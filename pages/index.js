@@ -1,6 +1,8 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import Link from 'next/link';
+
 
 export default function Home() {
   return (
@@ -19,9 +21,10 @@ export default function Home() {
         <p className={styles.description}>
           A collaborative learning tool for live training 😍
         </p>
-
+        <Link href="/supabaseData">Click here to see page connected to Supabase</Link>
 
       </main>
+
 
       <footer className={styles.footer}>
         <a
