@@ -4,50 +4,24 @@ import { useState } from "react"
 import { createClient } from "@/utils/supabase/client"
 import ButtonWithModal from "../ButtonWithModal"
 import { useRouter } from "next/navigation"
+import ContentTypeDropdown from "./ContentTypeDropdown"
 
-interface ContentPack {
+interface Slide {
   name: string
   description: string
   visibility: "public" | "private"
 }
 
-interface CreateContentPackModalProps {}
+interface CreateSlideModalProps {}
 
-export default function CreateContentPackModal(
-  props: CreateContentPackModalProps
-) {
+export default function CreateSlideModal(props: CreateSlideModalProps) {
   const [hideModal, setHideModal] = useState<boolean>(false)
-  const [contentPack, setContentPack] = useState<ContentPack>({
-    name: "",
-    description: "",
-    visibility: "public",
-  })
   const [creating, setCreating] = useState<boolean>(false)
   const supabase = createClient()
   const router = useRouter()
 
-  const createContentPack = async () => {
-    setCreating(true)
-    const { data, error } = await supabase
-      .from("content_decks")
-      .insert([
-        { name: contentPack.name, description: contentPack.description },
-      ])
-      .select()
-
-    console.log(contentPack)
-    setCreating(false)
-
-    if (error) {
-      alert(error.message)
-      return
-    }
-    setHideModal(true)
-    router.refresh()
-  }
-
   return (
-    <ButtonWithModal buttonLabel="Create Content Deck" hide={hideModal}>
+    <ButtonWithModal buttonLabel="Create Slide" hide={hideModal}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-gray-600">Name</label>
@@ -55,25 +29,10 @@ export default function CreateContentPackModal(
             type="text"
             disabled={creating}
             className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-            value={contentPack.name}
-            onChange={(e) =>
-              setContentPack({ ...contentPack, name: e.target.value })
-            }
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-gray-600">
-            Description
-          </label>
-          <textarea
-            disabled={creating}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-            value={contentPack.description}
-            onChange={(e) =>
-              setContentPack({ ...contentPack, description: e.target.value })
-            }
-          />
-        </div>
+
+        <ContentTypeDropdown />
         {/* <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-gray-600">
             Visibility
@@ -84,9 +43,9 @@ export default function CreateContentPackModal(
                 type="radio"
                 name="visibility"
                 className="w-4 h-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-                checked={contentPack.visibility === "public"}
+                checked={slide.visibility === "public"}
                 onChange={() =>
-                  setContentPack({ ...contentPack, visibility: "public" })
+                  setSlide({ ...slide, visibility: "public" })
                 }
               />
               <span className="text-sm font-semibold text-gray-600">
@@ -98,9 +57,9 @@ export default function CreateContentPackModal(
                 type="radio"
                 name="visibility"
                 className="w-4 h-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-                checked={contentPack.visibility === "private"}
+                checked={slide.visibility === "private"}
                 onChange={() =>
-                  setContentPack({ ...contentPack, visibility: "private" })
+                  setSlide({ ...slide, visibility: "private" })
                 }
               />
               <span className="text-sm font-semibold text-gray-600">
@@ -113,7 +72,6 @@ export default function CreateContentPackModal(
           <button
             disabled={creating}
             className="px-6 py-2 text-white bg-black rounded-md"
-            onClick={createContentPack}
           >
             {creating ? "Creating" : "Create"}
           </button>
