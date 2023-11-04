@@ -4,6 +4,7 @@ import { ArrowDownIcon } from "@heroicons/react/24/outline"
 import { IconPlus } from "@tabler/icons-react"
 import { useEffect, useRef, useState } from "react"
 import clsx from "clsx"
+import ChooseContentType from "./ChooseContentType"
 
 interface Slide {
   id: string
@@ -15,6 +16,7 @@ interface Slide {
   config: {
     backgroundColor: string
   }
+  contentType?: string
 }
 
 const slidesData: Slide[] = [
@@ -76,7 +78,7 @@ export default function SlideManager() {
           <div
             key={slide.id}
             data-slide-id={slide.id}
-            className="bg-pink-800 rounded-md  min-w-[80%] w-[80%] aspect-video m-auto relative"
+            className="bg-pink-800 rounded-md  min-w-[80%] w-[80%] aspect-video m-auto relative group"
             style={{
               backgroundColor: slide.config.backgroundColor || "#166534",
             }}
@@ -84,6 +86,11 @@ export default function SlideManager() {
             <div className="absolute -top-8 left-0">
               <h3 className="font-semibold">{slide.name}</h3>
             </div>
+            {!slide.contentType && (
+              <div className="p-12 bg-black/50 rounded-md absolute left-0 top-0 w-full h-full hidden group-hover:block transition-all">
+                <ChooseContentType onChoose={() => {}} />
+              </div>
+            )}
           </div>
         ))}
       </div>
