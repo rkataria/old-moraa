@@ -12,10 +12,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full bg-white">
-      <body className="h-full">
-        <main>
-          {children}
-        </main>
+      <body className="h-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full">
+        <main>{children}</main>
       </body>
     </html>
   )
