@@ -1,7 +1,7 @@
+import AuthButton from "@/components/AuthButton"
 import Head from "next/head"
-import Link from "next/link"
 
-export default async function Index() {
+export default async function HomePage() {
   return (
     <>
       <Head>
@@ -10,7 +10,7 @@ export default async function Index() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col w-full h-screen justify-center items-center gap-4">
+      <main className="flex flex-col w-full h-screen justify-center items-center gap-4 bg-background text-foreground">
         <h1 className="text-5xl font-bold">
           Welcome to <a href="https://learnsight.io">Learnsight</a>
         </h1>
@@ -18,12 +18,7 @@ export default async function Index() {
         <p className="text-2xl text-gray-200">
           A collaborative learning tool for live training 😍
         </p>
-        <Link
-          href="/login"
-          className="text-black bg-white px-8 py-2 rounded-sm shadow-md text-lg font-bold mt-12"
-        >
-          Start
-        </Link>
+        <AuthButton />
       </main>
     </>
   )

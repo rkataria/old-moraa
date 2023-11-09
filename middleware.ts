@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { createClient } from "@/utils/supabase/middleware"
 
-const protectedRoutes = ["/workspaces", "/content-libaries"]
+const protectedRoutes = ["/workspaces", "/content-libraries"]
 
 const checkIfProtectedRoute = (pathname: string) => {
   return protectedRoutes.find((route) => pathname?.startsWith(route))

@@ -33,7 +33,7 @@ export default function Slide({ index, slide }: SlideProps) {
   return (
     <div
       data-slide-id={slide.id}
-      className="bg-pink-800 rounded-md min-w-[75%] w-[75%] aspect-video m-auto relative group overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20"
+      className="bg-pink-800 rounded-md min-w-[75%] w-[75%] aspect-video m-auto relative group overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20 transition-all"
       style={{
         backgroundColor: slide.config.backgroundColor || "#166534",
       }}
