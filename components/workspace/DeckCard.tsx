@@ -18,7 +18,7 @@ export default function DeckCard({ deck, workspaceId }: DeckCardProps) {
   const router = useRouter()
 
   const handleCardClick = (id: string) => {
-    router.push(`/workspace/${workspaceId}/content-library/deck/${id}`)
+    router.push(`/content-libraries/${id}/slides`)
   }
 
   return (

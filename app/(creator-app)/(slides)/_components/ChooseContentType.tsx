@@ -4,14 +4,16 @@ import {
   IconChartBar,
 } from "@tabler/icons-react"
 
-interface ContentType {
+interface IContentType {
   name: string
   icon: React.ReactNode
   description: string
-  contentType: string
+  contentType: ContentType
 }
 
-const contentTypes: ContentType[] = [
+export type ContentType = "poll" | "text" | "image"
+
+const contentTypes: IContentType[] = [
   {
     name: "Poll",
     icon: <IconChartBar />,
@@ -33,7 +35,7 @@ const contentTypes: ContentType[] = [
 ]
 
 interface ChooseContentTypeProps {
-  onChoose: (contentType: string) => void
+  onChoose: (contentType: ContentType) => void
 }
 
 export default function ChooseContentType(props: ChooseContentTypeProps) {

@@ -4,22 +4,9 @@ import { ArrowDownIcon } from "@heroicons/react/24/outline"
 import { IconPlus } from "@tabler/icons-react"
 import { useEffect, useRef, useState } from "react"
 import clsx from "clsx"
-import ChooseContentType from "./ChooseContentType"
+import Slide, { ISlide } from "./Slide"
 
-interface Slide {
-  id: string
-  name: string
-  content?: string
-  deckId: string
-  createdAt?: string
-  updatedAt?: string
-  config: {
-    backgroundColor: string
-  }
-  contentType?: string
-}
-
-const slidesData: Slide[] = [
+const slidesData: ISlide[] = [
   {
     id: "1",
     name: "Slide 1",
@@ -31,8 +18,8 @@ const slidesData: Slide[] = [
 ]
 
 export default function SlideManager() {
-  const [slides, setSlides] = useState<Slide[]>(slidesData)
-  const [currentSlide, setCurrentSlide] = useState<Slide | null>(null)
+  const [slides, setSlides] = useState<ISlide[]>(slidesData)
+  const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const addSlideRef = useRef<HTMLDivElement>(null)
 
@@ -58,7 +45,7 @@ export default function SlideManager() {
   }, [currentSlide])
 
   const addNewSlide = () => {
-    const newSlide: Slide = {
+    const newSlide: ISlide = {
       id: Math.floor(Math.random() * 10000).toString(),
       name: "New Slide",
       deckId: "1",
@@ -72,31 +59,15 @@ export default function SlideManager() {
   }
 
   return (
-    <div className="pt-16 pb-40 overflow-hidden bg-orange-100">
+    <div className="pt-32 pb-40 overflow-hidden bg-orange-100">
       <div className="flex flex-col justify-start items-center gap-20 flex-nowrap">
-        {slides.map((slide) => (
-          <div
-            key={slide.id}
-            data-slide-id={slide.id}
-            className="bg-pink-800 rounded-md  min-w-[80%] w-[80%] aspect-video m-auto relative group"
-            style={{
-              backgroundColor: slide.config.backgroundColor || "#166534",
-            }}
-          >
-            <div className="absolute -top-8 left-0">
-              <h3 className="font-semibold">{slide.name}</h3>
-            </div>
-            {!slide.contentType && (
-              <div className="p-12 bg-black/50 rounded-md absolute left-0 top-0 w-full h-full hidden group-hover:block transition-all">
-                <ChooseContentType onChoose={() => {}} />
-              </div>
-            )}
-          </div>
+        {slides.map((slide, index) => (
+          <Slide key={slide.id} slide={slide} index={index} />
         ))}
       </div>
       <div
         className={clsx(
-          "fixed left-72 h-24 bg-white/95 w-[calc(100%_-_288px)] transition-all",
+          "fixed left-0 h-24 bg-white/95 w-full transition-all",
           miniMode ? "bottom-0" : "-bottom-20"
         )}
       >
