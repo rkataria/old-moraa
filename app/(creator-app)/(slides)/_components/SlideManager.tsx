@@ -12,7 +12,7 @@ const slidesData: ISlide[] = [
     name: "Slide 1",
     deckId: "1",
     config: {
-      backgroundColor: "#166534",
+      backgroundColor: "#fff",
     },
   },
 ]
@@ -62,7 +62,7 @@ export default function SlideManager() {
     <div>
       <div
         className={clsx(
-          "py-32 overflow-hidden bg-orange-100 transition-all",
+          "py-32 bg-orange-100 transition-all",
           miniMode ? "pl-28" : "pl-0"
         )}
       >
@@ -85,10 +85,10 @@ export default function SlideManager() {
                 key={`mini-slide-${slide.id}`}
                 onClick={() => setCurrentSlide(slide)}
                 className={clsx(
-                  "relative rounded-md flex-none w-full aspect-video cursor-pointer transition-all",
+                  "relative rounded-md flex-none w-full aspect-video cursor-pointer transition-all border-2",
                   currentSlide?.id === slide.id
-                    ? "drop-shadow-md"
-                    : "drop-shadow-none"
+                    ? "drop-shadow-md border-black"
+                    : "drop-shadow-none border-black/20"
                 )}
                 style={{
                   backgroundColor: slide.config.backgroundColor || "#166534",
