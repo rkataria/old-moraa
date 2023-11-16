@@ -19,7 +19,7 @@ const styles = {
   },
 }
 
-function Header() {
+function Header({ title = "Title" }: { title?: string }) {
   const [isToolboxCollapsed, setIsToolboxCollapsed] = useState<boolean>(false)
 
   const collapseToolbox = () => {
@@ -39,7 +39,7 @@ function Header() {
             })}
           >
             <h3 className="font-semibold pr-4 border-r-2 border-gray-200">
-              Learn to code by building real apps
+              {title}
             </h3>
             <button className={styles.button.default}>
               <IconArrowBack size={20} />

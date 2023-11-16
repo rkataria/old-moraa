@@ -16,7 +16,7 @@ import { createClient } from "@/utils/supabase/client"
 import clsx from "clsx"
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: HomeIcon, current: true },
+  { name: "Dashboard", href: "/", icon: HomeIcon, current: false },
   {
     name: "Content Library",
     href: "/content-libraries",
@@ -27,7 +27,7 @@ const navigation = [
     name: "Events",
     href: "/events",
     icon: DocumentDuplicateIcon,
-    current: false,
+    current: true,
   },
 ]
 
