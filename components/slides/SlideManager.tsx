@@ -1,8 +1,7 @@
 "use client"
-
+import { useEffect, useRef, useState } from "react"
 import { ArrowDownIcon } from "@heroicons/react/24/outline"
 import { IconPlus } from "@tabler/icons-react"
-import { useEffect, useRef, useState } from "react"
 import clsx from "clsx"
 import Slide, { ISlide } from "./Slide"
 
@@ -70,6 +69,9 @@ export default function SlideManager() {
           {slides.map((slide, index) => (
             <Slide key={slide.id} slide={slide} index={index} />
           ))}
+          <div className="min-w-[75%] w-[75%] p-6 -mt-6 rounded-md flex justify-center items-center gap-2 cursor-pointer bg-black text-white">
+            <IconPlus /> <span>Add Slide</span>
+          </div>
         </div>
       </div>
       <div

@@ -1,6 +1,5 @@
 import { cookies } from "next/headers"
-// TODO: Move Header and other components to a shared folder
-import Header from "../../(slides)/_components/Header"
+import Header from "@/components/slides/Header"
 import { createClient } from "@/utils/supabase/server"
 
 export default async function SlidesLayout({
