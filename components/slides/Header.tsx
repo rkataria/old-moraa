@@ -3,6 +3,7 @@
 import {
   IconArrowBack,
   IconArrowForward,
+  IconArrowLeft,
   IconBell,
   IconChevronCompactLeft,
   IconSearch,
@@ -10,6 +11,7 @@ import {
   IconUser,
 } from "@tabler/icons-react"
 import clsx from "clsx"
+import Link from "next/link"
 import React, { useState } from "react"
 
 const styles = {
@@ -27,40 +29,24 @@ function Header({ title = "Title" }: { title?: string }) {
   }
 
   return (
-    <div className="fixed left-0 top-0 w-full h-20 z-50 p-4 bg-transparent">
-      <div className="flex items-center justify-between h-12 w-full">
-        <div className="flex justify-start items-center gap-2 bg-white pl-4 pr-2 h-full shadow-lg rounded-md">
-          <h2 className="text-lg font-bold pr-4 border-r-2 border-gray-200 text-purple-700">
-            Learnsight
-          </h2>
+    <div className="fixed left-0 top-0 w-full h-16 z-50 bg-white">
+      <div className="flex items-center justify-between h-full">
+        <div className="flex justify-start items-center gap-2">
+          <div className="w-48 h-full pl-6 flex justify-start items-center">
+            <h2 className="text-lg font-bold text-purple-700">Learnsight</h2>
+          </div>
           <div
             className={clsx("flex justify-start items-center gap-2 ml-2", {
               hidden: isToolboxCollapsed,
             })}
           >
-            <h3 className="font-semibold pr-4 border-r-2 border-gray-200">
-              {title}
-            </h3>
-            <button className={styles.button.default}>
-              <IconArrowBack size={20} />
-            </button>
-            <button className={styles.button.default}>
-              <IconArrowForward size={20} />
-            </button>
-            <button className={styles.button.default}>
-              <IconSearch size={20} />
-            </button>
+            <Link href="/events" className={styles.button.default}>
+              <IconArrowLeft size={20} />
+            </Link>
+            <h3 className="font-semibold">{title}</h3>
           </div>
-          <button
-            className={clsx("flex justify-center items-center p-2 rounded-md", {
-              "rotate-180": isToolboxCollapsed,
-            })}
-            onClick={collapseToolbox}
-          >
-            <IconChevronCompactLeft size={20} />
-          </button>
         </div>
-        <div className="flex justify-start items-center gap-2 bg-white px-4 h-full shadow-lg rounded-md">
+        <div className="flex justify-start items-center gap-2 px-4 h-full">
           <button className={styles.button.default}>
             <IconBell size={20} />
           </button>

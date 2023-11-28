@@ -1,40 +1,40 @@
 "use client"
 
 import React, { useState } from "react"
-import ChooseContentType, { ContentType } from "./ChooseContentType"
+import { ContentType } from "./ContentTypePicker"
 import PollCreator from "./PollCreator"
 import { IconSettings } from "@tabler/icons-react"
 import clsx from "clsx"
+import ContentTypeBasic from "./content-types/Basic"
+import BasicSlide from "./content-types/Basic"
 
 export interface ISlide {
   id: string
   name: string
-  content?: string
-  deckId: string
+  content?: any
   createdAt?: string
   updatedAt?: string
   config: {
     backgroundColor: string
   }
-  contentType?: string
+  contentType: (typeof ContentType)[keyof typeof ContentType]
 }
 
 interface SlideProps {
   index: number
   slide: ISlide
+  onChange?: (data: Partial<ISlide>, index: number) => void
 }
 
 export default function Slide({ index, slide }: SlideProps) {
-  const [contentType, setContentType] = useState<ContentType | null>(null)
   const [openSettings, setOpenSettings] = useState<boolean>(false)
-
-  const addContentType = (contentType: ContentType) => {
-    console.log(contentType)
-    setContentType(contentType)
-  }
 
   const toggleSettings = () => {
     setOpenSettings((o) => !o)
+  }
+
+  const syncSlide = (data: Partial<ISlide>) => {
+    console.log("syncing slide", data)
   }
 
   return (
@@ -48,37 +48,28 @@ export default function Slide({ index, slide }: SlideProps) {
           />
         </div>
         <div className={clsx("flex justify-end items-center gap-2")}>
-          {contentType && (
-            <>
-              {/* {openPreview ? (
-                <span onClick={togglePreview}>Edit Poll</span>
-              ) : (
-                <span onClick={togglePreview}>Preview Poll</span>
-              )} */}
-              <IconSettings
-                onClick={toggleSettings}
-                className={clsx("cursor-pointer transition-all", {
-                  "rotate-0": !openSettings,
-                  "rotate-45": openSettings,
-                })}
-              />
-            </>
-          )}
+          <IconSettings
+            onClick={toggleSettings}
+            className={clsx("cursor-pointer transition-all", {
+              "rotate-0": !openSettings,
+              "rotate-45": openSettings,
+            })}
+          />
         </div>
       </div>
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20 transition-all"
         style={{
-          backgroundColor: slide.config.backgroundColor || "#fff",
+          backgroundColor: slide.config?.backgroundColor || "#fff",
         }}
       >
-        {!contentType && (
-          <div className="p-12 bg-black/50 rounded-md absolute left-0 top-0 w-full h-full hidden group-hover:block transition-all">
-            <ChooseContentType onChoose={addContentType} />
-          </div>
+        {slide.contentType === "poll" && (
+          <PollCreator openSettings={openSettings} />
         )}
-        {contentType === "poll" && <PollCreator openSettings={openSettings} />}
+        {slide.contentType === "basic" && (
+          <BasicSlide slide={slide} mode="edit" sync={syncSlide} />
+        )}
       </div>
     </div>
   )

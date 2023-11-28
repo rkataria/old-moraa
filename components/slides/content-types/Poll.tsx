@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ISlide } from "./Slide"
+import { ISlide } from "@/components/slides/Slide"
 import { IconTrash } from "@tabler/icons-react"
 
 interface ContentTypePollProps {
