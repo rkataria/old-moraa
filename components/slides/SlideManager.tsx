@@ -137,8 +137,8 @@ export default function SlideManager() {
         </div>
         <div
           className={clsx(
-            "fixed top-0 w-48 bg-white/95 h-full transition-all",
-            miniMode ? "left-0" : "-left-44"
+            "fixed top-0 w-56 bg-white/95 h-full transition-all",
+            miniMode ? "left-0" : "-left-52"
           )}
         >
           <div className="relative w-full h-full pt-16 pb-6">

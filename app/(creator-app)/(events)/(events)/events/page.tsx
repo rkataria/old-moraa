@@ -21,19 +21,19 @@ export default async function EventsPage() {
     <div className="px-4 sm:px-6 lg:px-8 mt-12">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">
+          {/* <h1 className="text-base font-semibold leading-6 text-gray-900">
             Events
           </h1>
           <p className="mt-2 text-sm text-gray-700">
             List of all events and their details.
-          </p>
+          </p> */}
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <Link
             href="/events/new"
             className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Create Event
+            Create new
           </Link>
         </div>
       </div>
@@ -47,34 +47,19 @@ export default async function EventsPage() {
                     scope="col"
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
                   >
-                    Title
+                    Name
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Description
+                    Status
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    className="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right"
                   >
-                    Event Type
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Start Date
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    End Date
-                  </th>
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    <span className="sr-only">Edit</span>
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -89,24 +74,24 @@ export default async function EventsPage() {
                         {event.name}
                       </Link>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {event.description}
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">
+                        {event.status}
+                      </span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {event.type}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {event.start_date}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {event.end_date}
-                    </td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 flex justify-end items-center gap-4">
                       <Link
                         href={`/events/${event.id}/slides`}
-                        className="text-indigo-600 hover:text-indigo-900"
+                        className="text-sm text-indigo-600 hover:text-indigo-900"
                       >
-                        Add Contents
+                        Edit
+                        <span className="sr-only">, {event.name}</span>
+                      </Link>
+                      <Link
+                        href={`/events/${event.id}/slides`}
+                        className="text-sm text-indigo-600 hover:text-indigo-900"
+                      >
+                        Launch
                         <span className="sr-only">, {event.name}</span>
                       </Link>
                     </td>

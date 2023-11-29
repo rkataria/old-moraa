@@ -27,7 +27,7 @@ export default function CreateEventPage() {
     }
 
     console.log("data", data)
-    redirect("/events")
+    redirect(`/events/${data[0].id}/slides`)
   }
 
   return (

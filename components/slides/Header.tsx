@@ -29,31 +29,19 @@ function Header({ title = "Title" }: { title?: string }) {
   }
 
   return (
-    <div className="fixed left-0 top-0 w-full h-16 z-50 bg-white">
-      <div className="flex items-center justify-between h-full">
-        <div className="flex justify-start items-center gap-2">
-          <div className="w-48 h-full pl-6 flex justify-start items-center">
-            <h2 className="text-lg font-bold text-purple-700">Learnsight</h2>
-          </div>
+    <div className="fixed left-0 top-0 w-full h-20 z-50 bg-transparent">
+      <div className="flex items-center justify-between h-12 w-full">
+        <div className="flex justify-start items-center gap-2 bg-white pl-4 pr-2 h-full shadow-lg rounded-md w-full">
+          <Link href="/events" className={styles.button.default}>
+            <IconArrowLeft size={20} />
+          </Link>
           <div
             className={clsx("flex justify-start items-center gap-2 ml-2", {
               hidden: isToolboxCollapsed,
             })}
           >
-            <Link href="/events" className={styles.button.default}>
-              <IconArrowLeft size={20} />
-            </Link>
-            <h3 className="font-semibold">{title}</h3>
+            <h3 className="font-semibold pr-4">{title}</h3>
           </div>
-        </div>
-        <div className="flex justify-start items-center gap-2 px-4 h-full">
-          <button className={styles.button.default}>
-            <IconBell size={20} />
-          </button>
-          <button className={styles.button.default}>
-            <IconSettings size={20} />
-          </button>
-          <div className="bg-gray-200 cursor-pointer border-2 border-transparent hover:border-black rounded-full h-9 w-9 ml-2"></div>
         </div>
       </div>
     </div>

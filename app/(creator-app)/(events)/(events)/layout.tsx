@@ -16,19 +16,7 @@ import { createClient } from "@/utils/supabase/client"
 import clsx from "clsx"
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: HomeIcon, current: false },
-  {
-    name: "Content Library",
-    href: "/content-libraries",
-    icon: FolderIcon,
-    current: false,
-  },
-  {
-    name: "Events",
-    href: "/events",
-    icon: DocumentDuplicateIcon,
-    current: true,
-  },
+  { name: "Dashboard", href: "/events", icon: HomeIcon, current: true },
 ]
 
 const teams: {
