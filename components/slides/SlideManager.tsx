@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
 import { ArrowDownIcon } from "@heroicons/react/24/outline"
-import { IconPlus } from "@tabler/icons-react"
+import { IconArrowLeft, IconPlus } from "@tabler/icons-react"
 import clsx from "clsx"
 import Slide, { ISlide } from "./Slide"
 import ContentTypePicker, { ContentType } from "./ContentTypePicker"
@@ -11,15 +11,16 @@ import Loading from "../common/Loading"
 import SyncingStatus from "../common/SyncingStatus"
 import { v4 as uuidv4 } from "uuid"
 import { getDefaultContent } from "@/utils/content.util"
+import Link from "next/link"
 
 const slidesData: ISlide[] = []
 
-export default function SlideManager() {
+export default function SlideManager({ event }: any) {
   const params = useParams()
   const [slides, setSlides] = useState<ISlide[]>(slidesData)
   const [slideLoaded, setSlideLoaded] = useState<boolean>(false)
   const [syncing, setSyncing] = useState<boolean>(false)
-  const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
+  const [currentSlide, setCurrentSlide] = useState<ISlide>(slidesData[0])
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const addSlideRef = useRef<HTMLDivElement>(null)
   const [openContentTypePicker, setOpenContentTypePicker] =
@@ -119,36 +120,42 @@ export default function SlideManager() {
       <div>
         <div
           className={clsx(
-            "py-32 bg-orange-100 transition-all min-h-screen",
-            miniMode ? "pl-28" : "pl-0"
+            "relative bg-orange-100 transition-all w-full h-screen flex justify-center items-center",
+            {
+              "p-8 pl-80": miniMode,
+              "p-24": !miniMode,
+            }
           )}
         >
-          <div className="flex flex-col justify-start items-center gap-20 flex-nowrap">
-            {slides.map((slide, index) => (
-              <Slide key={slide.id} slide={slide} index={index} />
-            ))}
-            <button
-              className="min-w-[75%] w-[75%] p-6 -mt-6 rounded-md flex justify-center items-center gap-2 cursor-pointer bg-black text-white"
-              onClick={() => setOpenContentTypePicker(true)}
-            >
-              <IconPlus /> <span>Add Slide</span>
-            </button>
+          <div className="relative bg-red-500 w-full aspect-video rounded-md">
+            {currentSlide && (
+              <Slide slide={currentSlide} index={1} onDelete={() => {}} />
+            )}
           </div>
         </div>
         <div
           className={clsx(
-            "fixed top-0 w-56 bg-white/95 h-full transition-all",
-            miniMode ? "left-0" : "-left-52"
+            "fixed top-0 w-72 bg-white/95 h-full transition-all",
+            miniMode ? "left-0" : "-left-64"
           )}
         >
-          <div className="relative w-full h-full pt-16 pb-6">
-            <div className="flex flex-col justify-start items-center gap-4 h-full w-full pt-4 px-6 flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-scroll">
-              {slides.map((slide) => (
+          <div className="px-6 py-2 mt-6 flex justify-start items-start gap-2">
+            <Link href="/events">
+              <IconArrowLeft size={20} />
+            </Link>
+            <span className="font-bold">{event.name}</span>
+          </div>
+          <div className="flex flex-col justify-start items-center gap-4 h-full w-full pt-4 px-6 flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-scroll">
+            {slides.map((slide, index) => (
+              <div
+                key={`mini-slide-${slide.id}`}
+                className="flex justify-start items-center gap-2 w-full"
+              >
+                <span className="w-5">{index + 1}.</span>
                 <div
-                  key={`mini-slide-${slide.id}`}
                   onClick={() => setCurrentSlide(slide)}
                   className={clsx(
-                    "relative rounded-md flex-none w-full aspect-video cursor-pointer transition-all border-2 flex justify-center items-center capitalize",
+                    "relative rounded-md flex-auto w-full aspect-video cursor-pointer transition-all border-2 flex justify-center items-center capitalize",
                     currentSlide?.id === slide.id
                       ? "drop-shadow-md border-black"
                       : "drop-shadow-none border-black/20"
@@ -159,27 +166,31 @@ export default function SlideManager() {
                 >
                   {slide.contentType}
                 </div>
-              ))}
-
+              </div>
+            ))}
+            <div className="flex justify-start items-center gap-2 w-full">
+              <span className="w-5"></span>
               <div
                 ref={addSlideRef}
-                className="relative bg-black/80 text-white rounded-md flex-none w-full aspect-video flex justify-center items-center cursor-pointer"
                 onClick={() => setOpenContentTypePicker(true)}
+                className={clsx(
+                  "relative rounded-md flex-auto w-full h-12 cursor-pointer transition-all border-2 flex justify-center items-center bg-black/80 text-white"
+                )}
               >
-                <IconPlus />
+                New Slide
               </div>
-              <button
-                className="absolute -right-8 bottom-1 cursor-pointer w-8 h-8 p-2 text-white bg-black/50 rounded-sm rounded-b-none"
-                onClick={() => setMiniMode((o) => !o)}
-              >
-                <ArrowDownIcon
-                  className={clsx(
-                    "transition-all",
-                    miniMode ? "rotate-90" : "-rotate-90"
-                  )}
-                />
-              </button>
             </div>
+            <button
+              className="absolute -right-8 top-1 cursor-pointer w-8 h-8 p-2 text-white bg-black/50 rounded-sm rounded-b-none"
+              onClick={() => setMiniMode((o) => !o)}
+            >
+              <ArrowDownIcon
+                className={clsx(
+                  "transition-all",
+                  miniMode ? "rotate-90" : "-rotate-90"
+                )}
+              />
+            </button>
           </div>
         </div>
       </div>

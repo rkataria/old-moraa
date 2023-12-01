@@ -3,7 +3,13 @@
 import React, { useState } from "react"
 import { ContentType } from "./ContentTypePicker"
 import PollCreator from "./PollCreator"
-import { IconSettings } from "@tabler/icons-react"
+import {
+  IconArrowBarToUp,
+  IconChevronDown,
+  IconChevronUp,
+  IconSettings,
+  IconTrash,
+} from "@tabler/icons-react"
 import clsx from "clsx"
 import ContentTypeBasic from "./content-types/Basic"
 import BasicSlide from "./content-types/Basic"
@@ -24,9 +30,10 @@ interface SlideProps {
   index: number
   slide: ISlide
   onChange?: (data: Partial<ISlide>, index: number) => void
+  onDelete: (index: number) => void
 }
 
-export default function Slide({ index, slide }: SlideProps) {
+export default function Slide({ index, slide, onDelete }: SlideProps) {
   const [openSettings, setOpenSettings] = useState<boolean>(false)
 
   const toggleSettings = () => {
@@ -37,23 +44,40 @@ export default function Slide({ index, slide }: SlideProps) {
     console.log("syncing slide", data)
   }
 
+  const deleteSlide = () => {
+    console.log("deleting slide")
+    onDelete(index)
+  }
+
   return (
-    <div className="relative min-w-[75%] w-[75%] aspect-video m-auto group">
-      <div className="absolute -top-8 left-0 w-full flex justify-between items-center">
-        <div className="flex justify-start items-center gap-2">
-          <h3 className="font-sm font-semibold">{`Slide ${index + 1} - `}</h3>
-          <input
-            placeholder="Add slide name"
-            className="font-sm font-semibold p-0 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0"
+    <div className="relative group w-full h-full">
+      <div className="absolute -top-8 left-0 w-full">
+        <div className="relative flex justify-center items-center gap-2">
+          <IconChevronUp
+            size={20}
+            className={clsx(
+              "text-gray-300 cursor-pointer hover:text-black transition-all duration-500"
+            )}
           />
-        </div>
-        <div className={clsx("flex justify-end items-center gap-2")}>
+          <IconChevronDown
+            size={20}
+            className={clsx(
+              "text-gray-300 cursor-pointer hover:text-black transition-all duration-500"
+            )}
+          />
           <IconSettings
+            size={20}
             onClick={toggleSettings}
-            className={clsx("cursor-pointer transition-all", {
-              "rotate-0": !openSettings,
-              "rotate-45": openSettings,
-            })}
+            className={clsx(
+              "text-gray-300 cursor-pointer hover:text-black transition-all duration-500"
+            )}
+          />
+          <IconTrash
+            size={20}
+            onClick={deleteSlide}
+            className={clsx(
+              "text-gray-300 cursor-pointer hover:text-red-500 transition-all duration-500"
+            )}
           />
         </div>
       </div>
