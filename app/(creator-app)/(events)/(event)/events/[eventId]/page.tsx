@@ -1,7 +1,7 @@
 import React from "react"
-import SlideManager from "@/components/slides/SlideManager"
 import { cookies } from "next/headers"
 import { createClient } from "@/utils/supabase/server"
+import SlideManagerWithProvider from "@/components/slides/SlideManagerWithProvider"
 
 async function EventSlidesPage({ params }: any) {
   const cookieStore = cookies()
@@ -22,7 +22,7 @@ async function EventSlidesPage({ params }: any) {
 
   return (
     <div className="w-full">
-      <SlideManager event={event} />
+      <SlideManagerWithProvider event={event} />
     </div>
   )
 }

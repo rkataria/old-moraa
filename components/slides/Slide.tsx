@@ -1,52 +1,41 @@
-"use client"
-
-import React, { useState } from "react"
-import { ContentType } from "./ContentTypePicker"
+import React, { useContext, useState } from "react"
 import PollCreator from "./PollCreator"
 import {
-  IconArrowBarToUp,
   IconChevronDown,
   IconChevronUp,
   IconSettings,
   IconTrash,
 } from "@tabler/icons-react"
 import clsx from "clsx"
-import ContentTypeBasic from "./content-types/Basic"
 import BasicSlide from "./content-types/Basic"
-
-export interface ISlide {
-  id: string
-  name: string
-  content?: any
-  createdAt?: string
-  updatedAt?: string
-  config: {
-    backgroundColor: string
-  }
-  contentType: (typeof ContentType)[keyof typeof ContentType]
-}
+import { ISlide } from "@/types/slide.type"
 
 interface SlideProps {
   index: number
   slide: ISlide
   onChange?: (data: Partial<ISlide>, index: number) => void
-  onDelete: (index: number) => void
+  deleteSlide: (id: string) => void
+  moveUpSlide: (id: string) => void
+  moveDownSlide: (id: string) => void
+  updateSlide: (slide: ISlide) => void
 }
 
-export default function Slide({ index, slide, onDelete }: SlideProps) {
+export default function Slide({
+  slide,
+  deleteSlide,
+  moveUpSlide,
+  moveDownSlide,
+  updateSlide,
+}: SlideProps) {
   const [openSettings, setOpenSettings] = useState<boolean>(false)
 
   const toggleSettings = () => {
     setOpenSettings((o) => !o)
   }
 
-  const syncSlide = (data: Partial<ISlide>) => {
+  const syncSlide = (data: ISlide) => {
     console.log("syncing slide", data)
-  }
-
-  const deleteSlide = () => {
-    console.log("deleting slide")
-    onDelete(index)
+    updateSlide(data)
   }
 
   return (
@@ -55,12 +44,14 @@ export default function Slide({ index, slide, onDelete }: SlideProps) {
         <div className="relative flex justify-center items-center gap-2">
           <IconChevronUp
             size={20}
+            onClick={() => moveUpSlide(slide.id)}
             className={clsx(
               "text-gray-300 cursor-pointer hover:text-black transition-all duration-500"
             )}
           />
           <IconChevronDown
             size={20}
+            onClick={() => moveDownSlide(slide.id)}
             className={clsx(
               "text-gray-300 cursor-pointer hover:text-black transition-all duration-500"
             )}
@@ -74,7 +65,7 @@ export default function Slide({ index, slide, onDelete }: SlideProps) {
           />
           <IconTrash
             size={20}
-            onClick={deleteSlide}
+            onClick={() => deleteSlide(slide.id)}
             className={clsx(
               "text-gray-300 cursor-pointer hover:text-red-500 transition-all duration-500"
             )}
@@ -89,7 +80,11 @@ export default function Slide({ index, slide, onDelete }: SlideProps) {
         }}
       >
         {slide.contentType === "poll" && (
-          <PollCreator openSettings={openSettings} />
+          <PollCreator
+            slide={slide}
+            openSettings={openSettings}
+            sync={syncSlide}
+          />
         )}
         {slide.contentType === "basic" && (
           <BasicSlide slide={slide} mode="edit" sync={syncSlide} />

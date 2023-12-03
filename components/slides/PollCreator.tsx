@@ -5,12 +5,32 @@ import { useClickAway } from "@uidotdev/usehooks"
 import clsx from "clsx"
 import { BlockPicker } from "react-color"
 import PollForm from "./PollForm"
+import { ISlide } from "@/types/slide.type"
 
-function PollCreator({ openSettings }: { openSettings: boolean }) {
+function PollCreator({
+  slide,
+  openSettings,
+  sync,
+}: {
+  slide: ISlide
+  openSettings: boolean
+  sync: (data: any) => void
+}) {
   const [poll, setPoll] = useState({
     question: "Who is the best YouTuber?",
     options: ["Web Dev Simplified", "Traversy Media", "Dev Ed"],
   })
+
+  useEffect(() => {
+    sync({
+      ...slide,
+      content: {
+        ...slide.content,
+        poll,
+      },
+    })
+  }, [poll])
+
   const [pollConfig, setPollConfig] = useState({
     slideBackgroundColor: "#166534",
   })

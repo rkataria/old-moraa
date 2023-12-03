@@ -5,9 +5,6 @@ import { Dialog, Menu, Transition } from "@headlessui/react"
 import {
   Bars3Icon,
   BellIcon,
-  Cog6ToothIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
   HomeIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
@@ -19,15 +16,10 @@ const navigation = [
   { name: "Dashboard", href: "/events", icon: HomeIcon, current: true },
 ]
 
-const teams: {
-  id: number
-  name: string
-  href: string
-  initial: string
-  current: boolean
-}[] = []
-
-const userNavigation = [{ name: "Your profile", href: "#" }, { name: "Logout" }]
+const userNavigation = [
+  { name: "Profile", href: "/profile" },
+  { name: "Logout", visible: true },
+]
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ")
@@ -144,47 +136,6 @@ export default function WorkspaceLayout({
                             ))}
                           </ul>
                         </li>
-                        {teams?.length > 0 && (
-                          <li>
-                            <div className="text-xs font-semibold leading-6 text-indigo-200">
-                              Your teams
-                            </div>
-                            <ul role="list" className="-mx-2 mt-2 space-y-1">
-                              {teams.map((team) => (
-                                <li key={team.name}>
-                                  <a
-                                    href={team.href}
-                                    className={classNames(
-                                      team.current
-                                        ? "bg-indigo-700 text-white"
-                                        : "text-indigo-200 hover:text-white hover:bg-indigo-700",
-                                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                    )}
-                                  >
-                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                                      {team.initial}
-                                    </span>
-                                    <span className="truncate">
-                                      {team.name}
-                                    </span>
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </li>
-                        )}
-                        <li className="mt-auto">
-                          <a
-                            href="#"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-indigo-200 hover:bg-indigo-700 hover:text-white"
-                          >
-                            <Cog6ToothIcon
-                              className="h-6 w-6 shrink-0 text-indigo-200 group-hover:text-white"
-                              aria-hidden="true"
-                            />
-                            Settings
-                          </a>
-                        </li>
                       </ul>
                     </nav>
                   </div>
@@ -239,45 +190,6 @@ export default function WorkspaceLayout({
                     ))}
                   </ul>
                 </li>
-                {teams?.length > 0 && (
-                  <li>
-                    <div className="text-xs font-semibold leading-6 text-indigo-200">
-                      Your teams
-                    </div>
-                    <ul role="list" className="-mx-2 mt-2 space-y-1">
-                      {teams.map((team) => (
-                        <li key={team.name}>
-                          <a
-                            href={team.href}
-                            className={classNames(
-                              team.current
-                                ? "bg-indigo-700 text-white"
-                                : "text-indigo-200 hover:text-white hover:bg-indigo-700",
-                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                            )}
-                          >
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                              {team.initial}
-                            </span>
-                            <span className="truncate">{team.name}</span>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                )}
-                <li className="mt-auto">
-                  <a
-                    href="#"
-                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-indigo-200 hover:bg-indigo-700 hover:text-white"
-                  >
-                    <Cog6ToothIcon
-                      className="h-6 w-6 shrink-0 text-indigo-200 group-hover:text-white"
-                      aria-hidden="true"
-                    />
-                    Settings
-                  </a>
-                </li>
               </ul>
             </nav>
           </div>
@@ -300,38 +212,8 @@ export default function WorkspaceLayout({
               aria-hidden="true"
             />
 
-            <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-              <form className="relative flex flex-1" action="#" method="GET">
-                <label htmlFor="search-field" className="sr-only">
-                  Search
-                </label>
-                <MagnifyingGlassIcon
-                  className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
-                  aria-hidden="true"
-                />
-                <input
-                  id="search-field"
-                  className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                  placeholder="Search..."
-                  type="search"
-                  name="search"
-                />
-              </form>
+            <div className="flex flex-1 justify-end gap-x-4 self-stretch lg:gap-x-6">
               <div className="flex items-center gap-x-4 lg:gap-x-6">
-                <button
-                  type="button"
-                  className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-
-                {/* Separator */}
-                <div
-                  className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
-                  aria-hidden="true"
-                />
-
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative">
                   <Menu.Button className="-m-1.5 flex items-center p-1.5">
@@ -345,9 +227,7 @@ export default function WorkspaceLayout({
                       <span
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                         aria-hidden="true"
-                      >
-                        Tom Cook
-                      </span>
+                      ></span>
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"
                         aria-hidden="true"

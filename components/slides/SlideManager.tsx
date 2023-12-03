@@ -1,96 +1,36 @@
 "use client"
-import { useEffect, useRef, useState } from "react"
-import { ArrowDownIcon } from "@heroicons/react/24/outline"
-import { IconArrowLeft, IconPlus } from "@tabler/icons-react"
+import { useContext, useRef, useState } from "react"
+import { IconArrowBarLeft, IconArrowBarRight } from "@tabler/icons-react"
 import clsx from "clsx"
-import Slide, { ISlide } from "./Slide"
+import Slide from "./Slide"
 import ContentTypePicker, { ContentType } from "./ContentTypePicker"
-import { createClient } from "@/utils/supabase/client"
-import { useParams } from "next/navigation"
 import Loading from "../common/Loading"
 import SyncingStatus from "../common/SyncingStatus"
-import { v4 as uuidv4 } from "uuid"
+import SlideManagerProvider, {
+  SlideManagerContext,
+} from "@/contexts/SlideManagerContext"
+import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { getDefaultContent } from "@/utils/content.util"
-import Link from "next/link"
-
-const slidesData: ISlide[] = []
+import { v4 as uuidv4 } from "uuid"
 
 export default function SlideManager({ event }: any) {
-  const params = useParams()
-  const [slides, setSlides] = useState<ISlide[]>(slidesData)
-  const [slideLoaded, setSlideLoaded] = useState<boolean>(false)
-  const [syncing, setSyncing] = useState<boolean>(false)
-  const [currentSlide, setCurrentSlide] = useState<ISlide>(slidesData[0])
-  const [miniMode, setMiniMode] = useState<boolean>(true)
+  const {
+    slides,
+    loading,
+    syncing,
+    miniMode,
+    currentSlide,
+    setCurrentSlide,
+    setMiniMode,
+    addSlide,
+    deleteSlide,
+    moveUpSlide,
+    moveDownSlide,
+    updateSlide,
+  } = useContext(SlideManagerContext) as SlideManagerContextType
   const addSlideRef = useRef<HTMLDivElement>(null)
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
-  const supabase = createClient()
-
-  useEffect(() => {
-    const fetchSlides = async () => {
-      const { data, error } = await supabase
-        .from("event_content")
-        .select("slides")
-        .eq("event_id", params.eventId)
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      const slides = data?.[0].slides || []
-
-      // @ts-ignore
-      setSlides(slides)
-      setSlideLoaded(true)
-    }
-
-    fetchSlides()
-  }, [params.eventId])
-
-  useEffect(() => {
-    if (!slides || !slideLoaded) return
-
-    const syncSlides = async () => {
-      setSyncing(true)
-
-      const { error } = await supabase
-        .from("event_content")
-        .update({ slides })
-        .eq("event_id", params.eventId)
-
-      setSyncing(false)
-
-      if (error) {
-        console.error(error, params.eventId)
-        return
-      }
-    }
-
-    syncSlides()
-  }, [slides])
-
-  useEffect(() => {
-    if (!currentSlide) return
-
-    const currentSlideElement = document.querySelector(
-      `div[data-slide-id="${currentSlide.id}"]`
-    )
-
-    if (!currentSlideElement) return
-
-    currentSlideElement.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "center",
-    })
-    addSlideRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-      inline: "center",
-    })
-  }, [currentSlide])
 
   const addNewSlide = (contentType: ContentType) => {
     const newSlide: ISlide = {
@@ -103,12 +43,12 @@ export default function SlideManager({ event }: any) {
       contentType: contentType,
     }
 
-    setSlides((o) => [...o, newSlide])
-    setCurrentSlide(newSlide)
+    addSlide(newSlide)
     setOpenContentTypePicker(false)
+    setCurrentSlide(newSlide)
   }
 
-  if (!slideLoaded)
+  if (!loading)
     return (
       <div className="h-screen">
         <Loading />
@@ -120,34 +60,45 @@ export default function SlideManager({ event }: any) {
       <div>
         <div
           className={clsx(
-            "relative bg-orange-100 transition-all w-full h-screen flex justify-center items-center",
+            "relative bg-gray-100 transition-all w-full h-screen flex justify-center items-center",
             {
               "p-8 pl-80": miniMode,
               "p-24": !miniMode,
             }
           )}
         >
-          <div className="relative bg-red-500 w-full aspect-video rounded-md">
-            {currentSlide && (
-              <Slide slide={currentSlide} index={1} onDelete={() => {}} />
+          <div
+            className={clsx("relative aspect-video rounded-md bg-white mt-16", {
+              "w-full": miniMode,
+              "w-[90%]": !miniMode,
+              "flex justify-center items-center border-2 border-black/10":
+                !currentSlide,
+            })}
+          >
+            {currentSlide ? (
+              <Slide
+                slide={currentSlide}
+                index={1}
+                deleteSlide={deleteSlide}
+                moveUpSlide={moveUpSlide}
+                moveDownSlide={moveDownSlide}
+                updateSlide={updateSlide}
+              />
+            ) : (
+              <div>Add a slide to continue</div>
             )}
           </div>
         </div>
         <div
           className={clsx(
-            "fixed top-0 w-72 bg-white/95 h-full transition-all",
+            "fixed top-0 w-72 bg-white/95 h-full transition-all pt-16 pb-4",
             miniMode ? "left-0" : "-left-64"
           )}
         >
-          <div className="px-6 py-2 mt-6 flex justify-start items-start gap-2">
-            <Link href="/events">
-              <IconArrowLeft size={20} />
-            </Link>
-            <span className="font-bold">{event.name}</span>
-          </div>
           <div className="flex flex-col justify-start items-center gap-4 h-full w-full pt-4 px-6 flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-scroll">
             {slides.map((slide, index) => (
               <div
+                data-minislide-id={slide.id}
                 key={`mini-slide-${slide.id}`}
                 className="flex justify-start items-center gap-2 w-full"
               >
@@ -181,15 +132,16 @@ export default function SlideManager({ event }: any) {
               </div>
             </div>
             <button
-              className="absolute -right-8 top-1 cursor-pointer w-8 h-8 p-2 text-white bg-black/50 rounded-sm rounded-b-none"
-              onClick={() => setMiniMode((o) => !o)}
+              className="absolute right-0 top-16 flex justify-center items-center cursor-pointer w-8 h-8 text-black rounded-sm rounded-b-none"
+              onClick={() => {
+                setMiniMode(!miniMode)
+              }}
             >
-              <ArrowDownIcon
-                className={clsx(
-                  "transition-all",
-                  miniMode ? "rotate-90" : "-rotate-90"
-                )}
-              />
+              {miniMode ? (
+                <IconArrowBarLeft size={20} />
+              ) : (
+                <IconArrowBarRight size={20} />
+              )}
             </button>
           </div>
         </div>

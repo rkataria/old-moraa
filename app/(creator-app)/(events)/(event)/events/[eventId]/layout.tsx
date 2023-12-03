@@ -21,7 +21,7 @@ export default async function SlidesLayout({ children, params }: any) {
 
   return (
     <div>
-      <Header title={event?.name} />
+      <Header event={event} />
       {children}
     </div>
   )
