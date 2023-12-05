@@ -1,8 +1,7 @@
 "use client"
 
 import React from "react"
-import SlideManager from "./SlideManager"
-import SlideManagerProvider from "@/contexts/SlideManagerContext"
+import EventSessionContextProvider from "@/contexts/EventSessionContext"
 
 interface SlideManagerWithProviderProps {
   event: any
@@ -14,9 +13,9 @@ function SlideManagerWithProvider({
   children,
 }: SlideManagerWithProviderProps) {
   return (
-    <SlideManagerProvider>
-      <SlideManager event={event} />
-    </SlideManagerProvider>
+    <EventSessionContextProvider>
+      <div></div>
+    </EventSessionContextProvider>
   )
 }
 

@@ -9,10 +9,14 @@ interface NewEventFormProps {
 function NewEventForm({ onClose }: NewEventFormProps) {
   async function create(formData: FormData) {
     const supabase = createClient()
+    const currentUser = await supabase.auth.getSession()
     const event = {
       name: formData.get("name"),
       description: formData.get("description"),
-      type: formData.get("type"),
+      type: "course", //formData.get("type"),
+      start_date: formData.get("start_date") || new Date(),
+      end_date: formData.get("end_date") || new Date(),
+      owner_id: currentUser.data.session?.user.id,
     }
     const { data, error } = await supabase
       .from("event")
@@ -113,7 +117,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                       <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <input
                           type="datetime-local"
-                          name="start-date"
+                          name="start_date"
                           id="start-date"
                           className={FormControlStyles.input.base}
                         />
@@ -132,7 +136,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                       <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <input
                           type="datetime-local"
-                          name="end-date"
+                          name="end_date"
                           id="end-date"
                           className={FormControlStyles.input.base}
                         />

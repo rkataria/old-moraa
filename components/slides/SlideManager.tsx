@@ -6,14 +6,12 @@ import Slide from "./Slide"
 import ContentTypePicker, { ContentType } from "./ContentTypePicker"
 import Loading from "../common/Loading"
 import SyncingStatus from "../common/SyncingStatus"
-import SlideManagerProvider, {
-  SlideManagerContext,
-} from "@/contexts/SlideManagerContext"
+import { SlideManagerContext } from "@/contexts/SlideManagerContext"
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { getDefaultContent } from "@/utils/content.util"
 import { v4 as uuidv4 } from "uuid"
 
-export default function SlideManager({ event }: any) {
+export default function SlideManager({}: any) {
   const {
     slides,
     loading,
@@ -77,8 +75,8 @@ export default function SlideManager({ event }: any) {
           >
             {currentSlide ? (
               <Slide
+                key={`slide-${currentSlide.id}`}
                 slide={currentSlide}
-                index={1}
                 deleteSlide={deleteSlide}
                 moveUpSlide={moveUpSlide}
                 moveDownSlide={moveDownSlide}

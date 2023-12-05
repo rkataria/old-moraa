@@ -41,7 +41,8 @@ function Header({ event }: { event: any }) {
               >
                 Add participant
               </button>
-              <button
+              <Link
+                href={`/event-session/${event.id}`}
                 className={clsx(
                   styles.button.default,
                   "font-semibold text-sm bg-black text-white !rounded-full px-4"
@@ -49,7 +50,7 @@ function Header({ event }: { event: any }) {
                 title="Publish Event"
               >
                 Start Session
-              </button>
+              </Link>
             </>
           )}
         </div>

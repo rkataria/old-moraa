@@ -43,9 +43,13 @@ function NewEventForm({ onClose }: NewEventFormProps) {
         id: event?.id,
         name: formData.get("name"),
         description: formData.get("description"),
-        start_date: formData.get("start-date"),
-        end_date: formData.get("end-date"),
-        participants,
+        // start_date: formData.get("start_date"),
+        // end_date: formData.get("end-date"),
+        participants: [
+          {
+            email: "nirajkaushal.dev@gmail.com",
+          },
+        ],
       }),
     })
 
@@ -157,7 +161,64 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                       <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <input
                           type="datetime-local"
-                          name="start-date"
+                          name="start_date"
+                          id="startdate"
+                          defaultValue={event?.start_date}
+                          className={FormControlStyles.input.base}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="end-date"
+                      className={FormControlStyles.label.base}
+                    >
+                      End Date
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                        <input
+                          type="datetime-local"
+                          name="end_date"
+                          id="end-date"
+                          defaultValue={event?.end_date}
+                          className={FormControlStyles.input.base}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
+            <div className="px-4 sm:px-0">
+              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                Event Participants
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Invite people to the event.
+              </p>
+            </div>
+
+            <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+              <div className="px-4 py-6 sm:p-8">
+                <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="participant-email"
+                      className={FormControlStyles.label.base}
+                    >
+                      Participant Email
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                        <input
+                          type="email"
+                          name="participant-email"
                           id="start-date"
                           defaultValue={event?.start_date}
                           className={FormControlStyles.input.base}
@@ -189,6 +250,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
               </div>
             </div>
           </div>
+
           <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
             <button
               type="button"

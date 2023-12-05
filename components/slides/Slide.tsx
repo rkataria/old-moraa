@@ -11,7 +11,6 @@ import BasicSlide from "./content-types/Basic"
 import { ISlide } from "@/types/slide.type"
 
 interface SlideProps {
-  index: number
   slide: ISlide
   onChange?: (data: Partial<ISlide>, index: number) => void
   deleteSlide: (id: string) => void

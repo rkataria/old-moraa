@@ -3,6 +3,8 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { createClient } from "@/utils/supabase/client"
 import { useParams } from "next/navigation"
 import { useDebounce } from "@uidotdev/usehooks"
+import { v4 as uuidv4 } from "uuid"
+import { ContentType } from "@/components/slides/ContentTypePicker"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -26,7 +28,7 @@ const SlideManagerProvider = ({ children }: SlideManagerProviderProps) => {
     const fetchSlides = async () => {
       const { data, error } = await supabase
         .from("event_content")
-        .select("slides")
+        .select("*")
         .eq("event_id", params.eventId)
 
       if (error) {
@@ -34,9 +36,25 @@ const SlideManagerProvider = ({ children }: SlideManagerProviderProps) => {
         return
       }
 
-      const slides = data?.[0].slides || []
+      const eventContent = data?.[0]
 
-      console.log("slides fetched", slides)
+      const slides = eventContent.slides || []
+
+      if (slides.length === 0) {
+        // add default cover slide
+        addSlide({
+          id: uuidv4(),
+          name: `Slide ${slides.length + 1}`,
+          config: {
+            backgroundColor: "#fff",
+          },
+          content: {
+            title: eventContent.name,
+            subtitle: eventContent.description,
+          },
+          contentType: ContentType.BASIC,
+        })
+      }
 
       // @ts-ignore
       setSlides(slides)
