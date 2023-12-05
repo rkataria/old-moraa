@@ -1,30 +1,22 @@
 "use client"
 
 import {
-  IconArrowBack,
-  IconArrowForward,
-  IconBell,
-  IconChevronCompactLeft,
-  IconSearch,
-  IconSettings,
-  IconUser,
+  IconArrowDown,
+  IconArrowLeft,
+  IconArrowRight,
+  IconLayoutSidebarRightCollapse,
 } from "@tabler/icons-react"
-import clsx from "clsx"
+import Link from "next/link"
 import React, { useState } from "react"
-
-enum EventType {
-  PUBLISHED = "PUBLISHED",
-  DRAFT = "DRAFT",
-}
 
 const styles = {
   button: {
     default:
-      "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
+      "flex justify-center items-center bg-gray-200 hover:bg-gray-800 hover:text-white transition-all duration-200 py-2 px-4 text-xs font-semibold rounded-lg",
   },
 }
 
-function Header({ event }: { event: any }) {
+function Header({ event, meeting }: { event: any; meeting: any }) {
   const [isToolboxCollapsed, setIsToolboxCollapsed] = useState<boolean>(false)
 
   const collapseToolbox = () => {
@@ -32,36 +24,32 @@ function Header({ event }: { event: any }) {
   }
 
   return (
-    <div className="fixed left-0 top-0 w-full h-18 z-50 p-2 bg-white">
+    <div className="fixed left-0 top-0 w-full z-50 py-1 px-2 bg-white">
       <div className="flex items-center justify-between h-12 w-full">
-        <div className="flex justify-start items-center gap-2 bg-white pl-4 pr-2 h-full">
-          <h2 className="text-lg font-bold pr-4 border-r-2 border-gray-200 text-purple-700">
-            Learnsight
-          </h2>
-          <div
-            className={clsx("flex justify-start items-center gap-2 ml-2", {
-              hidden: isToolboxCollapsed,
-            })}
-          >
-            <h3 className="font-semibold pr-4 border-r-2 border-gray-200">
-              {event.name}
-            </h3>
-          </div>
-          <button
-            className={clsx("flex justify-center items-center p-2 rounded-md", {
-              "rotate-180": isToolboxCollapsed,
-            })}
-            onClick={collapseToolbox}
-          >
-            <IconChevronCompactLeft size={20} />
+        <div className="flex justify-start items-center gap-2">
+          <Link href="/events">
+            <IconLayoutSidebarRightCollapse
+              size={20}
+              className="text-gray-400"
+            />
+          </Link>
+          <span className="font-bold">{event.name}</span>
+        </div>
+        <div className="flex justify-center items-center gap-2">
+          <button className={styles.button.default}>
+            <IconArrowLeft size={16} />
+          </button>
+          <button className={styles.button.default}>
+            <IconArrowRight size={16} />
           </button>
         </div>
         <div className="flex justify-start items-center gap-2 bg-white px-4 h-full">
+          <button className={styles.button.default}>Chat</button>
           <button className={styles.button.default}>
-            <IconBell size={20} />
-          </button>
-          <button className={styles.button.default}>
-            <IconSettings size={20} />
+            <span className="px-3 py-[2px] bg-gray-400 text-[11px] rounded-full mr-1">
+              {meeting.participants.count}
+            </span>
+            <span>Participants</span>
           </button>
           <div className="bg-gray-200 cursor-pointer border-2 border-transparent hover:border-black rounded-full h-9 w-9 ml-2"></div>
         </div>

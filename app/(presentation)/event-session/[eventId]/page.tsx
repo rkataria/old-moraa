@@ -1,5 +1,6 @@
 "use client"
 import Loading from "@/components/common/Loading"
+import Header from "@/components/event-session/Header"
 import SlideManagerWithProvider from "@/components/slides/SlideManagerWithProvider"
 import EventSessionProvider from "@/contexts/EventSessionContext"
 import { createClient } from "@/utils/supabase/client"
@@ -78,7 +79,7 @@ function Meeting() {
       authToken: meetingToken,
       defaults: {
         audio: false,
-        video: false,
+        video: true,
       },
     })
   }, [meetingToken])
@@ -117,41 +118,21 @@ function Meeting() {
           </div>
         }
       >
+        <Header event={event} meeting={meeting} />
         <div>
-          <DyteLeaveButton size="sm" onClick={() => meeting.leave()} />
-        </div>
-        <div>
-          <div className="fixed right-0 top-0 w-72 h-full bg-white pt-16">
-            <DyteMeeting meeting={meeting} mode="fill" />
-            {/* <div className="p-4 flex justify-start flex-col items-center">
-              <DyteParticipantTile
-                participant={meeting.self}
-                nameTagPosition="bottom-center"
-                className="h-36 aspect-video"
-              ></DyteParticipantTile>
+          <div className="fixed right-0 top-0 w-[420px] h-full bg-white pt-16">
+            {/* <DyteMeeting meeting={meeting} mode="fill" /> */}
+            <div className="p-1 grid grid-cols-2 gap-1 h-full scrollbar-thin overflow-y-auto">
+              {[...Array(50)].map((_, i) => (
+                <DyteParticipantTile
+                  participant={meeting.self}
+                  nameTagPosition="bottom-center"
+                  className="w-full h-36"
+                >
+                  <DyteNameTag participant={meeting.self} meeting={meeting} />
+                </DyteParticipantTile>
+              ))}
             </div>
-            <div className="p-4 grid grid-cols-2 gap-2">
-              <DyteParticipantTile
-                participant={meeting.self}
-                nameTagPosition="bottom-center"
-                className="w-full h-auto aspect-video"
-              ></DyteParticipantTile>
-              <DyteParticipantTile
-                participant={meeting.self}
-                nameTagPosition="bottom-center"
-                className="w-full h-auto aspect-video"
-              ></DyteParticipantTile>
-              <DyteParticipantTile
-                participant={meeting.self}
-                nameTagPosition="bottom-center"
-                className="w-full h-auto aspect-video"
-              ></DyteParticipantTile>
-              <DyteParticipantTile
-                participant={meeting.self}
-                nameTagPosition="bottom-center"
-                className="w-full h-auto aspect-video"
-              ></DyteParticipantTile>
-            </div> */}
           </div>
         </div>
       </DyteProvider>
