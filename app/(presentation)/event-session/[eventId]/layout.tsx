@@ -1,6 +1,10 @@
-import { cookies } from "next/headers"
-import { createClient } from "@/utils/supabase/server"
+"use client"
+import { EventSessionProvider } from "@/contexts/EventSessionContext"
 
-export default async function MeetingLayout({ children, params }: any) {
-  return <div className="bg-gray-100 h-screen pt-16">{children}</div>
+export default async function MeetingLayout({ children }: any) {
+  return (
+    <EventSessionProvider>
+      <div className="bg-gray-100">{children}</div>
+    </EventSessionProvider>
+  )
 }
