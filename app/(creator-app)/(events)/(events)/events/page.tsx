@@ -1,23 +1,29 @@
-import NewEventButtonWithModal from "@/components/common/NewEventButtonWithModal"
-import EventList from "@/components/events/EventList"
-import { createClient } from "@/utils/supabase/server"
-import { cookies } from "next/headers"
-import Link from "next/link"
-
-const people = [
-  {
-    name: "Lindsay Walton",
-    title: "Front-end Developer",
-    email: "lindsay.walton@example.com",
-    role: "Member",
-  },
-]
+import NewEventButtonWithModal from "@/components/common/NewEventButtonWithModal";
+import EventList from "@/components/events/EventList";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 
 export default async function EventsPage() {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
-  const { data, error } = await supabase.from("event").select()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  console.log(user);
+  const id = user?.id;
+  if (!user) {
+    return <></>;
+  }
+  const { data, error } = await supabase
+    .from("enrollment")
+    .select("*,event(*)")
+    .eq("user_id", id);
+
+  if (data?.length === 0) {
+    return <></>;
+  }
+  const events = data?.map((i) => i.event);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 mt-12">
@@ -27,7 +33,7 @@ export default async function EventsPage() {
           <NewEventButtonWithModal />
         </div>
       </div>
-      <EventList events={data} />
+      <EventList events={events} />
     </div>
-  )
+  );
 }
