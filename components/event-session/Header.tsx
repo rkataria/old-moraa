@@ -1,5 +1,7 @@
 "use client"
 
+import EventSessionContext from "@/contexts/EventSessionContext"
+import { EventSessionContextType } from "@/types/event-session.type"
 import {
   IconArrowDown,
   IconArrowLeft,
@@ -7,7 +9,7 @@ import {
   IconLayoutSidebarRightCollapse,
 } from "@tabler/icons-react"
 import Link from "next/link"
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 
 const styles = {
   button: {
@@ -17,10 +19,12 @@ const styles = {
 }
 
 function Header({ event, meeting }: { event: any; meeting: any }) {
-  const [isToolboxCollapsed, setIsToolboxCollapsed] = useState<boolean>(false)
+  const handlePreviousSlide = () => {
+    meeting?.participants.broadcastMessage("previous-slide", {})
+  }
 
-  const collapseToolbox = () => {
-    setIsToolboxCollapsed(!isToolboxCollapsed)
+  const handleNextSlide = () => {
+    meeting?.participants.broadcastMessage("next-slide", {})
   }
 
   return (
@@ -28,18 +32,18 @@ function Header({ event, meeting }: { event: any; meeting: any }) {
       <div className="flex items-center justify-between h-12 w-full">
         <div className="flex justify-start items-center gap-2">
           <Link href="/events">
-            <IconLayoutSidebarRightCollapse
-              size={20}
-              className="text-gray-400"
-            />
+            <IconArrowLeft size={20} />
           </Link>
           <span className="font-bold">{event.name}</span>
         </div>
         <div className="flex justify-center items-center gap-2">
-          <button className={styles.button.default}>
+          <button
+            className={styles.button.default}
+            onClick={handlePreviousSlide}
+          >
             <IconArrowLeft size={16} />
           </button>
-          <button className={styles.button.default}>
+          <button className={styles.button.default} onClick={handleNextSlide}>
             <IconArrowRight size={16} />
           </button>
         </div>

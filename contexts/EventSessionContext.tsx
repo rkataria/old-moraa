@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/client"
 import { useParams } from "next/navigation"
 import { EventSessionContextType } from "@/types/event-session.type"
 import { useDyteClient } from "@dytesdk/react-web-core"
+import { ISlide } from "@/types/slide.type"
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -18,6 +19,8 @@ export const EventSessionProvider = ({
   const [error, setError] = useState<string>("")
   const [meetingToken, setMeetingToken] = useState<string>("")
   const [isHost, setIsHost] = useState<boolean>(false)
+  const [slides, setSlides] = useState<ISlide[]>([])
+  const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
   const params = useParams()
   const supabase = createClient()
 
@@ -70,6 +73,48 @@ export const EventSessionProvider = ({
     getEnrollment()
   }, [event?.meeting_id])
 
+  useEffect(() => {
+    if (!event?.id) return
+
+    const fetchSlides = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("event_content")
+          .select("*")
+          .eq("event_id", event.id)
+
+        if (error) {
+          console.error(error)
+          setError(error.message)
+          return
+        }
+        setSlides(data[0]?.slides ?? [])
+        setCurrentSlide(data[0]?.slides[0] ?? null)
+      } catch (error: any) {
+        console.error(error)
+        setError(error.message)
+      }
+    }
+
+    fetchSlides()
+  }, [event?.id])
+
+  const nextSlide = () => {
+    const currentIndex = slides.findIndex(
+      (slide) => slide.id === currentSlide?.id
+    )
+    if (currentIndex === slides.length - 1) return
+    setCurrentSlide(slides[currentIndex + 1])
+  }
+
+  const previousSlide = () => {
+    const currentIndex = slides.findIndex(
+      (slide) => slide.id === currentSlide?.id
+    )
+    if (currentIndex === 0) return
+    setCurrentSlide(slides[currentIndex - 1])
+  }
+
   return (
     <EventSessionContext.Provider
       value={{
@@ -78,6 +123,11 @@ export const EventSessionProvider = ({
         error,
         meetingToken,
         isHost,
+        slides,
+        currentSlide,
+        setCurrentSlide,
+        nextSlide,
+        previousSlide,
       }}
     >
       {children}

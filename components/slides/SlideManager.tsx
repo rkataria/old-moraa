@@ -10,6 +10,7 @@ import { SlideManagerContext } from "@/contexts/SlideManagerContext"
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { getDefaultContent } from "@/utils/content.util"
 import { v4 as uuidv4 } from "uuid"
+import MiniSlideManager from "./MiniSlideManager"
 
 export default function SlideManager({}: any) {
   const {
@@ -87,7 +88,15 @@ export default function SlideManager({}: any) {
             )}
           </div>
         </div>
-        <div
+        <MiniSlideManager
+          slides={slides}
+          addSlideRef={addSlideRef}
+          currentSlide={currentSlide}
+          setOpenContentTypePicker={setOpenContentTypePicker}
+          setCurrentSlide={setCurrentSlide}
+          onMiniModeChange={setMiniMode}
+        />
+        {/* <div
           className={clsx(
             "fixed top-0 w-72 bg-white/95 h-full transition-all pt-16 pb-4",
             miniMode ? "left-0" : "-left-64"
@@ -142,7 +151,7 @@ export default function SlideManager({}: any) {
               )}
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <ContentTypePicker
         open={openContentTypePicker}

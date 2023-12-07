@@ -3,31 +3,18 @@ import Loading from "@/components/common/Loading"
 import Header from "@/components/event-session/Header"
 import Meeting from "@/components/event-session/Meeting"
 import MeetingSetupScreen from "@/components/event-session/MeetingSetupScreen"
-import EventSessionContext, {
-  EventSessionProvider,
-} from "@/contexts/EventSessionContext"
+import PresentationManager from "@/components/event-session/PresentationManager"
+import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
-import { createClient } from "@/utils/supabase/client"
-import {
-  DyteCameraToggle,
-  DyteDialogManager,
-  DyteMicToggle,
-  DyteNameTag,
-  DyteNotifications,
-  DyteParticipantTile,
-  DyteParticipantsAudio,
-  DyteSetupScreen,
-  provideDyteDesignSystem,
-} from "@dytesdk/react-ui-kit"
+import { provideDyteDesignSystem } from "@dytesdk/react-ui-kit"
 import { DyteProvider, useDyteClient } from "@dytesdk/react-web-core"
-import { useParams } from "next/navigation"
 import { useContext, useEffect, useRef, useState } from "react"
 
 function EventSessionPage() {
   const meetingEl = useRef<HTMLDivElement>(null)
   const [meeting, initMeeting] = useDyteClient()
   const [roomJoined, setRoomJoined] = useState<boolean>(false)
-  const { event, loading, error, meetingToken, isHost } = useContext(
+  const { event, meetingToken } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -106,7 +93,8 @@ function EventSessionPage() {
           </div>
         }
       >
-        <Header event={event} meeting={meeting} />
+        {roomJoined && <Header event={event} meeting={meeting} />}
+        {roomJoined && <PresentationManager />}
         {!roomJoined ? <MeetingSetupScreen /> : <Meeting />}
       </DyteProvider>
     </div>

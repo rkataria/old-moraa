@@ -20,25 +20,28 @@ function PollCreator({
     question: "Who is the best YouTuber?",
     options: ["Web Dev Simplified", "Traversy Media", "Dev Ed"],
   })
-
-  useEffect(() => {
-    sync({
-      ...slide,
-      content: {
-        ...slide.content,
-        poll,
-      },
-    })
-  }, [poll])
-
   const [pollConfig, setPollConfig] = useState({
-    slideBackgroundColor: "#166534",
+    backgroundColor: "#166534",
   })
   const [showSettings, setShowSettings] = useState<boolean>(openSettings)
   const settingsRef = useClickAway(() => {
     setShowSettings(false)
   })
   const [preview, setPreview] = useState<boolean>(false)
+
+  useEffect(() => {
+    sync({
+      ...slide,
+      config: {
+        ...slide.config,
+        ...pollConfig,
+      },
+      content: {
+        ...slide.content,
+        ...poll,
+      },
+    })
+  }, [poll, pollConfig])
 
   useEffect(() => {
     setShowSettings(openSettings)
@@ -60,7 +63,7 @@ function PollCreator({
       </div>
       <div className="relative w-full h-full overflow-x-hidden overflow-y-auto scrollbar-thin">
         {preview ? (
-          <PollPreview {...poll} configs={pollConfig} />
+          <PollPreview {...poll} config={pollConfig} />
         ) : (
           <PollForm
             question={poll.question}
@@ -86,7 +89,7 @@ function PollCreator({
             <div className="my-4">
               <label className="block mb-2 font-bold">Background Color</label>
               <BlockPicker
-                color={pollConfig.slideBackgroundColor}
+                color={pollConfig.backgroundColor}
                 onChange={(color) => {
                   setPollConfig((prev: any) => ({
                     ...prev,

@@ -7,18 +7,18 @@ const totalVotes = votes.reduce((a, b) => a + b, 0)
 export interface PollPreviewProps {
   question: string
   options: string[]
-  configs?: {
-    slideBackgroundColor: string
+  config?: {
+    backgroundColor: string
   }
-  mode?: "view-only" | "vote"
+  mode?: "present" | "vote"
   onVote?: (index: number) => void
 }
 
 function PollPreview({
   question,
   options,
-  configs,
-  mode = "view-only",
+  config,
+  mode = "present",
   onVote = () => {},
 }: PollPreviewProps) {
   const [voted, setVoted] = useState<boolean>(false)
@@ -48,7 +48,7 @@ function PollPreview({
         "absolute w-full h-full flex justify-center items-start pt-12"
       )}
       style={{
-        backgroundColor: configs?.slideBackgroundColor,
+        backgroundColor: config?.backgroundColor,
       }}
     >
       <div className="p-8 w-4/5">
