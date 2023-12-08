@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import MiniSlideManager from "../slides/MiniSlideManager"
 import PresentationSlide from "./PresentationSlide"
 import EventSessionContext from "@/contexts/EventSessionContext"
@@ -8,11 +8,23 @@ import { ISlide } from "@/types/slide.type"
 
 function PresentationManager() {
   const { meeting } = useDyteMeeting()
-  const { slides, currentSlide, setCurrentSlide, isHost } = useContext(
+  const [isHost, setIsHost] = useState<boolean>(false)
+  const { slides, currentSlide, setCurrentSlide } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
+  useEffect(() => {
+    if (!meeting) return
+
+    const preset = meeting.self.presetName
+    if (preset.includes("host")) {
+      setIsHost(true)
+    }
+  }, [meeting])
+
   const handleChangeCurrentSlide = (slide: ISlide) => {
+    if (!isHost) return
+
     meeting?.participants.broadcastMessage("slide-changed", {
       slide: slide as any,
     })

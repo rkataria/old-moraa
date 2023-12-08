@@ -32,6 +32,7 @@ function EventSessionPage() {
         audio: false,
         video: false,
       },
+      
     })
   }, [meetingToken])
 

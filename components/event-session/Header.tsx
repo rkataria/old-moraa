@@ -1,15 +1,9 @@
 "use client"
 
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
-import {
-  IconArrowDown,
-  IconArrowLeft,
-  IconArrowRight,
-  IconLayoutSidebarRightCollapse,
-} from "@tabler/icons-react"
+import React, { useEffect } from "react"
 import Link from "next/link"
-import React, { useContext, useState } from "react"
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react"
+import { useDyteClient, useDyteMeeting } from "@dytesdk/react-web-core"
 
 const styles = {
   button: {
@@ -18,7 +12,19 @@ const styles = {
   },
 }
 
-function Header({ event, meeting }: { event: any; meeting: any }) {
+function Header({ event }: { event: any; meeting: any }) {
+  const { meeting } = useDyteMeeting()
+  const [isHost, setIsHost] = React.useState<boolean>(false)
+
+  useEffect(() => {
+    if (!meeting) return
+
+    const preset = meeting.self.presetName
+    if (preset.includes("host")) {
+      setIsHost(true)
+    }
+  }, [meeting])
+
   const handlePreviousSlide = () => {
     meeting?.participants.broadcastMessage("previous-slide", {})
   }
@@ -36,17 +42,19 @@ function Header({ event, meeting }: { event: any; meeting: any }) {
           </Link>
           <span className="font-bold">{event.name}</span>
         </div>
-        <div className="flex justify-center items-center gap-2">
-          <button
-            className={styles.button.default}
-            onClick={handlePreviousSlide}
-          >
-            <IconArrowLeft size={16} />
-          </button>
-          <button className={styles.button.default} onClick={handleNextSlide}>
-            <IconArrowRight size={16} />
-          </button>
-        </div>
+        {isHost && (
+          <div className="flex justify-center items-center gap-2">
+            <button
+              className={styles.button.default}
+              onClick={handlePreviousSlide}
+            >
+              <IconArrowLeft size={16} />
+            </button>
+            <button className={styles.button.default} onClick={handleNextSlide}>
+              <IconArrowRight size={16} />
+            </button>
+          </div>
+        )}
         <div className="flex justify-start items-center gap-2 bg-white px-4 h-full">
           <button className={styles.button.default}>Chat</button>
           <button className={styles.button.default}>

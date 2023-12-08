@@ -9,13 +9,11 @@ import {
   DyteNameTag,
   DyteNotifications,
   DyteParticipantTile,
-  DyteParticipants,
   DyteParticipantsAudio,
-  DyteSettings,
   DyteSettingsToggle,
   DyteSidebar,
 } from "@dytesdk/react-ui-kit"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
+import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
 import clsx from "clsx"
 import React, { useContext, useEffect, useState } from "react"
 
@@ -27,6 +25,20 @@ function Meeting() {
   const [states, setStates] = useState({})
   const [activeSidebar, setActiveSidebar] = useState<boolean>(false)
   const [isHost, setIsHost] = useState<boolean>(false)
+  const self = useDyteSelector((meeting) => meeting.self)
+  const activeParticipants = useDyteSelector((meeting) =>
+    meeting.participants.active.toArray()
+  )
+
+  const pinnedParticipants = useDyteSelector((meeting) =>
+    meeting.participants.pinned.toArray()
+  )
+
+  const participants = [
+    self,
+    ...pinnedParticipants,
+    ...activeParticipants.filter((p) => !pinnedParticipants.includes(p)),
+  ]
 
   useEffect(() => {
     if (!meeting) return
@@ -87,18 +99,20 @@ function Meeting() {
   return (
     <>
       <div>
-        <div className="fixed right-0 top-0 w-64 h-full bg-white pt-16">
-          <div className="p-1 grid grid-cols-1 gap-2 h-full scrollbar-thin overflow-y-auto">
-            <div>
-              <DyteParticipantTile
-                participant={meeting.self}
-                nameTagPosition="bottom-center"
-                className="w-full h-36"
-                states={states}
-              >
-                <DyteNameTag participant={meeting.self} meeting={meeting} />
-              </DyteParticipantTile>
-            </div>
+        <div className="fixed right-0 top-0 w-72 h-full bg-white pt-16">
+          <div className="p-1 flex flex-col justify-start items-center gap-2 h-full scrollbar-thin overflow-y-auto">
+            {participants.map((participant, index) => (
+              <div key={participant.id}>
+                <DyteParticipantTile
+                  participant={participant}
+                  nameTagPosition="bottom-center"
+                  className="w-full h-36"
+                  states={states}
+                >
+                  <DyteNameTag participant={meeting.self} meeting={meeting} />
+                </DyteParticipantTile>
+              </div>
+            ))}
           </div>
         </div>
       </div>
