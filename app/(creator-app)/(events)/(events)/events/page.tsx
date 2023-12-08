@@ -20,9 +20,6 @@ export default async function EventsPage() {
     .select("*,event(*)")
     .eq("user_id", id);
 
-  if (data?.length === 0) {
-    return <></>;
-  }
   const events = data?.map((i) => i.event);
 
   return (
@@ -33,7 +30,7 @@ export default async function EventsPage() {
           <NewEventButtonWithModal />
         </div>
       </div>
-      <EventList events={events} />
+      {data?.length === 0 ? <></> : <EventList events={events} />}
     </div>
   );
 }
