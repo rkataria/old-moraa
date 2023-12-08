@@ -5,7 +5,10 @@ import Meeting from "@/components/event-session/Meeting"
 import MeetingSetupScreen from "@/components/event-session/MeetingSetupScreen"
 import PresentationManager from "@/components/event-session/PresentationManager"
 import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
+import {
+  EventSessionContextType,
+  PresentationStatuses,
+} from "@/types/event-session.type"
 import { provideDyteDesignSystem } from "@dytesdk/react-ui-kit"
 import { DyteProvider, useDyteClient } from "@dytesdk/react-web-core"
 import { useContext, useEffect, useRef, useState } from "react"
@@ -14,7 +17,7 @@ function EventSessionPage() {
   const meetingEl = useRef<HTMLDivElement>(null)
   const [meeting, initMeeting] = useDyteClient()
   const [roomJoined, setRoomJoined] = useState<boolean>(false)
-  const { event, meetingToken } = useContext(
+  const { event, meetingToken, presentationStatus } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -32,7 +35,6 @@ function EventSessionPage() {
         audio: false,
         video: false,
       },
-      
     })
   }, [meetingToken])
 
@@ -84,6 +86,29 @@ function EventSessionPage() {
     )
   }
 
+  const renderComponents = () => {
+    if (presentationStatus !== PresentationStatuses.STOPPED) {
+      return (
+        <>
+          <Header event={event} meeting={meeting} />
+          <PresentationManager />
+          <Meeting />
+        </>
+      )
+    }
+
+    if (roomJoined) {
+      return (
+        <>
+          <Header event={event} meeting={meeting} />
+          <Meeting />
+        </>
+      )
+    }
+
+    return <MeetingSetupScreen />
+  }
+
   return (
     <div ref={meetingEl}>
       <DyteProvider
@@ -94,9 +119,7 @@ function EventSessionPage() {
           </div>
         }
       >
-        {roomJoined && <Header event={event} meeting={meeting} />}
-        {roomJoined && <PresentationManager />}
-        {!roomJoined ? <MeetingSetupScreen /> : <Meeting />}
+        <>{renderComponents()}</>
       </DyteProvider>
     </div>
   )

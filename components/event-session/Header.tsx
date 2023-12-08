@@ -1,9 +1,14 @@
 "use client"
 
-import React, { useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Link from "next/link"
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react"
 import { useDyteClient, useDyteMeeting } from "@dytesdk/react-web-core"
+import EventSessionContext from "@/contexts/EventSessionContext"
+import {
+  EventSessionContextType,
+  PresentationStatuses,
+} from "@/types/event-session.type"
 
 const styles = {
   button: {
@@ -14,7 +19,10 @@ const styles = {
 
 function Header({ event }: { event: any; meeting: any }) {
   const { meeting } = useDyteMeeting()
-  const [isHost, setIsHost] = React.useState<boolean>(false)
+  const [isHost, setIsHost] = useState<boolean>(false)
+  const { presentationStatus } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
 
   useEffect(() => {
     if (!meeting) return
@@ -26,10 +34,12 @@ function Header({ event }: { event: any; meeting: any }) {
   }, [meeting])
 
   const handlePreviousSlide = () => {
+    if (!isHost) return
     meeting?.participants.broadcastMessage("previous-slide", {})
   }
 
   const handleNextSlide = () => {
+    if (!isHost) return
     meeting?.participants.broadcastMessage("next-slide", {})
   }
 
@@ -42,7 +52,7 @@ function Header({ event }: { event: any; meeting: any }) {
           </Link>
           <span className="font-bold">{event.name}</span>
         </div>
-        {isHost && (
+        {isHost && presentationStatus !== PresentationStatuses.STOPPED && (
           <div className="flex justify-center items-center gap-2">
             <button
               className={styles.button.default}
@@ -56,8 +66,7 @@ function Header({ event }: { event: any; meeting: any }) {
           </div>
         )}
         <div className="flex justify-start items-center gap-2 bg-white px-4 h-full">
-          <button className={styles.button.default}>Chat</button>
-          <button className={styles.button.default}>
+          <button className={styles.button.default} onClick={() => {}}>
             <span className="px-3 py-[2px] bg-gray-400 text-[11px] rounded-full mr-1">
               {meeting.participants.count}
             </span>

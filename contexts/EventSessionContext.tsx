@@ -1,8 +1,10 @@
 import { createContext, useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
 import { useParams } from "next/navigation"
-import { EventSessionContextType } from "@/types/event-session.type"
-import { useDyteClient } from "@dytesdk/react-web-core"
+import {
+  EventSessionContextType,
+  PresentationStatuses,
+} from "@/types/event-session.type"
 import { ISlide } from "@/types/slide.type"
 
 interface EventSessionProviderProps {
@@ -21,6 +23,8 @@ export const EventSessionProvider = ({
   const [isHost, setIsHost] = useState<boolean>(false)
   const [slides, setSlides] = useState<ISlide[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
+  const [presentationStatus, setPresentationStatus] =
+    useState<PresentationStatuses>(PresentationStatuses.STOPPED)
   const params = useParams()
   const supabase = createClient()
 
@@ -115,6 +119,21 @@ export const EventSessionProvider = ({
     setCurrentSlide(slides[currentIndex - 1])
   }
 
+  const startPresentation = () => {
+    if (!isHost) return
+    setPresentationStatus(PresentationStatuses.STARTED)
+  }
+
+  const stopPresentation = () => {
+    if (!isHost) return
+    setPresentationStatus(PresentationStatuses.STOPPED)
+  }
+
+  const pausePresentation = () => {
+    if (!isHost) return
+    setPresentationStatus(PresentationStatuses.PAUSED)
+  }
+
   return (
     <EventSessionContext.Provider
       value={{
@@ -125,6 +144,10 @@ export const EventSessionProvider = ({
         isHost,
         slides,
         currentSlide,
+        presentationStatus,
+        startPresentation,
+        stopPresentation,
+        pausePresentation,
         setCurrentSlide,
         nextSlide,
         previousSlide,
