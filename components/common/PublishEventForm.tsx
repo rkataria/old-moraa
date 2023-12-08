@@ -3,6 +3,7 @@ import FormControlStyles from "@/styles/form-control"
 import { createClient } from "@/utils/supabase/client"
 import { useEffect, useState } from "react"
 
+const DEFAULT_EVENT_ROLE = "participant"
 interface NewEventFormProps {
   onClose: () => void
 }
@@ -16,6 +17,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
   const params = useParams()
   const [event, setEvent] = useState<any>(null)
   const [participants, setParticipants] = useState<IParticipant[]>([])
+  const [participant, setParticipant] = useState<string>("")
 
   useEffect(() => {
     async function fetchEvent() {
@@ -38,42 +40,24 @@ function NewEventForm({ onClose }: NewEventFormProps) {
 
     const supabase = createClient()
 
-    // console.log("participants", participants)
-
-    // return
-
     const data = await supabase.functions.invoke("publish-event", {
       body: JSON.stringify({
         id: event?.id,
         name: formData.get("name"),
         description: formData.get("description"),
-        // start_date: formData.get("start_date"),
-        // end_date: formData.get("end-date"),
+        start_date: formData.get("start_date"),
+        end_date: formData.get("end-date"),
         participants: [
-          { email: "nirajkaushal007@gmail.com" },
-          { email: "rahul@rkataria.com" },
+          {
+            email: participant,
+            role: DEFAULT_EVENT_ROLE,
+          },
         ],
       }),
     })
 
     console.log("data", data)
     onClose()
-
-    // const event = {
-    //   name: formData.get("name"),
-    //   description: formData.get("description"),
-    //   type: formData.get("type"),
-    // }
-    // const { data, error } = await supabase
-    //   .from("event")
-    //   .insert([event])
-    //   .select()
-    // if (error) {
-    //   console.error(error)
-    //   return
-    // }
-    // console.log("data", data)
-    // redirect(`/events/${data[0].id}`)
   }
 
   const handleParticipantEmailChange = (e: any) => {
@@ -242,7 +226,8 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                           type="email"
                           name="participant_email"
                           id="participant-email"
-                          onChange={handleParticipantEmailChange}
+                          value={participant}
+                          onChange={(e) => setParticipant(e.target.value)}
                           className={FormControlStyles.input.base}
                         />
                       </div>

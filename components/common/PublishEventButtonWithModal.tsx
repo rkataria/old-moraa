@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import Modal from "./Modal"
-import NewEventForm from "./NewEventForm"
 import clsx from "clsx"
 import PublishEventForm from "./PublishEventForm"
 
