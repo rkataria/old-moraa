@@ -1,22 +1,21 @@
-"use client"
-
-import React, { useState } from "react"
-import { ISlide } from "@/components/slides/Slide"
-import { IconTrash } from "@tabler/icons-react"
+"use client";
+import React, { useState } from "react";
+import { ISlide } from "@/types/slide.type";
+import { IconTrash } from "@tabler/icons-react";
 
 interface ContentTypePollProps {
-  slide: ISlide
+  slide: ISlide;
 }
 
 function ContentTypePoll({ slide }: ContentTypePollProps) {
   const [poll, setPoll] = useState({
     question: "What is your favorite color?",
     options: ["Red", "Blue", "Green", "Yellow"],
-  })
+  });
 
   const updateQuestion = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPoll((prev) => ({ ...prev, question: e.target.value }))
-  }
+    setPoll((prev) => ({ ...prev, question: e.target.value }));
+  };
 
   return (
     <div className="w-full min-h-full flex justify-center items-start">
@@ -51,7 +50,7 @@ function ContentTypePoll({ slide }: ContentTypePollProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ContentTypePoll
+export default ContentTypePoll;
