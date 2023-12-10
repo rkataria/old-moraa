@@ -7,8 +7,9 @@ import {
   IconTrash,
 } from "@tabler/icons-react"
 import clsx from "clsx"
-import BasicSlide from "./content-types/Basic"
 import { ISlide } from "@/types/slide.type"
+import { ContentType } from "./ContentTypePicker"
+import CoverEditor from "./CoverEditor"
 
 interface SlideProps {
   slide: ISlide
@@ -24,17 +25,11 @@ export default function Slide({
   deleteSlide,
   moveUpSlide,
   moveDownSlide,
-  updateSlide,
 }: SlideProps) {
   const [openSettings, setOpenSettings] = useState<boolean>(false)
 
   const toggleSettings = () => {
     setOpenSettings((o) => !o)
-  }
-
-  const syncSlide = (data: ISlide) => {
-    console.log("syncing slide", data)
-    updateSlide(data)
   }
 
   return (
@@ -74,19 +69,12 @@ export default function Slide({
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20 transition-all"
-        style={{
-          backgroundColor: slide.config?.backgroundColor || "#fff",
-        }}
       >
-        {slide.contentType === "poll" && (
-          <PollCreator
-            slide={slide}
-            openSettings={openSettings}
-            sync={syncSlide}
-          />
+        {slide.contentType === ContentType.POLL && (
+          <PollCreator slide={slide} openSettings={openSettings} />
         )}
-        {slide.contentType === "basic" && (
-          <BasicSlide slide={slide} mode="edit" sync={syncSlide} />
+        {slide.contentType === ContentType.COVER && (
+          <CoverEditor slide={slide} />
         )}
       </div>
     </div>

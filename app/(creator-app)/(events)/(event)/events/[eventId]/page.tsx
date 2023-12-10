@@ -1,11 +1,11 @@
+"use client"
 import React from "react"
-import { cookies } from "next/headers"
-import { createClient } from "@/utils/supabase/server"
-import SlideManagerWithProvider from "@/components/slides/SlideManagerWithProvider"
+import { createClient } from "@/utils/supabase/client"
+import { SlideManagerProvider } from "@/contexts/SlideManagerContext"
+import SlideManager from "@/components/slides/SlideManager"
 
 async function EventSlidesPage({ params }: any) {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
   const { eventId } = params
 
   const { data, error } = await supabase
@@ -21,9 +21,9 @@ async function EventSlidesPage({ params }: any) {
   const event = data[0]
 
   return (
-    <div className="w-full">
-      <SlideManagerWithProvider event={event} />
-    </div>
+    <SlideManagerProvider>
+      <SlideManager event={event} />
+    </SlideManagerProvider>
   )
 }
 

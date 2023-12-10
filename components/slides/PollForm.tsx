@@ -1,14 +1,68 @@
+import SlideManagerContext from "@/contexts/SlideManagerContext"
+import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { IconTrash } from "@tabler/icons-react"
+import { useThrottle } from "@uidotdev/usehooks"
 import clsx from "clsx"
-import React from "react"
+import React, { useContext, useEffect, useState } from "react"
 
 interface PollFormProps {
-  question: string
-  options: string[]
-  onChangePoll: (poll: any) => void
+  slide: ISlide
 }
 
-function PollForm({ question, options, onChangePoll }: PollFormProps) {
+function PollForm({ slide: slideFromRemote }: PollFormProps) {
+  const { updateSlide } = useContext(
+    SlideManagerContext
+  ) as SlideManagerContextType
+  const [question, setQuestion] = useState<string>(
+    slideFromRemote.content.question
+  )
+  const [options, setOptions] = useState<string[]>(
+    slideFromRemote.content.options
+  )
+  const throttledQuestion = useThrottle(question, 500)
+  const throttledOptions = useThrottle(options, 500)
+
+  const updateQuestion = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion(e.target.value)
+  }
+
+  const updateOption = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const newOptions = [...options]
+    newOptions[index] = e.target.value
+    setOptions(newOptions)
+  }
+
+  const deleteOption = (index: number) => {
+    const newOptions = [...options]
+    newOptions.splice(index, 1)
+    setOptions(newOptions)
+  }
+
+  const addNewOption = () => {
+    setOptions([...options, ""])
+  }
+
+  useEffect(() => {
+    updateSlide({
+      ...slideFromRemote,
+      content: {
+        ...slideFromRemote.content,
+        question: throttledQuestion,
+        options: throttledOptions,
+      },
+    })
+  }, [throttledQuestion, throttledOptions])
+
+  const handleAddOption = () => {
+    updateSlide({
+      ...slideFromRemote,
+      content: { ...slideFromRemote.content, options: [...options, ""] },
+    })
+  }
+
   return (
     <div
       className={clsx("absolute w-full h-full flex justify-center items-start")}
@@ -18,10 +72,10 @@ function PollForm({ question, options, onChangePoll }: PollFormProps) {
           className="text-3xl font-bold mb-8 bg-transparent w-full text-black outline-none hover:outline-none border-0"
           value={question}
           placeholder="Question goes here"
-          onChange={(e) => onChangePoll({ question: e.target.value })}
+          onChange={updateQuestion}
         />
         <ul>
-          {options.map((option, index) => (
+          {options.map((option: string, index: number) => (
             <li
               key={index}
               className="flex justify-between items-center mb-2 rounded-md font-semibold bg-black/5 text-black"
@@ -33,22 +87,9 @@ function PollForm({ question, options, onChangePoll }: PollFormProps) {
                 type="text"
                 value={option}
                 placeholder={`Option ${index + 1}`}
-                onChange={(e) =>
-                  onChangePoll({
-                    options: options.map((o, i) =>
-                      i == index ? e.target.value : o
-                    ),
-                  })
-                }
+                onChange={(e) => updateOption(e, index)}
               />
-              <button
-                className="p-4"
-                onClick={() => {
-                  onChangePoll({
-                    options: options.filter((o, i) => i !== index),
-                  })
-                }}
-              >
+              <button className="p-4" onClick={() => deleteOption(index)}>
                 <IconTrash size={16} />
               </button>
             </li>
@@ -58,11 +99,7 @@ function PollForm({ question, options, onChangePoll }: PollFormProps) {
               className={clsx(
                 "w-full text-center p-4 border-2 border-black rounded-md mb-2 font-semibold cursor-pointer text-black outline-none hover:outline-none"
               )}
-              onClick={(e) => {
-                onChangePoll({
-                  options: [...options, `Option ${options.length + 1}`],
-                })
-              }}
+              onClick={addNewOption}
             >
               Add option
             </button>

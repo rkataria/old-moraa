@@ -10,6 +10,7 @@ export interface ISlide {
   updatedAt?: string
   config: {
     backgroundColor: string
+    textColor: string
   }
   contentType: (typeof ContentType)[keyof typeof ContentType]
 }
@@ -22,7 +23,7 @@ export type SlideManagerContextType = {
   miniMode: boolean
   setMiniMode: (miniMode: boolean) => void
   setCurrentSlide: (slide: ISlide) => void
-  addSlide: (slide: ISlide) => void
+  addNewSlide: (slide: ISlide) => void
   updateSlide: (slide: ISlide) => void
   deleteSlide: (id: string) => void
   moveUpSlide: (id: string) => void

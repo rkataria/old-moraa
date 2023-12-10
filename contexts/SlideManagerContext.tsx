@@ -3,26 +3,49 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { createClient } from "@/utils/supabase/client"
 import { useParams } from "next/navigation"
 import { useDebounce } from "@uidotdev/usehooks"
-import { v4 as uuidv4 } from "uuid"
-import { ContentType } from "@/components/slides/ContentTypePicker"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
 }
 
-export const SlideManagerContext =
-  createContext<SlideManagerContextType | null>(null)
+const SlideManagerContext = createContext<SlideManagerContextType | null>(null)
 
-const SlideManagerProvider = ({ children }: SlideManagerProviderProps) => {
+export const SlideManagerProvider = ({
+  children,
+}: SlideManagerProviderProps) => {
+  const [event, setEvent] = useState<any>(null)
+  const [error, setError] = useState<string>("")
   const [slides, setSlides] = useState<ISlide[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [syncing, setSyncing] = useState<boolean>(false)
   const [miniMode, setMiniMode] = useState<boolean>(true)
-  const debouncedSlides = useDebounce(slides, 300)
+  const debouncedSlides = useDebounce(slides, 500)
 
   const params = useParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    const getEvent = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("event")
+          .select("*")
+          .eq("id", params.eventId)
+
+        if (error) {
+          console.error(error)
+          setError(error.message)
+          return
+        }
+        setEvent(data[0])
+      } catch (error: any) {
+        console.error(error)
+        setError(error.message)
+      }
+    }
+    getEvent()
+  }, [params.eventId])
 
   useEffect(() => {
     const fetchSlides = async () => {
@@ -40,22 +63,6 @@ const SlideManagerProvider = ({ children }: SlideManagerProviderProps) => {
 
       const slides = eventContent.slides || []
 
-      if (slides.length === 0) {
-        // add default cover slide
-        addSlide({
-          id: uuidv4(),
-          name: `Slide ${slides.length + 1}`,
-          config: {
-            backgroundColor: "#fff",
-          },
-          content: {
-            title: eventContent.name,
-            subtitle: eventContent.description,
-          },
-          contentType: ContentType.BASIC,
-        })
-      }
-
       // @ts-ignore
       setSlides(slides)
       setLoading(true)
@@ -66,9 +73,7 @@ const SlideManagerProvider = ({ children }: SlideManagerProviderProps) => {
   }, [params.eventId])
 
   useEffect(() => {
-    console.log("slides", debouncedSlides, loading)
-
-    if (!debouncedSlides || !loading) return
+    if (debouncedSlides.length === 0) return
 
     const syncSlides = async () => {
       setSyncing(true)
@@ -105,12 +110,11 @@ const SlideManagerProvider = ({ children }: SlideManagerProviderProps) => {
     })
   }, [currentSlide])
 
-  const addSlide = (slide: ISlide) => {
+  const addNewSlide = (slide: ISlide) => {
     setSlides((s) => [...s, slide])
   }
 
   const updateSlide = (slide: ISlide) => {
-    console.log("updating slide", slide)
     setSlides((s) => s.map((s) => (s.id === slide.id ? slide : s)))
   }
 
@@ -165,7 +169,7 @@ const SlideManagerProvider = ({ children }: SlideManagerProviderProps) => {
         miniMode,
         setMiniMode,
         setCurrentSlide,
-        addSlide,
+        addNewSlide,
         updateSlide,
         deleteSlide,
         moveUpSlide,
@@ -177,4 +181,4 @@ const SlideManagerProvider = ({ children }: SlideManagerProviderProps) => {
   )
 }
 
-export default SlideManagerProvider
+export default SlideManagerContext

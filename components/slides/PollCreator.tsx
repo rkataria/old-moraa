@@ -1,28 +1,23 @@
-import React, { useEffect, useState } from "react"
-import PollPreview from "@/components/PollPreview"
+import React, { useContext, useEffect, useState } from "react"
+import Poll from "@/components/slides/content-types/Poll"
 // @ts-ignore
 import { useClickAway } from "@uidotdev/usehooks"
 import clsx from "clsx"
 import { BlockPicker } from "react-color"
 import PollForm from "./PollForm"
-import { ISlide } from "@/types/slide.type"
+import { ISlide, SlideManagerContextType } from "@/types/slide.type"
+import SlideManagerContext from "@/contexts/SlideManagerContext"
 
 function PollCreator({
   slide,
   openSettings,
-  sync,
 }: {
   slide: ISlide
   openSettings: boolean
-  sync: (data: any) => void
 }) {
-  const [poll, setPoll] = useState({
-    question: "Who is the best YouTuber?",
-    options: ["Web Dev Simplified", "Traversy Media", "Dev Ed"],
-  })
-  const [pollConfig, setPollConfig] = useState({
-    backgroundColor: "#166534",
-  })
+  const { updateSlide } = useContext(
+    SlideManagerContext
+  ) as SlideManagerContextType
   const [showSettings, setShowSettings] = useState<boolean>(openSettings)
   const settingsRef = useClickAway(() => {
     setShowSettings(false)
@@ -30,26 +25,8 @@ function PollCreator({
   const [preview, setPreview] = useState<boolean>(false)
 
   useEffect(() => {
-    sync({
-      ...slide,
-      config: {
-        ...slide.config,
-        ...pollConfig,
-      },
-      content: {
-        ...slide.content,
-        ...poll,
-      },
-    })
-  }, [poll, pollConfig])
-
-  useEffect(() => {
     setShowSettings(openSettings)
   }, [openSettings])
-
-  const handlePollChange = (poll: any) => {
-    setPoll((prev) => ({ ...prev, ...poll }))
-  }
 
   return (
     <div className={clsx("relative w-full h-full overflow-hidden")}>
@@ -62,15 +39,7 @@ function PollCreator({
         </button>
       </div>
       <div className="relative w-full h-full overflow-x-hidden overflow-y-auto scrollbar-thin">
-        {preview ? (
-          <PollPreview {...poll} config={pollConfig} />
-        ) : (
-          <PollForm
-            question={poll.question}
-            options={poll.options}
-            onChangePoll={handlePollChange}
-          />
-        )}
+        {preview ? <Poll slide={slide} /> : <PollForm slide={slide} />}
       </div>
       <div
         // @ts-ignore
@@ -89,12 +58,30 @@ function PollCreator({
             <div className="my-4">
               <label className="block mb-2 font-bold">Background Color</label>
               <BlockPicker
-                color={pollConfig.backgroundColor}
+                color={slide.config.backgroundColor}
                 onChange={(color) => {
-                  setPollConfig((prev: any) => ({
-                    ...prev,
-                    slideBackgroundColor: color.hex,
-                  }))
+                  updateSlide({
+                    ...slide,
+                    config: {
+                      ...slide.config,
+                      backgroundColor: color.hex,
+                    },
+                  })
+                }}
+              />
+            </div>
+            <div className="my-4">
+              <label className="block mb-2 font-bold">Text Color</label>
+              <BlockPicker
+                color={slide.config.textColor}
+                onChange={(color) => {
+                  updateSlide({
+                    ...slide,
+                    config: {
+                      ...slide.config,
+                      textColor: color.hex,
+                    },
+                  })
                 }}
               />
             </div>

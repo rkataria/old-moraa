@@ -1,24 +1,27 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import { ISlide, SlideMode } from "@/types/slide.type"
+import React, { useContext } from "react"
+import { ISlide, SlideManagerContextType, SlideMode } from "@/types/slide.type"
+import SlideManagerContext from "@/contexts/SlideManagerContext"
 
-interface BasicSlideProps {
+interface CoverProps {
   slide: ISlide
-  mode: SlideMode
-  sync: (slide: ISlide) => void
 }
 
-function BasicSlide({ slide, mode, sync }: BasicSlideProps) {
+function Cover({ slide }: CoverProps) {
+  const { updateSlide } = useContext(
+    SlideManagerContext
+  ) as SlideManagerContextType
+
   const updateTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    sync({
+    updateSlide({
       ...slide,
       content: { ...slide.content, title: e.target.value },
     })
   }
 
   const updateDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
-    sync({
+    updateSlide({
       ...slide,
       content: { ...slide.content, description: e.target.value },
     })
@@ -29,14 +32,12 @@ function BasicSlide({ slide, mode, sync }: BasicSlideProps) {
       <input
         placeholder="Title"
         defaultValue={slide.content.title}
-        disabled={mode === "present"}
         onChange={updateTitle}
         className="w-full p-2 text-center border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold text-gray-800"
       />
       <input
         placeholder="This is a description"
         defaultValue={slide.content.description}
-        disabled={mode === "present"}
         className="w-full p-2 text-center border-0 bg-transparent outline-none text-gray-400 hover:outline-none focus:ring-0 focus:border-0 text-xl"
         onChange={updateDescription}
       />
@@ -44,4 +45,4 @@ function BasicSlide({ slide, mode, sync }: BasicSlideProps) {
   )
 }
 
-export default BasicSlide
+export default Cover

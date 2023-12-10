@@ -120,17 +120,14 @@ export const EventSessionProvider = ({
   }
 
   const startPresentation = () => {
-    if (!isHost) return
     setPresentationStatus(PresentationStatuses.STARTED)
   }
 
   const stopPresentation = () => {
-    if (!isHost) return
     setPresentationStatus(PresentationStatuses.STOPPED)
   }
 
   const pausePresentation = () => {
-    if (!isHost) return
     setPresentationStatus(PresentationStatuses.PAUSED)
   }
 

@@ -1,10 +1,9 @@
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
 import React, { useContext } from "react"
-import Slide from "../slides/Slide"
-import clsx from "clsx"
-import BasicSlide from "../slides/content-types/Basic"
-import PollPreview from "../PollPreview"
+import Cover from "../slides/content-types/Cover"
+import Poll from "../slides/content-types/Poll"
+import { ContentType } from "../slides/ContentTypePicker"
 
 function PresentationSlide() {
   const { currentSlide } = useContext(
@@ -17,21 +16,11 @@ function PresentationSlide() {
 
   return (
     <div className="w-full h-full">
-      {currentSlide.contentType === "basic" && (
-        <BasicSlide
-          key={currentSlide.id}
-          slide={currentSlide}
-          mode="present"
-          sync={() => {}}
-        />
+      {currentSlide.contentType === ContentType.COVER && (
+        <Cover key={currentSlide.id} slide={currentSlide} />
       )}
       {currentSlide.contentType === "poll" && (
-        <PollPreview
-          key={currentSlide.id}
-          question={currentSlide.content.question}
-          options={currentSlide.content.options}
-          config={currentSlide.config}
-        />
+        <Poll key={currentSlide.id} slide={currentSlide} />
       )}
     </div>
   )

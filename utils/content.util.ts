@@ -2,7 +2,7 @@ import { ContentType } from "@/components/slides/ContentTypePicker"
 
 export const getDefaultContent = (contentType: ContentType) => {
   switch (contentType) {
-    case ContentType.BASIC:
+    case ContentType.COVER:
       return {
         title: "Title",
         description: "Description",

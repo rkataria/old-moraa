@@ -8,8 +8,6 @@ import {
   DyteCameraToggle,
   DyteChatToggle,
   DyteDialogManager,
-  DyteGrid,
-  DyteGridPagination,
   DyteLeaveButton,
   DyteMicToggle,
   DyteNameTag,
@@ -82,6 +80,19 @@ function Meeting({ lobbyMode = false }: { lobbyMode?: boolean }) {
           nextSlide()
           break
         }
+        case "start-presentation": {
+          console.log("start-presentation")
+          startPresentation()
+          break
+        }
+        case "pause-presentation": {
+          pausePresentation()
+          break
+        }
+        case "stop-presentation": {
+          stopPresentation()
+          break
+        }
         default:
           break
       }
@@ -89,8 +100,6 @@ function Meeting({ lobbyMode = false }: { lobbyMode?: boolean }) {
     meeting.participants.on("broadcastedMessage", handleBroadcastedMessage)
 
     const handleDyteStateUpdate = ({ detail }: any) => {
-      console.log("detail", detail)
-
       setActiveSidebar(detail.activeSidebar ? true : false)
     }
 
@@ -107,6 +116,18 @@ function Meeting({ lobbyMode = false }: { lobbyMode?: boolean }) {
       )
     }
   }, [meeting])
+
+  useEffect(() => {
+    if (presentationStatus === PresentationStatuses.STARTED) {
+      meeting?.participants.broadcastMessage("start-presentation", {})
+    }
+    if (presentationStatus === PresentationStatuses.PAUSED) {
+      meeting?.participants.broadcastMessage("pause-presentation", {})
+    }
+    if (presentationStatus === PresentationStatuses.STOPPED) {
+      meeting?.participants.broadcastMessage("stop-presentation", {})
+    }
+  }, [presentationStatus])
 
   const togglePresentationMode = () => {
     meeting?.participants.broadcastMessage("toggle-presentation-mode", {})

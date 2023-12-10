@@ -1,7 +1,11 @@
 "use client"
 import { EventSessionProvider } from "@/contexts/EventSessionContext"
 
-export default async function MeetingLayout({ children }: any) {
+export default function MeetingLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <EventSessionProvider>
       <div>{children}</div>

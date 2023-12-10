@@ -9,7 +9,7 @@ interface IContentType {
 }
 
 export enum ContentType {
-  BASIC = "basic",
+  COVER = "cover",
   POLL = "poll",
   IMAGE = "image",
   VIDEO = "video",
@@ -17,10 +17,10 @@ export enum ContentType {
 
 const contentTypes: IContentType[] = [
   {
-    name: "Basic",
+    name: "Cover",
     icon: <IconChartBar />,
     description: "You can use this to add a title and description",
-    contentType: ContentType.BASIC,
+    contentType: ContentType.COVER,
   },
   {
     name: "Poll",
