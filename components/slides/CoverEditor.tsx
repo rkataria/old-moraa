@@ -1,30 +1,43 @@
 "use client"
 
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { ISlide, SlideManagerContextType, SlideMode } from "@/types/slide.type"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
+import { useThrottle } from "@uidotdev/usehooks"
 
 interface CoverProps {
   slide: ISlide
 }
 
 function Cover({ slide }: CoverProps) {
+  const [title, setTitle] = useState<string>(slide.content.title)
+  const [description, setDescription] = useState<string>(
+    slide.content.description
+  )
+  const throttledTitle = useThrottle(title, 500)
+  const throttledDescription = useThrottle(description, 500)
+
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
-  const updateTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
     updateSlide({
       ...slide,
-      content: { ...slide.content, title: e.target.value },
+      content: {
+        ...slide.content,
+        title: throttledTitle,
+        description: throttledDescription,
+      },
     })
+  }, [throttledTitle, throttledDescription])
+
+  const updateTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
   }
 
   const updateDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateSlide({
-      ...slide,
-      content: { ...slide.content, description: e.target.value },
-    })
+    setDescription(e.target.value)
   }
 
   return (
