@@ -1,4 +1,5 @@
 import { ContentType } from "@/components/slides/ContentTypePicker"
+import { v4 as uuidv4 } from "uuid"
 
 export const getDefaultContent = (contentType: ContentType) => {
   switch (contentType) {
@@ -22,5 +23,29 @@ export const getDefaultContent = (contentType: ContentType) => {
       }
     default:
       return {}
+  }
+}
+
+export const getDefaultCoverSlide = ({
+  name = "Slide 1",
+  title = "Title",
+  description = "Description",
+}: {
+  name?: string
+  title?: string
+  description?: string
+}) => {
+  return {
+    id: uuidv4(),
+    name,
+    config: {
+      backgroundColor: "#fff",
+      textColor: "#000",
+    },
+    content: {
+      title,
+      description,
+    },
+    contentType: ContentType.COVER,
   }
 }

@@ -6,6 +6,8 @@ import {
   PresentationStatuses,
 } from "@/types/event-session.type"
 import { ISlide } from "@/types/slide.type"
+import { v4 as uuidv4 } from "uuid"
+import { getDefaultCoverSlide } from "@/utils/content.util"
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -27,6 +29,62 @@ export const EventSessionProvider = ({
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
   const params = useParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    const getEventSessionData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("event_session")
+          .select("*")
+          .eq("event_id", params.eventId)
+
+        if (error) {
+          console.error(error)
+          setError(error.message)
+          return
+        }
+
+        const sessionData = data[0]?.data
+
+        if (!sessionData) return
+
+        setCurrentSlide(sessionData.currentSlide)
+        setPresentationStatus(
+          sessionData.presentationStatus || PresentationStatuses.STOPPED
+        )
+      } catch (error: any) {
+        console.error(error)
+        setError(error.message)
+      }
+    }
+    getEventSessionData()
+  }, [params.eventId])
+
+  useEffect(() => {
+    const pushEventSessionToRemote = async () => {
+      try {
+        const { error } = await supabase
+          .from("event_session")
+          .update({
+            data: {
+              currentSlide,
+              presentationStatus,
+            },
+            updated_at: new Date(),
+          })
+          .eq("event_id", params.eventId)
+
+        if (error) {
+          console.error(error)
+          return
+        }
+      } catch (error: any) {
+        console.error(error)
+      }
+    }
+
+    pushEventSessionToRemote()
+  }, [currentSlide, presentationStatus, params.eventId])
 
   useEffect(() => {
     const getEvent = async () => {
@@ -92,6 +150,7 @@ export const EventSessionProvider = ({
           setError(error.message)
           return
         }
+
         setSlides(data[0]?.slides ?? [])
         setCurrentSlide(data[0]?.slides[0] ?? null)
       } catch (error: any) {

@@ -36,6 +36,7 @@ export default function SlideManager({}: any) {
       name: `Slide ${slides.length + 1}`,
       config: {
         backgroundColor: "#fff",
+        textColor: "#000",
       },
       content: getDefaultContent(contentType),
       contentType: contentType,

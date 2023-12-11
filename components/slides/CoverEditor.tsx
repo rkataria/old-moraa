@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { ISlide, SlideManagerContextType, SlideMode } from "@/types/slide.type"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
 import { useThrottle } from "@uidotdev/usehooks"
+import TextareaAutosize from "react-textarea-autosize"
 
 interface CoverProps {
   slide: ISlide
@@ -32,26 +33,28 @@ function Cover({ slide }: CoverProps) {
     })
   }, [throttledTitle, throttledDescription])
 
-  const updateTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateTitle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTitle(e.target.value)
   }
 
-  const updateDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value)
   }
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center px-4 bg-white">
-      <input
+    <div className="w-full h-full flex flex-col justify-center items-center px-8 bg-white">
+      <TextareaAutosize
+        maxLength={100}
         placeholder="Title"
         defaultValue={slide.content.title}
         onChange={updateTitle}
-        className="w-full p-2 text-center border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold text-gray-800"
+        className="w-full p-2 text-center border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold text-gray-800 resize-none"
       />
-      <input
+      <TextareaAutosize
+        maxLength={300}
         placeholder="This is a description"
         defaultValue={slide.content.description}
-        className="w-full p-2 text-center border-0 bg-transparent outline-none text-gray-400 hover:outline-none focus:ring-0 focus:border-0 text-xl"
+        className="w-full p-2 text-center border-0 bg-transparent outline-none text-gray-400 hover:outline-none focus:ring-0 focus:border-0 text-xl resize-none"
         onChange={updateDescription}
       />
     </div>

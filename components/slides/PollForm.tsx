@@ -4,6 +4,7 @@ import { IconTrash } from "@tabler/icons-react"
 import { useThrottle } from "@uidotdev/usehooks"
 import clsx from "clsx"
 import React, { useContext, useEffect, useState } from "react"
+import ReactTextareaAutosize from "react-textarea-autosize"
 
 interface PollFormProps {
   slide: ISlide
@@ -22,12 +23,12 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
   const throttledQuestion = useThrottle(question, 500)
   const throttledOptions = useThrottle(options, 500)
 
-  const updateQuestion = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateQuestion = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setQuestion(e.target.value)
   }
 
   const updateOption = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLTextAreaElement>,
     index: number
   ) => {
     const newOptions = [...options]
@@ -68,8 +69,9 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
       className={clsx("absolute w-full h-full flex justify-center items-start")}
     >
       <div className="p-8 w-4/5">
-        <input
-          className="text-3xl font-bold mb-8 bg-transparent w-full text-black outline-none hover:outline-none border-0"
+        <ReactTextareaAutosize
+          maxLength={100}
+          className="text-3xl font-bold mb-8 bg-transparent w-full text-black outline-none hover:outline-none border-0 resize-none"
           value={question}
           placeholder="Question goes here"
           onChange={updateQuestion}
@@ -80,11 +82,12 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
               key={index}
               className="flex justify-between items-center mb-2 rounded-md font-semibold bg-black/5 text-black"
             >
-              <input
+              <ReactTextareaAutosize
+                maxRows={1}
+                maxLength={50}
                 className={clsx(
-                  "w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none"
+                  "w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none"
                 )}
-                type="text"
                 value={option}
                 placeholder={`Option ${index + 1}`}
                 onChange={(e) => updateOption(e, index)}

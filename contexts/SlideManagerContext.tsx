@@ -3,6 +3,7 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { createClient } from "@/utils/supabase/client"
 import { useParams } from "next/navigation"
 import { useDebounce } from "@uidotdev/usehooks"
+import { getDefaultCoverSlide } from "@/utils/content.util"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -48,11 +49,13 @@ export const SlideManagerProvider = ({
   }, [params.eventId])
 
   useEffect(() => {
+    if (!event?.id) return
+
     const fetchSlides = async () => {
       const { data, error } = await supabase
         .from("event_content")
         .select("*")
-        .eq("event_id", params.eventId)
+        .eq("event_id", event.id)
 
       if (error) {
         console.error(error)
@@ -61,7 +64,12 @@ export const SlideManagerProvider = ({
 
       const eventContent = data?.[0]
 
-      const slides = eventContent.slides || []
+      const slides = eventContent.slides ?? [
+        getDefaultCoverSlide({
+          title: event.name,
+          description: event.description,
+        }),
+      ]
 
       // @ts-ignore
       setSlides(slides)
@@ -70,7 +78,7 @@ export const SlideManagerProvider = ({
     }
 
     fetchSlides()
-  }, [params.eventId])
+  }, [event?.id])
 
   useEffect(() => {
     if (debouncedSlides.length === 0) return
