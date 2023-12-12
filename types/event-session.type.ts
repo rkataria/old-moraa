@@ -14,11 +14,14 @@ export type EventSessionContextType = {
   isHost: boolean
   slides: ISlide[]
   currentSlide: ISlide | null
+  currentUser: any
   presentationStatus: PresentationStatuses
+  currentSlideResponses: any[] | null
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void
   setCurrentSlide: (slide: ISlide) => void
   nextSlide: () => void
   previousSlide: () => void
+  votePoll: (slide: ISlide, option: string) => void
 }

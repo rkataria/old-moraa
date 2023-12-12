@@ -27,8 +27,22 @@ export const EventSessionProvider = ({
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
   const [presentationStatus, setPresentationStatus] =
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
+  const [currentSlideResponses, setCurrentSlideResponses] = useState<
+    any[] | null
+  >(null)
+  const [currentUser, setCurrentUser] = useState<any>(null)
   const params = useParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const user = await supabase.auth.getSession()
+
+      setCurrentUser(user.data.session?.user)
+    }
+
+    fetchCurrentUser()
+  }, [])
 
   useEffect(() => {
     const getEventSessionData = async () => {
@@ -162,6 +176,53 @@ export const EventSessionProvider = ({
     fetchSlides()
   }, [event?.id])
 
+  useEffect(() => {
+    if (!currentSlide) return
+
+    // Fetch current slide responses
+    const fetchCurrentSlideResponses = async () => {
+      const { data, error } = await supabase
+        .from("slide_response")
+        .select("*")
+        .eq("slide_id", currentSlide.id)
+
+      if (error) {
+        console.error(error)
+        return
+      }
+
+      setCurrentSlideResponses(data)
+    }
+
+    fetchCurrentSlideResponses()
+
+    const channels = supabase
+      .channel("slide-response-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "slide_response",
+          filter: `slide_id=eq.${currentSlide.id}`,
+        },
+        (payload) => {
+          console.log("Change received!", payload)
+          if (payload.eventType === "INSERT") {
+            setCurrentSlideResponses((res: any) => [
+              ...(res ?? []),
+              payload.new,
+            ])
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      channels.unsubscribe()
+    }
+  }, [currentSlide])
+
   const nextSlide = () => {
     const currentIndex = slides.findIndex(
       (slide) => slide.id === currentSlide?.id
@@ -190,6 +251,37 @@ export const EventSessionProvider = ({
     setPresentationStatus(PresentationStatuses.PAUSED)
   }
 
+  const votePoll = async (slide: ISlide, option: string) => {
+    try {
+      const currentUser = await supabase.auth.getSession()
+
+      const { data, error } = await supabase
+        .from("slide_response")
+        .upsert({
+          slide,
+          response: { selected_option: option },
+          slide_id: slide.id,
+          event_id: event.id,
+          profile_id: currentUser.data.session?.user.id,
+        })
+        .eq("slide_id", slide.id)
+        .eq("event_id", event.id)
+        .eq("profile_id", currentUser.data.session?.user.id)
+        .select()
+
+      console.log("data", data, currentUser.data.session?.user.id)
+
+      if (error) {
+        console.error(error)
+        return
+      }
+    } catch (error: any) {
+      console.error(error)
+    }
+  }
+
+  console.log("currentSlideResponses", currentSlideResponses)
+
   return (
     <EventSessionContext.Provider
       value={{
@@ -201,12 +293,15 @@ export const EventSessionProvider = ({
         slides,
         currentSlide,
         presentationStatus,
+        currentSlideResponses,
+        currentUser,
         startPresentation,
         stopPresentation,
         pausePresentation,
         setCurrentSlide,
         nextSlide,
         previousSlide,
+        votePoll,
       }}
     >
       {children}
