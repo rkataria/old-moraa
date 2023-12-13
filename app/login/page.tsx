@@ -1,5 +1,5 @@
-import Link from "next/link"
-import Messages from "./messages"
+import Link from "next/link";
+import Messages from "./messages";
 
 export default function Login() {
   return (
@@ -59,9 +59,15 @@ export default function Login() {
           >
             Sign Up
           </button>
+          <button
+            formAction="/auth/google-signin"
+            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+          >
+            Sign In with Google
+          </button>
           <Messages />
         </form>
       </div>
     </div>
-  )
+  );
 }
