@@ -1,83 +1,76 @@
-import { redirect, useParams } from "next/navigation"
-import FormControlStyles from "@/styles/form-control"
-import { createClient } from "@/utils/supabase/client"
-import { useEffect, useState } from "react"
+import { redirect, useParams } from "next/navigation";
+import FormControlStyles from "@/styles/form-control";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 
-const DEFAULT_EVENT_ROLE = "participant"
+const DEFAULT_EVENT_ROLE = "participant";
 interface NewEventFormProps {
-  onClose: () => void
+  onClose: () => void;
 }
 
 interface IParticipant {
-  email: string
-  role?: string
+  email: string;
+  role?: string;
 }
 
 function NewEventForm({ onClose }: NewEventFormProps) {
-  const params = useParams()
-  const [event, setEvent] = useState<any>(null)
-  const [participants, setParticipants] = useState<IParticipant[]>([])
-  const [participant, setParticipant] = useState<string>("")
+  const params = useParams();
+  const [emails, setEmails] = useState<string[]>([]);
+  const [event, setEvent] = useState<any>({});
 
   useEffect(() => {
     async function fetchEvent() {
-      const supabase = createClient()
+      const supabase = createClient();
+      console.log(params.eventId);
       const { data, error } = await supabase
         .from("event")
         .select("*")
-        .eq("id", params.eventId)
+        .eq("id", params.eventId);
       if (error) {
-        console.error(error)
-        return
+        console.error(error);
+        return;
       }
-      setEvent(data[0])
+
+      console.log("data:", data);
+      setEvent(data[0]);
+      console.log("event: ", event);
     }
-    fetchEvent()
-  }, [params.eventId])
+    fetchEvent();
+  }, [params.eventId]);
 
   async function publish(formData: FormData) {
-    if (!event) return
+    if (!event) return;
 
-    const supabase = createClient()
-
-    const data = await supabase.functions.invoke("publish-event", {
-      body: JSON.stringify({
-        id: event?.id,
-        name: formData.get("name"),
-        description: formData.get("description"),
-        start_date: formData.get("start_date"),
-        end_date: formData.get("end-date"),
-        participants: [
-          {
-            email: participant,
-            role: DEFAULT_EVENT_ROLE,
-          },
-        ],
+    const supabase = createClient();
+    const payload = JSON.stringify({
+      id: event?.id,
+      name: formData.get("name"),
+      description: formData.get("description"),
+      startDate: `${formData.get("start_date")}${formData.get("timezone")}`,
+      endDate: `${formData.get("end_date")}${formData.get("timezone")}`,
+      participants: emails.map((email: string) => {
+        return { email: email, role: "Participant" };
       }),
-    })
+    });
+    console.log(payload);
+    const data = await supabase.functions.invoke("publish-event", {
+      body: payload,
+    });
 
-    console.log("data", data)
-    onClose()
+    console.log("data: ", data);
+    onClose();
   }
 
-  const handleParticipantEmailChange = (e: any) => {
-    console.log("handleParticipantEmailChange", e.target.value, e)
+  const handleEmailsInputChange = (e: any) => {
+    const inputValue = e.target.value;
+    const emailArray = inputValue
+      .split(",")
+      .map((email: string) => email.trim());
 
-    if (e.key === "Enter") {
-      console.log("Enter pressed")
-      // addParticipant({ email: e.target.value })
-    }
-  }
-
-  // async function addParticipant() {
-  //   if (!participant) return
-
-  //   const participant: IParticipant = {
-  //     email: participant.email,
-  //   }
-  //   setParticipants([...participants, participant])
-  //   setParticipants
-  // }
+    // Set the emails as an array
+    setEmails(emailArray);
+    console.log(emailArray);
+  };
 
   return (
     <div>
@@ -152,7 +145,27 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                 Schedule your event and make it visible to the public.
               </p>
             </div>
-
+            <div>
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="timezone"
+                  className={FormControlStyles.label.base}
+                >
+                  timezone
+                </label>
+                <div className="mt-2">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <input
+                      type="text"
+                      name="timezone"
+                      id="timezone"
+                      defaultValue="+00:00"
+                      className={FormControlStyles.input.base}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
               <div className="px-4 py-6 sm:p-8">
                 <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -168,8 +181,8 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                         <input
                           type="datetime-local"
                           name="start_date"
-                          id="startdate"
-                          defaultValue={event?.start_date}
+                          id="start-date"
+                          defaultValue={event?.start_date?.split("+")[0]}
                           className={FormControlStyles.input.base}
                         />
                       </div>
@@ -189,7 +202,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                           type="datetime-local"
                           name="end_date"
                           id="end-date"
-                          defaultValue={event?.end_date}
+                          defaultValue={event?.end_date?.split("+")[0]}
                           className={FormControlStyles.input.base}
                         />
                       </div>
@@ -223,11 +236,11 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                     <div className="mt-2">
                       <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <input
-                          type="email"
+                          type="text"
                           name="participant_email"
                           id="participant-email"
-                          value={participant}
-                          onChange={(e) => setParticipant(e.target.value)}
+                          onChange={handleEmailsInputChange}
+                          // onChange={(e) => setParticipant(e.target.value)}
                           className={FormControlStyles.input.base}
                         />
                       </div>
@@ -248,18 +261,18 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                   </div>
                 </div>
                 <div>
-                  {participants.length > 0 && (
+                  {emails.length > 0 && (
                     <div className="mt-6">
                       <h3 className="text-sm font-semibold leading-5 text-gray-900">
                         Participants
                       </h3>
                       <ul className="mt-2 border-t border-gray-900/10 divide-y divide-gray-900/10">
-                        {participants.map((participant) => (
+                        {emails.map((email) => (
                           <li
-                            key={participant.email}
+                            key={email}
                             className="flex items-center justify-between py-3"
                           >
-                            {participant.email}
+                            {email}
                           </li>
                         ))}
                       </ul>
@@ -288,7 +301,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
         </div>
       </form>
     </div>
-  )
+  );
 }
 
-export default NewEventForm
+export default NewEventForm;

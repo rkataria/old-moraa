@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
-import { IconArrowLeft } from "@tabler/icons-react"
-import clsx from "clsx"
-import Link from "next/link"
-import React, { useState } from "react"
-import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal"
+import { IconArrowLeft } from "@tabler/icons-react";
+import clsx from "clsx";
+import Link from "next/link";
+import React, { useState } from "react";
+import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal";
+import AddParticipantsButtonWithModal from "../common/AddParticipantsButtonWithModal";
 
 enum EventType {
   PUBLISHED = "PUBLISHED",
@@ -16,7 +17,7 @@ const styles = {
     default:
       "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
   },
-}
+};
 
 function Header({ event }: { event: any }) {
   return (
@@ -32,7 +33,7 @@ function Header({ event }: { event: any }) {
           {event.status === EventType.DRAFT && <PublishEventButtonWithModal />}
           {event.status === EventType.PUBLISHED && (
             <>
-              <button
+              {/* <button
                 className={clsx(
                   styles.button.default,
                   "font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full px-4"
@@ -40,7 +41,8 @@ function Header({ event }: { event: any }) {
                 title="Publish Event"
               >
                 Add participant
-              </button>
+              </button> */}
+              <AddParticipantsButtonWithModal />
               <Link
                 href={`/event-session/${event.id}`}
                 className={clsx(
@@ -56,7 +58,7 @@ function Header({ event }: { event: any }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Header
+export default Header;
