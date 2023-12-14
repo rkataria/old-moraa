@@ -1,33 +1,36 @@
 import { redirect } from "next/navigation"
 import FormControlStyles from "@/styles/form-control"
 import { createClient } from "@/utils/supabase/client"
+import { useAuth } from "@/hooks/useAuth"
+import { useMutation } from "@tanstack/react-query"
+import { EventService } from "@/services/event.service"
+import { IconLoader } from "@tabler/icons-react"
 
 interface NewEventFormProps {
   onClose: () => void
 }
 
 function NewEventForm({ onClose }: NewEventFormProps) {
+  const { currentUser } = useAuth()
+  const createEventMutation = useMutation({
+    mutationFn: EventService.createEvent,
+  })
+
   async function create(formData: FormData) {
-    const supabase = createClient()
-    const currentUser = await supabase.auth.getSession()
+    if (!currentUser) return
+
     const event = {
       name: formData.get("name"),
       description: formData.get("description"),
       type: "course", //formData.get("type"),
-      start_date: formData.get("start_date") || new Date(),
-      end_date: formData.get("end_date") || new Date(),
-      owner_id: currentUser.data.session?.user.id,
+      start_date: formData.get("start_date"),
+      end_date: formData.get("end_date"),
+      owner_id: currentUser.id,
     }
-    const { data, error } = await supabase
-      .from("event")
-      .insert([event])
-      .select()
-    if (error) {
-      console.error(error)
-      return
-    }
-    console.log("data", data)
-    redirect(`/events/${data[0].id}`)
+
+    createEventMutation.mutate(event)
+
+    // redirect(`/events/${data[0].id}`)
   }
 
   return (
@@ -159,7 +162,11 @@ function NewEventForm({ onClose }: NewEventFormProps) {
               type="submit"
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Save
+              {createEventMutation.isPending ? (
+                <IconLoader />
+              ) : (
+                <span>Save</span>
+              )}
             </button>
           </div>
         </div>

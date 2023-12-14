@@ -2,6 +2,7 @@ import { Montserrat } from "next/font/google"
 
 import "./globals.css"
 import clsx from "clsx"
+import { UseQueryProvider } from "@/utils/use-query-provider"
 
 const font = Montserrat({
   subsets: ["latin"],
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={clsx("h-full bg-white", font.className)}>
       <body className="h-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full">
-        <main>{children}</main>
+        <UseQueryProvider>
+          <main>{children}</main>
+        </UseQueryProvider>
       </body>
     </html>
   )
