@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation"
 import FormControlStyles from "@/styles/form-control"
-import { createClient } from "@/utils/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
 import { useMutation } from "@tanstack/react-query"
 import { EventService } from "@/services/event.service"
 import { IconLoader } from "@tabler/icons-react"
+import { getIsoDateString } from "@/utils/date"
 
 interface NewEventFormProps {
   onClose: () => void
@@ -12,7 +12,7 @@ interface NewEventFormProps {
 
 function NewEventForm({ onClose }: NewEventFormProps) {
   const { currentUser } = useAuth()
-  const createEventMutation = useMutation({
+  const { mutate, data, error, isPending, isSuccess } = useMutation({
     mutationFn: EventService.createEvent,
   })
 
@@ -23,14 +23,16 @@ function NewEventForm({ onClose }: NewEventFormProps) {
       name: formData.get("name"),
       description: formData.get("description"),
       type: "course", //formData.get("type"),
-      start_date: formData.get("start_date"),
-      end_date: formData.get("end_date"),
+      start_date: getIsoDateString(formData.get("start_date") as string),
+      end_date: getIsoDateString(formData.get("end_date") as string),
       owner_id: currentUser.id,
     }
 
-    createEventMutation.mutate(event)
+    mutate(event)
 
-    // redirect(`/events/${data[0].id}`)
+    if (Array.isArray(data)) {
+      redirect(`/events/${data[0].id}`)
+    }
   }
 
   return (
@@ -162,11 +164,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
               type="submit"
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              {createEventMutation.isPending ? (
-                <IconLoader />
-              ) : (
-                <span>Save</span>
-              )}
+              {isPending ? <IconLoader /> : <span>Save</span>}
             </button>
           </div>
         </div>

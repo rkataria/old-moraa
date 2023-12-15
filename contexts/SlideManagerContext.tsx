@@ -1,9 +1,11 @@
 import { createContext, useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { createClient } from "@/utils/supabase/client"
-import { useParams } from "next/navigation"
 import { useDebounce } from "@uidotdev/usehooks"
 import { getDefaultCoverSlide } from "@/utils/content.util"
+import { useEvent } from "@/hooks/useEvent"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -14,8 +16,9 @@ const SlideManagerContext = createContext<SlideManagerContextType | null>(null)
 export const SlideManagerProvider = ({
   children,
 }: SlideManagerProviderProps) => {
-  const [event, setEvent] = useState<any>(null)
-  const [error, setError] = useState<string>("")
+  const params = useParams()
+  const supabase = createClient()
+  const { event, eventContent } = useEvent(params.eventId as string)
   const [slides, setSlides] = useState<ISlide[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
@@ -23,62 +26,20 @@ export const SlideManagerProvider = ({
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const debouncedSlides = useDebounce(slides, 500)
 
-  const params = useParams()
-  const supabase = createClient()
-
   useEffect(() => {
-    const getEvent = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("event")
-          .select("*")
-          .eq("id", params.eventId)
+    if (!eventContent) return
 
-        if (error) {
-          console.error(error)
-          setError(error.message)
-          return
-        }
-        setEvent(data[0])
-      } catch (error: any) {
-        console.error(error)
-        setError(error.message)
-      }
-    }
-    getEvent()
-  }, [params.eventId])
+    const slides = eventContent.slides ?? [
+      getDefaultCoverSlide({
+        title: event.name,
+        description: event.description,
+      }),
+    ]
 
-  useEffect(() => {
-    if (!event?.id) return
-
-    const fetchSlides = async () => {
-      const { data, error } = await supabase
-        .from("event_content")
-        .select("*")
-        .eq("event_id", event.id)
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      const eventContent = data?.[0]
-
-      const slides = eventContent.slides ?? [
-        getDefaultCoverSlide({
-          title: event.name,
-          description: event.description,
-        }),
-      ]
-
-      // @ts-ignore
-      setSlides(slides)
-      setLoading(true)
-      setCurrentSlide(slides?.[0])
-    }
-
-    fetchSlides()
-  }, [event?.id])
+    setSlides(slides)
+    setLoading(true)
+    setCurrentSlide(slides?.[0])
+  }, [eventContent])
 
   useEffect(() => {
     if (debouncedSlides.length === 0) return

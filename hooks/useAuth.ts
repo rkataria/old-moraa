@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 export const useAuth = () => {
   const supabase = createClient()
   const [currentUser, setCurrentUser] = useState<any>()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -12,6 +13,7 @@ export const useAuth = () => {
       } = await supabase.auth.getUser()
 
       setCurrentUser(user)
+      setIsLoading(false)
     }
 
     fetchUser()
@@ -19,5 +21,6 @@ export const useAuth = () => {
 
   return {
     currentUser,
+    isLoading,
   }
 }

@@ -1,15 +1,12 @@
+import { ICreateEventPayload } from "@/types/event.type"
 import { createClient } from "@/utils/supabase/client"
 
-export type Event = {
-  name: FormDataEntryValue | null
-  description: FormDataEntryValue | null
-  type: FormDataEntryValue | null
-  start_date: FormDataEntryValue | null
-  end_date: FormDataEntryValue | null
-  owner_id: FormDataEntryValue | null
-}
-
 const supabase = createClient()
+
+export type GetEventParams = {
+  eventId: string
+  fetchEventContent?: boolean
+}
 
 const getEvents = async () => {
   const {
@@ -26,16 +23,51 @@ const getEvents = async () => {
   return data?.map((item) => item.event)
 }
 
-const createEvent = async (event: Event) => {
+const getEvent = async ({
+  eventId,
+  fetchEventContent = false,
+}: GetEventParams) => {
+  const { data: event, error } = await supabase
+    .from("event")
+    .select("*")
+    .eq("id", eventId)
+
+  if (error) {
+    return {
+      event: null,
+      contents: null,
+      error,
+    }
+  }
+
+  let eventContent
+
+  if (fetchEventContent) {
+    const { data } = await supabase
+      .from("event_content")
+      .select("*")
+      .eq("event_id", eventId)
+
+    eventContent = data
+  }
+
+  return {
+    event: event[0],
+    eventContent: eventContent?.[0],
+  }
+}
+
+const createEvent = async (event: ICreateEventPayload) => {
   const { data, error } = await supabase.from("event").insert([event]).select()
 
   return {
-    data,
+    data: data?.[0],
     error,
   }
 }
 
 export const EventService = {
   getEvents,
+  getEvent,
   createEvent,
 }

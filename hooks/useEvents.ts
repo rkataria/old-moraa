@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react"
 import { useAuth } from "./useAuth"
-import { createClient } from "@/utils/supabase/client"
 import { useQuery } from "@tanstack/react-query"
 import { EventService } from "@/services/event.service"
 
 export const useEvents = () => {
-  const { currentUser } = useAuth()
+  const { currentUser, isLoading: isUserLoading } = useAuth()
 
   const { data, error, isFetching, isLoading, isError } = useQuery({
     queryKey: ["events"],
@@ -15,7 +13,7 @@ export const useEvents = () => {
 
   return {
     events: data,
-    isLoading: isLoading,
+    isLoading: isLoading || isUserLoading,
     isFetching: isFetching,
     error,
     isError,

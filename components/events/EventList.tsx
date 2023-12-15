@@ -10,7 +10,6 @@ import { useState } from "react"
 import { useEvents } from "@/hooks/useEvents"
 
 function EventList() {
-  const [pageLoading, setPageLoading] = useState<boolean>(true)
   const { events, isLoading } = useEvents()
 
   const router = useRouter()
