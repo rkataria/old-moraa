@@ -1,74 +1,45 @@
-import { redirect, useParams } from "next/navigation";
-import FormControlStyles from "@/styles/form-control";
-import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
+import { useParams } from "next/navigation"
+import FormControlStyles from "@/styles/form-control"
+import { createClient } from "@/utils/supabase/client"
+import { useState } from "react"
+import { useEvent } from "@/hooks/useEvent"
 
-const DEFAULT_EVENT_ROLE = "participant";
 interface NewEventFormProps {
-  onClose: () => void;
-}
-
-interface IParticipant {
-  email: string;
-  role?: string;
+  onClose: () => void
 }
 
 function AddParticipantsForm({ onClose }: NewEventFormProps) {
-  const params = useParams();
-  const [emails, setEmails] = useState<string[]>([]);
-  const [event, setEvent] = useState<any>({});
-  const [participants, setParticipants] = useState<IParticipant[]>([]);
-  const [participant, setParticipant] = useState<string>("");
-
-  useEffect(() => {
-    async function fetchEvent() {
-      const supabase = createClient();
-      console.log(params.eventId);
-      const { data, error } = await supabase
-        .from("event")
-        .select("*")
-        .eq("id", params.eventId);
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      console.log("data:", data);
-      setEvent(data[0]);
-      console.log("event: ", event);
-    }
-    fetchEvent();
-  }, [params.eventId]);
+  const { eventId } = useParams()
+  const [emails, setEmails] = useState<string[]>([])
+  const { event, error } = useEvent({
+    id: eventId as string,
+  })
 
   async function inviteParticipants(formData: FormData) {
-    if (!event) return;
+    if (!event) return
 
-    const supabase = createClient();
+    const supabase = createClient()
     const payload = JSON.stringify({
       eventId: event?.id,
       participants: emails.map((email: string) => {
-        return { email: email, role: "Participant" };
+        return { email: email, role: "Participant" }
       }),
-    });
-    console.log(payload);
-    const data = await supabase.functions.invoke("invite-participants", {
+    })
+    await supabase.functions.invoke("invite-participants", {
       body: payload,
-    });
+    })
 
-    console.log("data: ", data);
-    onClose();
+    onClose()
   }
 
   const handleEmailsInputChange = (e: any) => {
-    const inputValue = e.target.value;
+    const inputValue = e.target.value
     const emailArray = inputValue
       .split(",")
-      .map((email: string) => email.trim());
+      .map((email: string) => email.trim())
 
-    // Set the emails as an array
-    setEmails(emailArray);
-    console.log(emailArray);
-  };
+    setEmails(emailArray)
+  }
 
   return (
     <div>
@@ -101,7 +72,6 @@ function AddParticipantsForm({ onClose }: NewEventFormProps) {
                           name="participant_email"
                           id="participant-email"
                           onChange={handleEmailsInputChange}
-                          // onChange={(e) => setParticipant(e.target.value)}
                           className={FormControlStyles.input.base}
                         />
                       </div>
@@ -110,14 +80,7 @@ function AddParticipantsForm({ onClose }: NewEventFormProps) {
                   <div className="sm:col-span-3">
                     <label className={FormControlStyles.label.base}></label>
                     <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        {/* <button
-                          className={FormControlStyles.input.base}
-                          onClick={addParticipant}
-                        >
-                          Add Emaiil
-                        </button> */}
-                      </div>
+                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md"></div>
                     </div>
                   </div>
                 </div>
@@ -162,7 +125,7 @@ function AddParticipantsForm({ onClose }: NewEventFormProps) {
         </div>
       </form>
     </div>
-  );
+  )
 }
 
-export default AddParticipantsForm;
+export default AddParticipantsForm

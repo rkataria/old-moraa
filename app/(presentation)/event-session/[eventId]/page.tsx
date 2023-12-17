@@ -87,20 +87,13 @@ function EventSessionPage() {
   }
 
   const renderComponents = () => {
-    if (presentationStatus !== PresentationStatuses.STOPPED) {
-      return (
-        <>
-          <Header event={event} meeting={meeting} />
-          <PresentationManager />
-          <Meeting />
-        </>
-      )
-    }
-
     if (roomJoined) {
       return (
         <>
           <Header event={event} meeting={meeting} />
+          {presentationStatus !== PresentationStatuses.STOPPED && (
+            <PresentationManager />
+          )}
           <Meeting />
         </>
       )

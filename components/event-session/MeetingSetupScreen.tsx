@@ -11,12 +11,18 @@ import {
 } from "@dytesdk/react-ui-kit"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
+import { useEvent } from "@/hooks/useEvent"
+import { useParams } from "next/navigation"
+import Loading from "../common/Loading"
 
 const MeetingSetupScreen = () => {
-  const { event } = useContext(EventSessionContext) as EventSessionContextType
+  const { eventId } = useParams()
+  const { event } = useEvent({
+    id: eventId as string,
+  })
   const { meeting } = useDyteMeeting()
-  const [name, setName] = useState<string>("")
   const { isHost } = useContext(EventSessionContext) as EventSessionContextType
+  const [name, setName] = useState<string>("")
 
   useEffect(() => {
     if (!meeting) return
@@ -27,6 +33,14 @@ const MeetingSetupScreen = () => {
   const joinMeeting = async () => {
     meeting?.self.setName(name)
     meeting.joinRoom()
+  }
+
+  if (!event) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loading />
+      </div>
+    )
   }
 
   return (

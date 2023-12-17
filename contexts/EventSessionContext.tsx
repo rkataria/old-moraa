@@ -8,6 +8,8 @@ import {
 import { ISlide } from "@/types/slide.type"
 import { v4 as uuidv4 } from "uuid"
 import { getDefaultCoverSlide } from "@/utils/content.util"
+import { useEventSession } from "@/hooks/useEventSession"
+import { useEvent } from "@/hooks/useEvent"
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -18,7 +20,8 @@ const EventSessionContext = createContext<EventSessionContextType | null>(null)
 export const EventSessionProvider = ({
   children,
 }: EventSessionProviderProps) => {
-  const [event, setEvent] = useState<any>(null)
+  const { eventId } = useParams()
+  const { event } = useEvent({ id: eventId as string })
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>("")
   const [meetingToken, setMeetingToken] = useState<string>("")
@@ -31,7 +34,9 @@ export const EventSessionProvider = ({
     any[] | null
   >(null)
   const [currentUser, setCurrentUser] = useState<any>(null)
-  const params = useParams()
+  const { eventSession, upsertEventSession } = useEventSession({
+    eventId: eventId as string,
+  })
   const supabase = createClient()
 
   useEffect(() => {
@@ -45,82 +50,27 @@ export const EventSessionProvider = ({
   }, [])
 
   useEffect(() => {
-    const getEventSessionData = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("event_session")
-          .select("*")
-          .eq("event_id", params.eventId)
+    if (!eventSession) return
 
-        if (error) {
-          console.error(error)
-          setError(error.message)
-          return
-        }
-
-        const sessionData = data[0]?.data
-
-        if (!sessionData) return
-
-        setCurrentSlide(sessionData.currentSlide)
-        setPresentationStatus(
-          sessionData.presentationStatus || PresentationStatuses.STOPPED
-        )
-      } catch (error: any) {
-        console.error(error)
-        setError(error.message)
-      }
-    }
-    getEventSessionData()
-  }, [params.eventId])
+    setCurrentSlide(eventSession.currentSlide)
+    setPresentationStatus(
+      eventSession.presentationStatus || PresentationStatuses.STOPPED
+    )
+  }, [eventSession])
 
   useEffect(() => {
-    const pushEventSessionToRemote = async () => {
-      try {
-        const { error } = await supabase
-          .from("event_session")
-          .update({
-            data: {
-              currentSlide,
-              presentationStatus,
-            },
-            updated_at: new Date(),
-          })
-          .eq("event_id", params.eventId)
+    if (!eventId) return
 
-        if (error) {
-          console.error(error)
-          return
-        }
-      } catch (error: any) {
-        console.error(error)
-      }
-    }
-
-    pushEventSessionToRemote()
-  }, [currentSlide, presentationStatus, params.eventId])
-
-  useEffect(() => {
-    const getEvent = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("event")
-          .select("*")
-          .eq("id", params.eventId)
-
-        if (error) {
-          console.error(error)
-          setError(error.message)
-          return
-        }
-        setEvent(data[0])
-      } catch (error: any) {
-        console.error(error)
-        setError(error.message)
-      }
-    }
-    getEvent()
-  }, [params.eventId])
+    upsertEventSession({
+      eventId: eventId as string,
+      payload: {
+        data: {
+          currentSlide,
+          presentationStatus,
+        },
+      },
+    })
+  }, [currentSlide, presentationStatus, eventId])
 
   useEffect(() => {
     const getEnrollment = async () => {
@@ -129,7 +79,7 @@ export const EventSessionProvider = ({
         const { data, error } = await supabase
           .from("enrollment")
           .select("*")
-          .eq("event_id", params.eventId)
+          .eq("event_id", eventId)
           .eq("user_id", currentUser.data.session?.user.id)
 
         console.log("data", data, currentUser.data.session?.user.id)

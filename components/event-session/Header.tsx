@@ -43,6 +43,8 @@ function Header({ event }: { event: any; meeting: any }) {
     meeting?.participants.broadcastMessage("next-slide", {})
   }
 
+  if (!event) return null
+
   return (
     <div className="fixed left-0 top-0 w-full z-50 py-1 px-2 bg-white">
       <div className="flex items-center justify-between h-12 w-full">

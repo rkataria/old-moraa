@@ -2,16 +2,24 @@ import { useAuth } from "./useAuth"
 import { useQuery } from "@tanstack/react-query"
 import { EventService } from "@/services/event.service"
 import { IEventContentPayload } from "@/types/event.type"
+import { createClient } from "@/utils/supabase/client"
 
-export const useEvent = (id: string) => {
+export const useEvent = ({
+  id,
+  fetchEventContent = false,
+}: {
+  id: string
+  fetchEventContent?: boolean
+}) => {
+  const supabase = createClient()
   const { currentUser, isLoading: isUserLoading } = useAuth()
 
   const { data, error, isFetching, isLoading, isError } = useQuery({
-    queryKey: ["event", id, true],
+    queryKey: ["event", id, fetchEventContent],
     queryFn: () =>
       EventService.getEvent({
         eventId: id,
-        fetchEventContent: true,
+        fetchEventContent,
       }),
     enabled: !!currentUser?.id && !!id,
   })
@@ -23,7 +31,12 @@ export const useEvent = (id: string) => {
     eventContentId: string
     payload: IEventContentPayload
   }) => {
-    
+    const { error } = await supabase
+      .from("event_content")
+      .update({ slides: payload })
+      .eq("id", eventContentId)
+
+    return { error }
   }
 
   return {
@@ -33,5 +46,6 @@ export const useEvent = (id: string) => {
     isFetching: isFetching,
     error,
     isError,
+    updateEventContent,
   }
 }

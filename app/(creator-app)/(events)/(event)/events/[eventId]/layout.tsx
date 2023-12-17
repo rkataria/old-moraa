@@ -1,23 +1,14 @@
-import { cookies } from "next/headers"
+"use client"
 import Header from "@/components/slides/Header"
-import { createClient } from "@/utils/supabase/server"
+import { useEvent } from "@/hooks/useEvent"
 
-export default async function SlidesLayout({ children, params }: any) {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+export default function SlidesLayout({ children, params }: any) {
   const { eventId } = params
-
-  const { data, error } = await supabase
-    .from("event")
-    .select("*")
-    .eq("id", eventId)
+  const { event, error } = useEvent({ id: eventId })
 
   if (error) {
-    console.error(error)
-    return <div>Error</div>
+    return null
   }
-
-  const event = data[0]
 
   return (
     <div>

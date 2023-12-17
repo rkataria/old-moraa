@@ -1,12 +1,9 @@
 "use client"
 
-import { useAuth } from "@/hooks/useAuth"
-import { createClient } from "@/utils/supabase/client"
 import { IconDotsVertical } from "@tabler/icons-react"
-import { useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
+
 import Loading from "../common/Loading"
-import { useState } from "react"
 import { useEvents } from "@/hooks/useEvents"
 
 function EventList() {

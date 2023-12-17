@@ -1,7 +1,5 @@
 import { IconBook, IconDashboard, IconTemplate } from "@tabler/icons-react"
 import Link from "next/link"
-import { createClient } from "@/utils/supabase/server"
-import { cookies } from "next/headers"
 
 const navItems = [
   {
@@ -21,14 +19,7 @@ const navItems = [
   },
 ]
 
-export default async function Sidebar() {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+export default function Sidebar() {
   return (
     <div className="w-[300px] h-screen max-h-screen bg-background">
       <div className="px-2 py-4">
@@ -57,7 +48,6 @@ export default async function Sidebar() {
           </ul>
         </nav>
       </div>
-      {/* <div>{user ? user.email : <Link href="/login">Login</Link>}</div> */}
     </div>
   )
 }

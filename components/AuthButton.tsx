@@ -1,18 +1,14 @@
-import { createClient } from "@/utils/supabase/server"
+"use client"
+
 import Link from "next/link"
-import { cookies } from "next/headers"
+import { useAuth } from "@/hooks/useAuth"
 
 export default async function AuthButton() {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const { currentUser } = useAuth()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  return user ? (
+  return currentUser ? (
     <div className="flex flex-col items-center gap-4">
-      <h3>Hey, {user.email}!</h3>
+      <h3>Hey, {currentUser.email}!</h3>
       <div className="flex gap-4">
         <Link
           href="/events"

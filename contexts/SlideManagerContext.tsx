@@ -2,7 +2,6 @@ import { createContext, useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
-import { createClient } from "@/utils/supabase/client"
 import { useDebounce } from "@uidotdev/usehooks"
 import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEvent } from "@/hooks/useEvent"
@@ -16,12 +15,14 @@ const SlideManagerContext = createContext<SlideManagerContextType | null>(null)
 export const SlideManagerProvider = ({
   children,
 }: SlideManagerProviderProps) => {
-  const params = useParams()
-  const supabase = createClient()
-  const { event, eventContent } = useEvent(params.eventId as string)
+  const { eventId } = useParams()
+  const { event, eventContent, updateEventContent } = useEvent({
+    id: eventId as string,
+    fetchEventContent: true,
+  })
   const [slides, setSlides] = useState<ISlide[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [syncing, setSyncing] = useState<boolean>(false)
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const debouncedSlides = useDebounce(slides, 500)
@@ -37,7 +38,7 @@ export const SlideManagerProvider = ({
     ]
 
     setSlides(slides)
-    setLoading(true)
+    setLoading(false)
     setCurrentSlide(slides?.[0])
   }, [eventContent])
 
@@ -47,15 +48,17 @@ export const SlideManagerProvider = ({
     const syncSlides = async () => {
       setSyncing(true)
 
-      const { error } = await supabase
-        .from("event_content")
-        .update({ slides: debouncedSlides })
-        .eq("event_id", params.eventId)
+      const { error } = await updateEventContent({
+        eventContentId: eventContent.id,
+        payload: {
+          slides: debouncedSlides,
+        },
+      })
 
       setSyncing(false)
 
       if (error) {
-        console.error(error, params.eventId)
+        console.error(error, eventId)
         return
       }
     }

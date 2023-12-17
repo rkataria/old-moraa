@@ -47,7 +47,7 @@ export default function SlideManager({}: any) {
     setCurrentSlide(newSlide)
   }
 
-  if (!loading)
+  if (loading)
     return (
       <div className="h-screen">
         <Loading />
