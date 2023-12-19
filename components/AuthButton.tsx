@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useAuth } from "@/hooks/useAuth"
 
-export default async function AuthButton() {
+export default function AuthButton() {
   const { currentUser } = useAuth()
 
   return currentUser ? (

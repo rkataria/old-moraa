@@ -33,7 +33,7 @@ export const useEvent = ({
   }) => {
     const { error } = await supabase
       .from("event_content")
-      .update({ slides: payload })
+      .update({ ...payload })
       .eq("id", eventContentId)
 
     return { error }

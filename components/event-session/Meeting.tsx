@@ -23,7 +23,7 @@ import { IconPencil, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-react"
 import clsx from "clsx"
 import React, { useContext, useEffect, useState } from "react"
 
-function Meeting({ lobbyMode = false }: { lobbyMode?: boolean }) {
+function Meeting() {
   const { meeting } = useDyteMeeting()
   const {
     setCurrentSlide,

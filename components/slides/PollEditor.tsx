@@ -8,7 +8,7 @@ import PollForm from "./PollForm"
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
 
-function PollCreator({
+function PollEditor({
   slide,
   openSettings,
 }: {
@@ -92,4 +92,4 @@ function PollCreator({
   )
 }
 
-export default PollCreator
+export default PollEditor

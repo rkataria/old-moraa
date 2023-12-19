@@ -35,7 +35,7 @@ const MeetingSetupScreen = () => {
     meeting.joinRoom()
   }
 
-  if (!event) {
+  if (!event || !meeting) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loading />
@@ -56,9 +56,9 @@ const MeetingSetupScreen = () => {
       <div className="flex justify-center items-center gap-4">
         <div className="w-1/2 flex justify-end">
           <div className="relative">
-            <DyteParticipantTile meeting={meeting} participant={meeting.self}>
+            <DyteParticipantTile participant={meeting.self}>
               <DyteAvatar size="md" participant={meeting.self} />
-              <DyteNameTag meeting={meeting} participant={meeting.self}>
+              <DyteNameTag participant={meeting.self}>
                 <DyteAudioVisualizer
                   size="sm"
                   slot="start"

@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Modal from "./Modal";
-import clsx from "clsx";
-import AddParticipantsForm from "./AddParticipantsForm";
+import { useState } from "react"
+import Modal from "./Modal"
+import clsx from "clsx"
+import AddParticipantsForm from "./AddParticipantsForm"
 
 const styles = {
   button: {
     default:
       "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
   },
-};
+}
 
 function AddParticipantsButtonWithModal() {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false)
 
   return (
     <>
@@ -21,7 +21,7 @@ function AddParticipantsButtonWithModal() {
         onClick={() => setOpen(true)}
         className={clsx(
           styles.button.default,
-          "font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full px-4"
+          "cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full px-4"
         )}
       >
         Add Participants
@@ -38,7 +38,7 @@ function AddParticipantsButtonWithModal() {
         <AddParticipantsForm onClose={() => setOpen(false)} />
       </Modal>
     </>
-  );
+  )
 }
 
-export default AddParticipantsButtonWithModal;
+export default AddParticipantsButtonWithModal

@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react"
-import PollCreator from "./PollCreator"
+import React, { useState } from "react"
 import {
   IconChevronDown,
   IconChevronUp,
@@ -10,6 +9,7 @@ import clsx from "clsx"
 import { ISlide } from "@/types/slide.type"
 import { ContentType } from "./ContentTypePicker"
 import CoverEditor from "./CoverEditor"
+import PollEditor from "./PollEditor"
 
 interface SlideProps {
   slide: ISlide
@@ -71,7 +71,7 @@ export default function Slide({
         className="relative w-full h-full rounded-md overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20 transition-all"
       >
         {slide.contentType === ContentType.POLL && (
-          <PollCreator slide={slide} openSettings={openSettings} />
+          <PollEditor slide={slide} openSettings={openSettings} />
         )}
         {slide.contentType === ContentType.COVER && (
           <CoverEditor slide={slide} />
