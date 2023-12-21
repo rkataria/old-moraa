@@ -1,5 +1,6 @@
 "use client"
 import Loading from "@/components/common/Loading"
+import ControlButton from "@/components/event-session/ControlButton"
 import Header from "@/components/event-session/Header"
 import Meeting from "@/components/event-session/Meeting"
 import MeetingSetupScreen from "@/components/event-session/MeetingSetupScreen"
@@ -9,8 +10,23 @@ import {
   EventSessionContextType,
   PresentationStatuses,
 } from "@/types/event-session.type"
-import { provideDyteDesignSystem } from "@dytesdk/react-ui-kit"
+import {
+  DyteAudioVisualizer,
+  DyteButton,
+  DyteLeaveButton,
+  DyteNameTag,
+  DyteParticipantTile,
+  provideDyteDesignSystem,
+} from "@dytesdk/react-ui-kit"
 import { DyteProvider, useDyteClient } from "@dytesdk/react-web-core"
+import {
+  IconArrowNarrowUp,
+  IconDots,
+  IconMicrophone,
+  IconScreenShare,
+  IconVideo,
+} from "@tabler/icons-react"
+import clsx from "clsx"
 import { useContext, useEffect, useRef, useState } from "react"
 
 function EventSessionPage() {
@@ -90,10 +106,10 @@ function EventSessionPage() {
     if (roomJoined) {
       return (
         <>
-          <Header event={event} meeting={meeting} />
-          {presentationStatus !== PresentationStatuses.STOPPED && (
+          {/* <Header event={event} meeting={meeting} /> */}
+          {/* {presentationStatus !== PresentationStatuses.STOPPED && (
             <PresentationManager />
-          )}
+          )} */}
           <Meeting />
         </>
       )

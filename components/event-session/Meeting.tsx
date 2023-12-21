@@ -4,28 +4,30 @@ import {
   PresentationStatuses,
 } from "@/types/event-session.type"
 import {
-  DyteButton,
-  DyteCameraToggle,
+  DyteAudioVisualizer,
   DyteChatToggle,
   DyteDialogManager,
-  DyteLeaveButton,
-  DyteMicToggle,
   DyteNameTag,
   DyteNotifications,
   DyteParticipantTile,
   DyteParticipantsAudio,
-  DyteSettingsToggle,
+  DytePluginMain,
   DyteSidebar,
-  DyteSpotlightGrid,
 } from "@dytesdk/react-ui-kit"
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
-import { IconPencil, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-react"
+
 import clsx from "clsx"
 import React, { useContext, useEffect, useState } from "react"
+import Header from "./Header"
+import ParticipantTiles from "./ParticipantTiles"
+import SlideContainer from "./SlideContainer"
+import MiniSlideManager from "./MiniSlideMananger"
 
 function Meeting() {
   const { meeting } = useDyteMeeting()
   const {
+    slides,
+    currentSlide,
     setCurrentSlide,
     previousSlide,
     nextSlide,
@@ -34,6 +36,8 @@ function Meeting() {
     pausePresentation,
     stopPresentation,
   } = useContext(EventSessionContext) as EventSessionContextType
+  const [slidesSidebarVisible, setSlidesSidebarVisibility] =
+    useState<boolean>(false)
   const [states, setStates] = useState({})
   const [activeSidebar, setActiveSidebar] = useState<boolean>(false)
   const [isHost, setIsHost] = useState<boolean>(false)
@@ -133,131 +137,49 @@ function Meeting() {
     meeting?.participants.broadcastMessage("toggle-presentation-mode", {})
   }
 
+  console.log("states", states)
+
   const setState = (s: any) => setStates((states) => ({ ...states, ...s }))
 
-  const renderPresentationControls = () => {
-    if (!isHost) return null
-
-    if (presentationStatus === PresentationStatuses.STOPPED) {
-      return (
-        <DyteButton
-          size="sm"
-          variant="secondary"
-          kind="icon"
-          className="p-2 w-14 h-10 rounded-lg flex justify-center items-center bg-black hover:bg-gray-900"
-          onClick={startPresentation}
-        >
-          <IconPlayerPlay />
-        </DyteButton>
-      )
-    }
-
-    if (presentationStatus === PresentationStatuses.STARTED) {
-      return (
-        <>
-          <DyteButton
-            size="sm"
-            variant="secondary"
-            kind="icon"
-            className="p-2 w-14 h-10 rounded-lg flex justify-center items-center bg-black hover:bg-gray-900"
-            onClick={pausePresentation}
-          >
-            <IconPencil />
-          </DyteButton>
-          <DyteButton
-            size="sm"
-            variant="secondary"
-            kind="icon"
-            className="p-2 w-14 h-10 rounded-lg flex justify-center items-center bg-black hover:bg-gray-900"
-            onClick={stopPresentation}
-          >
-            <IconPlayerStop />
-          </DyteButton>
-        </>
-      )
-    }
-
-    if (presentationStatus === PresentationStatuses.PAUSED) {
-      return (
-        <>
-          <DyteButton
-            size="sm"
-            variant="secondary"
-            kind="icon"
-            className="p-2 w-14 h-10 rounded-lg flex justify-center items-center bg-black hover:bg-gray-900"
-            onClick={startPresentation}
-          >
-            <IconPlayerPlay />
-          </DyteButton>
-          <DyteButton
-            size="sm"
-            variant="secondary"
-            kind="icon"
-            className="p-2 w-14 h-10 rounded-lg flex justify-center items-center bg-black hover:bg-gray-900"
-            onClick={stopPresentation}
-          >
-            <IconPlayerStop />
-          </DyteButton>
-        </>
-      )
-    }
-  }
+  console.log(slidesSidebarVisible)
 
   return (
-    <>
-      <div>
-        {presentationStatus === PresentationStatuses.STOPPED ? (
-          <div className="w-4/5 m-auto h-screen pt-16 flex justify-center items-center gap-6">
-            <DyteSpotlightGrid
-              layout="row"
-              participants={meeting.participants.active.toArray()}
-              pinnedParticipants={[meeting.self]}
-              style={{ height: "360px", width: "100%" }}
-            />
-          </div>
-        ) : (
-          <div
-            className={clsx("fixed right-0 top-0 w-72 h-full bg-white pt-16")}
-          >
-            <div className="p-1 flex flex-col justify-start items-center gap-2 h-full scrollbar-thin overflow-y-auto">
-              {participants.map((participant, index) => (
-                <div key={participant.id}>
-                  <DyteParticipantTile
-                    participant={participant}
-                    nameTagPosition="bottom-center"
-                    className="w-full h-36"
-                    states={states}
-                  >
-                    <DyteNameTag participant={meeting.self} meeting={meeting} />
-                  </DyteParticipantTile>
-                </div>
-              ))}
-            </div>
-          </div>
+    <div className="flex flex-col h-screen">
+      <Header
+        states={states}
+        setState={setState}
+        toggleSlidesSidebarVisiblity={() => {
+          setSlidesSidebarVisibility((v) => !v)
+        }}
+      />
+      <div className="flex flex-auto">
+        {presentationStatus === PresentationStatuses.STARTED && (
+          <MiniSlideManager
+            visible={slidesSidebarVisible}
+            slides={slides}
+            currentSlide={currentSlide}
+            setCurrentSlide={setCurrentSlide}
+          />
         )}
-      </div>
-      <div className="fixed bottom-2 left-1/2 -translate-x-1/2 flex justify-center items-center gap-1">
-        <DyteMicToggle size="sm" meeting={meeting} />
-        <DyteCameraToggle size="sm" meeting={meeting} />
-        <DyteLeaveButton
-          size="sm"
-          onClick={() => setState({ activeLeaveConfirmation: true })}
-        />
-        <DyteChatToggle size="sm" meeting={meeting} />
-        <DyteSettingsToggle
-          size="sm"
-          onClick={() => setState({ activeSettings: true })}
-        />
-        {renderPresentationControls()}
-      </div>
-
-      {/* Sidebar */}
-      <div
-        className={clsx("fixed right-0 top-12 h-screen w-72 bg-black", {
-          hidden: !activeSidebar,
-        })}
-      >
-        <DyteSidebar meeting={meeting} />
+        <div className="flex flex-col w-full h-full overflow-hidden">
+          <ParticipantTiles />
+          <SlideContainer />
+        </div>
+        <div
+          className={clsx("flex-none bg-black", {
+            "w-72": activeSidebar,
+            "w-0": !activeSidebar,
+          })}
+        >
+          <DyteSidebar
+            states={states}
+            meeting={meeting}
+            className="rounded-none text-white"
+            onDyteStateUpdate={(e) => {
+              setState({ ...states, ...e.detail })
+            }}
+          />
+        </div>
       </div>
 
       {/* Required Dyte Components */}
@@ -266,10 +188,80 @@ function Meeting() {
       <DyteDialogManager
         meeting={meeting}
         states={states}
-        onDyteStateUpdate={(e) => setState(e.detail)}
+        onDyteStateUpdate={(e) => {
+          setState({ ...states, ...e.detail })
+        }}
       />
-    </>
+    </div>
   )
+
+  // return (
+  //   <>
+  //     <div>
+  //       {presentationStatus === PresentationStatuses.STOPPED ? (
+  //         <div className="w-4/5 m-auto h-screen pt-16 flex justify-center items-center gap-6">
+  //           <DyteSpotlightGrid
+  //             layout="row"
+  //             participants={meeting.participants.active.toArray()}
+  //             pinnedParticipants={[meeting.self]}
+  //             style={{ height: "360px", width: "100%" }}
+  //           />
+  //         </div>
+  //       ) : (
+  //         <div
+  //           className={clsx("fixed right-0 top-0 w-72 h-full bg-white pt-16")}
+  //         >
+  //           <div className="p-1 flex flex-col justify-start items-center gap-2 h-full scrollbar-thin overflow-y-auto">
+  //             {participants.map((participant, index) => (
+  //               <div key={participant.id}>
+  //                 <DyteParticipantTile
+  //                   participant={participant}
+  //                   nameTagPosition="bottom-center"
+  //                   className="w-full h-36"
+  //                   states={states}
+  //                 >
+  //                   <DyteNameTag participant={meeting.self} meeting={meeting} />
+  //                 </DyteParticipantTile>
+  //               </div>
+  //             ))}
+  //           </div>
+  //         </div>
+  //       )}
+  //     </div>
+  //     <div className="fixed bottom-2 left-1/2 -translate-x-1/2 flex justify-center items-center gap-1">
+  //       <DyteMicToggle size="sm" meeting={meeting} />
+  //       <DyteCameraToggle size="sm" meeting={meeting} />
+  //       <DyteLeaveButton
+  //         size="sm"
+  //         onClick={() => setState({ activeLeaveConfirmation: true })}
+  //       />
+  //       <DyteChatToggle size="sm" meeting={meeting} />
+  //       <DyteSettingsToggle
+  //         size="sm"
+  //         onClick={() => setState({ activeSettings: true })}
+  //       />
+  //       {renderPresentationControls()}
+  //     </div>
+
+  //     {/* Sidebar */}
+  //     <div
+  //       className={clsx("fixed right-0 top-12 h-screen w-72 bg-black", {
+  //         hidden: !activeSidebar,
+  //       })}
+  //     >
+  //       <DyteSidebar meeting={meeting} />
+  //     </div>
+
+  //     {/* Required Dyte Components */}
+  //     <DyteParticipantsAudio meeting={meeting} />
+  //     <DyteNotifications meeting={meeting} />
+  //     <DyteDialogManager
+  //       meeting={meeting}
+  //       states={states}
+  //       onDyteStateUpdate={(e) => setState(e.detail)}
+  //     />
+  //   </>
+  // )
 }
 
 export default Meeting

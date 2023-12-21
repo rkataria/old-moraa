@@ -40,3 +40,9 @@
     transform: translateY(0);
   }
 }
+
+/* scrollbar */
+
+.scrollbar-transparent::-webkit-scrollbar {
+  height: 2px;
+}
