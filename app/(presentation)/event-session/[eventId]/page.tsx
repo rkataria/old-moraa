@@ -72,27 +72,27 @@ function EventSessionPage() {
     }
   }, [meeting])
 
-  useEffect(() => {
-    if (!meetingEl.current) return
-    provideDyteDesignSystem(meetingEl.current, {
-      googleFont: "Poppins",
-      theme: "light",
-      colors: {
-        danger: "#ffb31c",
-        brand: {
-          300: "#c6a6ff",
-          400: "#9e77e0",
-          500: "#754cba",
-          600: "#4e288f",
-          700: "#2e0773",
-        },
-        text: "#071428",
-        "text-on-brand": "#ffffff",
-        "video-bg": "#E5E7EB",
-      },
-      borderRadius: "rounded",
-    })
-  }, [])
+  // useEffect(() => {
+  //   if (!meetingEl.current) return
+  //   provideDyteDesignSystem(meetingEl.current, {
+  //     googleFont: "Poppins",
+  //     theme: "light",
+  //     colors: {
+  //       danger: "#ffb31c",
+  //       brand: {
+  //         300: "#c6a6ff",
+  //         400: "#9e77e0",
+  //         500: "#754cba",
+  //         600: "#4e288f",
+  //         700: "#2e0773",
+  //       },
+  //       text: "#071428",
+  //       "text-on-brand": "#ffffff",
+  //       "video-bg": "#E5E7EB",
+  //     },
+  //     borderRadius: "rounded",
+  //   })
+  // }, [])
 
   if (!meetingToken) {
     return (

@@ -3,10 +3,9 @@ import {
   EventSessionContextType,
   PresentationStatuses,
 } from "@/types/event-session.type"
-import React, { useContext, useState } from "react"
+import React, { useContext } from "react"
 import ControlButton from "./ControlButton"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react"
 
 export function PresentationControls() {
   const { meeting } = useDyteMeeting()
@@ -43,20 +42,12 @@ export function PresentationControls() {
         </ControlButton>
       )}
       {presentationStatus !== PresentationStatuses.STOPPED && (
-        <>
-          <ControlButton onClick={handlePreviousSlide}>
-            <IconArrowLeft size={16} />
-          </ControlButton>
-          <ControlButton onClick={handleNextSlide}>
-            <IconArrowRight size={16} />
-          </ControlButton>
-          <ControlButton
-            onClick={stopPresentation}
-            className="!bg-red-500 !text-white"
-          >
-            Stop presentation
-          </ControlButton>
-        </>
+        <ControlButton
+          onClick={stopPresentation}
+          className="!bg-red-500 !text-white"
+        >
+          Stop presentation
+        </ControlButton>
       )}
     </>
   )

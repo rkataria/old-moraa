@@ -6,11 +6,11 @@ import SlideManagerContext from "@/contexts/SlideManagerContext"
 import { useThrottle } from "@uidotdev/usehooks"
 import TextareaAutosize from "react-textarea-autosize"
 
-interface CoverProps {
+interface CoverEditorProps {
   slide: ISlide
 }
 
-function Cover({ slide }: CoverProps) {
+function CoverEditor({ slide }: CoverEditorProps) {
   const [title, setTitle] = useState<string>(slide.content.title)
   const [description, setDescription] = useState<string>(
     slide.content.description
@@ -61,4 +61,4 @@ function Cover({ slide }: CoverProps) {
   )
 }
 
-export default Cover
+export default CoverEditor

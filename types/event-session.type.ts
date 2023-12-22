@@ -16,7 +16,13 @@ export type EventSessionContextType = {
   currentSlide: ISlide | null
   currentUser: any
   presentationStatus: PresentationStatuses
+  currentSlideLoading: boolean
   currentSlideResponses: any[] | null
+  editing: boolean
+  syncSlides: () => void
+  updateSlide: (slide: ISlide) => void
+  enableEditing: () => void
+  disableEditing: () => void
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void

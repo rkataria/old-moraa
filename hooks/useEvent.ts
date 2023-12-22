@@ -14,7 +14,7 @@ export const useEvent = ({
   const supabase = createClient()
   const { currentUser, isLoading: isUserLoading } = useAuth()
 
-  const { data, error, isFetching, isLoading, isError } = useQuery({
+  const { data, error, isFetching, isLoading, isError, refetch } = useQuery({
     queryKey: ["event", id, fetchEventContent],
     queryFn: () =>
       EventService.getEvent({
@@ -47,5 +47,6 @@ export const useEvent = ({
     error,
     isError,
     updateEventContent,
+    refetch,
   }
 }

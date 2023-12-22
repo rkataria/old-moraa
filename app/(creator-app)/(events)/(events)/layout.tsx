@@ -4,8 +4,8 @@ import { Fragment, useState } from "react"
 import { Dialog, Menu, Transition } from "@headlessui/react"
 import { Bars3Icon, HomeIcon, XMarkIcon } from "@heroicons/react/24/outline"
 import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid"
-import { createClient } from "@/utils/supabase/client"
 import clsx from "clsx"
+import { useAuth } from "@/hooks/useAuth"
 
 const navigation = [
   { name: "Dashboard", href: "/events", icon: HomeIcon, current: true },
@@ -26,15 +26,7 @@ export default function WorkspaceLayout({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const supabase = createClient()
-
-  const logout = async () => {
-    const { error } = await supabase.auth.signOut()
-
-    if (error) {
-      console.error(error)
-    }
-  }
+  const { logout } = useAuth()
 
   return (
     <>

@@ -20,7 +20,7 @@ import clsx from "clsx"
 import React, { useContext, useEffect, useState } from "react"
 import Header from "./Header"
 import ParticipantTiles from "./ParticipantTiles"
-import SlideContainer from "./SlideContainer"
+import ContentContainer from "./ContentContainer"
 import MiniSlideManager from "./MiniSlideMananger"
 
 function Meeting() {
@@ -35,6 +35,7 @@ function Meeting() {
     startPresentation,
     pausePresentation,
     stopPresentation,
+    syncSlides,
   } = useContext(EventSessionContext) as EventSessionContextType
   const [slidesSidebarVisible, setSlidesSidebarVisibility] =
     useState<boolean>(false)
@@ -55,6 +56,8 @@ function Meeting() {
     ...pinnedParticipants,
     ...activeParticipants.filter((p) => !pinnedParticipants.includes(p)),
   ]
+
+  console.log("slides in meeting", slides)
 
   useEffect(() => {
     if (!meeting) return
@@ -95,6 +98,10 @@ function Meeting() {
         }
         case "stop-presentation": {
           stopPresentation()
+          break
+        }
+        case "sync-slides": {
+          syncSlides()
           break
         }
         default:
@@ -163,7 +170,7 @@ function Meeting() {
         )}
         <div className="flex flex-col w-full h-full overflow-hidden">
           <ParticipantTiles />
-          <SlideContainer />
+          <ContentContainer />
         </div>
         <div
           className={clsx("flex-none bg-black", {

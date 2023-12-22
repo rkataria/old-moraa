@@ -1,7 +1,9 @@
 import { createClient } from "@/utils/supabase/client"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export const useAuth = () => {
+  const router = useRouter()
   const supabase = createClient()
   const [currentUser, setCurrentUser] = useState<any>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -19,8 +21,14 @@ export const useAuth = () => {
     fetchUser()
   }, [])
 
+  const logout = async () => {
+    await supabase.auth.signOut()
+    router.push("/")
+  }
+
   return {
     currentUser,
     isLoading,
+    logout,
   }
 }

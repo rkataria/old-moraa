@@ -14,13 +14,17 @@ import {
   DyteParticipantsToggle,
   DytePluginsToggle,
   DyteScreenShareToggle,
+  DyteSettingsToggle,
 } from "@dytesdk/react-ui-kit"
 
 import { useEvent } from "@/hooks/useEvent"
 import PresentationControls from "./PresentationControls"
 import ControlButton from "./ControlButton"
 import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
+import {
+  EventSessionContextType,
+  PresentationStatuses,
+} from "@/types/event-session.type"
 import { IconMenu } from "@tabler/icons-react"
 
 type HeaderProps = {
@@ -37,25 +41,30 @@ function Header({
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const { isHost } = useContext(EventSessionContext) as EventSessionContextType
+  const { presentationStatus, isHost } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
 
   if (!event) return null
 
   return (
     <div className="h-16 bg-gray-950 flex justify-between items-center">
       <div className="p-4 flex justify-end items-center gap-2">
-        <ControlButton onClick={toggleSlidesSidebarVisiblity}>
-          <IconMenu size={16} />
-        </ControlButton>
+        {presentationStatus !== PresentationStatuses.STOPPED && (
+          <ControlButton onClick={toggleSlidesSidebarVisiblity}>
+            <IconMenu size={16} />
+          </ControlButton>
+        )}
         <DyteClock meeting={meeting} />
       </div>
       <div className="p-4 flex justify-end items-center gap-2">
         <PresentationControls />
-        <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />
+        {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
         {isHost && <DyteMuteAllButton meeting={meeting} size="sm" />}
         <DyteParticipantsToggle meeting={meeting} size="sm" />
         <DyteChatToggle meeting={meeting} size="sm" />
         {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
+        <DyteSettingsToggle size="sm" />
         <DyteMoreToggle size="sm" states={states} />
         <div className="w-[0.125rem] rounded-full h-8 bg-white/20"></div>
         <DyteScreenShareToggle meeting={meeting} size="sm" />
