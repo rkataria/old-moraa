@@ -1,29 +1,24 @@
+import clsx from "clsx"
+import { useContext, useEffect, useState } from "react"
+import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
+import {
+  DyteDialogManager,
+  DyteNotifications,
+  DyteParticipantsAudio,
+  DyteSidebar,
+} from "@dytesdk/react-ui-kit"
+
 import EventSessionContext from "@/contexts/EventSessionContext"
 import {
   EventSessionContextType,
   PresentationStatuses,
 } from "@/types/event-session.type"
-import {
-  DyteAudioVisualizer,
-  DyteChatToggle,
-  DyteDialogManager,
-  DyteNameTag,
-  DyteNotifications,
-  DyteParticipantTile,
-  DyteParticipantsAudio,
-  DytePluginMain,
-  DyteSidebar,
-} from "@dytesdk/react-ui-kit"
-import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
+import Header from "@/components/event-session/Header"
+import ParticipantTiles from "@/components/event-session/ParticipantTiles"
+import ContentContainer from "@/components/event-session/ContentContainer"
+import MiniSlideManager from "@/components/event-session/MiniSlideMananger"
 
-import clsx from "clsx"
-import React, { useContext, useEffect, useState } from "react"
-import Header from "./Header"
-import ParticipantTiles from "./ParticipantTiles"
-import ContentContainer from "./ContentContainer"
-import MiniSlideManager from "./MiniSlideMananger"
-
-function Meeting() {
+function MeetingScreen() {
   const { meeting } = useDyteMeeting()
   const {
     slides,
@@ -56,8 +51,6 @@ function Meeting() {
     ...pinnedParticipants,
     ...activeParticipants.filter((p) => !pinnedParticipants.includes(p)),
   ]
-
-  console.log("slides in meeting", slides)
 
   useEffect(() => {
     if (!meeting) return
@@ -144,11 +137,7 @@ function Meeting() {
     meeting?.participants.broadcastMessage("toggle-presentation-mode", {})
   }
 
-  console.log("states", states)
-
   const setState = (s: any) => setStates((states) => ({ ...states, ...s }))
-
-  console.log(slidesSidebarVisible)
 
   return (
     <div className="flex flex-col h-screen">
@@ -201,74 +190,6 @@ function Meeting() {
       />
     </div>
   )
-
-  // return (
-  //   <>
-  //     <div>
-  //       {presentationStatus === PresentationStatuses.STOPPED ? (
-  //         <div className="w-4/5 m-auto h-screen pt-16 flex justify-center items-center gap-6">
-  //           <DyteSpotlightGrid
-  //             layout="row"
-  //             participants={meeting.participants.active.toArray()}
-  //             pinnedParticipants={[meeting.self]}
-  //             style={{ height: "360px", width: "100%" }}
-  //           />
-  //         </div>
-  //       ) : (
-  //         <div
-  //           className={clsx("fixed right-0 top-0 w-72 h-full bg-white pt-16")}
-  //         >
-  //           <div className="p-1 flex flex-col justify-start items-center gap-2 h-full scrollbar-thin overflow-y-auto">
-  //             {participants.map((participant, index) => (
-  //               <div key={participant.id}>
-  //                 <DyteParticipantTile
-  //                   participant={participant}
-  //                   nameTagPosition="bottom-center"
-  //                   className="w-full h-36"
-  //                   states={states}
-  //                 >
-  //                   <DyteNameTag participant={meeting.self} meeting={meeting} />
-  //                 </DyteParticipantTile>
-  //               </div>
-  //             ))}
-  //           </div>
-  //         </div>
-  //       )}
-  //     </div>
-  //     <div className="fixed bottom-2 left-1/2 -translate-x-1/2 flex justify-center items-center gap-1">
-  //       <DyteMicToggle size="sm" meeting={meeting} />
-  //       <DyteCameraToggle size="sm" meeting={meeting} />
-  //       <DyteLeaveButton
-  //         size="sm"
-  //         onClick={() => setState({ activeLeaveConfirmation: true })}
-  //       />
-  //       <DyteChatToggle size="sm" meeting={meeting} />
-  //       <DyteSettingsToggle
-  //         size="sm"
-  //         onClick={() => setState({ activeSettings: true })}
-  //       />
-  //       {renderPresentationControls()}
-  //     </div>
-
-  //     {/* Sidebar */}
-  //     <div
-  //       className={clsx("fixed right-0 top-12 h-screen w-72 bg-black", {
-  //         hidden: !activeSidebar,
-  //       })}
-  //     >
-  //       <DyteSidebar meeting={meeting} />
-  //     </div>
-
-  //     {/* Required Dyte Components */}
-  //     <DyteParticipantsAudio meeting={meeting} />
-  //     <DyteNotifications meeting={meeting} />
-  //     <DyteDialogManager
-  //       meeting={meeting}
-  //       states={states}
-  //       onDyteStateUpdate={(e) => setState(e.detail)}
-  //     />
-  //   </>
-  // )
 }
 
-export default Meeting
+export default MeetingScreen

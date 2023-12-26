@@ -1,100 +1,18 @@
 "use client"
+
+import { useParams } from "next/navigation"
+
 import Loading from "@/components/common/Loading"
-import ControlButton from "@/components/event-session/ControlButton"
-import Header from "@/components/event-session/Header"
-import Meeting from "@/components/event-session/Meeting"
-import MeetingSetupScreen from "@/components/event-session/MeetingSetupScreen"
-import PresentationManager from "@/components/event-session/PresentationManager"
-import EventSessionContext from "@/contexts/EventSessionContext"
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from "@/types/event-session.type"
-import {
-  DyteAudioVisualizer,
-  DyteButton,
-  DyteLeaveButton,
-  DyteNameTag,
-  DyteParticipantTile,
-  provideDyteDesignSystem,
-} from "@dytesdk/react-ui-kit"
-import { DyteProvider, useDyteClient } from "@dytesdk/react-web-core"
-import {
-  IconArrowNarrowUp,
-  IconDots,
-  IconMicrophone,
-  IconScreenShare,
-  IconVideo,
-} from "@tabler/icons-react"
-import clsx from "clsx"
-import { useContext, useEffect, useRef, useState } from "react"
+import EventSession from "@/components/event-session/EventSession"
+import { useEnrollment } from "@/hooks/useEnrollment"
 
 function EventSessionPage() {
-  const meetingEl = useRef<HTMLDivElement>(null)
-  const [meeting, initMeeting] = useDyteClient()
-  const [roomJoined, setRoomJoined] = useState<boolean>(false)
-  const { event, meetingToken, presentationStatus } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { eventId } = useParams()
+  const { enrollment } = useEnrollment({
+    eventId: eventId as string,
+  })
 
-  useEffect(() => {
-    if (!meetingToken) {
-      console.log(
-        "An authToken wasn't passed, please pass an authToken in the URL query to join a meeting."
-      )
-      return
-    }
-
-    initMeeting({
-      authToken: meetingToken,
-      defaults: {
-        audio: false,
-        video: false,
-      },
-    })
-  }, [meetingToken])
-
-  useEffect(() => {
-    if (!meeting) return
-
-    const roomJoinedListener = () => {
-      setRoomJoined(true)
-    }
-    const roomLeftListener = () => {
-      setRoomJoined(false)
-    }
-    meeting.self.on("roomJoined", roomJoinedListener)
-    meeting.self.on("roomLeft", roomLeftListener)
-
-    return () => {
-      meeting.self.removeListener("roomJoined", roomJoinedListener)
-      meeting.self.removeListener("roomLeft", roomLeftListener)
-    }
-  }, [meeting])
-
-  // useEffect(() => {
-  //   if (!meetingEl.current) return
-  //   provideDyteDesignSystem(meetingEl.current, {
-  //     googleFont: "Poppins",
-  //     theme: "light",
-  //     colors: {
-  //       danger: "#ffb31c",
-  //       brand: {
-  //         300: "#c6a6ff",
-  //         400: "#9e77e0",
-  //         500: "#754cba",
-  //         600: "#4e288f",
-  //         700: "#2e0773",
-  //       },
-  //       text: "#071428",
-  //       "text-on-brand": "#ffffff",
-  //       "video-bg": "#E5E7EB",
-  //     },
-  //     borderRadius: "rounded",
-  //   })
-  // }, [])
-
-  if (!meetingToken) {
+  if (!enrollment?.meeting_token) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <Loading />
@@ -102,36 +20,7 @@ function EventSessionPage() {
     )
   }
 
-  const renderComponents = () => {
-    if (roomJoined) {
-      return (
-        <>
-          {/* <Header event={event} meeting={meeting} /> */}
-          {/* {presentationStatus !== PresentationStatuses.STOPPED && (
-            <PresentationManager />
-          )} */}
-          <Meeting />
-        </>
-      )
-    }
-
-    return <MeetingSetupScreen />
-  }
-
-  return (
-    <div ref={meetingEl}>
-      <DyteProvider
-        value={meeting}
-        fallback={
-          <div className="h-screen flex justify-center items-center">
-            <Loading />
-          </div>
-        }
-      >
-        <>{renderComponents()}</>
-      </DyteProvider>
-    </div>
-  )
+  return <EventSession meetingToken={enrollment.meeting_token} />
 }
 
 export default EventSessionPage

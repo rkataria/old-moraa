@@ -1,6 +1,6 @@
 "use client"
 import { useContext, useEffect, useState } from "react"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
+import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
 import {
   DyteAudioVisualizer,
   DyteAvatar,
@@ -9,8 +9,6 @@ import {
   DyteNameTag,
   DyteParticipantTile,
 } from "@dytesdk/react-ui-kit"
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
 import { useEvent } from "@/hooks/useEvent"
 import { useParams } from "next/navigation"
 import Loading from "../common/Loading"
@@ -21,18 +19,24 @@ const MeetingSetupScreen = () => {
     id: eventId as string,
   })
   const { meeting } = useDyteMeeting()
-  const { isHost } = useContext(EventSessionContext) as EventSessionContextType
   const [name, setName] = useState<string>("")
+  const [isHost, setIsHost] = useState<boolean>(false)
+  const self = useDyteSelector((states) => states.self)
 
   useEffect(() => {
     if (!meeting) return
+    const preset = meeting.self.presetName
     const name = meeting.self.name
     setName(name)
+
+    if (preset.includes("host")) {
+      setIsHost(true)
+    }
   }, [meeting])
 
-  const joinMeeting = async () => {
+  const joinMeeting = () => {
     meeting?.self.setName(name)
-    meeting.joinRoom()
+    meeting.join()
   }
 
   if (!event || !meeting) {
@@ -42,6 +46,8 @@ const MeetingSetupScreen = () => {
       </div>
     )
   }
+
+  console.log("meeting in setup screen", meeting)
 
   return (
     <div className="w-full h-screen flex flex-col justify-start items-center gap-4 pt-36">
@@ -56,13 +62,13 @@ const MeetingSetupScreen = () => {
       <div className="flex justify-center items-center gap-4">
         <div className="w-1/2 flex justify-end">
           <div className="relative">
-            <DyteParticipantTile participant={meeting.self}>
-              <DyteAvatar size="md" participant={meeting.self} />
-              <DyteNameTag participant={meeting.self}>
+            <DyteParticipantTile meeting={meeting} participant={self}>
+              <DyteAvatar size="md" participant={self} />
+              <DyteNameTag meeting={meeting} participant={self}>
                 <DyteAudioVisualizer
                   size="sm"
                   slot="start"
-                  participant={meeting.self}
+                  participant={self}
                 />
               </DyteNameTag>
               <div className="absolute bottom-2 right-2 flex">
@@ -78,8 +84,8 @@ const MeetingSetupScreen = () => {
             <h2 className="mt-2 font-semibold">Welcome! {name}</h2>
             <p className="mt-2 text-purple-500">
               {isHost
-                ? "You are joining as a Host"
-                : "You are joining as a Learner"}
+                ? "You are joining as Host"
+                : "You are joining as Learner"}
             </p>
             <input
               disabled={!meeting.self.permissions.canEditDisplayName ?? false}
@@ -92,7 +98,6 @@ const MeetingSetupScreen = () => {
             <button
               className="mt-2 outline-none p-2 rounded font-normal border-2 border-purple-500 bg-purple-500 text-white"
               onClick={joinMeeting}
-              disabled={!meeting}
             >
               Join Meeting
             </button>

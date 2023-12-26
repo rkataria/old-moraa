@@ -9,7 +9,7 @@ import {
   DyteParticipantTile,
   DyteSpotlightGrid,
 } from "@dytesdk/react-ui-kit"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
+import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
 import React, { useContext } from "react"
 
 function ParticipantTiles() {
@@ -34,23 +34,25 @@ function ParticipantTiles() {
   return (
     <div className="h-36 bg-gray-700 overflow-hidden overflow-x-auto flex justify-start items-center gap-[0.125rem] p-[0.125rem] flex-nowrap scrollbar-transparent scrollbar-thumb-transparent scrollbar-track-transparent scrollbar-track-rounded-full">
       <DyteParticipantTile
+        meeting={meeting}
         participant={meeting.self}
         nameTagPosition="bottom-center"
         variant="gradient"
         className="h-[140px] w-64 rounded-none aspect-video flex-none border-2 border-green-500 sticky left-0 z-[1]"
       >
-        <DyteNameTag participant={meeting.self}>
+        <DyteNameTag meeting={meeting} participant={meeting.self}>
           <DyteAudioVisualizer slot="start" />
         </DyteNameTag>
       </DyteParticipantTile>
       {meeting.participants.active.toArray().map((participant) => (
         <DyteParticipantTile
+          meeting={meeting}
           participant={participant}
           nameTagPosition="bottom-center"
           variant="gradient"
           className="h-[140px] w-64 rounded-none aspect-video flex-none"
         >
-          <DyteNameTag participant={participant}>
+          <DyteNameTag meeting={meeting} participant={participant}>
             <DyteAudioVisualizer slot="start" />
           </DyteNameTag>
         </DyteParticipantTile>
