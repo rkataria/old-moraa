@@ -1,26 +1,25 @@
-import { createClient } from "@/utils/supabase/client"
-import { useEffect, useState } from "react"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect, useState } from "react";
 
 export const useAuth = () => {
-  const supabase = createClient()
-  const [currentUser, setCurrentUser] = useState<any>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const supabase = createClientComponentClient();
+  const [currentUser, setCurrentUser] = useState<any>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       const {
         data: { user },
-      } = await supabase.auth.getUser()
+      } = await supabase.auth.getUser();
+      setCurrentUser(user);
+      setIsLoading(false);
+    };
 
-      setCurrentUser(user)
-      setIsLoading(false)
-    }
-
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
   return {
     currentUser,
     isLoading,
-  }
-}
+  };
+};
