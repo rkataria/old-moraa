@@ -43,7 +43,7 @@ function CoverEditor({ slide }: CoverEditorProps) {
       },
     })
 
-    // Let user know that the slide has been saved
+    // Let participants know that the slide has been saved
     meeting.participants.broadcastMessage("sync-slides", {})
 
     disableEditing()

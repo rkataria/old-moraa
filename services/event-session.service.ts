@@ -25,7 +25,7 @@ const upsertEventSession = async ({
   const { error } = await supabase
     .from("event_session")
     .update({
-      payload,
+      data: payload.data,
       updated_at: new Date(),
     })
     .eq("event_id", eventId)

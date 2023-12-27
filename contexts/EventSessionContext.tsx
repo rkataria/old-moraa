@@ -248,6 +248,7 @@ export const EventSessionProvider = ({
       }
 
       setSlides(data[0].slides)
+      setCurrentSlide(data[0].slides.find((s: ISlide) => s.id === slide.id))
     } catch (error: any) {
       console.error(error)
     }
