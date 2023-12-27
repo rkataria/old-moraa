@@ -1,10 +1,11 @@
-import { createClient } from "@/utils/supabase/client"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export const useAuth = () => {
   const router = useRouter()
-  const supabase = createClient()
+
+  const supabase = createClientComponentClient()
   const [currentUser, setCurrentUser] = useState<any>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
@@ -13,7 +14,6 @@ export const useAuth = () => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
-
       setCurrentUser(user)
       setIsLoading(false)
     }
