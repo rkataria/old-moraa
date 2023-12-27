@@ -61,8 +61,8 @@ function Header({
         <PresentationControls />
         {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
         {isHost && <DyteMuteAllButton meeting={meeting} size="sm" />}
-        <DyteParticipantsToggle meeting={meeting} size="sm" />
-        <DyteChatToggle meeting={meeting} size="sm" />
+        <DyteParticipantsToggle states={states} meeting={meeting} size="sm" />
+        <DyteChatToggle states={states} meeting={meeting} size="sm" />
         {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
         <DyteSettingsToggle size="sm" />
         <DyteMoreToggle size="sm" states={states} />

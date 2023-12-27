@@ -172,6 +172,8 @@ function MeetingScreen() {
             meeting={meeting}
             className="rounded-none text-white"
             onDyteStateUpdate={(e) => {
+              console.log("e.detail", e.detail)
+
               setState({ ...states, ...e.detail })
             }}
           />

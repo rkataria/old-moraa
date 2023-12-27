@@ -67,29 +67,27 @@ function EventSession({ meetingToken }: EventSessionProps) {
 
   const renderComponents = () => {
     if (roomJoined) {
-      return (
-        <EventSessionProvider>
-          <MeetingScreen />
-        </EventSessionProvider>
-      )
+      return <MeetingScreen />
     }
 
     return <MeetingSetupScreen />
   }
 
   return (
-    <div ref={meetingEl}>
-      <DyteProvider
-        value={meeting}
-        fallback={
-          <div className="h-screen flex justify-center items-center">
-            <Loading />
-          </div>
-        }
-      >
-        <>{renderComponents()}</>
-      </DyteProvider>
-    </div>
+    <EventSessionProvider>
+      <div ref={meetingEl}>
+        <DyteProvider
+          value={meeting}
+          fallback={
+            <div className="h-screen flex justify-center items-center">
+              <Loading />
+            </div>
+          }
+        >
+          <>{renderComponents()}</>
+        </DyteProvider>
+      </div>
+    </EventSessionProvider>
   )
 }
 
