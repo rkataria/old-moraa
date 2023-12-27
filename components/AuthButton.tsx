@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
+import Link from "next/link"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function AuthButton() {
-  const { currentUser } = useAuth();
+  const { currentUser } = useAuth()
 
   return currentUser ? (
     <div className="flex flex-col items-center gap-4">
@@ -30,5 +30,5 @@ export default function AuthButton() {
     >
       Login
     </Link>
-  );
+  )
 }

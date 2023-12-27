@@ -10,7 +10,6 @@
     "@dytesdk/react-web-core": "^1.35.10",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
-    "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@tabler/icons-react": "^2.40.0",
