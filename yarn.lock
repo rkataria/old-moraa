@@ -28,10 +28,10 @@
   dependencies:
     debug "^4.3.4"
 
-"@dyteinternals/mediasoup-client@3.6.86":
-  version "3.6.86"
-  resolved "https://registry.yarnpkg.com/@dyteinternals/mediasoup-client/-/mediasoup-client-3.6.86.tgz#fa0d24cd4bd363781ffcd857428c49234af777d1"
-  integrity sha512-DewaQkewxCYnQJ+ZdbpCtE4gBP4lmbq5TUigKSTYaTXbJwI+KFideciPju1bxszgSW+V3yNE6uoUy5RMzfPTsg==
+"@dyteinternals/mediasoup-client@3.6.89":
+  version "3.6.89"
+  resolved "https://registry.yarnpkg.com/@dyteinternals/mediasoup-client/-/mediasoup-client-3.6.89.tgz#66a21f1775b246a2937f01224048915ec96e0c8d"
+  integrity sha512-T9tKCr3u9W2k7zqUTR9TeJalHm9SAzTRoDXGku/oj1apHUcjdALRKd8VhY03DrtoLQKjT8/L8cwV4Q0J3ViJUw==
   dependencies:
     "@dyteinternals/awaitqueue" "^3.0.1"
     "@types/debug" "^4.1.7"
@@ -42,32 +42,32 @@
     queue-microtask "^1.2.3"
     sdp-transform "^2.14.1"
 
-"@dyteinternals/utils@^1.10.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@dyteinternals/utils/-/utils-1.11.0.tgz#eacde615188db09477cc85a399e059443f66d01f"
-  integrity sha512-oiZSfdJsyabqfadIbCJNdcekM3WHcEmpa3RS9YZ9xJIpfKYFnSrOVLjgSlDpIT0mkn1/MbmFdeyqul117+4kUw==
+"@dyteinternals/utils@^1.11.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@dyteinternals/utils/-/utils-1.12.0.tgz#f335f8190172a4c2a33abc838d1e6400ffddab01"
+  integrity sha512-RlLLIgicE24SP2/lpJIfeLXhvlSTIs5JmJmyNSfYCYJvbEKtCzFeKMn6E0TuF+mFVJZyVC6QTNCma+PEkX/1jA==
   dependencies:
     axios "^0.25.0"
     lodash-es "^4.17.21"
 
-"@dytesdk/react-ui-kit@^1.59.0":
-  version "1.59.0"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-ui-kit/-/react-ui-kit-1.59.0.tgz#b14a0c91d397fe52b9d0f989daa892db56fb5d72"
-  integrity sha512-23Zpp8IohfUdHXVWmR4YvZH1j0bfQr6DTK66sAq4UhHkMi+kMLSF+ou1leBSzWot+ERpibSfcTuYO6b+ZAqcCA==
+"@dytesdk/react-ui-kit@^1.61.1":
+  version "1.61.1"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-ui-kit/-/react-ui-kit-1.61.1.tgz#fd4e2a44242618a0fecddc103fa6763ad4357336"
+  integrity sha512-eaaK8kgd4Y6tOQVJMzH+2OnZKcXDzVhImpLkC/YjEXiJtRNGvl9yotW6h3FZGA7qGBdMlHDfXisJTpL/eQIPfA==
   dependencies:
-    "@dytesdk/ui-kit" "1.59.0"
+    "@dytesdk/ui-kit" "1.61.1"
 
-"@dytesdk/react-web-core@^1.35.5":
-  version "1.35.5"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-1.35.5.tgz#29a40b4b00f9f90ed8f5f1da3b92505695c7e7d6"
-  integrity sha512-1mglvXlIihEuK7zRJqW++Wdc2ZHTRDcXJm8A+iBwEss2vaZQ46meV9YtGk8iFIjwE6+RraC2bqj4lowmK/my1Q==
+"@dytesdk/react-web-core@^1.35.10":
+  version "1.35.10"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-1.35.10.tgz#03dbb905c0df2866de08a182f387cf7fd41ae69e"
+  integrity sha512-2ET3PWs6i+HK7wTBVikFwqg2Baj3f00PJJ0Qqif8UOgR9DFkXSOQpwunlDc7mQm/ljy6wgq5zEGYWgtXMxBDqg==
   dependencies:
-    "@dytesdk/web-core" "^1.20.0"
+    "@dytesdk/web-core" "^1.22.0"
 
-"@dytesdk/ui-kit@1.59.0":
-  version "1.59.0"
-  resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-1.59.0.tgz#2fc358ee98edb97cc5b6fde9abe6b365733f5714"
-  integrity sha512-fqzx2fZSFMPO9aaAK9Wc0ZG4aEtdZGQybuCQB0l/RUlDps5AEbulNfXrUHA7IuZphN6AZ5qMvwZ3PY6ejPbKlg==
+"@dytesdk/ui-kit@1.61.1":
+  version "1.61.1"
+  resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-1.61.1.tgz#eb57a46d27eb4e932fb2ae9ab449ac0c1384aec7"
+  integrity sha512-azVcm2wBzjCRbAPhTlwp31NQ4UQxDtN5vMp+zc2L3jvBiR/VmM+4pTpkUhOS1H7rl7DSGkbGW9N1dY6Wt5krnw==
   dependencies:
     "@floating-ui/dom" "^1.1.0"
     "@stencil/core" "^2.20.0"
@@ -75,15 +75,14 @@
     lodash-es "^4.17.21"
     resize-observer-polyfill "^1.5.1"
 
-"@dytesdk/web-core@^1.20.0":
-  version "1.20.0"
-  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-1.20.0.tgz#0058b7b3e06653fc781baea55eac34d33a4b0c85"
-  integrity sha512-sY3dgTJPCrJqskh+qkAtcV55FtGslY2M5un8EkV2YG3KCLEheLIKhmNovfWpryUyEbXoNoJP2kyCZ3N5kDuf+A==
+"@dytesdk/web-core@^1.22.0":
+  version "1.22.0"
+  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-1.22.0.tgz#71900938c9dcde84b3b07ce4c0d770861fc7a14a"
+  integrity sha512-J3KuI6XSNaT99cHmvMMu4323b/MUB20U5KV4xpKOy1A5Nbky6zxfXQk94X8GRDUIhyM3BZ0WrWQsIkmXhxOk9A==
   dependencies:
-    "@dyteinternals/mediasoup-client" "3.6.86"
-    "@dyteinternals/utils" "^1.10.0"
+    "@dyteinternals/mediasoup-client" "3.6.89"
+    "@dyteinternals/utils" "^1.11.0"
     "@protobuf-ts/runtime" "^2.7.0"
-    awaitqueue "^3.0.1"
     axios "^0.25.0"
     bowser "^2.11.0"
     sdp-transform "^2.14.1"
@@ -245,21 +244,6 @@
   version "2.22.3"
   resolved "https://registry.yarnpkg.com/@stencil/core/-/core-2.22.3.tgz#83987e20bba855c450f6d6780e3a20192603f13f"
   integrity sha512-kmVA0M/HojwsfkeHsifvHVIYe4l5tin7J5+DLgtl8h6WWfiMClND5K3ifCXXI2ETDNKiEk21p6jql3Fx9o2rng==
-
-"@supabase/auth-helpers-nextjs@^0.8.7":
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/@supabase/auth-helpers-nextjs/-/auth-helpers-nextjs-0.8.7.tgz#7d1454b4c211c2b8c18cc0c386ef469627dd3594"
-  integrity sha512-iYdOjFo0GkRvha340l8JdCiBiyXQuG9v8jnq7qMJ/2fakrskRgHTCOt7ryWbip1T6BExcWKC8SoJrhCzPOxhhg==
-  dependencies:
-    "@supabase/auth-helpers-shared" "0.6.3"
-    set-cookie-parser "^2.6.0"
-
-"@supabase/auth-helpers-shared@0.6.3":
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/@supabase/auth-helpers-shared/-/auth-helpers-shared-0.6.3.tgz#2805adfb652d409ee2ccf02549671921c99b22e0"
-  integrity sha512-xYQRLFeFkL4ZfwC7p9VKcarshj3FB2QJMgJPydvOY7J5czJe6xSG5/wM1z63RmAzGbCkKg+dzpq61oeSyWiGBQ==
-  dependencies:
-    jose "^4.14.4"
 
 "@supabase/functions-js@^2.1.5":
   version "2.1.5"
@@ -502,13 +486,6 @@ autoprefixer@10.4.15:
     normalize-range "^0.1.2"
     picocolors "^1.0.0"
     postcss-value-parser "^4.2.0"
-
-awaitqueue@^3.0.1:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/awaitqueue/-/awaitqueue-3.0.2.tgz#a37a212b137b784dc6bd701d1ecfa4a07ec89625"
-  integrity sha512-AVAtRwmf0DNSesMdyanFKKejTrOnjdKtz5LIDQFu2OTUgXvB/CRTYMrkPAF/2GCF9XBtYVxSwxDORlD41S+RyQ==
-  dependencies:
-    debug "^4.3.4"
 
 axios@^0.25.0:
   version "0.25.0"
@@ -910,11 +887,6 @@ jiti@^1.18.2:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.0.tgz#7c97f8fe045724e136a397f7340475244156105d"
   integrity sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==
 
-jose@^4.14.4:
-  version "4.15.4"
-  resolved "https://registry.yarnpkg.com/jose/-/jose-4.15.4.tgz#02a9a763803e3872cf55f29ecef0dfdcc218cc03"
-  integrity sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==
-
 "js-tokens@^3.0.0 || ^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -1287,11 +1259,6 @@ sdp-transform@^2.14.1:
   version "2.14.1"
   resolved "https://registry.yarnpkg.com/sdp-transform/-/sdp-transform-2.14.1.tgz#2bb443583d478dee217df4caa284c46b870d5827"
   integrity sha512-RjZyX3nVwJyCuTo5tGPx+PZWkDMCg7oOLpSlhjDdZfwUoNqG1mM8nyj31IGHyaPWXhjbP7cdK3qZ2bmkJ1GzRw==
-
-set-cookie-parser@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/set-cookie-parser/-/set-cookie-parser-2.6.0.tgz#131921e50f62ff1a66a461d7d62d7b21d5d15a51"
-  integrity sha512-RVnVQxTXuerk653XfuliOxBP81Sf0+qfQE73LIYKcyMYHG94AuH0kgrQpRDuTZnSmjpysHmzxJXKNfa6PjFhyQ==
 
 socket.io-client@4.6.2:
   version "4.6.2"

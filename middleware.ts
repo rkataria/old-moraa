@@ -1,32 +1,31 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { NextResponse, type NextRequest } from "next/server"
+import { createClient } from "@/utils/supabase/middleware"
 
-const protectedRoutes = ["/workspaces", "/content-libraries"];
+const protectedRoutes = ["/workspaces", "/content-libraries"]
 
 const checkIfProtectedRoute = (pathname: string) => {
-  return protectedRoutes.find((route) => pathname?.startsWith(route));
-};
+  return protectedRoutes.find((route) => pathname?.startsWith(route))
+}
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-
-  // Get pathname from request
-  const pathname = req.nextUrl.pathname;
-
-  // Create a Supabase client configured to use cookies
-  const supabase = createMiddlewareClient({ req, res });
+export async function middleware(request: NextRequest) {
+  const { supabase, response } = createClient(request)
 
   // Refresh session if expired - required for Server Components
-  const sessionData = await supabase.auth.getSession();
+  // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
+  const sessionData = await supabase.auth.getSession()
 
-  // console.log("pathname", pathname);
-  // console.log("protectedRoutes", checkIfProtectedRoute(pathname));
-  // console.log("sessionData", sessionData.data?.session);
+  // Get pathname from request
+  const pathname = request.nextUrl.pathname
+
+  // console.log("pathname", pathname)
+  // console.log("protectedRoutes", checkIfProtectedRoute(pathname))
+  // console.log("sessionData", sessionData.data?.session)
 
   if (!sessionData.data?.session && checkIfProtectedRoute(pathname)) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/login", request.url))
   }
-  return res;
+
+  return response
 }
 
 // export const config = {

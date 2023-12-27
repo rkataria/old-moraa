@@ -21,7 +21,14 @@ export const EventSessionProvider = ({
   children,
 }: EventSessionProviderProps) => {
   const { eventId } = useParams()
-  const { event } = useEvent({ id: eventId as string })
+  const {
+    event,
+    eventContent,
+    refetch: refetchEventContent,
+  } = useEvent({
+    id: eventId as string,
+    fetchEventContent: true,
+  })
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>("")
   const [meetingToken, setMeetingToken] = useState<string>("")
@@ -37,6 +44,8 @@ export const EventSessionProvider = ({
   const { eventSession, upsertEventSession } = useEventSession({
     eventId: eventId as string,
   })
+  const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
+  const [editing, setEditing] = useState<boolean>(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -100,34 +109,16 @@ export const EventSessionProvider = ({
   }, [event?.meeting_id])
 
   useEffect(() => {
-    if (!event?.id) return
+    if (!eventContent?.slides) return
 
-    const fetchSlides = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("event_content")
-          .select("*")
-          .eq("event_id", event.id)
-
-        if (error) {
-          console.error(error)
-          setError(error.message)
-          return
-        }
-
-        setSlides(data[0]?.slides ?? [])
-        setCurrentSlide(data[0]?.slides[0] ?? null)
-      } catch (error: any) {
-        console.error(error)
-        setError(error.message)
-      }
-    }
-
-    fetchSlides()
-  }, [event?.id])
+    setSlides(eventContent.slides || [])
+    setCurrentSlide(eventContent.slides[0] ?? null)
+  }, [eventContent])
 
   useEffect(() => {
     if (!currentSlide) return
+
+    setCurrentSlideLoading(true)
 
     // Fetch current slide responses
     const fetchCurrentSlideResponses = async () => {
@@ -138,10 +129,12 @@ export const EventSessionProvider = ({
 
       if (error) {
         console.error(error)
+        setCurrentSlideLoading(false)
         return
       }
 
       setCurrentSlideResponses(data)
+      setCurrentSlideLoading(false)
     }
 
     fetchCurrentSlideResponses()
@@ -189,6 +182,14 @@ export const EventSessionProvider = ({
     setCurrentSlide(slides[currentIndex - 1])
   }
 
+  const enableEditing = () => {
+    setEditing(true)
+  }
+
+  const disableEditing = () => {
+    setEditing(false)
+  }
+
   const startPresentation = () => {
     setPresentationStatus(PresentationStatuses.STARTED)
   }
@@ -230,7 +231,32 @@ export const EventSessionProvider = ({
     }
   }
 
-  console.log("currentSlideResponses", currentSlideResponses)
+  const updateSlide = async (slide: ISlide) => {
+    try {
+      const { data, error } = await supabase
+        .from("event_content")
+        .upsert({
+          id: event.id,
+          slides: slides.map((s) => (s.id === slide.id ? slide : s)),
+        })
+        .eq("id", event.id)
+        .select("*")
+
+      if (error) {
+        console.error(error)
+        return
+      }
+
+      setSlides(data[0].slides)
+      setCurrentSlide(data[0].slides.find((s: ISlide) => s.id === slide.id))
+    } catch (error: any) {
+      console.error(error)
+    }
+  }
+
+  const syncSlides = async () => {
+    await refetchEventContent()
+  }
 
   return (
     <EventSessionContext.Provider
@@ -244,7 +270,13 @@ export const EventSessionProvider = ({
         currentSlide,
         presentationStatus,
         currentSlideResponses,
+        currentSlideLoading,
         currentUser,
+        editing,
+        syncSlides,
+        updateSlide,
+        enableEditing,
+        disableEditing,
         startPresentation,
         stopPresentation,
         pausePresentation,

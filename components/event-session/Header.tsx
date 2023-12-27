@@ -1,81 +1,86 @@
 "use client"
 
 import React, { useContext, useEffect, useState } from "react"
-import Link from "next/link"
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react"
-import { useDyteClient, useDyteMeeting } from "@dytesdk/react-web-core"
+import { useParams } from "next/navigation"
+import { useDyteMeeting } from "@dytesdk/react-web-core"
+import {
+  DyteBreakoutRoomsToggle,
+  DyteCameraToggle,
+  DyteChatToggle,
+  DyteClock,
+  DyteMicToggle,
+  DyteMoreToggle,
+  DyteMuteAllButton,
+  DyteParticipantsToggle,
+  DytePluginsToggle,
+  DyteScreenShareToggle,
+  DyteSettingsToggle,
+} from "@dytesdk/react-ui-kit"
+
+import { useEvent } from "@/hooks/useEvent"
+import PresentationControls from "./PresentationControls"
+import ControlButton from "./ControlButton"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import {
   EventSessionContextType,
   PresentationStatuses,
 } from "@/types/event-session.type"
+import { IconMenu } from "@tabler/icons-react"
 
-const styles = {
-  button: {
-    default:
-      "flex justify-center items-center bg-gray-200 hover:bg-gray-800 hover:text-white transition-all duration-200 py-2 px-4 text-xs font-semibold rounded-lg",
-  },
+type HeaderProps = {
+  states: any
+  setState: any
+  toggleSlidesSidebarVisiblity: () => void
 }
 
-function Header({ event }: { event: any; meeting: any }) {
+function Header({
+  states,
+  setState,
+  toggleSlidesSidebarVisiblity,
+}: HeaderProps) {
+  const { eventId } = useParams()
+  const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const [isHost, setIsHost] = useState<boolean>(false)
-  const { presentationStatus } = useContext(
+  const { presentationStatus, isHost } = useContext(
     EventSessionContext
   ) as EventSessionContextType
-
-  useEffect(() => {
-    if (!meeting) return
-
-    const preset = meeting.self.presetName
-    if (preset.includes("host")) {
-      setIsHost(true)
-    }
-  }, [meeting])
-
-  const handlePreviousSlide = () => {
-    if (!isHost) return
-    meeting?.participants.broadcastMessage("previous-slide", {})
-  }
-
-  const handleNextSlide = () => {
-    if (!isHost) return
-    meeting?.participants.broadcastMessage("next-slide", {})
-  }
 
   if (!event) return null
 
   return (
-    <div className="fixed left-0 top-0 w-full z-50 py-1 px-2 bg-white">
-      <div className="flex items-center justify-between h-12 w-full">
-        <div className="flex justify-start items-center gap-2">
-          <Link href="/events">
-            <IconArrowLeft size={20} />
-          </Link>
-          <span className="font-bold">{event.name}</span>
-        </div>
-        {isHost && presentationStatus !== PresentationStatuses.STOPPED && (
-          <div className="flex justify-center items-center gap-2">
-            <button
-              className={styles.button.default}
-              onClick={handlePreviousSlide}
-            >
-              <IconArrowLeft size={16} />
-            </button>
-            <button className={styles.button.default} onClick={handleNextSlide}>
-              <IconArrowRight size={16} />
-            </button>
-          </div>
+    <div className="h-16 bg-gray-950 flex justify-between items-center">
+      <div className="p-4 flex justify-end items-center gap-2">
+        {presentationStatus !== PresentationStatuses.STOPPED && (
+          <ControlButton onClick={toggleSlidesSidebarVisiblity}>
+            <IconMenu size={16} />
+          </ControlButton>
         )}
-        <div className="flex justify-start items-center gap-2 bg-white px-4 h-full">
-          <button className={styles.button.default} onClick={() => {}}>
-            <span className="px-3 py-[2px] bg-gray-400 text-[11px] rounded-full mr-1">
-              {meeting.participants.count}
-            </span>
-            <span>Participants</span>
-          </button>
-          <div className="bg-gray-200 cursor-pointer border-2 border-transparent hover:border-black rounded-full h-9 w-9 ml-2"></div>
-        </div>
+        <DyteClock meeting={meeting} />
+      </div>
+      <div className="p-4 flex justify-end items-center gap-2">
+        <PresentationControls />
+        {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
+        {isHost && <DyteMuteAllButton meeting={meeting} size="sm" />}
+        <DyteParticipantsToggle meeting={meeting} size="sm" />
+        <DyteChatToggle meeting={meeting} size="sm" />
+        {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
+        <DyteSettingsToggle size="sm" />
+        <DyteMoreToggle size="sm" />
+        <div className="w-[0.125rem] rounded-full h-8 bg-white/20"></div>
+        <DyteScreenShareToggle meeting={meeting} size="sm" />
+        <DyteCameraToggle meeting={meeting} size="sm" />
+        <DyteMicToggle meeting={meeting} size="sm" />
+        <ControlButton
+          className="!bg-red-500 !text-white"
+          active
+          onClick={() => {
+            setState({
+              activeLeaveConfirmation: true,
+            })
+          }}
+        >
+          Leave
+        </ControlButton>
       </div>
     </div>
   )

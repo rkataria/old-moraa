@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Messages from "./messages";
-import { IconBrandGoogle } from "@tabler/icons-react";
 
 export default function Login() {
   return (
@@ -56,27 +55,17 @@ export default function Login() {
           </button>
           <button
             formAction="/auth/sign-up"
-            className="border border-foreground/20 bg-green-300 rounded-md px-4 py-2 text-foreground mb-2"
+            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
           >
             Sign Up
           </button>
-          <Messages />
-        </form>
-        <form
-          action="/auth/google-signin"
-          method="POST"
-          className="flex flex-col "
-        >
           <button
             formAction="/auth/google-signin"
-            className="flex flex-row justify-center border border-foreground/20 bg-green-300 rounded-md px-4 py-2 text-foreground mb-2"
+            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
           >
-            <IconBrandGoogle
-              className="h-6 w-6 text-black"
-              aria-hidden="true"
-            />
             Sign In with Google
           </button>
+          <Messages />
         </form>
       </div>
     </div>

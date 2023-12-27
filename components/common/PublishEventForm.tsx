@@ -16,7 +16,7 @@ interface IParticipant {
 function NewEventForm({ onClose }: NewEventFormProps) {
   const { eventId } = useParams()
   const [emails, setEmails] = useState<string[]>([])
-  const { event } = useEvent({
+  const { event, refetch } = useEvent({
     id: eventId as string,
   })
 
@@ -37,6 +37,8 @@ function NewEventForm({ onClose }: NewEventFormProps) {
     await supabase.functions.invoke("publish-event", {
       body: payload,
     })
+
+    refetch()
 
     onClose()
   }

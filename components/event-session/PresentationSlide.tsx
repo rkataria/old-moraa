@@ -5,10 +5,13 @@ import Cover from "../slides/content-types/Cover"
 import Poll from "../slides/content-types/Poll"
 import { ContentType } from "../slides/ContentTypePicker"
 import { checkVoted } from "@/utils/content.util"
+import { useAuth } from "@/hooks/useAuth"
 
 function PresentationSlide() {
-  const { currentSlide, currentSlideResponses, currentUser, votePoll } =
-    useContext(EventSessionContext) as EventSessionContextType
+  const { currentSlide, currentSlideResponses, votePoll } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
+  const { currentUser } = useAuth()
 
   if (!currentSlide) return null
 
