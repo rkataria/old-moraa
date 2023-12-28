@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Messages from "./messages";
+import { IconBrandGoogle } from "@tabler/icons-react";
 
 export default function Login() {
   return (
@@ -39,6 +40,7 @@ export default function Login() {
             name="email"
             placeholder="you@example.com"
             required
+            autoComplete="off"
           />
           <label className="text-md" htmlFor="password">
             Password
@@ -49,23 +51,34 @@ export default function Login() {
             name="password"
             placeholder="••••••••"
             required
+            autoComplete="off"
           />
-          <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
+          <button className="rounded-md px-4 py-2 text-foreground mb-2 bg-green-600 hover:bg-green-500">
             Sign In
           </button>
           <button
             formAction="/auth/sign-up"
-            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 bg-gray-100 hover:bg-gray-300"
           >
             Sign Up
           </button>
+          <Messages />
+        </form>
+        <form
+          action="/auth/google-signin"
+          method="POST"
+          className="flex flex-col"
+        >
           <button
             formAction="/auth/google-signin"
-            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+            className="flex flex-row justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 bg-gray-100 hover:bg-gray-300  "
           >
+            <IconBrandGoogle
+              className="h-6 w-6 text-black"
+              aria-hidden="true"
+            />
             Sign In with Google
           </button>
-          <Messages />
         </form>
       </div>
     </div>
