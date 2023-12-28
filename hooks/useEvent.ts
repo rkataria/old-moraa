@@ -2,7 +2,7 @@ import { useAuth } from "./useAuth"
 import { useQuery } from "@tanstack/react-query"
 import { EventService } from "@/services/event.service"
 import { IEventContentPayload } from "@/types/event.type"
-import { createClient } from "@/utils/supabase/client"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export const useEvent = ({
   id,
@@ -11,7 +11,7 @@ export const useEvent = ({
   id: string
   fetchEventContent?: boolean
 }) => {
-  const supabase = createClient()
+  const supabase = createClientComponentClient()
   const { currentUser, isLoading: isUserLoading } = useAuth()
 
   const { data, error, isFetching, isLoading, isError, refetch } = useQuery({

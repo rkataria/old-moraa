@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from "react"
-import { createClient } from "@/utils/supabase/client"
 import { useParams } from "next/navigation"
 import {
   EventSessionContextType,
@@ -10,6 +9,7 @@ import { v4 as uuidv4 } from "uuid"
 import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEventSession } from "@/hooks/useEventSession"
 import { useEvent } from "@/hooks/useEvent"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -46,7 +46,7 @@ export const EventSessionProvider = ({
   })
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
   const [editing, setEditing] = useState<boolean>(false)
-  const supabase = createClient()
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
     const fetchCurrentUser = async () => {

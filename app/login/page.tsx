@@ -1,6 +1,6 @@
-import Link from "next/link";
-import Messages from "./messages";
-import { IconBrandGoogle } from "@tabler/icons-react";
+import Link from "next/link"
+import Messages from "./messages"
+import { IconBrandGoogle, IconBrandGoogleFilled } from "@tabler/icons-react"
 
 export default function Login() {
   return (
@@ -27,60 +27,67 @@ export default function Login() {
           Back
         </Link>
 
-        <form
-          className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
-          action="/auth/sign-in"
-          method="post"
-        >
-          <label className="text-md" htmlFor="email">
-            Email
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            name="email"
-            placeholder="you@example.com"
-            required
-            autoComplete="off"
-          />
-          <label className="text-md" htmlFor="password">
-            Password
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            required
-            autoComplete="off"
-          />
-          <button className="rounded-md px-4 py-2 text-foreground mb-2 bg-green-600 hover:bg-green-500">
-            Sign In
-          </button>
-          <button
-            formAction="/auth/sign-up"
-            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 bg-gray-100 hover:bg-gray-300"
+        <div>
+          <form
+            className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
+            action="/auth/sign-in"
+            method="post"
           >
-            Sign Up
-          </button>
-          <Messages />
-        </form>
-        <form
-          action="/auth/google-signin"
-          method="POST"
-          className="flex flex-col"
-        >
-          <button
-            formAction="/auth/google-signin"
-            className="flex flex-row justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 bg-gray-100 hover:bg-gray-300  "
-          >
-            <IconBrandGoogle
-              className="h-6 w-6 text-black"
-              aria-hidden="true"
+            <label className="text-md" htmlFor="email">
+              Email
+            </label>
+            <input
+              className="rounded-md px-4 py-2 bg-inherit border mb-6"
+              name="email"
+              placeholder="Enter your email"
+              required
+              autoComplete="off"
             />
-            Sign In with Google
-          </button>
-        </form>
+            <label className="text-md" htmlFor="password">
+              Password
+            </label>
+            <input
+              className="rounded-md px-4 py-2 bg-inherit border mb-6"
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+              autoComplete="off"
+            />
+            <button className="rounded-md px-4 py-2 text-foreground mb-2 bg-green-600 hover:bg-green-500">
+              Sign In
+            </button>
+            <button
+              formAction="/auth/sign-up"
+              className="transition-all duration-200 rounded-md px-4 py-2 text-black mb-2 bg-white/80 hover:bg-white"
+            >
+              Sign Up
+            </button>
+            <Messages />
+          </form>
+          <div className="flex justify-center items-center my-8">
+            <span className="p-3 flex justify-center items-center bg-white/10 text-gray-500 rounded-full text-sm">
+              OR
+            </span>
+          </div>
+          <form
+            action="/auth/google-signin"
+            method="POST"
+            className="flex flex-col mt-2"
+          >
+            <button
+              formAction="/auth/google-signin"
+              className="flex flex-row gap-2 justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 bg-[#DB4437]/80 hover:bg-[#DB4437]"
+            >
+              <IconBrandGoogleFilled
+                className="h-6 w-6 text-white"
+                aria-hidden="true"
+              />
+              Sign In with Google
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  );
+  )
 }

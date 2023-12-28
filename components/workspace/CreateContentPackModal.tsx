@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { createClient } from "@/utils/supabase/client"
 import ButtonWithModal from "../ButtonWithModal"
 import { useRouter } from "next/navigation"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface ContentPack {
   name: string
@@ -23,7 +23,7 @@ export default function CreateContentPackModal(
     visibility: "public",
   })
   const [creating, setCreating] = useState<boolean>(false)
-  const supabase = createClient()
+  const supabase = createClientComponentClient()
   const router = useRouter()
 
   const createContentPack = async () => {

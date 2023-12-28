@@ -1,9 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { createClient } from "@/utils/supabase/client"
 import ButtonWithModal from "../ButtonWithModal"
-import { useRouter } from "next/navigation"
 import ContentTypeDropdown from "./ContentTypeDropdown"
 
 interface Slide {

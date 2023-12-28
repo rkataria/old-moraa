@@ -1,8 +1,8 @@
 import { useParams } from "next/navigation"
 import FormControlStyles from "@/styles/form-control"
-import { createClient } from "@/utils/supabase/client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useEvent } from "@/hooks/useEvent"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface NewEventFormProps {
   onClose: () => void
@@ -23,7 +23,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
   async function publish(formData: FormData) {
     if (!event) return
 
-    const supabase = createClient()
+    const supabase = createClientComponentClient()
     const payload = JSON.stringify({
       id: event?.id,
       name: formData.get("name"),
