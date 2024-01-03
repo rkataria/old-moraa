@@ -5,8 +5,6 @@ import {
   PresentationStatuses,
 } from "@/types/event-session.type"
 import { ISlide } from "@/types/slide.type"
-import { v4 as uuidv4 } from "uuid"
-import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEventSession } from "@/hooks/useEventSession"
 import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
