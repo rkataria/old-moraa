@@ -1,13 +1,13 @@
 import type { Config } from "tailwindcss"
+import { uiColors } from "./lib/ui-colors"
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   prefix: "",
   theme: {
     container: {
@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      backgroundColor: {
+        primary: uiColors.primary,
+        primarylight: uiColors.primaryLight
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

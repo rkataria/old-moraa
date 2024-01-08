@@ -1,5 +1,5 @@
-import NewEventButtonWithModal from "@/components/common/NewEventButtonWithModal"
-import EventList from "@/components/events/EventList"
+import NewEventButtonWithModal from "@/components/common/NewEventButtonWithModal";
+import EventList from "@/components/events/EventList";
 
 export default async function EventsPage() {
   return (
@@ -12,5 +12,5 @@ export default async function EventsPage() {
       </div>
       <EventList />
     </div>
-  )
+  );
 }

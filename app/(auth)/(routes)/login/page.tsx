@@ -30,7 +30,7 @@ export default function Login() {
         <div>
           <form
             className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
-            action="/auth/sign-in"
+            action="/api/auth/sign-in"
             method="post"
           >
             <label className="text-md" htmlFor="email">
@@ -58,7 +58,7 @@ export default function Login() {
               Sign In
             </button>
             <button
-              formAction="/auth/sign-up"
+              formAction="/api/auth/sign-up"
               className="transition-all duration-200 rounded-md px-4 py-2 text-black mb-2 bg-white/80 hover:bg-white"
             >
               Sign Up
@@ -71,12 +71,12 @@ export default function Login() {
             </span>
           </div>
           <form
-            action="/auth/google-signin"
+            action="/api/auth/google-signin"
             method="POST"
             className="flex flex-col mt-2"
           >
             <button
-              formAction="/auth/google-signin"
+              formAction="/api/auth/google-signin"
               className="flex flex-row gap-2 justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 bg-[#DB4437]/80 hover:bg-[#DB4437]"
             >
               <IconBrandGoogleFilled
