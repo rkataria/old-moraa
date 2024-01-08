@@ -8,23 +8,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import Link from 'next/link'
+import Link from "next/link";
 import { useState } from "react";
 
 type TUserNavigation =
   | {
-    type: "link";
-    name: string;
-    href: string;
-  }
+      type: "link";
+      name: string;
+      href: string;
+    }
   | {
-    type: "action";
-    name: string;
-    visible?: boolean;
-  };
+      type: "action";
+      name: string;
+      visible?: boolean;
+    };
 
 export const UserMenu = () => {
+  const { logout } = useAuth();
   const [userNavigation] = useState<TUserNavigation[]>([
     { name: "Profile", href: "/profile", type: "link" },
     { name: "Logout", visible: true, type: "action" },
@@ -50,14 +52,12 @@ export const UserMenu = () => {
             return (
               <>
                 {item.type === "action" ? (
-                  <DropdownMenuItem key={i} onClick={() => alert("hello")}>
+                  <DropdownMenuItem key={i} onClick={logout}>
                     {item.name}
                   </DropdownMenuItem>
                 ) : (
                   <Link href={item.href}>
-                    <DropdownMenuItem key={i}>
-                      {item.name}
-                    </DropdownMenuItem>
+                    <DropdownMenuItem key={i}>{item.name}</DropdownMenuItem>
                   </Link>
                 )}
               </>

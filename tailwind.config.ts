@@ -20,7 +20,8 @@ const config = {
     extend: {
       backgroundColor: {
         primary: uiColors.primary,
-        primarylight: uiColors.primaryLight
+        primarylight: uiColors.primaryLight,
+        bggray: uiColors.bgGray
       },
       textColor: {
         textIndigo: uiColors.textColorIndigo

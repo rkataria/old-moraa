@@ -4,7 +4,7 @@ import { Montserrat } from "next/font/google";
 import { UseQueryProvider } from "@/utils/use-query-provider";
 import { HeaderComponent } from "@/components/partials/header";
 import { cn } from "@/lib/utils";
-import '../globals.css'
+import '../../../globals.css'
 import { SidebarComponent } from "@/components/partials/sidebar";
 import { ModalProvider } from "@/components/providers/modal-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";

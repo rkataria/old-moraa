@@ -1,4 +1,3 @@
-import { Bars3Icon } from "@heroicons/react/20/solid";
 import React from "react";
 import { ThemeSwitcher } from "../hooks/theme-switcher";
 import { UserMenu } from "./user-menu";
@@ -18,7 +17,7 @@ export const HeaderComponent = (props: {}) => {
       </div>
 
       <div className="flex flex-1 justify-end gap-x-4 self-stretch lg:gap-x-6 pr-2">
-        <div className="flex items-center gap-x-4 lg:gap-x-6">
+        <div className="flex items-center gap-x-4 lg:gap-x-6 mr-4">
           <ThemeSwitcher />
           <UserMenu />
         </div>

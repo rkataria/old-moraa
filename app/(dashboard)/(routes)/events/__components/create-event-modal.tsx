@@ -37,6 +37,7 @@ const formSchema = z.object({
 });
 
 export const CreateEventModal = () => {
+  const router = useRouter()
   const { isOpen, onClose, type } = useModal()
   const isModalOpen = isOpen && type === "createEvent"
 
@@ -57,9 +58,7 @@ export const CreateEventModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-
     if (!currentUser) return
-
     const event = {
       name: values.name,
       description: values.desription,
@@ -68,11 +67,11 @@ export const CreateEventModal = () => {
     }
 
     //@ts-ignore
-    await mutateAsync(event, {
+    return await mutateAsync(event, {
       onSuccess: ({ data }) => {
         if (data) {
-          // //@ts-ignore
-          redirect(`/events/${data.id}`)
+          onClose()
+          router.push(`/events/${data.id}`)
         }
       }
     })
