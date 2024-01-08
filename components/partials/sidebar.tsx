@@ -1,13 +1,7 @@
-import { cn } from '@/lib/utils';
-import { HomeIcon } from 'lucide-react';
 import React from 'react'
+import { SidebarItem } from './sidebar-item';
 
-
-const navigation = [
-  { name: "Dashboard", href: "/events", icon: HomeIcon, current: true },
-];
-
-export const SidebarComponent = (props: {}) => {
+export const SidebarComponent = () => {
   return (
     <div className="w-[300px] bg-primary h-screen hidden md:flex">
 
@@ -16,41 +10,10 @@ export const SidebarComponent = (props: {}) => {
           <img
             className="h-8 w-auto"
             src="/logo.svg"
-            alt="Your Company"
+            alt="learign site"
           />
         </div>
-        <nav className="flex flex-1 flex-col">
-          <ul role="list" className="flex flex-1 flex-col gap-y-7">
-            <li>
-              <ul role="list" className="-mx-2 space-y-1">
-                {navigation.map((item) => (
-                  <li key={item.name}>
-                    <a
-                      href={item.href}
-                      className={cn(
-                        item.current
-                          ? "bg-primarylight text-white"
-                          : "text-indigo-200 hover:text-white hover:bg-indigo-700",
-                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                      )}
-                    >
-                      <item.icon
-                        className={cn(
-                          item.current
-                            ? "text-white"
-                            : "text-indigo-200 group-hover:text-white",
-                          "h-6 w-6 shrink-0"
-                        )}
-                        aria-hidden="true"
-                      />
-                      {item.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          </ul>
-        </nav>
+        <SidebarItem />
       </div>
 
     </div>

@@ -22,6 +22,9 @@ const config = {
         primary: uiColors.primary,
         primarylight: uiColors.primaryLight
       },
+      textColor: {
+        textIndigo: uiColors.textColorIndigo
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

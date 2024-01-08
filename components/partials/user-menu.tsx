@@ -5,12 +5,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
@@ -44,7 +39,7 @@ export const UserMenu = () => {
             alt="@shadcn"
             className="rounded-3xl"
           />
-          <AvatarFallback className="dark:bg-[#34444d]">GP</AvatarFallback>
+          <AvatarFallback className="dark:bg-[#34444d]">John</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
