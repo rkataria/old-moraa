@@ -1,7 +1,7 @@
 "use client"
 
 import EventList from "@/components/events/EventList";
-import { useModal } from "@/components/store/use-modal-store";
+import { useModal } from "@/stores/use-modal-store";
 import { Button } from "@/components/ui/button";
 
 export default function EventsPage() {
