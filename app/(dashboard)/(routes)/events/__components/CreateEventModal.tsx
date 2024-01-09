@@ -41,7 +41,6 @@ export const CreateEventModal = () => {
   const { isOpen, onClose, type } = useModal()
   const isModalOpen = isOpen && type === "createEvent"
 
-
   const { currentUser } = useAuth()
   const { mutateAsync, data, error } = useMutation({
     mutationFn: EventService.createEvent,
