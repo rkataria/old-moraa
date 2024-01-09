@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { redirect, useRouter } from "next/navigation";
-import { useModal } from "@/components/store/use-modal-store"
+import { useRouter } from "next/navigation";
+import { useModal } from "@/stores/use-modal-store"
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
@@ -82,7 +82,6 @@ export const CreateEventModal = () => {
     onClose()
   }
 
-
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
@@ -128,7 +127,7 @@ export const CreateEventModal = () => {
                     <FormLabel
                       className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                     >
-                      Title
+                      Description
                     </FormLabel>
                     <FormControl>
                       <Textarea placeholder="Type your message here."

@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={clsx("h-full bg-white", font.className)}>
-      <body className="h-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full">
+      <body>
           <main>{children}</main>
       </body>
     </html>

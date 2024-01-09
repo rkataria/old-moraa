@@ -6,8 +6,8 @@ import { HeaderComponent } from "@/components/partials/header";
 import { cn } from "@/lib/utils";
 import '../../../globals.css'
 import { SidebarComponent } from "@/components/partials/sidebar";
-import { ModalProvider } from "@/components/providers/modal-provider";
-import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ModalProvider } from "@/providers/modal-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 const font = Montserrat({
   subsets: ["latin"],
@@ -22,26 +22,16 @@ export default function WorkspaceLayout({
 }) {
   return (
     <html lang="en" className={cn("h-full bg-white", font.className)}>
-      <body className="h-full w-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem={false}
-          storageKey="elearning"
-        >
-          <UseQueryProvider>
-            <div className="flex">
-              <SidebarComponent />
-              <div className="flex flex-col w-full">
-                <HeaderComponent />
-                <div className="p-4">
-                  <main className="relative">{children}</main>
-                </div>
-              </div>
+      <body>
+        <div className="flex">
+          <SidebarComponent />
+          <div className="flex flex-col w-full">
+            <HeaderComponent />
+            <div className="p-4">
+              <main className="relative">{children}</main>
             </div>
-            <ModalProvider />
-          </UseQueryProvider>
-        </ThemeProvider>
+          </div>
+        </div>
       </body>
     </html>
   );

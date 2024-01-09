@@ -1,9 +1,9 @@
 import React from "react";
-import { ThemeSwitcher } from "../hooks/theme-switcher";
 import { UserMenu } from "./user-menu";
 import { IconComponent } from "../widgets/icon-component";
 import { Input } from '@/components/ui/input'
 import { SidebarMini } from "./sidebar-mini";
+import { ThemeSwitcher } from "../common/ThemeSwitcher";
 
 export const HeaderComponent = (props: {}) => {
   return (

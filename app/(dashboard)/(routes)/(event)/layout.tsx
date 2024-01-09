@@ -13,8 +13,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="h-full w-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full">
-        <UseQueryProvider>{children}</UseQueryProvider>
+      <body>
+        {children}
       </body>
     </html>
   );
