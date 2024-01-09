@@ -1,21 +1,23 @@
-import { cn } from "@/lib/utils";
-import { HomeIcon, LucideIcon } from "lucide-react";
-import React, { useState } from "react";
+import { cn } from "@/lib/utils"
+import { HomeIcon, LucideIcon } from "lucide-react"
+import React, { useState } from "react"
 
 type TNavigation = {
-  name: string;
-  href: string;
-  icon: LucideIcon;
-  current: boolean;
-};
+  name: string
+  href: string
+  icon: LucideIcon
+  current: boolean
+}
 
 export const SidebarItem = () => {
   const [navigation] = useState<TNavigation[]>([
     {
-      name: "Dashboard", href: "/events",
-      icon: HomeIcon, current: true
+      name: "Dashboard",
+      href: "/events",
+      icon: HomeIcon,
+      current: true,
     },
-  ]);
+  ])
   return (
     <nav className="flex flex-1 flex-col">
       <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -26,6 +28,7 @@ export const SidebarItem = () => {
                 <a
                   href={item.href}
                   className={cn(
+                    "dark:bg-gray-900 dark:text-white",
                     item.current
                       ? "bg-primarylight text-white"
                       : "text-indigo-200 hover:text-white hover:bg-indigo-700",
@@ -49,5 +52,5 @@ export const SidebarItem = () => {
         </li>
       </ul>
     </nav>
-  );
-};
+  )
+}

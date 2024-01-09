@@ -12,12 +12,12 @@ export default function AuthButton() {
       <div className="flex gap-4">
         <Link
           href="/events"
-          className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+          className="py-2 px-4 rounded-md no-underline bg-primary text-white"
         >
           Dashboard
         </Link>
         <form action="/api/auth/sign-out" method="post">
-          <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
+          <button className="py-2 px-4 rounded-md no-underline bg-gray-900 text-white">
             Logout
           </button>
         </form>
@@ -26,7 +26,7 @@ export default function AuthButton() {
   ) : (
     <Link
       href="/login"
-      className="py-2 px-3 flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+      className="py-2 px-3 flex rounded-md no-underline bg-black text-white"
     >
       Login
     </Link>

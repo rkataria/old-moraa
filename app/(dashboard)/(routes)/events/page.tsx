@@ -1,11 +1,11 @@
 "use client"
 
-import EventList from "@/components/events/EventList";
-import { useModal } from "@/stores/use-modal-store";
-import { Button } from "@/components/ui/button";
+import EventList from "@/components/events/EventList"
+import { useModal } from "@/stores/use-modal-store"
+import { Button } from "@/components/ui/button"
 
 export default function EventsPage() {
-  const { onOpen } = useModal();
+  const { onOpen } = useModal()
   return (
     <div className="px-4 sm:px-6 lg:px-8 mt-12">
       <div className="sm:flex sm:items-center">
@@ -21,5 +21,5 @@ export default function EventsPage() {
       </div>
       <EventList />
     </div>
-  );
+  )
 }
