@@ -26,7 +26,7 @@ function Header({ event }: { event: any }) {
           <Link href="/events">
             <IconArrowLeft size={20} />
           </Link>
-          <span className="font-bold">{event?.name}</span>
+          <span className="font-bold text-black">{event?.name}</span>
         </div>
         <div className="flex justify-start items-center gap-2 bg-white px-2 h-full">
           {event?.status === EventType.DRAFT && <PublishEventButtonWithModal />}
