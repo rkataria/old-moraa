@@ -1,18 +1,13 @@
-import React from "react";
-import { UserMenu } from "./user-menu";
-import { IconComponent } from "../widgets/icon-component";
-import { Input } from '@/components/ui/input'
-import { SidebarMini } from "./sidebar-mini";
-import { ThemeSwitcher } from "../common/ThemeSwitcher";
+import React from "react"
+
+import { UserMenu } from "./user-menu"
+import { SidebarMini } from "./sidebar-mini"
+import { ThemeSwitcher } from "../common/ThemeSwitcher"
 
 export const HeaderComponent = (props: {}) => {
   return (
     <div className="flex justify-between items-center shadow-md sticky top-0 z-40 ">
-      <div className="hidden md:flex gap-2 ml-4">
-        <IconComponent icon="search" />
-        <Input className="border-none focus:outline-none focus:border-blue-500 focus:bg-blue-100" placeholder="Search" />
-      </div>
-      <div className="flex h-16 shrink-0 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+      <div className="flex h-16 shrink-0 bg-white text-black dark:bg-background dark:text-foreground px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
         <SidebarMini />
       </div>
 
@@ -23,5 +18,5 @@ export const HeaderComponent = (props: {}) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

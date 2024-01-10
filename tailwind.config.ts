@@ -4,9 +4,9 @@ import { uiColors } from "./lib/ui-colors"
 const config = {
   darkMode: ["class"],
   content: [
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -21,10 +21,10 @@ const config = {
       backgroundColor: {
         primary: uiColors.primary,
         primarylight: uiColors.primaryLight,
-        bggray: uiColors.bgGray
+        bggray: uiColors.bgGray,
       },
       textColor: {
-        textIndigo: uiColors.textColorIndigo
+        textIndigo: uiColors.textColorIndigo,
       },
       colors: {
         border: "hsl(var(--border))",
