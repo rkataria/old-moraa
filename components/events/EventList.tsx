@@ -7,9 +7,8 @@ import Loading from "../common/Loading"
 import { useEvents } from "@/hooks/useEvents"
 
 function EventList() {
-  const { events, isLoading } = useEvents()
-
   const router = useRouter()
+  const { events, isLoading } = useEvents()
 
   const handleRowClick = (id: string) => {
     router.push(`/events/${id}`)
@@ -25,18 +24,18 @@ function EventList() {
     }
 
     return (
-      <table className="min-w-full divide-y divide-gray-300">
+      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-800">
         <thead>
           <tr>
             <th
               scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0"
             >
               Name
             </th>
             <th
               scope="col"
-              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-300"
             >
               Status
             </th>
@@ -48,18 +47,18 @@ function EventList() {
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
           {events?.map((event: any) => (
             <tr
               key={event.name}
               onClick={() => handleRowClick(event.id)}
               className="hover:bg-purple-700/5 cursor-pointer"
             >
-              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                 {event.name}
               </td>
               <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">
+                <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700  ring-1 ring-inset ring-gray-600/20">
                   {event.status}
                 </span>
               </td>
