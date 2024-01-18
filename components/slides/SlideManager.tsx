@@ -59,7 +59,7 @@ export default function SlideManager({}: any) {
       <div>
         <div
           className={clsx(
-            "relative bg-gray-100 transition-all w-full h-screen flex justify-center items-center",
+            "relative bg-white transition-all w-full h-screen flex justify-center items-center",
             {
               "p-8 pl-80": miniMode,
               "p-24": !miniMode,

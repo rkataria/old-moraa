@@ -34,7 +34,7 @@ export default function Slide({
 
   return (
     <div className="relative group w-full h-full">
-      <div className="absolute -top-8 left-0 w-full">
+      <div className=" relative left-0 w-full">
         <div className="relative flex justify-center items-center gap-2">
           <IconChevronUp
             size={20}
@@ -68,7 +68,7 @@ export default function Slide({
       </div>
       <div
         data-slide-id={slide.id}
-        className="relative w-full h-full rounded-md overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20 transition-all"
+        className="relative w-full h-full rounded-md overflow-auto transition-all"
       >
         {slide.contentType === ContentType.POLL && (
           <PollEditor slide={slide} openSettings={openSettings} />

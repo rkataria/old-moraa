@@ -14,7 +14,7 @@ interface IMiniSlideManagerProps {
 }
 
 function MiniSlideManager({
-  visible = false,
+  visible = true,
   mode = "present",
   slides,
   addSlideRef,

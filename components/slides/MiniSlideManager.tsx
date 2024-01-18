@@ -1,5 +1,5 @@
 import { ISlide } from "@/types/slide.type"
-import { IconArrowBarLeft, IconArrowBarRight } from "@tabler/icons-react"
+import { IconLayoutSidebarLeftCollapseFilled, IconLayoutSidebarRightCollapseFilled } from "@tabler/icons-react"
 import clsx from "clsx"
 import React, { useEffect, useState } from "react"
 
@@ -22,7 +22,7 @@ function MiniSlideManager({
   setCurrentSlide,
   onMiniModeChange,
 }: IMiniSlideManagerProps) {
-  const [miniMode, setMiniMode] = useState<boolean>(false)
+  const [miniMode, setMiniMode] = useState<boolean>(true)
 
   useEffect(() => {
     onMiniModeChange(miniMode)
@@ -74,15 +74,15 @@ function MiniSlideManager({
           </div>
         )}
         <button
-          className="absolute right-0 top-16 flex justify-center items-center cursor-pointer w-8 h-8 text-black rounded-sm rounded-b-none"
+          className="absolute right-0 bottom-0 flex justify-center items-center cursor-pointer w-8 h-8 text-black rounded-sm rounded-b-none"
           onClick={() => {
             setMiniMode(!miniMode)
           }}
         >
           {miniMode ? (
-            <IconArrowBarLeft size={20} />
+            <IconLayoutSidebarLeftCollapseFilled size={20} />
           ) : (
-            <IconArrowBarRight size={20} />
+            <IconLayoutSidebarRightCollapseFilled size={20} />
           )}
         </button>
       </div>

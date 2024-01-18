@@ -21,8 +21,8 @@ function EventSession({ meetingToken }: EventSessionProps) {
     initMeeting({
       authToken: meetingToken,
       defaults: {
-        audio: false,
-        video: false,
+        audio: true,
+        video: true,
       },
     })
   }, [])
@@ -70,7 +70,7 @@ function EventSession({ meetingToken }: EventSessionProps) {
 
   const renderComponents = () => {
     if (roomJoined) {
-      return <MeetingScreen />
+      return <MeetingScreen/>
     }
 
     return <MeetingSetupScreen />

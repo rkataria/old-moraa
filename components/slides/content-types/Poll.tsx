@@ -49,18 +49,18 @@ function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
             {slide.content.question}
           </h2>
 
-          <div className="mt-4 grid grid-cols-2 gap-4">
+          <div className="mt-4 grid grid-cols-1 gap-4">
             {slide.content.options.map((option: string, index: number) => (
               <div
                 key={index}
                 className={clsx(
-                  "relative w-full z-0 flex justify-between items-center gap-2 bg-green-100 p-4 rounded-lg overflow-hidden"
+                  "relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden"
                 )}
               >
                 {voted && (
                   <>
                     <div
-                      className="absolute transition-all left-0 top-0 h-full bg-green-200 z-[-1] w-0"
+                      className="absolute transition-all left-0 top-0 h-full bg-purple-500 z-[-1] w-0"
                       style={{
                         width: `${getOptionWidth(option)}%`,
                       }}
@@ -73,7 +73,7 @@ function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
                 <span className="font-bold">{option}</span>
                 {!voted && (
                   <button
-                    className="px-4 py-2 bg-green-900/10 text-sm font-semibold rounded-md"
+                    className="px-4 py-2 bg-purple-900/10 text-sm font-semibold rounded-md"
                     onClick={() => votePoll?.(slide, option)}
                   >
                     Vote

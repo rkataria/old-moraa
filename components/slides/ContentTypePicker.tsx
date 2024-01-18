@@ -17,15 +17,15 @@ export enum ContentType {
 
 const contentTypes: IContentType[] = [
   {
-    name: "Cover",
+    name: "Title & Description",
     icon: <IconChartBar />,
-    description: "You can use this to add a title and description",
+    description: "Suitable for cover pages and dividers",
     contentType: ContentType.COVER,
   },
   {
     name: "Poll",
     icon: <IconChartBar />,
-    description: "You can this to add a poll to your slide",
+    description: "Break the ice and gauge opinions easily and visually.",
     contentType: ContentType.POLL,
   },
 ]

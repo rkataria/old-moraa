@@ -33,7 +33,7 @@ function MeetingScreen() {
     syncSlides,
   } = useContext(EventSessionContext) as EventSessionContextType
   const [slidesSidebarVisible, setSlidesSidebarVisibility] =
-    useState<boolean>(false)
+    useState<boolean>(true)
   const [states, setStates] = useState({})
   const [activeSidebar, setActiveSidebar] = useState<boolean>(false)
   const [isHost, setIsHost] = useState<boolean>(false)
@@ -149,14 +149,14 @@ function MeetingScreen() {
         }}
       />
       <div className="flex flex-auto">
-        {presentationStatus === PresentationStatuses.STARTED && (
+        {/* {presentationStatus === PresentationStatuses.STARTED && ( */}
           <MiniSlideManager
             visible={slidesSidebarVisible}
             slides={slides}
             currentSlide={currentSlide}
             setCurrentSlide={setCurrentSlide}
           />
-        )}
+        {/* )} */}
         <div className="flex flex-col w-full h-full overflow-hidden">
           <ParticipantTiles />
           <ContentContainer />
