@@ -4,15 +4,21 @@ import React, { useContext, useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
 import {
+  DyteAi,
   DyteBreakoutRoomsToggle,
   DyteCameraToggle,
+  DyteCaptionToggle,
   DyteChatToggle,
   DyteClock,
+  DyteEmojiPickerButton,
+  DyteFullscreenToggle,
+  DyteLeaveButton,
   DyteMicToggle,
   DyteMoreToggle,
   DyteMuteAllButton,
   DyteParticipantsToggle,
   DytePluginsToggle,
+  DytePollsToggle,
   DyteScreenShareToggle,
   DyteSettingsToggle,
 } from "@dytesdk/react-ui-kit"
@@ -58,29 +64,25 @@ function Header({
         <DyteClock meeting={meeting} />
       </div>
       <div className="p-4 flex justify-end items-center gap-2">
-        <PresentationControls />
-        {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
-        {isHost && <DyteMuteAllButton meeting={meeting} size="sm" />}
-        <DyteParticipantsToggle meeting={meeting} size="sm" />
-        <DyteChatToggle meeting={meeting} size="sm" />
-        {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
-        <DyteSettingsToggle size="sm" />
-        <DyteMoreToggle size="sm" />
-        <div className="w-[0.125rem] rounded-full h-8 bg-white/20"></div>
-        <DyteScreenShareToggle meeting={meeting} size="sm" />
-        <DyteCameraToggle meeting={meeting} size="sm" />
         <DyteMicToggle meeting={meeting} size="sm" />
-        <ControlButton
-          className="!bg-red-500 !text-white"
-          active
-          onClick={() => {
+        <DyteCameraToggle meeting={meeting} size="sm" />
+        <DyteScreenShareToggle meeting={meeting} size="sm" />
+        {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
+        <PresentationControls />
+
+        <DyteMoreToggle size="sm" />
+        <DyteLeaveButton meeting={meeting} size="sm"  onClick={() => {
             setState({
               activeLeaveConfirmation: true,
             })
-          }}
-        >
-          Leave
-        </ControlButton>
+          }}/>
+        </div>
+        <div className="p-4 flex justify-start items-center gap-6">
+        <DyteParticipantsToggle meeting={meeting} size="sm" />
+        <DyteChatToggle meeting={meeting} size="sm" />
+        <DytePollsToggle meeting={meeting} size="sm" />
+
+
       </div>
     </div>
   )
