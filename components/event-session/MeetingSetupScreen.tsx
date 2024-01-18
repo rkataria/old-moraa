@@ -81,7 +81,7 @@ const MeetingSetupScreen = () => {
         </div>
         <div className="flex flex-col justify-start w-1/2 m-8">
           <div className="w-1/2 flex text-center flex-col min-w-[300px]">
-            <h2 className="mt-2 font-semibold">Welcome! {name}</h2>
+            <h2 className="mt-2 font-semibold">Welcome {name}!</h2>
             <p className="mt-2 text-purple-500">
               {isHost
                 ? "You are joining as Host"
