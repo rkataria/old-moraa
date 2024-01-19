@@ -2,7 +2,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CreateEventModal } from "@/app/(dashboard)/(routes)/events/__components/CreateEventModal";
+import { CreateEventModal } from "@/components/events/CreateEventModal";
+
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);

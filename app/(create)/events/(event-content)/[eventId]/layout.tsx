@@ -1,6 +1,6 @@
 "use client";
 import Header from "@/components/slides/Header";
-import "../../../../../globals.css";
+// import  '@/app/globals.css';
 import { useEvent } from "@/hooks/useEvent";
 
 export default function RootLayout({ params, children }: any) {

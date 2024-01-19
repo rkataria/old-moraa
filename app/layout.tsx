@@ -2,7 +2,7 @@ import { UseQueryProvider } from "@/utils/use-query-provider"
 import { ThemeProvider } from "@/providers/theme-provider"
 import { ModalProvider } from "@/providers/modal-provider"
 
-import "./globals.css"
+import "@/app/globals.css"
 
 export const metadata = {
   title: "Moraa",
