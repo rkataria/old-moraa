@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss"
-import { uiColors } from "./lib/ui-colors"
+import { uiColors } from  "./styles/ui-colors"
 
 const config = {
   darkMode: ["class"],
