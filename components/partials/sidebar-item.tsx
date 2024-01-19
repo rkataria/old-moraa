@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/utils/utils"
 import { HomeIcon, LucideIcon } from "lucide-react"
 import React, { useState } from "react"
 
