@@ -1,26 +1,19 @@
 "use client"
 
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext } from "react"
 import { useParams } from "next/navigation"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
 import {
-  DyteAi,
   DyteBreakoutRoomsToggle,
   DyteCameraToggle,
-  DyteCaptionToggle,
   DyteChatToggle,
   DyteClock,
-  DyteEmojiPickerButton,
-  DyteFullscreenToggle,
   DyteLeaveButton,
   DyteMicToggle,
   DyteMoreToggle,
-  DyteMuteAllButton,
   DyteParticipantsToggle,
-  DytePluginsToggle,
   DytePollsToggle,
   DyteScreenShareToggle,
-  DyteSettingsToggle,
 } from "@dytesdk/react-ui-kit"
 
 import { useEvent } from "@/hooks/useEvent"
@@ -71,7 +64,7 @@ function Header({
         <PresentationControls />
 
         <DyteMoreToggle size="sm" />
-        <DyteLeaveButton meeting={meeting} size="sm"  onClick={() => {
+        <DyteLeaveButton size="sm"  onClick={() => {
             setState({
               activeLeaveConfirmation: true,
             })
