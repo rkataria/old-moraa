@@ -1,5 +1,5 @@
 "use client";
-import Header from "@/components/slides/Header";
+import Header from "@/components/event-content/Header";
 import  '@/app/globals.css';
 import { useEvent } from "@/hooks/useEvent";
 
