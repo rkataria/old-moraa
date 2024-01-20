@@ -24,7 +24,7 @@ function ParticipantTiles() {
         <DyteSpotlightGrid
           meeting={meeting}
           layout="row"
-          participants={[meeting.self]}
+          participants={meeting.participants.active.toArray()}
           pinnedParticipants={[meeting.self]}
           style={{ height: "80%", width: "100%" }}
         />
