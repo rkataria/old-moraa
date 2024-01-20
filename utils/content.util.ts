@@ -1,4 +1,4 @@
-import { ContentType } from "@/components/slides/ContentTypePicker"
+import { ContentType } from "@/components/event-content/ContentTypePicker"
 import { v4 as uuidv4 } from "uuid"
 
 export const getDefaultContent = (contentType: ContentType) => {

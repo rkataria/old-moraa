@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import Poll from "@/components/slides/content-types/Poll"
+import Poll from "@/components/event-content/content-types/Poll"
 // @ts-ignore
 import { useClickAway } from "@uidotdev/usehooks"
 import clsx from "clsx"

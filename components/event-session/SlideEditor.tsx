@@ -1,7 +1,7 @@
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
 import React, { useContext } from "react"
-import { ContentType } from "../slides/ContentTypePicker"
+import { ContentType } from "../event-content/ContentTypePicker"
 import CoverEditor from "./CoverEditor"
 
 function SlideEditor() {

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import MiniSlideManager from "../slides/MiniSlideManager"
+import MiniSlideManager from "../event-content/MiniSlideManager"
 import PresentationSlide from "./PresentationSlide"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"

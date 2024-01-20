@@ -5,9 +5,9 @@ import {
   PresentationStatuses,
 } from "@/types/event-session.type"
 import React, { useContext } from "react"
-import { ContentType } from "../slides/ContentTypePicker"
-import Cover from "../slides/content-types/Cover"
-import Poll from "../slides/content-types/Poll"
+import { ContentType } from "../event-content/ContentTypePicker"
+import Cover from "../event-content/content-types/Cover"
+import Poll from "../event-content/content-types/Poll"
 import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
 

@@ -1,9 +1,9 @@
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
 import React, { useContext } from "react"
-import Cover from "../slides/content-types/Cover"
-import Poll from "../slides/content-types/Poll"
-import { ContentType } from "../slides/ContentTypePicker"
+import Cover from "../event-content/content-types/Cover"
+import Poll from "../event-content/content-types/Poll"
+import { ContentType } from "../event-content/ContentTypePicker"
 import { checkVoted } from "@/utils/content.util"
 import { useAuth } from "@/hooks/useAuth"
 

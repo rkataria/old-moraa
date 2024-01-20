@@ -1,4 +1,4 @@
-import { ContentType } from "@/components/slides/ContentTypePicker"
+import { ContentType } from "@/components/event-content/ContentTypePicker"
 
 export type SlideMode = "edit" | "present"
 
