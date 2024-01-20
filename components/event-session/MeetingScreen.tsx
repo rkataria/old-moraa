@@ -169,7 +169,6 @@ function MeetingScreen() {
           })}
         >
           <DyteSidebar
-            states={states}
             meeting={meeting}
             className="rounded-none text-white"
             onDyteStateUpdate={(e) => {
