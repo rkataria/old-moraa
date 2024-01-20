@@ -21,7 +21,7 @@ const ContentWrapper = ({ children }: { children: React.ReactNode }) => {
 }
 
 function ContentContainer() {
-  const { presentationStatus, editing } = useContext(
+  const { presentationStatus, editing, isHost } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -46,7 +46,7 @@ function ContentContainer() {
       ) : (
         <>
           <Slide />
-          <SlideViewControls />
+          {isHost && <SlideViewControls />}
         </>
       )}
     </ContentWrapper>

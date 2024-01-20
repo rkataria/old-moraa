@@ -12,7 +12,6 @@ export type EventSessionProps = {
 }
 
 function EventSession({ meetingToken }: EventSessionProps) {
-  const router = useRouter()
   const meetingEl = useRef<HTMLDivElement>(null)
   const [meeting, initMeeting] = useDyteClient()
   const [roomJoined, setRoomJoined] = useState<boolean>(false)
@@ -48,29 +47,11 @@ function EventSession({ meetingToken }: EventSessionProps) {
 
   useEffect(() => {
     if (!meetingEl.current) return
-    // provideDyteDesignSystem(meetingEl.current, {
-    //   googleFont: "Poppins",
-    //   theme: "dark",
-    //   colors: {
-    //     danger: "#ffb31c",
-    //     brand: {
-    //       300: "#c6a6ff",
-    //       400: "#9e77e0",
-    //       500: "#754cba",
-    //       600: "#4e288f",
-    //       700: "#2e0773",
-    //     },
-    //     text: "#071428",
-    //     "text-on-brand": "#ffffff",
-    //     "video-bg": "#E5E7EB",
-    //   },
-    //   borderRadius: "rounded",
-    // })
   }, [])
 
   const renderComponents = () => {
     if (roomJoined) {
-      return <MeetingScreen/>
+      return <MeetingScreen />
     }
 
     return <MeetingSetupScreen />

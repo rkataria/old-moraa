@@ -1,9 +1,9 @@
 import { ISlide } from "@/types/slide.type"
-import { IconArrowBarLeft, IconArrowBarRight } from "@tabler/icons-react"
 import clsx from "clsx"
-import React, { useEffect, useState } from "react"
+import React from "react"
 
 interface IMiniSlideManagerProps {
+  isHost?: boolean
   visible?: boolean
   mode?: "edit" | "present"
   slides: ISlide[]
@@ -14,6 +14,7 @@ interface IMiniSlideManagerProps {
 }
 
 function MiniSlideManager({
+  isHost,
   visible = true,
   mode = "present",
   slides,
@@ -38,12 +39,17 @@ function MiniSlideManager({
           >
             <span className="w-5">{index + 1}.</span>
             <div
-              onClick={() => setCurrentSlide(slide)}
+              onClick={() => {
+                if (isHost) setCurrentSlide(slide)
+              }}
               className={clsx(
-                "relative rounded-md flex-auto w-full aspect-video cursor-pointer transition-all border-2 flex justify-center items-center capitalize",
-                currentSlide?.id === slide.id
-                  ? "drop-shadow-md border-black"
-                  : "drop-shadow-none border-black/20"
+                "relative rounded-md flex-auto w-full aspect-video transition-all border-2 flex justify-center items-center capitalize",
+                {
+                  "cursor-pointer": isHost,
+                  "drop-shadow-md border-black": currentSlide?.id === slide.id,
+                  "drop-shadow-none border-black/20":
+                    currentSlide?.id !== slide.id,
+                }
               )}
               style={{
                 backgroundColor: slide.config?.backgroundColor || "#166534",
