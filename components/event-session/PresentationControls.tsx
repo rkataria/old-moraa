@@ -29,7 +29,7 @@ export function PresentationControls() {
           onClick={startPresentation}
           className="!bg-green-500 !text-white"
         >
-          Start presentation
+          Present
         </ControlButton>
       )}
 
@@ -38,7 +38,7 @@ export function PresentationControls() {
           onClick={startPresentation}
           className="!bg-white !text-black"
         >
-          Resume presentation
+          Resume
         </ControlButton>
       )}
       {presentationStatus !== PresentationStatuses.STOPPED && (
@@ -46,7 +46,7 @@ export function PresentationControls() {
           onClick={stopPresentation}
           className="!bg-red-500 !text-white"
         >
-          Stop presentation
+          Stop
         </ControlButton>
       )}
     </>
