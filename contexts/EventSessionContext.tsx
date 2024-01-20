@@ -165,6 +165,8 @@ export const EventSessionProvider = ({
   }, [currentSlide])
 
   const nextSlide = () => {
+    if (!isHost) return
+
     const currentIndex = slides.findIndex(
       (slide) => slide.id === currentSlide?.id
     )
@@ -173,6 +175,8 @@ export const EventSessionProvider = ({
   }
 
   const previousSlide = () => {
+    if (!isHost) return
+
     const currentIndex = slides.findIndex(
       (slide) => slide.id === currentSlide?.id
     )

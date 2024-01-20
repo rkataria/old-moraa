@@ -150,12 +150,13 @@ function MeetingScreen() {
       />
       <div className="flex flex-auto">
         {/* {presentationStatus === PresentationStatuses.STARTED && ( */}
-          <MiniSlideManager
-            visible={slidesSidebarVisible}
-            slides={slides}
-            currentSlide={currentSlide}
-            setCurrentSlide={setCurrentSlide}
-          />
+        <MiniSlideManager
+          isHost={isHost}
+          visible={slidesSidebarVisible}
+          slides={slides}
+          currentSlide={currentSlide}
+          setCurrentSlide={setCurrentSlide}
+        />
         {/* )} */}
         <div className="flex flex-col w-full h-full overflow-hidden">
           <ParticipantTiles />
