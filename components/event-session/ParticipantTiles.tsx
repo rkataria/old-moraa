@@ -9,7 +9,7 @@ import {
   DyteParticipantTile,
   DyteSpotlightGrid,
 } from "@dytesdk/react-ui-kit"
-import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
+import { useDyteMeeting } from "@dytesdk/react-web-core"
 import React, { useContext } from "react"
 
 function ParticipantTiles() {
@@ -22,6 +22,7 @@ function ParticipantTiles() {
     return (
       <div className="flex-auto flex justify-center items-center bg-gray-900">
         <DyteSpotlightGrid
+          meeting={meeting}
           layout="row"
           participants={meeting.participants.active.toArray()}
           pinnedParticipants={[meeting.self]}
@@ -41,7 +42,7 @@ function ParticipantTiles() {
         className="h-[140px] w-64 rounded-none aspect-video flex-none border-2 border-green-500 sticky left-0 z-[1]"
       >
         <DyteNameTag meeting={meeting} participant={meeting.self}>
-          <DyteAudioVisualizer slot="start" />
+          <DyteAudioVisualizer slot="start" participant={meeting.self} />
         </DyteNameTag>
       </DyteParticipantTile>
       {meeting.participants.active.toArray().map((participant) => (
