@@ -13,6 +13,7 @@ export enum ContentType {
   POLL = "poll",
   IMAGE = "image",
   VIDEO = "video",
+  REFLECTION = "reflection"
 }
 
 const contentTypes: IContentType[] = [
@@ -27,6 +28,12 @@ const contentTypes: IContentType[] = [
     icon: <IconChartBar />,
     description: "Break the ice and gauge opinions easily and visually.",
     contentType: ContentType.POLL,
+  },
+  {
+    name: "Reflection",
+    icon: <IconChartBar />,
+    description: "Foster thoughtful reflection and insights. Encourage participants to share their perspectives",
+    contentType: ContentType.REFLECTION,
   },
 ]
 
