@@ -12,6 +12,7 @@ import {
   DyteMicToggle,
   DyteMoreToggle,
   DyteParticipantsToggle,
+  DytePluginsToggle,
   DytePollsToggle,
   DyteScreenShareToggle,
 } from "@dytesdk/react-ui-kit"
@@ -62,7 +63,7 @@ function Header({
         <DyteScreenShareToggle meeting={meeting} size="sm" />
         {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
         <PresentationControls />
-
+        
         <DyteMoreToggle size="sm" />
         <DyteLeaveButton size="sm"  onClick={() => {
             setState({
@@ -74,8 +75,7 @@ function Header({
         <DyteParticipantsToggle meeting={meeting} size="sm" />
         <DyteChatToggle meeting={meeting} size="sm" />
         <DytePollsToggle meeting={meeting} size="sm" />
-
-
+        {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
       </div>
     </div>
   )
