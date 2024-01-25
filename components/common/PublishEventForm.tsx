@@ -34,12 +34,14 @@ function NewEventForm({ onClose }: NewEventFormProps) {
         return { email: email, role: "Participant" }
       }),
     })
-    await supabase.functions.invoke("publish-event", {
-      body: payload,
-    })
-
-    refetch()
-
+    try {
+      await supabase.functions.invoke("publish-event", {
+        body: payload,
+      })
+    } catch (err) {
+      console.error("🚀 ~ publish ~ err:", err)
+    }
+    await refetch()  
     onClose()
   }
 
