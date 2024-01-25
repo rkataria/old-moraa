@@ -12,7 +12,11 @@ import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
 import Reflection from "../event-content/content-types/Reflection"
 
-function Slide() {
+interface ISlideProps {
+  username: string
+}
+
+function Slide({ username }: ISlideProps) {
   const {
     presentationStatus,
     currentSlide,
@@ -51,6 +55,7 @@ function Slide() {
         slide={currentSlide}
         responses={currentSlideResponses}
         responded={checkVoted(currentSlideResponses, currentUser)}
+        username={username}
         addReflection={addReflection}
       />
     )

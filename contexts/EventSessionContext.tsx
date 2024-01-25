@@ -232,7 +232,11 @@ export const EventSessionProvider = ({
       console.error(error)
     }
   }
-  const addReflection = async (slide: ISlide, reflection: string) => {
+  const addReflection = async (
+    slide: ISlide,
+    reflection: string,
+    username: string
+  ) => {
     try {
       const currentUser = await supabase.auth.getSession()
 
@@ -242,7 +246,7 @@ export const EventSessionProvider = ({
           slide,
           response: {
             reflection: reflection,
-            username: currentUser.data.session?.user.email,
+            username: username,
           },
           slide_id: slide.id,
           event_id: event.id,

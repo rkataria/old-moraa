@@ -45,7 +45,7 @@ function ContentContainer() {
         <SlideEditor />
       ) : (
         <>
-          <Slide />
+          <Slide username={meeting.self.name} />
           {isHost && <SlideViewControls />}
         </>
       )}
