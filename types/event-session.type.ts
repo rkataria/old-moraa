@@ -29,5 +29,6 @@ export type EventSessionContextType = {
   setCurrentSlide: (slide: ISlide) => void
   nextSlide: () => void
   previousSlide: () => void
+  setCurrentSlideByID: (id: string) => void
   votePoll: (slide: ISlide, option: string) => void
 }

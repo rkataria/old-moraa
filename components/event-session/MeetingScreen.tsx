@@ -26,6 +26,7 @@ function MeetingScreen() {
     setCurrentSlide,
     previousSlide,
     nextSlide,
+    setCurrentSlideByID,
     presentationStatus,
     startPresentation,
     pausePresentation,
@@ -81,7 +82,6 @@ function MeetingScreen() {
           break
         }
         case "start-presentation": {
-          console.log("start-presentation")
           startPresentation()
           break
         }
@@ -97,11 +97,15 @@ function MeetingScreen() {
           syncSlides()
           break
         }
+        case "set-current-slide-by-id": {
+          setCurrentSlideByID(payload.slideId)
+          break
+        }
         default:
           break
       }
     }
-    meeting.participants.on("broadcastedMessage", handleBroadcastedMessage)
+    meeting.participants.addListener("broadcastedMessage", handleBroadcastedMessage)
 
     const handleDyteStateUpdate = ({ detail }: any) => {
       setActiveSidebar(detail.activeSidebar ? true : false)
@@ -155,7 +159,12 @@ function MeetingScreen() {
           visible={slidesSidebarVisible}
           slides={slides}
           currentSlide={currentSlide}
-          setCurrentSlide={setCurrentSlide}
+          setCurrentSlide={(slide) => {
+            meeting.participants.broadcastMessage('set-current-slide-by-id', {
+              slideId: slide.id
+            })
+            setCurrentSlide(slide)
+          }}
         />
         {/* )} */}
         <div className="flex flex-col w-full h-full overflow-hidden">

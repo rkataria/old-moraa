@@ -184,6 +184,12 @@ export const EventSessionProvider = ({
     setCurrentSlide(slides[currentIndex - 1])
   }
 
+  const setCurrentSlideByID = (id: string) => {
+    const newSlide = slides.find(slide => slide.id === id)
+    if(!newSlide) return;
+    setCurrentSlide(newSlide)
+  }
+
   const enableEditing = () => {
     setEditing(true)
   }
@@ -285,6 +291,7 @@ export const EventSessionProvider = ({
         setCurrentSlide,
         nextSlide,
         previousSlide,
+        setCurrentSlideByID,
         votePoll,
       }}
     >
