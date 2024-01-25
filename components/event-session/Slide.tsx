@@ -10,12 +10,14 @@ import Cover from "../event-content/content-types/Cover"
 import Poll from "../event-content/content-types/Poll"
 import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
+import Reflection from "../event-content/content-types/Reflection"
 
 function Slide() {
   const {
     presentationStatus,
     currentSlide,
     votePoll,
+    addReflection,
     currentSlideResponses,
     currentSlideLoading,
   } = useContext(EventSessionContext) as EventSessionContextType
@@ -39,6 +41,17 @@ function Slide() {
         votePoll={votePoll}
         votes={currentSlideResponses}
         voted={checkVoted(currentSlideResponses, currentUser)}
+      />
+    )
+  }
+  if (currentSlide.contentType === ContentType.REFLECTION) {
+    return (
+      <Reflection
+        key={currentSlide.id}
+        slide={currentSlide}
+        responses={currentSlideResponses}
+        responded={checkVoted(currentSlideResponses, currentUser)}
+        addReflection={addReflection}
       />
     )
   }

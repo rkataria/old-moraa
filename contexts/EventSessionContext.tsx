@@ -232,6 +232,37 @@ export const EventSessionProvider = ({
       console.error(error)
     }
   }
+  const addReflection = async (slide: ISlide, reflection: string) => {
+    try {
+      const currentUser = await supabase.auth.getSession()
+
+      const { data, error } = await supabase
+        .from("slide_response")
+        .upsert({
+          slide,
+          response: {
+            reflection: reflection,
+            username: currentUser.data.session?.user.email,
+          },
+          slide_id: slide.id,
+          event_id: event.id,
+          profile_id: currentUser.data.session?.user.id,
+        })
+        .eq("slide_id", slide.id)
+        .eq("event_id", event.id)
+        .eq("profile_id", currentUser.data.session?.user.id)
+        .select()
+
+      console.log("data", data, currentUser.data.session?.user.id)
+
+      if (error) {
+        console.error(error)
+        return
+      }
+    } catch (error: any) {
+      console.error(error)
+    }
+  }
 
   const updateSlide = async (slide: ISlide) => {
     try {
@@ -286,6 +317,7 @@ export const EventSessionProvider = ({
         nextSlide,
         previousSlide,
         votePoll,
+        addReflection,
       }}
     >
       {children}

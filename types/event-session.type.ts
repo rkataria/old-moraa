@@ -30,4 +30,5 @@ export type EventSessionContextType = {
   nextSlide: () => void
   previousSlide: () => void
   votePoll: (slide: ISlide, option: string) => void
+  addReflection?: (slide: ISlide, reflection: string) => void
 }
