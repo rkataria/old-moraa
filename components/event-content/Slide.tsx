@@ -10,6 +10,7 @@ import { ISlide } from "@/types/slide.type"
 import { ContentType } from "./ContentTypePicker"
 import CoverEditor from "./CoverEditor"
 import PollEditor from "./PollEditor"
+import GoogleSlidesEditor from "./GoogleSlidesEditor"
 
 interface SlideProps {
   slide: ISlide
@@ -75,6 +76,9 @@ export default function Slide({
         )}
         {slide.contentType === ContentType.COVER && (
           <CoverEditor slide={slide} />
+        )}
+        {slide.contentType === ContentType.GOOGLE_SLIDERS && (
+          <GoogleSlidesEditor slide={slide} />
         )}
       </div>
     </div>
