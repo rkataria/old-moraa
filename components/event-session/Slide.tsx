@@ -6,11 +6,11 @@ import {
 } from "@/types/event-session.type"
 import React, { useContext } from "react"
 import { ContentType } from "../event-content/ContentTypePicker"
-import Cover from "../event-content/content-types/Cover"
-import Poll from "../event-content/content-types/Poll"
+import Cover from "./content-types/Cover"
+import Poll from "./content-types/Poll"
 import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
-import Reflection from "../event-content/content-types/Reflection"
+import Reflection from "./content-types/Reflection"
 
 interface ISlideProps {
   username: string
@@ -57,6 +57,7 @@ function Slide({ username }: ISlideProps) {
         responded={checkVoted(currentSlideResponses, currentUser)}
         username={username}
         addReflection={addReflection}
+        user={currentUser}
       />
     )
   }

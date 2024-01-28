@@ -1,13 +1,13 @@
 "use client"
 import React, { useState } from "react"
 import { ISlide } from "@/types/slide.type"
-import clsx from "clsx"
 
 interface ReflectionProps {
   slide: ISlide
   responses?: any
   responded?: boolean
   username: string
+  user: any
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
 }
 
@@ -16,9 +16,11 @@ function Reflection({
   responses = [],
   responded,
   username,
+  user,
   addReflection,
 }: ReflectionProps) {
   const [reflection, setReflection] = useState("")
+  const selfResponse = responses.find((res: any) => res.profile_id === user.id)
   const otherResponses = responses.filter(
     (res: any) => res.response.username !== username
   )
@@ -59,9 +61,6 @@ function Reflection({
             )}
             {responded && (
               <div className="mt-4 grid grid-cols-1 gap-4">
-                <h3 className="text-lg font-semibold text-white">
-                  SELF REFLECTION
-                </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="p-4 bg-gray-300 rounded-md">
                     <div className="flex items-center">
@@ -72,45 +71,41 @@ function Reflection({
                       <div className="ml-3">
                         <p className="text-lg font-medium">{username}</p>
                         <p className="text-gray-600 font-semibold">
-                          {reflection} Hello dosto!!
+                          {selfResponse?.response.reflection}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                <h3 className="text-lg font-semibold text-white">
-                  OTHER REFLECTIONS
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {otherResponses.map(
-                    (
-                      res: {
-                        response: { username: string; reflection: string }
-                      },
-                      index: number
-                    ) => (
-                      <div className="p-4 bg-gray-200 rounded-md">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                            {/* Display the first character of the username */}
-                            {res.response.username.charAt(0)}
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-lg font-medium">
-                              {res.response.username}
-                            </p>
-                            <p className="text-gray-600 font-semibold">
-                              {res.response.reflection}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
               </div>
             )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {otherResponses?.map(
+                (
+                  res: {
+                    response: { username: string; reflection: string }
+                  },
+                  index: number
+                ) => (
+                  <div className="p-4 bg-gray-200 rounded-md">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                        {/* Display the first character of the username */}
+                        {res.response.username.charAt(0)}
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-lg font-medium">
+                          {res.response.username}
+                        </p>
+                        <p className="text-gray-600 font-semibold">
+                          {res.response.reflection}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
           </div>
         </div>
       </div>
