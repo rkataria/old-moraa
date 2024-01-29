@@ -23,7 +23,7 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
   const { meeting } = useDyteMeeting()
   const { isHost } = useContext(EventSessionContext) as EventSessionContextType
   useHotkeys("ArrowRight", () => {
-    setPosition((pos) => pos - 1)
+    setPosition((pos) => pos + 1)
   })
   useHotkeys("ArrowLeft", () => {
     setPosition((pos) => (pos > 1 ? pos - 1 : pos))

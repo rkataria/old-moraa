@@ -79,7 +79,7 @@ export default function Slide({
         {slide.contentType === ContentType.COVER && (
           <CoverEditor slide={slide} />
         )}
-        {slide.contentType === ContentType.GOOGLE_SLIDERS && (
+        {slide.contentType === ContentType.GOOGLE_SLIDES && (
           <GoogleSlidesEditor slide={slide} />
         )}
       </div>

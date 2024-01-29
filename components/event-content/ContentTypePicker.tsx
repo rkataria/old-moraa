@@ -13,7 +13,7 @@ export enum ContentType {
   POLL = "poll",
   IMAGE = "image",
   VIDEO = "video",
-  GOOGLE_SLIDERS = "google-slides",
+  GOOGLE_SLIDES = "google-slides",
 }
 
 const contentTypes: IContentType[] = [
@@ -33,7 +33,7 @@ const contentTypes: IContentType[] = [
     name: "Google Slides",
     icon: <IconChartBar />,
     description: "Google slides embed",
-    contentType: ContentType.GOOGLE_SLIDERS,
+    contentType: ContentType.GOOGLE_SLIDES,
   },
 ]
 

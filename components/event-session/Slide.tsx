@@ -44,7 +44,7 @@ function Slide() {
     )
   }
   
-  if (currentSlide.contentType === ContentType.GOOGLE_SLIDERS) {
+  if (currentSlide.contentType === ContentType.GOOGLE_SLIDES) {
     return (
       <GoogleSlides
         key={currentSlide.id}
