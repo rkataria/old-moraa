@@ -8,10 +8,13 @@ import {
   DyteMicToggle,
   DyteNameTag,
   DyteParticipantTile,
+  DyteSettings,
+  DyteSettingsToggle,
 } from "@dytesdk/react-ui-kit"
 import { useEvent } from "@/hooks/useEvent"
 import { useParams } from "next/navigation"
 import Loading from "../common/Loading"
+import { IconSettingsCog, IconX } from "@tabler/icons-react"
 
 const MeetingSetupScreen = () => {
   const { eventId } = useParams()
@@ -21,6 +24,23 @@ const MeetingSetupScreen = () => {
   const { meeting } = useDyteMeeting()
   const [name, setName] = useState<string>("")
   const [isHost, setIsHost] = useState<boolean>(false)
+  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false)
+
+  const handleSettingsClick = () => {
+    setSettingsModalOpen(true)
+  }
+
+  const handleCloseSettingsModal = () => {
+    setSettingsModalOpen(false)
+  }
+
+  // Close the modal when the component is unmounted
+  useEffect(() => {
+    return () => {
+      setSettingsModalOpen(false)
+    }
+  }, [])
+
   const self = useDyteSelector((states) => states.self)
 
   useEffect(() => {
@@ -75,9 +95,24 @@ const MeetingSetupScreen = () => {
                 <DyteMicToggle size="sm" meeting={meeting} />
                 &ensp;
                 <DyteCameraToggle size="sm" meeting={meeting} />
+                &ensp;
+                <DyteSettingsToggle size="sm" onClick={handleSettingsClick} />
               </div>
             </DyteParticipantTile>
           </div>
+          {isSettingsModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <div className="bg-white p-4 rounded-md">
+                <div className="flex justify-end">
+                  {/* Close icon in the top-right corner */}
+                  <button onClick={handleCloseSettingsModal}>
+                    <IconX className="w-6 h-6 text-black" />
+                  </button>
+                </div>
+                <DyteSettings meeting={meeting} />
+              </div>
+            </div>
+          )}
         </div>
         <div className="flex flex-col justify-start w-1/2 m-8">
           <div className="w-1/2 flex text-center flex-col min-w-[300px]">
