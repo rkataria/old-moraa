@@ -59,7 +59,7 @@ export const EventSessionProvider = ({
   useEffect(() => {
     if (!eventSession) return
 
-    setCurrentSlide(eventSession.currentSlide)
+    setCurrentSlide(eventSession.currentSlide || slides[0])
     setPresentationStatus(
       eventSession.presentationStatus || PresentationStatuses.STOPPED
     )

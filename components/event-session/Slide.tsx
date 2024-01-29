@@ -10,6 +10,7 @@ import Cover from "../event-content/content-types/Cover"
 import Poll from "../event-content/content-types/Poll"
 import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
+import GoogleSlides from "../event-content/content-types/GoogleSlides"
 
 function Slide() {
   const {
@@ -39,6 +40,15 @@ function Slide() {
         votePoll={votePoll}
         votes={currentSlideResponses}
         voted={checkVoted(currentSlideResponses, currentUser)}
+      />
+    )
+  }
+  
+  if (currentSlide.contentType === ContentType.GOOGLE_SLIDES) {
+    return (
+      <GoogleSlides
+        key={currentSlide.id}
+        slide={currentSlide}
       />
     )
   }
