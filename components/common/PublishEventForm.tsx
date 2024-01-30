@@ -41,8 +41,10 @@ function NewEventForm({ onClose }: NewEventFormProps) {
     } catch (err) {
       console.error("🚀 ~ publish ~ err:", err)
     }
-    await refetch()  
-    onClose()
+    setTimeout(async () => {
+      await refetch()
+      onClose()
+    }, 1000)
   }
 
   const handleEmailsInputChange = (e: any) => {

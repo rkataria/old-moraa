@@ -59,7 +59,7 @@ export const EventSessionProvider = ({
   useEffect(() => {
     if (!eventSession) return
 
-    setCurrentSlide(eventSession.currentSlide)
+    setCurrentSlide(eventSession.currentSlide || slides[0])
     setPresentationStatus(
       eventSession.presentationStatus || PresentationStatuses.STOPPED
     )
@@ -238,6 +238,41 @@ export const EventSessionProvider = ({
       console.error(error)
     }
   }
+  const addReflection = async (
+    slide: ISlide,
+    reflection: string,
+    username: string
+  ) => {
+    try {
+      const currentUser = await supabase.auth.getSession()
+
+      const { data, error } = await supabase
+        .from("slide_response")
+        .upsert({
+          slide,
+          response: {
+            reflection: reflection,
+            username: username,
+          },
+          slide_id: slide.id,
+          event_id: event.id,
+          profile_id: currentUser.data.session?.user.id,
+        })
+        .eq("slide_id", slide.id)
+        .eq("event_id", event.id)
+        .eq("profile_id", currentUser.data.session?.user.id)
+        .select()
+
+      console.log("data", data, currentUser.data.session?.user.id)
+
+      if (error) {
+        console.error(error)
+        return
+      }
+    } catch (error: any) {
+      console.error(error)
+    }
+  }
 
   const updateSlide = async (slide: ISlide) => {
     try {
@@ -293,6 +328,7 @@ export const EventSessionProvider = ({
         previousSlide,
         setCurrentSlideByID,
         votePoll,
+        addReflection,
       }}
     >
       {children}
