@@ -43,6 +43,7 @@
     "react": "18.2.0",
     "react-color": "^2.19.3",
     "react-dom": "18.2.0",
+    "react-google-slides": "^4.0.0",
     "react-hook-form": "^7.49.2",
     "react-textarea-autosize": "^8.5.3",
     "sweetalert2": "^11.9.0",

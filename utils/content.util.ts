@@ -21,6 +21,11 @@ export const getDefaultContent = (contentType: ContentType) => {
         question: "Question",
         options: ["Option 1", "Option 2", "Option 3"],
       }
+    case ContentType.GOOGLE_SLIDES:
+      return {
+        googleSlideURL: "",
+        startPosition: 1
+      }
     default:
       return {}
   }

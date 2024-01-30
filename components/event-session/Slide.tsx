@@ -10,13 +10,10 @@ import Cover from "./content-types/Cover"
 import Poll from "./content-types/Poll"
 import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
+import GoogleSlides from "../event-content/content-types/GoogleSlides"
 import Reflection from "./content-types/Reflection"
 
-interface ISlideProps {
-  username: string
-}
-
-function Slide({ username }: ISlideProps) {
+function Slide() {
   const {
     presentationStatus,
     currentSlide,
@@ -48,6 +45,10 @@ function Slide({ username }: ISlideProps) {
       />
     )
   }
+
+  if (currentSlide.contentType === ContentType.GOOGLE_SLIDES) {
+    return <GoogleSlides key={currentSlide.id} slide={currentSlide} />
+  }
   if (currentSlide.contentType === ContentType.REFLECTION) {
     return (
       <Reflection
@@ -55,7 +56,6 @@ function Slide({ username }: ISlideProps) {
         slide={currentSlide}
         responses={currentSlideResponses}
         responded={checkVoted(currentSlideResponses, currentUser)}
-        username={username}
         addReflection={addReflection}
         user={currentUser}
       />

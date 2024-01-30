@@ -1,12 +1,12 @@
 "use client"
 import React, { useState } from "react"
 import { ISlide } from "@/types/slide.type"
+import { useDyteMeeting } from "@dytesdk/react-web-core"
 
 interface ReflectionProps {
   slide: ISlide
   responses?: any
   responded?: boolean
-  username: string
   user: any
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
 }
@@ -15,11 +15,12 @@ function Reflection({
   slide,
   responses = [],
   responded,
-  username,
   user,
   addReflection,
 }: ReflectionProps) {
   const [reflection, setReflection] = useState("")
+  const { meeting } = useDyteMeeting()
+  const username = meeting.self.name
   const selfResponse = responses.find((res: any) => res.profile_id === user.id)
   const otherResponses = responses.filter(
     (res: any) => res.response.username !== username
