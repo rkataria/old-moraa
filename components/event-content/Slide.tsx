@@ -13,6 +13,7 @@ import { ContentType } from "./ContentTypePicker"
 import CoverEditor from "./CoverEditor"
 import PollEditor from "./PollEditor"
 import GoogleSlidesEditor from "./GoogleSlidesEditor"
+import ReflectionEditor from "./ReflectionEditor"
 
 interface SlideProps {
   slide: ISlide
@@ -81,6 +82,9 @@ export default function Slide({
         )}
         {slide.contentType === ContentType.GOOGLE_SLIDES && (
           <GoogleSlidesEditor slide={slide} />
+        )}
+        {slide.contentType === ContentType.REFLECTION && (
+          <ReflectionEditor slide={slide} />
         )}
       </div>
     </div>

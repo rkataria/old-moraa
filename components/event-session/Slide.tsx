@@ -6,17 +6,19 @@ import {
 } from "@/types/event-session.type"
 import React, { useContext } from "react"
 import { ContentType } from "../event-content/ContentTypePicker"
-import Cover from "../event-content/content-types/Cover"
-import Poll from "../event-content/content-types/Poll"
+import Cover from "./content-types/Cover"
+import Poll from "./content-types/Poll"
 import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
-import GoogleSlides from "../event-content/content-types/GoogleSlides"
+import GoogleSlides from "../event-session/content-types/GoogleSlides"
+import Reflection from "./content-types/Reflection"
 
 function Slide() {
   const {
     presentationStatus,
     currentSlide,
     votePoll,
+    addReflection,
     currentSlideResponses,
     currentSlideLoading,
   } = useContext(EventSessionContext) as EventSessionContextType
@@ -43,12 +45,19 @@ function Slide() {
       />
     )
   }
-  
+
   if (currentSlide.contentType === ContentType.GOOGLE_SLIDES) {
+    return <GoogleSlides key={currentSlide.id} slide={currentSlide} />
+  }
+  if (currentSlide.contentType === ContentType.REFLECTION) {
     return (
-      <GoogleSlides
+      <Reflection
         key={currentSlide.id}
         slide={currentSlide}
+        responses={currentSlideResponses}
+        responded={checkVoted(currentSlideResponses, currentUser)}
+        addReflection={addReflection}
+        user={currentUser}
       />
     )
   }
