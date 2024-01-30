@@ -155,11 +155,9 @@ function MeetingScreen() {
         states={states}
         setState={setState}
         toggleSlidesSidebarVisiblity={() => {
-          console.log(slidesSidebarVisible)
           setSlidesSidebarVisibility((v) => !v)
         }}
         toggleSettingsModal={() => {
-          console.log(isSettingsModalOpen)
           setSettingsModalOpen((v) => !v)
         }}
       />
