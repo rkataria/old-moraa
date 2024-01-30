@@ -10,7 +10,7 @@ import Cover from "./content-types/Cover"
 import Poll from "./content-types/Poll"
 import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
-import GoogleSlides from "../event-content/content-types/GoogleSlides"
+import GoogleSlides from "../event-session/content-types/GoogleSlides"
 import Reflection from "./content-types/Reflection"
 
 function Slide() {
