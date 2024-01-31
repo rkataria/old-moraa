@@ -19,8 +19,10 @@ function Slide() {
     currentSlide,
     votePoll,
     addReflection,
+    updateReflection,
     currentSlideResponses,
     currentSlideLoading,
+    isHost,
   } = useContext(EventSessionContext) as EventSessionContextType
   const { currentUser } = useAuth()
 
@@ -56,8 +58,10 @@ function Slide() {
         slide={currentSlide}
         responses={currentSlideResponses}
         responded={checkVoted(currentSlideResponses, currentUser)}
-        addReflection={addReflection}
         user={currentUser}
+        isHost={isHost}
+        addReflection={addReflection}
+        updateReflection={updateReflection}
       />
     )
   }
