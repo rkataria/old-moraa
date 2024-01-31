@@ -5,6 +5,7 @@ import {
   DyteDialogManager,
   DyteNotifications,
   DyteParticipantsAudio,
+  DyteSettings,
   DyteSidebar,
 } from "@dytesdk/react-ui-kit"
 
@@ -17,6 +18,7 @@ import Header from "@/components/event-session/Header"
 import ParticipantTiles from "@/components/event-session/ParticipantTiles"
 import ContentContainer from "@/components/event-session/ContentContainer"
 import MiniSlideManager from "@/components/event-session/MiniSlideMananger"
+import { IconX } from "@tabler/icons-react"
 
 function MeetingScreen() {
   const { meeting } = useDyteMeeting()
@@ -35,6 +37,7 @@ function MeetingScreen() {
   } = useContext(EventSessionContext) as EventSessionContextType
   const [slidesSidebarVisible, setSlidesSidebarVisibility] =
     useState<boolean>(true)
+  const [isSettingsModalOpen, setSettingsModalOpen] = useState<boolean>(false)
   const [states, setStates] = useState({})
   const [activeSidebar, setActiveSidebar] = useState<boolean>(false)
   const [isHost, setIsHost] = useState<boolean>(false)
@@ -105,7 +108,10 @@ function MeetingScreen() {
           break
       }
     }
-    meeting.participants.addListener("broadcastedMessage", handleBroadcastedMessage)
+    meeting.participants.addListener(
+      "broadcastedMessage",
+      handleBroadcastedMessage
+    )
 
     const handleDyteStateUpdate = ({ detail }: any) => {
       setActiveSidebar(detail.activeSidebar ? true : false)
@@ -151,6 +157,9 @@ function MeetingScreen() {
         toggleSlidesSidebarVisiblity={() => {
           setSlidesSidebarVisibility((v) => !v)
         }}
+        toggleSettingsModal={() => {
+          setSettingsModalOpen((v) => !v)
+        }}
       />
       <div className="flex flex-auto">
         {/* {presentationStatus === PresentationStatuses.STARTED && ( */}
@@ -160,8 +169,8 @@ function MeetingScreen() {
           slides={slides}
           currentSlide={currentSlide}
           setCurrentSlide={(slide) => {
-            meeting.participants.broadcastMessage('set-current-slide-by-id', {
-              slideId: slide.id
+            meeting.participants.broadcastMessage("set-current-slide-by-id", {
+              slideId: slide.id,
             })
             setCurrentSlide(slide)
           }}
@@ -199,6 +208,24 @@ function MeetingScreen() {
           setState({ ...states, ...e.detail })
         }}
       />
+
+      {isSettingsModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-md">
+            <div className="flex justify-end">
+              {/* Close icon in the top-right corner */}
+              <button
+                onClick={() => {
+                  setSettingsModalOpen(false)
+                }}
+              >
+                <IconX className="w-6 h-6 text-black" />
+              </button>
+            </div>
+            <DyteSettings meeting={meeting} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

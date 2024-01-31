@@ -10,7 +10,6 @@ import {
   DyteClock,
   DyteLeaveButton,
   DyteMicToggle,
-  DyteMoreToggle,
   DyteParticipantsToggle,
   DytePluginsToggle,
   DytePollsToggle,
@@ -25,18 +24,21 @@ import {
   EventSessionContextType,
   PresentationStatuses,
 } from "@/types/event-session.type"
-import { IconMenu } from "@tabler/icons-react"
+import { IconDots, IconMenu } from "@tabler/icons-react"
+import { Button } from "../ui/button"
 
 type HeaderProps = {
   states: any
   setState: any
   toggleSlidesSidebarVisiblity: () => void
+  toggleSettingsModal: () => void
 }
 
 function Header({
   states,
   setState,
   toggleSlidesSidebarVisiblity,
+  toggleSettingsModal,
 }: HeaderProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
@@ -62,16 +64,24 @@ function Header({
         <DyteCameraToggle meeting={meeting} size="sm" />
         <DyteScreenShareToggle meeting={meeting} size="sm" />
         {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
+
         <PresentationControls />
-        
-        <DyteMoreToggle size="sm" />
-        <DyteLeaveButton size="sm"  onClick={() => {
+        <Button
+          className="p-4 bg-inherit hover:bg-gray-800 bg-opacity-20"
+          onClick={toggleSettingsModal}
+        >
+          <IconDots className="text-white w-6 h-6" />
+        </Button>
+        <DyteLeaveButton
+          size="sm"
+          onClick={() => {
             setState({
               activeLeaveConfirmation: true,
             })
-          }}/>
-        </div>
-        <div className="p-4 flex justify-start items-center gap-6">
+          }}
+        />
+      </div>
+      <div className="p-4 flex justify-start items-center gap-6">
         <DyteParticipantsToggle meeting={meeting} size="sm" />
         <DyteChatToggle meeting={meeting} size="sm" />
         <DytePollsToggle meeting={meeting} size="sm" />
