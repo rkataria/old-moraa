@@ -32,4 +32,5 @@ export type EventSessionContextType = {
   setCurrentSlideByID: (id: string) => void
   votePoll: (slide: ISlide, option: string) => void
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
+  updateReflection?: (id: string, reflection: string, username: string) => void
 }

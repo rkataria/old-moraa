@@ -185,8 +185,8 @@ export const EventSessionProvider = ({
   }
 
   const setCurrentSlideByID = (id: string) => {
-    const newSlide = slides.find(slide => slide.id === id)
-    if(!newSlide) return;
+    const newSlide = slides.find((slide) => slide.id === id)
+    if (!newSlide) return
     setCurrentSlide(newSlide)
   }
 
@@ -273,6 +273,28 @@ export const EventSessionProvider = ({
       console.error(error)
     }
   }
+  const updateReflection = async (
+    id: string,
+    reflection: string,
+    username: string
+  ) => {
+    try {
+      const { error } = await supabase.from("slide_response").upsert({
+        id: id,
+        response: {
+          reflection: reflection,
+          username: username,
+        },
+      })
+
+      if (error) {
+        console.error(error)
+        return
+      }
+    } catch (error: any) {
+      console.error(error)
+    }
+  }
 
   const updateSlide = async (slide: ISlide) => {
     try {
@@ -329,6 +351,7 @@ export const EventSessionProvider = ({
         setCurrentSlideByID,
         votePoll,
         addReflection,
+        updateReflection,
       }}
     >
       {children}
