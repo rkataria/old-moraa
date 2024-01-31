@@ -10,7 +10,9 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Link,
   Stack,
+  StackDivider,
   Text,
   Textarea,
 } from "@chakra-ui/react"
@@ -45,24 +47,35 @@ const ReflectionCard = ({
           name={username}
           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`}
         />
-        <Text ml={2} fontSize="sm" fontWeight="medium">
+        <Text ml={2} fontSize="sm" fontWeight="semibold">
           {username}
         </Text>
       </Stack>
     </CardHeader>
     <CardBody>
-      <Text fontSize="md" fontWeight="medium">
-        {reflection}
-      </Text>
+      <Stack divider={<StackDivider />} spacing="4">
+        <Box>
+          <Text fontSize="sm" fontWeight="medium">
+            {reflection}
+          </Text>
+        </Box>
+        <Box>
+          {isOwner && (
+            <Link
+              onClick={enableEditReflection}
+              fontSize="x-small"
+              fontWeight="semibold"
+              className="text-gray-600"
+            >
+              <Stack direction="row" align="flex-start">
+                <IconPencil className="w-3 h-3" />
+                <Text>edit</Text>
+              </Stack>
+            </Link>
+          )}
+        </Box>
+      </Stack>
     </CardBody>
-    {isOwner && (
-      <CardFooter>
-        <Button colorScheme="purple" onClick={enableEditReflection}>
-          <IconPencil className="text-white w-2 h-2" />
-          edit
-        </Button>
-      </CardFooter>
-    )}
   </Card>
 )
 
@@ -85,8 +98,11 @@ function Reflection({
   )
 
   useEffect(() => {
-    setEditEnabled(false)
+    if (responded) {
+      setReflection(selfResponse.response.reflection)
+    }
   }, [])
+
   return (
     <div
       className="w-full min-h-full flex justify-center items-start"
@@ -94,7 +110,7 @@ function Reflection({
         backgroundColor: slide.content.backgroundColor,
       }}
     >
-      <div className="w-4/5 mt-20 rounded-md relative">
+      <div className="w-4/5 mt-2 rounded-md relative">
         <div className="p-4">
           <h2
             className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
@@ -115,42 +131,50 @@ function Reflection({
                       name={username}
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`}
                     />
-                    <Textarea
-                      placeholder="Enter your reflection here."
-                      value={reflection}
-                      onChange={(e) => setReflection(e.target.value)}
-                    ></Textarea>
+                    <Text ml={2} fontSize="sm" fontWeight="semibold">
+                      {username}
+                    </Text>
                   </Stack>
                 </CardHeader>
                 <CardBody>
-                  <Text fontSize="md" fontWeight="semibold">
-                    {reflection}
-                  </Text>
+                  <Textarea
+                    fontSize="sm"
+                    placeholder="Enter your reflection here."
+                    value={reflection}
+                    onChange={(e) => setReflection(e.target.value)}
+                  ></Textarea>
                 </CardBody>
                 <CardFooter>
-                  <Button
-                    variant="solid"
-                    colorScheme="purple"
-                    onClick={() => {
-                      !responded
-                        ? addReflection(slide, reflection, username)
-                        : updateReflection(
-                            selfResponse.id,
-                            reflection,
-                            username
-                          )
-                      setEditEnabled(false)
-                    }}
-                  >
-                    submit
-                  </Button>
+                  <Stack direction="row" boxSize="fit-content">
+                    <Button
+                      size="sm"
+                      colorScheme="purple"
+                      onClick={() => {
+                        !responded
+                          ? addReflection?.(slide, reflection, username)
+                          : updateReflection?.(
+                              selfResponse.id,
+                              reflection,
+                              username
+                            )
+                        setEditEnabled(false)
+                      }}
+                    >
+                      submit
+                    </Button>
+                    {editEnabled && (
+                      <Button size="sm" onClick={() => setEditEnabled(false)}>
+                        Cancel
+                      </Button>
+                    )}
+                  </Stack>
                 </CardFooter>
               </Card>
             )}
             {responded && !editEnabled && (
               <ReflectionCard
-                username={username}
-                reflection={selfResponse?.response.reflection}
+                username={username + " (you)"}
+                reflection={reflection}
                 isOwner={true}
                 enableEditReflection={() => {
                   setEditEnabled((v) => !v)
