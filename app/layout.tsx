@@ -1,6 +1,4 @@
-import { UseQueryProvider } from "@/utils/use-query-provider"
-import { ThemeProvider } from "@/providers/theme-provider"
-import { ModalProvider } from "@/providers/modal-provider"
+import { Providers } from "./providers"
 
 import "@/app/globals.css"
 
@@ -17,17 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="h-full w-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full bg-background text-foreground">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem={false}
-          storageKey="elearning"
-        >
-          <UseQueryProvider>
-            {children}
-            <ModalProvider />
-          </UseQueryProvider>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
