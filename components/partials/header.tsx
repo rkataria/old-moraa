@@ -13,7 +13,7 @@ export const HeaderComponent = (props: {}) => {
 
       <div className="flex flex-1 justify-end gap-x-4 self-stretch lg:gap-x-6 pr-2">
         <div className="flex items-center gap-x-4 lg:gap-x-6 mr-4">
-          <ThemeSwitcher />
+          {/* <ThemeSwitcher /> */}
           <UserMenu />
         </div>
       </div>

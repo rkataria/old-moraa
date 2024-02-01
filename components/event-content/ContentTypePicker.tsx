@@ -1,4 +1,4 @@
-import { IconChartBar, IconX } from "@tabler/icons-react"
+import {IconCards, IconAlignCenter, IconBrandGoogleDrive, IconChartBar, IconX } from "@tabler/icons-react"
 import clsx from "clsx"
 
 interface IContentType {
@@ -20,27 +20,27 @@ export enum ContentType {
 const contentTypes: IContentType[] = [
   {
     name: "Title & Description",
-    icon: <IconChartBar />,
-    description: "Suitable for cover pages and dividers",
+    icon: < IconAlignCenter/>,
+    description: "Simple and effective. Suitable for cover pages and section dividers",
     contentType: ContentType.COVER,
+  },
+  {
+    name: "Google Slides",
+    icon: <IconBrandGoogleDrive />,
+    description: "Empower presentations with seamless Google Slides embed",
+    contentType: ContentType.GOOGLE_SLIDES,
   },
   {
     name: "Poll",
     icon: <IconChartBar />,
-    description: "Break the ice and gauge opinions easily and visually.",
+    description: "Break ice, gauge opinions visually. Dive into dialogue effortlessly.",
     contentType: ContentType.POLL,
   },
   {
-    name: "Google Slides",
-    icon: <IconChartBar />,
-    description: "Google slides embed",
-    contentType: ContentType.GOOGLE_SLIDES,
-  },
-  {
-    name: "Reflection",
-    icon: <IconChartBar />,
+    name: "Reflections",
+    icon: <IconCards />,
     description:
-      "Foster thoughtful reflection and insights. Encourage participants to share their perspectives",
+      "Ignite insights through thoughtful reflection. Share perspectives, spark growth.",
     contentType: ContentType.REFLECTION,
   },
 ]
@@ -69,9 +69,9 @@ export default function ContentTypePicker({
       <div className="fixed bottom-0 left-0 w-full bg-white p-4">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="font-semibold text-lg">Choose content type</h3>
+            <h3 className="font-semibold text-lg">Gallery of static and interactive content slides </h3>
             <p className="text-sm text-gray-500">
-              Choose the type of content you want to add to your slide
+              Choose the type of slide you want to add to your event
             </p>
           </div>
           <button onClick={onClose}>
@@ -82,11 +82,12 @@ export default function ContentTypePicker({
           {contentTypes.map((contentType, index) => (
             <div
               key={index}
-              className="h-32 rounded-md flex-none aspect-video cursor-pointer transition-all border-2 flex flex-col justify-center items-center gap-2 p-4 text-center bg-gray-900 text-white hover:bg-black hover:border-black"
+              className="h-36 rounded-md flex-none aspect-video cursor-pointer transition-all border-2 flex flex-col justify-center items-center gap-2 p-4 text-center bg-gray-900 text-white hover:bg-black hover:border-black"
               onClick={() => onChoose(contentType.contentType)}
             >
+              <p>{contentType.icon}</p>
               <h3 className="font-bold">{contentType.name}</h3>
-              <p className="text-sm text-gray-400">{contentType.description}</p>
+              <p className="text-sm text-purple-400">{contentType.description}</p>
             </div>
           ))}
         </div>

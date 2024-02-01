@@ -1,5 +1,5 @@
 import { cn } from "@/utils/utils"
-import { HomeIcon, LucideIcon } from "lucide-react"
+import { Grip, LucideIcon } from "lucide-react"
 import React, { useState } from "react"
 
 type TNavigation = {
@@ -12,9 +12,9 @@ type TNavigation = {
 export const SidebarItem = () => {
   const [navigation] = useState<TNavigation[]>([
     {
-      name: "Dashboard",
+      name: "Events",
       href: "/events",
-      icon: HomeIcon,
+      icon: Grip,
       current: true,
     },
   ])
