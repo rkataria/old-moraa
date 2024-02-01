@@ -7,15 +7,15 @@ interface PollProps {
   slide: ISlide
   votes?: any
   voted?: boolean
+  isHost?: boolean
   votePoll?: (slide: ISlide, option: string) => void
 }
 
-function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
-  const { options } = slide.content
+function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
+  const { options, question } = slide.content
 
   const optionsWithVote = options.reduce((acc: any, option: any) => {
     acc[option] = 0
-
     return acc
   }, {})
 
@@ -28,6 +28,7 @@ function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
   })
 
   const getOptionWidth = (option: string) => {
+    if (votes.length === 0) return 0
     return Math.round((optionsWithVote[option] * 100) / votes.length)
   }
 
@@ -38,7 +39,7 @@ function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
         backgroundColor: slide.content.backgroundColor,
       }}
     >
-      <div className="w-4/5 mt-20 rounded-md relative">
+      <div className="w-4/5 mt-10 rounded-md relative">
         <div className="p-4">
           <h2
             className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
@@ -46,18 +47,18 @@ function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
               color: slide.content.textColor,
             }}
           >
-            {slide.content.question}
+            {question}
           </h2>
 
           <div className="mt-4 grid grid-cols-1 gap-4">
-            {slide.content.options.map((option: string, index: number) => (
+            {options.map((option: string, index: number) => (
               <div
                 key={index}
                 className={clsx(
                   "relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden"
                 )}
               >
-                {voted && (
+                {(voted || isHost) && (
                   <>
                     <div
                       className="absolute transition-all left-0 top-0 h-full bg-purple-500 z-[-1] w-0"
@@ -71,7 +72,7 @@ function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
                   </>
                 )}
                 <span className="font-bold">{option}</span>
-                {!voted && (
+                {!voted && !isHost && (
                   <button
                     className="px-4 py-2 bg-purple-900/10 text-sm font-semibold rounded-md"
                     onClick={() => votePoll?.(slide, option)}
