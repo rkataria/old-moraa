@@ -7,10 +7,11 @@ interface PollProps {
   slide: ISlide
   votes?: any
   voted?: boolean
+  isHost?: boolean
   votePoll?: (slide: ISlide, option: string) => void
 }
 
-function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
+function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
   const { options } = slide.content
 
   const optionsWithVote = options.reduce((acc: any, option: any) => {
@@ -71,7 +72,7 @@ function Poll({ slide, votes = [], voted, votePoll }: PollProps) {
                   </>
                 )}
                 <span className="font-bold">{option}</span>
-                {!voted && (
+                {!voted && !isHost && (
                   <button
                     className="px-4 py-2 bg-purple-900/10 text-sm font-semibold rounded-md"
                     onClick={() => votePoll?.(slide, option)}

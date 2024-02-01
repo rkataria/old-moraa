@@ -43,6 +43,7 @@ function Slide() {
         slide={currentSlide}
         votePoll={votePoll}
         votes={currentSlideResponses}
+        isHost={isHost}
         voted={checkVoted(currentSlideResponses, currentUser)}
       />
     )
