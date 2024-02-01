@@ -122,7 +122,7 @@ function Reflection({
           </h2>
 
           <div className="mt-4 grid grid-cols-4 gap-4 ">
-            {(!responded || editEnabled) && (
+            {(!responded || editEnabled) && !isHost && (
               <Card>
                 <CardHeader>
                   <Stack direction="row" align="center">
