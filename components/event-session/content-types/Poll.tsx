@@ -26,8 +26,6 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
 
     optionsWithVote[selected_option] = optionsWithVote[selected_option] + 1
   })
-  console.log(optionsWithVote)
-  console.log(options)
 
   const getOptionWidth = (option: string) => {
     if (votes.length === 0) return 0
