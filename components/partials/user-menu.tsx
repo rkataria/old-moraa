@@ -25,9 +25,9 @@ type TUserNavigation =
     }
 
 export const UserMenu = () => {
-  const { logout } = useAuth()
+  const { currentUser, logout } = useAuth()
   const [userNavigation] = useState<TUserNavigation[]>([
-    { name: "Profile", href: "/profile", type: "link" },
+    // { name: "Profile", href: "/profile", type: "link" },
     { name: "Logout", visible: true, type: "action" },
   ])
 
@@ -44,7 +44,7 @@ export const UserMenu = () => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {userNavigation.map((item, i) => {

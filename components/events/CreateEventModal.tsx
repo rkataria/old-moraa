@@ -31,9 +31,9 @@ import { EventService } from "@/services/event.service";
 
 const formSchema = z.object({
   name: z.string().min(1, {
-    message: "Title is required."
+    message: "Name is required."
   }),
-  desription: z.string().optional()
+  description: z.string().optional()
 });
 
 export const CreateEventModal = () => {
@@ -60,7 +60,7 @@ export const CreateEventModal = () => {
     if (!currentUser) return
     const event = {
       name: values.name,
-      description: values.desription,
+      description: values.description,
       type: "course", //formData.get("type"),
       owner_id: currentUser.id,
     }
@@ -86,11 +86,10 @@ export const CreateEventModal = () => {
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="p-6 flex flex-col items-start bg-primary text-white">
           <DialogTitle className="text-lg text-center">
-            New Event
+            New learning event
           </DialogTitle>
           <DialogDescription className="text-textIndigo">
-            Get started by filling in the information below to create your new project.
-          </DialogDescription>
+          Give your event a name and an optional description to get going!        </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -103,13 +102,13 @@ export const CreateEventModal = () => {
                     <FormLabel
                       className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                     >
-                      Title
+                      Name
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
                         className="focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                        placeholder="Enter server name"
+                        placeholder="Your awesome course or workshop name goes here"
                         {...field}
                       />
                     </FormControl>
@@ -129,7 +128,7 @@ export const CreateEventModal = () => {
                       Description
                     </FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Type your message here."
+                      <Textarea placeholder="This is what your learners would see. You could include high-level learning objectives or brief course overview here"
                         className="focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                         {...field}
                       />

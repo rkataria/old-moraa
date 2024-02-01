@@ -15,7 +15,7 @@ export default function EventsPage() {
             variant={"default"}
             onClick={() => onOpen("createEvent", { data: {} })}
           >
-            Create New
+            Create new event
           </Button>
         </div>
       </div>

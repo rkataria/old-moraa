@@ -3,7 +3,7 @@ import Poll from "@/components/event-session/content-types/Poll"
 // @ts-ignore
 import { useClickAway } from "@uidotdev/usehooks"
 import clsx from "clsx"
-import { BlockPicker } from "react-color"
+import { BlockPicker, SketchPicker } from "react-color"
 import PollForm from "./PollForm"
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
@@ -53,11 +53,11 @@ function PollEditor({
         )}
       >
         <div className="px-8 py-4">
-          <h3 className="text-xl font-bold mb-4">Poll Config</h3>
+          <h3 className="text-xl font-bold mb-4">Add a background color</h3>
           <div className="relative">
             <div className="my-4">
-              <label className="block mb-2 font-bold">Background Color</label>
-              <BlockPicker
+              {/* <label className="block mb-2 font-bold">Background Color</label> */}
+              <SketchPicker
                 color={slide.config.backgroundColor}
                 onChange={(color) => {
                   updateSlide({
@@ -70,9 +70,9 @@ function PollEditor({
                 }}
               />
             </div>
-            <div className="my-4">
+            {/* <div className="my-4">
               <label className="block mb-2 font-bold">Text Color</label>
-              <BlockPicker
+              <SketchPicker
                 color={slide.config.textColor}
                 onChange={(color) => {
                   updateSlide({
@@ -84,7 +84,7 @@ function PollEditor({
                   })
                 }}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

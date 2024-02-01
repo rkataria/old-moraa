@@ -17,6 +17,15 @@ function ReflectionEditor({ slide }: ReflectionEditorProps) {
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
+  const [showSettings, setShowSettings] = useState<boolean>(openSettings)
+  const settingsRef = useClickAway(() => {
+    setShowSettings(false)
+  })
+  const [preview, setPreview] = useState<boolean>(false)
+
+  useEffect(() => {
+    setShowSettings(openSettings)
+  }, [openSettings])
 
   useEffect(() => {
     updateSlide({
