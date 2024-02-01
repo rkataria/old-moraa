@@ -12,11 +12,10 @@ interface PollProps {
 }
 
 function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
-  const { options } = slide.content
+  const { options, question } = slide.content
 
   const optionsWithVote = options.reduce((acc: any, option: any) => {
     acc[option] = 0
-
     return acc
   }, {})
 
@@ -27,8 +26,11 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
 
     optionsWithVote[selected_option] = optionsWithVote[selected_option] + 1
   })
+  console.log(optionsWithVote)
+  console.log(options)
 
   const getOptionWidth = (option: string) => {
+    if (votes.length === 0) return 0
     return Math.round((optionsWithVote[option] * 100) / votes.length)
   }
 
@@ -39,7 +41,7 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
         backgroundColor: slide.content.backgroundColor,
       }}
     >
-      <div className="w-4/5 mt-20 rounded-md relative">
+      <div className="w-4/5 mt-10 rounded-md relative">
         <div className="p-4">
           <h2
             className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
@@ -47,18 +49,18 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
               color: slide.content.textColor,
             }}
           >
-            {slide.content.question}
+            {question}
           </h2>
 
           <div className="mt-4 grid grid-cols-1 gap-4">
-            {slide.content.options.map((option: string, index: number) => (
+            {options.map((option: string, index: number) => (
               <div
                 key={index}
                 className={clsx(
                   "relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden"
                 )}
               >
-                {voted && (
+                {(voted || isHost) && (
                   <>
                     <div
                       className="absolute transition-all left-0 top-0 h-full bg-purple-500 z-[-1] w-0"
