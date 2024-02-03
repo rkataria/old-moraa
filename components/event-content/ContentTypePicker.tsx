@@ -15,6 +15,7 @@ export enum ContentType {
   VIDEO = "video",
   GOOGLE_SLIDES = "google-slides",
   REFLECTION = "reflection",
+  PDF_VIEWER = "pdf-viewer",
 }
 
 const contentTypes: IContentType[] = [
@@ -29,6 +30,12 @@ const contentTypes: IContentType[] = [
     icon: <IconBrandGoogleDrive />,
     description: "Empower presentations with seamless Google Slides embed",
     contentType: ContentType.GOOGLE_SLIDES,
+  },
+  {
+    name: "PDF Viewer",
+    icon: <IconBrandGoogleDrive />,
+    description: "Embed PDF in presentations",
+    contentType: ContentType.PDF_VIEWER,
   },
   {
     name: "Poll",

@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import dynamic from "next/dynamic"
 import {
   IconChevronDown,
   IconChevronUp,
@@ -14,6 +15,10 @@ import CoverEditor from "./CoverEditor"
 import PollEditor from "./PollEditor"
 import GoogleSlidesEditor from "./GoogleSlidesEditor"
 import ReflectionEditor from "./ReflectionEditor"
+// import { PDFViewer } from "./PDFViewer/PDFViewer"
+const PDFViewer = dynamic(() => import("./PDFViewer").then(mod => mod.PDFViewer), {
+  ssr: false,
+})
 
 interface SlideProps {
   slide: ISlide
@@ -85,6 +90,9 @@ export default function Slide({
         )}
         {slide.contentType === ContentType.REFLECTION && (
           <ReflectionEditor slide={slide} />
+        )}
+        {slide.contentType === ContentType.PDF_VIEWER && (
+          <PDFViewer slide={slide} />
         )}
       </div>
     </div>
