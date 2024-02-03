@@ -44,7 +44,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
     setTimeout(async () => {
       await refetch()
       onClose()
-    }, 1000)
+    }, 3000)
   }
 
   const handleEmailsInputChange = (e: any) => {
