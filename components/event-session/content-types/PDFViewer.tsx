@@ -45,6 +45,7 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
           className="rounded overflow-y-scroll shadow-lg"
+          loading={"Please wait! Loading the PDF."}
         >
           <Page
             loading={" "}

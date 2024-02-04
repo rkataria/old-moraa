@@ -13,7 +13,8 @@ import {
   uploadPDFFile,
 } from "@/services/pdf.service"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { Button, Input } from "@chakra-ui/react"
+import { Button, Input, Text } from "@chakra-ui/react"
+import Loading from "../common/Loading"
 
 interface PDFUploaderProps {
   slide: ISlide
@@ -36,6 +37,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
   ) as SlideManagerContextType
 
   const isLoading = slide.content?.pdfPath && !file
+
   useEffect(() => {
     if (!file && slide.content?.pdfPath) {
       downloadPDFFile(slide.content?.pdfPath).then((data) => {
@@ -83,7 +85,12 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
     <div className="w-full flex flex-col justify-center items-center px-8 bg-white">
       {!isEditMode || file ? (
         <div>
-          {isLoading ? null : (
+          {isLoading ? (
+            <div className="mt-12 flex justify-center items-center flex-col">
+              <Loading />
+              <div>Loading the PDF...</div>
+            </div>
+          ) : (
             <div>
               <Document
                 file={file}
@@ -130,15 +137,13 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
           )}
         </div>
       ) : (
-        <div className="h-96 flex justify-center items-center">
+        <div className="h-96 flex flex-col justify-center items-center">
+          <Text className="mb-4">Select the PDF file.</Text>
           <FilePicker
             hideClearButton
-            placeholder="Select PDF file"
+            placeholder="Select"
             onFileChange={(files) => {
               if (files?.[0]) uploadAndSetFile(files[0])
-            }}
-            buttonProps={{
-              children: "Upload PDF file",
             }}
           />
         </div>
