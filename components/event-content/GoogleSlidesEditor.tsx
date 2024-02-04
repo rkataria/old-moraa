@@ -5,7 +5,6 @@ import React, { useContext, useState } from "react"
 import ReactGoogleSlides from "react-google-slides"
 import { Button } from "../ui/button"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { useHotkeys } from "@/hooks/useHotkeys"
 import { Input } from "../ui/input"
 import { NextPrevButtons } from "../common/NextPrevButtons"
 
@@ -20,12 +19,6 @@ export default function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
-  useHotkeys("ArrowLeft", () => {
-    setPosition((pos) => (pos > 1 ? pos - 1 : pos))
-  })
-  useHotkeys("ArrowRight", () => {
-    setPosition((pos) => pos + 1)
-  })
 
   const saveGoogleSlidesLink = () => {
     updateSlide({
