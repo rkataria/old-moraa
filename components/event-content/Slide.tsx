@@ -15,8 +15,7 @@ import CoverEditor from "./CoverEditor"
 import PollEditor from "./PollEditor"
 import GoogleSlidesEditor from "./GoogleSlidesEditor"
 import ReflectionEditor from "./ReflectionEditor"
-// import { PDFViewer } from "./PDFViewer/PDFViewer"
-const PDFViewer = dynamic(() => import("./PDFViewer").then(mod => mod.PDFViewer), {
+const PDFUploader = dynamic(() => import("./PDFUploader").then(mod => mod.PDFUploader), {
   ssr: false,
 })
 
@@ -92,7 +91,7 @@ export default function Slide({
           <ReflectionEditor slide={slide} />
         )}
         {slide.contentType === ContentType.PDF_VIEWER && (
-          <PDFViewer slide={slide} />
+          <PDFUploader slide={slide} />
         )}
       </div>
     </div>

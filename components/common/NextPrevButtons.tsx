@@ -15,22 +15,24 @@ export function NextPrevButtons({
   prevDisabled,
 }: NextPrevButtonsProps) {
   return (
-    <div className="flex justify-center items-center mb-4 mt-2">
+    <div className="flex justify-center items-center m-2">
       <Button
-        variant='outline'
-        onClick={onPrevious}
+        variant="outline"
+        onClick={!prevDisabled ? onPrevious : undefined}
         disabled={prevDisabled}
         colorScheme="secondary"
         className="mx-2"
+        size="sm"
       >
         Prev
       </Button>
       <Button
-        variant='outline'
-        onClick={onNext}
+        variant="outline"
+        onClick={!nextDisabled ? onNext : undefined}
         disabled={nextDisabled}
         colorScheme="secondary"
         className="mx-2"
+        size="sm"
       >
         Next
       </Button>

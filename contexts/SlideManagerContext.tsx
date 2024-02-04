@@ -5,6 +5,7 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { useDebounce } from "@uidotdev/usehooks"
 import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEvent } from "@/hooks/useEvent"
+import { deletePDFFile } from "@/services/pdf.service"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -92,7 +93,10 @@ export const SlideManagerProvider = ({
 
   const deleteSlide = (id: string) => {
     const index = slides.findIndex((slide) => slide.id === id)
-
+    const slide = slides.find((slide) => slide.id === id)
+    if (slide?.content?.pdfPath) {
+      deletePDFFile(slide?.content?.pdfPath)
+    }
     setSlides((s) => s.filter((slide) => slide.id !== id))
 
     if (currentSlide?.id === id) {

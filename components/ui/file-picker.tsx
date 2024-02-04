@@ -20,7 +20,7 @@ export const FilePicker = (props: FilePickerProps) => {
 
   const handleOnFileChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = []
-    if(ev.target.files) {
+    if (ev.target.files) {
       for (const file of ev.target.files) {
         fileList.push(file)
       }
@@ -67,7 +67,8 @@ export const FilePicker = (props: FilePickerProps) => {
         data-testid={inputProps?.placeholder ?? placeholder}
       />
       <Input
-        placeholder={placeholder}
+        as={Button}
+        variant={"outlined"}
         cursor="pointer"
         {...{
           ...inputProps,
@@ -75,7 +76,9 @@ export const FilePicker = (props: FilePickerProps) => {
           isReadOnly: true,
           onClick: handleOnInputClick,
         }}
-      />
+      >
+        {placeholder}
+      </Input>
       {!hideClearButton && (
         <ClearButton
           clearButtonLabel={clearButtonLabel ?? "Clear"}
