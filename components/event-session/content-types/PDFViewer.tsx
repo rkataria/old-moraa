@@ -29,7 +29,7 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
         setFile(getFileObjectFromBlob(slide.content?.pdfPath, data.data))
       }
     })
-    setSelectedPage(slide.content?.defaultPage || null)
+    setSelectedPage(slide.content?.defaultPage || 1)
   }, [slide.content?.pdfPath])
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = ({
