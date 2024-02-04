@@ -1,5 +1,6 @@
 "use client"
 
+import { MorraLogo } from "@/components/common/MorraLogo"
 import { Card, CardHeader, CardBody } from "@chakra-ui/react"
 import { Auth } from "@saas-ui/auth"
 
@@ -8,7 +9,7 @@ export default function Login() {
     <div className="h-[100vh] flex items-center justify-center">
       <Card flex="1" maxW="400px">
         <CardHeader display="flex" alignItems="center" justifyContent="center">
-          {/* <SaasUILogo width="100px" /> */}
+          <MorraLogo color="primary" />
         </CardHeader>
         <CardBody>
           <Auth
