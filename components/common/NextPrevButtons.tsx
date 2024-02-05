@@ -16,11 +16,12 @@ export function NextPrevButtons({
   prevDisabled,
 }: NextPrevButtonsProps) {
   useHotkeys("ArrowLeft", () => {
-    onPrevious()
+    if (!prevDisabled) onPrevious()
   })
   useHotkeys("ArrowRight", () => {
-    onNext()
+    if (!nextDisabled) onNext()
   })
+
   return (
     <div className="flex justify-center items-center m-2">
       <Button

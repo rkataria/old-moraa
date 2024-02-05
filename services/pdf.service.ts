@@ -3,14 +3,23 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 const supabase = createClientComponentClient()
 
 export const uploadPDFFile = (fileName: string, file: File) => {
-  return supabase.storage.from("pdf-uploads").upload(fileName, file, {
-    cacheControl: "3600",
-    upsert: false,
-  })
+  return supabase.storage
+    .from("pdf-uploads")
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false,
+    })
+    .then((res) => {
+      if (res.error) throw res.error
+      return res
+    })
 }
 
 export const downloadPDFFile = (fileName: string) => {
-  return supabase.storage.from("pdf-uploads").download(fileName)
+  return supabase.storage.from("pdf-uploads").download(fileName).then((res) => {
+    if (res.error) throw res.error
+    return res
+  })
 }
 
 export const deletePDFFile = (fileName: string) => {

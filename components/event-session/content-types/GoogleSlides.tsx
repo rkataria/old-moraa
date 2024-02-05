@@ -1,8 +1,8 @@
 "use client"
 
+import { NextPrevButtons } from "@/components/common/NextPrevButtons"
 import { Button } from "@/components/ui/button"
 import EventSessionContext from "@/contexts/EventSessionContext"
-import { useHotkeys } from "@/hooks/useHotkeys"
 import { EventSessionContextType } from "@/types/event-session.type"
 import { ISlide } from "@/types/slide.type"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
@@ -19,15 +19,9 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
   const {
     content: { googleSlideURL, startPosition },
   } = slide
-  const [position, setPosition] = useState(startPosition as number || 1)
+  const [position, setPosition] = useState((startPosition as number) || 1)
   const { meeting } = useDyteMeeting()
   const { isHost } = useContext(EventSessionContext) as EventSessionContextType
-  useHotkeys("ArrowRight", () => {
-    setPosition((pos) => pos + 1)
-  })
-  useHotkeys("ArrowLeft", () => {
-    setPosition((pos) => (pos > 1 ? pos - 1 : pos))
-  })
 
   useEffect(() => {
     const handleBroadcastedMessage = ({
@@ -69,25 +63,11 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
         />
       </div>
       {isHost && (
-        <div className="flex mb-4 mt-2">
-          <Button
-            onClick={() =>
-              changeSlidePosition(position > 1 ? position - 1 : position)
-            }
-            variant="secondary"
-            disabled={position === 1}
-            className="mx-2"
-          >
-            Prev
-          </Button>
-          <Button
-            onClick={() => changeSlidePosition(position + 1)}
-            variant="secondary"
-            className="mx-2"
-          >
-            Next
-          </Button>
-        </div>
+        <NextPrevButtons
+          onPrevious={() => setPosition((pos) => (pos > 1 ? pos - 1 : pos))}
+          onNext={() => setPosition((pos) => pos + 1)}
+          prevDisabled={position === 1}
+        />
       )}
     </div>
   )

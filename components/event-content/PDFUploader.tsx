@@ -15,6 +15,9 @@ import {
 import SlideManagerContext from "@/contexts/SlideManagerContext"
 import { Button, Input, Text } from "@chakra-ui/react"
 import Loading from "../common/Loading"
+import toast from "react-hot-toast"
+import { useMutation } from "@tanstack/react-query"
+import { getFileObjectFromBlob } from "@/utils/utils"
 
 interface PDFUploaderProps {
   slide: ISlide
@@ -22,44 +25,64 @@ interface PDFUploaderProps {
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-const getFileObjectFromBlob = (fileName: string, blob: Blob) => {
-  return new File([blob], fileName, { type: "application/pdf" })
-}
-
 export const PDFUploader = ({ slide }: PDFUploaderProps) => {
   const isEditMode = !slide.content?.pdfPath
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<null | number>(null)
   const [defaultPage, setDefaultPage] = useState<null | number>(null)
   const [selectedPage, setSelectedPage] = useState(1)
+  const uploadPDFMutation = useMutation({
+    mutationFn: (file: File) => {
+      return uploadPDFFile(slide.id + `_pdf.pdf`, file)
+    },
+    onSuccess: () => toast.success("PDF uploaded successfully."),
+    onError: () =>
+      toast.error(
+        "Failed to upload PDF, please try re-uploading again by deleting the slide."
+      ),
+    onSettled: () => toast.remove(slide.id),
+    onMutate: () => {
+      toast.loading("Uploading PDF...", {
+        id: slide.id,
+      })
+    },
+  })
+
+  const downloadPDFMutation = useMutation({
+    mutationFn: () =>
+      downloadPDFFile(slide.content?.pdfPath).then((data) =>
+        getFileObjectFromBlob(
+          slide.content?.pdfPath,
+          data.data,
+          "application/pdf"
+        )
+      ),
+    onSuccess: (file) => setFile(file),
+  })
+
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
-  const isLoading = slide.content?.pdfPath && !file
-
   useEffect(() => {
     if (!file && slide.content?.pdfPath) {
-      downloadPDFFile(slide.content?.pdfPath).then((data) => {
-        if (data.data) {
-          setFile(getFileObjectFromBlob(slide.content?.pdfPath, data.data))
-        }
-      })
+      downloadPDFMutation.mutate()
     }
     setDefaultPage(slide.content?.defaultPage || null)
+    setSelectedPage(slide.content?.defaultPage || null)
   }, [slide.content?.pdfPath])
 
   const uploadAndSetFile = async (file: File) => {
     setFile(file)
     if (slide.content?.pdfPath) await deletePDFFile(slide.content?.pdfPath)
-    const { data, error } = await uploadPDFFile(slide.id + `_pdf.pdf`, file)
-    if (error) {
-      return console.error(error)
-    }
-    updateSlide({
-      ...slide,
-      content: {
-        pdfPath: data?.path,
+    uploadPDFMutation.mutate(file, {
+      onSuccess: (res) => {
+        updateSlide({
+          ...slide,
+          content: {
+            pdfPath: res.data?.path,
+          },
+        })
       },
     })
   }
@@ -85,7 +108,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
     <div className="w-full flex flex-col justify-center items-center px-8 bg-white">
       {!isEditMode || file ? (
         <div>
-          {isLoading ? (
+          {downloadPDFMutation.isPending && !file ? (
             <div className="mt-12 flex justify-center items-center flex-col">
               <Loading />
               <div>Loading the PDF...</div>
