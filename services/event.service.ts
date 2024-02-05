@@ -5,7 +5,7 @@ const supabase = createClientComponentClient()
 
 export type GetEventParams = {
   eventId: string
-  fetchEventContent?: boolean
+  fetchMeetingSlides?: boolean
 }
 
 const getEvents = async () => {
@@ -25,13 +25,16 @@ const getEvents = async () => {
 
 const getEvent = async ({
   eventId,
-  fetchEventContent = false,
+  fetchMeetingSlides = false,
 }: GetEventParams) => {
-  const { data: event, error } = await supabase
-    .from("event")
-    .select("*")
-    .eq("id", eventId)
+  const { data: meeting, error } = await supabase
+    .from("meeting")
+    .select("id, event:event_id(*)")
+    .eq("event_id", eventId)
+    .single()
 
+  console.log("meeting: ", meeting)
+  console.log("error: ", error)
   if (error) {
     return {
       event: null,
@@ -40,26 +43,28 @@ const getEvent = async ({
     }
   }
 
-  let eventContent
+  let slides
 
-  if (fetchEventContent) {
+  if (fetchMeetingSlides) {
     const { data } = await supabase
-      .from("event_content")
-      .select("*")
-      .eq("event_id", eventId)
-
-    eventContent = data
+      .from("slide")
+      .select("*, meeting:meeting_id(*)")
+      .eq("meeting_id", meeting.id)
+    slides = data
   }
 
   return {
-    event: event[0],
-    eventContent: eventContent?.[0],
+    event: meeting.event[0],
+    meeting: meeting,
+    meetingSlides: { slides: slides },
   }
 }
 
 const createEvent = async (event: ICreateEventPayload) => {
+  console.log(event)
   const { data, error } = await supabase.from("event").insert([event]).select()
 
+  console.log(data)
   return {
     data: data?.[0],
     error,

@@ -23,6 +23,7 @@ function CoverEditor({ slide }: CoverEditorProps) {
   ) as SlideManagerContextType
 
   useEffect(() => {
+    console.log("coverEditor: ", slide)
     updateSlide({
       ...slide,
       content: {

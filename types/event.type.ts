@@ -9,7 +9,7 @@ export interface ICreateEventPayload {
   owner_id: FormDataEntryValue | null
 }
 
-export interface IEventContentPayload {
+export interface IMeetingSlidesPayload {
   name?: string
   description?: string
   slides?: ISlide[]

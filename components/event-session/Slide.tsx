@@ -30,13 +30,13 @@ function Slide() {
 
   if (!currentSlide) return null
 
-  if (currentSlide.contentType === ContentType.COVER) {
+  if (currentSlide.type === ContentType.COVER) {
     return <Cover key={currentSlide.id} slide={currentSlide} />
   }
 
   if (currentSlideLoading) return <SlideLoading />
 
-  if (currentSlide.contentType === ContentType.POLL) {
+  if (currentSlide.type === ContentType.POLL) {
     return (
       <Poll
         key={currentSlide.id}
@@ -49,10 +49,10 @@ function Slide() {
     )
   }
 
-  if (currentSlide.contentType === ContentType.GOOGLE_SLIDES) {
+  if (currentSlide.type === ContentType.GOOGLE_SLIDES) {
     return <GoogleSlides key={currentSlide.id} slide={currentSlide} />
   }
-  if (currentSlide.contentType === ContentType.REFLECTION) {
+  if (currentSlide.type === ContentType.REFLECTION) {
     return (
       <Reflection
         key={currentSlide.id}

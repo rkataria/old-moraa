@@ -5,6 +5,7 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { useDebounce } from "@uidotdev/usehooks"
 import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEvent } from "@/hooks/useEvent"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -16,9 +17,9 @@ export const SlideManagerProvider = ({
   children,
 }: SlideManagerProviderProps) => {
   const { eventId } = useParams()
-  const { event, eventContent, updateEventContent } = useEvent({
+  const { event, meeting, meetingSlides } = useEvent({
     id: eventId as string,
-    fetchEventContent: true,
+    fetchMeetingSlides: true,
   })
   const [slides, setSlides] = useState<ISlide[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
@@ -26,45 +27,46 @@ export const SlideManagerProvider = ({
   const [syncing, setSyncing] = useState<boolean>(false)
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const debouncedSlides = useDebounce(slides, 500)
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
-    if (!eventContent) return
+    if (!meetingSlides) return
 
-    const slides = eventContent.slides ?? [
+    const slides = meetingSlides.slides ?? [
       getDefaultCoverSlide({
         title: event.name,
         description: event.description,
       }),
     ]
-
+    console.log("slides:: ", slides)
     setSlides(slides)
     setLoading(false)
     setCurrentSlide(slides?.[0])
-  }, [eventContent])
+  }, [meetingSlides])
 
-  useEffect(() => {
-    if (debouncedSlides.length === 0) return
+  // useEffect(() => {
+  //   if (debouncedSlides.length === 0) return
 
-    const syncSlides = async () => {
-      setSyncing(true)
+  //   const syncSlides = async () => {
+  //     setSyncing(true)
 
-      const { error } = await updateEventContent({
-        eventContentId: eventContent.id,
-        payload: {
-          slides: debouncedSlides,
-        },
-      })
+  //     const { error } = await updateMeetingSlides({
+  //       meetingSlidesId: meetingSlides.id,
+  //       payload: {
+  //         slides: debouncedSlides,
+  //       },
+  //     })
 
-      setSyncing(false)
+  //     setSyncing(false)
 
-      if (error) {
-        console.error(error, eventId)
-        return
-      }
-    }
+  //     if (error) {
+  //       console.error(error, eventId)
+  //       return
+  //     }
+  //   }
 
-    syncSlides()
-  }, [debouncedSlides])
+  //   syncSlides()
+  // }, [debouncedSlides])
 
   useEffect(() => {
     if (!currentSlide) return
@@ -82,15 +84,47 @@ export const SlideManagerProvider = ({
     })
   }, [currentSlide])
 
-  const addNewSlide = (slide: ISlide) => {
-    setSlides((s) => [...s, slide])
+  const addNewSlide = async (slide: ISlide) => {
+    const newSlide = {
+      name: slide.name,
+      config: slide.config,
+      content: slide.content,
+      type: slide.type,
+      meeting_id: meeting?.id,
+    }
+    const { data, error } = await supabase
+      .from("slide")
+      .insert([newSlide])
+      .select("*")
+      .single()
+    if (error) {
+      console.error("error while creating slide: ", error)
+    }
+    setSlides((s) => [...s, { ...newSlide, id: data?.id }])
+    setCurrentSlide({ ...newSlide, id: data.id })
   }
 
-  const updateSlide = (slide: ISlide) => {
-    setSlides((s) => s.map((s) => (s.id === slide.id ? slide : s)))
+  const updateSlide = async (slide: ISlide) => {
+    console.log("update slide: ", slide)
+    slide.meeting_id = slide.meeting_id ?? meeting?.id
+    const { data, error } = await supabase
+      .from("slide")
+      .upsert({ id: slide.id, content: slide.content, config: slide.config })
+    console.log("update data: ", data)
+    setSlides((s) => {
+      if (s.findIndex((i) => i.id === slide.id) >= 0) {
+        return s.map((s) => (s.id === slide.id ? slide : s))
+      }
+      return [...s, slide]
+    })
+    console.log("slides from update: ", slides)
   }
 
-  const deleteSlide = (id: string) => {
+  const deleteSlide = async (id: string) => {
+    const { error } = await supabase.from("slide").delete().eq("id", id)
+    if (error) {
+      console.error("failed to delete the slide: ", error)
+    }
     const index = slides.findIndex((slide) => slide.id === id)
 
     setSlides((s) => s.filter((slide) => slide.id !== id))

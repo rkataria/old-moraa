@@ -39,12 +39,11 @@ export default function SlideManager({}: any) {
         textColor: "#000",
       },
       content: getDefaultContent(contentType),
-      contentType: contentType,
+      type: contentType,
     }
 
     addNewSlide(newSlide)
     setOpenContentTypePicker(false)
-    setCurrentSlide(newSlide)
   }
 
   if (loading)

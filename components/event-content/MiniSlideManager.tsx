@@ -1,5 +1,8 @@
 import { ISlide } from "@/types/slide.type"
-import { IconLayoutSidebarLeftCollapseFilled, IconLayoutSidebarRightCollapseFilled } from "@tabler/icons-react"
+import {
+  IconLayoutSidebarLeftCollapseFilled,
+  IconLayoutSidebarRightCollapseFilled,
+} from "@tabler/icons-react"
 import clsx from "clsx"
 import React, { useEffect, useState } from "react"
 
@@ -55,7 +58,7 @@ function MiniSlideManager({
                 backgroundColor: slide.config?.backgroundColor || "#166534",
               }}
             >
-              {slide.contentType}
+              {slide.type}
             </div>
           </div>
         ))}

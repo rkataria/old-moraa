@@ -21,11 +21,11 @@ export const EventSessionProvider = ({
   const { eventId } = useParams()
   const {
     event,
-    eventContent,
-    refetch: refetchEventContent,
+    meetingSlides,
+    refetch: refetchMeetingSlides,
   } = useEvent({
     id: eventId as string,
-    fetchEventContent: true,
+    fetchMeetingSlides: true,
   })
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>("")
@@ -107,11 +107,11 @@ export const EventSessionProvider = ({
   }, [event?.meeting_id])
 
   useEffect(() => {
-    if (!eventContent?.slides) return
+    if (!meetingSlides?.slides) return
 
-    setSlides(eventContent.slides || [])
-    setCurrentSlide(eventContent.slides[0] ?? null)
-  }, [eventContent])
+    setSlides(meetingSlides.slides || [])
+    setCurrentSlide(meetingSlides.slides[0] ?? null)
+  }, [meetingSlides])
 
   useEffect(() => {
     if (!currentSlide) return
@@ -320,7 +320,7 @@ export const EventSessionProvider = ({
   }
 
   const syncSlides = async () => {
-    await refetchEventContent()
+    await refetchMeetingSlides()
   }
 
   return (

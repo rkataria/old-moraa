@@ -74,16 +74,14 @@ export default function Slide({
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto transition-all"
       >
-        {slide.contentType === ContentType.POLL && (
+        {slide.type === ContentType.POLL && (
           <PollEditor slide={slide} openSettings={openSettings} />
         )}
-        {slide.contentType === ContentType.COVER && (
-          <CoverEditor slide={slide} />
-        )}
-        {slide.contentType === ContentType.GOOGLE_SLIDES && (
+        {slide.type === ContentType.COVER && <CoverEditor slide={slide} />}
+        {slide.type === ContentType.GOOGLE_SLIDES && (
           <GoogleSlidesEditor slide={slide} />
         )}
-        {slide.contentType === ContentType.REFLECTION && (
+        {slide.type === ContentType.REFLECTION && (
           <ReflectionEditor slide={slide} />
         )}
       </div>
