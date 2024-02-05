@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { Document, Page, pdfjs } from "react-pdf"
 import { ISlide } from "@/types/slide.type"
 import { OnDocumentLoadSuccess } from "react-pdf/dist/cjs/shared/types"
@@ -12,6 +12,7 @@ import EventSessionContext from "@/contexts/EventSessionContext"
 import { useMutation } from "@tanstack/react-query"
 import Loading from "@/components/common/Loading"
 import { getFileObjectFromBlob } from "@/utils/utils"
+import { useDyteMeeting } from "@dytesdk/react-web-core"
 
 interface PDFViewerProps {
   slide: ISlide
@@ -19,11 +20,18 @@ interface PDFViewerProps {
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
+const PositionChangeEvent = "pdf-position-changed"
+
 export const PDFViewer = ({ slide }: PDFViewerProps) => {
   const [file, setFile] = useState<File | undefined>()
+  const { isHost, metaData } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
   const [totalPages, setTotalPages] = useState<null | number>(null)
-  const [selectedPage, setSelectedPage] = useState(1)
-  const { isHost } = useContext(EventSessionContext) as EventSessionContextType
+  const [selectedPage, setSelectedPage] = useState<number>(
+    metaData.current.pdfLastPage || slide.content?.defaultPage
+  )
+  const { meeting } = useDyteMeeting()
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
       downloadPDFFile(slide.content?.pdfPath).then((data) =>
@@ -38,8 +46,40 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
 
   useEffect(() => {
     downloadPDFMutation.mutate()
-    setSelectedPage(slide.content?.defaultPage || 1)
   }, [slide.content?.pdfPath])
+
+  useEffect(() => {
+    // Do not listen for page change event is the current user is a host.
+    // Because the host position is directly changed by NextPrevious Buttons.
+    if (isHost) return
+    const handleBroadcastedMessage = ({
+      type,
+      payload,
+    }: {
+      type: string
+      payload: any
+    }) => {
+      switch (type) {
+        case PositionChangeEvent: {
+          setSelectedPage(payload.position || 1)
+          metaData.current.pdfLastPage = payload.position || 1
+          break
+        }
+        default:
+          break
+      }
+    }
+    meeting.participants.addListener(
+      "broadcastedMessage",
+      handleBroadcastedMessage
+    )
+  }, [])
+
+  const broadcastPagePosition = useCallback((newPosition: number) => {
+    meeting.participants.broadcastMessage(PositionChangeEvent, {
+      position: newPosition,
+    })
+  }, [])
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = ({
     numPages: nextNumPages,
@@ -76,9 +116,21 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
             <div />
             <NextPrevButtons
               onPrevious={() =>
-                setSelectedPage((pos) => (pos > 1 ? pos - 1 : pos))
+                setSelectedPage((pos) => {
+                  const newPos = pos > 1 ? pos - 1 : pos
+                  broadcastPagePosition(newPos)
+                  metaData.current.pdfLastPage = newPos
+                  return newPos
+                })
               }
-              onNext={() => setSelectedPage((pos) => pos + 1)}
+              onNext={() =>
+                setSelectedPage((pos) => {
+                  const newPos = pos + 1
+                  broadcastPagePosition(newPos)
+                  metaData.current.pdfLastPage = newPos
+                  return newPos
+                })
+              }
               prevDisabled={selectedPage === 1}
               nextDisabled={selectedPage === totalPages}
             />
