@@ -2,9 +2,14 @@
 
 import { MorraLogo } from "@/components/common/MorraLogo"
 import { Card, CardHeader, CardBody } from "@chakra-ui/react"
-import { Auth } from "@saas-ui/auth"
+import { Auth } from "@supabase/auth-ui-react"
+import { ThemeSupa } from "@supabase/auth-ui-shared"
+import { uiColors } from "@/styles/ui-colors"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export default function Login() {
+  const supabase = createClientComponentClient()
+
   return (
     <div className="h-[100vh] flex items-center justify-center">
       <Card flex="1" maxW="400px">
@@ -13,13 +18,19 @@ export default function Login() {
         </CardHeader>
         <CardBody>
           <Auth
-            type="password"
-            providers={{
-              google: {
-                name: "Google",
+            supabaseClient={supabase}
+            redirectTo="/events"
+            providers={["google"]}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: uiColors.primary,
+                  },
+                },
               },
             }}
-            schema={"brand"}
           />
         </CardBody>
       </Card>
