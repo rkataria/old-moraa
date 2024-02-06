@@ -1,9 +1,9 @@
 import React, { useContext } from "react"
 import {
-  IconArrowDown,
-  IconArrowLeft,
-  IconArrowRight,
-  IconArrowUp,
+  IconCaretDownFilled,
+  IconCaretUpFilled,
+  IconCaretLeftFilled,
+  IconCaretRightFilled
 } from "@tabler/icons-react"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
@@ -64,7 +64,7 @@ function SlideViewControls() {
               previousSlide()
             }}
           >
-            <IconArrowUp size={16} />
+            <IconCaretUpFilled size={24} />
           </IconButton>
         </div>
         {showRightLeftArrow ? (
@@ -76,7 +76,7 @@ function SlideViewControls() {
                 SlideEvents[SlideEventManagerType.OnLeft].dispatchEvent()
               }}
             >
-              <IconArrowLeft size={16} />
+              <IconCaretLeftFilled size={24} />
             </IconButton>
             <IconButton
               aria-label="button"
@@ -85,7 +85,7 @@ function SlideViewControls() {
                 SlideEvents[SlideEventManagerType.OnRight].dispatchEvent()
               }}
             >
-              <IconArrowRight size={16} />
+              <IconCaretRightFilled size={24} />
             </IconButton>
           </div>
         ) : null}
@@ -98,7 +98,7 @@ function SlideViewControls() {
               nextSlide()
             }}
           >
-            <IconArrowDown size={16} />
+            <IconCaretDownFilled size={24} />
           </IconButton>
         </div>
       </div>
