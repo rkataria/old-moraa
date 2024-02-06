@@ -6,9 +6,20 @@ import { Auth } from "@supabase/auth-ui-react"
 import { ThemeSupa } from "@supabase/auth-ui-shared"
 import { uiColors } from "@/styles/ui-colors"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { useAuth } from "@/hooks/useAuth"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function Login() {
   const supabase = createClientComponentClient()
+  const user = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (user.currentUser) {
+      router.replace("/events")
+    }
+  }, [user.currentUser])
 
   return (
     <div className="h-[100vh] flex items-center justify-center">
@@ -19,7 +30,7 @@ export default function Login() {
         <CardBody>
           <Auth
             supabaseClient={supabase}
-            redirectTo="/events"
+            redirectTo={window.location.origin + "/events"}
             providers={["google"]}
             appearance={{
               theme: ThemeSupa,
