@@ -17,12 +17,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
         storageKey="elearning"
       >
         <ChakraProvider>
-          <UserContextProvider>
-            <UseQueryProvider>
+          <UseQueryProvider>
+            <UserContextProvider>
               {children}
               <ModalProvider />
-            </UseQueryProvider>
-          </UserContextProvider>
+            </UserContextProvider>
+          </UseQueryProvider>
         </ChakraProvider>
       </ThemeProvider>
     </>

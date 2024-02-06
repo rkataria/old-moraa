@@ -1,6 +1,7 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect } from "react"
 
 const UserContext = createContext<{
   currentUser: any
@@ -9,37 +10,41 @@ const UserContext = createContext<{
 }>({
   currentUser: undefined,
   isLoading: true,
-  logout: () => {}
+  logout: () => {},
 })
 
 export const useUserContext = () => useContext(UserContext)
 
-export const UserContextProvider = ({ children }: React.PropsWithChildren<{}>) => {
+export const UserContextProvider = ({
+  children,
+}: React.PropsWithChildren<{}>) => {
   const router = useRouter()
   const supabase = createClientComponentClient()
-  const [currentUser, setCurrentUser] = useState<any>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const userQuery = useQuery({
+    queryKey: ["CURRENT_USER"],
+    queryFn: () => supabase.auth.getUser(),
+    select: (data) => data.data.user,
+  })
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      setCurrentUser(user)
-      setIsLoading(false)
-    }
-
-    fetchUser()
-    supabase.auth.onAuthStateChange(() => fetchUser())
+    supabase.auth.onAuthStateChange(() => {
+      userQuery.refetch()
+    })
   }, [])
 
   const logout = async () => {
     await supabase.auth.signOut()
     router.push("/")
   }
+
   return (
-    <UserContext.Provider value={{ currentUser, isLoading, logout }}>
+    <UserContext.Provider
+      value={{
+        currentUser: userQuery.data,
+        isLoading: userQuery.isLoading,
+        logout,
+      }}
+    >
       {children}
     </UserContext.Provider>
   )

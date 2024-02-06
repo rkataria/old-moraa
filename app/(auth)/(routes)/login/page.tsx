@@ -9,11 +9,13 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useAuth } from "@/hooks/useAuth"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useIsClient } from "@uidotdev/usehooks"
 
 export default function Login() {
   const supabase = createClientComponentClient()
   const user = useAuth()
   const router = useRouter()
+  const isClient = useIsClient()
 
   useEffect(() => {
     if (user.currentUser) {
@@ -30,7 +32,7 @@ export default function Login() {
         <CardBody>
           <Auth
             supabaseClient={supabase}
-            redirectTo={window.location.origin + "/events"}
+            redirectTo={isClient ? window.location.origin : '' + "/events"}
             providers={["google"]}
             appearance={{
               theme: ThemeSupa,
