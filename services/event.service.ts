@@ -54,7 +54,7 @@ const getEvent = async ({
   }
 
   return {
-    event: meeting.event[0],
+    event: meeting.event,
     meeting: meeting,
     meetingSlides: { slides: slides },
   }

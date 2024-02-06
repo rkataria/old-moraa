@@ -15,6 +15,8 @@ import { useEvent } from "@/hooks/useEvent"
 import { useParams } from "next/navigation"
 import Loading from "../common/Loading"
 import { IconSettingsCog, IconX } from "@tabler/icons-react"
+import EventSessionContext from "@/contexts/EventSessionContext"
+import { EventSessionContextType } from "@/types/event-session.type"
 
 const MeetingSetupScreen = () => {
   const { eventId } = useParams()
@@ -25,6 +27,9 @@ const MeetingSetupScreen = () => {
   const [name, setName] = useState<string>("")
   const [isHost, setIsHost] = useState<boolean>(false)
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false)
+  const { joinMeeting } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
 
   const handleSettingsClick = () => {
     setSettingsModalOpen(true)
@@ -54,8 +59,9 @@ const MeetingSetupScreen = () => {
     }
   }, [meeting])
 
-  const joinMeeting = () => {
+  const handleJoinMeeting = async () => {
     meeting?.self.setName(name)
+    await joinMeeting?.()
     meeting.join()
   }
 
@@ -132,7 +138,7 @@ const MeetingSetupScreen = () => {
             />
             <button
               className="mt-2 outline-none p-2 rounded font-normal border-2 border-purple-500 bg-purple-500 text-white"
-              onClick={joinMeeting}
+              onClick={handleJoinMeeting}
             >
               Join Meeting
             </button>

@@ -21,6 +21,7 @@ export const EventSessionProvider = ({
   const { eventId } = useParams()
   const {
     event,
+    meeting,
     meetingSlides,
     refetch: refetchMeetingSlides,
   } = useEvent({
@@ -39,11 +40,14 @@ export const EventSessionProvider = ({
     any[] | null
   >(null)
   const [currentUser, setCurrentUser] = useState<any>(null)
-  const { eventSession, upsertEventSession } = useEventSession({
-    eventId: eventId as string,
-  })
+  const [enrollment, setEnrollment] = useState<any>(null)
+  // const { eventSession, upsertEventSession } = useEventSession({
+  //   eventId: eventId as string,
+  // })
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
   const [editing, setEditing] = useState<boolean>(false)
+  const [activeSession, setActiveSession] = useState<any>(null)
+  const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
 
   useEffect(() => {
@@ -56,27 +60,35 @@ export const EventSessionProvider = ({
     fetchCurrentUser()
   }, [])
 
-  useEffect(() => {
-    if (!eventSession) return
+  // useEffect(() => {
+  //   if (!eventSession) return
 
-    setCurrentSlide(eventSession.currentSlide || slides[0])
-    setPresentationStatus(
-      eventSession.presentationStatus || PresentationStatuses.STOPPED
-    )
-  }, [eventSession])
+  //   setCurrentSlide(eventSession.currentSlide || slides[0])
+  //   setPresentationStatus(
+  //     eventSession.presentationStatus || PresentationStatuses.STOPPED
+  //   )
+  // }, [eventSession])
 
   useEffect(() => {
     if (!eventId) return
-
-    upsertEventSession({
-      eventId: eventId as string,
-      payload: {
-        data: {
-          currentSlide,
-          presentationStatus,
-        },
-      },
-    })
+    // TODO: WRITE SLIDE_ID TO SESSION TABLE
+    // TODO: write presentation status in session table
+    const updateSession = async () => {
+      const { data, error } = await supabase.from("session").upsert({
+        id: activeSession.id,
+        data: { currentSlideId: currentSlide?.id, presentationStatus },
+      })
+    }
+    updateSession()
+    // upsertEventSession({
+    //   eventId: eventId as string,
+    //   payload: {
+    //     data: {
+    //       currentSlide,
+    //       presentationStatus,
+    //     },
+    //   },
+    // })
   }, [currentSlide, presentationStatus, eventId])
 
   useEffect(() => {
@@ -89,7 +101,6 @@ export const EventSessionProvider = ({
           .eq("event_id", eventId)
           .eq("user_id", currentUser.data.session?.user.id)
 
-        console.log("data", data, currentUser.data.session?.user.id)
         if (error) {
           console.error(error)
           setError(error.message)
@@ -97,14 +108,30 @@ export const EventSessionProvider = ({
         }
         setMeetingToken(data[0].meeting_token)
         setIsHost(data[0]?.event_role === "Host")
+        setEnrollment(data[0])
         setLoading(false)
       } catch (error: any) {
         console.error(error)
         setError(error.message)
       }
     }
+    const getActiveSession = async () => {
+      const { data, error } = await supabase
+        .from("session")
+        .select("*")
+        .eq("meeting_id", meeting?.id)
+        .eq("status", "ACTIVE")
+        .single()
+      if (error) {
+        console.error(error)
+        setError(error.message)
+        return
+      }
+      setActiveSession(data)
+    }
     getEnrollment()
-  }, [event?.meeting_id])
+    getActiveSession()
+  }, [meeting?.id])
 
   useEffect(() => {
     if (!meetingSlides?.slides) return
@@ -221,11 +248,10 @@ export const EventSessionProvider = ({
           response: { selected_option: option },
           slide_id: slide.id,
           event_id: event.id,
-          profile_id: currentUser.data.session?.user.id,
+          participant_id: participant.id,
         })
         .eq("slide_id", slide.id)
-        .eq("event_id", event.id)
-        .eq("profile_id", currentUser.data.session?.user.id)
+        .eq("participant_id", participant.id)
         .select()
 
       console.log("data", data, currentUser.data.session?.user.id)
@@ -323,6 +349,50 @@ export const EventSessionProvider = ({
     await refetchMeetingSlides()
   }
 
+  const addParticipant = async () => {
+    console.log("active session: ", activeSession)
+    console.log("enrollment: ", enrollment)
+    const { data: participant, error: createParticipantError } = await supabase
+      .from("participant")
+      .insert([{ session_id: activeSession.id, enrollment_id: enrollment.id }])
+      .select()
+      .single()
+
+    if (createParticipantError) {
+      console.error("failed to create participant:", createParticipantError)
+      return
+    }
+    setParticipant(participant)
+  }
+
+  const joinMeeting = async () => {
+    // create a new session if host joins and expire others
+    if (isHost) {
+      // expire other sessions
+      const { data, error } = await supabase
+        .from("session")
+        .update({ status: "EXPIRED" })
+        .eq("meeting_id", meeting?.id)
+
+      if (error) {
+        console.error("failed to expire sessions, error: ", error)
+      }
+
+      // create new session in active state
+      const { data: newSession, error: createSessionError } = await supabase
+        .from("session")
+        .insert([{ meeting_id: meeting?.id, status: "ACTIVE" }])
+        .select()
+        .single()
+      if (createSessionError) {
+        console.error("failed to create session, error: ", createSessionError)
+        return
+      }
+      setActiveSession(newSession)
+    }
+    await addParticipant()
+  }
+
   return (
     <EventSessionContext.Provider
       value={{
@@ -352,6 +422,7 @@ export const EventSessionProvider = ({
         votePoll,
         addReflection,
         updateReflection,
+        joinMeeting,
       }}
     >
       {children}

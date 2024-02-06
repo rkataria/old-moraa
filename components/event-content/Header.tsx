@@ -19,6 +19,7 @@ const styles = {
 }
 
 function Header({ event }: { event: any }) {
+  console.log("header event: ", event)
   return (
     <div className="fixed left-0 top-0 w-full h-26 z-50 p-2 bg-white">
       <div className="flex justify-between items-center h-12 w-full">

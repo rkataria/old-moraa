@@ -105,19 +105,17 @@ export const SlideManagerProvider = ({
   }
 
   const updateSlide = async (slide: ISlide) => {
-    console.log("update slide: ", slide)
     slide.meeting_id = slide.meeting_id ?? meeting?.id
     const { data, error } = await supabase
       .from("slide")
       .upsert({ id: slide.id, content: slide.content, config: slide.config })
-    console.log("update data: ", data)
+
     setSlides((s) => {
       if (s.findIndex((i) => i.id === slide.id) >= 0) {
         return s.map((s) => (s.id === slide.id ? slide : s))
       }
       return [...s, slide]
     })
-    console.log("slides from update: ", slides)
   }
 
   const deleteSlide = async (id: string) => {
