@@ -5,7 +5,6 @@ import {
   PresentationStatuses,
 } from "@/types/event-session.type"
 import { ISlide } from "@/types/slide.type"
-import { useEventSession } from "@/hooks/useEventSession"
 import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
@@ -175,7 +174,6 @@ export const EventSessionProvider = ({
           filter: `slide_id=eq.${currentSlide.id}`,
         },
         (payload) => {
-          console.log("Change received!", payload)
           if (payload.eventType === "INSERT") {
             setCurrentSlideResponses((res: any) => [
               ...(res ?? []),
@@ -254,8 +252,6 @@ export const EventSessionProvider = ({
         .eq("participant_id", participant.id)
         .select()
 
-      console.log("data", data, currentUser.data.session?.user.id)
-
       if (error) {
         console.error(error)
         return
@@ -288,8 +284,6 @@ export const EventSessionProvider = ({
         .eq("event_id", event.id)
         .eq("profile_id", currentUser.data.session?.user.id)
         .select()
-
-      console.log("data", data, currentUser.data.session?.user.id)
 
       if (error) {
         console.error(error)
@@ -350,8 +344,6 @@ export const EventSessionProvider = ({
   }
 
   const addParticipant = async () => {
-    console.log("active session: ", activeSession)
-    console.log("enrollment: ", enrollment)
     const { data: participant, error: createParticipantError } = await supabase
       .from("participant")
       .insert([{ session_id: activeSession.id, enrollment_id: enrollment.id }])
