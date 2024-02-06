@@ -6,13 +6,13 @@ import { ISlide } from "@/types/slide.type"
 import { OnDocumentLoadSuccess } from "react-pdf/dist/cjs/shared/types"
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.js"
 import { downloadPDFFile } from "@/services/pdf.service"
-import { NextPrevButtons } from "@/components/common/NextPrevButtons"
 import { EventSessionContextType } from "@/types/event-session.type"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { useMutation } from "@tanstack/react-query"
 import Loading from "@/components/common/Loading"
 import { getFileObjectFromBlob } from "@/utils/utils"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
+import { SlideEventManagerType, SlideEvents } from "@/utils/events.util"
 
 interface PDFViewerProps {
   slide: ISlide
@@ -49,9 +49,19 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
   }, [slide.content?.pdfPath])
 
   useEffect(() => {
-    // Do not listen for page change event is the current user is a host.
-    // Because the host position is directly changed by NextPrevious Buttons.
-    if (isHost) return
+    const nextPosition = () =>
+      setSelectedPage((pos) => {
+        const newPos = pos + 1
+        if (isHost) broadcastPagePosition(newPos)
+        return newPos
+      })
+    const prevPosition = () =>
+      setSelectedPage((pos) => {
+        const newPos = pos > 1 ? pos - 1 : pos
+        if (isHost) broadcastPagePosition(newPos)
+        return newPos
+      })
+
     const handleBroadcastedMessage = ({
       type,
       payload,
@@ -73,6 +83,17 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
       "broadcastedMessage",
       handleBroadcastedMessage
     )
+    SlideEvents[SlideEventManagerType.OnRight].subscribe(nextPosition)
+    SlideEvents[SlideEventManagerType.OnLeft].subscribe(prevPosition)
+
+    return () => {
+      meeting.participants.removeListener(
+        "broadcastedMessage",
+        handleBroadcastedMessage
+      )
+      SlideEvents[SlideEventManagerType.OnRight].unsubscribe(nextPosition)
+      SlideEvents[SlideEventManagerType.OnLeft].unsubscribe(prevPosition)
+    }
   }, [])
 
   const broadcastPagePosition = useCallback((newPosition: number) => {
@@ -109,31 +130,6 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
           <div className="mt-12 flex justify-center items-center flex-col">
             <Loading />
             <div>Loading the PDF...</div>
-          </div>
-        )}
-        {isHost && (
-          <div className="m-4 flex justify-between items-center">
-            <div />
-            <NextPrevButtons
-              onPrevious={() =>
-                setSelectedPage((pos) => {
-                  const newPos = pos > 1 ? pos - 1 : pos
-                  broadcastPagePosition(newPos)
-                  metaData.current.pdfLastPage = newPos
-                  return newPos
-                })
-              }
-              onNext={() =>
-                setSelectedPage((pos) => {
-                  const newPos = pos + 1
-                  broadcastPagePosition(newPos)
-                  metaData.current.pdfLastPage = newPos
-                  return newPos
-                })
-              }
-              prevDisabled={selectedPage === 1}
-              nextDisabled={selectedPage === totalPages}
-            />
           </div>
         )}
       </div>

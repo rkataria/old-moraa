@@ -39,8 +39,7 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
         if (isHost) broadcastSlidePosition(newPos)
         return newPos
       })
-    // Do not listen for page change event is the current user is a host.
-    // Because the host position is directly changed by NextPrevious Buttons.
+
     const handleBroadcastedMessage = ({
       type,
       payload,

@@ -48,7 +48,7 @@ function SlideViewControls() {
     })
   }
 
-  const showRightLeftArrow = [ContentType.GOOGLE_SLIDES].includes(
+  const showRightLeftArrow = [ContentType.GOOGLE_SLIDES, ContentType.PDF_VIEWER].includes(
     currentSlide?.contentType as ContentType
   )
 
