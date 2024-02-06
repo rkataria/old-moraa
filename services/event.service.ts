@@ -29,7 +29,7 @@ const getEvent = async ({
 }: GetEventParams) => {
   const { data: meeting, error } = await supabase
     .from("meeting")
-    .select("id, event:event_id(*)")
+    .select("*, event:event_id(*)")
     .eq("event_id", eventId)
     .single()
 
