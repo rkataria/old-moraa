@@ -14,7 +14,7 @@ import {
 import { useEvent } from "@/hooks/useEvent"
 import { useParams } from "next/navigation"
 import Loading from "../common/Loading"
-import { IconSettingsCog, IconX } from "@tabler/icons-react"
+import { IconX } from "@tabler/icons-react"
 
 const MeetingSetupScreen = () => {
   const { eventId } = useParams()
@@ -66,8 +66,6 @@ const MeetingSetupScreen = () => {
       </div>
     )
   }
-
-  console.log("meeting in setup screen", meeting)
 
   return (
     <div className="w-full h-screen flex flex-col justify-start items-center gap-4 pt-36">
