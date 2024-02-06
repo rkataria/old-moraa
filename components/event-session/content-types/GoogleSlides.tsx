@@ -1,12 +1,9 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
 import { ISlide } from "@/types/slide.type"
 import { SlideEventManagerType, SlideEvents } from "@/utils/events.util"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
-import React, { useContext, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import ReactGoogleSlides from "react-google-slides"
 
 interface GoogleSlidesProps {
@@ -21,7 +18,6 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
   } = slide
   const [position, setPosition] = useState((startPosition as number) || 1)
   const { meeting } = useDyteMeeting()
-  const { isHost } = useContext(EventSessionContext) as EventSessionContextType
 
   useEffect(() => {
     const nextPosition = () => setPosition((pos) => pos + 1)
@@ -66,10 +62,10 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center h-full">
       <ReactGoogleSlides
-        width={640}
-        height={480}
+        width={"100%"}
+        height={"85%"}
         slidesLink={googleSlideURL}
         position={position}
       />
