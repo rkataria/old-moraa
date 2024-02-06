@@ -7,9 +7,11 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 export const useEvent = ({
   id,
   fetchMeetingSlides = false,
+  fetchActiveSession = false,
 }: {
   id: string
   fetchMeetingSlides?: boolean
+  fetchActiveSession?: boolean
 }) => {
   const supabase = createClientComponentClient()
   const { currentUser, isLoading: isUserLoading } = useAuth()
@@ -20,6 +22,7 @@ export const useEvent = ({
       EventService.getEvent({
         eventId: id,
         fetchMeetingSlides,
+        fetchActiveSession,
       }),
     enabled: !!currentUser?.id && !!id,
   })
@@ -28,6 +31,7 @@ export const useEvent = ({
     event: data?.event,
     meeting: data?.meeting,
     meetingSlides: data?.meetingSlides,
+    activeSession: data?.session,
     isLoading: isLoading || isUserLoading,
     isFetching: isFetching,
     error,

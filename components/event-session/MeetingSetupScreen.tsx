@@ -61,8 +61,8 @@ const MeetingSetupScreen = () => {
 
   const handleJoinMeeting = async () => {
     meeting?.self.setName(name)
-    await joinMeeting?.()
     meeting.join()
+    joinMeeting?.()
   }
 
   if (!event || !meeting) {

@@ -102,6 +102,9 @@ export const SlideManagerProvider = ({
   }, [currentSlide])
 
   const updateSlideIds = async () => {
+    if (!meeting.id) {
+      console.warn("meeting.id is missing")
+    }
     const { data, error } = await supabase
       .from("meeting")
       .update({ slides: slideIds })

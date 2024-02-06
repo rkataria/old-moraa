@@ -22,10 +22,12 @@ export const EventSessionProvider = ({
     event,
     meeting,
     meetingSlides,
+    activeSession,
     refetch: refetchMeetingSlides,
   } = useEvent({
     id: eventId as string,
     fetchMeetingSlides: true,
+    fetchActiveSession: true,
   })
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>("")
@@ -45,7 +47,7 @@ export const EventSessionProvider = ({
   // })
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
   const [editing, setEditing] = useState<boolean>(false)
-  const [activeSession, setActiveSession] = useState<any>(null)
+  const [activeStateSession, setActiveSession] = useState<any>(null)
   const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
 
@@ -78,7 +80,9 @@ export const EventSessionProvider = ({
         data: { currentSlideId: currentSlide?.id, presentationStatus },
       })
     }
-    updateSession()
+    if (activeSession && activeSession.id) {
+      updateSession()
+    }
     // upsertEventSession({
     //   eventId: eventId as string,
     //   payload: {
@@ -343,10 +347,15 @@ export const EventSessionProvider = ({
     await refetchMeetingSlides()
   }
 
-  const addParticipant = async () => {
+  const addParticipant = async (session?: any) => {
     const { data: participant, error: createParticipantError } = await supabase
       .from("participant")
-      .insert([{ session_id: activeSession.id, enrollment_id: enrollment.id }])
+      .insert([
+        {
+          session_id: session?.id ?? activeSession.id,
+          enrollment_id: enrollment.id,
+        },
+      ])
       .select()
       .single()
 
@@ -358,6 +367,7 @@ export const EventSessionProvider = ({
   }
 
   const joinMeeting = async () => {
+    let newSession
     // create a new session if host joins and expire others
     if (isHost) {
       // expire other sessions
@@ -371,7 +381,7 @@ export const EventSessionProvider = ({
       }
 
       // create new session in active state
-      const { data: newSession, error: createSessionError } = await supabase
+      const { data: session, error: createSessionError } = await supabase
         .from("session")
         .insert([{ meeting_id: meeting?.id, status: "ACTIVE" }])
         .select()
@@ -380,9 +390,10 @@ export const EventSessionProvider = ({
         console.error("failed to create session, error: ", createSessionError)
         return
       }
+      newSession = session
       setActiveSession(newSession)
     }
-    await addParticipant()
+    await addParticipant(newSession)
   }
 
   return (
