@@ -33,9 +33,8 @@ const getEvent = async ({
     .eq("event_id", eventId)
     .single()
 
-  console.log("meeting: ", meeting)
-  console.log("error: ", error)
   if (error) {
+    console.error("error while fetching meeting and event: ", error)
     return {
       event: null,
       contents: null,
@@ -61,10 +60,8 @@ const getEvent = async ({
 }
 
 const createEvent = async (event: ICreateEventPayload) => {
-  console.log(event)
   const { data, error } = await supabase.from("event").insert([event]).select()
 
-  console.log(data)
   return {
     data: data?.[0],
     error,

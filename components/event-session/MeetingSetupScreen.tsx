@@ -73,8 +73,6 @@ const MeetingSetupScreen = () => {
     )
   }
 
-  console.log("meeting in setup screen", meeting)
-
   return (
     <div className="w-full h-screen flex flex-col justify-start items-center gap-4 pt-36">
       <div className="mb-12">

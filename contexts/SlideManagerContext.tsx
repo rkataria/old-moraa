@@ -38,7 +38,6 @@ export const SlideManagerProvider = ({
         description: event.description,
       }),
     ]
-    console.log("slides:: ", slides)
     setSlides(slides)
     setLoading(false)
     setCurrentSlide(slides?.[0])

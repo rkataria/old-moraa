@@ -6,8 +6,6 @@ export default function RootLayout({ params, children }: any) {
   const { eventId } = params
   const { event, error } = useEvent({ id: eventId })
 
-  console.log("layout.tsx eventId: ", eventId)
-  console.log("layout.tsx event: ", event)
   if (error) {
     return null
   }
