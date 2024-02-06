@@ -22,6 +22,7 @@ export const SlideManagerProvider = ({
     fetchMeetingSlides: true,
   })
   const [slides, setSlides] = useState<ISlide[]>([])
+  const [slideIds, setSlideIds] = useState<string[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [syncing, setSyncing] = useState<boolean>(false)
@@ -31,18 +32,35 @@ export const SlideManagerProvider = ({
 
   useEffect(() => {
     if (!meetingSlides) return
+    const idIndexMap: { [id: string]: number } = {}
+    meeting?.slides?.forEach((id: string, index: number) => {
+      idIndexMap[id] = index
+    })
 
-    const slides = meetingSlides.slides ?? [
+    // Custom sorting function
+    const customSort = (a: any, b: any) => {
+      return idIndexMap[a.id] - idIndexMap[b.id]
+    }
+
+    // Sort the user objects array based on the order in user_ids array
+
+    const sortedSlides = meetingSlides.slides?.slice().sort(customSort)
+
+    const slides = sortedSlides ?? [
       getDefaultCoverSlide({
         title: event.name,
         description: event.description,
       }),
     ]
+    setSlideIds(meeting?.slides ?? [])
     setSlides(slides)
     setLoading(false)
     setCurrentSlide(slides?.[0])
   }, [meetingSlides])
 
+  useEffect(() => {
+    updateSlideIds()
+  }, [slideIds])
   // useEffect(() => {
   //   if (debouncedSlides.length === 0) return
 
@@ -83,6 +101,17 @@ export const SlideManagerProvider = ({
     })
   }, [currentSlide])
 
+  const updateSlideIds = async () => {
+    const { data, error } = await supabase
+      .from("meeting")
+      .update({ slides: slideIds })
+      .eq("id", meeting.id)
+    if (error) {
+      console.error("error while updating slide ids on meeting")
+      return
+    }
+  }
+
   const addNewSlide = async (slide: ISlide) => {
     const newSlide = {
       name: slide.name,
@@ -101,6 +130,7 @@ export const SlideManagerProvider = ({
     }
     setSlides((s) => [...s, { ...newSlide, id: data?.id }])
     setCurrentSlide({ ...newSlide, id: data.id })
+    setSlideIds((s) => [...s, data?.id])
   }
 
   const updateSlide = async (slide: ISlide) => {
@@ -125,7 +155,7 @@ export const SlideManagerProvider = ({
     const index = slides.findIndex((slide) => slide.id === id)
 
     setSlides((s) => s.filter((slide) => slide.id !== id))
-
+    setSlideIds((s) => s.filter((slideId) => slideId !== id))
     if (currentSlide?.id === id) {
       if (index !== slides.length - 1) {
         setCurrentSlide(slides[index + 1])
@@ -147,6 +177,15 @@ export const SlideManagerProvider = ({
     newSlides[index] = temp
 
     setSlides(newSlides)
+
+    // Reorder the slideIds
+    const idIndex = slideIds.findIndex((i) => i === id)
+    if (idIndex === 0) return
+    const newIds = [...slideIds]
+    const tempId = newIds[index - 1]
+    newIds[index - 1] = newIds[index]
+    newIds[index] = tempId
+    setSlideIds(newIds)
   }
 
   const moveDownSlide = (id: string) => {
@@ -160,6 +199,15 @@ export const SlideManagerProvider = ({
     newSlides[index] = temp
 
     setSlides(newSlides)
+
+    // Reorder the slideIds
+    const idIndex = slideIds.findIndex((i) => i === id)
+    if (idIndex === 0) return
+    const newIds = [...slideIds]
+    const tempId = newIds[index + 1]
+    newIds[index + 1] = newIds[index]
+    newIds[index] = tempId
+    setSlideIds(newIds)
   }
 
   return (
