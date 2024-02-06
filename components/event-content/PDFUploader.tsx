@@ -29,8 +29,12 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
   const isEditMode = !slide.content?.pdfPath
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<null | number>(null)
-  const [defaultPage, setDefaultPage] = useState<null | number>(null)
-  const [selectedPage, setSelectedPage] = useState(1)
+  const [defaultPage, setDefaultPage] = useState<null | number>(
+    slide.content?.defaultPage || 1
+  )
+  const [selectedPage, setSelectedPage] = useState<number>(
+    slide.content?.defaultPage || 1
+  )
   const uploadPDFMutation = useMutation({
     mutationFn: (file: File) => {
       return uploadPDFFile(slide.id + `_pdf.pdf`, file)
@@ -68,8 +72,6 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
     if (!file && slide.content?.pdfPath) {
       downloadPDFMutation.mutate()
     }
-    setDefaultPage(slide.content?.defaultPage || null)
-    setSelectedPage(slide.content?.defaultPage || null)
   }, [slide.content?.pdfPath])
 
   const uploadAndSetFile = async (file: File) => {

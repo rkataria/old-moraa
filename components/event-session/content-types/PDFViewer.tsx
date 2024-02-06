@@ -29,7 +29,7 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
   ) as EventSessionContextType
   const [totalPages, setTotalPages] = useState<null | number>(null)
   const [selectedPage, setSelectedPage] = useState<number>(
-    metaData.current.pdfLastPage || slide.content?.defaultPage
+    metaData.current.pdfLastPage || slide.content?.defaultPage || 1
   )
   const { meeting } = useDyteMeeting()
   const downloadPDFMutation = useMutation({
