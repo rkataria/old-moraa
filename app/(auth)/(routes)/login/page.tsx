@@ -1,6 +1,6 @@
 "use client"
 
-import { MorraLogo } from "@/components/common/MorraLogo"
+import { MoraaLogo } from "@/components/common/MoraaLogo"
 import { Card, CardHeader, CardBody } from "@chakra-ui/react"
 import { Auth } from "@supabase/auth-ui-react"
 import { ThemeSupa } from "@supabase/auth-ui-shared"
@@ -24,10 +24,10 @@ export default function Login() {
   }, [user.currentUser])
 
   return (
-    <div className="h-[100vh] flex items-center justify-center">
+    <div className="h-[100vh] flex items-center justify-center bg-gradient-to-br from-red-600 to-blue-600">
       <Card flex="1" maxW="400px">
         <CardHeader display="flex" alignItems="center" justifyContent="center">
-          <MorraLogo color="primary" />
+          <MoraaLogo color="primary" />
         </CardHeader>
         <CardBody>
           <Auth

@@ -1,8 +1,8 @@
-type MorraLogoProps = {
+type MoraaLogoProps = {
   color?: "primary" | "default"
 }
 
-export function MorraLogo({ color = "default" }: MorraLogoProps) {
+export function MoraaLogo({ color = "default" }: MoraaLogoProps) {
   return (
     <div className="flex h-16 shrink-0 items-center">
       <img
