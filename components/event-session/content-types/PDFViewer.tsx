@@ -49,9 +49,11 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
   }, [slide.content?.pdfPath])
 
   useEffect(() => {
+    if (totalPages === null) return
+
     const nextPosition = () =>
       setSelectedPage((pos) => {
-        const newPos = pos + 1
+        const newPos = pos + 1 > totalPages ? pos : pos + 1
         if (isHost) broadcastPagePosition(newPos)
         return newPos
       })
@@ -94,7 +96,7 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
       SlideEvents[SlideEventManagerType.OnRight].unsubscribe(nextPosition)
       SlideEvents[SlideEventManagerType.OnLeft].unsubscribe(prevPosition)
     }
-  }, [])
+  }, [totalPages])
 
   const broadcastPagePosition = useCallback((newPosition: number) => {
     meeting.participants.broadcastMessage(PositionChangeEvent, {
