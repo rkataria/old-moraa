@@ -1,9 +1,11 @@
 "use client"
 
+import React from "react"
 import { UseQueryProvider } from "@/utils/use-query-provider"
 import { ThemeProvider } from "@/providers/theme-provider"
 import { ModalProvider } from "@/providers/modal-provider"
 import { ChakraProvider } from "@chakra-ui/react"
+import { UserContextProvider } from "@/hooks/useAuth"
 import { Toaster } from 'react-hot-toast'
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -15,12 +17,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem={false}
         storageKey="elearning"
       >
-        <UseQueryProvider>
-          <ChakraProvider>{children}</ChakraProvider>
-
-          <ModalProvider />
-          <Toaster position="bottom-right" reverseOrder={false} />
-        </UseQueryProvider>
+        <ChakraProvider>
+          <UseQueryProvider>
+            <UserContextProvider>
+              {children}
+              <ModalProvider />
+            </UserContextProvider>
+          </UseQueryProvider>
+        </ChakraProvider>
       </ThemeProvider>
     </>
   )

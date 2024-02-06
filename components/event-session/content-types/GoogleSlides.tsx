@@ -1,9 +1,9 @@
 "use client"
 
-import { NextPrevButtons } from "@/components/common/NextPrevButtons"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
 import { ISlide } from "@/types/slide.type"
+import { SlideEventManagerType, SlideEvents } from "@/utils/events.util"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
 import React, { useCallback, useContext, useEffect, useState } from "react"
 import ReactGoogleSlides from "react-google-slides"
@@ -27,9 +27,20 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
   )
 
   useEffect(() => {
+    const nextPosition = () =>
+      setPosition((pos) => {
+        const newPos = pos + 1
+        if (isHost) broadcastSlidePosition(newPos)
+        return newPos
+      })
+    const prevPosition = () =>
+      setPosition((pos) => {
+        const newPos = pos > 1 ? pos - 1 : pos
+        if (isHost) broadcastSlidePosition(newPos)
+        return newPos
+      })
     // Do not listen for page change event is the current user is a host.
     // Because the host position is directly changed by NextPrevious Buttons.
-    if (isHost) return
     const handleBroadcastedMessage = ({
       type,
       payload,
@@ -51,6 +62,17 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
       "broadcastedMessage",
       handleBroadcastedMessage
     )
+    SlideEvents[SlideEventManagerType.OnRight].subscribe(nextPosition)
+    SlideEvents[SlideEventManagerType.OnLeft].subscribe(prevPosition)
+
+    return () => {
+      meeting.participants.removeListener(
+        "broadcastedMessage",
+        handleBroadcastedMessage
+      )
+      SlideEvents[SlideEventManagerType.OnRight].unsubscribe(nextPosition)
+      SlideEvents[SlideEventManagerType.OnLeft].unsubscribe(prevPosition)
+    }
   }, [])
 
   const broadcastSlidePosition = useCallback((newPosition: number) => {
@@ -60,36 +82,13 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
   }, [])
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="py-4">
-        <ReactGoogleSlides
-          width={640}
-          height={480}
-          slidesLink={googleSlideURL}
-          position={position}
-        />
-      </div>
-      {isHost && (
-        <NextPrevButtons
-          onPrevious={() =>
-            setPosition((pos) => {
-              const newPos = pos > 1 ? pos - 1 : pos
-              broadcastSlidePosition(newPos)
-              metaData.current.GSlideLastPosition = newPos
-              return newPos
-            })
-          }
-          onNext={() =>
-            setPosition((pos) => {
-              const newPos = pos + 1
-              broadcastSlidePosition(newPos)
-              metaData.current.GSlideLastPosition = newPos
-              return newPos
-            })
-          }
-          prevDisabled={position === 1}
-        />
-      )}
+    <div className="flex flex-col items-center h-full">
+      <ReactGoogleSlides
+        width={"100%"}
+        height={"85%"}
+        slidesLink={googleSlideURL}
+        position={position}
+      />
     </div>
   )
 }

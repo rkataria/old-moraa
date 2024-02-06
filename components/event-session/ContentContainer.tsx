@@ -13,7 +13,7 @@ import SlideViewControls from "./SlideViewControls"
 const ContentWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex-auto bg-gray-100 p-4 relative flex justify-center items-start">
-      <div className="h-[90%] aspect-video bg-white rounded-md relative group">
+      <div className="h-full aspect-video bg-white rounded-md relative group">
         {children}
       </div>
     </div>
