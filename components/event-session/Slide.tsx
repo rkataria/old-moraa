@@ -1,4 +1,5 @@
 import EventSessionContext from "@/contexts/EventSessionContext"
+import dynamic from "next/dynamic"
 import { useAuth } from "@/hooks/useAuth"
 import {
   EventSessionContextType,
@@ -12,6 +13,10 @@ import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
 import GoogleSlides from "../event-session/content-types/GoogleSlides"
 import Reflection from "./content-types/Reflection"
+
+const PDFViewer = dynamic(() => import("./content-types/PDFViewer").then(mod => mod.PDFViewer), {
+  ssr: false,
+})
 
 function Slide() {
   const {
@@ -51,6 +56,9 @@ function Slide() {
 
   if (currentSlide.contentType === ContentType.GOOGLE_SLIDES) {
     return <GoogleSlides key={currentSlide.id} slide={currentSlide} />
+  }
+  if (currentSlide.contentType === ContentType.PDF_VIEWER) {
+    return <PDFViewer key={currentSlide.id} slide={currentSlide} />
   }
   if (currentSlide.contentType === ContentType.REFLECTION) {
     return (
