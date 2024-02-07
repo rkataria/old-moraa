@@ -25,6 +25,8 @@ interface PDFUploaderProps {
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
+const getPDFName = (slideId: string) => `${slideId}_pdf.pdf`
+
 export const PDFUploader = ({ slide }: PDFUploaderProps) => {
   const isEditMode = !slide.content?.pdfPath
   const [file, setFile] = useState<File | undefined>()
@@ -36,9 +38,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
     slide.content?.defaultPage || 1
   )
   const uploadPDFMutation = useMutation({
-    mutationFn: (file: File) => {
-      return uploadPDFFile(slide.id + `_pdf.pdf`, file)
-    },
+    mutationFn: (file: File) => uploadPDFFile(getPDFName(slide.id), file),
     onSuccess: () => toast.success("PDF uploaded successfully."),
     onError: () =>
       toast.error(
@@ -76,13 +76,14 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
 
   const uploadAndSetFile = async (file: File) => {
     setFile(file)
-    if (slide.content?.pdfPath) await deletePDFFile(slide.content?.pdfPath)
+    await deletePDFFile(getPDFName(slide.id)).catch(() => {})
     uploadPDFMutation.mutate(file, {
       onSuccess: (res) => {
         updateSlide({
           ...slide,
           content: {
             pdfPath: res.data?.path,
+            defaultPage,
           },
         })
       },
@@ -121,6 +122,11 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
                 file={file}
                 onLoadSuccess={onDocumentLoadSuccess}
                 className="rounded overflow-y-scroll shadow-lg"
+                loading={
+                  <div className="h-96">
+                    <Loading />
+                  </div>
+                }
               >
                 <Page
                   loading={" "}
