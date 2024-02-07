@@ -61,14 +61,14 @@ export const EventSessionProvider = ({
     fetchCurrentUser()
   }, [])
 
-  // useEffect(() => {
-  //   if (!eventSession) return
+  useEffect(() => {
+    if (!activeSession) return
 
-  //   setCurrentSlide(eventSession.currentSlide || slides[0])
-  //   setPresentationStatus(
-  //     eventSession.presentationStatus || PresentationStatuses.STOPPED
-  //   )
-  // }, [eventSession])
+    setCurrentSlide(activeSession.data.currentSlide || slides[0])
+    setPresentationStatus(
+      activeSession.data.presentationStatus || PresentationStatuses.STOPPED
+    )
+  }, [activeSession])
 
   useEffect(() => {
     if (!eventId) return
