@@ -14,7 +14,7 @@ import {
 import { useEvent } from "@/hooks/useEvent"
 import { useParams } from "next/navigation"
 import Loading from "../common/Loading"
-import { IconSettingsCog, IconX } from "@tabler/icons-react"
+import { IconX } from "@tabler/icons-react"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
 

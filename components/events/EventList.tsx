@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 
 import Loading from "../common/Loading"
 import { useEvents } from "@/hooks/useEvents"
+import { getFormattedDate } from "@/utils/date"
 
 function EventList() {
   const router = useRouter()
@@ -71,7 +72,7 @@ function EventList() {
                 {event.name}
               </td>
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                {event.created_at}
+                {getFormattedDate(event.created_at, { includeTime: true })}
               </td>
 
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">

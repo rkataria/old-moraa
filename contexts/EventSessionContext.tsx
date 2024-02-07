@@ -184,6 +184,18 @@ export const EventSessionProvider = ({
               payload.new,
             ])
           }
+          if (payload.eventType === "UPDATE") {
+            setCurrentSlideResponses((res: any) => {
+              // Update the response in the array if it exists
+              const updatedResponses = res.map((existingResponse: any) =>
+                existingResponse.id === payload.new.id
+                  ? payload.new
+                  : existingResponse
+              )
+
+              return updatedResponses
+            })
+          }
         }
       )
       .subscribe()
