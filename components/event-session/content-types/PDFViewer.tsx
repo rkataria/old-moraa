@@ -131,7 +131,7 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
         ) : (
           <div className="mt-12 flex justify-center items-center flex-col">
             <Loading />
-            <div>Loading the PDF...</div>
+            <div>Loading content...</div>
           </div>
         )}
       </div>
