@@ -20,6 +20,7 @@ export type SlideManagerContextType = {
   loading: boolean
   syncing: boolean
   miniMode: boolean
+  isOwner: boolean
   setMiniMode: (miniMode: boolean) => void
   setCurrentSlide: (slide: ISlide) => void
   addNewSlide: (slide: ISlide) => void

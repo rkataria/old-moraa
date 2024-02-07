@@ -27,8 +27,22 @@ export const SlideManagerProvider = ({
   const [loading, setLoading] = useState<boolean>(true)
   const [syncing, setSyncing] = useState<boolean>(false)
   const [miniMode, setMiniMode] = useState<boolean>(true)
+  const [isOwner, setIsOwner] = useState<boolean>(true)
+  const [currentUser, setCurrentUser] = useState<any>(null)
   const debouncedSlides = useDebounce(slides, 500)
   const supabase = createClientComponentClient()
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const user = await supabase.auth.getSession()
+
+      setCurrentUser(user.data.session?.user)
+      if (user.data.session?.user.id === event.owner_id) {
+        setIsOwner(true)
+      }
+    }
+    fetchCurrentUser()
+  }, [])
 
   useEffect(() => {
     if (!meetingSlides) return
@@ -46,6 +60,7 @@ export const SlideManagerProvider = ({
 
     const sortedSlides = meetingSlides.slides?.slice().sort(customSort)
 
+    // check whether the user is owner of event or not
     const slides = sortedSlides ?? [
       getDefaultCoverSlide({
         title: event.name,
@@ -53,9 +68,16 @@ export const SlideManagerProvider = ({
       }),
     ]
     setSlideIds(meeting?.slides ?? [])
-    setSlides(slides)
+    let filteredSlides = slides
+    if (!isOwner) {
+      const interactiveSlideTypes = ["POLL", "REFLECTION"]
+      filteredSlides = slides.filter(
+        (s) => !interactiveSlideTypes.includes(s.type)
+      )
+    }
+    setSlides(filteredSlides)
     setLoading(false)
-    setCurrentSlide(slides?.[0])
+    setCurrentSlide(filteredSlides?.[0])
   }, [meetingSlides])
 
   useEffect(() => {
@@ -221,6 +243,7 @@ export const SlideManagerProvider = ({
         loading,
         syncing,
         miniMode,
+        isOwner,
         setMiniMode,
         setCurrentSlide,
         addNewSlide,
