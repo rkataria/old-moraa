@@ -1,4 +1,4 @@
-import {IconCards, IconAlignCenter, IconBrandGoogleDrive, IconChartBar, IconX } from "@tabler/icons-react"
+import {IconCards, IconAlignCenter, IconBrandGoogleDrive, IconBrandAdobe, IconChartBar, IconX } from "@tabler/icons-react"
 import clsx from "clsx"
 
 interface IContentType {
@@ -9,13 +9,13 @@ interface IContentType {
 }
 
 export enum ContentType {
-  COVER = "cover",
-  POLL = "poll",
-  IMAGE = "image",
-  VIDEO = "video",
-  GOOGLE_SLIDES = "google-slides",
-  REFLECTION = "reflection",
-  PDF_VIEWER = "pdf-viewer",
+  COVER = "Title",
+  POLL = "Poll",
+  IMAGE = "Image",
+  VIDEO = "Video",
+  GOOGLE_SLIDES = "Google Slides",
+  REFLECTION = "Reflections",
+  PDF_VIEWER = "PDF",
 }
 
 const contentTypes: IContentType[] = [
@@ -32,9 +32,9 @@ const contentTypes: IContentType[] = [
     contentType: ContentType.GOOGLE_SLIDES,
   },
   {
-    name: "PDF Viewer",
-    icon: <IconBrandGoogleDrive />,
-    description: "Embed PDF in presentations",
+    name: "PDF",
+    icon: <IconBrandAdobe />,
+    description: "Upload and integrate your PDF content as a multi-page slide!",
     contentType: ContentType.PDF_VIEWER,
   },
   {

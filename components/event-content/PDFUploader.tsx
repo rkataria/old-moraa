@@ -137,7 +137,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
                 />
               </Document>
               <div className="m-4 flex justify-between items-center">
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <Input
                     placeholder="Initial page number"
                     className="mr-2"
@@ -154,7 +154,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
                   <Button size="sm" onClick={saveDefaultPageNumber}>
                     Save
                   </Button>
-                </div>
+                </div> */}
                 <NextPrevButtons
                   onPrevious={() =>
                     setSelectedPage((pos) => (pos > 1 ? pos - 1 : pos))
