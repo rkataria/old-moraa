@@ -3,7 +3,7 @@ import {
   IconCaretDownFilled,
   IconCaretUpFilled,
   IconCaretLeftFilled,
-  IconCaretRightFilled
+  IconCaretRightFilled,
 } from "@tabler/icons-react"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
@@ -49,7 +49,7 @@ function SlideViewControls() {
   }
 
   const showRightLeftArrow = [ContentType.GOOGLE_SLIDES].includes(
-    currentSlide?.contentType as ContentType
+    currentSlide?.type as ContentType
   )
 
   return (
