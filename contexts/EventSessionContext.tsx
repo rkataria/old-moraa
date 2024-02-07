@@ -62,9 +62,12 @@ export const EventSessionProvider = ({
   }, [])
 
   useEffect(() => {
-    if (!activeSession) return
+    if (!activeSession || !meetingSlides?.slides) return
 
-    setCurrentSlide(activeSession.data.currentSlide || slides[0])
+    const slide = meetingSlides?.slides?.find(
+      (s) => s.id === activeSession.data.currentSlideId
+    )
+    setCurrentSlide(slide || slides[0])
     setPresentationStatus(
       activeSession.data.presentationStatus || PresentationStatuses.STOPPED
     )
