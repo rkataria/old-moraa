@@ -3,7 +3,7 @@ import {
   IconCaretDownFilled,
   IconCaretUpFilled,
   IconCaretLeftFilled,
-  IconCaretRightFilled
+  IconCaretRightFilled,
 } from "@tabler/icons-react"
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
@@ -48,13 +48,14 @@ function SlideViewControls() {
     })
   }
 
-  const showRightLeftArrow = [ContentType.GOOGLE_SLIDES, ContentType.PDF_VIEWER].includes(
-    currentSlide?.contentType as ContentType
-  )
+  const showRightLeftArrow = [
+    ContentType.GOOGLE_SLIDES,
+    ContentType.PDF_VIEWER,
+  ].includes(currentSlide?.contentType as ContentType)
 
   return (
     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 p-2 rounded-md flex justify-center items-center gap-2">
-      <div className={classNames({ flex: !showRightLeftArrow })}>
+      <div>
         <div className="flex justify-center items-center">
           <IconButton
             aria-label="button"
@@ -67,28 +68,30 @@ function SlideViewControls() {
             <IconCaretUpFilled size={24} />
           </IconButton>
         </div>
-        {showRightLeftArrow ? (
-          <div className="flex justify-center items-center">
-            <IconButton
-              aria-label="button"
-              className={buttonStyle}
-              onClick={() => {
-                SlideEvents[SlideEventManagerType.OnLeft].dispatchEvent()
-              }}
-            >
-              <IconCaretLeftFilled size={24} />
-            </IconButton>
-            <IconButton
-              aria-label="button"
-              className={buttonStyle}
-              onClick={() => {
-                SlideEvents[SlideEventManagerType.OnRight].dispatchEvent()
-              }}
-            >
-              <IconCaretRightFilled size={24} />
-            </IconButton>
-          </div>
-        ) : null}
+        <div
+          className={classNames("flex justify-center items-center", {
+            "invisible": !showRightLeftArrow,
+          })}
+        >
+          <IconButton
+            aria-label="button"
+            className={buttonStyle}
+            onClick={() => {
+              SlideEvents[SlideEventManagerType.OnLeft].dispatchEvent()
+            }}
+          >
+            <IconCaretLeftFilled size={24} />
+          </IconButton>
+          <IconButton
+            aria-label="button"
+            className={buttonStyle}
+            onClick={() => {
+              SlideEvents[SlideEventManagerType.OnRight].dispatchEvent()
+            }}
+          >
+            <IconCaretRightFilled size={24} />
+          </IconButton>
+        </div>
         <div className="flex justify-center items-center">
           <IconButton
             aria-label="button"
