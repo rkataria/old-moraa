@@ -75,8 +75,6 @@ export const EventSessionProvider = ({
 
   useEffect(() => {
     if (!eventId) return
-    // TODO: WRITE SLIDE_ID TO SESSION TABLE
-    // TODO: write presentation status in session table
     const updateSession = async () => {
       const { data, error } = await supabase.from("session").upsert({
         id: activeSession.id,

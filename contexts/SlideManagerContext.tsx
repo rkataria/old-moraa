@@ -6,6 +6,7 @@ import { useDebounce } from "@uidotdev/usehooks"
 import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { ContentType } from "@/components/event-content/ContentTypePicker"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -27,57 +28,12 @@ export const SlideManagerProvider = ({
   const [loading, setLoading] = useState<boolean>(true)
   const [syncing, setSyncing] = useState<boolean>(false)
   const [miniMode, setMiniMode] = useState<boolean>(true)
-  const [isOwner, setIsOwner] = useState<boolean>(true)
-  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [isOwner, setIsOwner] = useState<boolean>(false)
   const debouncedSlides = useDebounce(slides, 500)
   const supabase = createClientComponentClient()
 
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      const user = await supabase.auth.getSession()
-
-      setCurrentUser(user.data.session?.user)
-      if (user.data.session?.user.id === event.owner_id) {
-        setIsOwner(true)
-      }
-    }
-    fetchCurrentUser()
-  }, [])
-
-  useEffect(() => {
-    if (!meetingSlides) return
-    const idIndexMap: { [id: string]: number } = {}
-    meeting?.slides?.forEach((id: string, index: number) => {
-      idIndexMap[id] = index
-    })
-
-    // Custom sorting function
-    const customSort = (a: any, b: any) => {
-      return idIndexMap[a.id] - idIndexMap[b.id]
-    }
-
-    // Sort the user objects array based on the order in user_ids array
-
-    const sortedSlides = meetingSlides.slides?.slice().sort(customSort)
-
-    // check whether the user is owner of event or not
-    const slides = sortedSlides ?? [
-      getDefaultCoverSlide({
-        title: event.name,
-        description: event.description,
-      }),
-    ]
-    setSlideIds(meeting?.slides ?? [])
-    let filteredSlides = slides
-    if (!isOwner) {
-      const interactiveSlideTypes = ["POLL", "REFLECTION"]
-      filteredSlides = slides.filter(
-        (s) => !interactiveSlideTypes.includes(s.type)
-      )
-    }
-    setSlides(filteredSlides)
-    setLoading(false)
-    setCurrentSlide(filteredSlides?.[0])
+    handleSetSlides()
   }, [meetingSlides])
 
   useEffect(() => {
@@ -123,16 +79,57 @@ export const SlideManagerProvider = ({
     })
   }, [currentSlide])
 
+  const handleSetSlides = async () => {
+    if (!meetingSlides) return
+    const idIndexMap: { [id: string]: number } = {}
+    meeting?.slides?.forEach((id: string, index: number) => {
+      idIndexMap[id] = index
+    })
+
+    // Custom sorting function
+    const customSort = (a: any, b: any) => {
+      return idIndexMap[a.id] - idIndexMap[b.id]
+    }
+
+    // Sort the user objects array based on the order in user_ids array
+
+    const sortedSlides = meetingSlides.slides?.slice().sort(customSort)
+
+    // check whether the user is owner of event or not
+    const slides = sortedSlides ?? [
+      getDefaultCoverSlide({
+        title: event.name,
+        description: event.description,
+      }),
+    ]
+    setSlideIds(meeting?.slides ?? [])
+    let filteredSlides = slides
+    const currentUser = await supabase.auth.getSession()
+    if (currentUser.data.session?.user.id !== event.owner_id) {
+      const interactiveSlideTypes = [ContentType.POLL, ContentType.REFLECTION]
+      filteredSlides = slides.filter(
+        (s) => !interactiveSlideTypes.includes(s.type)
+      )
+      console.log("isOwner: ", false)
+      setIsOwner(false)
+      console.log("filtered slides: ", filteredSlides)
+    }
+    setSlides(filteredSlides)
+    setLoading(false)
+    setCurrentSlide(filteredSlides?.[0])
+  }
+
   const updateSlideIds = async () => {
-    if (!meeting.id) {
+    if (!meeting?.id) {
       console.warn("meeting.id is missing")
     }
+
     const { data, error } = await supabase
       .from("meeting")
       .update({ slides: slideIds })
-      .eq("id", meeting.id)
+      .eq("id", meeting?.id)
     if (error) {
-      console.error("error while updating slide ids on meeting")
+      console.error("error while updating slide ids on meeting,error: ", error)
       return
     }
   }
