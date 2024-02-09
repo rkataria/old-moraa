@@ -10,8 +10,17 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { getDefaultContent } from "@/utils/content.util"
 import { v4 as uuidv4 } from "uuid"
 import MiniSlideManager from "./MiniSlideManager"
+import { useParams } from "next/navigation"
+import { useEvent } from "@/hooks/useEvent"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function SlideManager({}: any) {
+  const { eventId } = useParams()
+  const { event } = useEvent({ id: eventId as string })
+
+  const { currentUser } = useAuth()
+  const userId = currentUser?.id
+
   const {
     slides,
     loading,
@@ -88,6 +97,7 @@ export default function SlideManager({}: any) {
           </div>
         </div>
         <MiniSlideManager
+          mode={userId === event.owner_id ? "edit" : "read"}
           slides={slides}
           addSlideRef={addSlideRef}
           currentSlide={currentSlide}
@@ -96,11 +106,13 @@ export default function SlideManager({}: any) {
           onMiniModeChange={setMiniMode}
         />
       </div>
+      (
       <ContentTypePicker
         open={openContentTypePicker}
         onClose={() => setOpenContentTypePicker(false)}
         onChoose={handleAddNewSlide}
       />
+      )
       <SyncingStatus syncing={syncing} />
     </div>
   )

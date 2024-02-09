@@ -7,7 +7,7 @@ import clsx from "clsx"
 import React, { useEffect, useState } from "react"
 
 interface IMiniSlideManagerProps {
-  mode?: "edit" | "present"
+  mode?: "edit" | "present" | "read"
   slides: ISlide[]
   addSlideRef?: React.RefObject<HTMLDivElement>
   currentSlide: ISlide | null
@@ -26,7 +26,6 @@ function MiniSlideManager({
   onMiniModeChange,
 }: IMiniSlideManagerProps) {
   const [miniMode, setMiniMode] = useState<boolean>(true)
-
   useEffect(() => {
     onMiniModeChange(miniMode)
   }, [miniMode])
