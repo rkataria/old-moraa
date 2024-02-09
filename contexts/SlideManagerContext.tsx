@@ -5,6 +5,7 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { useDebounce } from "@uidotdev/usehooks"
 import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEvent } from "@/hooks/useEvent"
+import { deletePDFFile } from "@/services/pdf.service"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { ContentType } from "@/components/event-content/ContentTypePicker"
 
@@ -175,7 +176,10 @@ export const SlideManagerProvider = ({
       console.error("failed to delete the slide: ", error)
     }
     const index = slides.findIndex((slide) => slide.id === id)
-
+    const slide = slides.find((slide) => slide.id === id)
+    if (slide?.content?.pdfPath) {
+      deletePDFFile(slide?.content?.pdfPath)
+    }
     setSlides((s) => s.filter((slide) => slide.id !== id))
     setSlideIds((s) => s.filter((slideId) => slideId !== id))
     if (currentSlide?.id === id) {

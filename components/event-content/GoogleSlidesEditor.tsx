@@ -5,8 +5,8 @@ import React, { useContext, useState } from "react"
 import ReactGoogleSlides from "react-google-slides"
 import { Button } from "../ui/button"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { useHotkeys } from "@/hooks/useHotkeys"
 import { Input } from "../ui/input"
+import { NextPrevButtons } from "../common/NextPrevButtons"
 
 interface GoogleSlidesEditorProps {
   slide: ISlide
@@ -19,19 +19,13 @@ export default function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
-  useHotkeys("ArrowLeft", () => {
-    setPosition((pos) => (pos > 1 ? pos - 1 : pos))
-  })
-  useHotkeys("ArrowRight", () => {
-    setPosition((pos) => pos + 1)
-  })
 
   const saveGoogleSlidesLink = () => {
     updateSlide({
       ...slide,
       content: {
         googleSlideURL: slideLink,
-        startPosition: position
+        startPosition: position,
       },
     })
     setIsEditMode(false)
@@ -58,7 +52,9 @@ export default function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
               value={position}
               onChange={(e) =>
                 setPosition(
-                  isNaN(Number(e.target.value)) ? position : Number(e.target.value)
+                  isNaN(Number(e.target.value))
+                    ? position
+                    : Number(e.target.value)
                 )
               }
             />
@@ -77,23 +73,11 @@ export default function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
               position={position}
             />
           </div>
-          <div className="flex mb-4 mt-2">
-            <Button
-              onClick={() => setPosition((pos) => (pos > 1 ? pos - 1 : pos))}
-              variant="secondary"
-              disabled={position === 1}
-              className="mx-2"
-            >
-              Prev
-            </Button>
-            <Button
-              onClick={() => setPosition((pos) => pos + 1)}
-              variant="secondary"
-              className="mx-2"
-            >
-              Next
-            </Button>
-          </div>
+          <NextPrevButtons
+            onPrevious={() => setPosition((pos) => (pos > 1 ? pos - 1 : pos))}
+            onNext={() => setPosition((pos) => pos + 1)}
+            prevDisabled={position === 1}
+          />
         </div>
       )}
     </div>

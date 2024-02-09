@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react"
+import { createContext, useEffect, useRef, useState } from "react"
 import { useParams } from "next/navigation"
 import {
   EventSessionContextType,
@@ -50,6 +50,7 @@ export const EventSessionProvider = ({
   const [activeStateSession, setActiveSession] = useState<any>(null)
   const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
+  const metaData = useRef<Object>({})
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -424,6 +425,7 @@ export const EventSessionProvider = ({
         currentSlideLoading,
         currentUser,
         editing,
+        metaData,
         syncSlides,
         updateSlide,
         enableEditing,
