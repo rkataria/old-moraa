@@ -20,7 +20,7 @@ function PresentationSlide() {
       {currentSlide.type === ContentType.COVER && (
         <Cover key={currentSlide.id} slide={currentSlide} />
       )}
-      {currentSlide.type === "poll" && (
+      {currentSlide.type === ContentType.POLL && (
         <Poll
           key={currentSlide.id}
           slide={currentSlide}

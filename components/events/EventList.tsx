@@ -116,12 +116,12 @@ function EventList() {
                 <div className="flex justify-start items-center gap-2 bg-white px-2 h-full">
                   {event?.status === EventType.DRAFT &&
                     userId === event.owner_id && (
-                      <PublishEventButtonWithModal />
+                      <PublishEventButtonWithModal eventId={event.id} />
                     )}
                   {event?.status === EventType.PUBLISHED && (
                     <>
                       {userId === event.owner_id && (
-                        <AddParticipantsButtonWithModal />
+                        <AddParticipantsButtonWithModal eventId={event.id} />
                       )}
                       <Link
                         href={`/event-session/${event.id}`}

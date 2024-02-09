@@ -5,22 +5,19 @@ import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface NewEventFormProps {
+  eventId: string
   onClose: () => void
 }
 
-function AddParticipantsForm({ onClose }: NewEventFormProps) {
-  const { eventId } = useParams()
+function AddParticipantsForm({ eventId, onClose }: NewEventFormProps) {
   const [emails, setEmails] = useState<string[]>([])
-  const { event, error } = useEvent({
-    id: eventId as string,
-  })
 
   async function inviteParticipants(formData: FormData) {
     if (!event) return
 
     const supabase = createClientComponentClient()
     const payload = JSON.stringify({
-      eventId: event?.id,
+      eventId: eventId,
       participants: emails.map((email: string) => {
         return { email: email, role: "Participant" }
       }),

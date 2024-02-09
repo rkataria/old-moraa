@@ -35,7 +35,7 @@ function Header({ event }: { event: any }) {
         </div>
         <div className="flex justify-start items-center gap-2 bg-white px-2 h-full">
           {event?.status === EventType.DRAFT && userId === event.owner_id && (
-            <PublishEventButtonWithModal />
+            <PublishEventButtonWithModal eventId={event.id} />
           )}
           {event?.status === EventType.PUBLISHED && (
             <>
@@ -48,7 +48,9 @@ function Header({ event }: { event: any }) {
               >
                 Add participant
               </button> */}
-              {userId === event.owner_id && <AddParticipantsButtonWithModal />}
+              {userId === event.owner_id && (
+                <AddParticipantsButtonWithModal eventId={event.id} />
+              )}
               <Link
                 href={`/event-session/${event.id}`}
                 className={clsx(
