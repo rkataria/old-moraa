@@ -5,6 +5,7 @@ import clsx from "clsx"
 import Link from "next/link"
 import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal"
 import AddParticipantsButtonWithModal from "../common/AddParticipantsButtonWithModal"
+import { useAuth } from "@/hooks/useAuth"
 
 enum EventType {
   PUBLISHED = "PUBLISHED",
@@ -19,6 +20,10 @@ const styles = {
 }
 
 function Header({ event }: { event: any }) {
+  const { currentUser } = useAuth()
+  console.log("header")
+  console.log(currentUser)
+  const userId = currentUser?.id
   return (
     <div className="fixed left-0 top-0 w-full h-26 z-50 p-2 bg-white">
       <div className="flex justify-between items-center h-12 w-full">
@@ -29,7 +34,9 @@ function Header({ event }: { event: any }) {
           <span className="font-bold">{event?.name}</span>
         </div>
         <div className="flex justify-start items-center gap-2 bg-white px-2 h-full">
-          {event?.status === EventType.DRAFT && <PublishEventButtonWithModal />}
+          {event?.status === EventType.DRAFT && userId === event.owner_id && (
+            <PublishEventButtonWithModal />
+          )}
           {event?.status === EventType.PUBLISHED && (
             <>
               {/* <button
@@ -41,14 +48,14 @@ function Header({ event }: { event: any }) {
               >
                 Add participant
               </button> */}
-              <AddParticipantsButtonWithModal />
+              {userId === event.owner_id && <AddParticipantsButtonWithModal />}
               <Link
                 href={`/event-session/${event.id}`}
                 className={clsx(
                   styles.button.default,
                   "font-semibold text-sm bg-black text-white !rounded-full px-4"
                 )}
-                title="Publish Event"
+                title="Start Session"
               >
                 Start Session
               </Link>
