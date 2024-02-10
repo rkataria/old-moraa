@@ -1,6 +1,4 @@
 "use client"
-
-import { IconDotsVertical } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 
 import Loading from "../common/Loading"
@@ -88,7 +86,10 @@ function EventList() {
                 {event.name}
               </td>
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                {event.owner_id}
+                {event.profile.email}
+                {/*TODO: write profile.firstname profile.lastname here
+                Using email as a placeholder 
+                 since firstName and lastName are not being captured as of now */}
               </td>
 
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">

@@ -18,10 +18,11 @@ const getEvents = async () => {
 
   const { data } = await supabase
     .from("enrollment")
-    .select("*,event(*)")
+    .select("*,event(*, profile(*))")
     .eq("user_id", user.id)
 
-  return data?.map((item) => item.event)
+  const events = data?.map((item) => item.event)
+  return events
 }
 
 const getEvent = async ({
