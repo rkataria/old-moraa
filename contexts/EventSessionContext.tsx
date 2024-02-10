@@ -42,9 +42,6 @@ export const EventSessionProvider = ({
   >(null)
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [enrollment, setEnrollment] = useState<any>(null)
-  // const { eventSession, upsertEventSession } = useEventSession({
-  //   eventId: eventId as string,
-  // })
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
   const [editing, setEditing] = useState<boolean>(false)
   const [activeStateSession, setActiveSession] = useState<any>(null)
@@ -85,15 +82,6 @@ export const EventSessionProvider = ({
     if (activeSession && activeSession.id) {
       updateSession()
     }
-    // upsertEventSession({
-    //   eventId: eventId as string,
-    //   payload: {
-    //     data: {
-    //       currentSlide,
-    //       presentationStatus,
-    //     },
-    //   },
-    // })
   }, [currentSlide, presentationStatus, eventId])
 
   useEffect(() => {
@@ -105,15 +93,16 @@ export const EventSessionProvider = ({
           .select("*")
           .eq("event_id", eventId)
           .eq("user_id", currentUser.data.session?.user.id)
+          .single()
 
         if (error) {
           console.error(error)
           setError(error.message)
           return
         }
-        setMeetingToken(data[0].meeting_token)
-        setIsHost(data[0]?.event_role === "Host")
-        setEnrollment(data[0])
+        setMeetingToken(data.meeting_token)
+        setIsHost(data?.event_role === "Host")
+        setEnrollment(data)
         setLoading(false)
       } catch (error: any) {
         console.error(error)

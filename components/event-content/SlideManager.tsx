@@ -1,5 +1,5 @@
 "use client"
-import { useContext, useRef, useState } from "react"
+import { useContext, useMemo, useRef, useState } from "react"
 import clsx from "clsx"
 import Slide from "./Slide"
 import ContentTypePicker, { ContentType } from "./ContentTypePicker"
@@ -20,6 +20,7 @@ export default function SlideManager({}: any) {
 
   const { currentUser } = useAuth()
   const userId = currentUser?.id
+  const isOwner = useMemo(() => userId === event.owner_id, [userId, event])
 
   const {
     slides,
@@ -97,7 +98,7 @@ export default function SlideManager({}: any) {
           </div>
         </div>
         <MiniSlideManager
-          mode={userId === event.owner_id ? "edit" : "read"}
+          mode={isOwner ? "edit" : "read"}
           slides={slides}
           addSlideRef={addSlideRef}
           currentSlide={currentSlide}

@@ -26,7 +26,6 @@ function EventList() {
   const router = useRouter()
   const { events, isLoading } = useEvents()
   const { currentUser } = useAuth()
-  console.log(currentUser)
   const userId = currentUser?.id
 
   const handleRowClick = (id: string) => {

@@ -7,7 +7,10 @@ import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEvent } from "@/hooks/useEvent"
 import { deletePDFFile } from "@/services/pdf.service"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { ContentType } from "@/components/event-content/ContentTypePicker"
+import {
+  ContentType,
+  INTERACTIVE_SLIDE_TYPES,
+} from "@/components/event-content/ContentTypePicker"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -40,29 +43,6 @@ export const SlideManagerProvider = ({
   useEffect(() => {
     updateSlideIds()
   }, [slideIds])
-  // useEffect(() => {
-  //   if (debouncedSlides.length === 0) return
-
-  //   const syncSlides = async () => {
-  //     setSyncing(true)
-
-  //     const { error } = await updateMeetingSlides({
-  //       meetingSlidesId: meetingSlides.id,
-  //       payload: {
-  //         slides: debouncedSlides,
-  //       },
-  //     })
-
-  //     setSyncing(false)
-
-  //     if (error) {
-  //       console.error(error, eventId)
-  //       return
-  //     }
-  //   }
-
-  //   syncSlides()
-  // }, [debouncedSlides])
 
   useEffect(() => {
     if (!currentSlide) return
@@ -80,8 +60,7 @@ export const SlideManagerProvider = ({
     })
   }, [currentSlide])
 
-  const handleSetSlides = async () => {
-    if (!meetingSlides) return
+  const getSortedSlides = () => {
     const idIndexMap: { [id: string]: number } = {}
     meeting?.slides?.forEach((id: string, index: number) => {
       idIndexMap[id] = index
@@ -92,12 +71,12 @@ export const SlideManagerProvider = ({
       return idIndexMap[a.id] - idIndexMap[b.id]
     }
 
-    // Sort the user objects array based on the order in user_ids array
-
-    const sortedSlides = meetingSlides.slides?.slice().sort(customSort)
-
+    return meetingSlides?.slides?.slice().sort(customSort)
+  }
+  const handleSetSlides = async () => {
+    if (!meetingSlides) return
     // check whether the user is owner of event or not
-    const slides = sortedSlides ?? [
+    const slides = getSortedSlides() ?? [
       getDefaultCoverSlide({
         title: event.name,
         description: event.description,
@@ -107,13 +86,10 @@ export const SlideManagerProvider = ({
     let filteredSlides = slides
     const currentUser = await supabase.auth.getSession()
     if (currentUser.data.session?.user.id !== event.owner_id) {
-      const interactiveSlideTypes = [ContentType.POLL, ContentType.REFLECTION]
       filteredSlides = slides.filter(
-        (s) => !interactiveSlideTypes.includes(s.type)
+        (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
       )
-      console.log("isOwner: ", false)
       setIsOwner(false)
-      console.log("filtered slides: ", filteredSlides)
     }
     setSlides(filteredSlides)
     setLoading(false)
