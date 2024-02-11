@@ -11,7 +11,7 @@ function SlideEditor() {
 
   if (!currentSlide) return null
 
-  if (currentSlide.contentType === ContentType.COVER) {
+  if (currentSlide.type === ContentType.COVER) {
     return <CoverEditor slide={currentSlide} />
   }
 

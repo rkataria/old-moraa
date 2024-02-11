@@ -12,7 +12,7 @@ const styles = {
   },
 }
 
-function AddParticipantsButtonWithModal() {
+function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
@@ -35,7 +35,7 @@ function AddParticipantsButtonWithModal() {
             Course
           </span>
         </div>
-        <AddParticipantsForm onClose={() => setOpen(false)} />
+        <AddParticipantsForm eventId={eventId} onClose={() => setOpen(false)} />
       </Modal>
     </>
   )

@@ -5,6 +5,7 @@ import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 interface NewEventFormProps {
+  eventId: string
   onClose: () => void
 }
 
@@ -13,8 +14,7 @@ interface IParticipant {
   role?: string
 }
 
-function NewEventForm({ onClose }: NewEventFormProps) {
-  const { eventId } = useParams()
+function NewEventForm({ eventId, onClose }: NewEventFormProps) {
   const [emails, setEmails] = useState<string[]>([])
   const { event, refetch } = useEvent({
     id: eventId as string,

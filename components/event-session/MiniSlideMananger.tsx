@@ -55,7 +55,7 @@ function MiniSlideManager({
                 backgroundColor: slide.config?.backgroundColor || "#166534",
               }}
             >
-              {slide.contentType}
+              {slide.type}
             </div>
           </div>
         ))}
