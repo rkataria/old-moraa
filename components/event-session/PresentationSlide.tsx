@@ -17,10 +17,10 @@ function PresentationSlide() {
 
   return (
     <div className="w-full h-full">
-      {currentSlide.contentType === ContentType.COVER && (
+      {currentSlide.type === ContentType.COVER && (
         <Cover key={currentSlide.id} slide={currentSlide} />
       )}
-      {currentSlide.contentType === "poll" && (
+      {currentSlide.type === ContentType.POLL && (
         <Poll
           key={currentSlide.id}
           slide={currentSlide}

@@ -1,10 +1,13 @@
 import { ISlide } from "@/types/slide.type"
-import { IconLayoutSidebarLeftCollapseFilled, IconLayoutSidebarRightCollapseFilled } from "@tabler/icons-react"
+import {
+  IconLayoutSidebarLeftCollapseFilled,
+  IconLayoutSidebarRightCollapseFilled,
+} from "@tabler/icons-react"
 import clsx from "clsx"
 import React, { useEffect, useState } from "react"
 
 interface IMiniSlideManagerProps {
-  mode?: "edit" | "present"
+  mode?: "edit" | "present" | "read"
   slides: ISlide[]
   addSlideRef?: React.RefObject<HTMLDivElement>
   currentSlide: ISlide | null
@@ -23,7 +26,6 @@ function MiniSlideManager({
   onMiniModeChange,
 }: IMiniSlideManagerProps) {
   const [miniMode, setMiniMode] = useState<boolean>(true)
-
   useEffect(() => {
     onMiniModeChange(miniMode)
   }, [miniMode])
@@ -55,7 +57,7 @@ function MiniSlideManager({
                 backgroundColor: slide.config?.backgroundColor || "#166534",
               }}
             >
-              {slide.contentType}
+              {slide.type}
             </div>
           </div>
         ))}

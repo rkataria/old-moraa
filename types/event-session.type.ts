@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react"
 import { ISlide } from "./slide.type"
 
 export enum PresentationStatuses {
@@ -19,6 +20,7 @@ export type EventSessionContextType = {
   currentSlideLoading: boolean
   currentSlideResponses: any[] | null
   editing: boolean
+  metaData: MutableRefObject<any>
   syncSlides: () => void
   updateSlide: (slide: ISlide) => void
   enableEditing: () => void
@@ -33,4 +35,5 @@ export type EventSessionContextType = {
   votePoll: (slide: ISlide, option: string) => void
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
+  joinMeeting?: () => void
 }

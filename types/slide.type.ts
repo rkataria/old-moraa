@@ -6,13 +6,12 @@ export interface ISlide {
   id: string
   name: string
   content?: any
-  createdAt?: string
-  updatedAt?: string
-  config: {
-    backgroundColor: string
-    textColor: string
-  }
-  contentType: (typeof ContentType)[keyof typeof ContentType]
+  created_at?: string
+  updated_at?: string
+  config: any
+  type: (typeof ContentType)[keyof typeof ContentType]
+  order?: number
+  meeting_id?: string
 }
 
 export type SlideManagerContextType = {
@@ -21,6 +20,7 @@ export type SlideManagerContextType = {
   loading: boolean
   syncing: boolean
   miniMode: boolean
+  isOwner: boolean
   setMiniMode: (miniMode: boolean) => void
   setCurrentSlide: (slide: ISlide) => void
   addNewSlide: (slide: ISlide) => void

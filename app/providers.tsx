@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/providers/theme-provider"
 import { ModalProvider } from "@/providers/modal-provider"
 import { ChakraProvider } from "@chakra-ui/react"
 import { UserContextProvider } from "@/hooks/useAuth"
+import { Toaster } from 'react-hot-toast'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -20,6 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <UseQueryProvider>
             <UserContextProvider>
               {children}
+              <Toaster position="bottom-right" reverseOrder={false} />
               <ModalProvider />
             </UserContextProvider>
           </UseQueryProvider>

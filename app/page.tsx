@@ -8,9 +8,8 @@ export default async function HomePage() {
       </h1>
 
       <p className="text-2xl">
-      Creating a ‘wow’ virtual learning experience where learning is interactive and results are awesome!
-
-😍
+        Creating a ‘wow’ virtual learning experience where learning is
+        interactive and results are awesome! 😍
       </p>
       <AuthButton />
     </main>

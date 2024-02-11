@@ -5,7 +5,8 @@ const supabase = createClientComponentClient()
 
 export type GetEventParams = {
   eventId: string
-  fetchEventContent?: boolean
+  fetchMeetingSlides?: boolean
+  fetchActiveSession?: boolean
 }
 
 const getEvents = async () => {
@@ -17,22 +18,26 @@ const getEvents = async () => {
 
   const { data } = await supabase
     .from("enrollment")
-    .select("*,event(*)")
+    .select("*,event(*, profile(*))")
     .eq("user_id", user.id)
 
-  return data?.map((item) => item.event)
+  const events = data?.map((item) => item.event)
+  return events
 }
 
 const getEvent = async ({
   eventId,
-  fetchEventContent = false,
+  fetchMeetingSlides = false,
+  fetchActiveSession = false,
 }: GetEventParams) => {
-  const { data: event, error } = await supabase
-    .from("event")
-    .select("*")
-    .eq("id", eventId)
+  const { data: meeting, error } = await supabase
+    .from("meeting")
+    .select("*, event:event_id(*)")
+    .eq("event_id", eventId)
+    .single()
 
   if (error) {
+    console.error("error while fetching meeting and event: ", error)
     return {
       event: null,
       contents: null,
@@ -40,20 +45,33 @@ const getEvent = async ({
     }
   }
 
-  let eventContent
+  let slides, session
 
-  if (fetchEventContent) {
+  if (fetchMeetingSlides) {
     const { data } = await supabase
-      .from("event_content")
-      .select("*")
-      .eq("event_id", eventId)
+      .from("slide")
+      .select("*, meeting:meeting_id(*)")
+      .eq("meeting_id", meeting.id)
+    slides = data
+  }
 
-    eventContent = data
+  if (fetchActiveSession) {
+    const { data, error } = await supabase
+      .from("session")
+      .select("*")
+      .eq("meeting_id", meeting.id)
+      .eq("status", "ACTIVE")
+      .single()
+    if (!error) {
+      session = data
+    }
   }
 
   return {
-    event: event[0],
-    eventContent: eventContent?.[0],
+    event: meeting.event,
+    meeting: meeting,
+    meetingSlides: { slides: slides },
+    session: session,
   }
 }
 
