@@ -24,7 +24,7 @@ function Header({ event }: { event: any }) {
   const { currentUser } = useAuth()
 
   const userId = currentUser?.id
-  const isOwner = useMemo(() => userId === event.owner_id, [userId, event])
+  const isOwner = useMemo(() => userId === event?.owner_id, [userId, event])
   return (
     <div className="fixed left-0 top-0 w-full h-26 z-50 p-2 bg-white">
       <div className="flex justify-between items-center h-12 w-full">

@@ -20,7 +20,7 @@ export default function SlideManager({}: any) {
 
   const { currentUser } = useAuth()
   const userId = currentUser?.id
-  const isOwner = useMemo(() => userId === event.owner_id, [userId, event])
+  const isOwner = useMemo(() => userId === event?.owner_id, [userId, event])
 
   const {
     slides,
