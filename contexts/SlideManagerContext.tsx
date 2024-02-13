@@ -73,17 +73,22 @@ export const SlideManagerProvider = ({
 
     return meetingSlides?.slides?.slice().sort(customSort)
   }
+
   const handleSetSlides = async () => {
     if (!meetingSlides) return
-    // check whether the user is owner of event or not
-    const slides = getSortedSlides() ?? [
-      getDefaultCoverSlide({
-        title: event.name,
-        description: event.description,
-      }),
-    ]
+    const sortedSlides = getSortedSlides()
+    const slides =
+      sortedSlides && sortedSlides.length > 0
+        ? sortedSlides
+        : [
+            getDefaultCoverSlide({
+              title: event.name,
+              description: event.description,
+            }),
+          ]
     setSlideIds(meeting?.slides ?? [])
     let filteredSlides = slides
+    // check whether the user is owner of event or not
     const currentUser = await supabase.auth.getSession()
     if (currentUser.data.session?.user.id !== event.owner_id) {
       filteredSlides = slides.filter(
