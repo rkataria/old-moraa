@@ -24,7 +24,7 @@ export const getDefaultContent = (contentType: ContentType) => {
     case ContentType.GOOGLE_SLIDES:
       return {
         googleSlideURL: "",
-        startPosition: 1
+        startPosition: 1,
       }
     default:
       return {}
@@ -51,7 +51,7 @@ export const getDefaultCoverSlide = ({
       title,
       description,
     },
-    contentType: ContentType.COVER,
+    type: ContentType.COVER,
   }
 }
 
