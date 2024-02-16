@@ -63,11 +63,11 @@ export const EventSessionProvider = ({
     if (!activeSession || !meetingSlides?.slides) return
 
     const slide = meetingSlides?.slides?.find(
-      (s) => s.id === activeSession.data.currentSlideId
+      (s) => s.id === activeSession.data?.currentSlideId
     )
     setCurrentSlide(slide || slides[0])
     setPresentationStatus(
-      activeSession.data.presentationStatus || PresentationStatuses.STOPPED
+      activeSession.data?.presentationStatus || PresentationStatuses.STOPPED
     )
   }, [activeSession])
 
