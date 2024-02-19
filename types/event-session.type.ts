@@ -22,8 +22,6 @@ export type EventSessionContextType = {
   metaData: MutableRefObject<any>
   syncSlides: () => void
   updateSlide: (slide: ISlide) => void
-  enableEditing: () => void
-  disableEditing: () => void
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void

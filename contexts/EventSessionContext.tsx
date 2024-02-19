@@ -43,7 +43,6 @@ export const EventSessionProvider = ({
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [enrollment, setEnrollment] = useState<any>(null)
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
-  const [editing, setEditing] = useState<boolean>(false)
   const [activeStateSession, setActiveSession] = useState<any>(null)
   const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
@@ -220,14 +219,6 @@ export const EventSessionProvider = ({
     const newSlide = slides.find((slide) => slide.id === id)
     if (!newSlide) return
     setCurrentSlide(newSlide)
-  }
-
-  const enableEditing = () => {
-    setEditing(true)
-  }
-
-  const disableEditing = () => {
-    setEditing(false)
   }
 
   const startPresentation = () => {
@@ -413,12 +404,9 @@ export const EventSessionProvider = ({
         currentSlideResponses,
         currentSlideLoading,
         currentUser,
-        editing,
         metaData,
         syncSlides,
         updateSlide,
-        enableEditing,
-        disableEditing,
         startPresentation,
         stopPresentation,
         pausePresentation,
