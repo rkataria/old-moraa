@@ -7,7 +7,6 @@ import {
   EventSessionContextType,
   PresentationStatuses,
 } from "@/types/event-session.type"
-import SlideEditor from "./SlideEditor"
 import SlideViewControls from "./SlideViewControls"
 
 const ContentWrapper = ({ children }: { children: React.ReactNode }) => {
@@ -21,7 +20,7 @@ const ContentWrapper = ({ children }: { children: React.ReactNode }) => {
 }
 
 function ContentContainer() {
-  const { presentationStatus, editing, isHost } = useContext(
+  const { presentationStatus, isHost } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -41,14 +40,8 @@ function ContentContainer() {
 
   return (
     <ContentWrapper>
-      {editing ? (
-        <SlideEditor />
-      ) : (
-        <>
-          <Slide />
-          {isHost && <SlideViewControls />}
-        </>
-      )}
+      <Slide />
+      {isHost && <SlideViewControls />}
     </ContentWrapper>
   )
 }
