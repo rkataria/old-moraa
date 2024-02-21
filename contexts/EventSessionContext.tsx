@@ -263,23 +263,23 @@ export const EventSessionProvider = ({
         console.error(error)
         return
       }
-      if (data) {
-        const { data, error } = await supabase
+      // update current slide responses
+      const { data: currentSlideResponses, error: currentSlideError } =
+        await supabase
           .from("slide_response")
           .select(
             "* , participant:participant_id(*, enrollment:enrollment_id(*))"
           )
           .eq("slide_id", currentSlide?.id)
 
-        if (error) {
-          console.error(error)
-          setCurrentSlideLoading(false)
-          return
-        }
-
-        setCurrentSlideResponses(data)
+      if (currentSlideError) {
+        console.error(currentSlideError)
         setCurrentSlideLoading(false)
+        return
       }
+
+      setCurrentSlideResponses(currentSlideResponses)
+      setCurrentSlideLoading(false)
     } catch (error: any) {
       console.error(error)
     }
