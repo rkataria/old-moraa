@@ -9,7 +9,7 @@ export const getFormattedDate = (
   // Extracting components from ISO date string
   const isoDate = new Date(date)
   const year = isoDate.getFullYear()
-  const month = isoDate.toLocaleString('default', { month: 'short' });
+  const month = isoDate.toLocaleString("default", { month: "short" })
   const day = String(isoDate.getDate()).padStart(2, "0")
   const hours = String(isoDate.getHours()).padStart(2, "0")
   const minutes = String(isoDate.getMinutes()).padStart(2, "0")
@@ -18,4 +18,43 @@ export const getFormattedDate = (
   const mmddyyyyFormatDateString = `${month} ${day}, ${year} ${includeTime ? `${hours}:${minutes}` : ""}`
 
   return mmddyyyyFormatDateString
+}
+
+export const convertTimeZoneOffsetToHHMM = (timeZoneOffset: number) => {
+  // Determine the sign
+  var sign = timeZoneOffset < 0 ? "-" : "+"
+
+  // Calculate absolute hours and minutes
+  var absHours = Math.floor(Math.abs(timeZoneOffset))
+  var absMinutes = Math.round((Math.abs(timeZoneOffset) - absHours) * 60)
+
+  // Ensure minutes are displayed with leading zero if necessary
+  var formattedMinutes = absMinutes < 10 ? "0" + absMinutes : absMinutes
+
+  return (
+    sign + (absHours < 10 ? `0${absHours}` : absHours) + ":" + formattedMinutes
+  )
+}
+
+export const createCustomTimeZoneDate = (
+  year: number,
+  month: number,
+  day: number,
+  hours: number,
+  minutes: number,
+  timezoneOffsetHours: number
+) => {
+  // Create a new Date object with the provided year, month, day, hours, and minutes
+  let customTimeZoneDate = new Date(year, month - 1, day, hours, minutes, 0, 0)
+
+  // Calculate the local time by adding the offset
+  let localTime =
+    customTimeZoneDate.getTime() +
+    customTimeZoneDate.getTimezoneOffset() * 60000 +
+    timezoneOffsetHours * 3600000
+
+  // Create a new Date object with the adjusted local time
+  customTimeZoneDate = new Date(localTime)
+
+  return customTimeZoneDate
 }

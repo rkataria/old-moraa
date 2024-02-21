@@ -19,6 +19,7 @@ import {
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { TimeZones } from "@/constants/timezone"
 import { useMutation } from "@tanstack/react-query"
+import { createCustomTimeZoneDate } from "@/utils/date"
 
 interface NewEventFormProps {
   onClose: () => void
@@ -49,17 +50,19 @@ function NewEventForm({ onClose }: NewEventFormProps) {
   const publishEventMutation = useMutation({
     mutationFn: async (data: string) => {
       const supabase = createClientComponentClient()
-      await supabase.functions.invoke("publish-event", {
+      const response = await supabase.functions.invoke("publish-event", {
         body: data,
       })
-    },
-    onSuccess: () => {
-      setTimeout(async () => {
-        await refetch()
-        onClose()
-      }, 3000)
+      return new Promise((resolve) => {
+        setTimeout(async () => {
+          await refetch()
+          resolve(response)
+          onClose()
+        }, 3000)
+      })
     },
   })
+
   const { event, refetch } = useEvent({
     id: eventId as string,
   })
@@ -72,17 +75,45 @@ function NewEventForm({ onClose }: NewEventFormProps) {
 
   const publishEvent: SubmitHandler<FormData> = async (formData) => {
     if (!event) return
-    const payload = JSON.stringify({
+    const timezone = TimeZones.find((tz) => tz.text === formData.timezone)
+    const [startYear = 1, startMonth = 1, startDay = 1] =
+      formData.startDate?.split("-") || []
+    const [startHours = "00", startMinutes = "00"] =
+      formData.startTime?.split(":") || []
+
+    const [endYear = 1, endMonth = 1, endDay = 1] =
+      formData.endDate?.split("-") || []
+    const [endHours = "00", endMinutes = "00"] =
+      formData.endTime?.split(":") || []
+
+    const startDate = createCustomTimeZoneDate(
+      +startYear,
+      +startMonth,
+      +startDay,
+      +startHours,
+      +startMinutes,
+      timezone?.offset || 0
+    )
+    const endDate = createCustomTimeZoneDate(
+      +endYear,
+      +endMonth,
+      +endDay,
+      +endHours,
+      +endMinutes,
+      timezone?.offset || 0
+    )
+
+    const payload = {
       id: event?.id,
       name: formData.eventName,
       description: formData.description,
-      startDate: `${formData.startDate}${formData.timezone}`,
-      endDate: `${formData.endDate}${formData.timezone}`,
+      startDate: startDate,
+      endDate: endDate,
       participants: formData.participants.map((email: string) => {
         return { email: email, role: "Participant" }
       }),
-    })
-    publishEventMutation.mutate(payload)
+    }
+    publishEventMutation.mutate(JSON.stringify(payload))
   }
 
   return (
@@ -106,7 +137,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
             render={({ field, fieldState }) => (
               <FormControl size="xs" isInvalid={!!fieldState.error?.message}>
                 <FormLabel>Description</FormLabel>
-                <Input {...field} />
+                <Input {...field} type="textarea" />
                 <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
               </FormControl>
             )}
@@ -119,7 +150,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                 <FormLabel>Timezone</FormLabel>
                 <Select {...field}>
                   {TimeZones.map((timezone) => (
-                    <option value={timezone.abbr}>{timezone.text}</option>
+                    <option value={timezone.text}>{timezone.text}</option>
                   ))}
                 </Select>
                 <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
@@ -226,9 +257,17 @@ function NewEventForm({ onClose }: NewEventFormProps) {
             )}
           />
           <div className="flex justify-end">
-            <Button className="mr-4">Cancel</Button>
-            <Button color={"black"} type="submit">
-              Save
+            <Button variant="outline" className="mr-4" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              colorScheme="purple"
+              variant="solid"
+              type="submit"
+              disabled={publishEventMutation.isPending}
+              isLoading={publishEventMutation.isPending}
+            >
+              Publish
             </Button>
           </div>
         </Stack>
