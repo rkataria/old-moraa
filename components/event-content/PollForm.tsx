@@ -75,11 +75,11 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
       setQuestionPressedEnterCount(0)
       return
     }
-    if (e.key === "Enter" && questionPressedEnterCount < 1) {
+    if (questionPressedEnterCount < 1) {
       setQuestionPressedEnterCount(questionPressedEnterCount + 1)
       return
     }
-    if (e.key === "Enter" && questionPressedEnterCount === 1) {
+    if (questionPressedEnterCount === 1) {
       setQuestion(question.trim())
       focusOnFirstEmptyOption(e)
       setQuestionPressedEnterCount(0)
