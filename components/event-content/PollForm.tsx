@@ -60,10 +60,10 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
         (option) => option?.length === 0
       )
       if (indexOfFirstEmptyOption !== -1) {
-        const ele = document.getElementById(
+        const optionElement = document.getElementById(
           `${indexOfFirstEmptyOption}-poll-option-form`
         )
-        ele?.focus()
+        optionElement?.focus()
         return
       }
       addNewOption()
@@ -73,6 +73,7 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
   const onOptionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     focusOnFirstEmptyOption(e)
   }
+
   const onQuestionKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key !== "Enter") {
       setQuestionPressedEnterCount(0)
