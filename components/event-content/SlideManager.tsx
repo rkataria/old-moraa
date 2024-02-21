@@ -1,5 +1,5 @@
 "use client"
-import { useContext, useRef, useState } from "react"
+import { useContext, useMemo, useRef, useState } from "react"
 import clsx from "clsx"
 import Slide from "./Slide"
 import ContentTypePicker, { ContentType } from "./ContentTypePicker"
@@ -10,8 +10,18 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { getDefaultContent } from "@/utils/content.util"
 import { v4 as uuidv4 } from "uuid"
 import MiniSlideManager from "./MiniSlideManager"
+import { useParams } from "next/navigation"
+import { useEvent } from "@/hooks/useEvent"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function SlideManager({}: any) {
+  const { eventId } = useParams()
+  const { event } = useEvent({ id: eventId as string })
+
+  const { currentUser } = useAuth()
+  const userId = currentUser?.id
+  const isOwner = useMemo(() => userId === event?.owner_id, [userId, event])
+
   const {
     slides,
     loading,
@@ -39,12 +49,11 @@ export default function SlideManager({}: any) {
         textColor: "#000",
       },
       content: getDefaultContent(contentType),
-      contentType: contentType,
+      type: contentType,
     }
 
     addNewSlide(newSlide)
     setOpenContentTypePicker(false)
-    setCurrentSlide(newSlide)
   }
 
   if (loading)
@@ -89,6 +98,7 @@ export default function SlideManager({}: any) {
           </div>
         </div>
         <MiniSlideManager
+          mode={isOwner ? "edit" : "read"}
           slides={slides}
           addSlideRef={addSlideRef}
           currentSlide={currentSlide}
@@ -97,11 +107,13 @@ export default function SlideManager({}: any) {
           onMiniModeChange={setMiniMode}
         />
       </div>
+      (
       <ContentTypePicker
         open={openContentTypePicker}
         onClose={() => setOpenContentTypePicker(false)}
         onChoose={handleAddNewSlide}
       />
+      )
       <SyncingStatus syncing={syncing} />
     </div>
   )

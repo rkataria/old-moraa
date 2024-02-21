@@ -19,12 +19,9 @@ export type EventSessionContextType = {
   presentationStatus: PresentationStatuses
   currentSlideLoading: boolean
   currentSlideResponses: any[] | null
-  editing: boolean
   metaData: MutableRefObject<any>
   syncSlides: () => void
   updateSlide: (slide: ISlide) => void
-  enableEditing: () => void
-  disableEditing: () => void
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void
@@ -35,4 +32,5 @@ export type EventSessionContextType = {
   votePoll: (slide: ISlide, option: string) => void
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
+  joinMeeting?: () => void
 }

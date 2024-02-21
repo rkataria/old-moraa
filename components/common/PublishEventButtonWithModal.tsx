@@ -12,7 +12,7 @@ const styles = {
   },
 }
 
-function PublishEventButtonWithModal() {
+function PublishEventButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
@@ -36,7 +36,7 @@ function PublishEventButtonWithModal() {
             Course
           </span>
         </div>
-        <PublishEventForm onClose={() => setOpen(false)} />
+        <PublishEventForm eventId={eventId} onClose={() => setOpen(false)} />
       </Modal>
     </>
   )

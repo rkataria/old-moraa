@@ -22,6 +22,7 @@ import { useMutation } from "@tanstack/react-query"
 import { createCustomTimeZoneDate } from "@/utils/date"
 
 interface NewEventFormProps {
+  eventId: string
   onClose: () => void
 }
 

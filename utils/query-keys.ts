@@ -27,4 +27,6 @@ class QureyKeysGenerator<FilterKeys extends string[] = [""]> {
   }
 }
 
-export const QueryKeys = Object.freeze({})
+export const QueryKeys = Object.freeze({
+  DownloadPDF: new QureyKeysGenerator('DOWNLOAD_PDF')
+})

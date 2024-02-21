@@ -51,7 +51,7 @@ function SlideViewControls() {
   const showRightLeftArrow = [
     ContentType.GOOGLE_SLIDES,
     ContentType.PDF_VIEWER,
-  ].includes(currentSlide?.contentType as ContentType)
+  ].includes(currentSlide?.type as ContentType)
 
   return (
     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 p-2 rounded-md flex justify-center items-center gap-2">
@@ -70,7 +70,7 @@ function SlideViewControls() {
         </div>
         <div
           className={classNames("flex justify-center items-center", {
-            "invisible": !showRightLeftArrow,
+            invisible: !showRightLeftArrow,
           })}
         >
           <IconButton
