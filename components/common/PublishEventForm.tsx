@@ -70,12 +70,16 @@ function NewEventForm({ onClose }: NewEventFormProps) {
     resolver: yupResolver(publishEventValidationSchema),
     defaultValues: {
       participants: [],
+      timezone: TimeZones[0].text,
+      startTime: "02:00",
+      endTime: "05:00",
     },
   })
 
   const publishEvent: SubmitHandler<FormData> = async (formData) => {
     if (!event) return
     const timezone = TimeZones.find((tz) => tz.text === formData.timezone)
+
     const [startYear = 1, startMonth = 1, startDay = 1] =
       formData.startDate?.split("-") || []
     const [startHours = "00", startMinutes = "00"] =
@@ -107,8 +111,8 @@ function NewEventForm({ onClose }: NewEventFormProps) {
       id: event?.id,
       name: formData.eventName,
       description: formData.description,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: formData.startDate ? startDate : null,
+      endDate: formData.endDate ? endDate : null,
       participants: formData.participants.map((email: string) => {
         return { email: email, role: "Participant" }
       }),
