@@ -264,7 +264,7 @@ export const EventSessionProvider = ({
         return
       }
       // update current slide responses
-      const { data: currentSlideResponses, error: currentSlideError } =
+      const { data: slideResponses, error: slideResponsesError } =
         await supabase
           .from("slide_response")
           .select(
@@ -272,13 +272,13 @@ export const EventSessionProvider = ({
           )
           .eq("slide_id", currentSlide?.id)
 
-      if (currentSlideError) {
-        console.error(currentSlideError)
+      if (slideResponsesError) {
+        console.error(slideResponsesError)
         setCurrentSlideLoading(false)
         return
       }
 
-      setCurrentSlideResponses(currentSlideResponses)
+      setCurrentSlideResponses(slideResponses)
       setCurrentSlideLoading(false)
     } catch (error: any) {
       console.error(error)
