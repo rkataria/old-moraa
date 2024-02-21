@@ -12,7 +12,6 @@ interface PollFormProps {
 }
 
 function PollForm({ slide: slideFromRemote }: PollFormProps) {
-  const [elementToFocus, setElementToFocus] = useState(null)
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
