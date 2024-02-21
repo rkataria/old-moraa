@@ -12,7 +12,7 @@ interface PollFormProps {
 }
 
 function PollForm({ slide: slideFromRemote }: PollFormProps) {
-  const [questionPressedEnterCount, setQuestionPressedEnterCount] = useState(0)
+  const [successiveEnterPressCount, setSuccessiveEnterPressCount] = useState(0)
 
   const { updateSlide } = useContext(
     SlideManagerContext
@@ -72,17 +72,17 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
 
   const onQuestionKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key !== "Enter") {
-      setQuestionPressedEnterCount(0)
+      setSuccessiveEnterPressCount(0)
       return
     }
-    if (questionPressedEnterCount < 1) {
-      setQuestionPressedEnterCount(questionPressedEnterCount + 1)
+    if (successiveEnterPressCount < 1) {
+      setSuccessiveEnterPressCount(successiveEnterPressCount + 1)
       return
     }
-    if (questionPressedEnterCount === 1) {
+    if (successiveEnterPressCount === 1) {
       setQuestion(question.trim())
       focusOnFirstEmptyOption(e)
-      setQuestionPressedEnterCount(0)
+      setSuccessiveEnterPressCount(0)
     }
   }
 
