@@ -70,10 +70,6 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
     }
   }
 
-  const onOptionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    focusOnFirstEmptyOption(e)
-  }
-
   const onQuestionKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key !== "Enter") {
       setQuestionPressedEnterCount(0)
@@ -138,7 +134,7 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
                 value={option}
                 placeholder={`Option ${index + 1}`}
                 onChange={(e) => updateOption(e, index)}
-                onKeyDown={onOptionKeyDown}
+                onKeyDown={focusOnFirstEmptyOption}
               />
               <button className="p-4" onClick={() => deleteOption(index)}>
                 <IconTrash size={16} />
