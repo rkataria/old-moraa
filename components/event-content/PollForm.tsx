@@ -12,6 +12,8 @@ interface PollFormProps {
 }
 
 function PollForm({ slide: slideFromRemote }: PollFormProps) {
+  const [questionPressedEnterCount, setQuestionPressedEnterCount] = useState(0)
+
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
@@ -25,7 +27,7 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
   const throttledQuestion = useThrottle(question, 500)
   const throttledOptions = useThrottle(options, 500)
 
-  const updateQuestion = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateQuestion = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setQuestion(e.target.value)
   }
 
@@ -48,7 +50,11 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
     setOptions([...options, ""])
   }
 
-  const onOptionKeyChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const focusOnFirstEmptyOption = (
+    e:
+      | React.KeyboardEvent<HTMLInputElement>
+      | React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
     if (e.key === "Enter") {
       const indexOfFirstEmptyOption = options.findIndex(
         (option) => option?.length === 0
@@ -63,19 +69,23 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
       addNewOption()
     }
   }
-  const onQuesKeyChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const indexOfFirstEmptyOption = options.findIndex(
-        (option) => option?.length === 0
-      )
-      if (indexOfFirstEmptyOption !== -1) {
-        const ele = document.getElementById(
-          `${indexOfFirstEmptyOption}-poll-option-form`
-        )
-        ele?.focus()
-        return
-      }
-      addNewOption()
+
+  const onOptionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    focusOnFirstEmptyOption(e)
+  }
+  const onQuestionKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key !== "Enter") {
+      setQuestionPressedEnterCount(0)
+      return
+    }
+    if (e.key === "Enter" && questionPressedEnterCount < 1) {
+      setQuestionPressedEnterCount(questionPressedEnterCount + 1)
+      return
+    }
+    if (e.key === "Enter" && questionPressedEnterCount === 1) {
+      setQuestion(question.trim())
+      focusOnFirstEmptyOption(e)
+      setQuestionPressedEnterCount(0)
     }
   }
 
@@ -102,21 +112,14 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
       className={clsx("absolute w-full h-full flex justify-center items-start")}
     >
       <div className="p-8 w-4/5">
-        {/* <ReactTextareaAutosize
+        <ReactTextareaAutosize
           autoFocus={question?.length === 0}
           maxLength={100}
           className="text-3xl font-bold mb-8 bg-transparent w-full text-black outline-none hover:outline-none border-0 resize-none"
           value={question}
           placeholder="Question goes here"
           onChange={updateQuestion}
-        /> */}
-        <input
-          autoFocus={question?.length === 0}
-          className="text-3xl font-bold mb-8 bg-transparent w-full text-black outline-none hover:outline-none border-0 resize-none"
-          value={question}
-          placeholder="Question goes here"
-          onChange={updateQuestion}
-          onKeyDown={onQuesKeyChange}
+          onKeyDown={onQuestionKeyDown}
         />
         <ul>
           {options.map((option: string, index: number) => (
@@ -134,7 +137,7 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
                 value={option}
                 placeholder={`Option ${index + 1}`}
                 onChange={(e) => updateOption(e, index)}
-                onKeyDown={onOptionKeyChange}
+                onKeyDown={onOptionKeyDown}
               />
               <button className="p-4" onClick={() => deleteOption(index)}>
                 <IconTrash size={16} />
