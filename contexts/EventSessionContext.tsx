@@ -143,7 +143,9 @@ export const EventSessionProvider = ({
     const fetchCurrentSlideResponses = async () => {
       const { data, error } = await supabase
         .from("slide_response")
-        .select("*")
+        .select(
+          "* , participant:participant_id(*, enrollment:enrollment_id(*))"
+        )
         .eq("slide_id", currentSlide.id)
 
       if (error) {
@@ -249,10 +251,8 @@ export const EventSessionProvider = ({
       const { data, error } = await supabase
         .from("slide_response")
         .upsert({
-          slide,
           response: { selected_option: option },
           slide_id: slide.id,
-          event_id: event.id,
           participant_id: participant.id,
         })
         .eq("slide_id", slide.id)
@@ -262,6 +262,23 @@ export const EventSessionProvider = ({
       if (error) {
         console.error(error)
         return
+      }
+      if (data) {
+        const { data, error } = await supabase
+          .from("slide_response")
+          .select(
+            "* , participant:participant_id(*, enrollment:enrollment_id(*))"
+          )
+          .eq("slide_id", currentSlide?.id)
+
+        if (error) {
+          console.error(error)
+          setCurrentSlideLoading(false)
+          return
+        }
+
+        setCurrentSlideResponses(data)
+        setCurrentSlideLoading(false)
       }
     } catch (error: any) {
       console.error(error)
@@ -278,17 +295,14 @@ export const EventSessionProvider = ({
       const { data, error } = await supabase
         .from("slide_response")
         .upsert({
-          slide,
           response: {
             reflection: reflection,
             username: username,
           },
           slide_id: slide.id,
-          event_id: event.id,
           profile_id: currentUser.data.session?.user.id,
         })
         .eq("slide_id", slide.id)
-        .eq("event_id", event.id)
         .eq("profile_id", currentUser.data.session?.user.id)
         .select()
 

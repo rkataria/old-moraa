@@ -59,5 +59,5 @@ export const checkVoted = (votes: any, user: any) => {
   if (!Array.isArray(votes)) return false
   if (!user) return false
 
-  return votes.some((vote) => vote.profile_id === user.id)
+  return votes.some((vote) => vote.participant.enrollment.user_id === user.id)
 }
