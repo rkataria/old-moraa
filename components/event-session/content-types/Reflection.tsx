@@ -102,7 +102,7 @@ function Reflection({
 
   useEffect(() => {
     if (responded) {
-      setReflection(selfResponse?.response.reflection)
+      setReflection(selfResponse.response.reflection)
     }
   }, [])
 
