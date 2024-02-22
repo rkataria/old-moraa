@@ -36,6 +36,8 @@ export const SlideManagerProvider = ({
   const debouncedSlides = useDebounce(slides, 500)
   const supabase = createClientComponentClient()
 
+  console.log("slides:", slides)
+
   useEffect(() => {
     handleSetSlides()
   }, [meetingSlides])
@@ -81,10 +83,10 @@ export const SlideManagerProvider = ({
       sortedSlides && sortedSlides.length > 0
         ? sortedSlides
         : [
-            getDefaultCoverSlide({
-              title: event.name,
-              description: event.description,
-            }),
+            // getDefaultCoverSlide({
+            //   title: event.name,
+            //   description: event.description,
+            // }),
           ]
     setSlideIds(meeting?.slides ?? [])
     let filteredSlides = slides

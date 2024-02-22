@@ -30,6 +30,8 @@ function MiniSlideManager({
     onMiniModeChange(miniMode)
   }, [miniMode])
 
+  console.log({ slides })
+
   return (
     <div
       className={clsx(
