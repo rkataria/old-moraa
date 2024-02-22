@@ -266,7 +266,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
               Cancel
             </Button>
             <Button
-              colorScheme="purple"
+              colorScheme="black"
               variant="solid"
               type="submit"
               disabled={publishEventMutation.isPending}
