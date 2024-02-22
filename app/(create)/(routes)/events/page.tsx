@@ -2,7 +2,7 @@
 
 import EventList from "@/components/events/EventList"
 import { useModal } from "@/stores/use-modal-store"
-import { Button } from "@/components/ui/button"
+import { Button } from "@chakra-ui/react"
 
 export default function EventsPage() {
   const { onOpen } = useModal()
@@ -11,10 +11,7 @@ export default function EventsPage() {
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto"></div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Button
-            variant={"default"}
-            onClick={() => onOpen("createEvent", { data: {} })}
-          >
+          <Button onClick={() => onOpen("createEvent", { data: {} })}>
             Create new event
           </Button>
         </div>
