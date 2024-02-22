@@ -36,8 +36,6 @@ export const SlideManagerProvider = ({
   const debouncedSlides = useDebounce(slides, 500)
   const supabase = createClientComponentClient()
 
-  console.log("slides:", slides)
-
   useEffect(() => {
     handleSetSlides()
   }, [meetingSlides])
