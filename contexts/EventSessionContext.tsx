@@ -7,6 +7,7 @@ import {
 import { ISlide } from "@/types/slide.type"
 import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import Participants from "../components/events/Participants"
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -300,10 +301,10 @@ export const EventSessionProvider = ({
             username: username,
           },
           slide_id: slide.id,
-          profile_id: currentUser.data.session?.user.id,
+          participant_id: participant.id,
         })
         .eq("slide_id", slide.id)
-        .eq("profile_id", currentUser.data.session?.user.id)
+        .eq("participant_id", participant.id)
         .select()
 
       if (error) {
@@ -429,6 +430,7 @@ export const EventSessionProvider = ({
         currentUser,
         editing,
         metaData,
+        participant,
         syncSlides,
         updateSlide,
         enableEditing,

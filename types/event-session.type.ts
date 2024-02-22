@@ -21,6 +21,7 @@ export type EventSessionContextType = {
   currentSlideResponses: any[] | null
   editing: boolean
   metaData: MutableRefObject<any>
+  participant: any
   syncSlides: () => void
   updateSlide: (slide: ISlide) => void
   enableEditing: () => void
