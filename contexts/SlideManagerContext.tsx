@@ -163,15 +163,26 @@ export const SlideManagerProvider = ({
     if (slide?.content?.pdfPath) {
       deletePDFFile(slide?.content?.pdfPath)
     }
-    setSlides((s) => s.filter((slide) => slide.id !== id))
+
+    const updatedSlides = slides.filter((slide) => slide.id !== id)
+    setSlides(updatedSlides)
     setSlideIds((s) => s.filter((slideId) => slideId !== id))
+
     if (currentSlide?.id === id) {
-      if (index !== slides.length - 1) {
-        setCurrentSlide(slides[index + 1])
-      } else
-        setCurrentSlide(
-          slides.length > 1 ? slides[slides.length - 2] : slides[0]
-        )
+      if (index !== updatedSlides.length) {
+        setCurrentSlide(updatedSlides[index])
+        return
+      }
+      if (updatedSlides.length > 0) {
+        setCurrentSlide(updatedSlides[index - 1])
+        return
+      }
+      setCurrentSlide(
+        getDefaultCoverSlide({
+          title: event.name,
+          description: event.description,
+        })
+      )
     }
   }
 
