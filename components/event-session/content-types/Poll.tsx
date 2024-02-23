@@ -55,8 +55,10 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
               <div
                 key={index}
                 className={clsx(
-                  "relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden"
+                  "relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden cursor-pointer",
+                  { "pointer-events-none cursor-default": voted || isHost }
                 )}
+                onClick={() => votePoll?.(slide, option)}
               >
                 {(voted || isHost) && (
                   <>
@@ -73,10 +75,7 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
                 )}
                 <span className="font-bold">{option}</span>
                 {!voted && !isHost && (
-                  <button
-                    className="px-4 py-2 bg-purple-900/10 text-sm font-semibold rounded-md"
-                    onClick={() => votePoll?.(slide, option)}
-                  >
+                  <button className="px-4 py-2 bg-purple-900/10 text-sm font-semibold rounded-md">
                     Vote
                   </button>
                 )}
