@@ -47,7 +47,7 @@ function ParticipantTiles() {
       </DyteParticipantTile>
       {meeting.participants.active.toArray().map((participant) => (
         <DyteParticipantTile
-          meeting={meeting}
+          meeting={meeting.participants}
           participant={participant}
           nameTagPosition="bottom-center"
           variant="gradient"
