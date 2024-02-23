@@ -63,13 +63,13 @@ export default function Slide({
               "text-gray-300 cursor-pointer hover:text-black transition-all duration-500"
             )}
           />
-          <IconSettings
+          {/* <IconSettings
             size={20}
             onClick={toggleSettings}
             className={clsx(
               "text-gray-300 cursor-pointer hover:text-black transition-all duration-500"
             )}
-          />
+          /> */}
           <IconTrash
             size={20}
             onClick={() => deleteSlide(slide.id)}
