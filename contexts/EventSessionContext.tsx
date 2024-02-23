@@ -271,7 +271,7 @@ export const EventSessionProvider = ({
           .select(
             "* , participant:participant_id(*, enrollment:enrollment_id(*))"
           )
-          .eq("slide_id", currentSlide?.id)
+          .eq("slide_id", slide.id)
 
       if (slideResponsesError) {
         console.error(slideResponsesError)
