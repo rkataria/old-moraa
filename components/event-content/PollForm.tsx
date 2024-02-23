@@ -33,7 +33,7 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
   }
 
   const updateOption = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLTextAreaElement>,
     index: number
   ) => {
     const newOptions = [...options]
