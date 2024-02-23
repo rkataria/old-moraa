@@ -60,19 +60,19 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
                 )}
                 onClick={() => votePoll?.(slide, option)}
               >
-                {(voted || isHost) && (
-                  <>
-                    <div
-                      className="absolute transition-all left-0 top-0 h-full bg-purple-500 z-[-1] w-0"
-                      style={{
-                        width: `${getOptionWidth(option)}%`,
-                      }}
-                    />
-                    <div className="absolute left-0 top-0 h-full w-full flex justify-center items-center text-xl font-bold text-black/10 pointer-events-none">
-                      {getOptionWidth(option)}%
-                    </div>
-                  </>
-                )}
+                <div
+                  className={clsx(
+                    "absolute transition-all left-0 top-0 h-full  z-[-1] w-0",
+                    { "bg-purple-500": voted || isHost }
+                  )}
+                  style={{
+                    width: `${getOptionWidth(option)}%`,
+                  }}
+                />
+                <div className="absolute left-0 top-0 h-full w-full flex justify-center items-center text-xl font-bold text-black/10 pointer-events-none">
+                  {getOptionWidth(option)}%
+                </div>
+
                 <span className="font-bold">{option}</span>
                 {!voted && !isHost && (
                   <button className="px-4 py-2 bg-purple-900/10 text-sm font-semibold rounded-md">
