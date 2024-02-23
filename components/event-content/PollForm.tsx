@@ -13,6 +13,7 @@ interface PollFormProps {
 
 function PollForm({ slide: slideFromRemote }: PollFormProps) {
   const [successiveEnterPressCount, setSuccessiveEnterPressCount] = useState(0)
+  const optionsRef = useRef<any>([])
 
   const { updateSlide } = useContext(
     SlideManagerContext
@@ -60,13 +61,12 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
         (option) => option?.length === 0
       )
       if (indexOfFirstEmptyOption !== -1) {
-        const optionElement = document.getElementById(
-          `${indexOfFirstEmptyOption}-poll-option-form`
-        )
-        optionElement?.focus()
+        optionsRef.current[indexOfFirstEmptyOption].focus()
+        e.preventDefault()
         return
       }
       addNewOption()
+      e.preventDefault()
     }
   }
 
@@ -124,10 +124,9 @@ function PollForm({ slide: slideFromRemote }: PollFormProps) {
               key={index}
               className="flex justify-between items-center mb-2 rounded-md font-semibold bg-black/5 text-black"
             >
-              <input
-                id={`${index}-poll-option-form`}
+              <ReactTextareaAutosize
+                ref={(el: any) => (optionsRef.current[index] = el)}
                 autoFocus={option.length === 0 && question?.length !== 0}
-                maxLength={50}
                 className={clsx(
                   "w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none"
                 )}
