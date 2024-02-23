@@ -175,12 +175,7 @@ export const SlideManagerProvider = ({
         setCurrentSlide(updatedSlides[index - 1])
         return
       }
-      setCurrentSlide(
-        getDefaultCoverSlide({
-          title: event.name,
-          description: event.description,
-        })
-      )
+      setCurrentSlide(null)
     }
   }
 
