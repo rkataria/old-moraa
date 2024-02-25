@@ -4,16 +4,17 @@ const fs = require('fs');
 
 rulesDirPlugin.RULES_DIR = 'eslint/rules';
 
-const dirsInSrc = fs
-  .readdirSync('./src', {
+const codeDir = fs
+  .readdirSync('./', {
     withFileTypes: true,
   })
   .filter((folderOrFile) => folderOrFile.isDirectory())
   .map((folder) => folder.name);
 
 module.exports = {
+  parser: '@typescript-eslint/parser',
   settings: {
-    'import/internal-regex': `^(${dirsInSrc.join('|')})+(.)*`,
+    'import/internal-regex': `^(${codeDir.join('|')})+(.)*`,
   },
   extends: [
     'eslint:recommended',
@@ -33,7 +34,6 @@ module.exports = {
     'import',
     'rulesdir',
   ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2018,
@@ -43,7 +43,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/*/**.(js|jsx|ts|tsx)'],
+      files: ['./*/**.(js|jsx|ts|tsx)'],
       parserOptions: {
         project: ['./tsconfig.json'],
       },
