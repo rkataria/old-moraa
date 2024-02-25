@@ -1,3 +1,5 @@
+import { TimeZones } from "@/constants/timezone"
+
 export const getIsoDateString = (date: string) => {
   return new Date(date).toISOString()
 }
@@ -57,4 +59,20 @@ export const createCustomTimeZoneDate = (
   customTimeZoneDate = new Date(localTime)
 
   return customTimeZoneDate
+}
+
+/**
+ * The `getBrowserTimeZone` can be used to retrieve the timezone object of browser.
+ * The list of timezones is defined in constants/timezone file.
+ * @returns {TimeZones}
+ */
+export function getBrowserTimeZone(): typeof TimeZones[number] {
+  const formatter = new Intl.DateTimeFormat("en-US")
+  const resolvedTimezone = formatter.resolvedOptions().timeZone
+  console.log("🚀 ~ getBrowserTimeZone ~ resolvedTimezone:", resolvedTimezone)
+  const timeZone = TimeZones.find(({ utc }) =>
+    (utc || []).some((_tz) => _tz === resolvedTimezone)
+  )
+  console.log("🚀 ~ getBrowserTimeZone ~ timeZone:", timeZone)
+  return timeZone || TimeZones[0]
 }

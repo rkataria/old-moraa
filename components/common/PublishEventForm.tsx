@@ -19,7 +19,7 @@ import {
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { TimeZones } from "@/constants/timezone"
 import { useMutation } from "@tanstack/react-query"
-import { createCustomTimeZoneDate } from "@/utils/date"
+import { createCustomTimeZoneDate, getBrowserTimeZone } from "@/utils/date"
 
 interface NewEventFormProps {
   eventId: string
@@ -70,8 +70,10 @@ function NewEventForm({ onClose }: NewEventFormProps) {
   const publishEventForm = useForm<FormData>({
     resolver: yupResolver(publishEventValidationSchema),
     defaultValues: {
+      eventName: event.name,
+      description: event.description,
       participants: [],
-      timezone: TimeZones[0].text,
+      timezone: getBrowserTimeZone().text,
       startTime: "02:00",
       endTime: "05:00",
     },
