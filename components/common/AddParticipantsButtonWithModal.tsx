@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import Modal from "./Modal"
-import clsx from "clsx"
 import AddParticipantsForm, {
   ParticipantsFormData,
 } from "./AddParticipantsForm"
@@ -48,21 +47,12 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
 
   return (
     <>
-      <div
-        onClick={() => setOpen(true)}
-        className={clsx(
-          styles.button.default,
-          "cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full px-4"
-        )}
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Add Participants"
+        description="Add participants to the event"
       >
-        Add Participants
-      </div>
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <div className="mb-8 flex justify-start items-center gap-2">
-          <h1 className="text-xl font-semibold leading-6 text-gray-900">
-            Add Participants
-          </h1>
-        </div>
         <AddParticipantsForm
           onSubmit={addParticipantsMutations.mutate}
           renderAction={() => (
