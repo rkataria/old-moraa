@@ -20,6 +20,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { TimeZones } from "@/constants/timezone"
 import { useMutation } from "@tanstack/react-query"
 import { createCustomTimeZoneDate, getBrowserTimeZone } from "@/utils/date"
+import { useEffect } from "react"
 
 interface NewEventFormProps {
   eventId: string
@@ -46,7 +47,7 @@ const publishEventValidationSchema = yup.object({
 
 type FormData = yup.InferType<typeof publishEventValidationSchema>
 
-function NewEventForm({ onClose }: NewEventFormProps) {
+function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
   const { eventId } = useParams()
   const publishEventMutation = useMutation({
     mutationFn: async (data: string) => {
@@ -65,19 +66,25 @@ function NewEventForm({ onClose }: NewEventFormProps) {
   })
 
   const { event, refetch } = useEvent({
-    id: eventId as string,
+    id: (eventId || _eventId) as string,
   })
   const publishEventForm = useForm<FormData>({
     resolver: yupResolver(publishEventValidationSchema),
     defaultValues: {
-      eventName: event.name,
-      description: event.description,
-      participants: [],
-      timezone: getBrowserTimeZone().text,
       startTime: "02:00",
       endTime: "05:00",
     },
   })
+
+  useEffect(() => {
+    if (!event) return
+    publishEventForm.reset({
+      eventName: event.name,
+      description: event.description,
+      participants: [],
+      timezone: getBrowserTimeZone().text,
+    })
+  }, [event])
 
   const publishEvent: SubmitHandler<FormData> = async (formData) => {
     if (!event) return

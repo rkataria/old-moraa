@@ -69,10 +69,8 @@ export const createCustomTimeZoneDate = (
 export function getBrowserTimeZone(): typeof TimeZones[number] {
   const formatter = new Intl.DateTimeFormat("en-US")
   const resolvedTimezone = formatter.resolvedOptions().timeZone
-  console.log("🚀 ~ getBrowserTimeZone ~ resolvedTimezone:", resolvedTimezone)
   const timeZone = TimeZones.find(({ utc }) =>
     (utc || []).some((_tz) => _tz === resolvedTimezone)
   )
-  console.log("🚀 ~ getBrowserTimeZone ~ timeZone:", timeZone)
   return timeZone || TimeZones[0]
 }
