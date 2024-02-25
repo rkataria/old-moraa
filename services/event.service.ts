@@ -45,7 +45,7 @@ const getEvent = async ({
     }
   }
 
-  let slides, session
+  let slides, session, participants
 
   if (fetchMeetingSlides) {
     const { data } = await supabase
@@ -69,6 +69,7 @@ const getEvent = async ({
 
   return {
     event: meeting.event,
+    participants,
     meeting: meeting,
     meetingSlides: { slides: slides },
     session: session,

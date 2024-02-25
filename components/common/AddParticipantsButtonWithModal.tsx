@@ -3,7 +3,14 @@
 import { useState } from "react"
 import Modal from "./Modal"
 import clsx from "clsx"
-import AddParticipantsForm from "./AddParticipantsForm"
+import AddParticipantsForm, {
+  ParticipantsFormData,
+} from "./AddParticipantsForm"
+import { useEvent } from "@/hooks/useEvent"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { Button } from "@chakra-ui/react"
+import { useMutation } from "@tanstack/react-query"
+import toast from "react-hot-toast"
 
 const styles = {
   button: {
@@ -14,6 +21,30 @@ const styles = {
 
 function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
+  // const { event } = useEvent({
+  //   id: eventId,
+  // })
+  const addParticipantsMutations = useMutation({
+    mutationFn: async ({ participants }: ParticipantsFormData) => {
+      try {
+        const supabase = createClientComponentClient()
+        const payload = JSON.stringify({
+          eventId: eventId,
+          participants: participants.map((participant) => {
+            return { email: participant.email, role: "Participant" }
+          }),
+        })
+        await supabase.functions.invoke("invite-participants", {
+          body: payload,
+        })
+        toast.success("Participants added successfully.")
+        setOpen(false)
+      } catch (err) {
+        console.error(err)
+        toast.error("Failed to add participants")
+      }
+    },
+  })
 
   return (
     <>
@@ -29,13 +60,32 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
       <Modal open={open} onClose={() => setOpen(false)}>
         <div className="mb-8 flex justify-start items-center gap-2">
           <h1 className="text-xl font-semibold leading-6 text-gray-900">
-            Create Event
+            Add Participants
           </h1>
-          <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-            Course
-          </span>
         </div>
-        <AddParticipantsForm eventId={eventId} onClose={() => setOpen(false)} />
+        <AddParticipantsForm
+          onSubmit={addParticipantsMutations.mutate}
+          renderAction={() => (
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                colorScheme="gray"
+                className="mr-2"
+                onClick={() => setOpen(false)}
+              >
+                Close
+              </Button>
+              <Button
+                type="submit"
+                colorScheme="brand"
+                variant="solid"
+                isLoading={addParticipantsMutations.isPending}
+              >
+                Save
+              </Button>
+            </div>
+          )}
+        />
       </Modal>
     </>
   )

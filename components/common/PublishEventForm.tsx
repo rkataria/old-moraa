@@ -3,7 +3,6 @@
 import { useParams } from "next/navigation"
 import { useEvent } from "@/hooks/useEvent"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import { ReactMultiEmail } from "react-multi-email"
 import "react-multi-email/dist/style.css"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -21,6 +20,9 @@ import { TimeZones } from "@/constants/timezone"
 import { useMutation } from "@tanstack/react-query"
 import { createCustomTimeZoneDate, getBrowserTimeZone } from "@/utils/date"
 import { useEffect } from "react"
+import AddParticipantsForm, {
+  participantsListValidationSchema,
+} from "./AddParticipantsForm"
 
 interface NewEventFormProps {
   eventId: string
@@ -40,9 +42,7 @@ const publishEventValidationSchema = yup.object({
   endDate: yup.string().optional(),
   startTime: yup.string().optional(),
   endTime: yup.string().optional(),
-  participants: yup
-    .array(yup.string().label("Participant email").email().required())
-    .required(),
+  participants: participantsListValidationSchema,
 })
 
 type FormData = yup.InferType<typeof publishEventValidationSchema>
@@ -73,6 +73,11 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
     defaultValues: {
       startTime: "02:00",
       endTime: "05:00",
+      participants: [
+        {
+          email: "",
+        },
+      ],
     },
   })
 
@@ -81,7 +86,13 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
     publishEventForm.reset({
       eventName: event.name,
       description: event.description,
-      participants: [],
+
+      // TODO: Pre-populate these emails
+      participants: [
+        {
+          email: "",
+        },
+      ],
       timezone: getBrowserTimeZone().text,
     })
   }, [event])
@@ -123,8 +134,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
       description: formData.description,
       startDate: formData.startDate ? startDate : null,
       endDate: formData.endDate ? endDate : null,
-      participants: formData.participants.map((email: string) => {
-        return { email: email, role: "Participant" }
+      participants: formData.participants.map((participant) => {
+        return { email: participant.email, role: "Participant" }
       }),
     }
     publishEventMutation.mutate(JSON.stringify(payload))
@@ -243,33 +254,7 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               )}
             />
           </div>
-          <Controller
-            control={publishEventForm.control}
-            name="participants"
-            render={({ field, fieldState }) => (
-              <FormControl size="xs" isInvalid={!!fieldState.error?.message}>
-                <FormLabel>Participants</FormLabel>
-                <ReactMultiEmail
-                  {...field}
-                  placeholder="Enter participant emails (Hit enter to add more)"
-                  getLabel={(email, index, removeEmail) => {
-                    return (
-                      <div data-tag key={index}>
-                        <div data-tag-item>{email}</div>
-                        <span
-                          data-tag-handle
-                          onClick={() => removeEmail(index)}
-                        >
-                          ×
-                        </span>
-                      </div>
-                    )
-                  }}
-                />
-                <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
-              </FormControl>
-            )}
-          />
+          <AddParticipantsForm formControl={publishEventForm.control} />
           <div className="flex justify-end">
             <Button variant="outline" className="mr-4" onClick={onClose}>
               Cancel
