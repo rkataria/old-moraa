@@ -4,9 +4,20 @@ import React from "react"
 import { UseQueryProvider } from "@/utils/use-query-provider"
 import { ThemeProvider } from "@/providers/theme-provider"
 import { ModalProvider } from "@/providers/modal-provider"
-import { ChakraProvider } from "@chakra-ui/react"
+import { ChakraProvider, extendTheme } from "@chakra-ui/react"
 import { UserContextProvider } from "@/hooks/useAuth"
 import { Toaster } from 'react-hot-toast'
+
+const theme = extendTheme({
+  colors: {
+    brand: {
+      500: "#7C3AED",
+    },
+    black: {
+      500: "#000",
+    },
+  },
+})
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -17,7 +28,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem={false}
         storageKey="elearning"
       >
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
           <UseQueryProvider>
             <UserContextProvider>
               {children}
