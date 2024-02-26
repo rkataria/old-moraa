@@ -113,7 +113,7 @@ function EventList() {
                 </button>
               </td>
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                <div className="flex justify-start items-center gap-2 bg-white px-2 h-full">
+                <div className="flex justify-start items-center gap-2 px-2 h-full">
                   {event?.status === EventType.DRAFT &&
                     userId === event.owner_id && (
                       <PublishEventButtonWithModal eventId={event.id} />

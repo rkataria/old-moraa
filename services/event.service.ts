@@ -47,6 +47,15 @@ const getEvent = async ({
 
   let slides, session, participants
 
+  if (eventId) {
+    const { data } = await supabase
+      .from("enrollment")
+      .select("email")
+      .eq("event_id", eventId)
+      .eq("event_role", "Participant")
+    participants = data
+  }
+
   if (fetchMeetingSlides) {
     const { data } = await supabase
       .from("slide")

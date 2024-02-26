@@ -10,6 +10,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { Button } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
+import clsx from "clsx"
 
 const styles = {
   button: {
@@ -20,9 +21,10 @@ const styles = {
 
 function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
-  // const { event } = useEvent({
-  //   id: eventId,
-  // })
+  const { participants } = useEvent({
+    id: eventId,
+  })
+
   const addParticipantsMutations = useMutation({
     mutationFn: async ({ participants }: ParticipantsFormData) => {
       try {
@@ -47,6 +49,15 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
 
   return (
     <>
+      <div
+        onClick={() => setOpen(true)}
+        className={clsx(
+          styles.button.default,
+          "cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full px-4"
+        )}
+      >
+        Add Participants
+      </div>
       <Modal
         open={open}
         onClose={() => setOpen(false)}
@@ -54,6 +65,7 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
         description="Add participants to the event"
       >
         <AddParticipantsForm
+          defaultValue={participants || []}
           onSubmit={addParticipantsMutations.mutate}
           renderAction={() => (
             <div className="flex justify-end">

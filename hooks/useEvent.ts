@@ -1,8 +1,6 @@
 import { useAuth } from "./useAuth"
 import { useQuery } from "@tanstack/react-query"
 import { EventService } from "@/services/event.service"
-import { IMeetingSlidesPayload } from "@/types/event.type"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export const useEvent = ({
   id,
@@ -13,7 +11,6 @@ export const useEvent = ({
   fetchMeetingSlides?: boolean
   fetchActiveSession?: boolean
 }) => {
-  const supabase = createClientComponentClient()
   const { currentUser, isLoading: isUserLoading } = useAuth()
 
   const { data, error, isFetching, isLoading, isError, refetch } = useQuery({
@@ -30,6 +27,7 @@ export const useEvent = ({
   return {
     event: data?.event,
     meeting: data?.meeting,
+    participants: data?.participants,
     meetingSlides: data?.meetingSlides,
     activeSession: data?.session,
     isLoading: isLoading || isUserLoading,
