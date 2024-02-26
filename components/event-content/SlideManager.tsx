@@ -91,6 +91,7 @@ export default function SlideManager({}: any) {
                 moveUpSlide={moveUpSlide}
                 moveDownSlide={moveDownSlide}
                 updateSlide={updateSlide}
+                isOwner={isOwner}
               />
             ) : (
               <div>Add a slide to continue</div>

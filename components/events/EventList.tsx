@@ -81,6 +81,7 @@ function EventList() {
             <tr
               key={event.name}
               className="hover:bg-purple-700/5 cursor-pointer"
+              onClick={() => handleRowClick(event.id)}
             >
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                 {event.name}
@@ -101,7 +102,7 @@ function EventList() {
                   {event.status}
                 </span>
               </td>
-              {userId === event.owner_id && (
+              {/* {userId === event.owner_id && (
                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                   <button
                     className={clsx(
@@ -113,8 +114,8 @@ function EventList() {
                     View Content
                   </button>
                 </td>
-              )}
-
+              )} */}
+              {/* 
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                 <div className="flex justify-start items-center gap-2 px-2 h-full">
                   {event?.status === EventType.DRAFT &&
@@ -139,7 +140,7 @@ function EventList() {
                     </>
                   )}
                 </div>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
