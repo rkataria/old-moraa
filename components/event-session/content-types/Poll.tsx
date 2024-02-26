@@ -66,12 +66,18 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
               <div
                 key={index}
                 className={clsx(
-                  "relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden cursor-pointer",
+                  "relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden",
                   {
-                    "pointer-events-none cursor-default": voted || isHost,
+                    "cursor-default": voted || isHost,
+                  },
+                  {
+                    "cursor-pointer": !(voted || isHost),
                   }
                 )}
-                onClick={() => votePoll?.(slide, option)}
+                onClick={() => {
+                  if (voted || isHost) return
+                  votePoll?.(slide, option)
+                }}
               >
                 <div
                   className={clsx(
