@@ -7,7 +7,6 @@ import {
 import { ISlide } from "@/types/slide.type"
 import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import Participants from "../components/events/Participants"
 
 interface EventSessionProviderProps {
   children: React.ReactNode
