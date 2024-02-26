@@ -1,16 +1,12 @@
 import { createContext, useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { useDebounce } from "@uidotdev/usehooks"
 import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEvent } from "@/hooks/useEvent"
 import { deletePDFFile } from "@/services/pdf.service"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import {
-  ContentType,
-  INTERACTIVE_SLIDE_TYPES,
-} from "@/components/event-content/ContentTypePicker"
+import { INTERACTIVE_SLIDE_TYPES } from "@/components/event-content/ContentTypePicker"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -39,10 +35,6 @@ export const SlideManagerProvider = ({
   useEffect(() => {
     handleSetSlides()
   }, [meetingSlides])
-
-  useEffect(() => {
-    updateSlideIds()
-  }, [slideIds])
 
   useEffect(() => {
     if (!currentSlide) return
@@ -77,38 +69,38 @@ export const SlideManagerProvider = ({
   const handleSetSlides = async () => {
     if (!meetingSlides) return
     const sortedSlides = getSortedSlides()
-    const slides =
-      sortedSlides && sortedSlides.length > 0
-        ? sortedSlides
-        : [
-            // getDefaultCoverSlide({
-            //   title: event.name,
-            //   description: event.description,
-            // }),
-          ]
-    setSlideIds(meeting?.slides ?? [])
-    let filteredSlides = slides
-    // check whether the user is owner of event or not
-    const currentUser = await supabase.auth.getSession()
-    if (currentUser.data.session?.user.id !== event.owner_id) {
-      filteredSlides = slides.filter(
-        (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
+    if (sortedSlides && sortedSlides.length > 0) {
+      let filteredSlides = sortedSlides
+      // check whether the user is owner of event or not
+      const currentUser = await supabase.auth.getSession()
+      if (currentUser.data.session?.user.id !== event.owner_id) {
+        filteredSlides = sortedSlides.filter(
+          (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
+        )
+        setIsOwner(false)
+      }
+      setSlides(filteredSlides)
+      setSlideIds(filteredSlides.map((i) => i?.id) ?? [])
+      setLoading(false)
+      setCurrentSlide(filteredSlides?.[0])
+    } else {
+      addNewSlide(
+        getDefaultCoverSlide({
+          title: event.name,
+          description: event.description,
+        })
       )
-      setIsOwner(false)
     }
-    setSlides(filteredSlides)
-    setLoading(false)
-    setCurrentSlide(filteredSlides?.[0])
   }
 
-  const updateSlideIds = async () => {
+  const updateSlideIds = async (ids: string[]) => {
     if (!meeting?.id) {
       console.warn("meeting.id is missing")
     }
 
     const { data, error } = await supabase
       .from("meeting")
-      .update({ slides: slideIds })
+      .update({ slides: ids })
       .eq("id", meeting?.id)
     if (error) {
       console.error("error while updating slide ids on meeting,error: ", error)
@@ -134,6 +126,7 @@ export const SlideManagerProvider = ({
     }
     setSlides((s) => [...s, { ...newSlide, id: data?.id }])
     setCurrentSlide({ ...newSlide, id: data.id })
+    await updateSlideIds([...slideIds, data?.id])
     setSlideIds((s) => [...s, data?.id])
   }
 
@@ -164,6 +157,8 @@ export const SlideManagerProvider = ({
 
     const updatedSlides = slides.filter((slide) => slide.id !== id)
     setSlides(updatedSlides)
+    setSlides((s) => s.filter((slide) => slide.id !== id))
+    await updateSlideIds(slideIds.filter((slideId) => slideId !== id))
     setSlideIds((s) => s.filter((slideId) => slideId !== id))
 
     if (currentSlide?.id === id) {
@@ -198,6 +193,7 @@ export const SlideManagerProvider = ({
     const tempId = newIds[index - 1]
     newIds[index - 1] = newIds[index]
     newIds[index] = tempId
+    updateSlideIds(newIds)
     setSlideIds(newIds)
   }
 
