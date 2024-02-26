@@ -2,6 +2,7 @@
 import React from "react"
 import { ISlide } from "@/types/slide.type"
 import clsx from "clsx"
+import { useAuth } from "@/hooks/useAuth"
 
 interface PollProps {
   slide: ISlide
@@ -13,6 +14,8 @@ interface PollProps {
 
 function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
   const { options, question } = slide.content
+
+  const { currentUser } = useAuth()
 
   const optionsWithVote = options.reduce((acc: any, option: any) => {
     acc[option] = 0
@@ -26,6 +29,14 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
 
     optionsWithVote[selected_option] = optionsWithVote[selected_option] + 1
   })
+
+  const checkVotedOption = (option: string) => {
+    return votes.some(
+      (vote: any) =>
+        vote.response.selected_option === option &&
+        vote.participant.enrollment.user_id === currentUser.id
+    )
+  }
 
   const getOptionWidth = (option: string) => {
     if (votes.length === 0) return 0
@@ -56,14 +67,16 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
                 key={index}
                 className={clsx(
                   "relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden cursor-pointer",
-                  { "pointer-events-none cursor-default": voted || isHost }
+                  {
+                    "pointer-events-none cursor-default": voted || isHost,
+                  }
                 )}
                 onClick={() => votePoll?.(slide, option)}
               >
                 <div
                   className={clsx(
                     "absolute transition-all left-0 top-0 h-full  z-[-1] w-0",
-                    { "bg-purple-500": voted || isHost }
+                    { "bg-purple-500": checkVotedOption(option) || isHost }
                   )}
                   style={{
                     width: `${getOptionWidth(option)}%`,
