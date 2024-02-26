@@ -10,21 +10,21 @@ import { getFormattedDate } from "@/utils/date"
 // import AddParticipantsButtonWithModal from "../common/AddParticipantsButtonWithModal"
 import { useAuth } from "@/hooks/useAuth"
 
-enum EventType {
-  PUBLISHED = "PUBLISHED",
-  DRAFT = "DRAFT",
-}
-const styles = {
-  button: {
-    default:
-      "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
-  },
-}
+// enum EventType {
+//   PUBLISHED = "PUBLISHED",
+//   DRAFT = "DRAFT",
+// }
+// const styles = {
+//   button: {
+//     default:
+//       "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
+//   },
+// }
 function EventList() {
   const router = useRouter()
   const { events, isLoading } = useEvents()
-  const { currentUser } = useAuth()
-  const userId = currentUser?.id
+  // const { currentUser } = useAuth()
+  // const userId = currentUser?.id
 
   const handleRowClick = (id: string) => {
     router.push(`/events/${id}`)
