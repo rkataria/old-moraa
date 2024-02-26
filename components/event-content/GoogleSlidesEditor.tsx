@@ -3,10 +3,9 @@
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import React, { useContext, useState } from "react"
 import ReactGoogleSlides from "react-google-slides"
-import { Button } from "../ui/button"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { Input } from "../ui/input"
 import { NextPrevButtons } from "../common/NextPrevButtons"
+import { Button, Input } from "@nextui-org/react"
 
 interface GoogleSlidesEditorProps {
   slide: ISlide
@@ -49,7 +48,7 @@ export default function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
             <Input
               className="w-96 outline-none mb-4"
               placeholder="Presentation start position"
-              value={position}
+              value={position as any}
               onChange={(e) =>
                 setPosition(
                   isNaN(Number(e.target.value))

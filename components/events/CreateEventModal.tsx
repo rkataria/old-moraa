@@ -27,7 +27,6 @@ const formSchema = z.object({
 })
 
 export const CreateEventModal = () => {
-  const { register, handleSubmit, formState, reset } = useForm()
   const router = useRouter()
   const { isOpen, onClose, type } = useModal()
   const isModalOpen = isOpen && type === "createEvent"
@@ -82,7 +81,7 @@ export const CreateEventModal = () => {
         </p>
       </ModalHeader>
       <ModalContent>
-        {(onClose) => (
+        {() => (
           <>
             <ModalHeader className="flex flex-col gap-1">
               <h2 className="font-md text-gray-800 font-semibold">New Event</h2>
@@ -101,7 +100,9 @@ export const CreateEventModal = () => {
                       disabled={isLoading}
                       className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
                       placeholder="Your awesome course or workshop name goes here"
-                      {...register("name", { required: "Name is required." })}
+                      {...form.register("name", {
+                        required: "Name is required.",
+                      })}
                     />
                     {
                       //@ts-ignore
@@ -120,7 +121,7 @@ export const CreateEventModal = () => {
                     <Textarea
                       placeholder="This is what your learners would see. You could include high-level learning objectives or brief course overview here"
                       className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
-                      {...register("description")}
+                      {...form.register("description")}
                     />
                     {
                       //@ts-ignore

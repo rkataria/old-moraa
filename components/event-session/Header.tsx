@@ -25,7 +25,7 @@ import {
   PresentationStatuses,
 } from "@/types/event-session.type"
 import { IconDots, IconMenu } from "@tabler/icons-react"
-import { Button } from "../ui/button"
+import { Button } from "@nextui-org/react"
 
 type HeaderProps = {
   states: any
