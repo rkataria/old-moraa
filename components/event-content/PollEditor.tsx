@@ -27,7 +27,6 @@ function PollEditor({
   useEffect(() => {
     setShowSettings(openSettings)
   }, [openSettings])
-
   return (
     <div className={clsx("relative w-full h-full overflow-hidden")}>
       <div className="absolute right-2 bottom-2 z-10">
