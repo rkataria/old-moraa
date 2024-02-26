@@ -44,7 +44,6 @@ export const EventSessionProvider = ({
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [enrollment, setEnrollment] = useState<any>(null)
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
-  const [editing, setEditing] = useState<boolean>(false)
   const [activeStateSession, setActiveSession] = useState<any>(null)
   const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
@@ -131,8 +130,9 @@ export const EventSessionProvider = ({
   useEffect(() => {
     if (!meetingSlides?.slides) return
 
-    setSlides(meetingSlides.slides || [])
-    setCurrentSlide(meetingSlides.slides[0] ?? null)
+    const slides = getSortedSlides() ?? []
+    setSlides(slides || [])
+    setCurrentSlide(slides[0] ?? null)
   }, [meetingSlides])
 
   useEffect(() => {
@@ -203,6 +203,20 @@ export const EventSessionProvider = ({
     }
   }, [currentSlide])
 
+  const getSortedSlides = () => {
+    const idIndexMap: { [id: string]: number } = {}
+    meeting?.slides?.forEach((id: string, index: number) => {
+      idIndexMap[id] = index
+    })
+
+    // Custom sorting function
+    const customSort = (a: any, b: any) => {
+      return idIndexMap[a.id] - idIndexMap[b.id]
+    }
+
+    return meetingSlides?.slides?.slice().sort(customSort)
+  }
+
   const nextSlide = () => {
     if (!isHost) return
 
@@ -227,14 +241,6 @@ export const EventSessionProvider = ({
     const newSlide = slides.find((slide) => slide.id === id)
     if (!newSlide) return
     setCurrentSlide(newSlide)
-  }
-
-  const enableEditing = () => {
-    setEditing(true)
-  }
-
-  const disableEditing = () => {
-    setEditing(false)
   }
 
   const startPresentation = () => {
@@ -354,29 +360,6 @@ export const EventSessionProvider = ({
     }
   }
 
-  const updateSlide = async (slide: ISlide) => {
-    try {
-      const { data, error } = await supabase
-        .from("event_content")
-        .upsert({
-          id: event.id,
-          slides: slides.map((s) => (s.id === slide.id ? slide : s)),
-        })
-        .eq("id", event.id)
-        .select("*")
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      setSlides(data[0].slides)
-      setCurrentSlide(data[0].slides.find((s: ISlide) => s.id === slide.id))
-    } catch (error: any) {
-      console.error(error)
-    }
-  }
-
   const syncSlides = async () => {
     await refetchMeetingSlides()
   }
@@ -444,13 +427,9 @@ export const EventSessionProvider = ({
         currentSlideResponses,
         currentSlideLoading,
         currentUser,
-        editing,
         metaData,
         participant,
         syncSlides,
-        updateSlide,
-        enableEditing,
-        disableEditing,
         startPresentation,
         stopPresentation,
         pausePresentation,
