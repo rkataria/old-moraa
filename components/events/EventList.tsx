@@ -21,20 +21,6 @@ import { useAuth } from "@/hooks/useAuth"
 //   },
 // }
 
-// const ViewContentButton = () => {
-//   return (
-//     <button
-//       className={clsx(
-//         styles.button.default,
-//         "font-semibold text-sm bg-black text-white !rounded-full px-4"
-//       )}
-//       onClick={() => handleRowClick(event.id)}
-//     >
-//       View Content
-//     </button>
-//   )
-// }
-
 function EventList() {
   const router = useRouter()
   const { events, isLoading } = useEvents()
@@ -119,7 +105,15 @@ function EventList() {
               </td>
               {/* {userId === event.owner_id && (
                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                 <ViewContentButton/>
+                  <button
+                    className={clsx(
+                      styles.button.default,
+                      "font-semibold text-sm bg-black text-white !rounded-full px-4"
+                    )}
+                    onClick={() => handleRowClick(event.id)}
+                  >
+                    View Content
+                  </button>
                 </td>
               )} */}
               {/* 
