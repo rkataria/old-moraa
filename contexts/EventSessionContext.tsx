@@ -171,28 +171,12 @@ export const EventSessionProvider = ({
           table: "slide_response",
           filter: `slide_id=eq.${currentSlide.id}`,
         },
-
         (payload) => {
-          console.log({ payload })
-
-          if (payload.eventType === "INSERT") {
-            setCurrentSlideResponses((res: any) => [
-              ...(res ?? []),
-              payload.new,
-            ])
-          }
-          if (payload.eventType === "UPDATE") {
-            setCurrentSlideResponses((res: any) => {
-              // Update the response in the array if it exists
-              // return getResponseData(currentSlide)
-              const updatedResponses = res.map((existingResponse: any) =>
-                existingResponse.id === payload.new.id
-                  ? payload.new
-                  : existingResponse
-              )
-
-              return updatedResponses
-            })
+          if (
+            payload.eventType === "INSERT" ||
+            payload.eventType === "UPDATE"
+          ) {
+            fetchCurrentSlideResponses()
           }
         }
       )
@@ -255,20 +239,6 @@ export const EventSessionProvider = ({
     setPresentationStatus(PresentationStatuses.PAUSED)
   }
 
-  // const getResponseData = async (slide: ISlide) => {
-  //   const { data: slideResponses, error: slideResponsesError } = await supabase
-  //     .from("slide_response")
-  //     .select("* , participant:participant_id(*, enrollment:enrollment_id(*))")
-  //     .eq("slide_id", slide.id)
-
-  //   if (slideResponsesError) {
-  //     console.error(slideResponsesError)
-  //     setCurrentSlideLoading(false)
-  //     return []
-  //   }
-  //   return slideResponses
-  // }
-
   const votePoll = async (slide: ISlide, option: string) => {
     try {
       const { data, error } = await supabase
@@ -286,23 +256,6 @@ export const EventSessionProvider = ({
         console.error(error)
         return
       }
-      // update current slide responses
-      const { data: slideResponses, error: slideResponsesError } =
-        await supabase
-          .from("slide_response")
-          .select(
-            "* , participant:participant_id(*, enrollment:enrollment_id(*))"
-          )
-          .eq("slide_id", slide.id)
-
-      if (slideResponsesError) {
-        console.error(slideResponsesError)
-        setCurrentSlideLoading(false)
-        return
-      }
-
-      setCurrentSlideResponses(slideResponses)
-      setCurrentSlideLoading(false)
     } catch (error: any) {
       console.error(error)
     }
