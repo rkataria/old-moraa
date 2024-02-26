@@ -135,7 +135,7 @@ export const SlideManagerProvider = ({
     const { data, error } = await supabase
       .from("slide")
       .upsert({ id: slide.id, content: slide.content, config: slide.config })
-
+    setCurrentSlide(slide)
     setSlides((s) => {
       if (s.findIndex((i) => i.id === slide.id) >= 0) {
         return s.map((s) => (s.id === slide.id ? slide : s))
