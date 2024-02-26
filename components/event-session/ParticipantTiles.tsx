@@ -48,13 +48,13 @@ function ParticipantTiles() {
       {meeting.participants.active.toArray().map((participant) => (
         <DyteParticipantTile
           meeting={meeting}
-          participant={meeting.self}
+          participant={participant}
           nameTagPosition="bottom-center"
           variant="gradient"
           className="h-[140px] w-64 rounded-none aspect-video flex-none"
         >
           <DyteNameTag meeting={meeting} participant={participant}>
-            <DyteAudioVisualizer slot="start" />
+            <DyteAudioVisualizer slot="start" participant={participant} />
           </DyteNameTag>
         </DyteParticipantTile>
       ))}
