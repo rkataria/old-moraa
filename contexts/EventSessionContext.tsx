@@ -249,19 +249,19 @@ export const EventSessionProvider = ({
     setPresentationStatus(PresentationStatuses.PAUSED)
   }
 
-  const getResponseData = async (slide: ISlide) => {
-    const { data: slideResponses, error: slideResponsesError } = await supabase
-      .from("slide_response")
-      .select("* , participant:participant_id(*, enrollment:enrollment_id(*))")
-      .eq("slide_id", slide.id)
+  // const getResponseData = async (slide: ISlide) => {
+  //   const { data: slideResponses, error: slideResponsesError } = await supabase
+  //     .from("slide_response")
+  //     .select("* , participant:participant_id(*, enrollment:enrollment_id(*))")
+  //     .eq("slide_id", slide.id)
 
-    if (slideResponsesError) {
-      console.error(slideResponsesError)
-      setCurrentSlideLoading(false)
-      return []
-    }
-    return slideResponses
-  }
+  //   if (slideResponsesError) {
+  //     console.error(slideResponsesError)
+  //     setCurrentSlideLoading(false)
+  //     return []
+  //   }
+  //   return slideResponses
+  // }
 
   const votePoll = async (slide: ISlide, option: string) => {
     try {
