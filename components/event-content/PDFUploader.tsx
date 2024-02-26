@@ -4,7 +4,6 @@ import { useContext, useState } from "react"
 import { Document, Page, pdfjs } from "react-pdf"
 import { OnDocumentLoadSuccess } from "react-pdf/dist/cjs/shared/types"
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.js"
-import { Button, Input, Text } from "@chakra-ui/react"
 import toast from "react-hot-toast"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
@@ -17,9 +16,9 @@ import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { NextPrevButtons } from "@/components/common/NextPrevButtons"
 import { getFileObjectFromBlob } from "@/utils/utils"
 import { QueryKeys } from "@/utils/query-keys"
-import FilePicker from "@/components/common/FilePicker"
 import Loading from "@/components/common/Loading"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
+import { Button, Input } from "@nextui-org/react"
 
 interface PDFUploaderProps {
   slide: ISlide
@@ -126,12 +125,20 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
       case !fileUrl:
         return (
           <div className="h-96 flex flex-col justify-center items-center">
-            <Text className="mb-4">Select the PDF file.</Text>
-            <FilePicker
-              hideClearButton
+            <p className="mb-4">Select the PDF file.</p>
+            <Input
+              isClearable
+              type="file"
+              variant="bordered"
               placeholder="Select file"
-              onFileChange={(files) => {
-                if (files?.[0]) uploadAndSetFile(files[0])
+              onChange={(event) => {
+                const fileList = []
+                if (event.target.files) {
+                  for (const file of event.target.files) {
+                    fileList.push(file)
+                  }
+                  uploadAndSetFile(fileList[0])
+                }
               }}
             />
           </div>
