@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss"
-import { uiColors } from  "./styles/ui-colors"
+import { nextui } from "@nextui-org/react"
+import { uiColors } from "./styles/ui-colors"
 
 const config = {
   darkMode: ["class"],
@@ -7,6 +8,7 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./**/*.{ts,tsx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   prefix: "",
   theme: {
@@ -82,7 +84,18 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    nextui({
+      layout: {
+        radius: {
+          small: "2px", // rounded-small
+          medium: "4px", // rounded-medium
+          large: "8px", // rounded-large
+        },
+      },
+    }),
+  ],
 } satisfies Config
 
 export default config
