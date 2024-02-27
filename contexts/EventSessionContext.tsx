@@ -171,10 +171,7 @@ export const EventSessionProvider = ({
           filter: `slide_id=eq.${currentSlide.id}`,
         },
         (payload) => {
-          if (
-            payload.eventType === "INSERT" ||
-            payload.eventType === "UPDATE"
-          ) {
+          if (["INSERT", "UPDATE"].includes(payload.eventType)) {
             fetchCurrentSlideResponses()
           }
         }
