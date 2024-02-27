@@ -91,13 +91,14 @@ function Reflection({
   const [reflection, setReflection] = useState("")
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
   const { meeting } = useDyteMeeting()
+
   const username = meeting.self.name
-  const selfResponse = responses.filter(
-    (res: any) => res.response.username === username
-  )[0]
+  const selfResponse = responses.find(
+    (res: any) => res.participant.enrollment.user_id === user.id
+  )
 
   const otherResponses = responses.filter(
-    (res: any) => res.response.username !== username
+    (res: any) => res.participant.enrollment.user_id !== user.id
   )
 
   useEffect(() => {
