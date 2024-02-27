@@ -12,11 +12,13 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  IconButton,
   Input,
 } from "@chakra-ui/react"
 import clsx from "clsx"
 import { ReactElement } from "react"
 import { useUserContext } from "@/hooks/useAuth"
+import { Trash } from "lucide-react"
 
 function getAllIndexes<T>(arr: Array<T>, val: T) {
   var indexes = [],
@@ -91,7 +93,7 @@ function AddParticipantsForm<
   onSubmit,
   renderAction,
 }: AddParticipantsFormProps<FormData>) {
-  const userProfile = useUserContext();
+  const userProfile = useUserContext()
   const participantsForm = useForm<ParticipantsFormData>({
     resolver: yupResolver(participantsValidationSchema),
     defaultValues: {
@@ -124,7 +126,15 @@ function AddParticipantsForm<
                 isInvalid={!!fieldState.error?.message}
                 className={clsx("flex-1", "mb-4")}
               >
-                <Input {...field} />
+                <div className="flex">
+                  <Input {...field} className="flex-1" />
+                  <IconButton
+                    className="ml-4"
+                    aria-label="Delete participant"
+                    icon={<Trash size={16} />}
+                    onClick={() => participantsFieldArray.remove(index)}
+                  />
+                </div>
                 <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
               </FormControl>
 
