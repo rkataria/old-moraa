@@ -30,7 +30,7 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
     optionsWithVote[selected_option] = optionsWithVote[selected_option] + 1
   })
 
-  const checkVotedOption = (option: string) => {
+  const hasVotedOn = (option: string) => {
     return votes.some(
       (vote: any) =>
         vote.response.selected_option === option &&
@@ -82,7 +82,7 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
                 <div
                   className={clsx(
                     "absolute transition-all left-0 top-0 h-full  z-[-1] w-0",
-                    { "bg-purple-500": checkVotedOption(option) || isHost }
+                    { "bg-purple-500": hasVotedOn(option) || isHost }
                   )}
                   style={{
                     width: `${getOptionWidth(option)}%`,
