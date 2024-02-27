@@ -43,6 +43,7 @@ function PresentationManager() {
         currentSlide={currentSlide}
         setCurrentSlide={handleChangeCurrentSlide}
         onMiniModeChange={() => {}}
+        reorderSlide={() => {}}
       />
     </div>
   )
