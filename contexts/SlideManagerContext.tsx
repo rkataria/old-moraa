@@ -7,7 +7,7 @@ import { useEvent } from "@/hooks/useEvent"
 import { deletePDFFile } from "@/services/pdf.service"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { INTERACTIVE_SLIDE_TYPES } from "@/components/event-content/ContentTypePicker"
-import update from "immutability-helper"
+import { OnDragEndResponder } from "react-beautiful-dnd"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -220,15 +220,20 @@ export const SlideManagerProvider = ({
     setSlideIds(newIds)
   }
 
-  const reorderSlide = (dragIndex: number, hoverIndex: number) => {
-    setSlides((prevCards) =>
-      update(prevCards, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, prevCards[dragIndex]],
-        ],
-      })
-    )
+  const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
+    const result = list
+    const [removed] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
+
+    return result
+  }
+
+  const reorderSlide = (result: OnDragEndResponder | any) => {
+    if (!result.destination) {
+      return
+    }
+    const items = reorder(slides, result.source.index, result.destination.index)
+    setSlides(items)
   }
 
   return (

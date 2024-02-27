@@ -1955,6 +1955,13 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.11.tgz#2596fb352ee96a1379c657734d4b913a613ad563"
   integrity sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==
 
+"@types/react-beautiful-dnd@^13.1.8":
+  version "13.1.8"
+  resolved "https://registry.yarnpkg.com/@types/react-beautiful-dnd/-/react-beautiful-dnd-13.1.8.tgz#f52d3ea07e1e19159d6c3c4a48c8da3d855e60b4"
+  integrity sha512-E3TyFsro9pQuK4r8S/OL6G99eq7p8v29sX0PM7oT8Z+PJfZvSQTx4zTQbUJ+QZXioAF0e7TGBEcA1XhYhCweyQ==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-color@^3.0.10":
   version "3.0.11"
   resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-3.0.11.tgz#65992e9fdfef70b2db939a98ce3d6a8b8456ecae"
@@ -2823,11 +2830,6 @@ immediate@~3.0.5:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
   integrity sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==
-
-immutability-helper@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/immutability-helper/-/immutability-helper-3.1.1.tgz#2b86b2286ed3b1241c9e23b7b21e0444f52f77b7"
-  integrity sha512-Q0QaXjPjwIju/28TsugCHNEASwoCcJSyJV3uO1sOIQGI0jKgm9f41Lvz0DZj3n46cNCyAZTsEYoY4C2bVRUzyQ==
 
 import-fresh@^3.2.1:
   version "3.3.0"

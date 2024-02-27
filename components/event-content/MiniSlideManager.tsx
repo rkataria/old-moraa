@@ -4,112 +4,30 @@ import {
   IconLayoutSidebarRightCollapseFilled,
 } from "@tabler/icons-react"
 import clsx from "clsx"
-import React, { useEffect, useRef, useState } from "react"
-import { DragDropContext, Draggable } from "react-beautiful-dnd"
-import { type DroppableProps, Droppable } from "react-beautiful-dnd"
+import React, { useEffect, useState } from "react"
+import {
+  DragDropContext,
+  Draggable,
+  type DroppableProps,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd"
+import { MiniSlideManagerCard } from "./MiniSlideManagerCard"
 
-interface IMiniSlideManagerCard {
-  id: string
-  slide: ISlide
-  index: number
-  reorderSlide: (dragIndex: number, hoverIndex: number) => void
-  currentSlide: ISlide
-  setCurrentSlide: (slide: ISlide) => void
-}
+const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
+  const [enabled, setEnabled] = useState(false)
 
-const MiniSlideManagerCard = ({
-  id,
-  slide,
-  index,
-  reorderSlide,
-  currentSlide,
-  setCurrentSlide,
-}: IMiniSlideManagerCard) => {
-  const ref = useRef(null)
-  const [{ handlerId }, drop] = useDrop({
-    accept: "card",
-    collect(monitor) {
-      return {
-        handlerId: monitor.getHandlerId(),
-      }
-    },
-    hover(item, monitor) {
-      if (!ref.current) {
-        return
-      }
-      const dragIndex = item.index
-      const hoverIndex = index
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return
-      }
-      // Determine rectangle on screen
-      const hoverBoundingRect = ref.current?.getBoundingClientRect()
-      // Get vertical middle
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset()
-      // Get pixels to the top
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return
-      }
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return
-      }
-      // Time to actually perform the action
-      reorderSlide(dragIndex, hoverIndex)
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      item.index = hoverIndex
-    },
-  })
-  const [{ isDragging }, drag] = useDrag({
-    type: "card",
-    item: () => {
-      return { id, index }
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  })
+  useEffect(() => {
+    const animation = requestAnimationFrame(() => setEnabled(true))
+    return () => {
+      cancelAnimationFrame(animation)
+      setEnabled(false)
+    }
+  }, [])
 
-  const opacity = isDragging ? 0 : 1
-  drag(drop(ref))
-  return (
-    <div
-      data-minislide-id={slide.id}
-      key={`mini-slide-${slide.id}`}
-      className="flex justify-start items-center gap-2 w-full"
-      ref={ref}
-      style={{ opacity }}
-      data-handler-id={handlerId}
-    >
-      <span className="w-5">{index + 1}.</span>
-      <div
-        onClick={() => setCurrentSlide(slide)}
-        className={clsx(
-          "relative rounded-md flex-auto w-full aspect-video cursor-pointer transition-all border-2 flex justify-center items-center capitalize",
-          currentSlide?.id === slide.id
-            ? "drop-shadow-md border-black"
-            : "drop-shadow-none border-black/20"
-        )}
-        style={{
-          backgroundColor: slide.config?.backgroundColor || "#166534",
-        }}
-      >
-        {slide.type}
-      </div>
-    </div>
-  )
+  if (!enabled) return null
+
+  return <Droppable {...props}>{children}</Droppable>
 }
 
 interface IMiniSlideManagerProps {
@@ -120,7 +38,7 @@ interface IMiniSlideManagerProps {
   setOpenContentTypePicker?: React.Dispatch<React.SetStateAction<boolean>>
   setCurrentSlide: (slide: ISlide) => void
   onMiniModeChange: (miniMode: boolean) => void
-  reorderSlide: (dragIndex: number, hoverIndex: number) => void
+  reorderSlide: OnDragEndResponder
 }
 
 function MiniSlideManager({
@@ -145,45 +63,42 @@ function MiniSlideManager({
         miniMode ? "left-0" : "-left-64"
       )}
     >
-      <div className="flex flex-col justify-start items-center gap-4 w-full pt-4 px-6 flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-auto h-[calc(100vh_-_50px)]">
-        {slides.map((slide, index) => (
-          // <div
-          //   data-minislide-id={slide.id}
-          //   key={`mini-slide-${slide.id}`}
-          //   className="flex justify-start items-center gap-2 w-full"
-          // >
-          //   <span className="w-5">{index + 1}.</span>
-          //   <div
-          //     onClick={() => setCurrentSlide(slide)}
-          //     className={clsx(
-          //       "relative rounded-md flex-auto w-full aspect-video cursor-pointer transition-all border-2 flex justify-center items-center capitalize",
-          //       currentSlide?.id === slide.id
-          //         ? "drop-shadow-md border-black"
-          //         : "drop-shadow-none border-black/20"
-          //     )}
-          //     style={{
-          //       backgroundColor: slide.config?.backgroundColor || "#166534",
-          //     }}
-          //   >
-          //     {slide.type}
-          //   </div>
-          // </div>
-          <DragDropContext onDragEnd={handleDragDropEndCategories}>
-            <StrictModeDroppable
-              droppableId="droppable-1"
-              type="PERSON"
-            ></StrictModeDroppable>
-          </DragDropContext>
-          // <MiniSlideManagerCard
-          //   key={slide.id}
-          //   slide={slide}
-          //   index={index}
-          //   reorderSlide={reorderSlide}
-          //   id={slide.id}
-          //   currentSlide={currentSlide}
-          //   setCurrentSlide={setCurrentSlide}
-          // />
-        ))}
+      <div className="flex flex-col justify-start items-center w-full pt-4 px-6">
+        <DragDropContext onDragEnd={reorderSlide}>
+          <StrictModeDroppable droppableId="droppable-1" type="slide">
+            {(provided: any) => (
+              <div
+                className="flex flex-col justify-start items-center gap-4 w-full flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-auto max-h-[calc(100vh_-_142px)] mb-1"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {slides.map((slide, index) => (
+                  <Draggable
+                    key={`slide-draggable-${slide.id}`}
+                    draggableId={`slide-draggable-${slide.id}`}
+                    index={index}
+                  >
+                    {(provided: any) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className="w-full"
+                      >
+                        <MiniSlideManagerCard
+                          slide={slide}
+                          currentSlide={currentSlide}
+                          setCurrentSlide={setCurrentSlide}
+                          index={index}
+                          draggableProps={provided.dragHandleProps}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+              </div>
+            )}
+          </StrictModeDroppable>
+        </DragDropContext>
         {mode === "edit" && (
           <div className="flex justify-start items-center gap-2 w-full">
             <span className="w-5"></span>

@@ -1,4 +1,5 @@
 import { ContentType } from "@/components/event-content/ContentTypePicker"
+import { OnDragEndResponder } from "react-beautiful-dnd"
 
 export type SlideMode = "edit" | "present"
 
@@ -28,5 +29,5 @@ export type SlideManagerContextType = {
   deleteSlide: (id: string) => void
   moveUpSlide: (id: string) => void
   moveDownSlide: (id: string) => void
-  reorderSlide: (dragIndex: number, hoverIndex: number) => void
+  reorderSlide: OnDragEndResponder
 }
