@@ -72,6 +72,7 @@ const config = {
   },
   plugins: [
     require("tailwindcss-animate"),
+    require("tailwind-scrollbar"),
     nextui({
       layout: {
         radius: {

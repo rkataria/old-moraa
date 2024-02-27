@@ -20,6 +20,7 @@ export type EventSessionContextType = {
   currentSlideLoading: boolean
   currentSlideResponses: any[] | null
   metaData: MutableRefObject<any>
+  participant: any
   syncSlides: () => void
   startPresentation: () => void
   stopPresentation: () => void
