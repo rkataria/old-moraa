@@ -28,4 +28,5 @@ export type SlideManagerContextType = {
   deleteSlide: (id: string) => void
   moveUpSlide: (id: string) => void
   moveDownSlide: (id: string) => void
+  reorderSlide: (dragIndex: number, hoverIndex: number) => void
 }

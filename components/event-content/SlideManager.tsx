@@ -35,6 +35,7 @@ export default function SlideManager({}: any) {
     moveUpSlide,
     moveDownSlide,
     updateSlide,
+    reorderSlide,
   } = useContext(SlideManagerContext) as SlideManagerContextType
   const addSlideRef = useRef<HTMLDivElement>(null)
   const [openContentTypePicker, setOpenContentTypePicker] =
@@ -105,6 +106,7 @@ export default function SlideManager({}: any) {
           setOpenContentTypePicker={setOpenContentTypePicker}
           setCurrentSlide={setCurrentSlide}
           onMiniModeChange={setMiniMode}
+          reorderSlide={reorderSlide}
         />
       </div>
       (

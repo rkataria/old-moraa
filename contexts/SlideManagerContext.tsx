@@ -7,6 +7,7 @@ import { useEvent } from "@/hooks/useEvent"
 import { deletePDFFile } from "@/services/pdf.service"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { INTERACTIVE_SLIDE_TYPES } from "@/components/event-content/ContentTypePicker"
+import update from "immutability-helper"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -219,6 +220,17 @@ export const SlideManagerProvider = ({
     setSlideIds(newIds)
   }
 
+  const reorderSlide = (dragIndex: number, hoverIndex: number) => {
+    setSlides((prevCards) =>
+      update(prevCards, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, prevCards[dragIndex]],
+        ],
+      })
+    )
+  }
+
   return (
     <SlideManagerContext.Provider
       value={{
@@ -235,6 +247,7 @@ export const SlideManagerProvider = ({
         deleteSlide,
         moveUpSlide,
         moveDownSlide,
+        reorderSlide,
       }}
     >
       {children}
