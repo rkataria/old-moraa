@@ -93,11 +93,6 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
                 </div>
 
                 <span className="font-bold">{option}</span>
-                {!voted && !isHost && (
-                  <button className="px-4 py-2 bg-purple-900/10 text-sm font-semibold rounded-md">
-                    Vote
-                  </button>
-                )}
               </div>
             ))}
           </div>
