@@ -81,7 +81,7 @@ function Poll({ slide, votes = [], voted, isHost, votePoll }: PollProps) {
               >
                 <div
                   className={clsx(
-                    "absolute transition-all left-0 top-0 h-full  z-[-1] w-0",
+                    "absolute transition-all left-0 top-0 h-full z-[-1] w-0",
                     { "bg-purple-500": hasVotedOn(option) || isHost }
                   )}
                   style={{
