@@ -23,6 +23,7 @@ import { useEffect } from "react"
 import AddParticipantsForm, {
   participantsListValidationSchema,
 } from "./AddParticipantsForm"
+import { useUserContext } from "@/hooks/useAuth"
 
 interface NewEventFormProps {
   eventId: string
@@ -49,6 +50,7 @@ type FormData = yup.InferType<typeof publishEventValidationSchema>
 
 function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
   const { eventId } = useParams()
+  const userProfile = useUserContext();
   const publishEventMutation = useMutation({
     mutationFn: async (data: string) => {
       const supabase = createClientComponentClient()
@@ -75,7 +77,7 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
       endTime: "05:00",
       participants: [
         {
-          email: "",
+          email: userProfile.currentUser.email,
         },
       ],
     },

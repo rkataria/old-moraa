@@ -16,30 +16,42 @@ import {
 } from "@chakra-ui/react"
 import clsx from "clsx"
 import { ReactElement } from "react"
+import { useUserContext } from "@/hooks/useAuth"
+
+function getAllIndexes<T>(arr: Array<T>, val: T) {
+  var indexes = [],
+    i = -1
+  while ((i = arr.indexOf(val, i + 1)) != -1) {
+    indexes.push(i)
+  }
+  return indexes
+}
 
 export const participantsListValidationSchema = yup
   .array(
     yup.object({
-      email: yup.string().email().label("Participant email").required(),
+      email: yup
+        .string()
+        .email()
+        .test({
+          name: "unique-email",
+          test: function (email, context) {
+            // @ts-ignore
+            const currentIndex = context.options.index
+            const allParticipants: string[] =
+              context.from?.[1].value?.participants?.map(
+                (p: { email: string }) => p.email
+              ) || []
+            const indexes = getAllIndexes(allParticipants, email)
+            if (indexes.length !== 1 && indexes[0] === currentIndex) return true
+            return indexes.length === 1
+          },
+          message: "Email addresses must be unique",
+        })
+        .label("Participant email")
+        .required(),
     })
   )
-  .test({
-    // TODO: Fix this validation. It is not working.
-    name: "unique-emails",
-    test: function (arr = []) {
-      console.log("🚀 ~ arr:", arr)
-      // Check for duplicate emails
-      const uniqueEmails = new Set()
-      for (const participant of arr) {
-        if (uniqueEmails.has(participant.email)) {
-          return true // Duplicate email found
-        }
-        uniqueEmails.add(participant.email)
-      }
-      return false // No duplicate emails found
-    },
-    message: "Email addresses must be unique",
-  })
   .required()
 
 const participantsValidationSchema = yup.object({
@@ -79,12 +91,13 @@ function AddParticipantsForm<
   onSubmit,
   renderAction,
 }: AddParticipantsFormProps<FormData>) {
+  const userProfile = useUserContext();
   const participantsForm = useForm<ParticipantsFormData>({
     resolver: yupResolver(participantsValidationSchema),
     defaultValues: {
       participants: defaultValue || [
         {
-          email: "",
+          email: userProfile.currentUser.email,
         },
       ],
     },

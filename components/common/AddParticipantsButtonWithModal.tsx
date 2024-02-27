@@ -21,7 +21,7 @@ const styles = {
 
 function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
-  const { participants } = useEvent({
+  const { participants, refetch } = useEvent({
     id: eventId,
   })
 
@@ -38,6 +38,7 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
         await supabase.functions.invoke("invite-participants", {
           body: payload,
         })
+        refetch()
         toast.success("Participants added successfully.")
         setOpen(false)
       } catch (err) {

@@ -52,7 +52,6 @@ const getEvent = async ({
       .from("enrollment")
       .select("email")
       .eq("event_id", eventId)
-      .eq("event_role", "Participant")
     participants = data
   }
 
