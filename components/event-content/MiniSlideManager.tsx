@@ -37,7 +37,7 @@ function MiniSlideManager({
         miniMode ? "left-0" : "-left-64"
       )}
     >
-      <div className="flex flex-col justify-start items-center gap-4 h-full w-full pt-4 px-6 flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-scroll">
+      <div className="flex flex-col justify-start items-center gap-4 w-full pt-4 px-6 flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-auto h-[calc(100vh_-_50px)]">
         {slides.map((slide, index) => (
           <div
             data-minislide-id={slide.id}

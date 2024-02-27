@@ -54,7 +54,7 @@ function ParticipantTiles() {
           className="h-[140px] w-64 rounded-none aspect-video flex-none"
         >
           <DyteNameTag meeting={meeting} participant={participant}>
-            <DyteAudioVisualizer slot="start" />
+            <DyteAudioVisualizer slot="start" participant={participant} />
           </DyteNameTag>
         </DyteParticipantTile>
       ))}
