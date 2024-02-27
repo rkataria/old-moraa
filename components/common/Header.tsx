@@ -2,7 +2,6 @@ import React from "react"
 
 import { UserMenu } from "./UserMenu"
 import { SidebarMini } from "./SidebarMini"
-import { ThemeSwitcher } from "../common/ThemeSwitcher"
 
 export const HeaderComponent = (props: {}) => {
   return (
@@ -11,7 +10,6 @@ export const HeaderComponent = (props: {}) => {
 
       <div className="flex flex-1 justify-end gap-x-4 self-stretch lg:gap-x-6 pr-2">
         <div className="flex items-center gap-x-4 lg:gap-x-6 mr-4">
-          <ThemeSwitcher />
           <UserMenu />
         </div>
       </div>
