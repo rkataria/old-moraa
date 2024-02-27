@@ -117,6 +117,7 @@ function AddParticipantsForm<
       <FormLabel>Participant Email(s)</FormLabel>
       {participantsFieldArray.fields.map((field, index) => (
         <Controller
+          key={field.id}
           control={control}
           name={`participants.${index}.email`}
           render={({ field, fieldState }) => (
