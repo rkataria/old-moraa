@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { useMutation } from "@tanstack/react-query"
 import { EventService } from "@/services/event.service"
 import { Button } from "@nextui-org/react"
+import styles from "@/styles/form-control"
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -93,9 +94,7 @@ export const CreateEventModal = () => {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div>
                   <div>
-                    <label className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                      Name
-                    </label>
+                    <label className={styles.label.base}>Name</label>
                     <Input
                       disabled={isLoading}
                       className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
@@ -115,9 +114,7 @@ export const CreateEventModal = () => {
                   </div>
 
                   <div className="mt-4">
-                    <label className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                      Description
-                    </label>
+                    <label className={styles.label.base}>Description</label>
                     <Textarea
                       placeholder="This is what your learners would see. You could include high-level learning objectives or brief course overview here"
                       className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
