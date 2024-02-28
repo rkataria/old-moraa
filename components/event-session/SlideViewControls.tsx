@@ -8,11 +8,11 @@ import {
 import EventSessionContext from "@/contexts/EventSessionContext"
 import { EventSessionContextType } from "@/types/event-session.type"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
-import { IconButton } from "@chakra-ui/react"
 import { ContentType } from "../event-content/ContentTypePicker"
 import { SlideEventManagerType, SlideEvents } from "@/utils/events.util"
 import { useHotkeys } from "@/hooks/useHotkeys"
 import classNames from "classnames"
+import { Button } from "@nextui-org/react"
 
 const buttonStyle =
   "!h-4 !w-4 !m-1 !bg-white/50 !text-black transition-all duration-200 hover:!bg-white/90"
@@ -57,8 +57,9 @@ function SlideViewControls() {
     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 p-2 rounded-md flex justify-center items-center gap-2">
       <div>
         <div className="flex justify-center items-center">
-          <IconButton
-            aria-label="button"
+          <Button
+            aria-label="previous-button"
+            isIconOnly
             className={buttonStyle}
             onClick={() => {
               updateCurrentSlide(false)
@@ -66,35 +67,38 @@ function SlideViewControls() {
             }}
           >
             <IconCaretUpFilled size={24} />
-          </IconButton>
+          </Button>
         </div>
         <div
           className={classNames("flex justify-center items-center", {
             invisible: !showRightLeftArrow,
           })}
         >
-          <IconButton
-            aria-label="button"
+          <Button
+            aria-label="left-button"
+            isIconOnly
             className={buttonStyle}
             onClick={() => {
               SlideEvents[SlideEventManagerType.OnLeft].dispatchEvent()
             }}
           >
             <IconCaretLeftFilled size={24} />
-          </IconButton>
-          <IconButton
-            aria-label="button"
+          </Button>
+          <Button
+            aria-label="right-button"
+            isIconOnly
             className={buttonStyle}
             onClick={() => {
               SlideEvents[SlideEventManagerType.OnRight].dispatchEvent()
             }}
           >
             <IconCaretRightFilled size={24} />
-          </IconButton>
+          </Button>
         </div>
         <div className="flex justify-center items-center">
-          <IconButton
-            aria-label="button"
+          <Button
+            aria-label="next-button"
+            isIconOnly
             className={buttonStyle}
             onClick={() => {
               updateCurrentSlide(true)
@@ -102,7 +106,7 @@ function SlideViewControls() {
             }}
           >
             <IconCaretDownFilled size={24} />
-          </IconButton>
+          </Button>
         </div>
       </div>
     </div>

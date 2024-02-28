@@ -1,12 +1,15 @@
 "use client"
 
 import React from "react"
-import { UseQueryProvider } from "@/utils/use-query-provider"
-import { ThemeProvider } from "@/providers/theme-provider"
+import { Toaster } from "react-hot-toast"
+import { ThemeProvider } from "next-themes"
+import { NextUIProvider } from "@nextui-org/react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
 import { ModalProvider } from "@/providers/modal-provider"
-import { ChakraProvider } from "@chakra-ui/react"
 import { UserContextProvider } from "@/hooks/useAuth"
-import { Toaster } from 'react-hot-toast'
+
+const queryClient = new QueryClient()
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -15,17 +18,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
         attribute="class"
         defaultTheme="system"
         enableSystem={false}
-        storageKey="elearning"
+        storageKey="moraa-theme"
       >
-        <ChakraProvider>
-          <UseQueryProvider>
+        <NextUIProvider>
+          <QueryClientProvider client={queryClient}>
             <UserContextProvider>
               {children}
               <Toaster position="bottom-right" reverseOrder={false} />
               <ModalProvider />
             </UserContextProvider>
-          </UseQueryProvider>
-        </ChakraProvider>
+          </QueryClientProvider>
+        </NextUIProvider>
       </ThemeProvider>
     </>
   )

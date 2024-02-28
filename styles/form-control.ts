@@ -1,4 +1,8 @@
 const styles = {
+  formControl: {
+    base: "flex flex-col mb-4",
+    error: "flex flex-col mb-4",
+  },
   input: {
     base: "block flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6",
     error:
@@ -15,8 +19,8 @@ const styles = {
       "block w-full border-0 bg-transparent py-1.5 text-red-600 placeholder:text-red-400 focus:ring-0 sm:text-sm sm:leading-6",
   },
   label: {
-    base: "block text-sm font-medium leading-6 text-gray-900",
-    error: "block text-sm font-medium leading-6 text-red-600",
+    base: "block text-sm font-medium leading-6 text-gray-900 mb-1.5",
+    error: "block text-sm font-medium leading-6 text-red-600 mb-1.5",
   },
   error: "text-red-600",
   button: {

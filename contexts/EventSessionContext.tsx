@@ -143,7 +143,9 @@ export const EventSessionProvider = ({
     const fetchCurrentSlideResponses = async () => {
       const { data, error } = await supabase
         .from("slide_response")
-        .select("*")
+        .select(
+          "* , participant:participant_id(*, enrollment:enrollment_id(*))"
+        )
         .eq("slide_id", currentSlide.id)
 
       if (error) {
@@ -169,23 +171,8 @@ export const EventSessionProvider = ({
           filter: `slide_id=eq.${currentSlide.id}`,
         },
         (payload) => {
-          if (payload.eventType === "INSERT") {
-            setCurrentSlideResponses((res: any) => [
-              ...(res ?? []),
-              payload.new,
-            ])
-          }
-          if (payload.eventType === "UPDATE") {
-            setCurrentSlideResponses((res: any) => {
-              // Update the response in the array if it exists
-              const updatedResponses = res.map((existingResponse: any) =>
-                existingResponse.id === payload.new.id
-                  ? payload.new
-                  : existingResponse
-              )
-
-              return updatedResponses
-            })
+          if (["INSERT", "UPDATE"].includes(payload.eventType)) {
+            fetchCurrentSlideResponses()
           }
         }
       )
@@ -250,15 +237,11 @@ export const EventSessionProvider = ({
 
   const votePoll = async (slide: ISlide, option: string) => {
     try {
-      const currentUser = await supabase.auth.getSession()
-
       const { data, error } = await supabase
         .from("slide_response")
         .upsert({
-          slide,
           response: { selected_option: option },
           slide_id: slide.id,
-          event_id: event.id, //TODO: REMOVE
           participant_id: participant.id,
         })
         .eq("slide_id", slide.id)
@@ -284,18 +267,15 @@ export const EventSessionProvider = ({
       const { data, error } = await supabase
         .from("slide_response")
         .upsert({
-          slide,
           response: {
             reflection: reflection,
             username: username,
           },
           slide_id: slide.id,
-          event_id: event.id, // TODO: REMOVE
-          profile_id: currentUser.data.session?.user.id,
+          participant_id: participant.id,
         })
         .eq("slide_id", slide.id)
-        .eq("event_id", event.id)
-        .eq("profile_id", currentUser.data.session?.user.id)
+        .eq("participant_id", participant.id)
         .select()
 
       if (error) {
@@ -397,6 +377,7 @@ export const EventSessionProvider = ({
         currentSlideLoading,
         currentUser,
         metaData,
+        participant,
         syncSlides,
         startPresentation,
         stopPresentation,
