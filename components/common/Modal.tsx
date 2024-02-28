@@ -1,6 +1,5 @@
 import { Fragment } from "react"
 import { Dialog, Transition } from "@headlessui/react"
-import { Box, Text } from "@chakra-ui/react"
 
 interface ModalProps {
   open: boolean
@@ -45,16 +44,14 @@ export default function Modal({
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-5xl ">
                 {title ? (
-                  <Box bg={"brand.500"} height={140} padding={6}>
-                    <Text fontSize="xl" textColor="white">
-                      {title}
-                    </Text>
-                    {description ? <Text textColor="white">{description}</Text> : null}
-                  </Box>
+                  <div className="bg-purple-500 h-[140px] p-1.5">
+                    <div className="text-xl text-white">{title}</div>
+                    {description ? (
+                      <div className="text-white">{description}</div>
+                    ) : null}
+                  </div>
                 ) : null}
-                <div className="px-4 pb-4 pt-5 sm:my-2 sm:p-6">
-                  {children}
-                </div>
+                <div className="px-4 pb-4 pt-5 sm:my-2 sm:p-6">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

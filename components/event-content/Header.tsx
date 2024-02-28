@@ -3,7 +3,7 @@
 import { IconArrowLeft } from "@tabler/icons-react"
 import clsx from "clsx"
 import Link from "next/link"
-import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal"
+// import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal"
 import AddParticipantsButtonWithModal from "../common/AddParticipantsButtonWithModal"
 import { useAuth } from "@/hooks/useAuth"
 import { useMemo } from "react"
@@ -35,9 +35,9 @@ function Header({ event }: { event: any }) {
           <span className="font-bold">{event?.name}</span>
         </div>
         <div className="flex justify-start items-center gap-2 bg-white px-2 h-full">
-          {event?.status === EventType.DRAFT && userId === event.owner_id && (
+          {/* {event?.status === EventType.DRAFT && userId === event.owner_id && (
             <PublishEventButtonWithModal eventId={event.id} />
-          )}
+          )} */}
           {event?.status === EventType.PUBLISHED && (
             <>
               {isOwner && <AddParticipantsButtonWithModal eventId={event.id} />}
