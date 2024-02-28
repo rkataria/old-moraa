@@ -26,17 +26,12 @@ interface SlideProps {
   slide: ISlide
   onChange?: (data: Partial<ISlide>, index: number) => void
   deleteSlide: (id: string) => void
-  moveUpSlide: (id: string) => void
-  moveDownSlide: (id: string) => void
+  // moveUpSlide: (id: string) => void
+  // moveDownSlide: (id: string) => void
   updateSlide: (slide: ISlide) => void
 }
 
-export default function Slide({
-  slide,
-  deleteSlide,
-  moveUpSlide,
-  moveDownSlide,
-}: SlideProps) {
+export default function Slide({ slide, deleteSlide }: SlideProps) {
   const [openSettings, setOpenSettings] = useState<boolean>(false)
 
   const toggleSettings = () => {
@@ -47,7 +42,7 @@ export default function Slide({
     <div className="relative group w-full h-full">
       <div className=" relative left-0 w-full">
         <div className="relative flex justify-center items-center gap-2">
-          <IconChevronUp
+          {/* <IconChevronUp
             size={20}
             onClick={() => moveUpSlide(slide.id)}
             className={clsx(
@@ -60,7 +55,7 @@ export default function Slide({
             className={clsx(
               "text-gray-300 cursor-pointer hover:text-black transition-all duration-500"
             )}
-          />
+          /> */}
           {/* <IconSettings
             size={20}
             onClick={toggleSettings}

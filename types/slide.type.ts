@@ -27,7 +27,7 @@ export type SlideManagerContextType = {
   addNewSlide: (slide: ISlide) => void
   updateSlide: (slide: ISlide) => void
   deleteSlide: (id: string) => void
-  moveUpSlide: (id: string) => void
-  moveDownSlide: (id: string) => void
+  // moveUpSlide: (id: string) => void
+  // moveDownSlide: (id: string) => void
   reorderSlide: OnDragEndResponder
 }

@@ -89,8 +89,6 @@ export default function SlideManager({}: any) {
                 key={`slide-${currentSlide.id}`}
                 slide={currentSlide}
                 deleteSlide={deleteSlide}
-                moveUpSlide={moveUpSlide}
-                moveDownSlide={moveDownSlide}
                 updateSlide={updateSlide}
               />
             ) : (

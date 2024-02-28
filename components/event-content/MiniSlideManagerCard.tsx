@@ -7,6 +7,7 @@ interface IMiniSlideManagerCard {
   currentSlide: ISlide | null
   setCurrentSlide: (slide: ISlide) => void
   draggableProps: any
+  mode: "edit" | "present" | "read"
 }
 export const MiniSlideManagerCard = ({
   slide,
@@ -14,13 +15,14 @@ export const MiniSlideManagerCard = ({
   currentSlide,
   setCurrentSlide,
   draggableProps,
+  mode,
 }: IMiniSlideManagerCard) => {
   return (
     <div
       data-minislide-id={slide.id}
       key={`mini-slide-${slide.id}`}
       className="flex justify-start items-center gap-2 w-full"
-      {...draggableProps}
+      {...(mode === "edit" && draggableProps)}
     >
       <span className="w-5">{index + 1}.</span>
       <div

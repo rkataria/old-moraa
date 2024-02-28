@@ -85,6 +85,7 @@ function MiniSlideManager({
                         className="w-full"
                       >
                         <MiniSlideManagerCard
+                          mode={mode}
                           slide={slide}
                           currentSlide={currentSlide}
                           setCurrentSlide={setCurrentSlide}
