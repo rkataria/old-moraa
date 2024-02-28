@@ -2,8 +2,9 @@ import { ISlide } from "@/types/slide.type"
 import {
   IconLayoutSidebarLeftCollapseFilled,
   IconLayoutSidebarRightCollapseFilled,
+  IconList,
+  IconLayoutGrid,
 } from "@tabler/icons-react"
-import clsx from "clsx"
 import React, { useEffect, useState } from "react"
 import {
   DragDropContext,
@@ -13,6 +14,8 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd"
 import { MiniSlideManagerCard } from "./MiniSlideManagerCard"
+import { cn } from "@/utils/utils"
+import { MiniSlideManageList } from "./MiniSlideManageList"
 
 const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
   const [enabled, setEnabled] = useState(false)
@@ -52,23 +55,41 @@ function MiniSlideManager({
   reorderSlide,
 }: IMiniSlideManagerProps) {
   const [miniMode, setMiniMode] = useState<boolean>(true)
+  const [showView, setShowView] = useState<"thumbnail" | "list">("thumbnail")
+
   useEffect(() => {
     onMiniModeChange(miniMode)
   }, [miniMode])
 
   return (
     <div
-      className={clsx(
+      className={cn(
         "fixed top-0 w-72 bg-white/95 h-full transition-all pt-16 pb-4",
         miniMode ? "left-0" : "-left-64"
       )}
     >
-      <div className="flex flex-col justify-start items-center w-full pt-4 px-6">
+      <div className="flex flex-col justify-start items-center w-full px-6">
+        <div className="flex items-center gap-4 justify-end w-full pb-4">
+          <IconLayoutGrid
+            className={cn("h-6 w-6 cursor-pointer", {
+              "text-slate-500": showView === "thumbnail",
+              "text-slate-300": showView !== "thumbnail",
+            })}
+            onClick={() => setShowView("thumbnail")}
+          />
+          <IconList
+            className={cn("h-6 w-6 cursor-pointer", {
+              "text-slate-500": showView === "list",
+              "text-slate-300": showView !== "list",
+            })}
+            onClick={() => setShowView("list")}
+          />
+        </div>
         <DragDropContext onDragEnd={reorderSlide}>
           <StrictModeDroppable droppableId="droppable-1" type="slide">
             {(provided: any) => (
               <div
-                className="flex flex-col justify-start items-center gap-4 w-full flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-auto max-h-[calc(100vh_-_142px)] mb-1"
+                className="flex flex-col justify-start items-center gap-4 w-full flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-auto max-h-[calc(100vh_-_170px)] mb-1"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
@@ -84,14 +105,25 @@ function MiniSlideManager({
                         {...provided.draggableProps}
                         className="w-full"
                       >
-                        <MiniSlideManagerCard
-                          mode={mode}
-                          slide={slide}
-                          currentSlide={currentSlide}
-                          setCurrentSlide={setCurrentSlide}
-                          index={index}
-                          draggableProps={provided.dragHandleProps}
-                        />
+                        {showView === "thumbnail" ? (
+                          <MiniSlideManagerCard
+                            mode={mode}
+                            slide={slide}
+                            currentSlide={currentSlide}
+                            setCurrentSlide={setCurrentSlide}
+                            index={index}
+                            draggableProps={provided.dragHandleProps}
+                          />
+                        ) : (
+                          <MiniSlideManageList
+                            mode={mode}
+                            slide={slide}
+                            currentSlide={currentSlide}
+                            setCurrentSlide={setCurrentSlide}
+                            index={index}
+                            draggableProps={provided.dragHandleProps}
+                          />
+                        )}
                       </div>
                     )}
                   </Draggable>
@@ -106,7 +138,7 @@ function MiniSlideManager({
             <div
               ref={addSlideRef}
               onClick={() => setOpenContentTypePicker?.(true)}
-              className={clsx(
+              className={cn(
                 "relative rounded-md flex-auto w-full h-12 cursor-pointer transition-all border-2 flex justify-center items-center bg-black/80 text-white"
               )}
             >

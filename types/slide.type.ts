@@ -31,3 +31,12 @@ export type SlideManagerContextType = {
   // moveDownSlide: (id: string) => void
   reorderSlide: OnDragEndResponder
 }
+
+export interface IMiniSlideManagerType {
+  slide: ISlide
+  index: number
+  currentSlide: ISlide | null
+  setCurrentSlide: (slide: ISlide) => void
+  draggableProps: any
+  mode: "edit" | "present" | "read"
+}
