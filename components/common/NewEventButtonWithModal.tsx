@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Modal from "./Modal";
-import NewEventForm from "./NewEventForm";
+import { useState } from "react"
+import Modal from "./Modal"
+// import NewEventForm from "./NewEventForm";
 
 function NewEventButtonWithModal() {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false)
 
   return (
     <>
@@ -24,10 +24,12 @@ function NewEventButtonWithModal() {
             Course
           </span>
         </div>
-        <NewEventForm onClose={() => setOpen(false)} />
+
+        {/* TODO: should be uncommented once chakra-ui related changes are done. */}
+        {/* <NewEventForm onClose={() => setOpen(false)} /> */}
       </Modal>
     </>
-  );
+  )
 }
 
-export default NewEventButtonWithModal;
+export default NewEventButtonWithModal
