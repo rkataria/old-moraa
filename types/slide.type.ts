@@ -27,8 +27,8 @@ export type SlideManagerContextType = {
   addNewSlide: (slide: ISlide) => void
   updateSlide: (slide: ISlide) => void
   deleteSlide: (id: string) => void
-  // moveUpSlide: (id: string) => void
-  // moveDownSlide: (id: string) => void
+  moveUpSlide: (id: string) => void
+  moveDownSlide: (id: string) => void
   reorderSlide: OnDragEndResponder
 }
 
@@ -39,4 +39,5 @@ export interface IMiniSlideManagerType {
   setCurrentSlide: (slide: ISlide) => void
   draggableProps: any
   mode: "edit" | "present" | "read"
+  handleActions: (item: any) => void
 }

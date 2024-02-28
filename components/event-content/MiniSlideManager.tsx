@@ -42,6 +42,9 @@ interface IMiniSlideManagerProps {
   setCurrentSlide: (slide: ISlide) => void
   onMiniModeChange: (miniMode: boolean) => void
   reorderSlide: OnDragEndResponder
+  deleteSlide: (id: string) => void
+  moveUpSlide: (id: string) => void
+  moveDownSlide: (id: string) => void
 }
 
 function MiniSlideManager({
@@ -53,6 +56,9 @@ function MiniSlideManager({
   setCurrentSlide,
   onMiniModeChange,
   reorderSlide,
+  deleteSlide,
+  moveUpSlide,
+  moveDownSlide,
 }: IMiniSlideManagerProps) {
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const [showView, setShowView] = useState<"thumbnail" | "list">("thumbnail")
@@ -60,6 +66,24 @@ function MiniSlideManager({
   useEffect(() => {
     onMiniModeChange(miniMode)
   }, [miniMode])
+
+  const handleActions = (
+    action: { key: string; label: string },
+    id: string
+  ) => {
+    if (action.key === "delete") {
+      deleteSlide(id)
+      return
+    }
+    if (action.key === "move_up") {
+      moveUpSlide(id)
+      return
+    }
+    if (action.key === "move_down") {
+      moveDownSlide(id)
+      return
+    }
+  }
 
   return (
     <div
@@ -113,6 +137,7 @@ function MiniSlideManager({
                             setCurrentSlide={setCurrentSlide}
                             index={index}
                             draggableProps={provided.dragHandleProps}
+                            handleActions={handleActions}
                           />
                         ) : (
                           <MiniSlideManageList
@@ -122,6 +147,7 @@ function MiniSlideManager({
                             setCurrentSlide={setCurrentSlide}
                             index={index}
                             draggableProps={provided.dragHandleProps}
+                            handleActions={handleActions}
                           />
                         )}
                       </div>

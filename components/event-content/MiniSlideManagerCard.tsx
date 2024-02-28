@@ -8,6 +8,7 @@ export const MiniSlideManagerCard = ({
   setCurrentSlide,
   draggableProps,
   mode,
+  handleActions,
 }: IMiniSlideManagerType) => {
   return (
     <div

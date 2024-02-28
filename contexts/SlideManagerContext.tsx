@@ -175,50 +175,50 @@ export const SlideManagerProvider = ({
     }
   }
 
-  // const moveUpSlide = (id: string) => {
-  //   const index = slides.findIndex((slide) => slide.id === id)
+  const moveUpSlide = (id: string) => {
+    const index = slides.findIndex((slide) => slide.id === id)
 
-  //   if (index === 0) return
+    if (index === 0) return
 
-  //   const newSlides = [...slides]
-  //   const temp = newSlides[index - 1]
-  //   newSlides[index - 1] = newSlides[index]
-  //   newSlides[index] = temp
+    const newSlides = [...slides]
+    const temp = newSlides[index - 1]
+    newSlides[index - 1] = newSlides[index]
+    newSlides[index] = temp
 
-  //   setSlides(newSlides)
+    setSlides(newSlides)
 
-  //   // Reorder the slideIds
-  //   const idIndex = slideIds.findIndex((i) => i === id)
-  //   if (idIndex === 0) return
-  //   const newIds = [...slideIds]
-  //   const tempId = newIds[index - 1]
-  //   newIds[index - 1] = newIds[index]
-  //   newIds[index] = tempId
-  //   updateSlideIds(newIds)
-  //   setSlideIds(newIds)
-  // }
+    // Reorder the slideIds
+    const idIndex = slideIds.findIndex((i) => i === id)
+    if (idIndex === 0) return
+    const newIds = [...slideIds]
+    const tempId = newIds[index - 1]
+    newIds[index - 1] = newIds[index]
+    newIds[index] = tempId
+    updateSlideIds(newIds)
+    setSlideIds(newIds)
+  }
 
-  // const moveDownSlide = (id: string) => {
-  //   const index = slides.findIndex((slide) => slide.id === id)
+  const moveDownSlide = (id: string) => {
+    const index = slides.findIndex((slide) => slide.id === id)
 
-  //   if (index === slides.length - 1) return
+    if (index === slides.length - 1) return
 
-  //   const newSlides = [...slides]
-  //   const temp = newSlides[index + 1]
-  //   newSlides[index + 1] = newSlides[index]
-  //   newSlides[index] = temp
+    const newSlides = [...slides]
+    const temp = newSlides[index + 1]
+    newSlides[index + 1] = newSlides[index]
+    newSlides[index] = temp
 
-  //   setSlides(newSlides)
+    setSlides(newSlides)
 
-  //   // Reorder the slideIds
-  //   const idIndex = slideIds.findIndex((i) => i === id)
-  //   if (idIndex === 0) return
-  //   const newIds = [...slideIds]
-  //   const tempId = newIds[index + 1]
-  //   newIds[index + 1] = newIds[index]
-  //   newIds[index] = tempId
-  //   setSlideIds(newIds)
-  // }
+    // Reorder the slideIds
+    const idIndex = slideIds.findIndex((i) => i === id)
+    if (idIndex === 0) return
+    const newIds = [...slideIds]
+    const tempId = newIds[index + 1]
+    newIds[index + 1] = newIds[index]
+    newIds[index] = tempId
+    setSlideIds(newIds)
+  }
 
   const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
     const result = list
@@ -250,8 +250,8 @@ export const SlideManagerProvider = ({
         addNewSlide,
         updateSlide,
         deleteSlide,
-        // moveUpSlide,
-        // moveDownSlide,
+        moveUpSlide,
+        moveDownSlide,
         reorderSlide,
       }}
     >

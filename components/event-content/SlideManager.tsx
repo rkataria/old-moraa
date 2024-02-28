@@ -32,6 +32,8 @@ export default function SlideManager({}: any) {
     setMiniMode,
     addNewSlide,
     deleteSlide,
+    moveUpSlide,
+    moveDownSlide,
     updateSlide,
     reorderSlide,
   } = useContext(SlideManagerContext) as SlideManagerContextType
@@ -104,6 +106,9 @@ export default function SlideManager({}: any) {
           setCurrentSlide={setCurrentSlide}
           onMiniModeChange={setMiniMode}
           reorderSlide={reorderSlide}
+          deleteSlide={deleteSlide}
+          moveUpSlide={moveUpSlide}
+          moveDownSlide={moveDownSlide}
         />
       </div>
       (
