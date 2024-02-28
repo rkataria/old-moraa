@@ -32,8 +32,6 @@ export default function SlideManager({}: any) {
     setMiniMode,
     addNewSlide,
     deleteSlide,
-    moveUpSlide,
-    moveDownSlide,
     updateSlide,
     reorderSlide,
   } = useContext(SlideManagerContext) as SlideManagerContextType
