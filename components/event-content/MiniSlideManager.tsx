@@ -101,7 +101,7 @@ function MiniSlideManager({
           </StrictModeDroppable>
         </DragDropContext>
         {mode === "edit" && (
-          <div className="flex justify-start items-center gap-2 w-full">
+          <div className="flex justify-start items-center gap-2 w-full sticky bottom-3.5">
             <span className="w-5"></span>
             <div
               ref={addSlideRef}

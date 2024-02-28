@@ -88,6 +88,7 @@ export default function SlideManager({}: any) {
                 slide={currentSlide}
                 deleteSlide={deleteSlide}
                 updateSlide={updateSlide}
+                isOwner={isOwner}
               />
             ) : (
               <div>Add a slide to continue</div>

@@ -2,13 +2,9 @@
 
 import React, { useState } from "react"
 import dynamic from "next/dynamic"
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconSettings,
-  IconTrash,
-} from "@tabler/icons-react"
+import { IconTrash } from "@tabler/icons-react"
 import clsx from "clsx"
+import { cn } from "@/utils/utils"
 import { ISlide } from "@/types/slide.type"
 import { ContentType } from "./ContentTypePicker"
 import CoverEditor from "./CoverEditor"
@@ -23,6 +19,7 @@ const PDFUploader = dynamic(
 )
 
 interface SlideProps {
+  isOwner: boolean
   slide: ISlide
   onChange?: (data: Partial<ISlide>, index: number) => void
   deleteSlide: (id: string) => void
@@ -31,7 +28,11 @@ interface SlideProps {
   updateSlide: (slide: ISlide) => void
 }
 
-export default function Slide({ slide, deleteSlide }: SlideProps) {
+export default function Slide({
+  isOwner = false,
+  slide,
+  deleteSlide,
+}: SlideProps) {
   const [openSettings, setOpenSettings] = useState<boolean>(false)
 
   const toggleSettings = () => {
@@ -39,8 +40,16 @@ export default function Slide({ slide, deleteSlide }: SlideProps) {
   }
 
   return (
-    <div className="relative group w-full h-full">
-      <div className=" relative left-0 w-full">
+    <div
+      className={cn("relative group w-full h-full", {
+        "pointer-events-none": !isOwner,
+      })}
+    >
+      <div
+        className={cn("relative left-0 w-full", {
+          hidden: !isOwner,
+        })}
+      >
         <div className="relative flex justify-center items-center gap-2">
           {/* <IconChevronUp
             size={20}

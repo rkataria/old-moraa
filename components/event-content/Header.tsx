@@ -49,7 +49,7 @@ function Header({ event }: { event: any }) {
                 )}
                 title="Start Session"
               >
-                Start Session
+                {isOwner ? "Start" : "Join"} Session
               </Link>
             </>
           )}

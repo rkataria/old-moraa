@@ -1,25 +1,25 @@
 # Chakra Files
 
-- [ ] app/providers.tsx
-- [ ] app/(auth)/(routes)/login/page.tsx
-- [ ] components/common/NextPrevButtons.tsx
-- [ ] components/event-content/PDFUploader.tsx
-- [ ] components/event-session/SlideViewControls.tsx
-- [ ] components/event-session/content-types/Reflection.tsx
-- [ ] components/ui/file-picker.tsx
+- [x] app/providers.tsx
+- [x] app/(auth)/(routes)/login/page.tsx
+- [x] components/common/NextPrevButtons.tsx
+- [x] components/event-content/PDFUploader.tsx
+- [x] components/event-session/SlideViewControls.tsx
+- [x] components/event-session/content-types/Reflection.tsx
+- [x] components/ui/file-picker.tsx
 
 # RadixUI
 
-- [ ] components/common/ThemeSwitcher.tsx
-- [ ] components/partials/user-menu.tsx
-- [ ] components/ui/avatar.tsx
-- [ ] components/ui/button.tsx
-- [ ] components/ui/dialog.tsx
-- [ ] components/ui/dropdown-menu.tsx
-- [ ] components/ui/form.tsx
-- [ ] components/ui/label.tsx
-- [ ] components/ui/sheet.tsx
+- [x] components/common/ThemeSwitcher.tsx
+- [x] components/partials/user-menu.tsx
+- [x] components/ui/avatar.tsx
+- [x] components/ui/button.tsx
+- [x] components/ui/dialog.tsx
+- [x] components/ui/dropdown-menu.tsx
+- [x] components/ui/form.tsx
+- [x] components/ui/label.tsx
+- [x] components/ui/sheet.tsx
 
 # Folder restructure
 
-- [ ] Shadcn files need to be moved
+- [x] Shadcn files need to be moved

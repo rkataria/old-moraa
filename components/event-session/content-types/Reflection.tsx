@@ -2,21 +2,16 @@
 import React, { useEffect, useState } from "react"
 import { ISlide } from "@/types/slide.type"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
+import { IconPencil } from "@tabler/icons-react"
 import {
   Avatar,
-  Box,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  Link,
-  Stack,
-  StackDivider,
-  Text,
   Textarea,
-} from "@chakra-ui/react"
-import { IconPencil } from "@tabler/icons-react"
+} from "@nextui-org/react"
 
 interface ReflectionProps {
   slide: ISlide
@@ -41,40 +36,24 @@ const ReflectionCard = ({
 }) => (
   <Card>
     <CardHeader>
-      <Stack direction="row" align="center">
+      <div className="flex justify-start items-center gap-2">
         <Avatar
-          size="sm"
-          name={username}
           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`}
         />
-        <Text ml={2} fontSize="sm" fontWeight="semibold">
-          {username}
-        </Text>
-      </Stack>
+        <span className="semibold">{username}</span>
+      </div>
     </CardHeader>
     <CardBody>
-      <Stack divider={<StackDivider />} spacing="4">
-        <Box>
-          <Text fontSize="sm" fontWeight="medium">
-            {reflection}
-          </Text>
-        </Box>
-        <Box>
-          {isOwner && (
-            <Link
-              onClick={enableEditReflection}
-              fontSize="x-small"
-              fontWeight="semibold"
-              className="text-gray-600"
-            >
-              <Stack direction="row" align="flex-start">
-                <IconPencil className="w-3 h-3" />
-                <Text>edit</Text>
-              </Stack>
-            </Link>
-          )}
-        </Box>
-      </Stack>
+      <p className="text-gray-600">{reflection}</p>
+      {isOwner && (
+        <Button
+          onClick={enableEditReflection}
+          className="text-gray-600 hover:text-gray-800"
+        >
+          <IconPencil className="w-3 h-3" />
+          <span>Edit</span>
+        </Button>
+      )}
     </CardBody>
   </Card>
 )
@@ -91,10 +70,14 @@ function Reflection({
   const [reflection, setReflection] = useState("")
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
   const { meeting } = useDyteMeeting()
+
   const username = meeting.self.name
-  const selfResponse = responses.find((res: any) => res.profile_id === user.id)
+  const selfResponse = responses.find(
+    (res: any) => res.participant.enrollment.user_id === user.id
+  )
+
   const otherResponses = responses.filter(
-    (res: any) => res.response.username !== username
+    (res: any) => res.participant.enrollment.user_id !== user.id
   )
 
   useEffect(() => {
@@ -125,30 +108,25 @@ function Reflection({
             {(!responded || editEnabled) && !isHost && (
               <Card>
                 <CardHeader>
-                  <Stack direction="row" align="center">
+                  <div className="flex justify-start items-center gap-2">
                     <Avatar
-                      size="sm"
-                      name={username}
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`}
                     />
-                    <Text ml={2} fontSize="sm" fontWeight="semibold">
-                      {username}
-                    </Text>
-                  </Stack>
+                    <span className="semibold">{username}</span>
+                  </div>
                 </CardHeader>
                 <CardBody>
                   <Textarea
-                    fontSize="sm"
+                    className="text-sm"
                     placeholder="Enter your reflection here."
                     value={reflection}
                     onChange={(e) => setReflection(e.target.value)}
                   ></Textarea>
                 </CardBody>
                 <CardFooter>
-                  <Stack direction="row" boxSize="fit-content">
+                  <div className="flex justify-start items-center gap-2">
                     <Button
                       size="sm"
-                      colorScheme="purple"
                       onClick={() => {
                         !responded
                           ? addReflection?.(slide, reflection, username)
@@ -167,7 +145,7 @@ function Reflection({
                         Cancel
                       </Button>
                     )}
-                  </Stack>
+                  </div>
                 </CardFooter>
               </Card>
             )}
