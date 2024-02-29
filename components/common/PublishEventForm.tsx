@@ -138,7 +138,7 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
   return (
     <div>
       <form onSubmit={publishEventForm.handleSubmit(publishEvent)}>
-        <div className="flex flex-col">
+        <div>
           <Controller
             control={publishEventForm.control}
             name="eventName"
@@ -242,8 +242,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               Cancel
             </Button>
             <Button
-              color="default"
               variant="solid"
+              color="primary"
               type="submit"
               disabled={publishEventMutation.isPending}
               isLoading={publishEventMutation.isPending}
