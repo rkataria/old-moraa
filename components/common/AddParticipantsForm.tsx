@@ -7,14 +7,7 @@ import {
   useForm,
 } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  IconButton,
-  Input,
-} from "@chakra-ui/react"
+import { Button, Input } from "@nextui-org/react"
 import clsx from "clsx"
 import { ReactElement } from "react"
 import { useUserContext } from "@/hooks/useAuth"
@@ -114,7 +107,7 @@ function AddParticipantsForm<
 
   const FormContentJSX = (
     <div>
-      <FormLabel>Participant Email(s)</FormLabel>
+      <Input>Participant Email(s)</Input>
       {participantsFieldArray.fields.map((field, index) => (
         <Controller
           key={field.id}
@@ -122,29 +115,27 @@ function AddParticipantsForm<
           name={`participants.${index}.email`}
           render={({ field, fieldState }) => (
             <div className="">
-              <FormControl
-                size="xs"
-                isInvalid={!!fieldState.error?.message}
-                className={clsx("flex-1", "mb-4")}
-              >
-                <div className="flex">
-                  <Input {...field} className="flex-1" />
-                  <IconButton
+              <div>
+                <Input
+                  {...field}
+                  className="flex-1"
+                  errorMessage={fieldState.error?.message}
+                  isInvalid={!!fieldState.error}
+                />
+                {/* <IconButton
                     className="ml-4"
                     aria-label="Delete participant"
                     icon={<Trash size={16} />}
                     onClick={() => participantsFieldArray.remove(index)}
-                  />
-                </div>
-                <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
-              </FormControl>
+                  /> */}
+              </div>
 
               <div className="flex">
                 {index === participantsFieldArray.fields.length - 1 && (
                   <Button
                     onClick={() => participantsFieldArray.append({ email: "" })}
-                    variant="outline"
-                    colorScheme="gray"
+                    variant="bordered"
+                    color="default"
                   >
                     + Add New Participant
                   </Button>

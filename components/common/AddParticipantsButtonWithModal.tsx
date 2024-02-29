@@ -7,7 +7,7 @@ import AddParticipantsForm, {
 } from "./AddParticipantsForm"
 import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { Button } from "@chakra-ui/react"
+import { Button } from "@nextui-org/react"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import clsx from "clsx"
@@ -71,8 +71,8 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
           renderAction={() => (
             <div className="flex justify-end">
               <Button
-                variant="outline"
-                colorScheme="gray"
+                variant="bordered"
+                color="default"
                 className="mr-2"
                 onClick={() => setOpen(false)}
               >
@@ -80,7 +80,7 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
               </Button>
               <Button
                 type="submit"
-                colorScheme="brand"
+                color="primary"
                 variant="solid"
                 isLoading={addParticipantsMutations.isPending}
               >
