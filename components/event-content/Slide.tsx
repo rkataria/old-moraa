@@ -2,8 +2,6 @@
 
 import React, { useState } from "react"
 import dynamic from "next/dynamic"
-import { IconTrash } from "@tabler/icons-react"
-import clsx from "clsx"
 import { cn } from "@/utils/utils"
 import { ISlide } from "@/types/slide.type"
 import { ContentType } from "./ContentTypePicker"
@@ -25,10 +23,7 @@ interface SlideProps {
   updateSlide: (slide: ISlide) => void
 }
 
-export default function Slide({
-  isOwner = false,
-  slide,
-}: SlideProps) {
+export default function Slide({ isOwner = false, slide }: SlideProps) {
   const [openSettings, setOpenSettings] = useState<boolean>(false)
 
   const toggleSettings = () => {

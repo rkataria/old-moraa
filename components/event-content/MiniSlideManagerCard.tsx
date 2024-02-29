@@ -74,7 +74,7 @@ export const MiniSlideManagerCard = ({
             backgroundColor: slide.config?.backgroundColor || "#166534",
           }}
         >
-          {slide.name}
+          <div className="absolute left-0 bottom-0 p-2">{slide.name}</div>
         </div>
       </div>
     )
