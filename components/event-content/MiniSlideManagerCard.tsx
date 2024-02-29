@@ -11,74 +11,44 @@ import { DeleteSlideModal } from "./DeleteSlideModal"
 import { useContext, useState } from "react"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
 
-export const MiniSlideManagerCard = ({
+interface SlideListViewProps {
+  slide: ISlide
+  draggableProps: any
+  index: number
+  mode: "edit" | "present" | "read"
+  handleActions: any
+  isDeleteModalOpen: boolean
+  setIsDeleteModalOpen: any
+  handleDelete: any
+}
+
+interface SlideThumbnailViewProps {
+  slide: ISlide
+  draggableProps: any
+  index: number
+  mode: "edit" | "present" | "read"
+  handleActions: any
+  isDeleteModalOpen: boolean
+  setIsDeleteModalOpen: any
+  handleDelete: any
+}
+
+const SlideListView = ({
   slide,
-  index,
-  currentSlide,
-  setCurrentSlide,
   draggableProps,
+  index,
   mode,
-  miniSlideView,
-}: IMiniSlideManagerType) => {
-  const { deleteSlide, moveUpSlide, moveDownSlide } = useContext(
+  handleActions,
+  isDeleteModalOpen,
+  setIsDeleteModalOpen,
+  handleDelete,
+}: SlideListViewProps) => {
+  const { currentSlide, setCurrentSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-
   const Icon = contentTypes.find(
     (type) => type.contentType === slide.type
   )?.icon
-
-  const handleActions = (
-    action: { key: string; label: string },
-    id: string
-  ) => {
-    if (action.key === "delete") {
-      setIsModalOpen(true)
-      return
-    }
-    if (action.key === "move_up") {
-      moveUpSlide(id)
-      return
-    }
-    if (action.key === "move_down") {
-      moveDownSlide(id)
-      return
-    }
-  }
-
-  const handleDelete = (slide: ISlide) => {
-    deleteSlide(slide.id)
-    setIsModalOpen(false)
-  }
-
-  if (miniSlideView === "thumbnail") {
-    return (
-      <div
-        data-minislide-id={slide.id}
-        key={`mini-slide-${slide.id}`}
-        className="flex justify-start items-center gap-2 w-full"
-        {...(mode === "edit" && draggableProps)}
-      >
-        <span className="w-5">{index + 1}.</span>
-        <div
-          onClick={() => setCurrentSlide(slide)}
-          className={cn(
-            "relative rounded-md flex-auto w-full aspect-video cursor-pointer transition-all border-2 flex justify-center items-center capitalize",
-            currentSlide?.id === slide.id
-              ? "drop-shadow-md border-black"
-              : "drop-shadow-none border-black/20"
-          )}
-          style={{
-            backgroundColor: slide.config?.backgroundColor || "#166534",
-          }}
-        >
-          <div className="absolute left-0 bottom-0 p-2">{slide.name}</div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div
@@ -86,12 +56,12 @@ export const MiniSlideManagerCard = ({
       key={`mini-slide-${slide.id}`}
       className="flex justify-start items-center gap-2 w-full"
     >
-      <span className="w-5">{index + 1}.</span>
+      <span className="w-8">{index + 1}.</span>
       <div className="text-slate-500">{Icon}</div>
       <div
         {...(mode === "edit" && draggableProps)}
         className={cn(
-          "rounded-md flex-auto w-full transition-all border-2 flex items-center justify-between capitalize group",
+          "rounded-md flex-auto w-full transition-all border flex items-center justify-between capitalize group",
           currentSlide?.id === slide.id
             ? "drop-shadow-md border-black"
             : "drop-shadow-none border-black/20"
@@ -109,7 +79,7 @@ export const MiniSlideManagerCard = ({
         </div>
         <SlideActions
           triggerIcon={
-            <div className="h-full w-fit bg-slate-100 rounded">
+            <div className="h-full w-fit bg-slate-100 rounded mr-1">
               <IconDots className="h-6 w-6 text-slate-500 px-1" />
             </div>
           }
@@ -117,12 +87,117 @@ export const MiniSlideManagerCard = ({
         />
       </div>
       <DeleteSlideModal
-        isModalOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isDeleteModalOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
         handleDelete={handleDelete}
         slide={slide}
       />
     </div>
+  )
+}
+
+const SlideThumbnailView = ({
+  slide,
+  draggableProps,
+  index,
+  mode,
+  handleActions,
+  isDeleteModalOpen,
+  setIsDeleteModalOpen,
+  handleDelete,
+}: SlideThumbnailViewProps) => {
+  const { currentSlide, setCurrentSlide } = useContext(
+    SlideManagerContext
+  ) as SlideManagerContextType
+
+  return (
+    <div
+      data-minislide-id={slide.id}
+      key={`mini-slide-${slide.id}`}
+      className="flex justify-start items-center gap-2 w-full"
+      {...(mode === "edit" && draggableProps)}
+    >
+      <span className="w-5">{index + 1}.</span>
+      <div
+        onClick={() => setCurrentSlide(slide)}
+        className={cn(
+          "relative rounded-md flex-auto w-full aspect-video cursor-pointer transition-all border-2 flex justify-center items-center capitalize",
+          currentSlide?.id === slide.id
+            ? "drop-shadow-md border-black"
+            : "drop-shadow-none border-black/20"
+        )}
+        style={{
+          backgroundColor: slide.config?.backgroundColor || "#166534",
+        }}
+      >
+        <div className="absolute left-0 bottom-0 p-2">{slide.name}</div>
+      </div>
+    </div>
+  )
+}
+
+export const MiniSlideManagerCard = ({
+  slide,
+  index,
+  draggableProps,
+  mode,
+  miniSlideView,
+}: IMiniSlideManagerType) => {
+  const { deleteSlide, moveUpSlide, moveDownSlide } = useContext(
+    SlideManagerContext
+  ) as SlideManagerContextType
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
+
+  const handleActions = (
+    action: { key: string; label: string },
+    id: string
+  ) => {
+    if (action.key === "delete") {
+      setIsDeleteModalOpen(true)
+      return
+    }
+    if (action.key === "move_up") {
+      moveUpSlide(id)
+      return
+    }
+    if (action.key === "move_down") {
+      moveDownSlide(id)
+      return
+    }
+  }
+
+  const handleDelete = (slide: ISlide) => {
+    deleteSlide(slide.id)
+    setIsDeleteModalOpen(false)
+  }
+
+  if (miniSlideView === "thumbnail") {
+    return (
+      <SlideThumbnailView
+        slide={slide}
+        draggableProps={draggableProps}
+        index={index}
+        mode={mode}
+        handleActions={handleActions}
+        isDeleteModalOpen={isDeleteModalOpen}
+        setIsDeleteModalOpen={setIsDeleteModalOpen}
+        handleDelete={handleDelete}
+      />
+    )
+  }
+
+  return (
+    <SlideListView
+      slide={slide}
+      draggableProps={draggableProps}
+      index={index}
+      mode={mode}
+      handleActions={handleActions}
+      isDeleteModalOpen={isDeleteModalOpen}
+      setIsDeleteModalOpen={setIsDeleteModalOpen}
+      handleDelete={handleDelete}
+    />
   )
 }
 export default MiniSlideManagerCard
