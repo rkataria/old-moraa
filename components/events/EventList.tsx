@@ -4,27 +4,28 @@ import { useRouter } from "next/navigation"
 import Loading from "../common/Loading"
 import { useEvents } from "@/hooks/useEvents"
 import { getFormattedDate } from "@/utils/date"
-import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal"
-import clsx from "clsx"
-import Link from "next/link"
-import AddParticipantsButtonWithModal from "../common/AddParticipantsButtonWithModal"
+// import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal"
+// import clsx from "clsx"
+// import Link from "next/link"
+// import AddParticipantsButtonWithModal from "../common/AddParticipantsButtonWithModal"
 import { useAuth } from "@/hooks/useAuth"
 
-enum EventType {
-  PUBLISHED = "PUBLISHED",
-  DRAFT = "DRAFT",
-}
-const styles = {
-  button: {
-    default:
-      "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
-  },
-}
+// enum EventType {
+//   PUBLISHED = "PUBLISHED",
+//   DRAFT = "DRAFT",
+// }
+// const styles = {
+//   button: {
+//     default:
+//       "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
+//   },
+// }
+
 function EventList() {
   const router = useRouter()
   const { events, isLoading } = useEvents()
-  const { currentUser } = useAuth()
-  const userId = currentUser?.id
+  // const { currentUser } = useAuth()
+  // const userId = currentUser?.id
 
   const handleRowClick = (id: string) => {
     router.push(`/events/${id}`)
@@ -81,6 +82,7 @@ function EventList() {
             <tr
               key={event.name}
               className="hover:bg-purple-700/5 cursor-pointer"
+              onClick={() => handleRowClick(event.id)}
             >
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                 {event.name}
@@ -101,17 +103,20 @@ function EventList() {
                   {event.status}
                 </span>
               </td>
-              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                <button
-                  className={clsx(
-                    styles.button.default,
-                    "font-semibold text-sm bg-black text-white !rounded-full px-4"
-                  )}
-                  onClick={() => handleRowClick(event.id)}
-                >
-                  View Content
-                </button>
-              </td>
+              {/* {userId === event.owner_id && (
+                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
+                  <button
+                    className={clsx(
+                      styles.button.default,
+                      "font-semibold text-sm bg-black text-white !rounded-full px-4"
+                    )}
+                    onClick={() => handleRowClick(event.id)}
+                  >
+                    View Content
+                  </button>
+                </td>
+              )} */}
+              {/* 
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                 <div className="flex justify-start items-center gap-2 px-2 h-full">
                   {event?.status === EventType.DRAFT &&
@@ -136,7 +141,7 @@ function EventList() {
                     </>
                   )}
                 </div>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
