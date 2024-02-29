@@ -28,8 +28,6 @@ function ContentContainer() {
 
   const activePlugin = meeting.plugins.active.toArray()?.[0]
 
-  if (presentationStatus === PresentationStatuses.STOPPED) return null
-
   if (activePlugin) {
     return (
       <ContentWrapper>
@@ -37,6 +35,8 @@ function ContentContainer() {
       </ContentWrapper>
     )
   }
+
+  if (presentationStatus === PresentationStatuses.STOPPED) return null
 
   return (
     <ContentWrapper>
