@@ -19,6 +19,7 @@ import { QueryKeys } from "@/utils/query-keys"
 import Loading from "@/components/common/Loading"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
 import { Button, Input } from "@nextui-org/react"
+import FilePicker from "../common/FilePicker"
 
 interface PDFUploaderProps {
   slide: ISlide
@@ -126,15 +127,14 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
         return (
           <div className="h-96 flex flex-col justify-center items-center">
             <p className="mb-4">Select the PDF file.</p>
-            <Input
-              isClearable
-              type="file"
-              variant="bordered"
-              placeholder="Select file"
-              onChange={(event) => {
+            <FilePicker
+              label="Select PDF file"
+              supportedFormatsText="pdf"
+              onUpload={(files) => {
+                console.log("🚀 ~ getInnerContent ~ event:", files)
                 const fileList = []
-                if (event.target.files) {
-                  for (const file of event.target.files) {
+                if (files) {
+                  for (const file of files) {
                     fileList.push(file)
                   }
                   uploadAndSetFile(fileList[0])
