@@ -44,10 +44,10 @@ export default function Modal({
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-5xl ">
                 {title ? (
-                  <div className="bg-purple-500 h-[140px] p-1.5">
-                    <div className="text-xl text-white">{title}</div>
+                  <div className="bg-primary h-[140px] p-6">
+                    <p className="text-xl text-white">{title}</p>
                     {description ? (
-                      <div className="text-white">{description}</div>
+                      <p className="text-white">{description}</p>
                     ) : null}
                   </div>
                 ) : null}

@@ -7,20 +7,15 @@ import { ReactMultiEmail } from "react-multi-email"
 import "react-multi-email/dist/style.css"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Select,
-  Stack,
-} from "@chakra-ui/react"
+
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { TimeZones } from "@/constants/timezone"
 import { useMutation } from "@tanstack/react-query"
 import { createCustomTimeZoneDate, getBrowserTimeZone } from "@/utils/date"
 import { useEffect } from "react"
+import { Button, Input, Select, SelectItem } from "@nextui-org/react"
+import styles from "@/styles/form-control"
+import { cn } from "@/utils/utils"
 
 interface NewEventFormProps {
   eventId: string
@@ -133,42 +128,44 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
   return (
     <div>
       <form onSubmit={publishEventForm.handleSubmit(publishEvent)}>
-        <Stack spacing={3}>
+        <div>
           <Controller
             control={publishEventForm.control}
             name="eventName"
             render={({ field, fieldState }) => (
-              <FormControl size="xs" isInvalid={!!fieldState.error?.message}>
-                <FormLabel>Event Name</FormLabel>
+              <div className={styles.formControl.base}>
+                <label className={styles.label.base}>Event Name</label>
                 <Input {...field} />
-                <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
-              </FormControl>
+                <p className="text-red-500">{fieldState.error?.message}</p>
+              </div>
             )}
           />
           <Controller
             control={publishEventForm.control}
             name="description"
             render={({ field, fieldState }) => (
-              <FormControl size="xs" isInvalid={!!fieldState.error?.message}>
-                <FormLabel>Description</FormLabel>
+              <div className={styles.formControl.base}>
+                <label className={styles.label.base}>Description</label>
                 <Input {...field} type="textarea" />
-                <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
-              </FormControl>
+                <p className="text-red-500">{fieldState.error?.message}</p>
+              </div>
             )}
           />
           <Controller
             control={publishEventForm.control}
             name="timezone"
             render={({ field, fieldState }) => (
-              <FormControl size="xs" isInvalid={!!fieldState.error?.message}>
-                <FormLabel>Timezone</FormLabel>
+              <div className={styles.formControl.base}>
+                <label className={styles.label.base}>Timezone</label>
                 <Select {...field}>
-                  {TimeZones.map((timezone) => (
-                    <option value={timezone.text}>{timezone.text}</option>
+                  {TimeZones.map((timezone, index) => (
+                    <SelectItem key={`timezone-${index}`} value={timezone.text}>
+                      {timezone.text}
+                    </SelectItem>
                   ))}
                 </Select>
-                <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
-              </FormControl>
+                <p>{fieldState.error?.message}</p>
+              </div>
             )}
           />
           <div className="flex">
@@ -176,34 +173,22 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               control={publishEventForm.control}
               name="startDate"
               render={({ field, fieldState }) => (
-                <FormControl
-                  size="xs"
-                  className="mr-2"
-                  isInvalid={!!fieldState.error?.message}
-                >
-                  <FormLabel>Start Date</FormLabel>
+                <div className={cn(styles.formControl.base, "mr-2")}>
+                  <label className={styles.label.base}>Start Date</label>
                   <Input {...field} type="date" />
-                  <FormErrorMessage>
-                    {fieldState.error?.message}
-                  </FormErrorMessage>
-                </FormControl>
+                  <p>{fieldState.error?.message}</p>
+                </div>
               )}
             />
             <Controller
               control={publishEventForm.control}
               name="startTime"
               render={({ field, fieldState }) => (
-                <FormControl
-                  size="xs"
-                  className="ml-2"
-                  isInvalid={!!fieldState.error?.message}
-                >
-                  <FormLabel>Start Time</FormLabel>
+                <div className={cn(styles.formControl.base, "ml-2")}>
+                  <label className={styles.label.base}>Start Time</label>
                   <Input {...field} type="time" />
-                  <FormErrorMessage>
-                    {fieldState.error?.message}
-                  </FormErrorMessage>
-                </FormControl>
+                  <p className="text-red-500">{fieldState.error?.message}</p>
+                </div>
               )}
             />
           </div>
@@ -212,34 +197,25 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               control={publishEventForm.control}
               name="endDate"
               render={({ field, fieldState }) => (
-                <FormControl
-                  size="xs"
-                  className="mr-2"
-                  isInvalid={!!fieldState.error?.message}
-                >
-                  <FormLabel>End Date</FormLabel>
+                <div className={cn(styles.formControl.base, "mr-2")}>
+                  <label className={styles.label.base}>End Date</label>
                   <Input {...field} type="date" />
-                  <FormErrorMessage>
-                    {fieldState.error?.message}
-                  </FormErrorMessage>
-                </FormControl>
+                  <p className="text-red-500">{fieldState.error?.message}</p>
+                </div>
               )}
             />
             <Controller
               control={publishEventForm.control}
               name="endTime"
               render={({ field, fieldState }) => (
-                <FormControl
-                  size="xs"
-                  className="ml-2"
-                  isInvalid={!!fieldState.error?.message}
+                <div
+                  className={cn(styles.formControl.base, "ml-2")}
+                  // isInvalid={!!fieldState.error?.message}
                 >
-                  <FormLabel>End Time</FormLabel>
+                  <label className={styles.label.base}>End Time</label>
                   <Input {...field} type="time" />
-                  <FormErrorMessage>
-                    {fieldState.error?.message}
-                  </FormErrorMessage>
-                </FormControl>
+                  <p className="text-red-500">{fieldState.error?.message}</p>
+                </div>
               )}
             />
           </div>
@@ -247,12 +223,16 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
             control={publishEventForm.control}
             name="participants"
             render={({ field, fieldState }) => (
-              <FormControl size="xs" isInvalid={!!fieldState.error?.message}>
-                <FormLabel>Participants</FormLabel>
+              <div className={styles.formControl.base}>
+                <label className={styles.label.base}>Participants</label>
                 <ReactMultiEmail
                   {...field}
                   placeholder="Enter participant emails (Hit enter to add more)"
-                  getLabel={(email, index, removeEmail) => {
+                  getLabel={(
+                    email: string,
+                    index: number,
+                    removeEmail: (i: number) => void
+                  ) => {
                     return (
                       <div data-tag key={index}>
                         <div data-tag-item>{email}</div>
@@ -266,17 +246,17 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
                     )
                   }}
                 />
-                <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
-              </FormControl>
+                <div className="text-red-500">{fieldState.error?.message}</div>
+              </div>
             )}
           />
           <div className="flex justify-end">
-            <Button variant="outline" className="mr-4" onClick={onClose}>
+            <Button variant="ghost" className="mr-4" onClick={onClose}>
               Cancel
             </Button>
             <Button
-              colorScheme="black"
               variant="solid"
+              color="primary"
               type="submit"
               disabled={publishEventMutation.isPending}
               isLoading={publishEventMutation.isPending}
@@ -284,7 +264,7 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               Publish
             </Button>
           </div>
-        </Stack>
+        </div>
       </form>
     </div>
   )
