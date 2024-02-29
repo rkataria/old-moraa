@@ -88,10 +88,8 @@ const SlideListView = ({
       className="flex justify-start items-center gap-2 max-w-full"
     >
       <span className="w-8">{index + 1}</span>
-      <Tooltip>
-        <div className="text-slate-500" content={slide.type}>
-          {Icon}
-        </div>
+      <Tooltip content={slide.type}>
+        <div className="text-slate-500">{Icon}</div>
       </Tooltip>
       <div
         {...(mode === "edit" && draggableProps)}
