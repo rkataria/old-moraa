@@ -31,7 +31,7 @@ export const INTERACTIVE_SLIDE_TYPES = [
   ContentType.REFLECTION,
 ]
 
-const contentTypes: IContentType[] = [
+export const contentTypes: IContentType[] = [
   {
     name: "Title & Description",
     icon: <IconAlignCenter />,

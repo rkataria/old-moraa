@@ -7,6 +7,7 @@ import { useEvent } from "@/hooks/useEvent"
 import { deletePDFFile } from "@/services/pdf.service"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { INTERACTIVE_SLIDE_TYPES } from "@/components/event-content/ContentTypePicker"
+import { OnDragEndResponder } from "react-beautiful-dnd"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -140,7 +141,12 @@ export const SlideManagerProvider = ({
     slide.meeting_id = slide.meeting_id ?? meeting?.id
     const { data, error } = await supabase
       .from("slide")
-      .upsert({ id: slide.id, content: slide.content, config: slide.config })
+      .upsert({
+        id: slide.id,
+        content: slide.content,
+        config: slide.config,
+        name: slide.name,
+      })
     setCurrentSlide(slide)
     setSlides((s) => {
       if (s.findIndex((i) => i.id === slide.id) >= 0) {
@@ -225,6 +231,22 @@ export const SlideManagerProvider = ({
     setSlideIds(newIds)
   }
 
+  const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
+    const result = list
+    const [removed] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
+
+    return result
+  }
+
+  const reorderSlide = (result: OnDragEndResponder | any) => {
+    if (!result.destination) {
+      return
+    }
+    const items = reorder(slides, result.source.index, result.destination.index)
+    setSlides(items)
+  }
+
   return (
     <SlideManagerContext.Provider
       value={{
@@ -241,6 +263,7 @@ export const SlideManagerProvider = ({
         deleteSlide,
         moveUpSlide,
         moveDownSlide,
+        reorderSlide,
       }}
     >
       {children}
