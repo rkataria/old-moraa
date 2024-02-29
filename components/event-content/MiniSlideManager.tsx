@@ -41,9 +41,6 @@ interface IMiniSlideManagerProps {
   setCurrentSlide: (slide: ISlide) => void
   onMiniModeChange: (miniMode: boolean) => void
   reorderSlide: OnDragEndResponder
-  deleteSlide: (id: string) => void
-  moveUpSlide: (id: string) => void
-  moveDownSlide: (id: string) => void
 }
 
 function MiniSlideManager({
@@ -55,9 +52,6 @@ function MiniSlideManager({
   setCurrentSlide,
   onMiniModeChange,
   reorderSlide,
-  deleteSlide,
-  moveUpSlide,
-  moveDownSlide,
 }: IMiniSlideManagerProps) {
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const [miniSlideView, setMiniSlideView] = useState<"thumbnail" | "list">(
