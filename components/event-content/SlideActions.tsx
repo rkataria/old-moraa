@@ -25,7 +25,7 @@ const slideActions = [
     icon: <IconArrowUp className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: "",
+    key: "moveDown",
     label: "Move down",
     icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
   },
