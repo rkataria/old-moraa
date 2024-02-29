@@ -15,6 +15,7 @@ import {
 } from "react-beautiful-dnd"
 import { MiniSlideManagerCard } from "./MiniSlideManagerCard"
 import { cn } from "@/utils/utils"
+import { Tooltip } from "@nextui-org/react"
 
 const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
   const [enabled, setEnabled] = useState(false)
@@ -71,20 +72,24 @@ function MiniSlideManager({
     >
       <div className="flex flex-col justify-start items-center w-full px-6">
         <div className="flex items-center gap-4 justify-end w-full pb-4">
-          <IconLayoutGrid
-            className={cn("h-6 w-6 cursor-pointer", {
-              "text-slate-500": miniSlideView === "thumbnail",
-              "text-slate-300": miniSlideView !== "thumbnail",
-            })}
-            onClick={() => setMiniSlideView("thumbnail")}
-          />
-          <IconList
-            className={cn("h-6 w-6 cursor-pointer", {
-              "text-slate-500": miniSlideView === "list",
-              "text-slate-300": miniSlideView !== "list",
-            })}
-            onClick={() => setMiniSlideView("list")}
-          />
+          <Tooltip content="Thumbnail View">
+            <IconLayoutGrid
+              className={cn("h-6 w-6 cursor-pointer hover:text-slate-500", {
+                "text-slate-500": miniSlideView === "thumbnail",
+                "text-slate-300": miniSlideView !== "thumbnail",
+              })}
+              onClick={() => setMiniSlideView("thumbnail")}
+            />
+          </Tooltip>
+          <Tooltip content="List View">
+            <IconList
+              className={cn("h-6 w-6 cursor-pointer hover:text-slate-500", {
+                "text-slate-500": miniSlideView === "list",
+                "text-slate-300": miniSlideView !== "list",
+              })}
+              onClick={() => setMiniSlideView("list")}
+            />
+          </Tooltip>
         </div>
         <DragDropContext onDragEnd={reorderSlide}>
           <StrictModeDroppable droppableId="droppable-1" type="slide">

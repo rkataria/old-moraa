@@ -10,6 +10,7 @@ import { contentTypes } from "./ContentTypePicker"
 import { DeleteSlideModal } from "./DeleteSlideModal"
 import { useContext, useState } from "react"
 import SlideManagerContext from "@/contexts/SlideManagerContext"
+import { Tooltip } from "@nextui-org/react"
 
 interface SlideListViewProps {
   slide: ISlide
@@ -50,6 +51,7 @@ const SlideEditableName = ({ slide }: { slide: ISlide }) => {
       <input
         defaultValue={slide.name}
         onBlur={handleBlur}
+        onKeyDown={(e) => e.key === "Enter" && handleBlur(e)}
         className="border-b border-primary outline-none py-1 w-[inherit] pr-2"
       />
     )
@@ -85,8 +87,12 @@ const SlideListView = ({
       key={`mini-slide-${slide.id}`}
       className="flex justify-start items-center gap-2 max-w-full"
     >
-      <span className="w-8">{index + 1}.</span>
-      <div className="text-slate-500">{Icon}</div>
+      <span className="w-8">{index + 1}</span>
+      <Tooltip>
+        <div className="text-slate-500" content={slide.type}>
+          {Icon}
+        </div>
+      </Tooltip>
       <div
         {...(mode === "edit" && draggableProps)}
         className={cn(
@@ -148,7 +154,7 @@ const SlideThumbnailView = ({
       className="flex justify-start items-center gap-2 w-full"
       {...(mode === "edit" && draggableProps)}
     >
-      <span className="w-5">{index + 1}.</span>
+      <span className="w-5">{index + 1}</span>
       <div
         onClick={() => setCurrentSlide(slide)}
         className={cn(
