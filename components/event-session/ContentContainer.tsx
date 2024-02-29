@@ -30,8 +30,6 @@ function ContentContainer() {
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
   )
 
-  if (presentationStatus === PresentationStatuses.STOPPED) return null
-
   if (screensharingParticipant) {
     return (
       <SlideWrapper>
@@ -74,6 +72,8 @@ function ContentContainer() {
       </SlideWrapper>
     )
   }
+
+  if (presentationStatus === PresentationStatuses.STOPPED) return null
 
   return (
     <SlideWrapper>

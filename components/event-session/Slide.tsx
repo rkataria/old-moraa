@@ -13,6 +13,7 @@ import { checkVoted } from "@/utils/content.util"
 import SlideLoading from "./SlideLoading"
 import GoogleSlides from "../event-session/content-types/GoogleSlides"
 import Reflection from "./content-types/Reflection"
+import VideoEmbed from "./content-types/VideoEmbed"
 
 const PDFViewer = dynamic(
   () => import("./content-types/PDFViewer").then((mod) => mod.PDFViewer),
@@ -76,6 +77,9 @@ function Slide() {
         updateReflection={updateReflection}
       />
     )
+  }
+  if (currentSlide.type === ContentType.VIDEO_EMBED) {
+    return <VideoEmbed key={currentSlide.id} slide={currentSlide} />
   }
 
   return null

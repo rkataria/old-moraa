@@ -17,8 +17,9 @@ function ParticipantTiles() {
   const { presentationStatus } = useContext(
     EventSessionContext
   ) as EventSessionContextType
+  const activePlugin = meeting.plugins.active.toArray()?.[0]
 
-  if (presentationStatus === PresentationStatuses.STOPPED) {
+  if (!activePlugin && presentationStatus === PresentationStatuses.STOPPED) {
     return (
       <div className="flex-auto flex justify-center items-center bg-gray-900">
         <DyteSpotlightGrid

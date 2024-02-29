@@ -12,3 +12,15 @@ export const getFileObjectFromBlob = (
 ) => {
   return new File([blob], fileName, { type: fileType })
 }
+
+export const formatSecondsToDuration = (seconds: number) => {
+  return [
+    formatToPaddedString(seconds / 60 / 60),
+    formatToPaddedString((seconds / 60) % 60),
+    formatToPaddedString(seconds % 60),
+  ].join(":")
+}
+
+const formatToPaddedString = (value: number) => {
+  return (~~value).toString().padStart(2, "0")
+}
