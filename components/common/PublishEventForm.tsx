@@ -3,19 +3,19 @@
 import { useParams } from "next/navigation"
 import { useEvent } from "@/hooks/useEvent"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import { ReactMultiEmail } from "react-multi-email"
 import "react-multi-email/dist/style.css"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
-
+import { Button, Input, Select, SelectItem } from "@nextui-org/react"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { TimeZones } from "@/constants/timezone"
 import { useMutation } from "@tanstack/react-query"
 import { createCustomTimeZoneDate, getBrowserTimeZone } from "@/utils/date"
 import { useEffect } from "react"
-import { Button, Input, Select, SelectItem } from "@nextui-org/react"
-import styles from "@/styles/form-control"
-import { cn } from "@/utils/utils"
+import AddParticipantsForm, {
+  participantsListValidationSchema,
+} from "./AddParticipantsForm"
+import { useUserContext } from "@/hooks/useAuth"
 
 interface NewEventFormProps {
   eventId: string
@@ -35,15 +35,14 @@ const publishEventValidationSchema = yup.object({
   endDate: yup.string().optional(),
   startTime: yup.string().optional(),
   endTime: yup.string().optional(),
-  participants: yup
-    .array(yup.string().label("Participant email").email().required())
-    .required(),
+  participants: participantsListValidationSchema,
 })
 
 type FormData = yup.InferType<typeof publishEventValidationSchema>
 
 function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
   const { eventId } = useParams()
+  const userProfile = useUserContext()
   const publishEventMutation = useMutation({
     mutationFn: async (data: string) => {
       const supabase = createClientComponentClient()
@@ -68,6 +67,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
     defaultValues: {
       startTime: "02:00",
       endTime: "05:00",
+      participants: [],
+      timezone: getBrowserTimeZone().text,
     },
   })
 
@@ -76,7 +77,14 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
     publishEventForm.reset({
       eventName: event.name,
       description: event.description,
-      participants: [],
+
+      participants: [
+        {
+          participantId: userProfile.currentUser.id,
+          isHost: true,
+          email: userProfile.currentUser.email,
+        },
+      ],
       timezone: getBrowserTimeZone().text,
     })
   }, [event])
@@ -118,8 +126,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
       description: formData.description,
       startDate: formData.startDate ? startDate : null,
       endDate: formData.endDate ? endDate : null,
-      participants: formData.participants.map((email: string) => {
-        return { email: email, role: "Participant" }
+      participants: formData.participants.map((participant) => {
+        return { email: participant.email, role: "Participant" }
       }),
     }
     publishEventMutation.mutate(JSON.stringify(payload))
@@ -133,39 +141,52 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
             control={publishEventForm.control}
             name="eventName"
             render={({ field, fieldState }) => (
-              <div className={styles.formControl.base}>
-                <label className={styles.label.base}>Event Name</label>
-                <Input {...field} />
-                <p className="text-red-500">{fieldState.error?.message}</p>
-              </div>
+              <Input
+                {...field}
+                variant="bordered"
+                className="mb-4"
+                isInvalid={!!fieldState.error?.message}
+                errorMessage={fieldState.error?.message}
+                label="Event Name"
+              />
             )}
           />
           <Controller
             control={publishEventForm.control}
             name="description"
             render={({ field, fieldState }) => (
-              <div className={styles.formControl.base}>
-                <label className={styles.label.base}>Description</label>
-                <Input {...field} type="textarea" />
-                <p className="text-red-500">{fieldState.error?.message}</p>
-              </div>
+              <Input
+                {...field}
+                variant="bordered"
+                className="mb-4"
+                type="textarea"
+                isInvalid={!!fieldState.error?.message}
+                errorMessage={fieldState.error?.message}
+                label="Description"
+              />
             )}
           />
           <Controller
             control={publishEventForm.control}
             name="timezone"
             render={({ field, fieldState }) => (
-              <div className={styles.formControl.base}>
-                <label className={styles.label.base}>Timezone</label>
-                <Select {...field}>
-                  {TimeZones.map((timezone, index) => (
-                    <SelectItem key={`timezone-${index}`} value={timezone.text}>
-                      {timezone.text}
-                    </SelectItem>
-                  ))}
-                </Select>
-                <p>{fieldState.error?.message}</p>
-              </div>
+              <Select
+                {...field}
+                selectedKeys={field.value ? [field.value] : undefined}
+                selectionMode="single"
+                items={TimeZones}
+                variant="bordered"
+                className="mb-4"
+                label="Timezone"
+                isInvalid={!!fieldState.error?.message}
+                errorMessage={fieldState.error?.message}
+              >
+                {(timezone) => (
+                  <SelectItem key={timezone.text} value={timezone.text}>
+                    {timezone.text}
+                  </SelectItem>
+                )}
+              </Select>
             )}
           />
           <div className="flex">
@@ -173,22 +194,31 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               control={publishEventForm.control}
               name="startDate"
               render={({ field, fieldState }) => (
-                <div className={cn(styles.formControl.base, "mr-2")}>
-                  <label className={styles.label.base}>Start Date</label>
-                  <Input {...field} type="date" />
-                  <p>{fieldState.error?.message}</p>
-                </div>
+                <Input
+                  {...field}
+                  variant="bordered"
+                  className="mb-4 mr-2"
+                  placeholder="Start Date"
+                  type="date"
+                  isInvalid={!!fieldState.error?.message}
+                  errorMessage={fieldState.error?.message}
+                  label="Start Date"
+                />
               )}
             />
             <Controller
               control={publishEventForm.control}
               name="startTime"
               render={({ field, fieldState }) => (
-                <div className={cn(styles.formControl.base, "ml-2")}>
-                  <label className={styles.label.base}>Start Time</label>
-                  <Input {...field} type="time" />
-                  <p className="text-red-500">{fieldState.error?.message}</p>
-                </div>
+                <Input
+                  {...field}
+                  variant="bordered"
+                  className="mb-4 ml-2"
+                  type="time"
+                  isInvalid={!!fieldState.error?.message}
+                  errorMessage={fieldState.error?.message}
+                  label="Start Time"
+                />
               )}
             />
           </div>
@@ -197,61 +227,37 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               control={publishEventForm.control}
               name="endDate"
               render={({ field, fieldState }) => (
-                <div className={cn(styles.formControl.base, "mr-2")}>
-                  <label className={styles.label.base}>End Date</label>
-                  <Input {...field} type="date" />
-                  <p className="text-red-500">{fieldState.error?.message}</p>
-                </div>
+                <Input
+                  {...field}
+                  placeholder="End Date"
+                  variant="bordered"
+                  className="mb-4 mr-2"
+                  type="date"
+                  isInvalid={!!fieldState.error?.message}
+                  errorMessage={fieldState.error?.message}
+                  label="End Date"
+                />
               )}
             />
             <Controller
               control={publishEventForm.control}
               name="endTime"
               render={({ field, fieldState }) => (
-                <div
-                  className={cn(styles.formControl.base, "ml-2")}
-                  // isInvalid={!!fieldState.error?.message}
-                >
-                  <label className={styles.label.base}>End Time</label>
-                  <Input {...field} type="time" />
-                  <p className="text-red-500">{fieldState.error?.message}</p>
-                </div>
+                <Input
+                  {...field}
+                  variant="bordered"
+                  className="mb-4 ml-2"
+                  type="time"
+                  isInvalid={!!fieldState.error?.message}
+                  errorMessage={fieldState.error?.message}
+                  label="End Time"
+                />
               )}
             />
           </div>
-          <Controller
-            control={publishEventForm.control}
-            name="participants"
-            render={({ field, fieldState }) => (
-              <div className={styles.formControl.base}>
-                <label className={styles.label.base}>Participants</label>
-                <ReactMultiEmail
-                  {...field}
-                  placeholder="Enter participant emails (Hit enter to add more)"
-                  getLabel={(
-                    email: string,
-                    index: number,
-                    removeEmail: (i: number) => void
-                  ) => {
-                    return (
-                      <div data-tag key={index}>
-                        <div data-tag-item>{email}</div>
-                        <span
-                          data-tag-handle
-                          onClick={() => removeEmail(index)}
-                        >
-                          ×
-                        </span>
-                      </div>
-                    )
-                  }}
-                />
-                <div className="text-red-500">{fieldState.error?.message}</div>
-              </div>
-            )}
-          />
+          <AddParticipantsForm formControl={publishEventForm.control} />
           <div className="flex justify-end">
-            <Button variant="ghost" className="mr-4" onClick={onClose}>
+            <Button variant="bordered" className="mr-4" onClick={onClose}>
               Cancel
             </Button>
             <Button
