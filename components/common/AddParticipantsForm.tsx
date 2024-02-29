@@ -107,32 +107,38 @@ function AddParticipantsForm<
 
   const FormContentJSX = (
     <div>
-      <Input>Participant Email(s)</Input>
+      <p className="mb-2">Participant(s)</p>
       {participantsFieldArray.fields.map((field, index) => (
         <Controller
           key={field.id}
           control={control}
           name={`participants.${index}.email`}
           render={({ field, fieldState }) => (
-            <div className="">
-              <div>
+            <div className="mb-4">
+              <div className="flex items-center">
                 <Input
                   {...field}
                   className="flex-1"
+                  variant="bordered"
+                  size="sm"
                   errorMessage={fieldState.error?.message}
                   isInvalid={!!fieldState.error}
                 />
-                {/* <IconButton
-                    className="ml-4"
-                    aria-label="Delete participant"
-                    icon={<Trash size={16} />}
-                    onClick={() => participantsFieldArray.remove(index)}
-                  /> */}
+                <Button
+                  isIconOnly
+                  className="ml-4"
+                  aria-label="Delete participant"
+                  variant="bordered"
+                  onClick={() => participantsFieldArray.remove(index)}
+                >
+                  <Trash size={16} />
+                </Button>
               </div>
 
               <div className="flex">
                 {index === participantsFieldArray.fields.length - 1 && (
                   <Button
+                    className="mt-4"
                     onClick={() => participantsFieldArray.append({ email: "" })}
                     variant="bordered"
                     color="default"

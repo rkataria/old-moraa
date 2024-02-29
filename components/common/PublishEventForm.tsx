@@ -6,7 +6,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import "react-multi-email/dist/style.css"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
-import { Button, Input, Select } from "@nextui-org/react"
+import { Button, Input, Select, SelectItem } from "@nextui-org/react"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { TimeZones } from "@/constants/timezone"
 import { useMutation } from "@tanstack/react-query"
@@ -145,6 +145,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
             render={({ field, fieldState }) => (
               <Input
                 {...field}
+                variant="bordered"
+                className="mb-4"
                 isInvalid={!!fieldState.error?.message}
                 errorMessage={fieldState.error?.message}
                 label="Event Name"
@@ -157,6 +159,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
             render={({ field, fieldState }) => (
               <Input
                 {...field}
+                variant="bordered"
+                className="mb-4"
                 type="textarea"
                 isInvalid={!!fieldState.error?.message}
                 errorMessage={fieldState.error?.message}
@@ -170,12 +174,16 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
             render={({ field, fieldState }) => (
               <Select
                 {...field}
+                variant="bordered"
+                className="mb-4"
                 label="Timezone"
                 isInvalid={!!fieldState.error?.message}
                 errorMessage={fieldState.error?.message}
               >
                 {TimeZones.map((timezone) => (
-                  <option value={timezone.text}>{timezone.text}</option>
+                  <SelectItem key={timezone.text} value={timezone.text}>
+                    {timezone.text}
+                  </SelectItem>
                 ))}
               </Select>
             )}
@@ -187,6 +195,9 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               render={({ field, fieldState }) => (
                 <Input
                   {...field}
+                  variant="bordered"
+                  className="mb-4 mr-2"
+                  placeholder="Start Date"
                   type="date"
                   isInvalid={!!fieldState.error?.message}
                   errorMessage={fieldState.error?.message}
@@ -200,6 +211,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               render={({ field, fieldState }) => (
                 <Input
                   {...field}
+                  variant="bordered"
+                  className="mb-4 ml-2"
                   type="time"
                   isInvalid={!!fieldState.error?.message}
                   errorMessage={fieldState.error?.message}
@@ -215,6 +228,9 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               render={({ field, fieldState }) => (
                 <Input
                   {...field}
+                  placeholder="End Date"
+                  variant="bordered"
+                  className="mb-4 mr-2"
                   type="date"
                   isInvalid={!!fieldState.error?.message}
                   errorMessage={fieldState.error?.message}
@@ -228,6 +244,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               render={({ field, fieldState }) => (
                 <Input
                   {...field}
+                  variant="bordered"
+                  className="mb-4 ml-2"
                   type="time"
                   isInvalid={!!fieldState.error?.message}
                   errorMessage={fieldState.error?.message}
