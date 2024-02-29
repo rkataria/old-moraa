@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Modal from "./Modal"
-// import NewEventForm from "./NewEventForm";
+import NewEventForm from "./NewEventForm"
 
 function NewEventButtonWithModal() {
   const [open, setOpen] = useState<boolean>(false)
@@ -25,8 +25,7 @@ function NewEventButtonWithModal() {
           </span>
         </div>
 
-        {/* TODO: should be uncommented once chakra-ui related changes are done. */}
-        {/* <NewEventForm onClose={() => setOpen(false)} /> */}
+        <NewEventForm onClose={() => setOpen(false)} />
       </Modal>
     </>
   )
