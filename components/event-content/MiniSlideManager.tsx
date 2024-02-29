@@ -15,7 +15,6 @@ import {
 } from "react-beautiful-dnd"
 import { MiniSlideManagerCard } from "./MiniSlideManagerCard"
 import { cn } from "@/utils/utils"
-import { MiniSlideManageList } from "./MiniSlideManageList"
 
 const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
   const [enabled, setEnabled] = useState(false)
@@ -61,29 +60,13 @@ function MiniSlideManager({
   moveDownSlide,
 }: IMiniSlideManagerProps) {
   const [miniMode, setMiniMode] = useState<boolean>(true)
-  const [showView, setShowView] = useState<"thumbnail" | "list">("thumbnail")
+  const [miniSlideView, setMiniSlideView] = useState<"thumbnail" | "list">(
+    "thumbnail"
+  )
 
   useEffect(() => {
     onMiniModeChange(miniMode)
   }, [miniMode])
-
-  const handleActions = (
-    action: { key: string; label: string },
-    id: string
-  ) => {
-    if (action.key === "delete") {
-      deleteSlide(id)
-      return
-    }
-    if (action.key === "move_up") {
-      moveUpSlide(id)
-      return
-    }
-    if (action.key === "move_down") {
-      moveDownSlide(id)
-      return
-    }
-  }
 
   return (
     <div
@@ -96,17 +79,17 @@ function MiniSlideManager({
         <div className="flex items-center gap-4 justify-end w-full pb-4">
           <IconLayoutGrid
             className={cn("h-6 w-6 cursor-pointer", {
-              "text-slate-500": showView === "thumbnail",
-              "text-slate-300": showView !== "thumbnail",
+              "text-slate-500": miniSlideView === "thumbnail",
+              "text-slate-300": miniSlideView !== "thumbnail",
             })}
-            onClick={() => setShowView("thumbnail")}
+            onClick={() => setMiniSlideView("thumbnail")}
           />
           <IconList
             className={cn("h-6 w-6 cursor-pointer", {
-              "text-slate-500": showView === "list",
-              "text-slate-300": showView !== "list",
+              "text-slate-500": miniSlideView === "list",
+              "text-slate-300": miniSlideView !== "list",
             })}
-            onClick={() => setShowView("list")}
+            onClick={() => setMiniSlideView("list")}
           />
         </div>
         <DragDropContext onDragEnd={reorderSlide}>
@@ -129,27 +112,15 @@ function MiniSlideManager({
                         {...provided.draggableProps}
                         className="w-full"
                       >
-                        {showView === "thumbnail" ? (
-                          <MiniSlideManagerCard
-                            mode={mode}
-                            slide={slide}
-                            currentSlide={currentSlide}
-                            setCurrentSlide={setCurrentSlide}
-                            index={index}
-                            draggableProps={provided.dragHandleProps}
-                            handleActions={handleActions}
-                          />
-                        ) : (
-                          <MiniSlideManageList
-                            mode={mode}
-                            slide={slide}
-                            currentSlide={currentSlide}
-                            setCurrentSlide={setCurrentSlide}
-                            index={index}
-                            draggableProps={provided.dragHandleProps}
-                            handleActions={handleActions}
-                          />
-                        )}
+                        <MiniSlideManagerCard
+                          mode={mode}
+                          slide={slide}
+                          currentSlide={currentSlide}
+                          setCurrentSlide={setCurrentSlide}
+                          index={index}
+                          draggableProps={provided.dragHandleProps}
+                          miniSlideView={miniSlideView}
+                        />
                       </div>
                     )}
                   </Draggable>

@@ -88,7 +88,6 @@ export default function SlideManager({}: any) {
               <Slide
                 key={`slide-${currentSlide.id}`}
                 slide={currentSlide}
-                deleteSlide={deleteSlide}
                 updateSlide={updateSlide}
                 isOwner={isOwner}
               />

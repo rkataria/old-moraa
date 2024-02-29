@@ -39,5 +39,5 @@ export interface IMiniSlideManagerType {
   setCurrentSlide: (slide: ISlide) => void
   draggableProps: any
   mode: "edit" | "present" | "read"
-  handleActions: (item: any) => void
+  miniSlideView: "thumbnail" | "list"
 }
