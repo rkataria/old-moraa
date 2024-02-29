@@ -9,7 +9,7 @@ import {
   DyteParticipantTile,
   DyteSpotlightGrid,
 } from "@dytesdk/react-ui-kit"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
+import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
 import React, { useContext } from "react"
 
 function ParticipantTiles() {
@@ -18,8 +18,18 @@ function ParticipantTiles() {
     EventSessionContext
   ) as EventSessionContextType
   const activePlugin = meeting.plugins.active.toArray()?.[0]
+  const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
+  const screensharingParticipant = useDyteSelector((m) =>
+    m.participants.joined.toArray().find((p) => p.screenShareEnabled)
+  )
 
-  if (!activePlugin && presentationStatus === PresentationStatuses.STOPPED) {
+  const isScreensharing = !!screensharingParticipant || selfScreenShared
+
+  if (
+    !isScreensharing &&
+    !activePlugin &&
+    presentationStatus === PresentationStatuses.STOPPED
+  ) {
     return (
       <div className="flex-auto flex justify-center items-center bg-gray-900">
         <DyteSpotlightGrid
