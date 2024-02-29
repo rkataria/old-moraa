@@ -2,7 +2,7 @@ import React from "react"
 
 export type FilePickerType = {
   label: string
-  supportedFormatsText: string
+  supportedFormats: string[]
   onUpload: (files: FileList | null) => void
 }
 
@@ -16,9 +16,12 @@ export default function FilePicker(props: FilePickerType) {
               <h4 className="text-2xl font-semibold mb-2">
                 {props.label || "Upload your file(s)"}
               </h4>
-              {props.supportedFormatsText ? (
+              {props.supportedFormats ? (
                 <p className="text-xs text-gray-500">
-                  File should be of format {props.supportedFormatsText}
+                  File should be of format{" "}
+                  {props.supportedFormats
+                    .map((f) => f.split("/")[1])
+                    .join(", ")}
                 </p>
               ) : null}
             </div>
@@ -30,6 +33,7 @@ export default function FilePicker(props: FilePickerType) {
                 type="file"
                 id="file-upload"
                 className="hidden"
+                accept={props.supportedFormats.join(', ')}
                 onChange={(e) => props.onUpload(e.target.files)}
               />
               <label

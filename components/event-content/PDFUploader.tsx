@@ -129,7 +129,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
             <p className="mb-4">Select the PDF file.</p>
             <FilePicker
               label="Select PDF file"
-              supportedFormatsText="pdf"
+              supportedFormats={["application/pdf"]}
               onUpload={(files) => {
                 console.log("🚀 ~ getInnerContent ~ event:", files)
                 const fileList = []
