@@ -139,14 +139,12 @@ export const SlideManagerProvider = ({
 
   const updateSlide = async (slide: ISlide) => {
     slide.meeting_id = slide.meeting_id ?? meeting?.id
-    const { data, error } = await supabase
-      .from("slide")
-      .upsert({
-        id: slide.id,
-        content: slide.content,
-        config: slide.config,
-        name: slide.name,
-      })
+    const { data, error } = await supabase.from("slide").upsert({
+      id: slide.id,
+      content: slide.content,
+      config: slide.config,
+      name: slide.name,
+    })
     setCurrentSlide(slide)
     setSlides((s) => {
       if (s.findIndex((i) => i.id === slide.id) >= 0) {
@@ -239,12 +237,15 @@ export const SlideManagerProvider = ({
     return result
   }
 
-  const reorderSlide = (result: OnDragEndResponder | any) => {
+  const reorderSlide = async (result: OnDragEndResponder | any) => {
     if (!result.destination) {
       return
     }
     const items = reorder(slides, result.source.index, result.destination.index)
     setSlides(items)
+    setSyncing(true)
+    await updateSlideIds(items.map((i) => i.id))
+    setSyncing(false)
   }
 
   return (
