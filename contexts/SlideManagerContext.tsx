@@ -85,12 +85,18 @@ export const SlideManagerProvider = ({
       setLoading(false)
       setCurrentSlide(filteredSlides?.[0])
     } else {
+      if (slides.length > 0) {
+        setLoading(false)
+        return
+      }
+
       addNewSlide(
         getDefaultCoverSlide({
           title: event.name,
           description: event.description,
         })
       )
+      setLoading(false)
     }
   }
 

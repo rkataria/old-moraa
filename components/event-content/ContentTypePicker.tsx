@@ -5,6 +5,7 @@ import {
   IconBrandAdobe,
   IconChartBar,
   IconX,
+  IconVideo,
 } from "@tabler/icons-react"
 import clsx from "clsx"
 
@@ -23,6 +24,7 @@ export enum ContentType {
   GOOGLE_SLIDES = "Google Slides",
   REFLECTION = "Reflections",
   PDF_VIEWER = "PDF",
+  VIDEO_EMBED = "Video Embed",
 }
 export const INTERACTIVE_SLIDE_TYPES = [
   ContentType.POLL,
@@ -62,6 +64,13 @@ export const contentTypes: IContentType[] = [
     description:
       "Ignite insights through thoughtful reflection. Share perspectives, spark growth.",
     contentType: ContentType.REFLECTION,
+  },
+  {
+    name: "Video Embed",
+    icon: <IconVideo />,
+    description:
+      "Embed videos from YouTube, Vimeo, or any other video hosting platform",
+    contentType: ContentType.VIDEO_EMBED,
   },
 ]
 
