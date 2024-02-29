@@ -67,11 +67,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
     defaultValues: {
       startTime: "02:00",
       endTime: "05:00",
-      participants: [
-        {
-          email: userProfile.currentUser.email,
-        },
-      ],
+      participants: [],
+      timezone: getBrowserTimeZone().text,
     },
   })
 
@@ -81,10 +78,11 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
       eventName: event.name,
       description: event.description,
 
-      // TODO: Pre-populate these emails
       participants: [
         {
-          email: "",
+          participantId: userProfile.currentUser.id,
+          isHost: true,
+          email: userProfile.currentUser.email,
         },
       ],
       timezone: getBrowserTimeZone().text,
@@ -174,17 +172,20 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
             render={({ field, fieldState }) => (
               <Select
                 {...field}
+                selectedKeys={field.value ? [field.value] : undefined}
+                selectionMode="single"
+                items={TimeZones}
                 variant="bordered"
                 className="mb-4"
                 label="Timezone"
                 isInvalid={!!fieldState.error?.message}
                 errorMessage={fieldState.error?.message}
               >
-                {TimeZones.map((timezone) => (
+                {(timezone) => (
                   <SelectItem key={timezone.text} value={timezone.text}>
                     {timezone.text}
                   </SelectItem>
-                ))}
+                )}
               </Select>
             )}
           />

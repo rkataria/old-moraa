@@ -114,8 +114,6 @@ function AddParticipantsForm<
     name: "participants",
   })
 
-  console.log(participantsFieldArray.fields)
-
   const FormContentJSX = (
     <div>
       <p className="mb-2">Participant(s)</p>
