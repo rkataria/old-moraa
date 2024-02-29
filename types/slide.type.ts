@@ -1,4 +1,5 @@
 import { ContentType } from "@/components/event-content/ContentTypePicker"
+import { OnDragEndResponder } from "react-beautiful-dnd"
 
 export type SlideMode = "edit" | "present"
 
@@ -28,4 +29,15 @@ export type SlideManagerContextType = {
   deleteSlide: (id: string) => void
   moveUpSlide: (id: string) => void
   moveDownSlide: (id: string) => void
+  reorderSlide: OnDragEndResponder
+}
+
+export interface IMiniSlideManagerType {
+  slide: ISlide
+  index: number
+  currentSlide: ISlide | null
+  setCurrentSlide: (slide: ISlide) => void
+  draggableProps: any
+  mode: "edit" | "present" | "read"
+  miniSlideView: "thumbnail" | "list"
 }

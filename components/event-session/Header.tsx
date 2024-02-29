@@ -4,7 +4,6 @@ import React, { useContext } from "react"
 import { useParams } from "next/navigation"
 import { useDyteMeeting } from "@dytesdk/react-web-core"
 import {
-  DyteBreakoutRoomsToggle,
   DyteCameraToggle,
   DyteChatToggle,
   DyteClock,
@@ -12,7 +11,6 @@ import {
   DyteMicToggle,
   DyteParticipantsToggle,
   DytePluginsToggle,
-  DytePollsToggle,
   DyteScreenShareToggle,
 } from "@dytesdk/react-ui-kit"
 
@@ -62,8 +60,7 @@ function Header({
       <div className="p-4 flex justify-end items-center gap-2">
         <DyteMicToggle meeting={meeting} size="sm" />
         <DyteCameraToggle meeting={meeting} size="sm" />
-        <DyteScreenShareToggle meeting={meeting} size="sm" />
-        {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
+        {isHost && <DyteScreenShareToggle meeting={meeting} size="sm" />}
 
         <PresentationControls />
         <Button
@@ -84,7 +81,6 @@ function Header({
       <div className="p-4 flex justify-start items-center gap-6">
         <DyteParticipantsToggle meeting={meeting} size="sm" />
         <DyteChatToggle meeting={meeting} size="sm" />
-        <DytePollsToggle meeting={meeting} size="sm" />
         {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
       </div>
     </div>
