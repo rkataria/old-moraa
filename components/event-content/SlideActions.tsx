@@ -15,22 +15,17 @@ import {
 
 const slideActions = [
   {
-    key: "rename",
-    label: "Rename",
-    icon: <IconEdit className="h-4 w-4 text-slate-500" />,
-  },
-  {
     key: "delete",
     label: "Delete",
     icon: <IconTrash className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: "move_up",
+    key: "moveUp",
     label: "Move up",
     icon: <IconArrowUp className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: "move_down",
+    key: "",
     label: "Move down",
     icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
   },

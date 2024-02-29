@@ -135,7 +135,12 @@ export const SlideManagerProvider = ({
     slide.meeting_id = slide.meeting_id ?? meeting?.id
     const { data, error } = await supabase
       .from("slide")
-      .upsert({ id: slide.id, content: slide.content, config: slide.config })
+      .upsert({
+        id: slide.id,
+        content: slide.content,
+        config: slide.config,
+        name: slide.name,
+      })
     setCurrentSlide(slide)
     setSlides((s) => {
       if (s.findIndex((i) => i.id === slide.id) >= 0) {

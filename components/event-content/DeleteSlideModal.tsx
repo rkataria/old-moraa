@@ -1,4 +1,5 @@
 "use client"
+import { ISlide } from "@/types/slide.type"
 import {
   Modal,
   ModalContent,
@@ -9,12 +10,19 @@ import {
 
 import { Button } from "@nextui-org/react"
 
+type DeleteSlideModalProps = {
+  isModalOpen: boolean
+  onClose: any
+  handleDelete: any
+  slide: ISlide
+}
+
 export const DeleteSlideModal = ({
   isModalOpen,
   onClose,
   handleDelete,
   slide,
-}: any) => {
+}: DeleteSlideModalProps) => {
   return (
     <Modal
       size="md"
