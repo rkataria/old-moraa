@@ -25,6 +25,8 @@ function getAllIndexes<T>(arr: Array<T>, val: T) {
 export const participantsListValidationSchema = yup
   .array(
     yup.object({
+      participantId: yup.string(),
+      isHost: yup.boolean(),
       email: yup
         .string()
         .email()
@@ -61,7 +63,6 @@ export type AddParticipantsFormProps<
 > = {
   defaultValue?: FormData["participants"]
   onParticipantRemove?: (email: string) => Promise<void>
-  disableDeleteForEmails?: string[]
 } & (
   | {
       formControl?: Control<FormData>
@@ -88,7 +89,6 @@ function AddParticipantsForm<
   onSubmit,
   renderAction,
   onParticipantRemove,
-  disableDeleteForEmails,
 }: AddParticipantsFormProps<FormData>) {
   const userProfile = useUserContext()
   const participantsForm = useForm<ParticipantsFormData>({
@@ -96,13 +96,15 @@ function AddParticipantsForm<
     defaultValues: {
       participants: defaultValue || [
         {
+          participantId: userProfile.currentUser.id,
           email: userProfile.currentUser.email,
+          isHost: true,
         },
       ],
     },
   })
   const fakeDeleteParticipantMutation = useMutation({
-    mutationFn: async (email: string) => await onParticipantRemove?.(email),
+    mutationFn: async (id: string) => await onParticipantRemove?.(id),
   })
 
   const control = (formControl ||
@@ -112,12 +114,14 @@ function AddParticipantsForm<
     name: "participants",
   })
 
+  console.log(participantsFieldArray.fields)
+
   const FormContentJSX = (
     <div>
       <p className="mb-2">Participant(s)</p>
-      {participantsFieldArray.fields.map((field, index) => (
+      {participantsFieldArray.fields.map((arrayField, index) => (
         <Controller
-          key={field.id}
+          key={arrayField.id}
           control={control}
           name={`participants.${index}.email`}
           render={({ field, fieldState }) => (
@@ -128,44 +132,30 @@ function AddParticipantsForm<
                   className="flex-1"
                   variant="bordered"
                   size="sm"
+                  disabled={arrayField.isHost}
                   errorMessage={fieldState.error?.message}
                   isInvalid={!!fieldState.error}
                 />
-                <Button
-                  isIconOnly
-                  className="ml-4"
-                  disabled={disableDeleteForEmails?.includes(field.value)}
-                  aria-label="Delete participant"
-                  variant="bordered"
-                  isLoading={
-                    fakeDeleteParticipantMutation.isPending &&
-                    field.value === fakeDeleteParticipantMutation.variables
-                  }
-                  onClick={async () => {
-                    if (
-                      defaultValue?.some(
-                        (participant) => participant.email === field.value
-                      )
-                    )
-                      await fakeDeleteParticipantMutation.mutateAsync(
-                        field.value
-                      )
-                    participantsFieldArray.remove(index)
-                  }}
-                >
-                  <Trash size={16} />
-                </Button>
-              </div>
-
-              <div className="flex">
-                {index === participantsFieldArray.fields.length - 1 && (
+                {!arrayField.isHost && (
                   <Button
-                    className="mt-4"
-                    onClick={() => participantsFieldArray.append({ email: "" })}
+                    isIconOnly
+                    className="ml-4"
+                    aria-label="Delete participant"
                     variant="bordered"
-                    color="default"
+                    isLoading={
+                      fakeDeleteParticipantMutation.isPending &&
+                      arrayField.participantId ===
+                        fakeDeleteParticipantMutation.variables
+                    }
+                    onClick={async () => {
+                      if (arrayField.participantId && !arrayField.isHost)
+                        await fakeDeleteParticipantMutation.mutateAsync(
+                          arrayField.participantId
+                        )
+                      participantsFieldArray.remove(index)
+                    }}
                   >
-                    + Add New Participant
+                    <Trash size={16} />
                   </Button>
                 )}
               </div>
@@ -173,6 +163,16 @@ function AddParticipantsForm<
           )}
         />
       ))}
+      <div className="flex">
+        <Button
+          className="mt-4"
+          onClick={() => participantsFieldArray.append({ email: "" })}
+          variant="bordered"
+          color="default"
+        >
+          + Add New Participant
+        </Button>
+      </div>
 
       {renderAction?.()}
     </div>

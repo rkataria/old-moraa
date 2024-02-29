@@ -12,7 +12,6 @@ import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import clsx from "clsx"
 import { EventService } from "@/services/event.service"
-import { useUserContext } from "@/hooks/useAuth"
 
 const styles = {
   button: {
@@ -23,15 +22,16 @@ const styles = {
 
 function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
-  const userContext = useUserContext()
   const { participants, refetch } = useEvent({
     id: eventId,
   })
   const deleteParticipantMutation = useMutation({
-    mutationFn: async (email: string) => {
-      await EventService.deleteEventParticipant(eventId, email)
+    mutationFn: async (participantId: string) => {
+      await EventService.deleteEventParticipant(eventId, participantId)
       await refetch()
+      toast.success("Participant deleted successfully")
     },
+    onError: () => toast.error("Failed to delete the participant."),
   })
 
   const addParticipantsMutations = useMutation({
@@ -75,11 +75,16 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
         description="Add participants to the event"
       >
         <AddParticipantsForm
-          defaultValue={participants || []}
-          disableDeleteForEmails={[userContext.currentUser?.email]}
+          defaultValue={
+            participants?.map((participant) => ({
+              email: participant.email,
+              isHost: participant.event_role === "Host",
+              participantId: participant.id,
+            })) || []
+          }
           onSubmit={addParticipantsMutations.mutate}
-          onParticipantRemove={async (email) => {
-            await deleteParticipantMutation.mutateAsync(email)
+          onParticipantRemove={async (participantId) => {
+            await deleteParticipantMutation.mutateAsync(participantId)
           }}
           renderAction={() => (
             <div className="flex justify-end">

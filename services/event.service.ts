@@ -50,8 +50,9 @@ const getEvent = async ({
   if (eventId) {
     const { data } = await supabase
       .from("enrollment")
-      .select("email")
+      .select("email,event_role,id")
       .eq("event_id", eventId)
+      .order('created_at', { ascending: true })
     participants = data
   }
 
@@ -93,11 +94,11 @@ const createEvent = async (event: ICreateEventPayload) => {
   }
 }
 
-const deleteEventParticipant = async (eventId: string, email: string) => {
+const deleteEventParticipant = async (eventId: string, participantId: string) => {
   return await supabase
     .from("enrollment")
     .delete()
-    .eq("email", email)
+    .eq("id", participantId)
     .eq("event_id", eventId)
     .eq("event_role", "Participant")
 }
