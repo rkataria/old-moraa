@@ -93,8 +93,18 @@ const createEvent = async (event: ICreateEventPayload) => {
   }
 }
 
+const deleteEventParticipant = async (eventId: string, email: string) => {
+  return await supabase
+    .from("enrollment")
+    .delete()
+    .eq("email", email)
+    .eq("event_id", eventId)
+    .eq("event_role", "Participant")
+}
+
 export const EventService = {
   getEvents,
   getEvent,
   createEvent,
+  deleteEventParticipant
 }

@@ -8,10 +8,10 @@ import {
 } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Button, Input } from "@nextui-org/react"
-import clsx from "clsx"
 import { ReactElement } from "react"
 import { useUserContext } from "@/hooks/useAuth"
 import { Trash } from "lucide-react"
+import { useMutation } from "@tanstack/react-query"
 
 function getAllIndexes<T>(arr: Array<T>, val: T) {
   var indexes = [],
@@ -60,6 +60,8 @@ export type AddParticipantsFormProps<
   FormData extends ParticipantsFormData = ParticipantsFormData,
 > = {
   defaultValue?: FormData["participants"]
+  onParticipantRemove?: (email: string) => Promise<void>
+  disableDeleteForEmails?: string[]
 } & (
   | {
       formControl?: Control<FormData>
@@ -85,6 +87,8 @@ function AddParticipantsForm<
   defaultValue,
   onSubmit,
   renderAction,
+  onParticipantRemove,
+  disableDeleteForEmails,
 }: AddParticipantsFormProps<FormData>) {
   const userProfile = useUserContext()
   const participantsForm = useForm<ParticipantsFormData>({
@@ -96,6 +100,9 @@ function AddParticipantsForm<
         },
       ],
     },
+  })
+  const fakeDeleteParticipantMutation = useMutation({
+    mutationFn: async (email: string) => await onParticipantRemove?.(email),
   })
 
   const control = (formControl ||
@@ -127,9 +134,24 @@ function AddParticipantsForm<
                 <Button
                   isIconOnly
                   className="ml-4"
+                  disabled={disableDeleteForEmails?.includes(field.value)}
                   aria-label="Delete participant"
                   variant="bordered"
-                  onClick={() => participantsFieldArray.remove(index)}
+                  isLoading={
+                    fakeDeleteParticipantMutation.isPending &&
+                    field.value === fakeDeleteParticipantMutation.variables
+                  }
+                  onClick={async () => {
+                    if (
+                      defaultValue?.some(
+                        (participant) => participant.email === field.value
+                      )
+                    )
+                      await fakeDeleteParticipantMutation.mutateAsync(
+                        field.value
+                      )
+                    participantsFieldArray.remove(index)
+                  }}
                 >
                   <Trash size={16} />
                 </Button>

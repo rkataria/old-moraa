@@ -11,6 +11,8 @@ import { Button } from "@nextui-org/react"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import clsx from "clsx"
+import { EventService } from "@/services/event.service"
+import { useUserContext } from "@/hooks/useAuth"
 
 const styles = {
   button: {
@@ -21,8 +23,15 @@ const styles = {
 
 function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
+  const userContext = useUserContext()
   const { participants, refetch } = useEvent({
     id: eventId,
+  })
+  const deleteParticipantMutation = useMutation({
+    mutationFn: async (email: string) => {
+      await EventService.deleteEventParticipant(eventId, email)
+      await refetch()
+    },
   })
 
   const addParticipantsMutations = useMutation({
@@ -39,11 +48,11 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
           body: payload,
         })
         refetch()
-        toast.success("Participants added successfully.")
+        toast.success("Participants updated successfully.")
         setOpen(false)
       } catch (err) {
         console.error(err)
-        toast.error("Failed to add participants")
+        toast.error("Failed to update participants")
       }
     },
   })
@@ -67,7 +76,11 @@ function AddParticipantsButtonWithModal({ eventId }: { eventId: string }) {
       >
         <AddParticipantsForm
           defaultValue={participants || []}
+          disableDeleteForEmails={[userContext.currentUser?.email]}
           onSubmit={addParticipantsMutations.mutate}
+          onParticipantRemove={async (email) => {
+            await deleteParticipantMutation.mutateAsync(email)
+          }}
           renderAction={() => (
             <div className="flex justify-end">
               <Button
