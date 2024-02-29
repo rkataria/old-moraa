@@ -1,3 +1,4 @@
+import { formatSecondsToDuration } from "@/utils/utils"
 import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
@@ -20,6 +21,8 @@ export type ResponsiveVideoPlayerState = {
   muted: boolean
   playbackRate: number
   played: number
+  seeking: boolean
+  playedSeconds?: number
 }
 
 type ResponsiveVideoPlayerProps = {
@@ -48,6 +51,7 @@ export const ResponsiveVideoPlayer = ({
       muted: false,
       playbackRate: 1,
       played: 0,
+      seeking: false,
     })
 
   useEffect(() => {
@@ -135,6 +139,16 @@ export const ResponsiveVideoPlayer = ({
         onPlaybackQualityChange={(event: unknown) =>
           console.log("onPlaybackQualityChange", event)
         }
+        onProgress={(progress: any) => {
+          if (!currentPlayerState.seeking) {
+            setCurrentPlayerState((prevState) => ({
+              ...prevState,
+              played: progress.played,
+              playedSeconds: progress.playedSeconds,
+            }))
+          }
+        }}
+        onDuration={(duration: number) => console.log("onDuration", duration)}
       />
       {/* Player Custom Control */}
       {showControls && playerControl === PlayerControl.CUSTOM && (
@@ -168,17 +182,29 @@ export const ResponsiveVideoPlayer = ({
                 />
               </div>
             }
-            <input
-              type="range"
-              min={0}
-              max={0.999999}
-              step="any"
-              value={played}
-              className="flex-auto"
-              onMouseDown={handleSeekMouseDown}
-              onChange={handleSeekChange}
-              onMouseUp={handleSeekMouseUp}
-            />
+            <div className="flex justify-start items-center gap-2 w-full">
+              <span>
+                {formatSecondsToDuration(
+                  parseInt(currentPlayerState?.playedSeconds?.toString() || "0")
+                )}
+              </span>
+              <input
+                type="range"
+                min={0}
+                max={0.999999}
+                step="any"
+                value={played}
+                className="flex-auto"
+                onMouseDown={handleSeekMouseDown}
+                onChange={handleSeekChange}
+                onMouseUp={handleSeekMouseUp}
+              />
+              <span>
+                {formatSecondsToDuration(
+                  parseInt(playerRef.current?.getDuration()?.toString() || "0")
+                )}
+              </span>
+            </div>
           </div>
         </div>
       )}

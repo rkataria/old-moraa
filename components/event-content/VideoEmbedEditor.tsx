@@ -1,7 +1,7 @@
 "use client"
 
-import { Button, Input } from "@chakra-ui/react"
 import React, { useContext, useState } from "react"
+import { Button, Input } from "@nextui-org/react"
 
 import SlideManagerContext from "@/contexts/SlideManagerContext"
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
@@ -31,16 +31,17 @@ export default function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
   return (
     <>
       {isEditMode ? (
-        <div className="flex justify-center items-center gap-4 h-full bg-gray-200">
+        <div className="flex flex-col justify-center items-center gap-4 h-full ">
           <Input
-            w={96}
-            color="black"
-            bgColor="white"
+            size="sm"
+            className="w-1/2 rounded-md"
             placeholder="Enter video URL"
             onChange={(e) => setVideoUrl(e.target.value)}
             value={videoUrl}
           />
-          <Button onClick={saveVideoUrl}>Save</Button>
+          <Button size="lg" color="primary" onClick={saveVideoUrl}>
+            Save
+          </Button>
         </div>
       ) : (
         <ResponsiveVideoPlayer url={videoUrl} />
