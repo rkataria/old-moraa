@@ -2,23 +2,24 @@
 
 import { useContext, useState } from "react"
 import { Document, Page, pdfjs } from "react-pdf"
-import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { OnDocumentLoadSuccess } from "react-pdf/dist/cjs/shared/types"
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.js"
-import FilePicker from "../ui/file-picker"
-import { NextPrevButtons } from "../common/NextPrevButtons"
+import toast from "react-hot-toast"
+import { useMutation, useQuery } from "@tanstack/react-query"
+
 import {
   deletePDFFile,
   downloadPDFFile,
   uploadPDFFile,
 } from "@/services/pdf.service"
-import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { Button, Input, Text } from "@chakra-ui/react"
-import Loading from "../common/Loading"
-import toast from "react-hot-toast"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { ISlide, SlideManagerContextType } from "@/types/slide.type"
+import { NextPrevButtons } from "@/components/common/NextPrevButtons"
 import { getFileObjectFromBlob } from "@/utils/utils"
 import { QueryKeys } from "@/utils/query-keys"
+import Loading from "@/components/common/Loading"
+import SlideManagerContext from "@/contexts/SlideManagerContext"
+import { Button, Input } from "@nextui-org/react"
+import FilePicker from "../common/FilePicker"
 
 interface PDFUploaderProps {
   slide: ISlide
@@ -111,7 +112,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
     })
     setSelectedPage(defaultPage || 1)
   }
-  
+
   const getInnerContent = () => {
     switch (true) {
       case uploadPDFMutation.isPending || downloadPDFQuery.isLoading:
@@ -125,12 +126,19 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
       case !fileUrl:
         return (
           <div className="h-96 flex flex-col justify-center items-center">
-            <Text className="mb-4">Select the PDF file.</Text>
+            <p className="mb-4">Select the PDF file.</p>
             <FilePicker
-              hideClearButton
-              placeholder="Select"
-              onFileChange={(files) => {
-                if (files?.[0]) uploadAndSetFile(files[0])
+              label="Select PDF file"
+              supportedFormats={["application/pdf"]}
+              onUpload={(files) => {
+                console.log("🚀 ~ getInnerContent ~ event:", files)
+                const fileList = []
+                if (files) {
+                  for (const file of files) {
+                    fileList.push(file)
+                  }
+                  uploadAndSetFile(fileList[0])
+                }
               }}
             />
           </div>

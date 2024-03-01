@@ -1,5 +1,5 @@
 import React from "react"
-import { SidebarItem } from "./sidebar-item"
+import { SidebarItem } from "./SidebarItem"
 import { MoraaLogo } from "../common/MoraaLogo"
 
 export const SidebarComponent = () => {

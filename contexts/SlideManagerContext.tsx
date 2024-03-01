@@ -1,16 +1,13 @@
 import { createContext, useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-
 import { ISlide, SlideManagerContextType } from "@/types/slide.type"
 import { useDebounce } from "@uidotdev/usehooks"
 import { getDefaultCoverSlide } from "@/utils/content.util"
 import { useEvent } from "@/hooks/useEvent"
 import { deletePDFFile } from "@/services/pdf.service"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import {
-  ContentType,
-  INTERACTIVE_SLIDE_TYPES,
-} from "@/components/event-content/ContentTypePicker"
+import { INTERACTIVE_SLIDE_TYPES } from "@/components/event-content/ContentTypePicker"
+import { OnDragEndResponder } from "react-beautiful-dnd"
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
@@ -39,10 +36,6 @@ export const SlideManagerProvider = ({
   useEffect(() => {
     handleSetSlides()
   }, [meetingSlides])
-
-  useEffect(() => {
-    updateSlideIds()
-  }, [slideIds])
 
   useEffect(() => {
     if (!currentSlide) return
@@ -77,38 +70,44 @@ export const SlideManagerProvider = ({
   const handleSetSlides = async () => {
     if (!meetingSlides) return
     const sortedSlides = getSortedSlides()
-    const slides =
-      sortedSlides && sortedSlides.length > 0
-        ? sortedSlides
-        : [
-            getDefaultCoverSlide({
-              title: event.name,
-              description: event.description,
-            }),
-          ]
-    setSlideIds(meeting?.slides ?? [])
-    let filteredSlides = slides
-    // check whether the user is owner of event or not
-    const currentUser = await supabase.auth.getSession()
-    if (currentUser.data.session?.user.id !== event.owner_id) {
-      filteredSlides = slides.filter(
-        (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
+    if (sortedSlides && sortedSlides.length > 0) {
+      let filteredSlides = sortedSlides
+      // check whether the user is owner of event or not
+      const currentUser = await supabase.auth.getSession()
+      if (currentUser.data.session?.user.id !== event.owner_id) {
+        filteredSlides = sortedSlides.filter(
+          (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
+        )
+        setIsOwner(false)
+      }
+      setSlides(filteredSlides)
+      setSlideIds(filteredSlides.map((i) => i?.id) ?? [])
+      setLoading(false)
+      setCurrentSlide(filteredSlides?.[0])
+    } else {
+      if (slides.length > 0) {
+        setLoading(false)
+        return
+      }
+
+      addNewSlide(
+        getDefaultCoverSlide({
+          title: event.name,
+          description: event.description,
+        })
       )
-      setIsOwner(false)
+      setLoading(false)
     }
-    setSlides(filteredSlides)
-    setLoading(false)
-    setCurrentSlide(filteredSlides?.[0])
   }
 
-  const updateSlideIds = async () => {
+  const updateSlideIds = async (ids: string[]) => {
     if (!meeting?.id) {
       console.warn("meeting.id is missing")
     }
 
     const { data, error } = await supabase
       .from("meeting")
-      .update({ slides: slideIds })
+      .update({ slides: ids })
       .eq("id", meeting?.id)
     if (error) {
       console.error("error while updating slide ids on meeting,error: ", error)
@@ -134,15 +133,19 @@ export const SlideManagerProvider = ({
     }
     setSlides((s) => [...s, { ...newSlide, id: data?.id }])
     setCurrentSlide({ ...newSlide, id: data.id })
+    await updateSlideIds([...slideIds, data?.id])
     setSlideIds((s) => [...s, data?.id])
   }
 
   const updateSlide = async (slide: ISlide) => {
     slide.meeting_id = slide.meeting_id ?? meeting?.id
-    const { data, error } = await supabase
-      .from("slide")
-      .upsert({ id: slide.id, content: slide.content, config: slide.config })
-
+    const { data, error } = await supabase.from("slide").upsert({
+      id: slide.id,
+      content: slide.content,
+      config: slide.config,
+      name: slide.name,
+    })
+    setCurrentSlide(slide)
     setSlides((s) => {
       if (s.findIndex((i) => i.id === slide.id) >= 0) {
         return s.map((s) => (s.id === slide.id ? slide : s))
@@ -161,15 +164,23 @@ export const SlideManagerProvider = ({
     if (slide?.content?.pdfPath) {
       deletePDFFile(slide?.content?.pdfPath)
     }
+
+    const updatedSlides = slides.filter((slide) => slide.id !== id)
+    setSlides(updatedSlides)
     setSlides((s) => s.filter((slide) => slide.id !== id))
+    await updateSlideIds(slideIds.filter((slideId) => slideId !== id))
     setSlideIds((s) => s.filter((slideId) => slideId !== id))
+
     if (currentSlide?.id === id) {
-      if (index !== slides.length - 1) {
-        setCurrentSlide(slides[index + 1])
-      } else
-        setCurrentSlide(
-          slides.length > 1 ? slides[slides.length - 2] : slides[0]
-        )
+      if (index !== updatedSlides.length) {
+        setCurrentSlide(updatedSlides[index])
+        return
+      }
+      if (updatedSlides.length > 0) {
+        setCurrentSlide(updatedSlides[index - 1])
+        return
+      }
+      setCurrentSlide(null)
     }
   }
 
@@ -192,6 +203,7 @@ export const SlideManagerProvider = ({
     const tempId = newIds[index - 1]
     newIds[index - 1] = newIds[index]
     newIds[index] = tempId
+    updateSlideIds(newIds)
     setSlideIds(newIds)
   }
 
@@ -217,6 +229,25 @@ export const SlideManagerProvider = ({
     setSlideIds(newIds)
   }
 
+  const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
+    const result = list
+    const [removed] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
+
+    return result
+  }
+
+  const reorderSlide = async (result: OnDragEndResponder | any) => {
+    if (!result.destination) {
+      return
+    }
+    const items = reorder(slides, result.source.index, result.destination.index)
+    setSlides(items)
+    setSyncing(true)
+    await updateSlideIds(items.map((i) => i.id))
+    setSyncing(false)
+  }
+
   return (
     <SlideManagerContext.Provider
       value={{
@@ -233,6 +264,7 @@ export const SlideManagerProvider = ({
         deleteSlide,
         moveUpSlide,
         moveDownSlide,
+        reorderSlide,
       }}
     >
       {children}

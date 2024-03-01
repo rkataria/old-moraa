@@ -45,7 +45,16 @@ const getEvent = async ({
     }
   }
 
-  let slides, session
+  let slides, session, participants
+
+  if (eventId) {
+    const { data } = await supabase
+      .from("enrollment")
+      .select("email,event_role,id")
+      .eq("event_id", eventId)
+      .order('created_at', { ascending: true })
+    participants = data
+  }
 
   if (fetchMeetingSlides) {
     const { data } = await supabase
@@ -69,6 +78,7 @@ const getEvent = async ({
 
   return {
     event: meeting.event,
+    participants,
     meeting: meeting,
     meetingSlides: { slides: slides },
     session: session,
@@ -84,8 +94,18 @@ const createEvent = async (event: ICreateEventPayload) => {
   }
 }
 
+const deleteEventParticipant = async (eventId: string, participantId: string) => {
+  return await supabase
+    .from("enrollment")
+    .delete()
+    .eq("id", participantId)
+    .eq("event_id", eventId)
+    .eq("event_role", "Participant")
+}
+
 export const EventService = {
   getEvents,
   getEvent,
   createEvent,
+  deleteEventParticipant
 }

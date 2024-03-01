@@ -129,8 +129,9 @@ export const EventSessionProvider = ({
   useEffect(() => {
     if (!meetingSlides?.slides) return
 
-    setSlides(meetingSlides.slides || [])
-    setCurrentSlide(meetingSlides.slides[0] ?? null)
+    const slides = getSortedSlides() ?? []
+    setSlides(slides || [])
+    setCurrentSlide(slides[0] ?? null)
   }, [meetingSlides])
 
   useEffect(() => {
@@ -142,7 +143,9 @@ export const EventSessionProvider = ({
     const fetchCurrentSlideResponses = async () => {
       const { data, error } = await supabase
         .from("slide_response")
-        .select("*")
+        .select(
+          "* , participant:participant_id(*, enrollment:enrollment_id(*))"
+        )
         .eq("slide_id", currentSlide.id)
 
       if (error) {
@@ -168,23 +171,8 @@ export const EventSessionProvider = ({
           filter: `slide_id=eq.${currentSlide.id}`,
         },
         (payload) => {
-          if (payload.eventType === "INSERT") {
-            setCurrentSlideResponses((res: any) => [
-              ...(res ?? []),
-              payload.new,
-            ])
-          }
-          if (payload.eventType === "UPDATE") {
-            setCurrentSlideResponses((res: any) => {
-              // Update the response in the array if it exists
-              const updatedResponses = res.map((existingResponse: any) =>
-                existingResponse.id === payload.new.id
-                  ? payload.new
-                  : existingResponse
-              )
-
-              return updatedResponses
-            })
+          if (["INSERT", "UPDATE"].includes(payload.eventType)) {
+            fetchCurrentSlideResponses()
           }
         }
       )
@@ -194,6 +182,20 @@ export const EventSessionProvider = ({
       channels.unsubscribe()
     }
   }, [currentSlide])
+
+  const getSortedSlides = () => {
+    const idIndexMap: { [id: string]: number } = {}
+    meeting?.slides?.forEach((id: string, index: number) => {
+      idIndexMap[id] = index
+    })
+
+    // Custom sorting function
+    const customSort = (a: any, b: any) => {
+      return idIndexMap[a.id] - idIndexMap[b.id]
+    }
+
+    return meetingSlides?.slides?.slice().sort(customSort)
+  }
 
   const nextSlide = () => {
     if (!isHost) return
@@ -235,15 +237,11 @@ export const EventSessionProvider = ({
 
   const votePoll = async (slide: ISlide, option: string) => {
     try {
-      const currentUser = await supabase.auth.getSession()
-
       const { data, error } = await supabase
         .from("slide_response")
         .upsert({
-          slide,
           response: { selected_option: option },
           slide_id: slide.id,
-          event_id: event.id,
           participant_id: participant.id,
         })
         .eq("slide_id", slide.id)
@@ -269,18 +267,15 @@ export const EventSessionProvider = ({
       const { data, error } = await supabase
         .from("slide_response")
         .upsert({
-          slide,
           response: {
             reflection: reflection,
             username: username,
           },
           slide_id: slide.id,
-          event_id: event.id,
-          profile_id: currentUser.data.session?.user.id,
+          participant_id: participant.id,
         })
         .eq("slide_id", slide.id)
-        .eq("event_id", event.id)
-        .eq("profile_id", currentUser.data.session?.user.id)
+        .eq("participant_id", participant.id)
         .select()
 
       if (error) {
@@ -309,29 +304,6 @@ export const EventSessionProvider = ({
         console.error(error)
         return
       }
-    } catch (error: any) {
-      console.error(error)
-    }
-  }
-
-  const updateSlide = async (slide: ISlide) => {
-    try {
-      const { data, error } = await supabase
-        .from("event_content")
-        .upsert({
-          id: event.id,
-          slides: slides.map((s) => (s.id === slide.id ? slide : s)),
-        })
-        .eq("id", event.id)
-        .select("*")
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      setSlides(data[0].slides)
-      setCurrentSlide(data[0].slides.find((s: ISlide) => s.id === slide.id))
     } catch (error: any) {
       console.error(error)
     }
@@ -405,8 +377,8 @@ export const EventSessionProvider = ({
         currentSlideLoading,
         currentUser,
         metaData,
+        participant,
         syncSlides,
-        updateSlide,
         startPresentation,
         stopPresentation,
         pausePresentation,

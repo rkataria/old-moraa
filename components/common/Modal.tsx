@@ -4,10 +4,18 @@ import { Dialog, Transition } from "@headlessui/react"
 interface ModalProps {
   open: boolean
   onClose: () => void
+  title?: string
+  description?: string
   children: React.ReactNode
 }
 
-export default function Modal({ open, onClose, children }: ModalProps) {
+export default function Modal({
+  open,
+  onClose,
+  children,
+  title,
+  description,
+}: ModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -34,8 +42,16 @@ export default function Modal({ open, onClose, children }: ModalProps) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-5xl sm:p-6">
-                {children}
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-5xl ">
+                {title ? (
+                  <div className="bg-primary h-[140px] p-6">
+                    <p className="text-xl text-white">{title}</p>
+                    {description ? (
+                      <p className="text-white">{description}</p>
+                    ) : null}
+                  </div>
+                ) : null}
+                <div className="px-4 pb-4 pt-5 sm:my-2 sm:p-6">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
