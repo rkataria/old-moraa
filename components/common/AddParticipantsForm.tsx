@@ -1,24 +1,29 @@
-import * as yup from "yup"
+import { ReactElement } from 'react'
+
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
+import { Trash } from 'lucide-react'
 import {
   Control,
   Controller,
   SubmitHandler,
   useFieldArray,
   useForm,
-} from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { Button, Input } from "@nextui-org/react"
-import { ReactElement } from "react"
-import { useUserContext } from "@/hooks/useAuth"
-import { Trash } from "lucide-react"
-import { useMutation } from "@tanstack/react-query"
+} from 'react-hook-form'
+import * as yup from 'yup'
+
+import { Button, Input } from '@nextui-org/react'
+
+import { useUserContext } from '@/hooks/useAuth'
 
 function getAllIndexes<T>(arr: Array<T>, val: T) {
-  var indexes = [],
-    i = -1
-  while ((i = arr.indexOf(val, i + 1)) != -1) {
+  const indexes = []
+  let i = -1
+  // eslint-disable-next-line no-cond-assign
+  while ((i = arr.indexOf(val, i + 1)) !== -1) {
     indexes.push(i)
   }
+
   return indexes
 }
 
@@ -31,9 +36,10 @@ export const participantsListValidationSchema = yup
         .string()
         .email()
         .test({
-          name: "unique-email",
-          test: function (email, context) {
-            // @ts-ignore
+          name: 'unique-email',
+          test(email, context) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             const currentIndex = context.options.index
             const allParticipants: string[] =
               context.from?.[1].value?.participants?.map(
@@ -41,11 +47,12 @@ export const participantsListValidationSchema = yup
               ) || []
             const indexes = getAllIndexes(allParticipants, email)
             if (indexes.length !== 1 && indexes[0] === currentIndex) return true
+
             return indexes.length === 1
           },
-          message: "Email addresses must be unique",
+          message: 'Email addresses must be unique',
         })
-        .label("Participant email")
+        .label('Participant email')
         .required(),
     })
   )
@@ -61,7 +68,7 @@ export type ParticipantsFormData = yup.InferType<
 export type AddParticipantsFormProps<
   FormData extends ParticipantsFormData = ParticipantsFormData,
 > = {
-  defaultValue?: FormData["participants"]
+  defaultValue?: FormData['participants']
   onParticipantRemove?: (email: string) => Promise<void>
 } & (
   | {
@@ -81,7 +88,7 @@ export type AddParticipantsFormProps<
     }
 )
 
-function AddParticipantsForm<
+export function AddParticipantsForm<
   FormData extends ParticipantsFormData = ParticipantsFormData,
 >({
   formControl,
@@ -104,14 +111,14 @@ function AddParticipantsForm<
     },
   })
   const fakeDeleteParticipantMutation = useMutation({
-    mutationFn: async (id: string) => await onParticipantRemove?.(id),
+    mutationFn: async (id: string) => onParticipantRemove?.(id),
   })
 
   const control = (formControl ||
     participantsForm.control) as Control<ParticipantsFormData>
   const participantsFieldArray = useFieldArray({
     control,
-    name: "participants",
+    name: 'participants',
   })
 
   const FormContentJSX = (
@@ -146,13 +153,13 @@ function AddParticipantsForm<
                         fakeDeleteParticipantMutation.variables
                     }
                     onClick={async () => {
-                      if (arrayField.participantId && !arrayField.isHost)
+                      if (arrayField.participantId && !arrayField.isHost) {
                         await fakeDeleteParticipantMutation.mutateAsync(
                           arrayField.participantId
                         )
+                      }
                       participantsFieldArray.remove(index)
-                    }}
-                  >
+                    }}>
                     <Trash size={16} />
                   </Button>
                 )}
@@ -164,10 +171,9 @@ function AddParticipantsForm<
       <div className="flex">
         <Button
           className="mt-4"
-          onClick={() => participantsFieldArray.append({ email: "" })}
+          onClick={() => participantsFieldArray.append({ email: '' })}
           variant="bordered"
-          color="default"
-        >
+          color="default">
           + Add New Participant
         </Button>
       </div>
@@ -182,8 +188,7 @@ function AddParticipantsForm<
         <form
           onSubmit={participantsForm.handleSubmit(
             onSubmit as SubmitHandler<ParticipantsFormData>
-          )}
-        >
+          )}>
           {FormContentJSX}
         </form>
       ) : (
@@ -192,5 +197,3 @@ function AddParticipantsForm<
     </div>
   )
 }
-
-export default AddParticipantsForm

@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { HeaderComponent } from "@/components/common/Header"
-import { SidebarComponent } from "@/components/common/Sidebar"
+import { HeaderComponent } from '@/components/common/Header'
+import { SidebarComponent } from '@/components/common/Sidebar'
 
 export default function WorkspaceLayout({
   children,

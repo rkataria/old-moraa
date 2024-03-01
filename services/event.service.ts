@@ -1,5 +1,6 @@
-import { ICreateEventPayload } from "@/types/event.type"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+
+import { ICreateEventPayload } from '@/types/event.type'
 
 const supabase = createClientComponentClient()
 
@@ -17,11 +18,12 @@ const getEvents = async () => {
   if (!user) return []
 
   const { data } = await supabase
-    .from("enrollment")
-    .select("*,event(*, profile(*))")
-    .eq("user_id", user.id)
+    .from('enrollment')
+    .select('*,event(*, profile(*))')
+    .eq('user_id', user.id)
 
   const events = data?.map((item) => item.event)
+
   return events
 }
 
@@ -31,13 +33,14 @@ const getEvent = async ({
   fetchActiveSession = false,
 }: GetEventParams) => {
   const { data: meeting, error } = await supabase
-    .from("meeting")
-    .select("*, event:event_id(*)")
-    .eq("event_id", eventId)
+    .from('meeting')
+    .select('*, event:event_id(*)')
+    .eq('event_id', eventId)
     .single()
 
   if (error) {
-    console.error("error while fetching meeting and event: ", error)
+    console.error('error while fetching meeting and event: ', error)
+
     return {
       event: null,
       contents: null,
@@ -45,33 +48,35 @@ const getEvent = async ({
     }
   }
 
-  let slides, session, participants
+  let slides
+  let session
+  let participants
 
   if (eventId) {
     const { data } = await supabase
-      .from("enrollment")
-      .select("email,event_role,id")
-      .eq("event_id", eventId)
+      .from('enrollment')
+      .select('email,event_role,id')
+      .eq('event_id', eventId)
       .order('created_at', { ascending: true })
     participants = data
   }
 
   if (fetchMeetingSlides) {
     const { data } = await supabase
-      .from("slide")
-      .select("*, meeting:meeting_id(*)")
-      .eq("meeting_id", meeting.id)
+      .from('slide')
+      .select('*, meeting:meeting_id(*)')
+      .eq('meeting_id', meeting.id)
     slides = data
   }
 
   if (fetchActiveSession) {
-    const { data, error } = await supabase
-      .from("session")
-      .select("*")
-      .eq("meeting_id", meeting.id)
-      .eq("status", "ACTIVE")
+    const { data, error: _error } = await supabase
+      .from('session')
+      .select('*')
+      .eq('meeting_id', meeting.id)
+      .eq('status', 'ACTIVE')
       .single()
-    if (!error) {
+    if (!_error) {
       session = data
     }
   }
@@ -79,14 +84,14 @@ const getEvent = async ({
   return {
     event: meeting.event,
     participants,
-    meeting: meeting,
-    meetingSlides: { slides: slides },
-    session: session,
+    meeting,
+    meetingSlides: { slides },
+    session,
   }
 }
 
 const createEvent = async (event: ICreateEventPayload) => {
-  const { data, error } = await supabase.from("event").insert([event]).select()
+  const { data, error } = await supabase.from('event').insert([event]).select()
 
   return {
     data: data?.[0],
@@ -94,18 +99,17 @@ const createEvent = async (event: ICreateEventPayload) => {
   }
 }
 
-const deleteEventParticipant = async (eventId: string, participantId: string) => {
-  return await supabase
-    .from("enrollment")
+const deleteEventParticipant = async (eventId: string, participantId: string) =>
+  supabase
+    .from('enrollment')
     .delete()
-    .eq("id", participantId)
-    .eq("event_id", eventId)
-    .eq("event_role", "Participant")
-}
+    .eq('id', participantId)
+    .eq('event_id', eventId)
+    .eq('event_role', 'Participant')
 
 export const EventService = {
   getEvents,
   getEvent,
   createEvent,
-  deleteEventParticipant
+  deleteEventParticipant,
 }

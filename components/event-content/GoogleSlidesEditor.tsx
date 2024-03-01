@@ -1,18 +1,24 @@
-"use client"
+/* eslint-disable jsx-a11y/label-has-associated-control */
 
-import { ISlide, SlideManagerContextType } from "@/types/slide.type"
-import React, { useContext, useState } from "react"
-import ReactGoogleSlides from "react-google-slides"
-import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { NextPrevButtons } from "../common/NextPrevButtons"
-import { Button, Input } from "@nextui-org/react"
+'use client'
+
+import React, { useContext, useState } from 'react'
+
+import ReactGoogleSlides from 'react-google-slides'
+
+import { Button, Input } from '@nextui-org/react'
+
+import { NextPrevButtons } from '../common/NextPrevButtons'
+
+import { SlideManagerContext } from '@/contexts/SlideManagerContext'
+import { ISlide, SlideManagerContextType } from '@/types/slide.type'
 
 interface GoogleSlidesEditorProps {
   slide: ISlide
 }
 
-export default function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
-  const [slideLink, setSlideLink] = useState(slide.content.googleSlideURL || "")
+export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
+  const [slideLink, setSlideLink] = useState(slide.content.googleSlideURL || '')
   const [position, setPosition] = useState<number>(slide.content.position || 1)
   const [isEditMode, setIsEditMode] = useState(!slide.content.googleSlideURL)
   const { updateSlide } = useContext(
@@ -35,8 +41,9 @@ export default function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
       {isEditMode ? (
         <div className="flex items-center justify-center flex-col mt-4">
           <div>
-            <label>Google slide URL</label>
+            <label htmlFor="slide-url">Google slide URL</label>
             <Input
+              id="slide-url"
               className="w-96 outline-none mb-4"
               placeholder="Enter Google slide URL"
               onChange={(e) => setSlideLink(e.target.value)}
@@ -48,10 +55,11 @@ export default function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
             <Input
               className="w-96 outline-none mb-4"
               placeholder="Presentation start position"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               value={position as any}
               onChange={(e) =>
                 setPosition(
-                  isNaN(Number(e.target.value))
+                  Number.isNaN(Number(e.target.value))
                     ? position
                     : Number(e.target.value)
                 )

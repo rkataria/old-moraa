@@ -4,7 +4,8 @@ const nextConfig = {
     PROJECT_ROOT: __dirname,
   },
   webpack: (config) => {
-    config.externals.push({ canvas: "commonjs canvas" })
+    config.externals.push({ canvas: 'commonjs canvas' })
+
     return config
   },
 }

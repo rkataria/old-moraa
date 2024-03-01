@@ -1,9 +1,9 @@
-import React from "react"
+import React from 'react'
 
-import { UserMenu } from "./UserMenu"
-import { SidebarMini } from "./SidebarMini"
+import { SidebarMini } from './SidebarMini'
+import { UserMenu } from './UserMenu'
 
-export const HeaderComponent = (props: {}) => {
+export function HeaderComponent() {
   return (
     <div className="flex justify-between items-center shadow-md sticky top-0 z-40 h-16">
       <SidebarMini />

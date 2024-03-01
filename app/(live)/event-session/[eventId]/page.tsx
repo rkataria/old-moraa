@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { useParams } from "next/navigation"
+import { useParams } from 'next/navigation'
 
-import Loading from "@/components/common/Loading"
-import EventSession from "@/components/event-session/EventSession"
-import { useEnrollment } from "@/hooks/useEnrollment"
+import { Loading } from '@/components/common/Loading'
+import { EventSession } from '@/components/event-session/EventSession'
+import { useEnrollment } from '@/hooks/useEnrollment'
 
 function EventSessionPage() {
   const { eventId } = useParams()

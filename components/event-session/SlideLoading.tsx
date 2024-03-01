@@ -1,7 +1,8 @@
-import React from "react"
-import Loading from "../common/Loading"
+import React from 'react'
 
-export default function SlideLoading() {
+import { Loading } from '../common/Loading'
+
+export function SlideLoading() {
   return (
     <div className="absolute h-full w-full flex justify-center items-center">
       <Loading />

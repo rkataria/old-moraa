@@ -1,18 +1,21 @@
-"use client"
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useState } from "react"
-import Modal from "./Modal"
-import NewEventForm from "./NewEventForm"
+'use client'
 
-function NewEventButtonWithModal() {
+import { useState } from 'react'
+
+import { Modal } from './Modal'
+import { NewEventForm } from './NewEventForm'
+
+export function NewEventButtonWithModal() {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
     <>
       <div
         onClick={() => setOpen(true)}
-        className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
-      >
+        className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer">
         Create new
       </div>
       <Modal open={open} onClose={() => setOpen(false)}>
@@ -30,5 +33,3 @@ function NewEventButtonWithModal() {
     </>
   )
 }
-
-export default NewEventButtonWithModal

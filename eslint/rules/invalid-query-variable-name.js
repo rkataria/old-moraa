@@ -1,5 +1,5 @@
-const validMutationHooks = ['useMutationWithToast', 'useMutation'];
-const validQueryHooks = ['useQuery'];
+const validMutationHooks = ['useMutationWithToast', 'useMutation']
+const validQueryHooks = ['useQuery']
 
 module.exports = {
   meta: {
@@ -24,7 +24,7 @@ module.exports = {
             context.report({
               node: node.declarations[0].id,
               message: "Identifier name must end with 'Mutation'",
-            });
+            })
           }
         }
         if (validQueryHooks.includes(node.declarations[0].init?.callee?.name)) {
@@ -32,10 +32,10 @@ module.exports = {
             context.report({
               node: node.declarations[0].id,
               message: "Identifier name must end with 'Query'",
-            });
+            })
           }
         }
       },
-    };
+    }
   },
-};
+}

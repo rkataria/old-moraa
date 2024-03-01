@@ -1,16 +1,18 @@
-"use client"
+'use client'
 
-import React, { useContext, useEffect, useState } from "react"
-import { ISlide, SlideManagerContextType, SlideMode } from "@/types/slide.type"
-import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { useThrottle } from "@uidotdev/usehooks"
-import TextareaAutosize from "react-textarea-autosize"
+import React, { useContext, useEffect, useState } from 'react'
+
+import { useThrottle } from '@uidotdev/usehooks'
+import TextareaAutosize from 'react-textarea-autosize'
+
+import { SlideManagerContext } from '@/contexts/SlideManagerContext'
+import { ISlide, SlideManagerContextType } from '@/types/slide.type'
 
 interface CoverEditorProps {
   slide: ISlide
 }
 
-function CoverEditor({ slide }: CoverEditorProps) {
+export function CoverEditor({ slide }: CoverEditorProps) {
   const [title, setTitle] = useState<string>(slide.content.title)
   const [description, setDescription] = useState<string>(
     slide.content.description
@@ -31,6 +33,7 @@ function CoverEditor({ slide }: CoverEditorProps) {
         description: throttledDescription,
       },
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [throttledTitle, throttledDescription])
 
   const updateTitle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -60,5 +63,3 @@ function CoverEditor({ slide }: CoverEditorProps) {
     </div>
   )
 }
-
-export default CoverEditor

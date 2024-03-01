@@ -1,13 +1,15 @@
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
-import React, { useContext } from "react"
-import Cover from "./content-types/Cover"
-import Poll from "./content-types/Poll"
-import { ContentType } from "../event-content/ContentTypePicker"
-import { checkVoted } from "@/utils/content.util"
-import { useAuth } from "@/hooks/useAuth"
+import React, { useContext } from 'react'
 
-function PresentationSlide() {
+import { Cover } from './content-types/Cover'
+import { Poll } from './content-types/Poll'
+import { ContentType } from '../event-content/ContentTypePicker'
+
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useAuth } from '@/hooks/useAuth'
+import { EventSessionContextType } from '@/types/event-session.type'
+import { checkVoted } from '@/utils/content.util'
+
+export function PresentationSlide() {
   const { currentSlide, currentSlideResponses, votePoll } = useContext(
     EventSessionContext
   ) as EventSessionContextType
@@ -32,5 +34,3 @@ function PresentationSlide() {
     </div>
   )
 }
-
-export default PresentationSlide

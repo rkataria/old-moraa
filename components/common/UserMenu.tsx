@@ -4,10 +4,11 @@ import {
   DropdownMenu,
   DropdownItem,
   Avatar,
-} from "@nextui-org/react"
-import { useAuth } from "@/hooks/useAuth"
+} from '@nextui-org/react'
 
-export const UserMenu = () => {
+import { useAuth } from '@/hooks/useAuth'
+
+export function UserMenu() {
   const { currentUser, logout } = useAuth()
 
   return (

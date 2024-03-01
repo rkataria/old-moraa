@@ -1,8 +1,6 @@
-import { TimeZones } from "@/constants/timezone"
+import { TimeZones } from '@/constants/timezone'
 
-export const getIsoDateString = (date: string) => {
-  return new Date(date).toISOString()
-}
+export const getIsoDateString = (date: string) => new Date(date).toISOString()
 
 export const getFormattedDate = (
   date: string,
@@ -11,31 +9,29 @@ export const getFormattedDate = (
   // Extracting components from ISO date string
   const isoDate = new Date(date)
   const year = isoDate.getFullYear()
-  const month = isoDate.toLocaleString("default", { month: "short" })
-  const day = String(isoDate.getDate()).padStart(2, "0")
-  const hours = String(isoDate.getHours()).padStart(2, "0")
-  const minutes = String(isoDate.getMinutes()).padStart(2, "0")
+  const month = isoDate.toLocaleString('default', { month: 'short' })
+  const day = String(isoDate.getDate()).padStart(2, '0')
+  const hours = String(isoDate.getHours()).padStart(2, '0')
+  const minutes = String(isoDate.getMinutes()).padStart(2, '0')
 
   // Constructing mm-dd-yyyy format date string
-  const mmddyyyyFormatDateString = `${month} ${day}, ${year} ${includeTime ? `${hours}:${minutes}` : ""}`
+  const mmddyyyyFormatDateString = `${month} ${day}, ${year} ${includeTime ? `${hours}:${minutes}` : ''}`
 
   return mmddyyyyFormatDateString
 }
 
 export const convertTimeZoneOffsetToHHMM = (timeZoneOffset: number) => {
   // Determine the sign
-  var sign = timeZoneOffset < 0 ? "-" : "+"
+  const sign = timeZoneOffset < 0 ? '-' : '+'
 
   // Calculate absolute hours and minutes
-  var absHours = Math.floor(Math.abs(timeZoneOffset))
-  var absMinutes = Math.round((Math.abs(timeZoneOffset) - absHours) * 60)
+  const absHours = Math.floor(Math.abs(timeZoneOffset))
+  const absMinutes = Math.round((Math.abs(timeZoneOffset) - absHours) * 60)
 
   // Ensure minutes are displayed with leading zero if necessary
-  var formattedMinutes = absMinutes < 10 ? "0" + absMinutes : absMinutes
+  const formattedMinutes = absMinutes < 10 ? `0${absMinutes}` : absMinutes
 
-  return (
-    sign + (absHours < 10 ? `0${absHours}` : absHours) + ":" + formattedMinutes
-  )
+  return `${sign + (absHours < 10 ? `0${absHours}` : absHours)}:${formattedMinutes}`
 }
 
 export const createCustomTimeZoneDate = (
@@ -50,7 +46,7 @@ export const createCustomTimeZoneDate = (
   let customTimeZoneDate = new Date(year, month - 1, day, hours, minutes, 0, 0)
 
   // Calculate the local time by adding the offset
-  let localTime =
+  const localTime =
     customTimeZoneDate.getTime() +
     customTimeZoneDate.getTimezoneOffset() * 60000 +
     timezoneOffsetHours * 3600000
@@ -66,11 +62,12 @@ export const createCustomTimeZoneDate = (
  * The list of timezones is defined in constants/timezone file.
  * @returns {TimeZones}
  */
-export function getBrowserTimeZone(): typeof TimeZones[number] {
-  const formatter = new Intl.DateTimeFormat("en-US")
+export function getBrowserTimeZone(): (typeof TimeZones)[number] {
+  const formatter = new Intl.DateTimeFormat('en-US')
   const resolvedTimezone = formatter.resolvedOptions().timeZone
   const timeZone = TimeZones.find(({ utc }) =>
     (utc || []).some((_tz) => _tz === resolvedTimezone)
   )
+
   return timeZone || TimeZones[0]
 }

@@ -1,18 +1,20 @@
-"use client"
+'use client'
 
-import { useCallback, useContext, useEffect, useState } from "react"
-import { Document, Page, pdfjs } from "react-pdf"
-import { ISlide } from "@/types/slide.type"
-import { OnDocumentLoadSuccess } from "react-pdf/dist/cjs/shared/types"
-import pdfjsWorker from "pdfjs-dist/build/pdf.worker.js"
-import { downloadPDFFile } from "@/services/pdf.service"
-import { EventSessionContextType } from "@/types/event-session.type"
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { useMutation } from "@tanstack/react-query"
-import Loading from "@/components/common/Loading"
-import { getFileObjectFromBlob } from "@/utils/utils"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
-import { SlideEventManagerType, SlideEvents } from "@/utils/events.util"
+import { useCallback, useContext, useEffect, useState } from 'react'
+
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { useMutation } from '@tanstack/react-query'
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.js'
+import { Document, Page, pdfjs } from 'react-pdf'
+import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
+
+import { Loading } from '@/components/common/Loading'
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { downloadPDFFile } from '@/services/pdf.service'
+import { EventSessionContextType } from '@/types/event-session.type'
+import { ISlide } from '@/types/slide.type'
+import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
+import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFViewerProps {
   slide: ISlide
@@ -20,9 +22,9 @@ interface PDFViewerProps {
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-const PositionChangeEvent = "pdf-position-changed"
+const PositionChangeEvent = 'pdf-position-changed'
 
-export const PDFViewer = ({ slide }: PDFViewerProps) => {
+export function PDFViewer({ slide }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
   const { isHost, metaData } = useContext(
     EventSessionContext
@@ -38,14 +40,15 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
         getFileObjectFromBlob(
           slide.content?.pdfPath,
           data.data,
-          "application/pdf"
+          'application/pdf'
         )
       ),
-    onSuccess: (file) => setFile(file),
+    onSuccess: (_file) => setFile(_file),
   })
 
   useEffect(() => {
     downloadPDFMutation.mutate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide.content?.pdfPath])
 
   useEffect(() => {
@@ -55,12 +58,14 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
       setSelectedPage((pos) => {
         const newPos = pos + 1 > totalPages ? pos : pos + 1
         if (isHost) broadcastPagePosition(newPos)
+
         return newPos
       })
     const prevPosition = () =>
       setSelectedPage((pos) => {
         const newPos = pos > 1 ? pos - 1 : pos
         if (isHost) broadcastPagePosition(newPos)
+
         return newPos
       })
 
@@ -69,6 +74,7 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
       payload,
     }: {
       type: string
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       payload: any
     }) => {
       switch (type) {
@@ -82,26 +88,29 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
       }
     }
     meeting.participants.addListener(
-      "broadcastedMessage",
+      'broadcastedMessage',
       handleBroadcastedMessage
     )
     SlideEvents[SlideEventManagerType.OnRight].subscribe(nextPosition)
     SlideEvents[SlideEventManagerType.OnLeft].subscribe(prevPosition)
 
+    // eslint-disable-next-line consistent-return
     return () => {
       meeting.participants.removeListener(
-        "broadcastedMessage",
+        'broadcastedMessage',
         handleBroadcastedMessage
       )
       SlideEvents[SlideEventManagerType.OnRight].unsubscribe(nextPosition)
       SlideEvents[SlideEventManagerType.OnLeft].unsubscribe(prevPosition)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalPages])
 
   const broadcastPagePosition = useCallback((newPosition: number) => {
     meeting.participants.broadcastMessage(PositionChangeEvent, {
       position: newPosition,
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = ({
@@ -118,10 +127,9 @@ export const PDFViewer = ({ slide }: PDFViewerProps) => {
             file={file}
             onLoadSuccess={onDocumentLoadSuccess}
             className="rounded overflow-y-scroll shadow-lg"
-            loading={"Please wait! Loading the PDF."}
-          >
+            loading="Please wait! Loading the PDF.">
             <Page
-              loading={" "}
+              loading={' '}
               pageNumber={selectedPage}
               renderAnnotationLayer={false}
               renderTextLayer={false}

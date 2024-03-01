@@ -1,17 +1,19 @@
-import { formatSecondsToDuration } from "@/utils/utils"
+import { useEffect, useRef, useState } from 'react'
+
 import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
   IconVolume,
   IconVolume2,
   IconVolume3,
-} from "@tabler/icons-react"
-import { useEffect, useRef, useState } from "react"
-import ReactPlayer from "react-player/lazy"
+} from '@tabler/icons-react'
+import ReactPlayer from 'react-player/lazy'
+
+import { formatSecondsToDuration } from '@/utils/utils'
 
 export enum PlayerControl {
-  CUSTOM = "custom",
-  DEFAULT = "default",
+  CUSTOM = 'custom',
+  DEFAULT = 'default',
 }
 
 export type ResponsiveVideoPlayerState = {
@@ -34,14 +36,14 @@ type ResponsiveVideoPlayerProps = {
   onPlayerStateChange?: (state: ResponsiveVideoPlayerState) => void
 }
 
-export const ResponsiveVideoPlayer = ({
+export function ResponsiveVideoPlayer({
   url,
   playerControl = PlayerControl.CUSTOM,
   showControls = true,
   light = false,
   playerState,
   onPlayerStateChange,
-}: ResponsiveVideoPlayerProps) => {
+}: ResponsiveVideoPlayerProps) {
   const playerRef = useRef<ReactPlayer>(null)
   const [currentPlayerState, setCurrentPlayerState] =
     useState<ResponsiveVideoPlayerState>({
@@ -56,6 +58,7 @@ export const ResponsiveVideoPlayer = ({
 
   useEffect(() => {
     onPlayerStateChange?.(currentPlayerState)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPlayerState])
 
   useEffect(() => {
@@ -67,6 +70,7 @@ export const ResponsiveVideoPlayer = ({
         playerRef.current?.seekTo(playerState.played)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerState])
 
   const handlePlay = () => {
@@ -97,6 +101,7 @@ export const ResponsiveVideoPlayer = ({
     setCurrentPlayerState((prevState) => ({ ...prevState, seeking: true }))
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSeekChange = (e: any) => {
     setCurrentPlayerState((prevState) => ({
       ...prevState,
@@ -104,6 +109,7 @@ export const ResponsiveVideoPlayer = ({
     }))
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSeekMouseUp = (e: any) => {
     setCurrentPlayerState((prevState) => ({ ...prevState, seeking: false }))
     playerRef.current?.seekTo(parseFloat(e.target.value))
@@ -127,18 +133,11 @@ export const ResponsiveVideoPlayer = ({
         playbackRate={playbackRate}
         volume={volume}
         muted={muted}
-        onReady={() => console.log("onReady")}
-        onStart={() => console.log("onStart")}
         onPlay={handlePlay}
         onPause={handlePause}
-        onBuffer={() => console.log("onBuffer")}
         onPlaybackRateChange={handleOnPlaybackRateChange}
-        onSeek={(event: unknown) => console.log("onSeek", event)}
         onEnded={handleEnded}
-        onError={(event: unknown) => console.log("onError", event)}
-        onPlaybackQualityChange={(event: unknown) =>
-          console.log("onPlaybackQualityChange", event)
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onProgress={(progress: any) => {
           if (!currentPlayerState.seeking) {
             setCurrentPlayerState((prevState) => ({
@@ -148,7 +147,6 @@ export const ResponsiveVideoPlayer = ({
             }))
           }
         }}
-        onDuration={(duration: number) => console.log("onDuration", duration)}
       />
       {/* Player Custom Control */}
       {showControls && playerControl === PlayerControl.CUSTOM && (
@@ -159,33 +157,34 @@ export const ResponsiveVideoPlayer = ({
             ) : (
               <IconPlayerPlayFilled onClick={handlePlay} />
             )}
-            {
-              <div className="flex items-center">
-                {volume > 0.8 && <IconVolume onClick={handleMuteToggle} />}
-                {volume <= 0.8 && volume > 0 && (
-                  <IconVolume2 onClick={handleMuteToggle} />
-                )}
-                {volume === 0 && <IconVolume3 onClick={handleMuteToggle} />}
-                <input
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.1}
-                  value={volume}
-                  onChange={(event) =>
-                    setCurrentPlayerState((prevState) => ({
-                      ...prevState,
-                      volume: parseFloat(event.target.value),
-                      muted: parseFloat(event.target.value) === 0,
-                    }))
-                  }
-                />
-              </div>
-            }
+            <div className="flex items-center">
+              {volume > 0.8 && <IconVolume onClick={handleMuteToggle} />}
+              {volume <= 0.8 && volume > 0 && (
+                <IconVolume2 onClick={handleMuteToggle} />
+              )}
+              {volume === 0 && <IconVolume3 onClick={handleMuteToggle} />}
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.1}
+                value={volume}
+                onChange={(event) =>
+                  setCurrentPlayerState((prevState) => ({
+                    ...prevState,
+                    volume: parseFloat(event.target.value),
+                    muted: parseFloat(event.target.value) === 0,
+                  }))
+                }
+              />
+            </div>
             <div className="flex justify-start items-center gap-2 w-full">
               <span>
                 {formatSecondsToDuration(
-                  parseInt(currentPlayerState?.playedSeconds?.toString() || "0")
+                  parseInt(
+                    currentPlayerState?.playedSeconds?.toString() || '0',
+                    10
+                  )
                 )}
               </span>
               <input
@@ -201,7 +200,10 @@ export const ResponsiveVideoPlayer = ({
               />
               <span>
                 {formatSecondsToDuration(
-                  parseInt(playerRef.current?.getDuration()?.toString() || "0")
+                  parseInt(
+                    playerRef.current?.getDuration()?.toString() || '0',
+                    10
+                  )
                 )}
               </span>
             </div>

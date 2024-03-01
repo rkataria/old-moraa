@@ -1,15 +1,15 @@
-const rulesDirPlugin = require('eslint-plugin-rulesdir');
-const prettierConfig = require('./.prettierrc.json');
-const fs = require('fs');
+const rulesDirPlugin = require('eslint-plugin-rulesdir')
+const prettierConfig = require('./.prettierrc.json')
+const fs = require('fs')
 
-rulesDirPlugin.RULES_DIR = 'eslint/rules';
+rulesDirPlugin.RULES_DIR = 'eslint/rules'
 
 const codeDir = fs
   .readdirSync('./', {
     withFileTypes: true,
   })
   .filter((folderOrFile) => folderOrFile.isDirectory())
-  .map((folder) => folder.name);
+  .map((folder) => folder.name)
 
 module.exports = {
   parser: '@typescript-eslint/parser',
@@ -48,9 +48,23 @@ module.exports = {
         project: ['./tsconfig.json'],
       },
     },
+    {
+      files: ['./**/*'],
+      rules: {
+        'import/no-default-export': 'error',
+      },
+    },
+    // App router
+    {
+      files: ['app/**/{page,layout,not-found}.{tsx,tsx}'],
+      rules: {
+        'import/no-default-export': 'off',
+      },
+    },
   ],
   rules: {
     'prettier/prettier': ['error', prettierConfig],
+
     'lines-between-class-members': 'off',
     'no-multiple-empty-lines': ['error', { max: 1 }],
     'implicit-arrow-linebreak': 'off',
@@ -60,6 +74,7 @@ module.exports = {
     'no-shadow': 'off',
     'no-unused-vars': 'off',
     indent: 'off',
+    semi: 'off',
     'operator-linebreak': 'off',
     'function-paren-newline': 'off',
     'max-len': 'off',
@@ -94,11 +109,12 @@ module.exports = {
         },
       },
     ],
-    'import/no-default-export': 'error',
+    // This rule is configured in overrides.
+    // 'import/no-default-export': 'error',
     'import/no-unresolved': 0,
     'import/prefer-default-export': 'off',
     'import/newline-after-import': ['error', { count: 1 }],
-    'import/extensions': ['error', 'never'],
+    'import/extensions': 'off',
     'unused-imports/no-unused-imports': 'error',
 
     'react/react-in-jsx-scope': 'off',
@@ -126,4 +142,4 @@ module.exports = {
     'linebreak-style': 'off',
   },
   ignorePatterns: ['babel.config.js', 'build'],
-};
+}

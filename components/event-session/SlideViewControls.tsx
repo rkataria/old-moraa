@@ -1,38 +1,42 @@
-import React, { useContext } from "react"
+import React, { useContext } from 'react'
+
+import { useDyteMeeting } from '@dytesdk/react-web-core'
 import {
   IconCaretDownFilled,
   IconCaretUpFilled,
   IconCaretLeftFilled,
   IconCaretRightFilled,
-} from "@tabler/icons-react"
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
-import { ContentType } from "../event-content/ContentTypePicker"
-import { SlideEventManagerType, SlideEvents } from "@/utils/events.util"
-import { useHotkeys } from "@/hooks/useHotkeys"
-import classNames from "classnames"
-import { Button } from "@nextui-org/react"
+} from '@tabler/icons-react'
+import classNames from 'classnames'
+
+import { Button } from '@nextui-org/react'
+
+import { ContentType } from '../event-content/ContentTypePicker'
+
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useHotkeys } from '@/hooks/useHotkeys'
+import { EventSessionContextType } from '@/types/event-session.type'
+import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
 
 const buttonStyle =
-  "!h-4 !w-4 !m-1 !bg-white/50 !text-black transition-all duration-200 hover:!bg-white/90"
+  '!h-4 !w-4 !m-1 !bg-white/50 !text-black transition-all duration-200 hover:!bg-white/90'
 
-function SlideViewControls() {
+export function SlideViewControls() {
   const { slides, currentSlide, nextSlide, previousSlide } = useContext(
     EventSessionContext
   ) as EventSessionContextType
   const { meeting } = useDyteMeeting()
-  useHotkeys("ArrowRight", () => {
+  useHotkeys('ArrowRight', () => {
     SlideEvents[SlideEventManagerType.OnRight].dispatchEvent()
   })
-  useHotkeys("ArrowLeft", () => {
+  useHotkeys('ArrowLeft', () => {
     SlideEvents[SlideEventManagerType.OnLeft].dispatchEvent()
   })
-  useHotkeys("ArrowUp", () => {
+  useHotkeys('ArrowUp', () => {
     updateCurrentSlide(false)
     previousSlide()
   })
-  useHotkeys("ArrowDown", () => {
+  useHotkeys('ArrowDown', () => {
     updateCurrentSlide(true)
     nextSlide()
   })
@@ -41,9 +45,10 @@ function SlideViewControls() {
     const currentSlideIndex = slides.findIndex(
       (slide) => slide.id === currentSlide?.id
     )
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const nextSlide = slides[currentSlideIndex + (isNext ? 1 : -1)]
     if (!nextSlide) return
-    meeting.participants.broadcastMessage("set-current-slide-by-id", {
+    meeting.participants.broadcastMessage('set-current-slide-by-id', {
       slideId: nextSlide.id,
     })
   }
@@ -64,24 +69,21 @@ function SlideViewControls() {
             onClick={() => {
               updateCurrentSlide(false)
               previousSlide()
-            }}
-          >
+            }}>
             <IconCaretUpFilled size={24} />
           </Button>
         </div>
         <div
-          className={classNames("flex justify-center items-center", {
+          className={classNames('flex justify-center items-center', {
             invisible: !showRightLeftArrow,
-          })}
-        >
+          })}>
           <Button
             aria-label="left-button"
             isIconOnly
             className={buttonStyle}
             onClick={() => {
               SlideEvents[SlideEventManagerType.OnLeft].dispatchEvent()
-            }}
-          >
+            }}>
             <IconCaretLeftFilled size={24} />
           </Button>
           <Button
@@ -90,8 +92,7 @@ function SlideViewControls() {
             className={buttonStyle}
             onClick={() => {
               SlideEvents[SlideEventManagerType.OnRight].dispatchEvent()
-            }}
-          >
+            }}>
             <IconCaretRightFilled size={24} />
           </Button>
         </div>
@@ -103,8 +104,7 @@ function SlideViewControls() {
             onClick={() => {
               updateCurrentSlide(true)
               nextSlide()
-            }}
-          >
+            }}>
             <IconCaretDownFilled size={24} />
           </Button>
         </div>
@@ -112,5 +112,3 @@ function SlideViewControls() {
     </div>
   )
 }
-
-export default SlideViewControls

@@ -1,20 +1,22 @@
-"use client"
+'use client'
 
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
-import { ISlide } from "@/types/slide.type"
-import { SlideEventManagerType, SlideEvents } from "@/utils/events.util"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
-import React, { useCallback, useContext, useEffect, useState } from "react"
-import ReactGoogleSlides from "react-google-slides"
+import React, { useCallback, useContext, useEffect, useState } from 'react'
+
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+import ReactGoogleSlides from 'react-google-slides'
+
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { EventSessionContextType } from '@/types/event-session.type'
+import { ISlide } from '@/types/slide.type'
+import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
 
 interface GoogleSlidesProps {
   slide: ISlide
 }
 
-const PositionChangeEvent = "g-slide-position-changed"
+const PositionChangeEvent = 'g-slide-position-changed'
 
-export default function GoogleSlides({ slide }: GoogleSlidesProps) {
+export function GoogleSlides({ slide }: GoogleSlidesProps) {
   const {
     content: { googleSlideURL, startPosition },
   } = slide
@@ -31,12 +33,14 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
       setPosition((pos) => {
         const newPos = pos + 1
         if (isHost) broadcastSlidePosition(newPos)
+
         return newPos
       })
     const prevPosition = () =>
       setPosition((pos) => {
         const newPos = pos > 1 ? pos - 1 : pos
         if (isHost) broadcastSlidePosition(newPos)
+
         return newPos
       })
 
@@ -45,6 +49,7 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
       payload,
     }: {
       type: string
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       payload: any
     }) => {
       switch (type) {
@@ -58,7 +63,7 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
       }
     }
     meeting.participants.addListener(
-      "broadcastedMessage",
+      'broadcastedMessage',
       handleBroadcastedMessage
     )
     SlideEvents[SlideEventManagerType.OnRight].subscribe(nextPosition)
@@ -66,25 +71,27 @@ export default function GoogleSlides({ slide }: GoogleSlidesProps) {
 
     return () => {
       meeting.participants.removeListener(
-        "broadcastedMessage",
+        'broadcastedMessage',
         handleBroadcastedMessage
       )
       SlideEvents[SlideEventManagerType.OnRight].unsubscribe(nextPosition)
       SlideEvents[SlideEventManagerType.OnLeft].unsubscribe(prevPosition)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const broadcastSlidePosition = useCallback((newPosition: number) => {
     meeting.participants.broadcastMessage(PositionChangeEvent, {
       position: newPosition,
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div className="flex flex-col items-center h-full">
       <ReactGoogleSlides
-        width={"100%"}
-        height={"85%"}
+        width="100%"
+        height="85%"
         slidesLink={googleSlideURL}
         position={position}
       />
