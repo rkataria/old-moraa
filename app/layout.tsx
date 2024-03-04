@@ -1,10 +1,10 @@
-import { Providers } from "./providers"
+import { Providers } from './providers'
 
-import "@/app/globals.css"
+import '@/app/globals.css'
 
 export const metadata = {
-  title: "Moraa",
-  description: "Moraa is a platform for learning and teaching online.",
+  title: 'Moraa',
+  description: 'Moraa is a platform for learning and teaching online.',
 }
 
 export default function RootLayout({

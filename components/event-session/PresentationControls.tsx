@@ -1,24 +1,16 @@
-import EventSessionContext from "@/contexts/EventSessionContext"
+import React, { useContext } from 'react'
+
+import { ControlButton } from './ControlButton'
+
+import { EventSessionContext } from '@/contexts/EventSessionContext'
 import {
   EventSessionContextType,
   PresentationStatuses,
-} from "@/types/event-session.type"
-import React, { useContext } from "react"
-import ControlButton from "./ControlButton"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
+} from '@/types/event-session.type'
 
 export function PresentationControls() {
-  const { meeting } = useDyteMeeting()
   const { presentationStatus, startPresentation, stopPresentation, isHost } =
     useContext(EventSessionContext) as EventSessionContextType
-
-  const handlePreviousSlide = () => {
-    meeting?.participants.broadcastMessage("previous-slide", {})
-  }
-
-  const handleNextSlide = () => {
-    meeting?.participants.broadcastMessage("next-slide", {})
-  }
 
   if (!isHost) return null
 
@@ -27,8 +19,7 @@ export function PresentationControls() {
       {presentationStatus === PresentationStatuses.STOPPED && (
         <ControlButton
           onClick={startPresentation}
-          className="!bg-green-500 !text-white"
-        >
+          className="!bg-green-500 !text-white">
           Present
         </ControlButton>
       )}
@@ -36,21 +27,17 @@ export function PresentationControls() {
       {presentationStatus === PresentationStatuses.PAUSED && (
         <ControlButton
           onClick={startPresentation}
-          className="!bg-white !text-black"
-        >
+          className="!bg-white !text-black">
           Resume
         </ControlButton>
       )}
       {presentationStatus !== PresentationStatuses.STOPPED && (
         <ControlButton
           onClick={stopPresentation}
-          className="!bg-red-500 !text-white"
-        >
+          className="!bg-red-500 !text-white">
           Stop
         </ControlButton>
       )}
     </>
   )
 }
-
-export default PresentationControls

@@ -1,88 +1,93 @@
-import type { Config } from "tailwindcss"
-import { nextui } from "@nextui-org/react"
-import { uiColors } from "./styles/ui-colors"
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable global-require */
+import { nextui } from '@nextui-org/react'
+
+import { UIColors } from './styles/ui-colors'
+
+import type { Config } from 'tailwindcss'
 
 const config = {
-  darkMode: ["class"],
+  darkMode: ['class'],
   content: [
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./**/*.{ts,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './**/*.{ts,tsx}',
+    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
-  prefix: "",
+  prefix: '',
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: '2rem',
       screens: {
-        "2xl": "1400px",
+        '2xl': '1400px',
       },
     },
     extend: {
       backgroundColor: {
-        primary: uiColors.primary,
-        primarylight: uiColors.primaryLight,
-        bggray: uiColors.bgGray,
+        primary: UIColors.primary,
+        primarylight: UIColors.primaryLight,
+        bggray: UIColors.bgGray,
       },
       textColor: {
-        textIndigo: uiColors.textColorIndigo,
+        textIndigo: UIColors.textColorIndigo,
       },
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
-    require("tailwind-scrollbar"),
+    require('tailwindcss-animate'),
+    require('tailwind-scrollbar'),
     nextui({
       layout: {
         radius: {
-          small: "2px", // rounded-small
-          medium: "4px", // rounded-medium
-          large: "8px", // rounded-large
+          small: '2px', // rounded-small
+          medium: '4px', // rounded-medium
+          large: '8px', // rounded-large
         },
       },
     }),
   ],
 } satisfies Config
 
+// eslint-disable-next-line import/no-default-export
 export default config

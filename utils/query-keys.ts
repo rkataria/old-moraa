@@ -1,4 +1,4 @@
-class QureyKeysGenerator<FilterKeys extends string[] = [""]> {
+class QureyKeysGenerator<FilterKeys extends string[] = ['']> {
   identifier: string
 
   constructor(identifier: string) {
@@ -9,7 +9,7 @@ class QureyKeysGenerator<FilterKeys extends string[] = [""]> {
     return [this.identifier]
   }
   listings() {
-    return [...this.all(), "LISTING"]
+    return [...this.all(), 'LISTING']
   }
 
   listing(filters?: { [x in FilterKeys[number]]?: string | number }) {
@@ -20,7 +20,7 @@ class QureyKeysGenerator<FilterKeys extends string[] = [""]> {
     return this.listings()
   }
   items() {
-    return [...this.all(), "ITEM"]
+    return [...this.all(), 'ITEM']
   }
   item(id: string) {
     return [...this.items(), id]
@@ -28,5 +28,5 @@ class QureyKeysGenerator<FilterKeys extends string[] = [""]> {
 }
 
 export const QueryKeys = Object.freeze({
-  DownloadPDF: new QureyKeysGenerator('DOWNLOAD_PDF')
+  DownloadPDF: new QureyKeysGenerator('DOWNLOAD_PDF'),
 })

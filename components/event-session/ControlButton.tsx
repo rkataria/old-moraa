@@ -1,5 +1,5 @@
-import { DyteButton } from "@dytesdk/react-ui-kit"
-import clsx from "clsx"
+import { DyteButton } from '@dytesdk/react-ui-kit'
+import clsx from 'clsx'
 
 export type ControlButtonProps = {
   children?: React.ReactNode | string
@@ -11,20 +11,17 @@ export type ControlButtonProps = {
 export function ControlButton({
   children,
   active,
-  className = "",
+  className = '',
   ...rest
 }: ControlButtonProps) {
   return (
     <DyteButton
       class={clsx(className, {
-        "bg-white/10 text-white": !active,
-        "bg-white text-black": active,
+        'bg-white/10 text-white': !active,
+        'bg-white text-black': active,
       })}
-      {...rest}
-    >
+      {...rest}>
       {children}
     </DyteButton>
   )
 }
-
-export default ControlButton

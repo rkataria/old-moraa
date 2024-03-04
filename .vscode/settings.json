@@ -1,2 +1,24 @@
 {
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "prettier.configPath": ".prettierrc.json",
+  "eslint.alwaysShowStatus": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "eslint.format.enable": true,
+  "prettier.requireConfig": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.format": "explicit"
+  },
+  "files.eol": "\n",
+  "files.associations": {
+    "*.env": "properties"
+  },
+  "todo-tree.tree.showBadges": true,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

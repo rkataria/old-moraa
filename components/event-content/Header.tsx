@@ -1,30 +1,35 @@
-"use client"
+'use client'
 
-import { IconArrowLeft } from "@tabler/icons-react"
-import clsx from "clsx"
-import Link from "next/link"
-import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal"
-import AddParticipantsButtonWithModal from "../common/AddParticipantsButtonWithModal"
-import { useAuth } from "@/hooks/useAuth"
-import { useMemo } from "react"
+import { useMemo } from 'react'
+
+import { IconArrowLeft } from '@tabler/icons-react'
+import clsx from 'clsx'
+import Link from 'next/link'
+
+import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
+import { PublishEventButtonWithModal } from '../common/PublishEventButtonWithModal'
+
+import { useAuth } from '@/hooks/useAuth'
 
 enum EventType {
-  PUBLISHED = "PUBLISHED",
-  DRAFT = "DRAFT",
+  PUBLISHED = 'PUBLISHED',
+  DRAFT = 'DRAFT',
 }
 
 const styles = {
   button: {
     default:
-      "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
+      'flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md',
   },
 }
 
-function Header({ event }: { event: any }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function Header({ event }: { event: any }) {
   const { currentUser } = useAuth()
 
   const userId = currentUser?.id
   const isOwner = useMemo(() => userId === event?.owner_id, [userId, event])
+
   return (
     <div className="fixed left-0 top-0 w-full h-26 z-50 p-2 bg-white">
       <div className="flex justify-between items-center h-12 w-full">
@@ -45,11 +50,10 @@ function Header({ event }: { event: any }) {
                 href={`/event-session/${event.id}`}
                 className={clsx(
                   styles.button.default,
-                  "font-semibold text-sm bg-black text-white !rounded-full px-4"
+                  'font-semibold text-sm bg-black text-white !rounded-full px-4'
                 )}
-                title="Start Session"
-              >
-                {isOwner ? "Start" : "Join"} Session
+                title="Start Session">
+                {isOwner ? 'Start' : 'Join'} Session
               </Link>
             </>
           )}
@@ -58,5 +62,3 @@ function Header({ event }: { event: any }) {
     </div>
   )
 }
-
-export default Header

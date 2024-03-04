@@ -1,23 +1,24 @@
-"use client"
+'use client'
 
-import { useCallback, useContext, useEffect, useState } from "react"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
+import { useCallback, useContext, useEffect, useState } from 'react'
+
+import { useDyteMeeting } from '@dytesdk/react-web-core'
 
 import {
   ResponsiveVideoPlayer,
   ResponsiveVideoPlayerState,
-} from "@/components/common/ResponsiveVideoPlayer"
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
-import { ISlide } from "@/types/slide.type"
+} from '@/components/common/ResponsiveVideoPlayer'
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { EventSessionContextType } from '@/types/event-session.type'
+import { ISlide } from '@/types/slide.type'
 
 interface VideoEmbedProps {
   slide: ISlide
 }
 
-const playerStateChangeEvent = "video-embed-option-changed"
+const playerStateChangeEvent = 'video-embed-option-changed'
 
-export default function VideoEmbed({ slide }: VideoEmbedProps) {
+export function VideoEmbed({ slide }: VideoEmbedProps) {
   const {
     content: { videoUrl },
   } = slide
@@ -31,14 +32,15 @@ export default function VideoEmbed({ slide }: VideoEmbedProps) {
       payload,
     }: {
       type: string
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       payload: any
     }) => {
       switch (type) {
         case playerStateChangeEvent: {
           if (isHost) return
-          const { playerState } = payload
-          if (playerState) {
-            setPlayerState(playerState)
+          const { playerState: _playerState } = payload
+          if (_playerState) {
+            setPlayerState(_playerState)
           }
           break
         }
@@ -47,22 +49,24 @@ export default function VideoEmbed({ slide }: VideoEmbedProps) {
       }
     }
     meeting.participants.addListener(
-      "broadcastedMessage",
+      'broadcastedMessage',
       handleBroadcastedMessage
     )
 
     return () => {
       meeting.participants.removeListener(
-        "broadcastedMessage",
+        'broadcastedMessage',
         handleBroadcastedMessage
       )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handlePlayerStateChange = useCallback(
     (state: ResponsiveVideoPlayerState) => {
       if (isHost) {
         meeting.participants.broadcastMessage(playerStateChangeEvent, {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           playerState: state as any,
         })
       }

@@ -1,7 +1,9 @@
-import { ContentType } from "@/components/event-content/ContentTypePicker"
-import { OnDragEndResponder } from "react-beautiful-dnd"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { OnDragEndResponder } from 'react-beautiful-dnd'
 
-export type SlideMode = "edit" | "present"
+import { ContentType } from '@/components/event-content/ContentTypePicker'
+
+export type SlideMode = 'edit' | 'present'
 
 export interface ISlide {
   id: string
@@ -38,6 +40,6 @@ export interface IMiniSlideManagerType {
   currentSlide: ISlide | null
   setCurrentSlide: (slide: ISlide) => void
   draggableProps: any
-  mode: "edit" | "present" | "read"
-  miniSlideView: "thumbnail" | "list"
+  mode: 'edit' | 'present' | 'read'
+  miniSlideView: 'thumbnail' | 'list'
 }

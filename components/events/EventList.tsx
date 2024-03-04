@@ -1,27 +1,13 @@
-"use client"
-import { useRouter } from "next/navigation"
+'use client'
 
-import Loading from "../common/Loading"
-import { useEvents } from "@/hooks/useEvents"
-import { getFormattedDate } from "@/utils/date"
-// import PublishEventButtonWithModal from "../common/PublishEventButtonWithModal"
-// import clsx from "clsx"
-// import Link from "next/link"
-// import AddParticipantsButtonWithModal from "../common/AddParticipantsButtonWithModal"
-import { useAuth } from "@/hooks/useAuth"
+import { useRouter } from 'next/navigation'
 
-// enum EventType {
-//   PUBLISHED = "PUBLISHED",
-//   DRAFT = "DRAFT",
-// }
-// const styles = {
-//   button: {
-//     default:
-//       "flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md",
-//   },
-// }
+import { Loading } from '../common/Loading'
 
-function EventList() {
+import { useEvents } from '@/hooks/useEvents'
+import { getFormattedDate } from '@/utils/date'
+
+export function EventList() {
   const router = useRouter()
   const { events, isLoading } = useEvents()
   // const { currentUser } = useAuth()
@@ -46,51 +32,46 @@ function EventList() {
           <tr>
             <th
               scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0"
-            >
+              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
               Name
             </th>
             <th
               scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0"
-            >
+              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
               Created by
             </th>
 
             <th
               scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0"
-            >
+              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
               Last Modified
             </th>
             <th
               scope="col"
-              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-300"
-            >
+              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
               Status
             </th>
             <th
               scope="col"
-              className="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right"
-            >
+              className="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right">
               <span className="sr-only">Action</span>
             </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {events?.map((event: any) => (
             <tr
               key={event.name}
               className="hover:bg-purple-700/5 cursor-pointer"
-              onClick={() => handleRowClick(event.id)}
-            >
+              onClick={() => handleRowClick(event.id)}>
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                 {event.name}
               </td>
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                 {event.profile.email}
-                {/*TODO: write profile.firstname profile.lastname here
-                Using email as a placeholder 
+                {/* TODO: write profile.firstname profile.lastname here
+                Using email as a placeholder
                  since firstName and lastName are not being captured as of now */}
               </td>
 
@@ -116,7 +97,7 @@ function EventList() {
                   </button>
                 </td>
               )} */}
-              {/* 
+              {/*
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
                 <div className="flex justify-start items-center gap-2 px-2 h-full">
                   {event?.status === EventType.DRAFT &&
@@ -159,5 +140,3 @@ function EventList() {
     </div>
   )
 }
-
-export default EventList

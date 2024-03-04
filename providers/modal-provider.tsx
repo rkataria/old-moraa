@@ -1,23 +1,18 @@
+'use client'
 
-"use client";
+import { useEffect, useState } from 'react'
 
-import { useEffect, useState } from "react";
-import { CreateEventModal } from "@/components/events/CreateEventModal";
+import { CreateEventModal } from '@/components/events/CreateEventModal'
 
-
-export const ModalProvider = () => {
-  const [isMounted, setIsMounted] = useState(false);
+export function ModalProvider() {
+  const [isMounted, setIsMounted] = useState(false)
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
   if (!isMounted) {
-    return null;
+    return null
   }
 
-  return (
-    <>
-      <CreateEventModal />
-    </>
-  );
-};
+  return <CreateEventModal />
+}

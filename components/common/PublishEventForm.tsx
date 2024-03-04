@@ -1,21 +1,27 @@
-"use client"
+'use client'
 
-import { useParams } from "next/navigation"
-import { useEvent } from "@/hooks/useEvent"
-import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import "react-multi-email/dist/style.css"
-import * as yup from "yup"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { Button, Input, Select, SelectItem } from "@nextui-org/react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { TimeZones } from "@/constants/timezone"
-import { useMutation } from "@tanstack/react-query"
-import { createCustomTimeZoneDate, getBrowserTimeZone } from "@/utils/date"
-import { useEffect } from "react"
-import AddParticipantsForm, {
+import { useEffect } from 'react'
+
+import { yupResolver } from '@hookform/resolvers/yup'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useMutation } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import * as yup from 'yup'
+
+import { Button, Input, Select, SelectItem } from '@nextui-org/react'
+
+import {
+  AddParticipantsForm,
   participantsListValidationSchema,
-} from "./AddParticipantsForm"
-import { useUserContext } from "@/hooks/useAuth"
+} from './AddParticipantsForm'
+
+import { TimeZones } from '@/constants/timezone'
+import { useUserContext } from '@/hooks/useAuth'
+import { useEvent } from '@/hooks/useEvent'
+import { createCustomTimeZoneDate, getBrowserTimeZone } from '@/utils/date'
+
+import 'react-multi-email/dist/style.css'
 
 interface NewEventFormProps {
   eventId: string
@@ -23,10 +29,11 @@ interface NewEventFormProps {
 }
 
 const publishEventValidationSchema = yup.object({
-  eventName: yup.string().label("Event name").min(3).max(50).required(),
+  // eslint-disable-next-line newline-per-chained-call
+  eventName: yup.string().label('Event name').min(3).max(50).required(),
   description: yup
     .string()
-    .label("Event description")
+    .label('Event description')
     .min(3)
     .max(200)
     .required(),
@@ -40,15 +47,19 @@ const publishEventValidationSchema = yup.object({
 
 type FormData = yup.InferType<typeof publishEventValidationSchema>
 
-function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
+export function NewEventForm({
+  onClose,
+  eventId: _eventId,
+}: NewEventFormProps) {
   const { eventId } = useParams()
   const userProfile = useUserContext()
   const publishEventMutation = useMutation({
     mutationFn: async (data: string) => {
       const supabase = createClientComponentClient()
-      const response = await supabase.functions.invoke("publish-event", {
+      const response = await supabase.functions.invoke('publish-event', {
         body: data,
       })
+
       return new Promise((resolve) => {
         setTimeout(async () => {
           await refetch()
@@ -65,8 +76,8 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
   const publishEventForm = useForm<FormData>({
     resolver: yupResolver(publishEventValidationSchema),
     defaultValues: {
-      startTime: "02:00",
-      endTime: "05:00",
+      startTime: '02:00',
+      endTime: '05:00',
       participants: [],
       timezone: getBrowserTimeZone().text,
     },
@@ -87,6 +98,7 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
       ],
       timezone: getBrowserTimeZone().text,
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event])
 
   const publishEvent: SubmitHandler<FormData> = async (formData) => {
@@ -94,14 +106,14 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
     const timezone = TimeZones.find((tz) => tz.text === formData.timezone)
 
     const [startYear = 1, startMonth = 1, startDay = 1] =
-      formData.startDate?.split("-") || []
-    const [startHours = "00", startMinutes = "00"] =
-      formData.startTime?.split(":") || []
+      formData.startDate?.split('-') || []
+    const [startHours = '00', startMinutes = '00'] =
+      formData.startTime?.split(':') || []
 
     const [endYear = 1, endMonth = 1, endDay = 1] =
-      formData.endDate?.split("-") || []
-    const [endHours = "00", endMinutes = "00"] =
-      formData.endTime?.split(":") || []
+      formData.endDate?.split('-') || []
+    const [endHours = '00', endMinutes = '00'] =
+      formData.endTime?.split(':') || []
 
     const startDate = createCustomTimeZoneDate(
       +startYear,
@@ -126,9 +138,10 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
       description: formData.description,
       startDate: formData.startDate ? startDate : null,
       endDate: formData.endDate ? endDate : null,
-      participants: formData.participants.map((participant) => {
-        return { email: participant.email, role: "Participant" }
-      }),
+      participants: formData.participants.map((participant) => ({
+        email: participant.email,
+        role: 'Participant',
+      })),
     }
     publishEventMutation.mutate(JSON.stringify(payload))
   }
@@ -179,8 +192,7 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
                 className="mb-4"
                 label="Timezone"
                 isInvalid={!!fieldState.error?.message}
-                errorMessage={fieldState.error?.message}
-              >
+                errorMessage={fieldState.error?.message}>
                 {(timezone) => (
                   <SelectItem key={timezone.text} value={timezone.text}>
                     {timezone.text}
@@ -265,8 +277,7 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
               color="primary"
               type="submit"
               disabled={publishEventMutation.isPending}
-              isLoading={publishEventMutation.isPending}
-            >
+              isLoading={publishEventMutation.isPending}>
               Publish
             </Button>
           </div>
@@ -275,5 +286,3 @@ function NewEventForm({ onClose, eventId: _eventId }: NewEventFormProps) {
     </div>
   )
 }
-
-export default NewEventForm

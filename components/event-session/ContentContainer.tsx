@@ -1,22 +1,24 @@
-import { useContext } from "react"
+import { useContext } from 'react'
+
 import {
   DyteAudioVisualizer,
   DyteNameTag,
   DytePluginMain,
   DyteScreenshareView,
-} from "@dytesdk/react-ui-kit"
-import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
+} from '@dytesdk/react-ui-kit'
+import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
-import EventSessionContext from "@/contexts/EventSessionContext"
+import { Slide } from './Slide'
+import { SlideViewControls } from './SlideViewControls'
+import { SlideWrapper } from './SlideWrapper'
+
+import { EventSessionContext } from '@/contexts/EventSessionContext'
 import {
   EventSessionContextType,
   PresentationStatuses,
-} from "@/types/event-session.type"
-import SlideViewControls from "./SlideViewControls"
-import { SlideWrapper } from "./SlideWrapper"
-import Slide from "./Slide"
+} from '@/types/event-session.type'
 
-function ContentContainer() {
+export function ContentContainer() {
   const { presentationStatus, isHost } = useContext(
     EventSessionContext
   ) as EventSessionContextType
@@ -36,8 +38,7 @@ function ContentContainer() {
         <DyteScreenshareView
           meeting={meeting}
           participant={screensharingParticipant}
-          className="h-full"
-        >
+          className="h-full">
           <DyteNameTag participant={screensharingParticipant}>
             <DyteAudioVisualizer
               slot="start"
@@ -55,8 +56,7 @@ function ContentContainer() {
         <DyteScreenshareView
           meeting={meeting}
           participant={meeting.self}
-          className="h-full"
-        >
+          className="h-full">
           <DyteNameTag participant={meeting.self}>
             <DyteAudioVisualizer slot="start" participant={meeting.self} />
           </DyteNameTag>
@@ -82,5 +82,3 @@ function ContentContainer() {
     </SlideWrapper>
   )
 }
-
-export default ContentContainer

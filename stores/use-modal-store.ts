@@ -1,26 +1,25 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 
-export type ModalType = "createEvent";
+export type ModalType = 'createEvent'
 
 interface ModalStore<T> {
-  type: ModalType | null;
-  data: T;
-  isOpen: boolean;
-  onOpen: (type: ModalType, { data }: TModalData<T>, isEdit?: boolean) => void;
-  onClose: () => void;
+  type: ModalType | null
+  data: T
+  isOpen: boolean
+  onOpen: (type: ModalType, { data }: TModalData<T>, isEdit?: boolean) => void
+  onClose: () => void
 }
 
 type TModalData<T> = {
-  data: T;
-};
+  data: T
+}
 
-export type T = any;
-export const useModal = create<ModalStore<T>>((set) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useModal = create<ModalStore<any>>((set) => ({
   type: null,
   data: {},
   isOpen: false,
-  onOpen: (type, { data }) => {
-    return set({ isOpen: true, type, data: data as T });
-  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onOpen: (type, { data }) => set({ isOpen: true, type, data: data as any }),
   onClose: () => set({ isOpen: false }),
-}));
+}))

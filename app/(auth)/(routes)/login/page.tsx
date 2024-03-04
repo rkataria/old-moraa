@@ -1,15 +1,18 @@
-"use client"
+'use client'
 
-import { MoraaLogo } from "@/components/common/MoraaLogo"
-import { Auth } from "@supabase/auth-ui-react"
-import { ThemeSupa } from "@supabase/auth-ui-shared"
-import { uiColors } from "@/styles/ui-colors"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useAuth } from "@/hooks/useAuth"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useIsClient } from "@uidotdev/usehooks"
-import { Card, CardBody, CardHeader } from "@nextui-org/react"
+import { useEffect } from 'react'
+
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
+import { useIsClient } from '@uidotdev/usehooks'
+import { useRouter } from 'next/navigation'
+
+import { Card, CardBody, CardHeader } from '@nextui-org/react'
+
+import { MoraaLogo } from '@/components/common/MoraaLogo'
+import { useAuth } from '@/hooks/useAuth'
+import { UIColors } from '@/styles/ui-colors'
 
 export default function Login() {
   const supabase = createClientComponentClient()
@@ -19,8 +22,9 @@ export default function Login() {
 
   useEffect(() => {
     if (user.currentUser) {
-      router.replace("/events")
+      router.replace('/events')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.currentUser])
 
   return (
@@ -32,14 +36,14 @@ export default function Login() {
         <CardBody>
           <Auth
             supabaseClient={supabase}
-            redirectTo={isClient ? window.location.origin : "" + "/events"}
-            providers={["google"]}
+            redirectTo={isClient ? window.location.origin : '/events'}
+            providers={['google']}
             appearance={{
               theme: ThemeSupa,
               variables: {
                 default: {
                   colors: {
-                    brand: uiColors.primary,
+                    brand: UIColors.primary,
                   },
                 },
               },

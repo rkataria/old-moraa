@@ -1,10 +1,12 @@
-import { MutableRefObject } from "react"
-import { ISlide } from "./slide.type"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { MutableRefObject } from 'react'
+
+import { ISlide } from './slide.type'
 
 export enum PresentationStatuses {
-  STARTED = "started",
-  STOPPED = "stopped",
-  PAUSED = "paused",
+  STARTED = 'started',
+  STOPPED = 'stopped',
+  PAUSED = 'paused',
 }
 
 export type EventSessionContextType = {
