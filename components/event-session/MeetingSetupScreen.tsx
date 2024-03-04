@@ -18,11 +18,13 @@ import { useParams } from 'next/navigation'
 
 import { Loading } from '../common/Loading'
 
-import { EventSessionContext } from '@/contexts/EventSessionContext'
+import EventSessionContext from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
+import { useProfile } from '@/hooks/useProfile'
 import { EventSessionContextType } from '@/types/event-session.type'
 
 export function MeetingSetupScreen() {
+  const { data: profile } = useProfile()
   const { eventId } = useParams()
   const { event } = useEvent({
     id: eventId as string,
@@ -51,13 +53,17 @@ export function MeetingSetupScreen() {
     []
   )
 
+  useEffect(() => {
+    setName(`${profile?.first_name} ${profile?.last_name}`)
+  }, [profile])
+
   const self = useDyteSelector((states) => states.self)
 
   useEffect(() => {
     if (!meeting) return
     const preset = meeting.self.presetName
-    const { name: selfName } = meeting.self
-    setName(selfName)
+    // const name = meeting.self.name
+    // setName(name)
 
     if (preset.includes('host')) {
       setIsHost(true)
