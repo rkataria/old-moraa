@@ -33,4 +33,8 @@ export type EventSessionContextType = {
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
   joinMeeting?: () => void
+  syncing: boolean
+  reorderSlide: (result: any) => void
+  moveUpSlide: (id: string) => void
+  moveDownSlide: (id: string) => void
 }

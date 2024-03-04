@@ -7,6 +7,7 @@ import {
 import { ISlide } from "@/types/slide.type"
 import { useEvent } from "@/hooks/useEvent"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { OnDragEndResponder } from "react-beautiful-dnd"
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -47,6 +48,7 @@ export const EventSessionProvider = ({
   const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
   const metaData = useRef<Object>({})
+  const [syncing, setSyncing] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -362,6 +364,86 @@ export const EventSessionProvider = ({
     await addParticipant(newSession)
   }
 
+  const updateSlideIds = async (ids: string[]) => {
+    if (!meeting?.id) {
+      console.warn("meeting.id is missing")
+    }
+
+    const { data, error } = await supabase
+      .from("meeting")
+      .update({ slides: ids })
+      .eq("id", meeting?.id)
+    if (error) {
+      console.error("error while updating slide ids on meeting,error: ", error)
+      return
+    }
+  }
+
+  const moveUpSlide = (id: string) => {
+    const index = slides.findIndex((slide) => slide.id === id)
+    const slideIds = slides.map((i) => i.id)
+
+    if (index === 0) return
+
+    const newSlides = [...slides]
+    const temp = newSlides[index - 1]
+    newSlides[index - 1] = newSlides[index]
+    newSlides[index] = temp
+
+    setSlides(newSlides)
+
+    // Reorder the slideIds
+    const idIndex = slideIds.findIndex((i) => i === id)
+    if (idIndex === 0) return
+    const newIds = [...slideIds]
+    const tempId = newIds[index - 1]
+    newIds[index - 1] = newIds[index]
+    newIds[index] = tempId
+    updateSlideIds(newIds)
+  }
+
+  const moveDownSlide = (id: string) => {
+    const index = slides.findIndex((slide) => slide.id === id)
+    const slideIds = slides.map((i) => i.id)
+
+    if (index === slides.length - 1) return
+
+    const newSlides = [...slides]
+    const temp = newSlides[index + 1]
+    newSlides[index + 1] = newSlides[index]
+    newSlides[index] = temp
+
+    setSlides(newSlides)
+
+    // Reorder the slideIds
+    const idIndex = slideIds.findIndex((i) => i === id)
+    if (idIndex === 0) return
+    const newIds = [...slideIds]
+    const tempId = newIds[index + 1]
+    newIds[index + 1] = newIds[index]
+    newIds[index] = tempId
+    updateSlideIds(newIds)
+  }
+
+  const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
+    const result = list
+    const [removed] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
+
+    return result
+  }
+
+  const reorderSlide = async (result: OnDragEndResponder | any) => {
+    if (!result.destination) {
+      return
+    }
+    const items = reorder(slides, result.source.index, result.destination.index)
+    setSlides(items)
+    setSyncing(true)
+    await updateSlideIds(items.map((i) => i.id))
+    setSyncing(false)
+  }
+
   return (
     <EventSessionContext.Provider
       value={{
@@ -390,6 +472,10 @@ export const EventSessionProvider = ({
         addReflection,
         updateReflection,
         joinMeeting,
+        syncing,
+        reorderSlide,
+        moveUpSlide,
+        moveDownSlide,
       }}
     >
       {children}
