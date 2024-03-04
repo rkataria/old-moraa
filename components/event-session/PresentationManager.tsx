@@ -1,15 +1,18 @@
-import React, { useContext, useEffect, useState } from "react"
-import MiniSlideManager from "../event-content/MiniSlideManager"
-import PresentationSlide from "./PresentationSlide"
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
-import { ISlide } from "@/types/slide.type"
+import React, { useContext, useEffect, useState } from 'react'
 
-function PresentationManager() {
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+
+import { PresentationSlide } from './PresentationSlide'
+import { MiniSlideManager } from '../event-content/MiniSlideManager'
+
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { EventSessionContextType } from '@/types/event-session.type'
+import { ISlide } from '@/types/slide.type'
+
+export function PresentationManager() {
   const { meeting } = useDyteMeeting()
   const [isHost, setIsHost] = useState<boolean>(false)
-  const { slides, currentSlide, setCurrentSlide } = useContext(
+  const { slides, currentSlide } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -17,7 +20,7 @@ function PresentationManager() {
     if (!meeting) return
 
     const preset = meeting.self.presetName
-    if (preset.includes("host")) {
+    if (preset.includes('host')) {
       setIsHost(true)
     }
   }, [meeting])
@@ -25,7 +28,8 @@ function PresentationManager() {
   const handleChangeCurrentSlide = (slide: ISlide) => {
     if (!isHost) return
 
-    meeting?.participants.broadcastMessage("slide-changed", {
+    meeting?.participants.broadcastMessage('slide-changed', {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       slide: slide as any,
     })
   }
@@ -43,9 +47,8 @@ function PresentationManager() {
         currentSlide={currentSlide}
         setCurrentSlide={handleChangeCurrentSlide}
         onMiniModeChange={() => {}}
+        reorderSlide={() => {}}
       />
     </div>
   )
 }
-
-export default PresentationManager

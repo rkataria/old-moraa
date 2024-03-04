@@ -1,22 +1,23 @@
-import { createContext, useEffect, useRef, useState } from "react"
-import { useParams } from "next/navigation"
+import { createContext, useEffect, useRef, useState } from 'react'
+
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useParams } from 'next/navigation'
+
+import { useEvent } from '@/hooks/useEvent'
 import {
   EventSessionContextType,
   PresentationStatuses,
-} from "@/types/event-session.type"
-import { ISlide } from "@/types/slide.type"
-import { useEvent } from "@/hooks/useEvent"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+} from '@/types/event-session.type'
+import { ISlide } from '@/types/slide.type'
 
 interface EventSessionProviderProps {
   children: React.ReactNode
 }
 
-const EventSessionContext = createContext<EventSessionContextType | null>(null)
+export const EventSessionContext =
+  createContext<EventSessionContextType | null>(null)
 
-export const EventSessionProvider = ({
-  children,
-}: EventSessionProviderProps) => {
+export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventId } = useParams()
   const {
     event,
@@ -30,24 +31,26 @@ export const EventSessionProvider = ({
     fetchActiveSession: true,
   })
   const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string>("")
-  const [meetingToken, setMeetingToken] = useState<string>("")
+  const [error, setError] = useState<string>('')
+  const [meetingToken, setMeetingToken] = useState<string>('')
   const [isHost, setIsHost] = useState<boolean>(false)
   const [slides, setSlides] = useState<ISlide[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
   const [presentationStatus, setPresentationStatus] =
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
   const [currentSlideResponses, setCurrentSlideResponses] = useState<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any[] | null
   >(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [currentUser, setCurrentUser] = useState<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [enrollment, setEnrollment] = useState<any>(null)
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
-  const [editing, setEditing] = useState<boolean>(false)
-  const [activeStateSession, setActiveSession] = useState<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
-  const metaData = useRef<Object>({})
+  const metaData = useRef<object>({})
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -57,24 +60,26 @@ export const EventSessionProvider = ({
     }
 
     fetchCurrentUser()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     if (!activeSession || !meetingSlides?.slides) return
 
     const slide = meetingSlides?.slides?.find(
-      (s) => s.id === activeSession.data.currentSlideId
+      (s) => s.id === activeSession.data?.currentSlideId
     )
     setCurrentSlide(slide || slides[0])
     setPresentationStatus(
-      activeSession.data.presentationStatus || PresentationStatuses.STOPPED
+      activeSession.data?.presentationStatus || PresentationStatuses.STOPPED
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSession])
 
   useEffect(() => {
     if (!eventId) return
     const updateSession = async () => {
-      const { data, error } = await supabase.from("session").upsert({
+      await supabase.from('session').upsert({
         id: activeSession.id,
         data: { currentSlideId: currentSlide?.id, presentationStatus },
       })
@@ -82,56 +87,60 @@ export const EventSessionProvider = ({
     if (activeSession && activeSession.id) {
       updateSession()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSlide, presentationStatus, eventId])
 
   useEffect(() => {
     const getEnrollment = async () => {
       try {
-        const currentUser = await supabase.auth.getSession()
-        const { data, error } = await supabase
-          .from("enrollment")
-          .select("*")
-          .eq("event_id", eventId)
-          .eq("user_id", currentUser.data.session?.user.id)
+        const _currentUser = await supabase.auth.getSession()
+        const { data, error: _error } = await supabase
+          .from('enrollment')
+          .select('*')
+          .eq('event_id', eventId)
+          .eq('user_id', _currentUser.data.session?.user.id)
           .single()
 
-        if (error) {
-          console.error(error)
-          setError(error.message)
+        if (_error) {
+          console.error(_error)
+          setError(_error.message)
+
           return
         }
         setMeetingToken(data.meeting_token)
-        setIsHost(data?.event_role === "Host")
+        setIsHost(data?.event_role === 'Host')
         setEnrollment(data)
         setLoading(false)
-      } catch (error: any) {
-        console.error(error)
-        setError(error.message)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (_error: any) {
+        console.error(_error)
+        setError(_error.message)
       }
     }
     const getActiveSession = async () => {
-      const { data, error } = await supabase
-        .from("session")
-        .select("*")
-        .eq("meeting_id", meeting?.id)
-        .eq("status", "ACTIVE")
+      const { error: _error } = await supabase
+        .from('session')
+        .select('*')
+        .eq('meeting_id', meeting?.id)
+        .eq('status', 'ACTIVE')
         .single()
-      if (error) {
-        console.error(error)
-        setError(error.message)
-        return
+      if (_error) {
+        console.error(_error)
+        setError(_error.message)
       }
-      setActiveSession(data)
     }
     getEnrollment()
     getActiveSession()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting?.id])
 
   useEffect(() => {
     if (!meetingSlides?.slides) return
 
-    setSlides(meetingSlides.slides || [])
-    setCurrentSlide(meetingSlides.slides[0] ?? null)
+    const _slides = getSortedSlides() ?? []
+    setSlides(_slides || [])
+    setCurrentSlide(_slides[0] ?? null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meetingSlides])
 
   useEffect(() => {
@@ -141,14 +150,17 @@ export const EventSessionProvider = ({
 
     // Fetch current slide responses
     const fetchCurrentSlideResponses = async () => {
-      const { data, error } = await supabase
-        .from("slide_response")
-        .select("*")
-        .eq("slide_id", currentSlide.id)
+      const { data, error: _error } = await supabase
+        .from('slide_response')
+        .select(
+          '* , participant:participant_id(*, enrollment:enrollment_id(*))'
+        )
+        .eq('slide_id', currentSlide.id)
 
-      if (error) {
-        console.error(error)
+      if (_error) {
+        console.error(_error)
         setCurrentSlideLoading(false)
+
         return
       }
 
@@ -159,42 +171,42 @@ export const EventSessionProvider = ({
     fetchCurrentSlideResponses()
 
     const channels = supabase
-      .channel("slide-response-channel")
+      .channel('slide-response-channel')
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "slide_response",
+          event: '*',
+          schema: 'public',
+          table: 'slide_response',
           filter: `slide_id=eq.${currentSlide.id}`,
         },
         (payload) => {
-          if (payload.eventType === "INSERT") {
-            setCurrentSlideResponses((res: any) => [
-              ...(res ?? []),
-              payload.new,
-            ])
-          }
-          if (payload.eventType === "UPDATE") {
-            setCurrentSlideResponses((res: any) => {
-              // Update the response in the array if it exists
-              const updatedResponses = res.map((existingResponse: any) =>
-                existingResponse.id === payload.new.id
-                  ? payload.new
-                  : existingResponse
-              )
-
-              return updatedResponses
-            })
+          if (['INSERT', 'UPDATE'].includes(payload.eventType)) {
+            fetchCurrentSlideResponses()
           }
         }
       )
       .subscribe()
 
+    // eslint-disable-next-line consistent-return
     return () => {
       channels.unsubscribe()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSlide])
+
+  const getSortedSlides = () => {
+    const idIndexMap: { [id: string]: number } = {}
+    meeting?.slides?.forEach((id: string, index: number) => {
+      idIndexMap[id] = index
+    })
+
+    // Custom sorting function
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const customSort = (a: any, b: any) => idIndexMap[a.id] - idIndexMap[b.id]
+
+    return meetingSlides?.slides?.slice().sort(customSort)
+  }
 
   const nextSlide = () => {
     if (!isHost) return
@@ -222,14 +234,6 @@ export const EventSessionProvider = ({
     setCurrentSlide(newSlide)
   }
 
-  const enableEditing = () => {
-    setEditing(true)
-  }
-
-  const disableEditing = () => {
-    setEditing(false)
-  }
-
   const startPresentation = () => {
     setPresentationStatus(PresentationStatuses.STARTED)
   }
@@ -244,27 +248,23 @@ export const EventSessionProvider = ({
 
   const votePoll = async (slide: ISlide, option: string) => {
     try {
-      const currentUser = await supabase.auth.getSession()
-
-      const { data, error } = await supabase
-        .from("slide_response")
+      const slideResponse = await supabase
+        .from('slide_response')
         .upsert({
-          slide,
           response: { selected_option: option },
           slide_id: slide.id,
-          event_id: event.id,
           participant_id: participant.id,
         })
-        .eq("slide_id", slide.id)
-        .eq("participant_id", participant.id)
+        .eq('slide_id', slide.id)
+        .eq('participant_id', participant.id)
         .select()
 
-      if (error) {
-        console.error(error)
-        return
+      if (slideResponse.error) {
+        console.error(slideResponse.error)
       }
-    } catch (error: any) {
-      console.error(error)
+      // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-explicit-any
+    } catch (_error: any) {
+      console.error(_error)
     }
   }
   const addReflection = async (
@@ -273,31 +273,26 @@ export const EventSessionProvider = ({
     username: string
   ) => {
     try {
-      const currentUser = await supabase.auth.getSession()
-
-      const { data, error } = await supabase
-        .from("slide_response")
+      const slideResponse = await supabase
+        .from('slide_response')
         .upsert({
-          slide,
           response: {
-            reflection: reflection,
-            username: username,
+            reflection,
+            username,
           },
           slide_id: slide.id,
-          event_id: event.id,
-          profile_id: currentUser.data.session?.user.id,
+          participant_id: participant.id,
         })
-        .eq("slide_id", slide.id)
-        .eq("event_id", event.id)
-        .eq("profile_id", currentUser.data.session?.user.id)
+        .eq('slide_id', slide.id)
+        .eq('participant_id', participant.id)
         .select()
 
-      if (error) {
-        console.error(error)
-        return
+      if (slideResponse.error) {
+        console.error(slideResponse.error)
       }
-    } catch (error: any) {
-      console.error(error)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (_error: any) {
+      console.error(_error)
     }
   }
   const updateReflection = async (
@@ -306,43 +301,20 @@ export const EventSessionProvider = ({
     username: string
   ) => {
     try {
-      const { error } = await supabase.from("slide_response").upsert({
-        id: id,
+      const slideResponse = await supabase.from('slide_response').upsert({
+        id,
         response: {
-          reflection: reflection,
-          username: username,
+          reflection,
+          username,
         },
       })
 
-      if (error) {
-        console.error(error)
-        return
+      if (slideResponse.error) {
+        console.error(slideResponse.error)
       }
-    } catch (error: any) {
-      console.error(error)
-    }
-  }
-
-  const updateSlide = async (slide: ISlide) => {
-    try {
-      const { data, error } = await supabase
-        .from("event_content")
-        .upsert({
-          id: event.id,
-          slides: slides.map((s) => (s.id === slide.id ? slide : s)),
-        })
-        .eq("id", event.id)
-        .select("*")
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      setSlides(data[0].slides)
-      setCurrentSlide(data[0].slides.find((s: ISlide) => s.id === slide.id))
-    } catch (error: any) {
-      console.error(error)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (_error: any) {
+      console.error(_error)
     }
   }
 
@@ -350,9 +322,10 @@ export const EventSessionProvider = ({
     await refetchMeetingSlides()
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addParticipant = async (session?: any) => {
-    const { data: participant, error: createParticipantError } = await supabase
-      .from("participant")
+    const { data: _participant, error: createParticipantError } = await supabase
+      .from('participant')
       .insert([
         {
           session_id: session?.id ?? activeSession.id,
@@ -363,10 +336,11 @@ export const EventSessionProvider = ({
       .single()
 
     if (createParticipantError) {
-      console.error("failed to create participant:", createParticipantError)
+      console.error('failed to create participant:', createParticipantError)
+
       return
     }
-    setParticipant(participant)
+    setParticipant(_participant)
   }
 
   const joinMeeting = async () => {
@@ -374,33 +348,34 @@ export const EventSessionProvider = ({
     // create a new session if host joins and expire others
     if (isHost) {
       // expire other sessions
-      const { data, error } = await supabase
-        .from("session")
-        .update({ status: "EXPIRED" })
-        .eq("meeting_id", meeting?.id)
+      const { error: sessionError } = await supabase
+        .from('session')
+        .update({ status: 'EXPIRED' })
+        .eq('meeting_id', meeting?.id)
 
-      if (error) {
-        console.error("failed to expire sessions, error: ", error)
+      if (sessionError) {
+        console.error('failed to expire sessions, error: ', sessionError)
       }
 
       // create new session in active state
       const { data: session, error: createSessionError } = await supabase
-        .from("session")
-        .insert([{ meeting_id: meeting?.id, status: "ACTIVE" }])
+        .from('session')
+        .insert([{ meeting_id: meeting?.id, status: 'ACTIVE' }])
         .select()
         .single()
       if (createSessionError) {
-        console.error("failed to create session, error: ", createSessionError)
+        console.error('failed to create session, error: ', createSessionError)
+
         return
       }
       newSession = session
-      setActiveSession(newSession)
     }
     await addParticipant(newSession)
   }
 
   return (
     <EventSessionContext.Provider
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         event,
         loading,
@@ -413,12 +388,9 @@ export const EventSessionProvider = ({
         currentSlideResponses,
         currentSlideLoading,
         currentUser,
-        editing,
         metaData,
+        participant,
         syncSlides,
-        updateSlide,
-        enableEditing,
-        disableEditing,
         startPresentation,
         stopPresentation,
         pausePresentation,
@@ -430,11 +402,8 @@ export const EventSessionProvider = ({
         addReflection,
         updateReflection,
         joinMeeting,
-      }}
-    >
+      }}>
       {children}
     </EventSessionContext.Provider>
   )
 }
-
-export default EventSessionContext

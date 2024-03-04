@@ -1,6 +1,7 @@
-"use client"
-import { useContext, useEffect, useState } from "react"
-import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
+'use client'
+
+import { useContext, useEffect, useState } from 'react'
+
 import {
   DyteAudioVisualizer,
   DyteAvatar,
@@ -10,21 +11,26 @@ import {
   DyteParticipantTile,
   DyteSettings,
   DyteSettingsToggle,
-} from "@dytesdk/react-ui-kit"
-import { useEvent } from "@/hooks/useEvent"
-import { useParams } from "next/navigation"
-import Loading from "../common/Loading"
-import { IconX } from "@tabler/icons-react"
-import EventSessionContext from "@/contexts/EventSessionContext"
-import { EventSessionContextType } from "@/types/event-session.type"
+} from '@dytesdk/react-ui-kit'
+import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { IconX } from '@tabler/icons-react'
+import { useParams } from 'next/navigation'
 
-const MeetingSetupScreen = () => {
+import { Loading } from '../common/Loading'
+
+import EventSessionContext from '@/contexts/EventSessionContext'
+import { useEvent } from '@/hooks/useEvent'
+import { useProfile } from '@/hooks/useProfile'
+import { EventSessionContextType } from '@/types/event-session.type'
+
+export function MeetingSetupScreen() {
+  const { data: profile } = useProfile()
   const { eventId } = useParams()
   const { event } = useEvent({
     id: eventId as string,
   })
   const { meeting } = useDyteMeeting()
-  const [name, setName] = useState<string>("")
+  const [name, setName] = useState<string>('')
   const [isHost, setIsHost] = useState<boolean>(false)
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false)
   const { joinMeeting } = useContext(
@@ -40,21 +46,26 @@ const MeetingSetupScreen = () => {
   }
 
   // Close the modal when the component is unmounted
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       setSettingsModalOpen(false)
-    }
-  }, [])
+    },
+    []
+  )
+
+  useEffect(() => {
+    setName(`${profile?.first_name} ${profile?.last_name}`)
+  }, [profile])
 
   const self = useDyteSelector((states) => states.self)
 
   useEffect(() => {
     if (!meeting) return
     const preset = meeting.self.presetName
-    const name = meeting.self.name
-    setName(name)
+    // const name = meeting.self.name
+    // setName(name)
 
-    if (preset.includes("host")) {
+    if (preset.includes('host')) {
       setIsHost(true)
     }
   }, [meeting])
@@ -109,7 +120,8 @@ const MeetingSetupScreen = () => {
               <div className="bg-white p-4 rounded-md">
                 <div className="flex justify-end">
                   {/* Close icon in the top-right corner */}
-                  <button onClick={handleCloseSettingsModal}>
+                  {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+                  <button type="button" onClick={handleCloseSettingsModal}>
                     <IconX className="w-6 h-6 text-black" />
                   </button>
                 </div>
@@ -123,8 +135,8 @@ const MeetingSetupScreen = () => {
             <h2 className="mt-2 font-semibold">Welcome {name}!</h2>
             <p className="mt-2 text-purple-500">
               {isHost
-                ? "You are joining as Host"
-                : "You are joining as Learner"}
+                ? 'You are joining as Host'
+                : 'You are joining as Learner'}
             </p>
             <input
               disabled={!meeting.self.permissions.canEditDisplayName ?? false}
@@ -135,9 +147,9 @@ const MeetingSetupScreen = () => {
               }}
             />
             <button
+              type="button"
               className="mt-2 outline-none p-2 rounded font-normal border-2 border-purple-500 bg-purple-500 text-white"
-              onClick={handleJoinMeeting}
-            >
+              onClick={handleJoinMeeting}>
               Join Meeting
             </button>
           </div>
@@ -146,5 +158,3 @@ const MeetingSetupScreen = () => {
     </div>
   )
 }
-
-export default MeetingSetupScreen

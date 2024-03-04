@@ -1,10 +1,8 @@
-"use client"
+'use client'
 
-import React, { useContext } from "react"
-import { useParams } from "next/navigation"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
+import React, { useContext } from 'react'
+
 import {
-  DyteBreakoutRoomsToggle,
   DyteCameraToggle,
   DyteChatToggle,
   DyteClock,
@@ -12,30 +10,32 @@ import {
   DyteMicToggle,
   DyteParticipantsToggle,
   DytePluginsToggle,
-  DytePollsToggle,
   DyteScreenShareToggle,
-} from "@dytesdk/react-ui-kit"
+} from '@dytesdk/react-ui-kit'
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { IconDots, IconMenu } from '@tabler/icons-react'
+import { useParams } from 'next/navigation'
 
-import { useEvent } from "@/hooks/useEvent"
-import PresentationControls from "./PresentationControls"
-import ControlButton from "./ControlButton"
-import EventSessionContext from "@/contexts/EventSessionContext"
+import { Button } from '@nextui-org/react'
+
+import { ControlButton } from './ControlButton'
+import { PresentationControls } from './PresentationControls'
+
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useEvent } from '@/hooks/useEvent'
 import {
   EventSessionContextType,
   PresentationStatuses,
-} from "@/types/event-session.type"
-import { IconDots, IconMenu } from "@tabler/icons-react"
-import { Button } from "../ui/button"
+} from '@/types/event-session.type'
 
 type HeaderProps = {
-  states: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setState: any
   toggleSlidesSidebarVisiblity: () => void
   toggleSettingsModal: () => void
 }
 
-function Header({
-  states,
+export function Header({
   setState,
   toggleSlidesSidebarVisiblity,
   toggleSettingsModal,
@@ -62,14 +62,12 @@ function Header({
       <div className="p-4 flex justify-end items-center gap-2">
         <DyteMicToggle meeting={meeting} size="sm" />
         <DyteCameraToggle meeting={meeting} size="sm" />
-        <DyteScreenShareToggle meeting={meeting} size="sm" />
-        {isHost && <DyteBreakoutRoomsToggle meeting={meeting} size="sm" />}
+        {isHost && <DyteScreenShareToggle meeting={meeting} size="sm" />}
 
         <PresentationControls />
         <Button
           className="p-4 bg-inherit hover:bg-gray-800 bg-opacity-20"
-          onClick={toggleSettingsModal}
-        >
+          onClick={toggleSettingsModal}>
           <IconDots className="text-white w-6 h-6" />
         </Button>
         <DyteLeaveButton
@@ -84,11 +82,8 @@ function Header({
       <div className="p-4 flex justify-start items-center gap-6">
         <DyteParticipantsToggle meeting={meeting} size="sm" />
         <DyteChatToggle meeting={meeting} size="sm" />
-        <DytePollsToggle meeting={meeting} size="sm" />
         {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
       </div>
     </div>
   )
 }
-
-export default Header

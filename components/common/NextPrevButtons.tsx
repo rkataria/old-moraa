@@ -1,6 +1,8 @@
-import { useHotkeys } from "@/hooks/useHotkeys"
-import { Button } from "@chakra-ui/react"
-import React from "react"
+import React from 'react'
+
+import { Button } from '@nextui-org/react'
+
+import { useHotkeys } from '@/hooks/useHotkeys'
 
 type NextPrevButtonsProps = {
   onPrevious: () => void
@@ -15,33 +17,29 @@ export function NextPrevButtons({
   nextDisabled,
   prevDisabled,
 }: NextPrevButtonsProps) {
-  useHotkeys("ArrowLeft", () => {
+  useHotkeys('ArrowLeft', () => {
     if (!prevDisabled) onPrevious()
   })
-  useHotkeys("ArrowRight", () => {
+  useHotkeys('ArrowRight', () => {
     if (!nextDisabled) onNext()
   })
 
   return (
     <div className="flex justify-center items-center m-2">
       <Button
-        variant="outline"
+        variant="bordered"
         onClick={!prevDisabled ? onPrevious : undefined}
         disabled={prevDisabled}
-        colorScheme="secondary"
         className="mx-2"
-        size="sm"
-      >
+        size="sm">
         Prev
       </Button>
       <Button
-        variant="outline"
+        variant="bordered"
         onClick={!nextDisabled ? onNext : undefined}
         disabled={nextDisabled}
-        colorScheme="secondary"
         className="mx-2"
-        size="sm"
-      >
+        size="sm">
         Next
       </Button>
     </div>

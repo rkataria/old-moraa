@@ -1,8 +1,8 @@
-import { useAuth } from "./useAuth"
-import { useQuery } from "@tanstack/react-query"
-import { EventService } from "@/services/event.service"
-import { IMeetingSlidesPayload } from "@/types/event.type"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { useQuery } from '@tanstack/react-query'
+
+import { useAuth } from './useAuth'
+
+import { EventService } from '@/services/event.service'
 
 export const useEvent = ({
   id,
@@ -13,11 +13,10 @@ export const useEvent = ({
   fetchMeetingSlides?: boolean
   fetchActiveSession?: boolean
 }) => {
-  const supabase = createClientComponentClient()
   const { currentUser, isLoading: isUserLoading } = useAuth()
 
-  const { data, error, isFetching, isLoading, isError, refetch } = useQuery({
-    queryKey: ["event", id, fetchMeetingSlides],
+  const eventQuery = useQuery({
+    queryKey: ['event', id, fetchMeetingSlides],
     queryFn: () =>
       EventService.getEvent({
         eventId: id,
@@ -28,14 +27,15 @@ export const useEvent = ({
   })
 
   return {
-    event: data?.event,
-    meeting: data?.meeting,
-    meetingSlides: data?.meetingSlides,
-    activeSession: data?.session,
-    isLoading: isLoading || isUserLoading,
-    isFetching: isFetching,
-    error,
-    isError,
-    refetch,
+    event: eventQuery.data?.event,
+    meeting: eventQuery.data?.meeting,
+    participants: eventQuery.data?.participants,
+    meetingSlides: eventQuery.data?.meetingSlides,
+    activeSession: eventQuery.data?.session,
+    isLoading: eventQuery.isLoading || isUserLoading,
+    isFetching: eventQuery.isFetching,
+    error: eventQuery.error,
+    isError: eventQuery.isError,
+    refetch: eventQuery.refetch,
   }
 }

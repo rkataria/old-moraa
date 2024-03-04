@@ -1,27 +1,31 @@
-import EventSessionContext from "@/contexts/EventSessionContext"
-import dynamic from "next/dynamic"
-import { useAuth } from "@/hooks/useAuth"
+import React, { useContext } from 'react'
+
+import dynamic from 'next/dynamic'
+
+import { Cover } from './content-types/Cover'
+import { GoogleSlides } from './content-types/GoogleSlides'
+import { Poll } from './content-types/Poll'
+import { Reflection } from './content-types/Reflection'
+import { VideoEmbed } from './content-types/VideoEmbed'
+import { SlideLoading } from './SlideLoading'
+import { ContentType } from '../event-content/ContentTypePicker'
+
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useAuth } from '@/hooks/useAuth'
 import {
   EventSessionContextType,
   PresentationStatuses,
-} from "@/types/event-session.type"
-import React, { useContext } from "react"
-import { ContentType } from "../event-content/ContentTypePicker"
-import Cover from "./content-types/Cover"
-import Poll from "./content-types/Poll"
-import { checkVoted } from "@/utils/content.util"
-import SlideLoading from "./SlideLoading"
-import GoogleSlides from "../event-session/content-types/GoogleSlides"
-import Reflection from "./content-types/Reflection"
+} from '@/types/event-session.type'
+import { checkVoted } from '@/utils/content.util'
 
 const PDFViewer = dynamic(
-  () => import("./content-types/PDFViewer").then((mod) => mod.PDFViewer),
+  () => import('./content-types/PDFViewer').then((mod) => mod.PDFViewer),
   {
     ssr: false,
   }
 )
 
-function Slide() {
+export function Slide() {
   const {
     presentationStatus,
     currentSlide,
@@ -77,8 +81,9 @@ function Slide() {
       />
     )
   }
+  if (currentSlide.type === ContentType.VIDEO_EMBED) {
+    return <VideoEmbed key={currentSlide.id} slide={currentSlide} />
+  }
 
   return null
 }
-
-export default Slide

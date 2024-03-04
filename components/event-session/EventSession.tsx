@@ -1,17 +1,19 @@
-import { useEffect, useRef, useState } from "react"
-import { DyteProvider, useDyteClient } from "@dytesdk/react-web-core"
+import { useEffect, useRef, useState } from 'react'
 
-import Loading from "@/components/common/Loading"
-import MeetingSetupScreen from "@/components/event-session/MeetingSetupScreen"
-import { EventSessionProvider } from "@/contexts/EventSessionContext"
-import MeetingScreen from "@/components/event-session/MeetingScreen"
-import { useRouter } from "next/navigation"
+import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
+import { useRouter } from 'next/navigation'
+
+import { Loading } from '@/components/common/Loading'
+import { MeetingScreen } from '@/components/event-session/MeetingScreen'
+import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScreen'
+import { EventSessionProvider } from '@/contexts/EventSessionContext'
 
 export type EventSessionProps = {
   meetingToken: string
 }
 
-function EventSession({ meetingToken }: EventSessionProps) {
+export function EventSession({ meetingToken }: EventSessionProps) {
+  const router = useRouter()
   const meetingEl = useRef<HTMLDivElement>(null)
   const [meeting, initMeeting] = useDyteClient()
   const [roomJoined, setRoomJoined] = useState<boolean>(false)
@@ -24,6 +26,7 @@ function EventSession({ meetingToken }: EventSessionProps) {
         video: true,
       },
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -34,20 +37,20 @@ function EventSession({ meetingToken }: EventSessionProps) {
     }
     const roomLeftListener = () => {
       setRoomJoined(false)
-      console.log("room left")
+      // eslint-disable-next-line no-console
+      console.log('room left')
+      router.push('/events')
     }
-    meeting.self.on("roomJoined", roomJoinedListener)
-    meeting.self.on("roomLeft", roomLeftListener)
+    meeting.self.on('roomJoined', roomJoinedListener)
+    meeting.self.on('roomLeft', roomLeftListener)
 
+    // eslint-disable-next-line consistent-return
     return () => {
-      meeting.self.removeListener("roomJoined", roomJoinedListener)
-      meeting.self.removeListener("roomLeft", roomLeftListener)
+      meeting.self.removeListener('roomJoined', roomJoinedListener)
+      meeting.self.removeListener('roomLeft', roomLeftListener)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting])
-
-  useEffect(() => {
-    if (!meetingEl.current) return
-  }, [])
 
   const renderComponents = () => {
     if (roomJoined) {
@@ -66,13 +69,10 @@ function EventSession({ meetingToken }: EventSessionProps) {
             <div className="h-screen flex justify-center items-center">
               <Loading />
             </div>
-          }
-        >
+          }>
           <>{renderComponents()}</>
         </DyteProvider>
       </div>
     </EventSessionProvider>
   )
 }
-
-export default EventSession

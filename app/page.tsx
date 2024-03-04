@@ -1,4 +1,7 @@
-import AuthButton from "@/components/auth/AuthButton"
+'use client'
+
+import { AuthButton } from '@/components/auth/AuthButton'
+import { NamesForm } from '@/components/auth/NamesForm'
 
 export default async function HomePage() {
   return (
@@ -12,6 +15,7 @@ export default async function HomePage() {
         interactive and results are awesome! 😍
       </p>
       <AuthButton />
+      <NamesForm />
     </main>
   )
 }

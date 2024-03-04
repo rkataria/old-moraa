@@ -1,6 +1,9 @@
-import { cn } from "@/utils/utils"
-import { Grip, LucideIcon } from "lucide-react"
-import React, { useState } from "react"
+/* eslint-disable jsx-a11y/no-redundant-roles */
+import React, { useState } from 'react'
+
+import { Grip, LucideIcon } from 'lucide-react'
+
+import { cn } from '@/utils/utils'
 
 type TNavigation = {
   name: string
@@ -9,15 +12,16 @@ type TNavigation = {
   current: boolean
 }
 
-export const SidebarItem = () => {
+export function SidebarItem() {
   const [navigation] = useState<TNavigation[]>([
     {
-      name: "Events",
-      href: "/events",
+      name: 'Events',
+      href: '/events',
       icon: Grip,
       current: true,
     },
   ])
+
   return (
     <nav className="flex flex-1 flex-col">
       <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -28,19 +32,18 @@ export const SidebarItem = () => {
                 <a
                   href={item.href}
                   className={cn(
-                    "dark:bg-gray-900 dark:text-white",
+                    'dark:bg-gray-900 dark:text-white',
                     item.current
-                      ? "bg-primarylight text-white"
-                      : "text-indigo-200 hover:text-white hover:bg-indigo-700",
-                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                  )}
-                >
+                      ? 'bg-primarylight text-white'
+                      : 'text-indigo-200 hover:text-white hover:bg-indigo-700',
+                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                  )}>
                   <item.icon
                     className={cn(
                       item.current
-                        ? "text-white"
-                        : "text-indigo-200 group-hover:text-white",
-                      "h-6 w-6 shrink-0"
+                        ? 'text-white'
+                        : 'text-indigo-200 group-hover:text-white',
+                      'h-6 w-6 shrink-0'
                     )}
                     aria-hidden="true"
                   />

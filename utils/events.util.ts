@@ -1,6 +1,7 @@
+/* eslint-disable max-classes-per-file */
 export enum SlideEventManagerType {
-  OnRight = "OnRight",
-  OnLeft = "OnLeft",
+  OnRight = 'OnRight',
+  OnLeft = 'OnLeft',
 }
 
 class SlideEventTarget extends EventTarget {}
