@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 interface IParticipant {
   name?: string
   email: string
@@ -6,12 +7,12 @@ interface IParticipant {
 
 const participants: IParticipant[] = [
   {
-    email: "lindsay.walton@example.com",
-    role: "Member",
+    email: 'lindsay.walton@example.com',
+    role: 'Member',
   },
 ]
 
-export default function Participants() {
+export function Participants() {
   return (
     <div className="">
       <div className="sm:flex sm:items-center">
@@ -26,8 +27,7 @@ export default function Participants() {
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
             type="button"
-            className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
+            className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             Add Participant
           </button>
         </div>
@@ -40,20 +40,17 @@ export default function Participants() {
                 <tr>
                   <th
                     scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-                  >
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
                     Name
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     Email
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     Role
                   </th>
                   <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -65,7 +62,7 @@ export default function Participants() {
                 {participants.map((participant) => (
                   <tr key={participant.email}>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                      {participant?.name || "Unknown"}
+                      {participant?.name || 'Unknown'}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {participant.email}
@@ -76,8 +73,7 @@ export default function Participants() {
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                       <a
                         href="#"
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
+                        className="text-indigo-600 hover:text-indigo-900">
                         Remove
                         <span className="sr-only">, {participant.email}</span>
                       </a>

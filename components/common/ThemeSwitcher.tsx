@@ -1,17 +1,19 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { useTheme } from "next-themes"
-import { IconMoon, IconSun } from "@tabler/icons-react"
+import * as React from 'react'
 
-import { cn } from "@/utils/utils"
+import { IconMoon, IconSun } from '@tabler/icons-react'
+import { useTheme } from 'next-themes'
+
 import {
   Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/react"
+} from '@nextui-org/react'
+
+import { cn } from '@/utils/utils'
 
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme()
@@ -27,21 +29,18 @@ export function ThemeSwitcher() {
       </DropdownTrigger>
       <DropdownMenu>
         <DropdownItem
-          className={cn({ "font-bold": theme === "light" })}
-          onClick={() => setTheme("light")}
-        >
+          className={cn({ 'font-bold': theme === 'light' })}
+          onClick={() => setTheme('light')}>
           Light
         </DropdownItem>
         <DropdownItem
-          className={cn({ "font-bold": theme === "dark" })}
-          onClick={() => setTheme("dark")}
-        >
+          className={cn({ 'font-bold': theme === 'dark' })}
+          onClick={() => setTheme('dark')}>
           Dark
         </DropdownItem>
         <DropdownItem
-          className={cn({ "font-bold": theme === "system" })}
-          onClick={() => setTheme("system")}
-        >
+          className={cn({ 'font-bold': theme === 'system' })}
+          onClick={() => setTheme('system')}>
           System
         </DropdownItem>
       </DropdownMenu>

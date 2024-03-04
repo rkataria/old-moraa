@@ -1,8 +1,10 @@
-"use client"
-import React, { useEffect, useState } from "react"
-import { ISlide } from "@/types/slide.type"
-import { useDyteMeeting } from "@dytesdk/react-web-core"
-import { IconPencil } from "@tabler/icons-react"
+'use client'
+
+import React, { useEffect, useState } from 'react'
+
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { IconPencil } from '@tabler/icons-react'
+
 import {
   Avatar,
   Button,
@@ -11,19 +13,23 @@ import {
   CardFooter,
   CardHeader,
   Textarea,
-} from "@nextui-org/react"
+} from '@nextui-org/react'
+
+import { ISlide } from '@/types/slide.type'
 
 interface ReflectionProps {
   slide: ISlide
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responses?: any
   responded?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any
   isHost: boolean
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
 }
 
-const ReflectionCard = ({
+export function ReflectionCard({
   username,
   reflection,
   isOwner,
@@ -33,32 +39,33 @@ const ReflectionCard = ({
   reflection: string
   isOwner: boolean
   enableEditReflection?: () => void
-}) => (
-  <Card>
-    <CardHeader>
-      <div className="flex justify-start items-center gap-2">
-        <Avatar
-          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`}
-        />
-        <span className="semibold">{username}</span>
-      </div>
-    </CardHeader>
-    <CardBody>
-      <p className="text-gray-600">{reflection}</p>
-      {isOwner && (
-        <Button
-          onClick={enableEditReflection}
-          className="text-gray-600 hover:text-gray-800"
-        >
-          <IconPencil className="w-3 h-3" />
-          <span>Edit</span>
-        </Button>
-      )}
-    </CardBody>
-  </Card>
-)
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex justify-start items-center gap-2">
+          <Avatar
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`}
+          />
+          <span className="semibold">{username}</span>
+        </div>
+      </CardHeader>
+      <CardBody>
+        <p className="text-gray-600">{reflection}</p>
+        {isOwner && (
+          <Button
+            onClick={enableEditReflection}
+            className="text-gray-600 hover:text-gray-800">
+            <IconPencil className="w-3 h-3" />
+            <span>Edit</span>
+          </Button>
+        )}
+      </CardBody>
+    </Card>
+  )
+}
 
-function Reflection({
+export function Reflection({
   slide,
   responses = [],
   responded,
@@ -67,16 +74,18 @@ function Reflection({
   addReflection,
   updateReflection,
 }: ReflectionProps) {
-  const [reflection, setReflection] = useState("")
+  const [reflection, setReflection] = useState('')
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
   const { meeting } = useDyteMeeting()
 
   const username = meeting.self.name
   const selfResponse = responses.find(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (res: any) => res.participant.enrollment.user_id === user.id
   )
 
   const otherResponses = responses.filter(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (res: any) => res.participant.enrollment.user_id !== user.id
   )
 
@@ -84,6 +93,7 @@ function Reflection({
     if (responded) {
       setReflection(selfResponse.response.reflection)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -91,16 +101,14 @@ function Reflection({
       className="w-full min-h-full flex justify-center items-start"
       style={{
         backgroundColor: slide.content.backgroundColor,
-      }}
-    >
+      }}>
       <div className="w-4/5 mt-2 rounded-md relative">
         <div className="p-4">
           <h2
             className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
             style={{
               color: slide.content.textColor,
-            }}
-          >
+            }}>
             {slide.content.title}
           </h2>
 
@@ -121,23 +129,25 @@ function Reflection({
                     placeholder="Enter your reflection here."
                     value={reflection}
                     onChange={(e) => setReflection(e.target.value)}
-                  ></Textarea>
+                  />
                 </CardBody>
                 <CardFooter>
                   <div className="flex justify-start items-center gap-2">
                     <Button
+                      type="button"
                       size="sm"
                       onClick={() => {
-                        !responded
-                          ? addReflection?.(slide, reflection, username)
-                          : updateReflection?.(
-                              selfResponse.id,
-                              reflection,
-                              username
-                            )
+                        if (responded) {
+                          addReflection?.(slide, reflection, username)
+                        } else {
+                          updateReflection?.(
+                            selfResponse.id,
+                            reflection,
+                            username
+                          )
+                        }
                         setEditEnabled(false)
-                      }}
-                    >
+                      }}>
                       submit
                     </Button>
                     {editEnabled && (
@@ -151,21 +161,16 @@ function Reflection({
             )}
             {responded && !editEnabled && (
               <ReflectionCard
-                username={username + " (you)"}
+                username={`${username} (you)`}
                 reflection={reflection}
-                isOwner={true}
+                isOwner
                 enableEditReflection={() => {
                   setEditEnabled((v) => !v)
                 }}
               />
             )}
             {otherResponses?.map(
-              (
-                res: {
-                  response: { username: string; reflection: string }
-                },
-                index: number
-              ) => (
+              (res: { response: { username: string; reflection: string } }) => (
                 <ReflectionCard
                   username={res.response.username}
                   reflection={res.response.reflection}
@@ -179,5 +184,3 @@ function Reflection({
     </div>
   )
 }
-
-export default Reflection

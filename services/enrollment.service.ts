@@ -1,4 +1,4 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 const supabase = createClientComponentClient()
 
@@ -10,10 +10,10 @@ const getEnrollment = async ({
   userId: string
 }) => {
   const { data } = await supabase
-    .from("enrollment")
-    .select("*")
-    .eq("event_id", eventId)
-    .eq("user_id", userId)
+    .from('enrollment')
+    .select('*')
+    .eq('event_id', eventId)
+    .eq('user_id', userId)
 
   return data?.[0]
 }

@@ -1,8 +1,13 @@
-"use client"
+/* eslint-disable jsx-a11y/label-has-associated-control */
 
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+'use client'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+
 import {
   Modal,
   ModalContent,
@@ -10,38 +15,36 @@ import {
   ModalBody,
   Input,
   Textarea,
-} from "@nextui-org/react"
+  Button,
+} from '@nextui-org/react'
 
-import { useRouter } from "next/navigation"
-import { useModal } from "@/stores/use-modal-store"
-import { useAuth } from "@/hooks/useAuth"
-import { useMutation } from "@tanstack/react-query"
-import { EventService } from "@/services/event.service"
-import { Button } from "@nextui-org/react"
-import styles from "@/styles/form-control"
+import { useAuth } from '@/hooks/useAuth'
+import { EventService } from '@/services/event.service'
+import { useModal } from '@/stores/use-modal-store'
+import { styles } from '@/styles/form-control'
 
 const formSchema = z.object({
   name: z.string().min(1, {
-    message: "Name is required.",
+    message: 'Name is required.',
   }),
   description: z.string().optional(),
 })
 
-export const CreateEventModal = () => {
+export function CreateEventModal() {
   const router = useRouter()
   const { isOpen, onClose, type } = useModal()
-  const isModalOpen = isOpen && type === "createEvent"
+  const isModalOpen = isOpen && type === 'createEvent'
 
   const { currentUser } = useAuth()
-  const { mutateAsync, data, error } = useMutation({
+  const createEventMutation = useMutation({
     mutationFn: EventService.createEvent,
   })
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
     },
   })
 
@@ -49,23 +52,27 @@ export const CreateEventModal = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!currentUser) return
-    const event = {
-      name: values.name,
-      description: values.description,
-      type: "course", //formData.get("type"),
-      owner_id: currentUser.id,
-    }
 
-    //@ts-ignore
-    return await mutateAsync(event, {
-      onSuccess: ({ data }) => {
-        if (data) {
-          form.reset()
-          onClose()
-          router.push(`/events/${data.id}`)
-        }
+    // eslint-disable-next-line consistent-return
+    return createEventMutation.mutateAsync(
+      {
+        name: values.name,
+        description: values.description || '',
+        type: 'course', // formData.get("type"),
+        owner_id: currentUser.id,
+        start_date: null,
+        end_date: null,
       },
-    })
+      {
+        onSuccess: ({ data }) => {
+          if (data) {
+            form.reset()
+            onClose()
+            router.push(`/events/${data.id}`)
+          }
+        },
+      }
+    )
   }
 
   const handleClose = () => {
@@ -94,23 +101,23 @@ export const CreateEventModal = () => {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div>
                   <div>
-                    <label className={styles.label.base}>Name</label>
+                    <label htmlFor="name" className={styles.label.base}>
+                      Name
+                    </label>
                     <Input
+                      id="name"
                       disabled={isLoading}
                       className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
                       placeholder="Your awesome course or workshop name goes here"
-                      {...form.register("name", {
-                        required: "Name is required.",
+                      {...form.register('name', {
+                        required: 'Name is required.',
                       })}
                     />
-                    {
-                      //@ts-ignore
-                      form.formState.errors.name && (
-                        <p className="text-destructive text-xs mt-1">
-                          {form.formState.errors.name.message}
-                        </p>
-                      )
-                    }
+                    {form.formState.errors.name && (
+                      <p className="text-destructive text-xs mt-1">
+                        {form.formState.errors.name.message}
+                      </p>
+                    )}
                   </div>
 
                   <div className="mt-4">
@@ -118,16 +125,13 @@ export const CreateEventModal = () => {
                     <Textarea
                       placeholder="This is what your learners would see. You could include high-level learning objectives or brief course overview here"
                       className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
-                      {...form.register("description")}
+                      {...form.register('description')}
                     />
-                    {
-                      //@ts-ignore
-                      form.formState.errors.description && (
-                        <p className="text-destructive text-xs mt-1">
-                          {form.formState.errors.description.message}
-                        </p>
-                      )
-                    }
+                    {form.formState.errors.description && (
+                      <p className="text-destructive text-xs mt-1">
+                        {form.formState.errors.description.message}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex justify-end items-center mt-8 mb-4">
@@ -135,8 +139,7 @@ export const CreateEventModal = () => {
                     type="submit"
                     color="primary"
                     disabled={isLoading}
-                    isLoading={isLoading}
-                  >
+                    isLoading={isLoading}>
                     Create
                   </Button>
                 </div>

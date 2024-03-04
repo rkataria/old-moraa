@@ -1,43 +1,40 @@
-import React from "react"
+import React from 'react'
+
+import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
+
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Button,
-} from "@nextui-org/react"
-import {
-  IconArrowDown,
-  IconArrowUp,
-  IconEdit,
-  IconTrash,
-} from "@tabler/icons-react"
+} from '@nextui-org/react'
 
 const slideActions = [
   {
-    key: "delete",
-    label: "Delete",
+    key: 'delete',
+    label: 'Delete',
     icon: <IconTrash className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: "moveUp",
-    label: "Move up",
+    key: 'moveUp',
+    label: 'Move up',
     icon: <IconArrowUp className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: "moveDown",
-    label: "Move down",
+    key: 'moveDown',
+    label: 'Move down',
     icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
   },
 ]
 
-export const SlideActions = ({
+export function SlideActions({
   triggerIcon,
   handleActions,
 }: {
   triggerIcon: React.ReactNode
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleActions: (item: any) => void
-}) => {
+}) {
   return (
     <Dropdown placement="bottom-start">
       <DropdownTrigger>{triggerIcon}</DropdownTrigger>
@@ -48,8 +45,7 @@ export const SlideActions = ({
             color="default"
             startContent={item.icon}
             className="flex items-center gap-4"
-            onClick={() => handleActions(item)}
-          >
+            onClick={() => handleActions(item)}>
             {item.label}
           </DropdownItem>
         )}
@@ -57,5 +53,3 @@ export const SlideActions = ({
     </Dropdown>
   )
 }
-
-export default SlideActions

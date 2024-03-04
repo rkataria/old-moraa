@@ -1,23 +1,23 @@
-import { createContext, useEffect, useState } from "react"
-import { useParams } from "next/navigation"
-import { ISlide, SlideManagerContextType } from "@/types/slide.type"
-import { useDebounce } from "@uidotdev/usehooks"
-import { getDefaultCoverSlide } from "@/utils/content.util"
-import { useEvent } from "@/hooks/useEvent"
-import { deletePDFFile } from "@/services/pdf.service"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { INTERACTIVE_SLIDE_TYPES } from "@/components/event-content/ContentTypePicker"
-import { OnDragEndResponder } from "react-beautiful-dnd"
+import { createContext, useEffect, useState } from 'react'
+
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useParams } from 'next/navigation'
+import { OnDragEndResponder } from 'react-beautiful-dnd'
+
+import { INTERACTIVE_SLIDE_TYPES } from '@/components/event-content/ContentTypePicker'
+import { useEvent } from '@/hooks/useEvent'
+import { deletePDFFile } from '@/services/pdf.service'
+import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { getDefaultCoverSlide } from '@/utils/content.util'
 
 interface SlideManagerProviderProps {
   children: React.ReactNode
 }
 
-const SlideManagerContext = createContext<SlideManagerContextType | null>(null)
+export const SlideManagerContext =
+  createContext<SlideManagerContextType | null>(null)
 
-export const SlideManagerProvider = ({
-  children,
-}: SlideManagerProviderProps) => {
+export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
   const { eventId } = useParams()
   const { event, meeting, meetingSlides } = useEvent({
     id: eventId as string,
@@ -30,11 +30,11 @@ export const SlideManagerProvider = ({
   const [syncing, setSyncing] = useState<boolean>(false)
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const [isOwner, setIsOwner] = useState<boolean>(false)
-  const debouncedSlides = useDebounce(slides, 500)
   const supabase = createClientComponentClient()
 
   useEffect(() => {
     handleSetSlides()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meetingSlides])
 
   useEffect(() => {
@@ -47,9 +47,9 @@ export const SlideManagerProvider = ({
     if (!currentSlideElement) return
 
     currentSlideElement.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "center",
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
     })
   }, [currentSlide])
 
@@ -60,9 +60,8 @@ export const SlideManagerProvider = ({
     })
 
     // Custom sorting function
-    const customSort = (a: any, b: any) => {
-      return idIndexMap[a.id] - idIndexMap[b.id]
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const customSort = (a: any, b: any) => idIndexMap[a.id] - idIndexMap[b.id]
 
     return meetingSlides?.slides?.slice().sort(customSort)
   }
@@ -87,6 +86,7 @@ export const SlideManagerProvider = ({
     } else {
       if (slides.length > 0) {
         setLoading(false)
+
         return
       }
 
@@ -102,16 +102,15 @@ export const SlideManagerProvider = ({
 
   const updateSlideIds = async (ids: string[]) => {
     if (!meeting?.id) {
-      console.warn("meeting.id is missing")
+      console.warn('meeting.id is missing')
     }
 
-    const { data, error } = await supabase
-      .from("meeting")
+    const { error } = await supabase
+      .from('meeting')
       .update({ slides: ids })
-      .eq("id", meeting?.id)
+      .eq('id', meeting?.id)
     if (error) {
-      console.error("error while updating slide ids on meeting,error: ", error)
-      return
+      console.error('error while updating slide ids on meeting,error: ', error)
     }
   }
 
@@ -124,12 +123,12 @@ export const SlideManagerProvider = ({
       meeting_id: meeting?.id,
     }
     const { data, error } = await supabase
-      .from("slide")
+      .from('slide')
       .insert([newSlide])
-      .select("*")
+      .select('*')
       .single()
     if (error) {
-      console.error("error while creating slide: ", error)
+      console.error('error while creating slide: ', error)
     }
     setSlides((s) => [...s, { ...newSlide, id: data?.id }])
     setCurrentSlide({ ...newSlide, id: data.id })
@@ -138,46 +137,50 @@ export const SlideManagerProvider = ({
   }
 
   const updateSlide = async (slide: ISlide) => {
-    slide.meeting_id = slide.meeting_id ?? meeting?.id
-    const { data, error } = await supabase.from("slide").upsert({
-      id: slide.id,
-      content: slide.content,
-      config: slide.config,
-      name: slide.name,
+    const _slide = { ...slide }
+    _slide.meeting_id = slide.meeting_id ?? meeting?.id
+    await supabase.from('slide').upsert({
+      id: _slide.id,
+      content: _slide.content,
+      config: _slide.config,
+      name: _slide.name,
     })
-    setCurrentSlide(slide)
+    setCurrentSlide(_slide)
     setSlides((s) => {
-      if (s.findIndex((i) => i.id === slide.id) >= 0) {
-        return s.map((s) => (s.id === slide.id ? slide : s))
+      if (s.findIndex((i) => i.id === _slide.id) >= 0) {
+        return s.map((sl) => (sl.id === _slide.id ? _slide : sl))
       }
-      return [...s, slide]
+
+      return [...s, _slide]
     })
   }
 
   const deleteSlide = async (id: string) => {
-    const { error } = await supabase.from("slide").delete().eq("id", id)
+    const { error } = await supabase.from('slide').delete().eq('id', id)
     if (error) {
-      console.error("failed to delete the slide: ", error)
+      console.error('failed to delete the slide: ', error)
     }
     const index = slides.findIndex((slide) => slide.id === id)
-    const slide = slides.find((slide) => slide.id === id)
+    const slide = slides.find((_slide) => _slide.id === id)
     if (slide?.content?.pdfPath) {
       deletePDFFile(slide?.content?.pdfPath)
     }
 
-    const updatedSlides = slides.filter((slide) => slide.id !== id)
+    const updatedSlides = slides.filter((_slide) => _slide.id !== id)
     setSlides(updatedSlides)
-    setSlides((s) => s.filter((slide) => slide.id !== id))
+    setSlides((s) => s.filter((_slide) => _slide.id !== id))
     await updateSlideIds(slideIds.filter((slideId) => slideId !== id))
     setSlideIds((s) => s.filter((slideId) => slideId !== id))
 
     if (currentSlide?.id === id) {
       if (index !== updatedSlides.length) {
         setCurrentSlide(updatedSlides[index])
+
         return
       }
       if (updatedSlides.length > 0) {
         setCurrentSlide(updatedSlides[index - 1])
+
         return
       }
       setCurrentSlide(null)
@@ -237,6 +240,7 @@ export const SlideManagerProvider = ({
     return result
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reorderSlide = async (result: OnDragEndResponder | any) => {
     if (!result.destination) {
       return
@@ -250,6 +254,7 @@ export const SlideManagerProvider = ({
 
   return (
     <SlideManagerContext.Provider
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         slides,
         currentSlide,
@@ -265,11 +270,8 @@ export const SlideManagerProvider = ({
         moveUpSlide,
         moveDownSlide,
         reorderSlide,
-      }}
-    >
+      }}>
       {children}
     </SlideManagerContext.Provider>
   )
 }
-
-export default SlideManagerContext

@@ -1,18 +1,20 @@
-import { redirect } from "next/navigation"
-import FormControlStyles from "@/styles/form-control"
-import { useAuth } from "@/hooks/useAuth"
-import { useMutation } from "@tanstack/react-query"
-import { EventService } from "@/services/event.service"
-import { IconLoader } from "@tabler/icons-react"
-import { getIsoDateString } from "@/utils/date"
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import { IconLoader } from '@tabler/icons-react'
+import { useMutation } from '@tanstack/react-query'
+import { redirect } from 'next/navigation'
+
+import { useAuth } from '@/hooks/useAuth'
+import { EventService } from '@/services/event.service'
+import { styles } from '@/styles/form-control'
+import { getIsoDateString } from '@/utils/date'
 
 interface NewEventFormProps {
   onClose: () => void
 }
 
-function NewEventForm({ onClose }: NewEventFormProps) {
+export function NewEventForm({ onClose }: NewEventFormProps) {
   const { currentUser } = useAuth()
-  const { mutate, data, error, isPending, isSuccess } = useMutation({
+  const createEventMutation = useMutation({
     mutationFn: EventService.createEvent,
   })
 
@@ -20,18 +22,18 @@ function NewEventForm({ onClose }: NewEventFormProps) {
     if (!currentUser) return
 
     const event = {
-      name: formData.get("name"),
-      description: formData.get("description"),
-      type: "course", //formData.get("type"),
-      start_date: getIsoDateString(formData.get("start_date") as string),
-      end_date: getIsoDateString(formData.get("end_date") as string),
+      name: formData.get('name'),
+      description: formData.get('description'),
+      type: 'course', // formData.get("type"),
+      start_date: getIsoDateString(formData.get('start_date') as string),
+      end_date: getIsoDateString(formData.get('end_date') as string),
       owner_id: currentUser.id,
     }
 
-    mutate(event)
+    createEventMutation.mutate(event)
 
-    if (Array.isArray(data)) {
-      redirect(`/events/${data[0].id}`)
+    if (Array.isArray(createEventMutation.data)) {
+      redirect(`/events/${createEventMutation.data[0].id}`)
     }
   }
 
@@ -54,10 +56,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
               <div className="px-4 py-6 sm:p-8">
                 <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="sm:col-span-4">
-                    <label
-                      htmlFor="title"
-                      className={FormControlStyles.label.base}
-                    >
+                    <label htmlFor="title" className={styles.label.base}>
                       Title
                     </label>
                     <div className="mt-2">
@@ -66,7 +65,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                           type="text"
                           name="name"
                           id="title"
-                          className={FormControlStyles.input.base}
+                          className={styles.input.base}
                           placeholder="Learn to code"
                         />
                       </div>
@@ -74,10 +73,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                   </div>
 
                   <div className="col-span-full">
-                    <label
-                      htmlFor="description"
-                      className={FormControlStyles.label.base}
-                    >
+                    <label htmlFor="description" className={styles.label.base}>
                       Description
                     </label>
                     <div className="mt-2">
@@ -85,8 +81,8 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                         id="description"
                         name="description"
                         rows={3}
-                        className={FormControlStyles.textarea.base}
-                        defaultValue={""}
+                        className={styles.textarea.base}
+                        defaultValue=""
                       />
                     </div>
                     <p className="mt-3 text-sm leading-6 text-gray-600">
@@ -112,10 +108,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
               <div className="px-4 py-6 sm:p-8">
                 <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="sm:col-span-3">
-                    <label
-                      htmlFor="start-date"
-                      className={FormControlStyles.label.base}
-                    >
+                    <label htmlFor="start-date" className={styles.label.base}>
                       Start Date
                     </label>
                     <div className="mt-2">
@@ -124,17 +117,14 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                           type="datetime-local"
                           name="start_date"
                           id="start-date"
-                          className={FormControlStyles.input.base}
+                          className={styles.input.base}
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="sm:col-span-3">
-                    <label
-                      htmlFor="end-date"
-                      className={FormControlStyles.label.base}
-                    >
+                    <label htmlFor="end-date" className={styles.label.base}>
                       End Date
                     </label>
                     <div className="mt-2">
@@ -143,7 +133,7 @@ function NewEventForm({ onClose }: NewEventFormProps) {
                           type="datetime-local"
                           name="end_date"
                           id="end-date"
-                          className={FormControlStyles.input.base}
+                          className={styles.input.base}
                         />
                       </div>
                     </div>
@@ -156,15 +146,17 @@ function NewEventForm({ onClose }: NewEventFormProps) {
             <button
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
-              onClick={onClose}
-            >
+              onClick={onClose}>
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              {isPending ? <IconLoader /> : <span>Save</span>}
+              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              {createEventMutation.isPending ? (
+                <IconLoader />
+              ) : (
+                <span>Save</span>
+              )}
             </button>
           </div>
         </div>
@@ -172,5 +164,3 @@ function NewEventForm({ onClose }: NewEventFormProps) {
     </div>
   )
 }
-
-export default NewEventForm
