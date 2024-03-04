@@ -1,4 +1,4 @@
-import { ISlide } from "./slide.type"
+import { ISlide } from './slide.type'
 
 export interface ICreateEventPayload {
   name: FormDataEntryValue | null

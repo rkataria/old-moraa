@@ -1,20 +1,24 @@
-"use client"
-import { useContext, useMemo, useRef, useState } from "react"
-import clsx from "clsx"
-import Slide from "./Slide"
-import ContentTypePicker, { ContentType } from "./ContentTypePicker"
-import Loading from "../common/Loading"
-import SyncingStatus from "../common/SyncingStatus"
-import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { ISlide, SlideManagerContextType } from "@/types/slide.type"
-import { getDefaultContent } from "@/utils/content.util"
-import { v4 as uuidv4 } from "uuid"
-import MiniSlideManager from "./MiniSlideManager"
-import { useParams } from "next/navigation"
-import { useEvent } from "@/hooks/useEvent"
-import { useAuth } from "@/hooks/useAuth"
+'use client'
 
-export default function SlideManager({}: any) {
+import { useContext, useMemo, useRef, useState } from 'react'
+
+import clsx from 'clsx'
+import { useParams } from 'next/navigation'
+import { v4 as uuidv4 } from 'uuid'
+
+import { ContentTypePicker, ContentType } from './ContentTypePicker'
+import { MiniSlideManager } from './MiniSlideManager'
+import { Slide } from './Slide'
+import { Loading } from '../common/Loading'
+import { SyncingStatus } from '../common/SyncingStatus'
+
+import { SlideManagerContext } from '@/contexts/SlideManagerContext'
+import { useAuth } from '@/hooks/useAuth'
+import { useEvent } from '@/hooks/useEvent'
+import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { getDefaultContent } from '@/utils/content.util'
+
+export function SlideManager() {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
 
@@ -31,7 +35,6 @@ export default function SlideManager({}: any) {
     setCurrentSlide,
     setMiniMode,
     addNewSlide,
-    updateSlide,
     reorderSlide,
   } = useContext(SlideManagerContext) as SlideManagerContextType
   const addSlideRef = useRef<HTMLDivElement>(null)
@@ -43,8 +46,8 @@ export default function SlideManager({}: any) {
       id: uuidv4(),
       name: `Slide ${slides.length + 1}`,
       config: {
-        backgroundColor: "#fff",
-        textColor: "#000",
+        backgroundColor: '#fff',
+        textColor: '#000',
       },
       content: getDefaultContent(contentType),
       type: contentType,
@@ -54,38 +57,36 @@ export default function SlideManager({}: any) {
     setOpenContentTypePicker(false)
   }
 
-  if (loading)
+  if (loading) {
     return (
       <div className="h-screen">
         <Loading />
       </div>
     )
+  }
 
   return (
     <div className="w-full">
       <div>
         <div
           className={clsx(
-            "relative bg-white transition-all w-full h-screen flex justify-center items-center",
+            'relative bg-white transition-all w-full h-screen flex justify-center items-center',
             {
-              "p-8 pl-80": miniMode,
-              "p-24": !miniMode,
+              'p-8 pl-80': miniMode,
+              'p-24': !miniMode,
             }
-          )}
-        >
+          )}>
           <div
-            className={clsx("relative aspect-video rounded-md bg-white mt-16", {
-              "w-full": miniMode,
-              "w-[90%]": !miniMode,
-              "flex justify-center items-center border-2 border-black/10":
+            className={clsx('relative aspect-video rounded-md bg-white mt-16', {
+              'w-full': miniMode,
+              'w-[90%]': !miniMode,
+              'flex justify-center items-center border-2 border-black/10':
                 !currentSlide,
-            })}
-          >
+            })}>
             {currentSlide ? (
               <Slide
                 key={`slide-${currentSlide.id}`}
                 slide={currentSlide}
-                updateSlide={updateSlide}
                 isOwner={isOwner}
               />
             ) : (
@@ -94,7 +95,7 @@ export default function SlideManager({}: any) {
           </div>
         </div>
         <MiniSlideManager
-          mode={isOwner ? "edit" : "read"}
+          mode={isOwner ? 'edit' : 'read'}
           slides={slides}
           addSlideRef={addSlideRef}
           currentSlide={currentSlide}

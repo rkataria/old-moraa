@@ -1,14 +1,14 @@
-import { Providers } from "./providers"
-import { Inter } from "next/font/google"
+import { Providers } from './providers'
+import { Inter } from 'next/font/google'
 
-import "@/app/globals.css"
+import '@/app/globals.css'
 
 export const metadata = {
-  title: "Moraa",
-  description: "Moraa is a platform for learning and teaching online.",
+  title: 'Moraa',
+  description: 'Moraa is a platform for learning and teaching online.',
 }
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
   children,

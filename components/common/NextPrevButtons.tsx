@@ -1,6 +1,8 @@
-import { useHotkeys } from "@/hooks/useHotkeys"
-import { Button } from "@nextui-org/react"
-import React from "react"
+import React from 'react'
+
+import { Button } from '@nextui-org/react'
+
+import { useHotkeys } from '@/hooks/useHotkeys'
 
 type NextPrevButtonsProps = {
   onPrevious: () => void
@@ -15,10 +17,10 @@ export function NextPrevButtons({
   nextDisabled,
   prevDisabled,
 }: NextPrevButtonsProps) {
-  useHotkeys("ArrowLeft", () => {
+  useHotkeys('ArrowLeft', () => {
     if (!prevDisabled) onPrevious()
   })
-  useHotkeys("ArrowRight", () => {
+  useHotkeys('ArrowRight', () => {
     if (!nextDisabled) onNext()
   })
 
@@ -29,8 +31,7 @@ export function NextPrevButtons({
         onClick={!prevDisabled ? onPrevious : undefined}
         disabled={prevDisabled}
         className="mx-2"
-        size="sm"
-      >
+        size="sm">
         Prev
       </Button>
       <Button
@@ -38,8 +39,7 @@ export function NextPrevButtons({
         onClick={!nextDisabled ? onNext : undefined}
         disabled={nextDisabled}
         className="mx-2"
-        size="sm"
-      >
+        size="sm">
         Next
       </Button>
     </div>

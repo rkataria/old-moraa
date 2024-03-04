@@ -1,25 +1,30 @@
-"use client"
+/* eslint-disable no-restricted-syntax */
 
-import { useContext, useState } from "react"
-import { Document, Page, pdfjs } from "react-pdf"
-import { OnDocumentLoadSuccess } from "react-pdf/dist/cjs/shared/types"
-import pdfjsWorker from "pdfjs-dist/build/pdf.worker.js"
-import toast from "react-hot-toast"
-import { useMutation, useQuery } from "@tanstack/react-query"
+'use client'
 
+import { useContext, useState } from 'react'
+
+import { useMutation, useQuery } from '@tanstack/react-query'
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.js'
+import toast from 'react-hot-toast'
+import { Document, Page, pdfjs } from 'react-pdf'
+import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
+
+import { Button, Input } from '@nextui-org/react'
+
+import { FilePicker } from '../common/FilePicker'
+
+import { Loading } from '@/components/common/Loading'
+import { NextPrevButtons } from '@/components/common/NextPrevButtons'
+import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import {
   deletePDFFile,
   downloadPDFFile,
   uploadPDFFile,
-} from "@/services/pdf.service"
-import { ISlide, SlideManagerContextType } from "@/types/slide.type"
-import { NextPrevButtons } from "@/components/common/NextPrevButtons"
-import { getFileObjectFromBlob } from "@/utils/utils"
-import { QueryKeys } from "@/utils/query-keys"
-import Loading from "@/components/common/Loading"
-import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { Button, Input } from "@nextui-org/react"
-import FilePicker from "../common/FilePicker"
+} from '@/services/pdf.service'
+import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { QueryKeys } from '@/utils/query-keys'
+import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
   slide: ISlide
@@ -29,7 +34,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
 const getPDFName = (slideId: string) => `${slideId}_pdf.pdf`
 
-export const PDFUploader = ({ slide }: PDFUploaderProps) => {
+export function PDFUploader({ slide }: PDFUploaderProps) {
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
@@ -45,7 +50,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
     slide.content?.defaultPage || 1
   )
   const downloadPDFQuery = useQuery({
-    queryKey: QueryKeys.DownloadPDF.item(fileUrl || ""),
+    queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
     queryFn: () =>
       !fileUrl
         ? undefined
@@ -53,7 +58,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
             getFileObjectFromBlob(
               slide.content?.pdfPath,
               data.data,
-              "application/pdf"
+              'application/pdf'
             )
           ),
     refetchOnMount: false,
@@ -63,16 +68,17 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
   const uploadPDFMutation = useMutation({
     mutationFn: async (file: File) => {
       await deletePDFFile(getPDFName(slide.id)).catch(() => {})
+
       return uploadPDFFile(getPDFName(slide.id), file)
     },
-    onSuccess: () => toast.success("PDF uploaded successfully."),
+    onSuccess: () => toast.success('PDF uploaded successfully.'),
     onError: () =>
       toast.error(
-        "Failed to upload PDF, please try re-uploading again by deleting the slide."
+        'Failed to upload PDF, please try re-uploading again by deleting the slide.'
       ),
     onSettled: () => toast.remove(slide.id),
     onMutate: () => {
-      toast.loading("Uploading PDF...", {
+      toast.loading('Uploading PDF...', {
         id: slide.id,
       })
     },
@@ -129,9 +135,8 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
             <p className="mb-4">Select the PDF file.</p>
             <FilePicker
               label="Select PDF file"
-              supportedFormats={["application/pdf"]}
+              supportedFormats={['application/pdf']}
               onUpload={(files) => {
-                console.log("🚀 ~ getInnerContent ~ event:", files)
                 const fileList = []
                 if (files) {
                   for (const file of files) {
@@ -155,10 +160,9 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
                 <div className="h-96">
                   <Loading />
                 </div>
-              }
-            >
+              }>
               <Page
-                loading={" "}
+                loading={' '}
                 pageNumber={selectedPage}
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
@@ -176,8 +180,9 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
                     if (
                       +e.target.value > 0 &&
                       +e.target.value <= (totalPages || 0)
-                    )
+                    ) {
                       setDefaultPage(+e.target.value)
+                    }
                   }}
                 />
                 <Button size="sm" onClick={saveDefaultPageNumber}>
@@ -197,7 +202,7 @@ export const PDFUploader = ({ slide }: PDFUploaderProps) => {
         )
 
       default:
-        return "Something went wrong..."
+        return 'Something went wrong...'
     }
   }
 

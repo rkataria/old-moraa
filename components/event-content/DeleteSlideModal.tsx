@@ -1,35 +1,37 @@
-"use client"
-import { ISlide } from "@/types/slide.type"
+'use client'
+
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/react"
+  Button,
+} from '@nextui-org/react'
 
-import { Button } from "@nextui-org/react"
+import { ISlide } from '@/types/slide.type'
 
 type DeleteSlideModalProps = {
   isModalOpen: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClose: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDelete: any
   slide: ISlide
 }
 
-export const DeleteSlideModal = ({
+export function DeleteSlideModal({
   isModalOpen,
   onClose,
   handleDelete,
   slide,
-}: DeleteSlideModalProps) => {
+}: DeleteSlideModalProps) {
   return (
     <Modal
       size="md"
       isOpen={isModalOpen}
       onClose={onClose}
-      onOpenChange={handleDelete}
-    >
+      onOpenChange={handleDelete}>
       <ModalContent>
         {() => (
           <>

@@ -1,18 +1,20 @@
-import EventSessionContext from "@/contexts/EventSessionContext"
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from "@/types/event-session.type"
+import React, { useContext } from 'react'
+
 import {
   DyteAudioVisualizer,
   DyteNameTag,
   DyteParticipantTile,
   DyteSpotlightGrid,
-} from "@dytesdk/react-ui-kit"
-import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core"
-import React, { useContext } from "react"
+} from '@dytesdk/react-ui-kit'
+import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
-function ParticipantTiles() {
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import {
+  EventSessionContextType,
+  PresentationStatuses,
+} from '@/types/event-session.type'
+
+export function ParticipantTiles() {
   const { meeting } = useDyteMeeting()
   const { presentationStatus } = useContext(
     EventSessionContext
@@ -37,7 +39,7 @@ function ParticipantTiles() {
           layout="row"
           participants={meeting.participants.active.toArray()}
           pinnedParticipants={[meeting.self]}
-          style={{ height: "80%", width: "100%" }}
+          style={{ height: '80%', width: '100%' }}
         />
       </div>
     )
@@ -50,8 +52,7 @@ function ParticipantTiles() {
         participant={meeting.self}
         nameTagPosition="bottom-center"
         variant="gradient"
-        className="h-[140px] w-64 rounded-none aspect-video flex-none border-2 border-green-500 sticky left-0 z-[1]"
-      >
+        className="h-[140px] w-64 rounded-none aspect-video flex-none border-2 border-green-500 sticky left-0 z-[1]">
         <DyteNameTag meeting={meeting} participant={meeting.self}>
           <DyteAudioVisualizer slot="start" participant={meeting.self} />
         </DyteNameTag>
@@ -62,8 +63,7 @@ function ParticipantTiles() {
           participant={participant}
           nameTagPosition="bottom-center"
           variant="gradient"
-          className="h-[140px] w-64 rounded-none aspect-video flex-none"
-        >
+          className="h-[140px] w-64 rounded-none aspect-video flex-none">
           <DyteNameTag meeting={meeting} participant={participant}>
             <DyteAudioVisualizer slot="start" participant={participant} />
           </DyteNameTag>
@@ -72,5 +72,3 @@ function ParticipantTiles() {
     </div>
   )
 }
-
-export default ParticipantTiles

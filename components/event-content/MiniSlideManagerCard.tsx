@@ -1,46 +1,62 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import { useContext, useState } from 'react'
+
+import { IconDots, IconGripVertical } from '@tabler/icons-react'
+
+import { Tooltip } from '@nextui-org/react'
+
+import { contentTypes } from './ContentTypePicker'
+import { DeleteSlideModal } from './DeleteSlideModal'
+import { SlideActions } from './SlideActions'
+
+import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import {
   IMiniSlideManagerType,
   ISlide,
   SlideManagerContextType,
-} from "@/types/slide.type"
-import { cn } from "@/utils/utils"
-import { IconDots, IconGripVertical } from "@tabler/icons-react"
-import SlideActions from "./SlideActions"
-import { contentTypes } from "./ContentTypePicker"
-import { DeleteSlideModal } from "./DeleteSlideModal"
-import { useContext, useState } from "react"
-import SlideManagerContext from "@/contexts/SlideManagerContext"
-import { Tooltip } from "@nextui-org/react"
+} from '@/types/slide.type'
+import { cn } from '@/utils/utils'
 
 interface SlideListViewProps {
   slide: ISlide
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   draggableProps: any
   index: number
-  mode: "edit" | "present" | "read"
+  mode: 'edit' | 'present' | 'read'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleActions: any
   isDeleteModalOpen: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setIsDeleteModalOpen: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDelete: any
 }
 
 interface SlideThumbnailViewProps {
   slide: ISlide
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   draggableProps: any
   index: number
-  mode: "edit" | "present" | "read"
+  mode: 'edit' | 'present' | 'read'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleActions: any
   isDeleteModalOpen: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setIsDeleteModalOpen: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDelete: any
 }
 
-const SlideEditableName = ({ slide }: { slide: ISlide }) => {
+function SlideEditableName({ slide }: { slide: ISlide }) {
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
   const [nameEditable, setNameEditable] = useState(false)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleBlur = (e: any) => {
     updateSlide({ ...slide, name: e.target.value })
     setNameEditable(false)
@@ -51,7 +67,7 @@ const SlideEditableName = ({ slide }: { slide: ISlide }) => {
       <input
         defaultValue={slide.name}
         onBlur={handleBlur}
-        onKeyDown={(e) => e.key === "Enter" && handleBlur(e)}
+        onKeyDown={(e) => e.key === 'Enter' && handleBlur(e)}
         className="border-b border-primary outline-none py-1 w-[inherit] pr-2"
       />
     )
@@ -64,7 +80,7 @@ const SlideEditableName = ({ slide }: { slide: ISlide }) => {
   )
 }
 
-const SlideListView = ({
+function SlideListView({
   slide,
   draggableProps,
   index,
@@ -73,7 +89,7 @@ const SlideListView = ({
   isDeleteModalOpen,
   setIsDeleteModalOpen,
   handleDelete,
-}: SlideListViewProps) => {
+}: SlideListViewProps) {
   const { currentSlide, setCurrentSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
@@ -85,31 +101,28 @@ const SlideListView = ({
     <div
       data-minislide-id={slide.id}
       key={`mini-slide-${slide.id}`}
-      className="flex justify-start items-center gap-2 max-w-full"
-    >
+      className="flex justify-start items-center gap-2 max-w-full">
       <span className="w-8">{index + 1}</span>
       <Tooltip content={slide.type}>
         <div className="text-slate-500">{Icon}</div>
       </Tooltip>
       <div
-        {...(mode === "edit" && draggableProps)}
+        {...(mode === 'edit' && draggableProps)}
         className={cn(
-          "rounded-md flex-auto w-full transition-all border flex items-center justify-between capitalize group",
+          'rounded-md flex-auto w-full transition-all border flex items-center justify-between capitalize group',
           currentSlide?.id === slide.id
-            ? "drop-shadow-md border-black"
-            : "drop-shadow-none border-black/20"
+            ? 'drop-shadow-md border-black'
+            : 'drop-shadow-none border-black/20'
         )}
         style={{
-          backgroundColor: slide.config?.backgroundColor || "#166534",
-        }}
-      >
+          backgroundColor: slide.config?.backgroundColor || '#166534',
+        }}>
         <div>
           <IconGripVertical className="h-4 w-4 text-slate-300 group-hover:text-slate-500" />
         </div>
         <div
           className="shrink w-full cursor-pointer"
-          onClick={() => setCurrentSlide(slide)}
-        >
+          onClick={() => setCurrentSlide(slide)}>
           <SlideEditableName slide={slide} />
         </div>
         <SlideActions
@@ -131,7 +144,7 @@ const SlideListView = ({
   )
 }
 
-const SlideThumbnailView = ({
+function SlideThumbnailView({
   slide,
   draggableProps,
   index,
@@ -140,7 +153,7 @@ const SlideThumbnailView = ({
   isDeleteModalOpen,
   setIsDeleteModalOpen,
   handleDelete,
-}: SlideThumbnailViewProps) => {
+}: SlideThumbnailViewProps) {
   const { currentSlide, setCurrentSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
@@ -150,26 +163,23 @@ const SlideThumbnailView = ({
       data-minislide-id={slide.id}
       key={`mini-slide-${slide.id}`}
       className="flex justify-start items-center gap-2 w-full"
-      {...(mode === "edit" && draggableProps)}
-    >
+      {...(mode === 'edit' && draggableProps)}>
       <span className="w-5">{index + 1}</span>
       <div
         onClick={() => setCurrentSlide(slide)}
         className={cn(
-          "relative rounded-md w-full aspect-video cursor-pointer transition-all border-2 capitalize group",
+          'relative rounded-md w-full aspect-video cursor-pointer transition-all border-2 capitalize group',
           currentSlide?.id === slide.id
-            ? "drop-shadow-md border-black"
-            : "drop-shadow-none border-black/20"
+            ? 'drop-shadow-md border-black'
+            : 'drop-shadow-none border-black/20'
         )}
         style={{
-          backgroundColor: slide.config?.backgroundColor || "#166534",
-        }}
-      >
+          backgroundColor: slide.config?.backgroundColor || '#166534',
+        }}>
         <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
           <div
             className="shrink w-full cursor-pointer"
-            onClick={() => setCurrentSlide(slide)}
-          >
+            onClick={() => setCurrentSlide(slide)}>
             <SlideEditableName slide={slide} />
           </div>
           <SlideActions
@@ -192,15 +202,15 @@ const SlideThumbnailView = ({
   )
 }
 
-type SlideActionKey = "delete" | "moveUp" | "moveDown"
+type SlideActionKey = 'delete' | 'moveUp' | 'moveDown'
 
-export const MiniSlideManagerCard = ({
+export function MiniSlideManagerCard({
   slide,
   index,
   draggableProps,
   mode,
   miniSlideView,
-}: IMiniSlideManagerType) => {
+}: IMiniSlideManagerType) {
   const { deleteSlide, moveUpSlide, moveDownSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
@@ -211,6 +221,7 @@ export const MiniSlideManagerCard = ({
     action: { key: SlideActionKey; label: string },
     id: string
   ) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const actions: Record<SlideActionKey, any> = {
       delete: () => setIsDeleteModalOpen(true),
       moveUp: () => moveUpSlide(id),
@@ -220,12 +231,12 @@ export const MiniSlideManagerCard = ({
     actions[action.key]()
   }
 
-  const handleDelete = (slide: ISlide) => {
-    deleteSlide(slide.id)
+  const handleDelete = (_slide: ISlide) => {
+    deleteSlide(_slide.id)
     setIsDeleteModalOpen(false)
   }
 
-  if (miniSlideView === "thumbnail") {
+  if (miniSlideView === 'thumbnail') {
     return (
       <SlideThumbnailView
         slide={slide}
@@ -253,4 +264,3 @@ export const MiniSlideManagerCard = ({
     />
   )
 }
-export default MiniSlideManagerCard
