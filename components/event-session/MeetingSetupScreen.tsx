@@ -18,7 +18,7 @@ import { useParams } from 'next/navigation'
 
 import { Loading } from '../common/Loading'
 
-import EventSessionContext from '@/contexts/EventSessionContext'
+import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useProfile } from '@/hooks/useProfile'
 import { EventSessionContextType } from '@/types/event-session.type'
