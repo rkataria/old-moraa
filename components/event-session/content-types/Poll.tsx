@@ -44,7 +44,7 @@ export function Poll({
       response: { selected_option },
     } = vote
 
-    optionsWithVote[selected_option] += optionsWithVote[selected_option]
+    optionsWithVote[selected_option] += 1
   })
 
   const hasVotedOn = (option: string) =>
