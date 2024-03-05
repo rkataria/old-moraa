@@ -324,53 +324,58 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addParticipant = async (session?: any) => {
-    const { data: _participant, error: createParticipantError } = await supabase
+    const { data: participant, error: _err } = await supabase
       .from('participant')
-      .insert([
-        {
-          session_id: session?.id ?? activeSession.id,
-          enrollment_id: enrollment.id,
-        },
-      ])
       .select()
+      .eq('session_id', session?.id ?? activeSession?.id)
+      .eq('enrollment_id', enrollment?.id)
       .single()
+    if (_err || !participant) {
+      const { data: _participant, error } = await supabase
+        .from('participant')
+        .insert([
+          {
+            session_id: session?.id ?? activeSession.id,
+            enrollment_id: enrollment.id,
+          },
+        ])
+        .select()
+        .single()
 
-    if (createParticipantError) {
-      console.error('failed to create participant:', createParticipantError)
-
+      if (error) {
+        console.error('failed to create participant:', error)
+        return
+      }
+      setParticipant(_participant)
       return
     }
-    setParticipant(_participant)
+    setParticipant(participant)
   }
 
   const joinMeeting = async () => {
-    let newSession
-    // create a new session if host joins and expire others
-    if (isHost) {
-      // expire other sessions
-      const { error: sessionError } = await supabase
-        .from('session')
-        .update({ status: 'EXPIRED' })
-        .eq('meeting_id', meeting?.id)
+    // check if active session exists, else create one
+    const { data: session, error: _error } = await supabase
+      .from('session')
+      .select()
+      .eq('meeting_id', meeting?.id)
+      .eq('status', 'ACTIVE')
+      .single()
 
-      if (sessionError) {
-        console.error('failed to expire sessions, error: ', sessionError)
-      }
-
+    if (_error || !session) {
       // create new session in active state
-      const { data: session, error: createSessionError } = await supabase
+      const { data: _session, error: createSessionError } = await supabase
         .from('session')
         .insert([{ meeting_id: meeting?.id, status: 'ACTIVE' }])
         .select()
         .single()
       if (createSessionError) {
         console.error('failed to create session, error: ', createSessionError)
-
         return
       }
-      newSession = session
+      await addParticipant(_session)
+      return
     }
-    await addParticipant(newSession)
+    await addParticipant(session)
   }
 
   return (
