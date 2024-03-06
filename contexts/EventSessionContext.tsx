@@ -52,8 +52,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  const metaData = useRef<Object>({})
+  const metaData = useRef<object>({})
   const [syncing, setSyncing] = useState<boolean>(false)
 
   useEffect(() => {
