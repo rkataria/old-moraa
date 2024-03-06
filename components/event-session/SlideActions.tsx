@@ -9,30 +9,33 @@ import {
   DropdownItem,
 } from '@nextui-org/react'
 
-const slideActions = [
-  {
-    key: 'delete',
-    label: 'Delete',
-    icon: <IconTrash className="h-4 w-4 text-slate-500" />,
-  },
-  {
-    key: 'moveUp',
-    label: 'Move up',
-    icon: <IconArrowUp className="h-4 w-4 text-slate-500" />,
-  },
-  {
-    key: 'moveDown',
-    label: 'Move down',
-    icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
-  },
-]
+type ActionKey = 'delete' | 'moveUp' | 'moveDown'
+
+const slideActions: { key: ActionKey; label: string; icon: React.ReactNode }[] =
+  [
+    {
+      key: 'delete',
+      label: 'Delete',
+      icon: <IconTrash className="h-4 w-4 text-slate-500" />,
+    },
+    {
+      key: 'moveUp',
+      label: 'Move up',
+      icon: <IconArrowUp className="h-4 w-4 text-slate-500" />,
+    },
+    {
+      key: 'moveDown',
+      label: 'Move down',
+      icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
+    },
+  ]
 
 export function SlideActions({
   triggerIcon,
   handleActions,
 }: {
   triggerIcon: React.ReactNode
-  handleActions: (item: { key: string; label: string }) => void
+  handleActions: (item: { key: ActionKey; label: string }) => void
 }) {
   return (
     <Dropdown placement="bottom-start">
