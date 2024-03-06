@@ -39,4 +39,6 @@ export type EventSessionContextType = {
   reorderSlide: (result: any) => void
   moveUpSlide: (id: string) => void
   moveDownSlide: (id: string) => void
+  deleteSlide: (id: string) => void
+  updateSlide: (slide: ISlide) => void
 }

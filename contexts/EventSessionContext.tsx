@@ -10,6 +10,7 @@ import {
 } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
+import { deletePDFFile } from '@/services/pdf.service'
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -441,6 +442,58 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     updateSlideIds(newIds)
   }
 
+  const updateSlide = async (slide: ISlide) => {
+    const _slide = { ...slide }
+    _slide.meeting_id = slide.meeting_id ?? meeting?.id
+    await supabase.from('slide').upsert({
+      id: _slide.id,
+      content: _slide.content,
+      config: _slide.config,
+      name: _slide.name,
+    })
+    setCurrentSlide(_slide)
+    setSlides((s) => {
+      if (s.findIndex((i) => i.id === _slide.id) >= 0) {
+        return s.map((sl) => (sl.id === _slide.id ? _slide : sl))
+      }
+
+      return [...s, _slide]
+    })
+  }
+
+  const deleteSlide = async (id: string) => {
+    const { error } = await supabase.from('slide').delete().eq('id', id)
+    if (error) {
+      console.error('failed to delete the slide: ', error)
+    }
+    const index = slides.findIndex((slide) => slide.id === id)
+    const slide = slides.find((_slide) => _slide.id === id)
+    if (slide?.content?.pdfPath) {
+      deletePDFFile(slide?.content?.pdfPath)
+    }
+
+    const updatedSlides = slides.filter((_slide) => _slide.id !== id)
+    setSlides(updatedSlides)
+    setSlides((s) => s.filter((_slide) => _slide.id !== id))
+    await updateSlideIds(
+      slides.filter((slide) => slide.id !== id).map((i) => i.id)
+    )
+
+    if (currentSlide?.id === id) {
+      if (index !== updatedSlides.length) {
+        setCurrentSlide(updatedSlides[index])
+
+        return
+      }
+      if (updatedSlides.length > 0) {
+        setCurrentSlide(updatedSlides[index - 1])
+
+        return
+      }
+      setCurrentSlide(null)
+    }
+  }
+
   const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
     const result = list
     const [removed] = result.splice(startIndex, 1)
@@ -493,6 +546,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         reorderSlide,
         moveUpSlide,
         moveDownSlide,
+        deleteSlide,
+        updateSlide,
       }}>
       {children}
     </EventSessionContext.Provider>

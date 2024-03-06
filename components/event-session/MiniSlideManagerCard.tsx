@@ -1,10 +1,11 @@
 import { ISlide } from '@/types/slide.type'
 import { cn } from '@/utils/utils'
 import { IconDots } from '@tabler/icons-react'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { SlideActions } from './SlideActions'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
+import { DeleteSlideModal } from '../event-content/DeleteSlideModal'
 
 interface SlideThumbnailViewProps {
   slide: ISlide
@@ -12,6 +13,42 @@ interface SlideThumbnailViewProps {
   index: number
   mode: 'edit' | 'present' | 'read'
   handleActions: any
+  isDeleteModalOpen: boolean
+  setIsDeleteModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+function SlideEditableName({ slide }: { slide: ISlide }) {
+  const { updateSlide, isHost } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
+
+  const [nameEditable, setNameEditable] = useState(false)
+
+  const handleBlur = (e: any) => {
+    updateSlide({ ...slide, name: e.target.value })
+    setNameEditable(false)
+  }
+
+  if (nameEditable) {
+    return (
+      <input
+        defaultValue={slide.name}
+        onBlur={handleBlur}
+        onKeyDown={(e) => e.key === 'Enter' && handleBlur(e)}
+        className="border-b border-primary outline-none py-1 w-[inherit] pr-2"
+      />
+    )
+  }
+
+  return (
+    <p
+      className="line-clamp-1 py-1"
+      onClick={() => {
+        if (isHost) setNameEditable(true)
+      }}>
+      {slide.name}
+    </p>
+  )
 }
 
 const SlideThumbnailView = ({
@@ -20,10 +57,17 @@ const SlideThumbnailView = ({
   index,
   mode,
   handleActions,
+  isDeleteModalOpen,
+  setIsDeleteModalOpen,
 }: SlideThumbnailViewProps) => {
-  const { currentSlide, setCurrentSlide, isHost } = useContext(
+  const { currentSlide, setCurrentSlide, isHost, deleteSlide } = useContext(
     EventSessionContext
   ) as EventSessionContextType
+
+  const handleDelete = (_slide: ISlide) => {
+    deleteSlide(_slide.id)
+    setIsDeleteModalOpen(false)
+  }
 
   return (
     <div
@@ -48,7 +92,7 @@ const SlideThumbnailView = ({
         }}>
         <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
           <div className="shrink w-full">
-            <p className="line-clamp-1 py-1">{slide.name}</p>
+            <SlideEditableName slide={slide} />
           </div>
           {isHost && (
             <SlideActions
@@ -62,11 +106,17 @@ const SlideThumbnailView = ({
           )}
         </div>
       </div>
+      <DeleteSlideModal
+        isModalOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        handleDelete={handleDelete}
+        slide={slide}
+      />
     </div>
   )
 }
 
-type SlideActionKey = 'moveUp' | 'moveDown'
+type SlideActionKey = 'delete' | 'moveUp' | 'moveDown'
 
 interface IMiniSlideManagerCardProps {
   slide: ISlide
@@ -85,11 +135,14 @@ export const MiniSlideManagerCard = ({
     EventSessionContext
   ) as EventSessionContextType
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
+
   const handleActions = (
     action: { key: SlideActionKey; label: string },
     id: string
   ) => {
     const actions: Record<SlideActionKey, any> = {
+      delete: () => setIsDeleteModalOpen(true),
       moveUp: () => moveUpSlide(id),
       moveDown: () => moveDownSlide(id),
     }
@@ -104,6 +157,8 @@ export const MiniSlideManagerCard = ({
       index={index}
       mode={mode}
       handleActions={handleActions}
+      isDeleteModalOpen={isDeleteModalOpen}
+      setIsDeleteModalOpen={setIsDeleteModalOpen}
     />
   )
 }

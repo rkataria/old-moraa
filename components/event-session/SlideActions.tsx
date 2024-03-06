@@ -1,21 +1,26 @@
-import React from "react"
+import React from 'react'
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/react"
-import { IconArrowDown, IconArrowUp } from "@tabler/icons-react"
+} from '@nextui-org/react'
+import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
 
 const slideActions = [
   {
-    key: "moveUp",
-    label: "Move up",
+    key: 'delete',
+    label: 'Delete',
+    icon: <IconTrash className="h-4 w-4 text-slate-500" />,
+  },
+  {
+    key: 'moveUp',
+    label: 'Move up',
     icon: <IconArrowUp className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: "moveDown",
-    label: "Move down",
+    key: 'moveDown',
+    label: 'Move down',
     icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
   },
 ]
@@ -37,8 +42,7 @@ export const SlideActions = ({
             color="default"
             startContent={item.icon}
             className="flex items-center gap-4"
-            onClick={() => handleActions(item)}
-          >
+            onClick={() => handleActions(item)}>
             {item.label}
           </DropdownItem>
         )}
