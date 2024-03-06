@@ -137,7 +137,7 @@ export function Reflection({
                       type="button"
                       size="sm"
                       onClick={() => {
-                        if (responded) {
+                        if (!responded) {
                           addReflection?.(slide, reflection, username)
                         } else {
                           updateReflection?.(
