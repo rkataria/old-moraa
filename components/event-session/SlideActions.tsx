@@ -1,11 +1,13 @@
 import React from 'react'
+
+import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
+
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
 } from '@nextui-org/react'
-import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
 
 const slideActions = [
   {
@@ -25,13 +27,17 @@ const slideActions = [
   },
 ]
 
-export const SlideActions = ({
+export function SlideActions({
   triggerIcon,
   handleActions,
 }: {
   triggerIcon: React.ReactNode
-  handleActions: (item: any) => void
-}) => {
+  handleActions: (item: {
+    key: string
+    label: string
+    icon: React.JSX.Element
+  }) => void
+}) {
   return (
     <Dropdown placement="bottom-start">
       <DropdownTrigger>{triggerIcon}</DropdownTrigger>
@@ -50,5 +56,3 @@ export const SlideActions = ({
     </Dropdown>
   )
 }
-
-export default SlideActions

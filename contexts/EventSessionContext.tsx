@@ -2,15 +2,15 @@ import { createContext, useEffect, useRef, useState } from 'react'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useParams } from 'next/navigation'
+import { OnDragEndResponder } from 'react-beautiful-dnd'
 
 import { useEvent } from '@/hooks/useEvent'
+import { deletePDFFile } from '@/services/pdf.service'
 import {
   EventSessionContextType,
   PresentationStatuses,
 } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
-import { OnDragEndResponder } from 'react-beautiful-dnd'
-import { deletePDFFile } from '@/services/pdf.service'
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -52,6 +52,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
   const supabase = createClientComponentClient()
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const metaData = useRef<Object>({})
   const [syncing, setSyncing] = useState<boolean>(false)
 
@@ -161,6 +162,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         .eq('slide_id', currentSlide.id)
 
       if (_error) {
+        // eslint-disable-next-line no-console
         console.error(_error)
         setCurrentSlideLoading(false)
 
@@ -327,6 +329,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addParticipant = async (session?: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const { data: participant, error: _err } = await supabase
       .from('participant')
       .select()
@@ -334,6 +337,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       .eq('enrollment_id', enrollment?.id)
       .single()
     if (_err || !participant) {
+      // eslint-disable-next-line @typescript-eslint/no-shadow
       const { data: _participant, error } = await supabase
         .from('participant')
         .insert([
@@ -346,10 +350,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         .single()
 
       if (error) {
+        // eslint-disable-next-line no-console
         console.error('failed to create participant:', error)
+
         return
       }
       setParticipant(_participant)
+
       return
     }
     setParticipant(participant)
@@ -372,10 +379,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         .select()
         .single()
       if (createSessionError) {
+        // eslint-disable-next-line no-console
         console.error('failed to create session, error: ', createSessionError)
+
         return
       }
       await addParticipant(_session)
+
       return
     }
     await addParticipant(session)
@@ -386,13 +396,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.warn('meeting.id is missing')
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-shadow
     const { data, error } = await supabase
       .from('meeting')
       .update({ slides: ids })
       .eq('id', meeting?.id)
     if (error) {
       console.error('error while updating slide ids on meeting,error: ', error)
-      return
     }
   }
 
@@ -462,6 +472,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const deleteSlide = async (id: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const { error } = await supabase.from('slide').delete().eq('id', id)
     if (error) {
       console.error('failed to delete the slide: ', error)
@@ -476,6 +487,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     setSlides(updatedSlides)
     setSlides((s) => s.filter((_slide) => _slide.id !== id))
     await updateSlideIds(
+      // eslint-disable-next-line @typescript-eslint/no-shadow
       slides.filter((slide) => slide.id !== id).map((i) => i.id)
     )
 
@@ -502,6 +514,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     return result
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reorderSlide = async (result: OnDragEndResponder | any) => {
     if (!result.destination) {
       return

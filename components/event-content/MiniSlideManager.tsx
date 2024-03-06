@@ -14,6 +14,7 @@ import {
   type DroppableProps,
   Droppable,
   OnDragEndResponder,
+  DroppableProvided,
 } from 'react-beautiful-dnd'
 
 import { Tooltip } from '@nextui-org/react'
@@ -100,8 +101,7 @@ export function MiniSlideManager({
         </div>
         <DragDropContext onDragEnd={reorderSlide}>
           <StrictModeDroppable droppableId="droppable-1" type="slide">
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {(provided: any) => (
+            {(provided: DroppableProvided) => (
               <div
                 className="flex flex-col justify-start items-center gap-4 w-full flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-auto max-h-[calc(100vh_-_170px)] mb-1"
                 ref={provided.innerRef}
