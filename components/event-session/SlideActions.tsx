@@ -32,11 +32,7 @@ export function SlideActions({
   handleActions,
 }: {
   triggerIcon: React.ReactNode
-  handleActions: (item: {
-    key: string
-    label: string
-    icon: React.JSX.Element
-  }) => void
+  handleActions: (item: { key: string; label: string }) => void
 }) {
   return (
     <Dropdown placement="bottom-start">

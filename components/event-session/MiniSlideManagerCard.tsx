@@ -31,7 +31,8 @@ function SlideEditableName({ slide }: { slide: ISlide }) {
 
   const [nameEditable, setNameEditable] = useState(false)
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleBlur = (e: any) => {
     updateSlide({ ...slide, name: e.target.value })
     setNameEditable(false)
   }
