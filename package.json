@@ -101,11 +101,6 @@
   "resolutions": {
     "strip-ansi": "6.0.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
       "prettier -c ",
