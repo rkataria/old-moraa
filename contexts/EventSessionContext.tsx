@@ -324,32 +324,32 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addParticipant = async (session?: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    const { data: participant, error: _err } = await supabase
-      .from('participant')
-      .select()
-      .eq('session_id', session?.id ?? activeSession?.id)
-      .eq('enrollment_id', enrollment?.id)
-      .single()
-    if (_err || !participant) {
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      const { data: _participant, error } = await supabase
+    const { data: existingParticipant, error: existingParticipantError } =
+      await supabase
         .from('participant')
-        .insert([
-          {
-            session_id: session?.id ?? activeSession.id,
-            enrollment_id: enrollment.id,
-          },
-        ])
         .select()
+        .eq('session_id', session?.id ?? activeSession?.id)
+        .eq('enrollment_id', enrollment?.id)
         .single()
+    if (existingParticipantError || !existingParticipant) {
+      const { data: createdParticipant, error: createdParticipantError } =
+        await supabase
+          .from('participant')
+          .insert([
+            {
+              session_id: session?.id ?? activeSession.id,
+              enrollment_id: enrollment.id,
+            },
+          ])
+          .select()
+          .single()
 
-      if (error) {
+      if (createdParticipantError) {
         console.error('failed to create participant:', error)
 
         return
       }
-      setParticipant(_participant)
+      setParticipant(createdParticipant)
 
       return
     }
