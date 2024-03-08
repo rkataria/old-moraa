@@ -50,7 +50,7 @@ interface SlideThumbnailViewProps {
 }
 
 function SlideEditableName({ slide }: { slide: ISlide }) {
-  const { updateSlide } = useContext(
+  const { updateSlide, isOwner } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
@@ -74,7 +74,11 @@ function SlideEditableName({ slide }: { slide: ISlide }) {
   }
 
   return (
-    <p className="line-clamp-1 py-1" onClick={() => setNameEditable(true)}>
+    <p
+      className="line-clamp-1 py-1"
+      onClick={() => {
+        if (isOwner) setNameEditable(true)
+      }}>
       {slide.name}
     </p>
   )
@@ -90,7 +94,7 @@ function SlideListView({
   setIsDeleteModalOpen,
   handleDelete,
 }: SlideListViewProps) {
-  const { currentSlide, setCurrentSlide } = useContext(
+  const { currentSlide, setCurrentSlide, isOwner } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
   const Icon = contentTypes.find(
@@ -125,14 +129,16 @@ function SlideListView({
           onClick={() => setCurrentSlide(slide)}>
           <SlideEditableName slide={slide} />
         </div>
-        <SlideActions
-          triggerIcon={
-            <div className="h-full w-fit bg-slate-100 rounded mr-1 hidden group-hover:block">
-              <IconDots className="h-6 w-6 text-slate-500 px-1" />
-            </div>
-          }
-          handleActions={(action) => handleActions(action, slide.id)}
-        />
+        {isOwner && (
+          <SlideActions
+            triggerIcon={
+              <div className="h-full w-fit bg-slate-100 rounded mr-1 hidden group-hover:block">
+                <IconDots className="h-6 w-6 text-slate-500 px-1" />
+              </div>
+            }
+            handleActions={(action) => handleActions(action, slide.id)}
+          />
+        )}
       </div>
       <DeleteSlideModal
         isModalOpen={isDeleteModalOpen}
@@ -154,7 +160,7 @@ function SlideThumbnailView({
   setIsDeleteModalOpen,
   handleDelete,
 }: SlideThumbnailViewProps) {
-  const { currentSlide, setCurrentSlide } = useContext(
+  const { currentSlide, setCurrentSlide, isOwner } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
@@ -182,14 +188,16 @@ function SlideThumbnailView({
             onClick={() => setCurrentSlide(slide)}>
             <SlideEditableName slide={slide} />
           </div>
-          <SlideActions
-            triggerIcon={
-              <div className="h-full w-fit bg-slate-100 rounded hidden group-hover:block">
-                <IconDots className="h-6 w-6 text-slate-500 px-1" />
-              </div>
-            }
-            handleActions={(action) => handleActions(action, slide.id)}
-          />
+          {isOwner && (
+            <SlideActions
+              triggerIcon={
+                <div className="h-full w-fit bg-slate-100 rounded hidden group-hover:block">
+                  <IconDots className="h-6 w-6 text-slate-500 px-1" />
+                </div>
+              }
+              handleActions={(action) => handleActions(action, slide.id)}
+            />
+          )}
         </div>
       </div>
       <DeleteSlideModal

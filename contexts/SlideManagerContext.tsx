@@ -83,6 +83,8 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
       setSlideIds(filteredSlides.map((i) => i?.id) ?? [])
       setLoading(false)
       setCurrentSlide(filteredSlides?.[0])
+
+      if (currentUser.data.session?.user.id === event.owner_id) setIsOwner(true)
     } else {
       if (slides.length > 0) {
         setLoading(false)
