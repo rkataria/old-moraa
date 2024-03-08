@@ -161,7 +161,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         .eq('slide_id', currentSlide.id)
 
       if (_error) {
-        // eslint-disable-next-line no-console
         console.error(_error)
         setCurrentSlideLoading(false)
 
@@ -266,7 +265,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       if (slideResponse.error) {
         console.error(slideResponse.error)
       }
-      // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_error: any) {
       console.error(_error)
     }
@@ -377,7 +376,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         .select()
         .single()
       if (createSessionError) {
-        // eslint-disable-next-line no-console
         console.error('failed to create session, error: ', createSessionError)
 
         return
@@ -390,16 +388,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const updateSlideIds = async (ids: string[]) => {
-    if (!meeting?.id) {
-      console.warn('meeting.id is missing')
-    }
+    if (!meeting?.id) return
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-shadow
-    const { data, error } = await supabase
+    const { error: updatedSlideError } = await supabase
       .from('meeting')
       .update({ slides: ids })
       .eq('id', meeting?.id)
-    if (error) {
+    if (updatedSlideError) {
       console.error('error while updating slide ids on meeting,error: ', error)
     }
   }
@@ -470,10 +465,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const deleteSlide = async (id: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    const { error } = await supabase.from('slide').delete().eq('id', id)
-    if (error) {
-      console.error('failed to delete the slide: ', error)
+    const { error: deleteSlideError } = await supabase
+      .from('slide')
+      .delete()
+      .eq('id', id)
+
+    if (deleteSlideError) {
+      console.error('failed to delete the slide: ', deleteSlideError)
     }
     const index = slides.findIndex((slide) => slide.id === id)
     const slide = slides.find((_slide) => _slide.id === id)
@@ -485,8 +483,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     setSlides(updatedSlides)
     setSlides((s) => s.filter((_slide) => _slide.id !== id))
     await updateSlideIds(
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      slides.filter((slide) => slide.id !== id).map((i) => i.id)
+      slides.filter((slideData) => slideData.id !== id).map((i) => i.id)
     )
 
     if (currentSlide?.id === id) {
