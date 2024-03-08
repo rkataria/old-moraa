@@ -50,10 +50,13 @@ export function MiniSlideManager({
 
   return (
     <div
-      className={cn('bg-white/95 transition-all duration-200 relative', {
-        'w-72 opacity-1': visible,
-        'w-0 opacity-0': !visible,
-      })}>
+      className={cn(
+        'bg-white/95 transition-all duration-200 relative overflow-y-auto scrollbar-none h-[calc(100vh_-_64px)]',
+        {
+          'w-72 opacity-100 pr-4': visible,
+          'w-0 opacity-0': !visible,
+        }
+      )}>
       <DragDropContext onDragEnd={reorderSlide}>
         <StrictModeDroppable droppableId="droppable-1" type="slide">
           {(provided: DroppableProvided) => (
