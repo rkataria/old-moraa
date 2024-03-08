@@ -68,7 +68,7 @@ function SlideEditableName({ slide }: { slide: ISlide }) {
         defaultValue={slide.name}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && handleBlur(e)}
-        className="border-b border-primary outline-none py-1 w-[inherit] pr-2"
+        className="border-b border-primary-500 outline-none py-1 w-[inherit] pr-2"
       />
     )
   }

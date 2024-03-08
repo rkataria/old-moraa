@@ -84,9 +84,7 @@ export function CreateEventModal() {
     <Modal size="2xl" isOpen={isModalOpen} onClose={handleClose}>
       <ModalHeader>
         <h2 className="text-lg font-bold">Create a new event</h2>
-        <p className="text-textIndigo">
-          Give your event a name and an optional description to get going!
-        </p>
+        <p>Give your event a name and an optional description to get going!</p>
       </ModalHeader>
       <ModalContent>
         {() => (

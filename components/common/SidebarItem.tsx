@@ -34,7 +34,7 @@ export function SidebarItem() {
                   className={cn(
                     'dark:bg-gray-900 dark:text-white',
                     item.current
-                      ? 'bg-primarylight text-white'
+                      ? 'bg-primary text-white'
                       : 'text-indigo-200 hover:text-white hover:bg-indigo-700',
                     'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                   )}>

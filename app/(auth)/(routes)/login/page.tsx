@@ -12,7 +12,6 @@ import { Card, CardBody, CardHeader } from '@nextui-org/react'
 
 import { MoraaLogo } from '@/components/common/MoraaLogo'
 import { useAuth } from '@/hooks/useAuth'
-import { UIColors } from '@/styles/ui-colors'
 
 export default function Login() {
   const supabase = createClientComponentClient()
@@ -43,7 +42,7 @@ export default function Login() {
               variables: {
                 default: {
                   colors: {
-                    brand: UIColors.primary,
+                    brand: '#7C3AED',
                   },
                 },
               },
