@@ -88,14 +88,14 @@ export function ContentTypePicker({
   onChoose,
 }: ChooseContentTypeProps) {
   return (
-    <Modal size="5xl" isOpen={open} onClose={onClose} className="bg-[#464646]">
+    <Modal size="5xl" isOpen={open} onClose={onClose} className="bg-[#18181B]">
       <ModalContent>
         {() => (
           <>
             <ModalHeader className="flex flex-col gap-1">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-lg text-white">
+                  <h3 className="font-semibold text-xl text-white">
                     Gallery of static and interactive content slides{' '}
                   </h3>
                   <p className="text-sm text-gray-200 font-normal">
@@ -104,9 +104,9 @@ export function ContentTypePicker({
                 </div>
               </div>
             </ModalHeader>
-            <ModalBody>
-              <div className="w-full p-4">
-                <div className="grid grid-cols-3 justify-start items-center gap-4 py-4 flex-wrap scrollbar-none rounded-md mt-4">
+            <ModalBody className="p-6">
+              <div className="w-full">
+                <div className="grid grid-cols-3 justify-start items-center gap-4 flex-wrap scrollbar-none rounded-md">
                   {contentTypes.map((contentType, index) => (
                     <div
                       // eslint-disable-next-line react/no-array-index-key
@@ -114,7 +114,7 @@ export function ContentTypePicker({
                       className="flex-1 rounded-md  aspect-video cursor-pointer transition-all  flex flex-col justify-center items-center gap-2 p-[20px] text-center bg-[#353535] text-white hover:bg-black hover:border-black"
                       onClick={() => onChoose(contentType.contentType)}>
                       <p>{contentType.icon}</p>
-                      <h3 className="font-semibold text-xl ">
+                      <h3 className="font-semibold text-xl">
                         {contentType.name}
                       </h3>
                       <p className="text-sm text-white">
