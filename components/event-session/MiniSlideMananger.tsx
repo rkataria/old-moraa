@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import {
   DragDropContext,
@@ -66,7 +66,7 @@ export function MiniSlideManager({
                   key={`slide-draggable-${slide.id}`}
                   draggableId={`slide-draggable-${slide.id}`}
                   index={index}>
-                  {/* eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-explicit-any */}
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {(draggableProvided: any) => (
                     <div
                       ref={draggableProvided.innerRef}
