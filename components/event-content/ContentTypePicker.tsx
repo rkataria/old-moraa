@@ -88,14 +88,6 @@ export function ContentTypePicker({
   onChoose,
 }: ChooseContentTypeProps) {
   return (
-    // <div
-    //   className={clsx(
-    //     'fixed w-full h-full bg-black/75 left-0 top-0 overflow-hidden z-50',
-    //     {
-    //       'opacity-0 pointer-events-none': !open,
-    //       'opacity-100 pointer-events-auto': open,
-    //     }
-    //   )}>
     <Modal size="5xl" isOpen={open} onClose={onClose} className="bg-[#464646]">
       <ModalContent>
         {() => (
@@ -137,7 +129,5 @@ export function ContentTypePicker({
         )}
       </ModalContent>
     </Modal>
-
-    // </div>
   )
 }
