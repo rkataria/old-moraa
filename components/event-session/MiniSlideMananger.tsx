@@ -67,16 +67,16 @@ export function MiniSlideManager({
                   draggableId={`slide-draggable-${slide.id}`}
                   index={index}>
                   {/* eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-explicit-any */}
-                  {(provided: any) => (
+                  {(draggableProvided: any) => (
                     <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
+                      ref={draggableProvided.innerRef}
+                      {...draggableProvided.draggableProps}
                       className="w-full">
                       <MiniSlideManagerCard
                         mode={isHost ? 'present' : 'read'}
                         slide={slide}
                         index={index}
-                        draggableProps={provided.dragHandleProps}
+                        draggableProps={draggableProvided.dragHandleProps}
                       />
                     </div>
                   )}
