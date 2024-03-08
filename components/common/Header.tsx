@@ -5,7 +5,7 @@ import { UserMenu } from './UserMenu'
 
 export function HeaderComponent() {
   return (
-    <div className="flex justify-between items-center shadow-md sticky top-0 z-40 h-16">
+    <div className="flex justify-between items-center shadow-md sticky top-0 z-[50] h-16 bg-white">
       <SidebarMini />
 
       <div className="flex flex-1 justify-end gap-x-4 self-stretch lg:gap-x-6 pr-2">

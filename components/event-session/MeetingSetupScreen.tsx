@@ -45,9 +45,10 @@ export function MeetingSetupScreen() {
   useEffect(() => {
     if (!meeting) return
     const preset = meeting.self.presetName
-
     if (preset.includes('host')) {
       setIsHost(true)
+    } else {
+      meeting.self.disableAudio()
     }
   }, [meeting])
 

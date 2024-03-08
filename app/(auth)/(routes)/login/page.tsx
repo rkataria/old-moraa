@@ -35,7 +35,9 @@ export default function Login() {
         <CardBody>
           <Auth
             supabaseClient={supabase}
-            redirectTo={isClient ? window.location.origin : '/events'}
+            redirectTo={
+              isClient ? `${window.location.origin}/events` : '/events'
+            }
             providers={['google']}
             appearance={{
               theme: ThemeSupa,
