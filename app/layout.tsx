@@ -20,6 +20,7 @@ export default function RootLayout({
     <html lang="en" className={inter.className}>
       <body className="h-full w-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full bg-background text-foreground">
         <Providers>{children}</Providers>
+        <div />
       </body>
     </html>
   )
