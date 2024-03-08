@@ -48,7 +48,7 @@ export function Slide({
       />
       {settingsEnabled && (
         <IconSettings
-          className="absolute right-0 top-0 z-[999] m-1 text-slate-300 hover:text-slate-500 duration-100 cursor-pointer"
+          className="absolute right-0 top-0 z-[40] m-1 text-slate-300 hover:text-slate-500 duration-100 cursor-pointer"
           onClick={() => setSettingsSidebarVisible(true)}
         />
       )}
