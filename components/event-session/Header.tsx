@@ -60,9 +60,9 @@ export function Header({
         <DyteClock meeting={meeting} />
       </div>
       <div className="p-4 flex justify-end items-center gap-2">
-        <DyteMicToggle meeting={meeting} size="sm" />
-        <DyteCameraToggle meeting={meeting} size="sm" />
-        {isHost && <DyteScreenShareToggle meeting={meeting} size="sm" />}
+        <DyteMicToggle meeting={meeting} size="lg" />
+        <DyteCameraToggle meeting={meeting} size="lg" />
+        {isHost && <DyteScreenShareToggle meeting={meeting} size="lg" />}
 
         <PresentationControls />
         <Button
@@ -71,7 +71,7 @@ export function Header({
           <IconDots className="text-white w-6 h-6" />
         </Button>
         <DyteLeaveButton
-          size="sm"
+          size="lg"
           onClick={() => {
             setState({
               activeLeaveConfirmation: true,
@@ -79,10 +79,10 @@ export function Header({
           }}
         />
       </div>
-      <div className="p-4 flex justify-start items-center gap-6">
-        <DyteParticipantsToggle meeting={meeting} size="sm" />
-        <DyteChatToggle meeting={meeting} size="sm" />
-        {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
+      <div className="p-4 flex justify-start items-center gap-2">
+        <DyteParticipantsToggle meeting={meeting} size="lg" />
+        <DyteChatToggle meeting={meeting} size="lg" />
+        {isHost && <DytePluginsToggle meeting={meeting} size="lg" />}
       </div>
     </div>
   )
