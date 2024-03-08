@@ -23,6 +23,8 @@ export type EventSessionContextType = {
   currentSlideResponses: any[] | null
   metaData: MutableRefObject<any>
   participant: any
+  activeStateSession: any
+  syncing: boolean
   syncSlides: () => void
   startPresentation: () => void
   stopPresentation: () => void
@@ -35,7 +37,7 @@ export type EventSessionContextType = {
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
   joinMeeting?: () => void
-  syncing: boolean
+  handRaisedHandler: (id: string) => void
   reorderSlide: (result: any) => void
   moveUpSlide: (id: string) => void
   moveDownSlide: (id: string) => void

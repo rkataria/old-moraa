@@ -51,9 +51,16 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [activeStateSession, setActiveSession] = useState<any>(null)
   const supabase = createClientComponentClient()
   const metaData = useRef<object>({})
   const [syncing, setSyncing] = useState<boolean>(false)
+
+  useEffect(() => {
+    setActiveSession(activeSession)
+  }, [activeSession])
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -70,7 +77,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     if (!activeSession || !meetingSlides?.slides) return
 
     const slide = meetingSlides?.slides?.find(
-      (s) => s.id === activeSession.data?.currentSlideId
+      (s: ISlide) => s.id === activeSession.data?.currentSlideId
     )
     setCurrentSlide(slide || slides[0])
     setPresentationStatus(
@@ -387,6 +394,52 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     await addParticipant(session)
   }
 
+  useEffect(() => {
+    const channels = supabase
+      .channel('session-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'session',
+          filter: `id=eq.${activeStateSession?.id}`,
+        },
+        (payload) => {
+          setActiveSession(payload?.new)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      channels.unsubscribe()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeStateSession])
+
+  const handRaisedHandler = async (participantId: string) => {
+    const prevSessionRaisedHands = activeStateSession?.data?.handsRaised || []
+    let updateRaisedHands = prevSessionRaisedHands
+    const isParticipantIdExist =
+      prevSessionRaisedHands.findIndex((i: string) => i === participantId) !==
+      -1
+    if (isParticipantIdExist) {
+      updateRaisedHands = prevSessionRaisedHands.filter(
+        (i: string) => i !== participantId
+      )
+    } else {
+      updateRaisedHands = [...prevSessionRaisedHands, participantId]
+    }
+    await supabase.from('session').upsert({
+      id: activeStateSession.id,
+      data: {
+        currentSlideId: currentSlide?.id,
+        presentationStatus,
+        handsRaised: updateRaisedHands,
+      },
+    })
+  }
+
   const updateSlideIds = async (ids: string[]) => {
     if (!meeting?.id) return
 
@@ -550,6 +603,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         addReflection,
         updateReflection,
         joinMeeting,
+        handRaisedHandler,
+        activeStateSession,
         syncing,
         reorderSlide,
         moveUpSlide,

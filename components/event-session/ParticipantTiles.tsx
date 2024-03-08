@@ -7,6 +7,7 @@ import {
   DyteSpotlightGrid,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { HiMiniHandRaised } from 'react-icons/hi2'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import {
@@ -16,7 +17,7 @@ import {
 
 export function ParticipantTiles() {
   const { meeting } = useDyteMeeting()
-  const { presentationStatus } = useContext(
+  const { presentationStatus, activeStateSession } = useContext(
     EventSessionContext
   ) as EventSessionContextType
   const activePlugin = meeting.plugins.active.toArray()?.[0]
@@ -52,10 +53,13 @@ export function ParticipantTiles() {
         participant={meeting.self}
         nameTagPosition="bottom-center"
         variant="gradient"
-        className="h-[140px] w-64 rounded-none aspect-video flex-none border-2 border-green-500 sticky left-0 z-[1]">
+        className="relative h-[140px] w-64 rounded-none aspect-video flex-none border-2 border-green-500 left-0 z-[1]">
         <DyteNameTag meeting={meeting} participant={meeting.self}>
           <DyteAudioVisualizer slot="start" participant={meeting.self} />
         </DyteNameTag>
+        {activeStateSession?.data?.handsRaised?.includes(meeting.self.id) && (
+          <HiMiniHandRaised className="absolute right-2 top-2 text-xl animate-pulse flex justify-center items-center text-[#FAC036]" />
+        )}
       </DyteParticipantTile>
       {meeting.participants.active.toArray().map((participant) => (
         <DyteParticipantTile
@@ -67,6 +71,9 @@ export function ParticipantTiles() {
           <DyteNameTag meeting={meeting} participant={participant}>
             <DyteAudioVisualizer slot="start" participant={participant} />
           </DyteNameTag>
+          {activeStateSession?.data?.handsRaised?.includes(participant.id) && (
+            <HiMiniHandRaised className="absolute right-2 top-2 text-xl animate-pulse flex justify-center items-center text-[#FAC036]" />
+          )}
         </DyteParticipantTile>
       ))}
     </div>

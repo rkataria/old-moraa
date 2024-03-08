@@ -19,6 +19,7 @@ import { useParams } from 'next/navigation'
 
 import { ControlButton } from './ControlButton'
 import { PresentationControls } from './PresentationControls'
+import { RaiseHand } from './RaiseHand'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
@@ -62,8 +63,9 @@ export function Header({
         {isHost && <DyteScreenShareToggle meeting={meeting} size="lg" />}
 
         <PresentationControls />
+        <RaiseHand meeting={meeting} isHost={isHost} />
         <DyteSettingsToggle
-          size="sm"
+          size="lg"
           onClick={() => {
             setState({
               activeSettings: true,
