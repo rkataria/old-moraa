@@ -97,21 +97,24 @@ export function MeetingSetupScreen() {
       <div className="flex justify-center items-center gap-4">
         <div className="w-1/2 flex justify-end">
           <div className="relative">
-            <DyteParticipantTile meeting={meeting} participant={self}>
+            <DyteParticipantTile
+              meeting={meeting}
+              participant={self}
+              className="relative">
               <DyteAvatar size="md" participant={self} />
-              <DyteNameTag meeting={meeting} participant={self}>
-                <DyteAudioVisualizer
-                  size="sm"
-                  slot="start"
-                  participant={self}
-                />
-              </DyteNameTag>
-              <div className="absolute bottom-2 right-2 flex">
-                <DyteMicToggle size="sm" meeting={meeting} />
-                &ensp;
-                <DyteCameraToggle size="sm" meeting={meeting} />
-                &ensp;
-                <DyteSettingsToggle size="sm" onClick={handleSettingsClick} />
+              <div className="absolute top-2 left-2">
+                <DyteNameTag meeting={meeting} participant={self}>
+                  <DyteAudioVisualizer
+                    size="lg"
+                    slot="start"
+                    participant={self}
+                  />
+                </DyteNameTag>
+              </div>
+              <div className="absolute bottom-2 left-2 w-full flex justify-center items-center gap-2">
+                <DyteMicToggle size="lg" meeting={meeting} />
+                <DyteCameraToggle size="lg" meeting={meeting} />
+                <DyteSettingsToggle size="lg" onClick={handleSettingsClick} />
               </div>
             </DyteParticipantTile>
           </div>
