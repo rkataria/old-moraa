@@ -106,12 +106,12 @@ export function ContentTypePicker({
             </ModalHeader>
             <ModalBody className="p-6">
               <div className="w-full">
-                <div className="grid grid-cols-3 justify-start items-center gap-4 flex-wrap scrollbar-none rounded-md">
+                <div className="grid grid-cols-3 justify-start items-center gap-4 scrollbar-none rounded-md">
                   {contentTypes.map((contentType, index) => (
                     <div
                       // eslint-disable-next-line react/no-array-index-key
                       key={index}
-                      className="flex-1 rounded-md  aspect-video cursor-pointer transition-all  flex flex-col justify-center items-center gap-2 p-[20px] text-center bg-[#353535] text-white hover:bg-black hover:border-black"
+                      className="rounded-md  aspect-video cursor-pointer transition-all flex flex-col justify-center items-center gap-2 p-[20px] text-center bg-[#353535] text-white hover:bg-black hover:border-black"
                       onClick={() => onChoose(contentType.contentType)}>
                       <p>{contentType.icon}</p>
                       <h3 className="font-semibold text-xl">
