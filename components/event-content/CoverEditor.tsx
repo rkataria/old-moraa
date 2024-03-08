@@ -45,7 +45,7 @@ export function CoverEditor({ slide }: CoverEditorProps) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center px-8 bg-white">
+    <div className="w-full h-full flex flex-col justify-center items-center px-8">
       <TextareaAutosize
         maxLength={100}
         placeholder="Title"

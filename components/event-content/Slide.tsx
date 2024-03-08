@@ -2,6 +2,7 @@
 
 import React from 'react'
 
+import { IconSettings } from '@tabler/icons-react'
 import dynamic from 'next/dynamic'
 
 import { ContentType } from './ContentTypePicker'
@@ -24,11 +25,19 @@ const PDFUploader = dynamic(
 interface SlideProps {
   isOwner: boolean
   slide: ISlide
+  settingsEnabled?: boolean
+  setSettingsSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function Slide({ isOwner = false, slide }: SlideProps) {
+export function Slide({
+  isOwner = false,
+  slide,
+  settingsEnabled,
+  setSettingsSidebarVisible,
+}: SlideProps) {
   return (
     <div
+      style={{ backgroundColor: slide.config.backgroundColor }}
       className={cn('relative group w-full h-full', {
         'pointer-events-none': !isOwner,
       })}>
@@ -37,6 +46,13 @@ export function Slide({ isOwner = false, slide }: SlideProps) {
           hidden: !isOwner,
         })}
       />
+      {settingsEnabled && (
+        <IconSettings
+          className="absolute right-0 top-0 z-[999] m-1 text-slate-300 hover:text-slate-500 duration-100 cursor-pointer"
+          onClick={() => setSettingsSidebarVisible(true)}
+        />
+      )}
+
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto transition-all">

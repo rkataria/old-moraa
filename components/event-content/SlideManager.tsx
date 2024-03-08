@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { ContentTypePicker, ContentType } from './ContentTypePicker'
 import { MiniSlideManager } from './MiniSlideManager'
+import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
 import { Loading } from '../common/Loading'
 import { SyncingStatus } from '../common/SyncingStatus'
@@ -21,6 +22,7 @@ import { getDefaultContent } from '@/utils/content.util'
 export function SlideManager() {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
+  const [settingsSidebarVisible, setSettingsSidebarVisible] = useState(false)
 
   const { currentUser } = useAuth()
   const userId = currentUser?.id
@@ -40,6 +42,18 @@ export function SlideManager() {
   const addSlideRef = useRef<HTMLDivElement>(null)
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
+
+  const getSettingsEnabled = () => {
+    if (!currentSlide) return false
+
+    return [
+      ContentType.POLL,
+      ContentType.COVER,
+      ContentType.REFLECTION,
+    ].includes(currentSlide.type)
+  }
+
+  const settingsEnabled = getSettingsEnabled()
 
   const handleAddNewSlide = (contentType: ContentType) => {
     const newSlide: ISlide = {
@@ -74,6 +88,7 @@ export function SlideManager() {
             {
               'p-8 pl-80': miniMode,
               'p-24': !miniMode,
+              'pr-80': settingsSidebarVisible,
             }
           )}>
           <div
@@ -88,6 +103,8 @@ export function SlideManager() {
                 key={`slide-${currentSlide.id}`}
                 slide={currentSlide}
                 isOwner={isOwner}
+                settingsEnabled={settingsEnabled}
+                setSettingsSidebarVisible={setSettingsSidebarVisible}
               />
             ) : (
               <div>Add a slide to continue</div>
@@ -104,6 +121,14 @@ export function SlideManager() {
           onMiniModeChange={setMiniMode}
           reorderSlide={reorderSlide}
         />
+        {currentSlide && (
+          <SettingsSidebar
+            settingsEnabled={settingsEnabled}
+            open={settingsSidebarVisible}
+            slide={currentSlide}
+            setSettingsSidebarVisible={setSettingsSidebarVisible}
+          />
+        )}
       </div>
       (
       <ContentTypePicker
