@@ -5,7 +5,7 @@ import {
   Draggable,
   type DroppableProps,
   Droppable,
-  DroppableProvided,
+  type DroppableProvided,
 } from 'react-beautiful-dnd'
 
 import { MiniSlideManagerCard } from './MiniSlideManagerCard'
