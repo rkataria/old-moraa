@@ -5,11 +5,9 @@ import {
   DyteDialogManager,
   DyteNotifications,
   DyteParticipantsAudio,
-  DyteSettings,
   DyteSidebar,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { IconX } from '@tabler/icons-react'
 import clsx from 'clsx'
 
 import { ContentContainer } from '@/components/event-session/ContentContainer'
@@ -39,7 +37,6 @@ export function MeetingScreen() {
   } = useContext(EventSessionContext) as EventSessionContextType
   const [slidesSidebarVisible, setSlidesSidebarVisibility] =
     useState<boolean>(true)
-  const [isSettingsModalOpen, setSettingsModalOpen] = useState<boolean>(false)
   const [states, setStates] = useState({})
   const [activeSidebar, setActiveSidebar] = useState<boolean>(false)
   const [isHost, setIsHost] = useState<boolean>(false)
@@ -148,9 +145,6 @@ export function MeetingScreen() {
         toggleSlidesSidebarVisiblity={() => {
           setSlidesSidebarVisibility((v) => !v)
         }}
-        toggleSettingsModal={() => {
-          setSettingsModalOpen((v) => !v)
-        }}
       />
       <div className="flex flex-auto">
         {/* {presentationStatus === PresentationStatuses.STARTED && ( */}
@@ -196,24 +190,6 @@ export function MeetingScreen() {
           setState({ ...states, ...e.detail })
         }}
       />
-
-      {isSettingsModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md">
-            <div className="flex justify-end">
-              {/* Close icon in the top-right corner */}
-              <button
-                type="button"
-                onClick={() => {
-                  setSettingsModalOpen(false)
-                }}>
-                <IconX className="w-6 h-6 text-black" />
-              </button>
-            </div>
-            <DyteSettings meeting={meeting} />
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -6,18 +6,18 @@ import {
   DyteAudioVisualizer,
   DyteAvatar,
   DyteCameraToggle,
+  DyteDialogManager,
   DyteMicToggle,
   DyteNameTag,
+  DyteNotifications,
   DyteParticipantTile,
-  DyteSettings,
+  DyteParticipantsAudio,
   DyteSettingsToggle,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { IconX } from '@tabler/icons-react'
 import { useParams } from 'next/navigation'
 
-import { Loading } from '../common/Loading'
-
+import { Loading } from '@/components/common/Loading'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useProfile } from '@/hooks/useProfile'
@@ -29,41 +29,22 @@ export function MeetingSetupScreen() {
   const { event } = useEvent({
     id: eventId as string,
   })
+  const self = useDyteSelector((meeting) => meeting.self)
   const { meeting } = useDyteMeeting()
   const [name, setName] = useState<string>('')
   const [isHost, setIsHost] = useState<boolean>(false)
-  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false)
   const { joinMeeting } = useContext(
     EventSessionContext
   ) as EventSessionContextType
-
-  const handleSettingsClick = () => {
-    setSettingsModalOpen(true)
-  }
-
-  const handleCloseSettingsModal = () => {
-    setSettingsModalOpen(false)
-  }
-
-  // Close the modal when the component is unmounted
-  useEffect(
-    () => () => {
-      setSettingsModalOpen(false)
-    },
-    []
-  )
+  const [states, setStates] = useState({})
 
   useEffect(() => {
     setName(`${profile?.first_name} ${profile?.last_name}`)
   }, [profile])
 
-  const self = useDyteSelector((states) => states.self)
-
   useEffect(() => {
     if (!meeting) return
     const preset = meeting.self.presetName
-    // const name = meeting.self.name
-    // setName(name)
 
     if (preset.includes('host')) {
       setIsHost(true)
@@ -83,6 +64,9 @@ export function MeetingSetupScreen() {
       </div>
     )
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const setState = (s: any) => setStates((_states) => ({ ..._states, ...s }))
 
   return (
     <div className="w-full h-screen flex flex-col justify-start items-center gap-4 pt-36">
@@ -111,27 +95,18 @@ export function MeetingSetupScreen() {
                   />
                 </DyteNameTag>
               </div>
-              <div className="absolute bottom-2 left-2 w-full flex justify-center items-center gap-2">
+              <div className="absolute bottom-2 w-full flex justify-center items-center gap-2">
                 <DyteMicToggle size="lg" meeting={meeting} />
                 <DyteCameraToggle size="lg" meeting={meeting} />
-                <DyteSettingsToggle size="lg" onClick={handleSettingsClick} />
+                <DyteSettingsToggle
+                  size="lg"
+                  onClick={() => {
+                    setStates({ activeSettings: true })
+                  }}
+                />
               </div>
             </DyteParticipantTile>
           </div>
-          {isSettingsModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="bg-white p-4 rounded-md">
-                <div className="flex justify-end">
-                  {/* Close icon in the top-right corner */}
-                  {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button type="button" onClick={handleCloseSettingsModal}>
-                    <IconX className="w-6 h-6 text-black" />
-                  </button>
-                </div>
-                <DyteSettings meeting={meeting} />
-              </div>
-            </div>
-          )}
         </div>
         <div className="flex flex-col justify-start w-1/2 m-8">
           <div className="w-1/2 flex text-center flex-col min-w-[300px]">
@@ -158,6 +133,17 @@ export function MeetingSetupScreen() {
           </div>
         </div>
       </div>
+
+      {/* Required Dyte Components */}
+      <DyteParticipantsAudio meeting={meeting} />
+      <DyteNotifications meeting={meeting} />
+      <DyteDialogManager
+        meeting={meeting}
+        states={states}
+        onDyteStateUpdate={(e) => {
+          setState({ ...states, ...e.detail })
+        }}
+      />
     </div>
   )
 }

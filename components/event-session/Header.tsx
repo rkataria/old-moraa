@@ -11,12 +11,11 @@ import {
   DyteParticipantsToggle,
   DytePluginsToggle,
   DyteScreenShareToggle,
+  DyteSettingsToggle,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { IconDots, IconMenu } from '@tabler/icons-react'
+import { IconMenu } from '@tabler/icons-react'
 import { useParams } from 'next/navigation'
-
-import { Button } from '@nextui-org/react'
 
 import { ControlButton } from './ControlButton'
 import { PresentationControls } from './PresentationControls'
@@ -32,13 +31,11 @@ type HeaderProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setState: any
   toggleSlidesSidebarVisiblity: () => void
-  toggleSettingsModal: () => void
 }
 
 export function Header({
   setState,
   toggleSlidesSidebarVisiblity,
-  toggleSettingsModal,
 }: HeaderProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
@@ -65,11 +62,14 @@ export function Header({
         {isHost && <DyteScreenShareToggle meeting={meeting} size="lg" />}
 
         <PresentationControls />
-        <Button
-          className="p-4 bg-inherit hover:bg-gray-800 bg-opacity-20"
-          onClick={toggleSettingsModal}>
-          <IconDots className="text-white w-6 h-6" />
-        </Button>
+        <DyteSettingsToggle
+          size="sm"
+          onClick={() => {
+            setState({
+              activeSettings: true,
+            })
+          }}
+        />
         <DyteLeaveButton
           size="lg"
           onClick={() => {
