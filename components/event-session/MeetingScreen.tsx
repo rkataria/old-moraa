@@ -172,6 +172,7 @@ export function MeetingScreen() {
           })}>
           <DyteSidebar
             meeting={meeting}
+            states={states}
             className="rounded-none text-white"
             onDyteStateUpdate={(e) => {
               setState({ ...states, ...e.detail })

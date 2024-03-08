@@ -79,10 +79,40 @@ export function Header({
           }}
         />
       </div>
+
       <div className="p-4 flex justify-start items-center gap-2">
-        <DyteParticipantsToggle meeting={meeting} size="lg" />
-        <DyteChatToggle meeting={meeting} size="lg" />
-        {isHost && <DytePluginsToggle meeting={meeting} size="lg" />}
+        <DyteParticipantsToggle
+          meeting={meeting}
+          size="lg"
+          onClick={() => {
+            setState({
+              activeSidebar: true,
+              sidebar: 'participants',
+            })
+          }}
+        />
+        <DyteChatToggle
+          meeting={meeting}
+          size="lg"
+          onClick={() => {
+            setState({
+              activeSidebar: true,
+              sidebar: 'chat',
+            })
+          }}
+        />
+        {isHost && (
+          <DytePluginsToggle
+            meeting={meeting}
+            size="lg"
+            onClick={() => {
+              setState({
+                activeSidebar: true,
+                sidebar: 'plugins',
+              })
+            }}
+          />
+        )}
       </div>
     </div>
   )
