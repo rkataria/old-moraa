@@ -6,10 +6,10 @@ import {
   IconBrandGoogleDrive,
   IconBrandAdobe,
   IconChartBar,
-  IconX,
   IconVideo,
 } from '@tabler/icons-react'
-import clsx from 'clsx'
+
+import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/react'
 
 interface IContentType {
   name: string
@@ -36,40 +36,40 @@ export const INTERACTIVE_SLIDE_TYPES = [
 export const contentTypes: IContentType[] = [
   {
     name: 'Title & Description',
-    icon: <IconAlignCenter />,
+    icon: <IconAlignCenter className="w-11 h-11" />,
     description:
       'Simple and effective. Suitable for cover pages and section dividers',
     contentType: ContentType.COVER,
   },
   {
     name: 'Google Slides',
-    icon: <IconBrandGoogleDrive />,
+    icon: <IconBrandGoogleDrive className="w-11 h-11" />,
     description: 'Empower presentations with seamless Google Slides embed',
     contentType: ContentType.GOOGLE_SLIDES,
   },
   {
     name: 'PDF',
-    icon: <IconBrandAdobe />,
+    icon: <IconBrandAdobe className="w-11 h-11" />,
     description: 'Upload and integrate your PDF content as a multi-page slide!',
     contentType: ContentType.PDF_VIEWER,
   },
   {
     name: 'Poll',
-    icon: <IconChartBar />,
+    icon: <IconChartBar className="w-11 h-11" />,
     description:
       'Break ice, gauge opinions visually. Dive into dialogue effortlessly.',
     contentType: ContentType.POLL,
   },
   {
     name: 'Reflections',
-    icon: <IconCards />,
+    icon: <IconCards className="w-11 h-11" />,
     description:
       'Ignite insights through thoughtful reflection. Share perspectives, spark growth.',
     contentType: ContentType.REFLECTION,
   },
   {
     name: 'Video Embed',
-    icon: <IconVideo />,
+    icon: <IconVideo className="w-11 h-11" />,
     description:
       'Embed videos from YouTube, Vimeo, or any other video hosting platform',
     contentType: ContentType.VIDEO_EMBED,
@@ -88,44 +88,46 @@ export function ContentTypePicker({
   onChoose,
 }: ChooseContentTypeProps) {
   return (
-    <div
-      className={clsx(
-        'fixed w-full h-full bg-black/75 left-0 top-0 overflow-hidden z-50',
-        {
-          'opacity-0 pointer-events-none': !open,
-          'opacity-100 pointer-events-auto': open,
-        }
-      )}>
-      <div className="fixed bottom-0 left-0 w-full bg-white p-4">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-semibold text-lg">
-              Gallery of static and interactive content slides{' '}
-            </h3>
-            <p className="text-sm text-gray-500">
-              Choose the type of slide you want to add to your event
-            </p>
-          </div>
-          <button aria-label="Close " type="button" onClick={onClose}>
-            <IconX />
-          </button>
-        </div>
-        <div className="flex justify-start items-center gap-4 py-4 flex-nowrap overflow-x-auto scrollbar-none rounded-md mt-4">
-          {contentTypes.map((contentType, index) => (
-            <div
-              // eslint-disable-next-line react/no-array-index-key
-              key={index}
-              className="h-36 rounded-md flex-none aspect-video cursor-pointer transition-all border-2 flex flex-col justify-center items-center gap-2 p-4 text-center bg-gray-900 text-white hover:bg-black hover:border-black"
-              onClick={() => onChoose(contentType.contentType)}>
-              <p>{contentType.icon}</p>
-              <h3 className="font-bold">{contentType.name}</h3>
-              <p className="text-sm text-purple-400">
-                {contentType.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <Modal size="5xl" isOpen={open} onClose={onClose} className="bg-[#18181B]">
+      <ModalContent>
+        {() => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-xl text-white">
+                    Gallery of static and interactive content slides{' '}
+                  </h3>
+                  <p className="text-sm text-gray-200 font-normal">
+                    Choose the type of slide you want to add to your event
+                  </p>
+                </div>
+              </div>
+            </ModalHeader>
+            <ModalBody className="p-6">
+              <div className="w-full">
+                <div className="grid grid-cols-3 justify-start items-center gap-4 scrollbar-none rounded-md">
+                  {contentTypes.map((contentType, index) => (
+                    <div
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={index}
+                      className="rounded-md  aspect-video cursor-pointer transition-all flex flex-col justify-center items-center gap-2 p-[20px] text-center bg-[#353535] text-white hover:bg-black hover:border-black"
+                      onClick={() => onChoose(contentType.contentType)}>
+                      <p>{contentType.icon}</p>
+                      <h3 className="font-semibold text-xl">
+                        {contentType.name}
+                      </h3>
+                      <p className="text-sm text-white">
+                        {contentType.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </ModalBody>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   )
 }
