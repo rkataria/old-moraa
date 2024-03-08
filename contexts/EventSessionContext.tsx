@@ -324,6 +324,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addParticipant = async (session?: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const { data: participant, error: _err } = await supabase
       .from('participant')
       .select()
@@ -331,6 +332,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       .eq('enrollment_id', enrollment?.id)
       .single()
     if (_err || !participant) {
+      // eslint-disable-next-line @typescript-eslint/no-shadow
       const { data: _participant, error } = await supabase
         .from('participant')
         .insert([
@@ -344,9 +346,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
       if (error) {
         console.error('failed to create participant:', error)
+
         return
       }
       setParticipant(_participant)
+
       return
     }
     setParticipant(participant)
@@ -370,9 +374,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         .single()
       if (createSessionError) {
         console.error('failed to create session, error: ', createSessionError)
+
         return
       }
       await addParticipant(_session)
+
       return
     }
     await addParticipant(session)
