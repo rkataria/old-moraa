@@ -80,6 +80,7 @@ export function VideoEmbed({ slide }: VideoEmbedProps) {
         url={videoUrl}
         showControls={isHost}
         playerState={playerState}
+        viewOnly={!isHost}
         onPlayerStateChange={handlePlayerStateChange}
       />
     </div>
