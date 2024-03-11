@@ -12,7 +12,14 @@ import { useAuth } from '@/hooks/useAuth'
 import { ISlide } from '@/types/slide.type'
 
 interface PollProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      question: string
+      options: string[]
+      backgroundColor: string
+      textColor: string
+    }
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   votes?: any
   voted?: boolean

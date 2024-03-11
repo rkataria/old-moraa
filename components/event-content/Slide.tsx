@@ -1,3 +1,6 @@
+// TODO: Fix any types
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 'use client'
 
 import React from 'react'
@@ -5,8 +8,9 @@ import React from 'react'
 import { IconSettings } from '@tabler/icons-react'
 import dynamic from 'next/dynamic'
 
+import { CoverEditor } from './content-types/CoverEditor'
+import { TextImageEditor } from './content-types/TextImageEditor'
 import { ContentType } from './ContentTypePicker'
-import { CoverEditor } from './CoverEditor'
 import { GoogleSlidesEditor } from './GoogleSlidesEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
@@ -61,14 +65,19 @@ export function Slide({
         )}
         {slide.type === ContentType.COVER && <CoverEditor slide={slide} />}
         {slide.type === ContentType.GOOGLE_SLIDES && (
-          <GoogleSlidesEditor slide={slide} />
+          <GoogleSlidesEditor slide={slide as any} />
         )}
         {slide.type === ContentType.REFLECTION && (
           <ReflectionEditor slide={slide} />
         )}
-        {slide.type === ContentType.PDF_VIEWER && <PDFUploader slide={slide} />}
+        {slide.type === ContentType.PDF_VIEWER && (
+          <PDFUploader slide={slide as any} />
+        )}
         {slide.type === ContentType.VIDEO_EMBED && (
-          <VideoEmbedEditor slide={slide} />
+          <VideoEmbedEditor slide={slide as any} />
+        )}
+        {slide.type === ContentType.TEXT_IMAGE && (
+          <TextImageEditor slide={slide} />
         )}
       </div>
     </div>

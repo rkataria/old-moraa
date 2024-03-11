@@ -13,7 +13,7 @@ interface ReflectionEditorProps {
 }
 
 export function ReflectionEditor({ slide }: ReflectionEditorProps) {
-  const [title, setTitle] = useState<string>(slide.content.title)
+  const [title, setTitle] = useState(slide.content?.title)
   const throttledTitle = useThrottle(title, 500)
 
   const { updateSlide } = useContext(
@@ -39,7 +39,7 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
       <TextareaAutosize
         maxLength={100}
         placeholder="Title"
-        defaultValue={slide.content.title}
+        defaultValue={slide.content?.title}
         onChange={updateTitle}
         className="w-full p-2 text-center border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold text-gray-800 resize-none"
       />

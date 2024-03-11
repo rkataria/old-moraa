@@ -27,7 +27,12 @@ import { QueryKeys } from '@/utils/query-keys'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      pdfPath: string
+      defaultPage: number
+    }
+  }
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker

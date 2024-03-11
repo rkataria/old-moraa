@@ -11,7 +11,12 @@ import { ISlide } from '@/types/slide.type'
 import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
 
 interface GoogleSlidesProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      googleSlideURL: string
+      startPosition?: number
+    }
+  }
 }
 
 const PositionChangeEvent = 'g-slide-position-changed'

@@ -527,7 +527,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.error('failed to delete the slide: ', deleteSlideError)
     }
     const index = slides.findIndex((slide) => slide.id === id)
-    const slide = slides.find((_slide) => _slide.id === id)
+    // TODO: Implement block pattern
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const slide = slides.find((_slide) => _slide.id === id) as any
     if (slide?.content?.pdfPath) {
       deletePDFFile(slide?.content?.pdfPath)
     }

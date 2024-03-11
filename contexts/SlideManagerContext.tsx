@@ -138,7 +138,7 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
     setSlideIds((s) => [...s, data?.id])
   }
 
-  const updateSlide = async (slide: ISlide) => {
+  const updateSlide = async (slide: Partial<ISlide>) => {
     const _slide = { ...slide }
     _slide.meeting_id = slide.meeting_id ?? meeting?.id
     await supabase.from('slide').upsert({
@@ -147,10 +147,11 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
       config: _slide.config,
       name: _slide.name,
     })
-    setCurrentSlide(_slide)
-    setSlides((s) => {
-      if (s.findIndex((i) => i.id === _slide.id) >= 0) {
-        return s.map((sl) => (sl.id === _slide.id ? _slide : sl))
+    setCurrentSlide(_slide as ISlide)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setSlides((s: any) => {
+      if (s.findIndex((i: ISlide) => i.id === _slide.id) >= 0) {
+        return s.map((sl: ISlide) => (sl.id === _slide.id ? _slide : sl))
       }
 
       return [...s, _slide]
@@ -163,7 +164,9 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
       console.error('failed to delete the slide: ', error)
     }
     const index = slides.findIndex((slide) => slide.id === id)
-    const slide = slides.find((_slide) => _slide.id === id)
+    // TODO: Implement block pattern
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const slide: any = slides.find((_slide) => _slide.id === id)
     if (slide?.content?.pdfPath) {
       deletePDFFile(slide?.content?.pdfPath)
     }

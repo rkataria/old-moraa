@@ -1,3 +1,5 @@
+/* TODO: Fix any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext, useEffect, useState } from 'react'
 
 import { useClickAway } from '@uidotdev/usehooks'
@@ -41,7 +43,11 @@ export function PollEditor({
         </button>
       </div>
       <div className="relative w-full h-full overflow-x-hidden overflow-y-auto scrollbar-thin">
-        {preview ? <Poll slide={slide} /> : <PollForm slide={slide} />}
+        {preview ? (
+          <Poll slide={slide as any} />
+        ) : (
+          <PollForm slide={slide as any} />
+        )}
       </div>
       <div
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -18,7 +18,13 @@ import {
 import { ISlide } from '@/types/slide.type'
 
 interface ReflectionProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      backgroundColor: string
+      textColor: string
+      title: string
+    }
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responses?: any
   responded?: boolean

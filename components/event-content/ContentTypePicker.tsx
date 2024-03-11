@@ -7,6 +7,7 @@ import {
   IconBrandAdobe,
   IconChartBar,
   IconVideo,
+  IconLayout,
 } from '@tabler/icons-react'
 
 import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/react'
@@ -27,6 +28,7 @@ export enum ContentType {
   REFLECTION = 'Reflections',
   PDF_VIEWER = 'PDF',
   VIDEO_EMBED = 'Video Embed',
+  TEXT_IMAGE = 'Text & Image',
 }
 export const INTERACTIVE_SLIDE_TYPES = [
   ContentType.POLL,
@@ -40,6 +42,12 @@ export const contentTypes: IContentType[] = [
     description:
       'Simple and effective. Suitable for cover pages and section dividers',
     contentType: ContentType.COVER,
+  },
+  {
+    name: 'Text & Image',
+    icon: <IconLayout />,
+    description: 'Combine text and image to create a visually appealing slide',
+    contentType: ContentType.TEXT_IMAGE,
   },
   {
     name: 'Google Slides',

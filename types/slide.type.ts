@@ -5,10 +5,40 @@ import { ContentType } from '@/components/event-content/ContentTypePicker'
 
 export type SlideMode = 'edit' | 'present'
 
+export type Block = {
+  id: string
+  type: string
+}
+
+export type TextBlock = Block & {
+  data: {
+    html: string
+  }
+}
+
+export type FileBlock = Block & {
+  data: {
+    file: {
+      url: string
+      meta: {
+        name: string
+        size: number
+        type: string
+      }
+    }
+  }
+}
+
 export interface ISlide {
   id: string
   name: string
-  content?: any
+  content?: {
+    title?: string
+    description?: string
+    blocks?: TextBlock[] | FileBlock[]
+    panelSizes?: number[]
+    [key: string]: unknown
+  }
   created_at?: string
   updated_at?: string
   config: any
@@ -27,7 +57,7 @@ export type SlideManagerContextType = {
   setMiniMode: (miniMode: boolean) => void
   setCurrentSlide: (slide: ISlide) => void
   addNewSlide: (slide: ISlide) => void
-  updateSlide: (slide: ISlide) => void
+  updateSlide: (slide: Partial<ISlide>) => void
   deleteSlide: (id: string) => void
   moveUpSlide: (id: string) => void
   moveDownSlide: (id: string) => void

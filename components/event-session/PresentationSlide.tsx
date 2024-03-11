@@ -25,7 +25,8 @@ export function PresentationSlide() {
       {currentSlide.type === ContentType.POLL && (
         <Poll
           key={currentSlide.id}
-          slide={currentSlide}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          slide={currentSlide as any}
           votePoll={votePoll}
           votes={currentSlideResponses}
           voted={checkVoted(currentSlideResponses, currentUser)}

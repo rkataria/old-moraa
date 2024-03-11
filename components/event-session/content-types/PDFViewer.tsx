@@ -17,7 +17,12 @@ import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFViewerProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      pdfPath: string
+      defaultPage: number
+    }
+  }
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker

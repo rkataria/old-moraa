@@ -6,8 +6,50 @@ export const getDefaultContent = (contentType: ContentType) => {
   switch (contentType) {
     case ContentType.COVER:
       return {
-        title: 'Title',
-        description: 'Description',
+        blocks: [
+          {
+            id: uuidv4(),
+            type: 'header',
+            data: {
+              html: '<h1 style="text-align: center">Title</h1>',
+            },
+          },
+          {
+            id: uuidv4(),
+            type: 'paragraph',
+            data: {
+              html: '<p style="text-align: center">lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>',
+            },
+          },
+        ],
+      }
+    case ContentType.TEXT_IMAGE:
+      return {
+        blocks: [
+          {
+            id: uuidv4(),
+            type: 'header',
+            data: {
+              html: '<h1>Title</h1>',
+            },
+          },
+          {
+            id: uuidv4(),
+            type: 'paragraph',
+            data: {
+              html: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
+            },
+          },
+          {
+            id: uuidv4(),
+            type: 'image',
+            data: {
+              file: {
+                url: 'https://images.unsplash.com/photo-1708947567920-316933385c73?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              },
+            },
+          },
+        ],
       }
     case ContentType.IMAGE:
       return {

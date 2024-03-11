@@ -14,7 +14,12 @@ import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import { ISlide, SlideManagerContextType } from '@/types/slide.type'
 
 interface GoogleSlidesEditorProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      googleSlideURL: string
+      position?: number
+    }
+  }
 }
 
 export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {

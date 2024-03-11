@@ -1,3 +1,5 @@
+// TODO: fix any types
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext } from 'react'
 
 import dynamic from 'next/dynamic'
@@ -6,6 +8,7 @@ import { Cover } from './content-types/Cover'
 import { GoogleSlides } from './content-types/GoogleSlides'
 import { Poll } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
+import { TextImage } from './content-types/TextImage'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { SlideLoading } from './SlideLoading'
 import { ContentType } from '../event-content/ContentTypePicker'
@@ -52,7 +55,7 @@ export function Slide() {
     return (
       <Poll
         key={currentSlide.id}
-        slide={currentSlide}
+        slide={currentSlide as any}
         votePoll={votePoll}
         votes={currentSlideResponses}
         isHost={isHost}
@@ -62,16 +65,16 @@ export function Slide() {
   }
 
   if (currentSlide.type === ContentType.GOOGLE_SLIDES) {
-    return <GoogleSlides key={currentSlide.id} slide={currentSlide} />
+    return <GoogleSlides key={currentSlide.id} slide={currentSlide as any} />
   }
   if (currentSlide.type === ContentType.PDF_VIEWER) {
-    return <PDFViewer key={currentSlide.id} slide={currentSlide} />
+    return <PDFViewer key={currentSlide.id} slide={currentSlide as any} />
   }
   if (currentSlide.type === ContentType.REFLECTION) {
     return (
       <Reflection
         key={currentSlide.id}
-        slide={currentSlide}
+        slide={currentSlide as any}
         responses={currentSlideResponses}
         responded={checkVoted(currentSlideResponses, currentUser)}
         user={currentUser}
@@ -82,7 +85,10 @@ export function Slide() {
     )
   }
   if (currentSlide.type === ContentType.VIDEO_EMBED) {
-    return <VideoEmbed key={currentSlide.id} slide={currentSlide} />
+    return <VideoEmbed key={currentSlide.id} slide={currentSlide as any} />
+  }
+  if (currentSlide.type === ContentType.TEXT_IMAGE) {
+    return <TextImage key={currentSlide.id} slide={currentSlide} />
   }
 
   return null

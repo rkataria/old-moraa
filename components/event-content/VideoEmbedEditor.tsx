@@ -9,7 +9,11 @@ import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import { ISlide, SlideManagerContextType } from '@/types/slide.type'
 
 interface VideoEmbedEditorProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      videoUrl: string
+    }
+  }
 }
 
 export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {

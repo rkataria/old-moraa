@@ -33,3 +33,53 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Uppy Custom Style */
+.uppy-Dashboard-inner, .uppy-Dashboard-innerWrapper {
+  border-width: 0px !important;
+  border-radius: 0 !important;
+}
+
+
+/* Tiptap Editor */
+
+.ProseMirror {
+  @apply p-2;
+}
+
+.ProseMirror:hover {
+  @apply bg-primary/5;
+}
+
+.ProseMirror-focused {
+  @apply outline-none;
+}
+
+.ProseMirror h1 {
+  @apply text-4xl font-bold;
+}
+
+.ProseMirror h2 {
+  @apply text-3xl font-bold;
+}
+
+.ProseMirror h3 {
+  @apply text-2xl font-bold;
+}
+
+/* Block Content Styles */
+.block-content-header,
+.block-content-paragraph {
+  @apply p-4;
+}
+.block-content-header h1 {
+  @apply text-4xl font-bold;
+}
+
+.block-content-header h2 {
+  @apply text-3xl font-bold;
+}
+
+.block-content-header h3 {
+  @apply text-2xl font-bold;
+}

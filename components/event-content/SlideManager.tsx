@@ -45,11 +45,13 @@ export function SlideManager() {
 
   const getSettingsEnabled = () => {
     if (!currentSlide) return false
+    if (!isOwner) return false
 
     return [
       ContentType.POLL,
       ContentType.COVER,
       ContentType.REFLECTION,
+      ContentType.TEXT_IMAGE,
     ].includes(currentSlide.type)
   }
 
@@ -63,7 +65,9 @@ export function SlideManager() {
         backgroundColor: '#fff',
         textColor: '#000',
       },
-      content: getDefaultContent(contentType),
+      // TODO: Fix any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      content: getDefaultContent(contentType) as any,
       type: contentType,
     }
 

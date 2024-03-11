@@ -13,7 +13,12 @@ import { EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
 
 interface VideoEmbedProps {
-  slide: ISlide
+  // TODO: Implement block pattern
+  slide: ISlide & {
+    content: {
+      videoUrl: string
+    }
+  }
 }
 
 const playerStateChangeEvent = 'video-embed-option-changed'
