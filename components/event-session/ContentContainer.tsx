@@ -9,8 +9,8 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { Slide } from './Slide'
-import { SlideViewControls } from './SlideViewControls'
 import { SlideWrapper } from './SlideWrapper'
+import { SlideControls } from '../common/SlideControls'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import {
@@ -19,7 +19,7 @@ import {
 } from '@/types/event-session.type'
 
 export function ContentContainer() {
-  const { presentationStatus, isHost } = useContext(
+  const { presentationStatus, currentSlide } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -73,12 +73,16 @@ export function ContentContainer() {
     )
   }
 
-  if (presentationStatus === PresentationStatuses.STOPPED) return null
+  if (presentationStatus === PresentationStatuses.STOPPED || !currentSlide) {
+    return null
+  }
 
   return (
     <SlideWrapper>
-      <Slide />
-      {isHost && <SlideViewControls />}
+      <div className="w-full h-full relative">
+        <Slide key={`slide-${currentSlide.id}`} />
+        <SlideControls />
+      </div>
     </SlideWrapper>
   )
 }

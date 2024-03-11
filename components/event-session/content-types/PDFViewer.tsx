@@ -9,6 +9,7 @@ import { Document, Page, pdfjs } from 'react-pdf'
 import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
 
 import { Loading } from '@/components/common/Loading'
+import { PageControls } from '@/components/common/PageControls'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -123,24 +124,37 @@ export function PDFViewer({ slide }: PDFViewerProps) {
   }) => {
     setTotalPages(nextNumPages)
   }
+  const handleCurrentPageChange = (pageNumber: number) => {
+    if ((totalPages && totalPages < pageNumber) || pageNumber === 0) return
+
+    setSelectedPage(pageNumber)
+  }
 
   return (
     <div className="w-full flex justify-center items-center bg-white overflow-scroll">
-      <div>
+      <div className="relative">
         {downloadPDFMutation.isSuccess ? (
-          <Document
-            file={file}
-            onLoadSuccess={onDocumentLoadSuccess}
-            className="rounded overflow-y-scroll shadow-lg"
-            loading="Please wait! Loading the PDF.">
-            <Page
-              loading={' '}
-              pageNumber={selectedPage}
-              renderAnnotationLayer={false}
-              renderTextLayer={false}
-              className="m-2 w-96"
+          <>
+            <Document
+              file={file}
+              onLoadSuccess={onDocumentLoadSuccess}
+              className="rounded overflow-y-scroll shadow-lg"
+              loading="Please wait! Loading the PDF.">
+              <Page
+                loading={' '}
+                pageNumber={selectedPage}
+                renderAnnotationLayer={false}
+                renderTextLayer={false}
+                className="m-2 w-96"
+              />
+            </Document>
+            <PageControls
+              currentPage={selectedPage}
+              isHost={isHost}
+              totalPages={totalPages}
+              handleCurrentPageChange={handleCurrentPageChange}
             />
-          </Document>
+          </>
         ) : (
           <div className="mt-12 flex justify-center items-center flex-col">
             <Loading />
