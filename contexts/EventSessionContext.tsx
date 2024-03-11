@@ -163,7 +163,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       const { data, error: _error } = await supabase
         .from('slide_response')
         .select(
-          '* , participant:participant_id(*, enrollment:enrollment_id(*))'
+          '* , participant:participant_id(*, enrollment:enrollment_id(*, profile:user_id(*)))'
         )
         .eq('slide_id', currentSlide.id)
 

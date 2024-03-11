@@ -6,10 +6,55 @@
 
 import React from 'react'
 
-import clsx from 'clsx'
+import { Avatar, AvatarGroup } from '@nextui-org/react'
 
 import { useAuth } from '@/hooks/useAuth'
 import { ISlide } from '@/types/slide.type'
+import { cn } from '@/utils/utils'
+
+interface VotedUsersProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  votes: any[]
+  option: string
+}
+
+function VotedUsers({ votes, option }: VotedUsersProps) {
+  const votedUsers = votes.filter(
+    (voterData) => voterData.response.selected_option === option
+  )
+
+  if (!votedUsers || votedUsers.length === 0) return null
+
+  return (
+    <div className="flex items-center gap-4">
+      <AvatarGroup
+        isBordered
+        max={5}
+        total={votedUsers.length}
+        renderCount={(count) => (
+          <p className="text-sm font-medium ms-2">+{count} votes</p>
+        )}>
+        {votedUsers.map((voterData) => (
+          <div>
+            {voterData.participant.enrollment.profile.first_name ? (
+              <Avatar
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(`${voterData.participant.enrollment.profile.first_name} ${voterData.participant.enrollment.profile.last_name}`)}`}
+                size="sm"
+              />
+            ) : (
+              <Avatar
+                isBordered
+                className="h-8 w-8 cursor-pointer"
+                src="https://github.com/shadcn.png"
+                size="sm"
+              />
+            )}
+          </div>
+        ))}
+      </AvatarGroup>
+    </div>
+  )
+}
 
 interface PollProps {
   slide: ISlide & {
@@ -88,7 +133,7 @@ export function Poll({
             {options.map((option: string) => (
               <div
                 key={option}
-                className={clsx(
+                className={cn(
                   'relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden',
                   {
                     'cursor-default': voted || isHost,
@@ -102,7 +147,7 @@ export function Poll({
                   votePoll?.(slide, option)
                 }}>
                 <div
-                  className={clsx(
+                  className={cn(
                     'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
                     { 'bg-purple-500': hasVotedOn(option) || isHost }
                   )}
@@ -115,6 +160,9 @@ export function Poll({
                 </div>
 
                 <span className="font-bold">{option}</span>
+                <div className="absolute right-4">
+                  <VotedUsers votes={votes} option={option} />
+                </div>
               </div>
             ))}
           </div>
