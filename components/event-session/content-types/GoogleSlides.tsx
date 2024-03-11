@@ -5,6 +5,8 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import ReactGoogleSlides from 'react-google-slides'
 
+import { Skeleton } from '@nextui-org/react'
+
 import { PageControls } from '@/components/common/PageControls'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -33,6 +35,7 @@ export function GoogleSlides({ slide }: GoogleSlidesProps) {
   const [position, setPosition] = useState<number>(
     metaData.current.GSlideLastPosition || startPosition || 1
   )
+  const [googleSlidesLoaded, setGoogleSlidesLoaded] = useState<boolean>(false)
 
   useEffect(() => {
     const nextPosition = () =>
@@ -100,12 +103,18 @@ export function GoogleSlides({ slide }: GoogleSlidesProps) {
   }
 
   return (
-    <div className="flex flex-col items-center h-full relative">
+    <div className="relative w-full h-full">
+      {!googleSlidesLoaded && (
+        <Skeleton className="absolute left-0 top-0 w-full h-full rounded-md" />
+      )}
       <ReactGoogleSlides
         width="100%"
-        height="85%"
+        height="100%"
         slidesLink={googleSlideURL}
         position={position}
+        onLoad={() => {
+          setGoogleSlidesLoaded(true)
+        }}
       />
 
       <PageControls

@@ -83,3 +83,9 @@
 .block-content-header h3 {
   @apply text-2xl font-bold;
 }
+
+
+/* PDF */
+.react-pdf__Page__canvas {
+  @apply mx-auto !w-full !h-auto;
+}
