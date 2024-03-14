@@ -64,7 +64,7 @@ export function MiniSlideManager({
 }: IMiniSlideManagerProps) {
   const [miniMode, setMiniMode] = useState<boolean>(true)
   const [miniSlideView, setMiniSlideView] = useState<'thumbnail' | 'list'>(
-    'thumbnail'
+    'list'
   )
 
   useEffect(() => {

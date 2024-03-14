@@ -17,6 +17,7 @@ import {
   ISlide,
   SlideManagerContextType,
 } from '@/types/slide.type'
+import { getSlideName } from '@/utils/getSlideName'
 import { cn } from '@/utils/utils'
 
 interface SlideListViewProps {
@@ -62,13 +63,15 @@ function SlideEditableName({ slide }: { slide: ISlide }) {
     setNameEditable(false)
   }
 
+  const slideName = getSlideName(slide)
+
   if (nameEditable) {
     return (
       <input
-        defaultValue={slide.name}
+        defaultValue={slideName}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && handleBlur(e)}
-        className="border-b border-primary-500 outline-none py-1 w-[inherit] pr-2"
+        className="outline-none py-1 w-[inherit] pr-2 bg-transparent"
       />
     )
   }
@@ -79,7 +82,7 @@ function SlideEditableName({ slide }: { slide: ISlide }) {
       onClick={() => {
         if (isOwner) setNameEditable(true)
       }}>
-      {slide.name}
+      {slideName}
     </p>
   )
 }
@@ -113,10 +116,8 @@ function SlideListView({
       <div
         {...(mode === 'edit' && draggableProps)}
         className={cn(
-          'rounded-md flex-auto w-full transition-all border flex items-center justify-between capitalize group',
-          currentSlide?.id === slide.id
-            ? 'drop-shadow-md border-black'
-            : 'drop-shadow-none border-black/20'
+          'rounded-md flex-auto w-full transition-all flex items-center justify-between group',
+          currentSlide?.id === slide.id ? 'drop-shadow-md' : 'drop-shadow-none'
         )}
         style={{
           backgroundColor: slide.config?.backgroundColor || '#166534',
@@ -174,7 +175,7 @@ function SlideThumbnailView({
       <div
         onClick={() => setCurrentSlide(slide)}
         className={cn(
-          'relative rounded-md w-full aspect-video cursor-pointer transition-all border-2 capitalize group',
+          'relative rounded-md w-full aspect-video cursor-pointer transition-all border-2 group',
           currentSlide?.id === slide.id
             ? 'drop-shadow-md border-black'
             : 'drop-shadow-none border-black/20'
