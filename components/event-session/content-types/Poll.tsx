@@ -31,9 +31,11 @@ function VotedUsers({ votes, option }: VotedUsersProps) {
         isBordered
         max={5}
         total={votedUsers.length}
-        renderCount={(count) => (
-          <p className="text-sm font-medium ms-2">+{count} votes</p>
-        )}>
+        renderCount={(count) =>
+          count > 5 && (
+            <p className="text-sm font-medium ms-2">+{count - 5} more votes</p>
+          )
+        }>
         {votedUsers.map((voterData) => (
           <div>
             {voterData.participant.enrollment.profile.first_name ? (

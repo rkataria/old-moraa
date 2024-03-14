@@ -363,7 +363,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
       return
     }
-    setParticipant(participant)
+    setParticipant(existingParticipant)
   }
 
   const joinMeeting = async () => {
