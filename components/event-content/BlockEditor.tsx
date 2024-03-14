@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react'
 
+import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
@@ -10,6 +11,7 @@ import StarterKit from '@tiptap/starter-kit'
 
 import { BlockEditorControls } from './BlockEditorControls'
 
+import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { TextBlock } from '@/types/slide.type'
 
 const getExtensions = (type: string) => {
@@ -21,6 +23,9 @@ const getExtensions = (type: string) => {
         Color,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
+        }),
+        CharacterCount.configure({
+          limit: type === 'header' ? TITLE_CHARACTER_LIMIT : null,
         }),
       ]
   }

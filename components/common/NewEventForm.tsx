@@ -1,166 +1,109 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { IconLoader } from '@tabler/icons-react'
-import { useMutation } from '@tanstack/react-query'
-import { redirect } from 'next/navigation'
 
-import { useAuth } from '@/hooks/useAuth'
-import { EventService } from '@/services/event.service'
+import { ReactElement } from 'react'
+
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Control, Controller, useForm } from 'react-hook-form'
+import * as yup from 'yup'
+
+import { Input, Textarea } from '@nextui-org/react'
+
 import { styles } from '@/styles/form-control'
-import { getIsoDateString } from '@/utils/date'
 
-interface NewEventFormProps {
-  onClose: () => void
-}
+const createEventValidationSchema = yup.object({
+  // eslint-disable-next-line newline-per-chained-call
+  name: yup.string().label('Event name').min(3).max(50).required(),
+  description: yup
+    .string()
+    .label('Event description')
+    .min(3)
+    .max(200)
+    .required(),
+})
 
-export function NewEventForm({ onClose }: NewEventFormProps) {
-  const { currentUser } = useAuth()
-  const createEventMutation = useMutation({
-    mutationFn: EventService.createEvent,
+export type CreateEventFormData = yup.InferType<
+  typeof createEventValidationSchema
+>
+
+export type CreateEventFormProps<
+  FormData extends CreateEventFormData = CreateEventFormData,
+> =
+  | {
+      formControl?: Control<FormData>
+      onSubmit?: void
+      renderAction?: void
+    }
+  | {
+      formControl?: never
+      onSubmit?: (values: CreateEventFormData) => void
+      /**
+       * The action is responsible for triggering the `onSubmit` handler
+       * so a least one of the button rendered using the `renderAction` should have `type="submit"`
+       * @returns {ReactElement}
+       */
+      renderAction?: () => ReactElement
+    }
+
+export function NewEventForm<
+  FormData extends CreateEventFormData = CreateEventFormData,
+>({ onSubmit, renderAction }: CreateEventFormProps<FormData>) {
+  const createEventForm = useForm<CreateEventFormData>({
+    resolver: yupResolver(createEventValidationSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+    },
   })
 
-  async function create(formData: FormData) {
-    if (!currentUser) return
+  const FormContentJSX = (
+    <div>
+      <label htmlFor="name" className={styles.label.base}>
+        Name
+      </label>
+      <Controller
+        control={createEventForm.control}
+        name="name"
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
+            placeholder="Your awesome course or workshop name goes here"
+            isInvalid={!!fieldState.error?.message}
+            errorMessage={fieldState.error?.message}
+          />
+        )}
+      />
 
-    const event = {
-      name: formData.get('name'),
-      description: formData.get('description'),
-      type: 'course', // formData.get("type"),
-      start_date: getIsoDateString(formData.get('start_date') as string),
-      end_date: getIsoDateString(formData.get('end_date') as string),
-      owner_id: currentUser.id,
-    }
+      <div className="my-4">
+        <label className={styles.label.base}>Description</label>
+        <Controller
+          control={createEventForm.control}
+          name="description"
+          render={({ field, fieldState }) => (
+            <Textarea
+              {...field}
+              placeholder="This is what your learners would see. You could include high-level learning objectives or brief course overview here"
+              className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
+              isInvalid={!!fieldState.error?.message}
+              errorMessage={fieldState.error?.message}
+            />
+          )}
+        />
+      </div>
 
-    createEventMutation.mutate(event)
-
-    if (Array.isArray(createEventMutation.data)) {
-      redirect(`/events/${createEventMutation.data[0].id}`)
-    }
-  }
+      {renderAction?.()}
+    </div>
+  )
 
   return (
     <div>
-      <form action={create}>
-        <div className="space-y-10 divide-y divide-gray-900/10">
-          <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
-            <div className="px-4 sm:px-0">
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Basic Information
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                This information will be displayed publicly so be careful what
-                you share.
-              </p>
-            </div>
-
-            <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-              <div className="px-4 py-6 sm:p-8">
-                <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-4">
-                    <label htmlFor="title" className={styles.label.base}>
-                      Title
-                    </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <input
-                          type="text"
-                          name="name"
-                          id="title"
-                          className={styles.input.base}
-                          placeholder="Learn to code"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-span-full">
-                    <label htmlFor="description" className={styles.label.base}>
-                      Description
-                    </label>
-                    <div className="mt-2">
-                      <textarea
-                        id="description"
-                        name="description"
-                        rows={3}
-                        className={styles.textarea.base}
-                        defaultValue=""
-                      />
-                    </div>
-                    <p className="mt-3 text-sm leading-6 text-gray-600">
-                      Write a few sentences about the event.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
-            <div className="px-4 sm:px-0">
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Event Scheduling
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Schedule your event and make it visible to the public.
-              </p>
-            </div>
-
-            <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-              <div className="px-4 py-6 sm:p-8">
-                <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-3">
-                    <label htmlFor="start-date" className={styles.label.base}>
-                      Start Date
-                    </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <input
-                          type="datetime-local"
-                          name="start_date"
-                          id="start-date"
-                          className={styles.input.base}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label htmlFor="end-date" className={styles.label.base}>
-                      End Date
-                    </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <input
-                          type="datetime-local"
-                          name="end_date"
-                          id="end-date"
-                          className={styles.input.base}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-            <button
-              type="button"
-              className="text-sm font-semibold leading-6 text-gray-900"
-              onClick={onClose}>
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              {createEventMutation.isPending ? (
-                <IconLoader />
-              ) : (
-                <span>Save</span>
-              )}
-            </button>
-          </div>
-        </div>
-      </form>
+      {onSubmit ? (
+        <form onSubmit={createEventForm.handleSubmit(onSubmit)}>
+          {FormContentJSX}
+        </form>
+      ) : (
+        FormContentJSX
+      )}
     </div>
   )
 }
