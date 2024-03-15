@@ -256,12 +256,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     setPresentationStatus(PresentationStatuses.PAUSED)
   }
 
-  const votePoll = async (slide: ISlide, option: string) => {
+  const onVote = async (slide: ISlide, options: string[]) => {
     try {
       const slideResponse = await supabase
         .from('slide_response')
         .upsert({
-          response: { selected_option: option },
+          response: { selected_options: options },
           slide_id: slide.id,
           participant_id: participant.id,
         })
@@ -601,7 +601,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         nextSlide,
         previousSlide,
         setCurrentSlideByID,
-        votePoll,
+        onVote,
         addReflection,
         updateReflection,
         joinMeeting,

@@ -1,14 +1,11 @@
-import React, { useContext } from 'react'
-
 import { IconX } from '@tabler/icons-react'
-import { TwitterPicker } from 'react-color'
 
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { CommonSlideSettings } from '../common/CommonSlideSettings'
+import { PollSlideSettings } from '../common/PollSlideSettings'
+
 import { cn } from '@/utils/utils'
 
 interface ISlideSetting {
-  slide: ISlide
   open: boolean
   settingsEnabled: boolean
   setSettingsSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -47,25 +44,10 @@ function SettingsWrapper({
 }
 
 export function SettingsSidebar({
-  slide,
   open,
   settingsEnabled,
   setSettingsSidebarVisible,
 }: ISlideSetting) {
-  const { updateSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
-
-  const updateSlideColors = (color: string, colorKey: string) => {
-    updateSlide({
-      ...slide,
-      config: {
-        ...slide.config,
-        [colorKey]: color,
-      },
-    })
-  }
-
   if (!settingsEnabled) {
     return null
   }
@@ -74,41 +56,8 @@ export function SettingsSidebar({
     <SettingsWrapper
       open={open}
       setSettingsSidebarVisible={setSettingsSidebarVisible}>
-      <div className="flex items-center gap-2px-4 my-4 text-xs gap-3">
-        <div className="flex-1">
-          <p className="text-xs text-slate-500 mt-2">Background Color</p>
-          <TwitterPicker
-            colors={[
-              '#FF6900',
-              '#FCB900',
-              '#7BDCB5',
-              '#00D084',
-              '#8ED1FC',
-              '#0693E3',
-              '#ffffff',
-              '#EB144C',
-              '#F78DA7',
-              '#9900EF',
-            ]}
-            className="!shadow-none mt-2"
-            triangle="hide"
-            styles={{
-              default: {
-                body: {
-                  padding: '0',
-                },
-                swatch: {
-                  border: '1px solid lightGrey',
-                },
-              },
-            }}
-            color={slide.config.backgroundColor}
-            onChange={(color) =>
-              updateSlideColors(color.hex, 'backgroundColor')
-            }
-          />
-        </div>
-      </div>
+      <CommonSlideSettings />
+      <PollSlideSettings />
     </SettingsWrapper>
   )
 }

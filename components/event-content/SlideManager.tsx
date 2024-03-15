@@ -64,6 +64,7 @@ export function SlideManager() {
       config: {
         backgroundColor: '#fff',
         textColor: '#000',
+        allowVoteOnMultipleOptions: false,
       },
       // TODO: Fix any
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -129,7 +130,6 @@ export function SlideManager() {
           <SettingsSidebar
             settingsEnabled={settingsEnabled}
             open={settingsSidebarVisible}
-            slide={currentSlide}
             setSettingsSidebarVisible={setSettingsSidebarVisible}
           />
         )}

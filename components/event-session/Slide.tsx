@@ -32,7 +32,7 @@ export function Slide() {
   const {
     presentationStatus,
     currentSlide,
-    votePoll,
+    onVote,
     addReflection,
     updateReflection,
     currentSlideResponses,
@@ -56,9 +56,9 @@ export function Slide() {
       <Poll
         key={currentSlide.id}
         slide={currentSlide as any}
-        votePoll={votePoll}
+        onVote={onVote}
         votes={currentSlideResponses}
-        isHost={isHost}
+        isOwner={isHost}
         voted={checkVoted(currentSlideResponses, currentUser)}
       />
     )

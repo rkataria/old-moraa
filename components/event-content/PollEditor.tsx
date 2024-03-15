@@ -19,7 +19,7 @@ export function PollEditor({
   slide: ISlide
   openSettings: boolean
 }) {
-  const { updateSlide } = useContext(
+  const { updateSlide, isOwner } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
   const [showSettings, setShowSettings] = useState<boolean>(openSettings)
@@ -44,7 +44,7 @@ export function PollEditor({
       </div>
       <div className="relative w-full h-full overflow-x-hidden overflow-y-auto scrollbar-thin">
         {preview ? (
-          <Poll slide={slide as any} />
+          <Poll slide={slide as any} isOwner={isOwner} />
         ) : (
           <PollForm slide={slide as any} />
         )}
