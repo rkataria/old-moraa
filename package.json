@@ -13,7 +13,8 @@
     "fix-format": "prettier -w .",
     "fix-lint": "eslint --fix .",
     "-=-=-=-=-=-=-=-=-=-=-=-=": "",
-    "prepare": "husky"
+    "prepare": "husky",
+    "sync-db-types": "supabase gen types typescript --project-id pcwxaszjgtcbxjdlsguj > services/types/supabase-db.d.ts && prettier -w services/types/supabase-db.d.ts"
   },
   "dependencies": {
     "@advisr/pptx-compose-2": "^1.0.3",
@@ -44,6 +45,7 @@
     "@tiptap/pm": "^2.2.4",
     "@tiptap/react": "^2.2.4",
     "@tiptap/starter-kit": "^2.2.4",
+    "@types/luxon": "^3.4.2",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-color": "^3.0.10",
     "@uidotdev/usehooks": "^2.4.1",
@@ -65,6 +67,7 @@
     "emotion-theming": "^11.0.0",
     "framer-motion": "^11.0.6",
     "lucide-react": "^0.303.0",
+    "luxon": "^3.4.4",
     "next": "latest",
     "next-themes": "^0.2.1",
     "pdfjs-dist": "3.11.174",
@@ -85,6 +88,7 @@
     "react-player": "^2.14.1",
     "react-resizable-panels": "^2.0.12",
     "react-textarea-autosize": "^8.5.3",
+    "supabase": "^1.148.6",
     "sweetalert2": "^11.9.0",
     "tailwind-merge": "^2.2.0",
     "tailwindcss": "3.3.2",
@@ -122,7 +126,8 @@
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwind-scrollbar": "^3.0.5",
-    "tailwindcss-themer": "^4.0.0"
+    "tailwindcss-themer": "^4.0.0",
+    "type-fest": "^4.12.0"
   },
   "resolutions": {
     "strip-ansi": "6.0.0"

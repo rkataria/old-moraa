@@ -5,9 +5,9 @@
 
 import { useState } from 'react'
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useMutation } from '@tanstack/react-query'
 import clsx from 'clsx'
+import { UserRoundPlusIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { Button } from '@nextui-org/react'
@@ -19,12 +19,12 @@ import {
 import { Modal } from './Modal'
 
 import { useEvent } from '@/hooks/useEvent'
-import { EventService } from '@/services/event.service'
+import { EventService } from '@/services/event/event-service'
 
 const styles = {
   button: {
     default:
-      'flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 p-2 rounded-md',
+      'flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 rounded-md',
   },
 }
 
@@ -39,7 +39,7 @@ export function AddParticipantsButtonWithModal({
   })
   const deleteParticipantMutation = useMutation({
     mutationFn: async (participantId: string) => {
-      await EventService.deleteEventParticipant(eventId, participantId)
+      await EventService.deleteParticipant({ eventId, participantId })
       await refetch()
       toast.success('Participant deleted successfully')
     },
@@ -51,16 +51,9 @@ export function AddParticipantsButtonWithModal({
       participants: _participants,
     }: ParticipantsFormData) => {
       try {
-        const supabase = createClientComponentClient()
-        const payload = JSON.stringify({
+        await EventService.addParticipant({
           eventId,
-          participants: _participants.map((participant) => ({
-            email: participant.email,
-            role: 'Participant',
-          })),
-        })
-        await supabase.functions.invoke('invite-participants', {
-          body: payload,
+          participants: _participants,
         })
         refetch()
         toast.success('Participants updated successfully.')
@@ -74,14 +67,15 @@ export function AddParticipantsButtonWithModal({
 
   return (
     <>
-      <div
+      <Button
+        isIconOnly
         onClick={() => setOpen(true)}
         className={clsx(
           styles.button.default,
-          'cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full px-4'
+          'cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3'
         )}>
-        Add Participants
-      </div>
+        <UserRoundPlusIcon />
+      </Button>
       <Modal
         open={open}
         onClose={() => setOpen(false)}

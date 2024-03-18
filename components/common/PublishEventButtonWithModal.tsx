@@ -6,9 +6,12 @@
 import { useState } from 'react'
 
 import clsx from 'clsx'
+import { Edit } from 'lucide-react'
 
+import { Button } from '@nextui-org/react'
+
+import { EditEventForm } from './EditEventForm'
 import { Modal } from './Modal'
-import { NewEventForm } from './PublishEventForm'
 
 const styles = {
   button: {
@@ -17,26 +20,28 @@ const styles = {
   },
 }
 
-export function PublishEventButtonWithModal({ eventId }: { eventId: string }) {
+export function EditEventButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
     <>
-      <div
+      <Button
+        isIconOnly
+        variant="light"
         onClick={() => setOpen(true)}
         className={clsx(
           styles.button.default,
-          'font-semibold text-sm bg-green-600 text-white hover:bg-green-500 !rounded-full px-4 cursor-pointer'
+          'cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3'
         )}
         title="Publish Event">
-        Publish
-      </div>
+        <Edit />
+      </Button>
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title="Publish learning event"
-        description="Set a date and time and make your content go live!">
-        <NewEventForm eventId={eventId} onClose={() => setOpen(false)} />
+        title="Edit event information"
+        description="Change event name, description, date and time.">
+        <EditEventForm eventId={eventId} onClose={() => setOpen(false)} />
       </Modal>
     </>
   )

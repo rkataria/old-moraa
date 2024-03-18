@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { TimeZones } from '@/constants/timezone'
 
 export const getIsoDateString = (date: string) => new Date(date).toISOString()
@@ -5,20 +7,10 @@ export const getIsoDateString = (date: string) => new Date(date).toISOString()
 export const getFormattedDate = (
   date: string,
   { includeTime = false }: { includeTime?: boolean } = {}
-) => {
-  // Extracting components from ISO date string
-  const isoDate = new Date(date)
-  const year = isoDate.getFullYear()
-  const month = isoDate.toLocaleString('default', { month: 'short' })
-  const day = String(isoDate.getDate()).padStart(2, '0')
-  const hours = String(isoDate.getHours()).padStart(2, '0')
-  const minutes = String(isoDate.getMinutes()).padStart(2, '0')
-
-  // Constructing mm-dd-yyyy format date string
-  const mmddyyyyFormatDateString = `${month} ${day}, ${year} ${includeTime ? `${hours}:${minutes}` : ''}`
-
-  return mmddyyyyFormatDateString
-}
+) =>
+  DateTime.fromJSDate(new Date(date)).toFormat(
+    includeTime ? 'LLL dd, yyyy HH:MM' : 'LLL DD, YYYY'
+  )
 
 export const convertTimeZoneOffsetToHHMM = (timeZoneOffset: number) => {
   // Determine the sign

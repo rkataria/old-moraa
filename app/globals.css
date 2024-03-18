@@ -24,22 +24,20 @@
     --secondary-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-
   }
 }
 @layer base {
-
   body {
     @apply bg-background text-foreground;
   }
 }
 
 /* Uppy Custom Style */
-.uppy-Dashboard-inner, .uppy-Dashboard-innerWrapper {
+.uppy-Dashboard-inner,
+.uppy-Dashboard-innerWrapper {
   border-width: 0px !important;
   border-radius: 0 !important;
 }
-
 
 /* Tiptap Editor */
 
@@ -83,7 +81,6 @@
 .block-content-header h3 {
   @apply text-2xl font-bold;
 }
-
 
 /* PDF */
 .react-pdf__Page__canvas {

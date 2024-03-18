@@ -16,13 +16,21 @@ import { SyncingStatus } from '../common/SyncingStatus'
 import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
+import { SlideStatus } from '@/services/types/enums'
 import { ISlide, SlideManagerContextType } from '@/types/slide.type'
 import { getDefaultContent } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
 
 export function SlideManager() {
   const { eventId } = useParams()
-  const { event, isLoading: eventLoading } = useEvent({ id: eventId as string })
+  const {
+    event,
+    isLoading: eventLoading,
+    meetingSlides,
+  } = useEvent({
+    id: eventId as string,
+    fetchMeetingSlides: true,
+  })
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(false)
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
 
@@ -74,6 +82,7 @@ export function SlideManager() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       content: getDefaultContent(contentType) as any,
       type: contentType,
+      status: SlideStatus.PUBLISHED,
     }
 
     addNewSlide(newSlide)
@@ -118,6 +127,11 @@ export function SlideManager() {
           event={event}
           leftSidebarVisible={leftSidebarVisible}
           onLeftSidebarToggle={setLeftSidebarVisible}
+          isSlidePublished={
+            meetingSlides?.slides?.some(
+              (slide) => slide.status === SlideStatus.PUBLISHED
+            ) || false
+          }
         />
       </SlideManagerHeader>
       <div className="flex flex-auto w-full">

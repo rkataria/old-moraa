@@ -131,9 +131,19 @@ const deleteEventParticipant = async (eventId: string, participantId: string) =>
     .eq('event_id', eventId)
     .eq('event_role', 'Participant')
 
+const scheduleEvent = async (scheduleInfo: {
+  id: string
+  startDate: string
+  endDate: string
+}) =>
+  supabase.functions.invoke('schedule-event', {
+    body: scheduleInfo,
+  })
+
 export const EventService = {
   getEvents,
   getEvent,
   createEvent,
   deleteEventParticipant,
+  scheduleEvent,
 }

@@ -45,6 +45,7 @@ export interface ISlide {
   type: (typeof ContentType)[keyof typeof ContentType]
   order?: number
   meeting_id?: string
+  status?: string
 }
 
 export type SlideManagerContextType = {

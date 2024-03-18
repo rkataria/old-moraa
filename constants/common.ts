@@ -1,3 +1,4 @@
+export const DEFAULT_PAGE_SIZE = 10
 export const TITLE_CHARACTER_LIMIT = 300
 export const SLIDE_BG_COLOR_PALETTE = [
   '#FF6900',
