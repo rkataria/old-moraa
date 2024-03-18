@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
 import { INTERACTIVE_SLIDE_TYPES } from '@/components/event-content/ContentTypePicker'
+import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { deletePDFFile } from '@/services/pdf.service'
 import { ISlide, SlideManagerContextType } from '@/types/slide.type'
@@ -23,6 +24,7 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
     id: eventId as string,
     fetchMeetingSlides: true,
   })
+  const { currentUser } = useAuth()
   const [slides, setSlides] = useState<ISlide[]>([])
   const [slideIds, setSlideIds] = useState<string[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
@@ -53,45 +55,14 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
     })
   }, [currentSlide])
 
-  const getSortedSlides = () => {
-    const idIndexMap: { [id: string]: number } = {}
-    meeting?.slides?.forEach((id: string, index: number) => {
-      idIndexMap[id] = index
-    })
-
-    // Custom sorting function
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const customSort = (a: any, b: any) => idIndexMap[a.id] - idIndexMap[b.id]
-
-    return meetingSlides?.slides?.slice().sort(customSort)
-  }
-
   const handleSetSlides = async () => {
     if (!meetingSlides) return
-    const sortedSlides = getSortedSlides()
-    if (sortedSlides && sortedSlides.length > 0) {
-      let filteredSlides = sortedSlides
-      // check whether the user is owner of event or not
-      const currentUser = await supabase.auth.getSession()
-      if (currentUser.data.session?.user.id !== event.owner_id) {
-        filteredSlides = sortedSlides.filter(
-          (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
-        )
-        setIsOwner(false)
-      }
-      setSlides(filteredSlides)
-      setSlideIds(filteredSlides.map((i) => i?.id) ?? [])
-      setLoading(false)
-      setCurrentSlide(filteredSlides?.[0])
 
-      if (currentUser.data.session?.user.id === event.owner_id) setIsOwner(true)
-    } else {
-      if (slides.length > 0) {
-        setLoading(false)
+    const meetingSlidesWithContent: ISlide[] = meeting?.slides?.map(
+      (slide: ISlide) => meetingSlides?.slides?.find((s) => s.id === slide)
+    )
 
-        return
-      }
-
+    if (meetingSlidesWithContent?.length === 0) {
       addNewSlide(
         getDefaultCoverSlide({
           title: event.name,
@@ -99,7 +70,27 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
         })
       )
       setLoading(false)
+
+      return
     }
+
+    if (currentUser.id === event.owner_id) {
+      setIsOwner(true)
+      setSlides(meetingSlidesWithContent)
+      setSlideIds(meeting?.slides ?? [])
+      setCurrentSlide(meetingSlidesWithContent[0])
+      setLoading(false)
+
+      return
+    }
+
+    const nonInteractiveSlides = meetingSlidesWithContent.filter(
+      (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
+    )
+    setSlides(nonInteractiveSlides)
+    setSlideIds(nonInteractiveSlides.map((slide) => slide?.id) ?? [])
+    setLoading(false)
+    setCurrentSlide(nonInteractiveSlides[0])
   }
 
   const updateSlideIds = async (ids: string[]) => {
