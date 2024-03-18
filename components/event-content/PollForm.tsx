@@ -9,7 +9,12 @@ import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import { ISlide, SlideManagerContextType } from '@/types/slide.type'
 
 interface PollFormProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      question: string
+      options: string[]
+    }
+  }
 }
 
 export function PollForm({ slide: slideFromRemote }: PollFormProps) {

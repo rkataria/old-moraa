@@ -1,11 +1,13 @@
-'use client'
-
 import React from 'react'
 
 import dynamic from 'next/dynamic'
+import { TbSettings } from 'react-icons/tb'
 
+import { Button } from '@nextui-org/react'
+
+import { CoverEditor } from './content-types/CoverEditor'
+import { TextImageEditor } from './content-types/TextImageEditor'
 import { ContentType } from './ContentTypePicker'
-import { CoverEditor } from './CoverEditor'
 import { GoogleSlidesEditor } from './GoogleSlidesEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
@@ -24,12 +26,20 @@ const PDFUploader = dynamic(
 interface SlideProps {
   isOwner: boolean
   slide: ISlide
+  settingsEnabled?: boolean
+  setSettingsSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function Slide({ isOwner = false, slide }: SlideProps) {
+export function Slide({
+  isOwner = false,
+  slide,
+  settingsEnabled,
+  setSettingsSidebarVisible,
+}: SlideProps) {
   return (
     <div
-      className={cn('relative group w-full h-full', {
+      style={{ backgroundColor: slide.config.backgroundColor }}
+      className={cn('relative group w-full h-full p-4', {
         'pointer-events-none': !isOwner,
       })}>
       <div
@@ -37,6 +47,15 @@ export function Slide({ isOwner = false, slide }: SlideProps) {
           hidden: !isOwner,
         })}
       />
+      {settingsEnabled && (
+        <Button
+          isIconOnly
+          variant="light"
+          className="absolute top-2 right-2 z-10 pointer-events-auto bg-black/20 text-white"
+          onClick={() => setSettingsSidebarVisible(true)}>
+          <TbSettings size={22} />
+        </Button>
+      )}
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto transition-all">
@@ -45,14 +64,22 @@ export function Slide({ isOwner = false, slide }: SlideProps) {
         )}
         {slide.type === ContentType.COVER && <CoverEditor slide={slide} />}
         {slide.type === ContentType.GOOGLE_SLIDES && (
-          <GoogleSlidesEditor slide={slide} />
+          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+          <GoogleSlidesEditor slide={slide as any} />
         )}
         {slide.type === ContentType.REFLECTION && (
           <ReflectionEditor slide={slide} />
         )}
-        {slide.type === ContentType.PDF_VIEWER && <PDFUploader slide={slide} />}
+        {slide.type === ContentType.PDF_VIEWER && (
+          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+          <PDFUploader slide={slide as any} />
+        )}
         {slide.type === ContentType.VIDEO_EMBED && (
-          <VideoEmbedEditor slide={slide} />
+          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+          <VideoEmbedEditor slide={slide as any} />
+        )}
+        {slide.type === ContentType.TEXT_IMAGE && (
+          <TextImageEditor slide={slide} />
         )}
       </div>
     </div>

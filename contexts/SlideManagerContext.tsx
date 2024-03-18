@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
 import { INTERACTIVE_SLIDE_TYPES } from '@/components/event-content/ContentTypePicker'
+import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { deletePDFFile } from '@/services/pdf.service'
 import { ISlide, SlideManagerContextType } from '@/types/slide.type'
@@ -23,6 +24,7 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
     id: eventId as string,
     fetchMeetingSlides: true,
   })
+  const { currentUser } = useAuth()
   const [slides, setSlides] = useState<ISlide[]>([])
   const [slideIds, setSlideIds] = useState<string[]>([])
   const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
@@ -53,43 +55,14 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
     })
   }, [currentSlide])
 
-  const getSortedSlides = () => {
-    const idIndexMap: { [id: string]: number } = {}
-    meeting?.slides?.forEach((id: string, index: number) => {
-      idIndexMap[id] = index
-    })
-
-    // Custom sorting function
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const customSort = (a: any, b: any) => idIndexMap[a.id] - idIndexMap[b.id]
-
-    return meetingSlides?.slides?.slice().sort(customSort)
-  }
-
   const handleSetSlides = async () => {
     if (!meetingSlides) return
-    const sortedSlides = getSortedSlides()
-    if (sortedSlides && sortedSlides.length > 0) {
-      let filteredSlides = sortedSlides
-      // check whether the user is owner of event or not
-      const currentUser = await supabase.auth.getSession()
-      if (currentUser.data.session?.user.id !== event.owner_id) {
-        filteredSlides = sortedSlides.filter(
-          (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
-        )
-        setIsOwner(false)
-      }
-      setSlides(filteredSlides)
-      setSlideIds(filteredSlides.map((i) => i?.id) ?? [])
-      setLoading(false)
-      setCurrentSlide(filteredSlides?.[0])
-    } else {
-      if (slides.length > 0) {
-        setLoading(false)
 
-        return
-      }
+    const meetingSlidesWithContent: ISlide[] = meeting?.slides?.map(
+      (slide: ISlide) => meetingSlides?.slides?.find((s) => s.id === slide)
+    )
 
+    if (meetingSlidesWithContent?.length === 0) {
       addNewSlide(
         getDefaultCoverSlide({
           title: event.name,
@@ -97,7 +70,27 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
         })
       )
       setLoading(false)
+
+      return
     }
+
+    if (currentUser.id === event.owner_id) {
+      setIsOwner(true)
+      setSlides(meetingSlidesWithContent || [])
+      setSlideIds(meeting?.slides ?? [])
+      setCurrentSlide(meetingSlidesWithContent?.[0] || null)
+      setLoading(false)
+
+      return
+    }
+
+    const nonInteractiveSlides = meetingSlidesWithContent.filter(
+      (s) => !INTERACTIVE_SLIDE_TYPES.includes(s.type)
+    )
+    setSlides(nonInteractiveSlides)
+    setSlideIds(nonInteractiveSlides.map((slide) => slide?.id) ?? [])
+    setLoading(false)
+    setCurrentSlide(nonInteractiveSlides[0])
   }
 
   const updateSlideIds = async (ids: string[]) => {
@@ -136,7 +129,7 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
     setSlideIds((s) => [...s, data?.id])
   }
 
-  const updateSlide = async (slide: ISlide) => {
+  const updateSlide = async (slide: Partial<ISlide>) => {
     const _slide = { ...slide }
     _slide.meeting_id = slide.meeting_id ?? meeting?.id
     await supabase.from('slide').upsert({
@@ -145,10 +138,11 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
       config: _slide.config,
       name: _slide.name,
     })
-    setCurrentSlide(_slide)
-    setSlides((s) => {
-      if (s.findIndex((i) => i.id === _slide.id) >= 0) {
-        return s.map((sl) => (sl.id === _slide.id ? _slide : sl))
+    setCurrentSlide(_slide as ISlide)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setSlides((s: any) => {
+      if (s.findIndex((i: ISlide) => i.id === _slide.id) >= 0) {
+        return s.map((sl: ISlide) => (sl.id === _slide.id ? _slide : sl))
       }
 
       return [...s, _slide]
@@ -161,7 +155,9 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
       console.error('failed to delete the slide: ', error)
     }
     const index = slides.findIndex((slide) => slide.id === id)
-    const slide = slides.find((_slide) => _slide.id === id)
+    // TODO: Implement block pattern
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const slide: any = slides.find((_slide) => _slide.id === id)
     if (slide?.content?.pdfPath) {
       deletePDFFile(slide?.content?.pdfPath)
     }

@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useContext } from 'react'
 
 import {
@@ -11,78 +9,116 @@ import {
   DyteParticipantsToggle,
   DytePluginsToggle,
   DyteScreenShareToggle,
+  DyteSettingsToggle,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { IconDots, IconMenu } from '@tabler/icons-react'
 import { useParams } from 'next/navigation'
+import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 
 import { Button } from '@nextui-org/react'
 
-import { ControlButton } from './ControlButton'
 import { PresentationControls } from './PresentationControls'
+import { RaiseHand } from './RaiseHand'
+import { WhiteboardToggleButton } from './WhiteboardToggleButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
+import { EventSessionContextType } from '@/types/event-session.type'
 
 type HeaderProps = {
+  leftSidebarVisible: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setState: any
-  toggleSlidesSidebarVisiblity: () => void
-  toggleSettingsModal: () => void
+  onUpdateDyteStates: any
+  toggleLeftSidebar?: () => void
 }
 
 export function Header({
-  setState,
-  toggleSlidesSidebarVisiblity,
-  toggleSettingsModal,
+  leftSidebarVisible,
+  onUpdateDyteStates,
+  toggleLeftSidebar = () => {},
 }: HeaderProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const { presentationStatus, isHost } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { isHost } = useContext(EventSessionContext) as EventSessionContextType
 
   if (!event) return null
 
   return (
     <div className="h-16 bg-gray-950 flex justify-between items-center">
       <div className="p-4 flex justify-end items-center gap-2">
-        {presentationStatus !== PresentationStatuses.STOPPED && (
-          <ControlButton onClick={toggleSlidesSidebarVisiblity}>
-            <IconMenu size={16} />
-          </ControlButton>
-        )}
+        <Button
+          variant="light"
+          isIconOnly
+          className="text-white bg-white/5 hover:bg-white/10"
+          onClick={toggleLeftSidebar}>
+          {leftSidebarVisible ? (
+            <GoSidebarCollapse size={24} className="rotate-180" />
+          ) : (
+            <GoSidebarExpand size={24} className="rotate-180" />
+          )}
+        </Button>
         <DyteClock meeting={meeting} />
       </div>
       <div className="p-4 flex justify-end items-center gap-2">
-        <DyteMicToggle meeting={meeting} size="sm" />
-        <DyteCameraToggle meeting={meeting} size="sm" />
-        {isHost && <DyteScreenShareToggle meeting={meeting} size="sm" />}
+        <DyteMicToggle meeting={meeting} size="lg" />
+        <DyteCameraToggle meeting={meeting} size="lg" />
+        {isHost && <DyteScreenShareToggle meeting={meeting} size="lg" />}
 
         <PresentationControls />
-        <Button
-          className="p-4 bg-inherit hover:bg-gray-800 bg-opacity-20"
-          onClick={toggleSettingsModal}>
-          <IconDots className="text-white w-6 h-6" />
-        </Button>
-        <DyteLeaveButton
-          size="sm"
+        <RaiseHand meeting={meeting} isHost={isHost} />
+        <DyteSettingsToggle
+          size="lg"
           onClick={() => {
-            setState({
+            onUpdateDyteStates({
+              activeSettings: true,
+            })
+          }}
+        />
+        <DyteLeaveButton
+          size="lg"
+          onClick={() => {
+            onUpdateDyteStates({
               activeLeaveConfirmation: true,
             })
           }}
         />
       </div>
-      <div className="p-4 flex justify-start items-center gap-6">
-        <DyteParticipantsToggle meeting={meeting} size="sm" />
-        <DyteChatToggle meeting={meeting} size="sm" />
-        {isHost && <DytePluginsToggle meeting={meeting} size="sm" />}
+
+      <div className="p-4 flex justify-start items-center gap-2">
+        <DyteParticipantsToggle
+          meeting={meeting}
+          size="lg"
+          onClick={() => {
+            onUpdateDyteStates({
+              activeSidebar: true,
+              sidebar: 'participants',
+            })
+          }}
+        />
+        <DyteChatToggle
+          meeting={meeting}
+          size="lg"
+          onClick={() => {
+            onUpdateDyteStates({
+              activeSidebar: true,
+              sidebar: 'chat',
+            })
+          }}
+        />
+        {isHost && (
+          <DytePluginsToggle
+            meeting={meeting}
+            size="lg"
+            onClick={() => {
+              onUpdateDyteStates({
+                activeSidebar: true,
+                sidebar: 'plugins',
+              })
+            }}
+          />
+        )}
+        {isHost && <WhiteboardToggleButton meeting={meeting} />}
       </div>
     </div>
   )

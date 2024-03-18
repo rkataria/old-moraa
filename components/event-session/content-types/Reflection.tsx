@@ -15,10 +15,17 @@ import {
   Textarea,
 } from '@nextui-org/react'
 
+import { useProfile } from '@/hooks/useProfile'
 import { ISlide } from '@/types/slide.type'
 
 interface ReflectionProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      backgroundColor: string
+      textColor: string
+      title: string
+    }
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responses?: any
   responded?: boolean
@@ -77,8 +84,18 @@ export function Reflection({
   const [reflection, setReflection] = useState('')
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
   const { meeting } = useDyteMeeting()
+  const { data: profile } = useProfile()
 
-  const username = meeting.self.name
+  const getParticipantName = () => {
+    if (!profile) {
+      return meeting.self.name
+    }
+
+    return `${profile.first_name} ${profile.last_name}`
+  }
+
+  const username = getParticipantName()
+
   const selfResponse = responses.find(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (res: any) => res.participant.enrollment.user_id === user.id

@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+// TODO: fix any types
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useContext, useEffect } from 'react'
 
 import dynamic from 'next/dynamic'
 
@@ -6,6 +8,7 @@ import { Cover } from './content-types/Cover'
 import { GoogleSlides } from './content-types/GoogleSlides'
 import { Poll } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
+import { TextImage } from './content-types/TextImage'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { SlideLoading } from './SlideLoading'
 import { ContentType } from '../event-content/ContentTypePicker'
@@ -29,7 +32,7 @@ export function Slide() {
   const {
     presentationStatus,
     currentSlide,
-    votePoll,
+    onVote,
     addReflection,
     updateReflection,
     currentSlideResponses,
@@ -37,6 +40,15 @@ export function Slide() {
     isHost,
   } = useContext(EventSessionContext) as EventSessionContextType
   const { currentUser } = useAuth()
+
+  useEffect(() => {
+    if (!currentSlide) return
+
+    document.documentElement.style.setProperty(
+      '--slide-bg-color',
+      currentSlide?.config.backgroundColor || 'rgb(17 24 39)'
+    )
+  }, [currentSlide])
 
   if (presentationStatus === PresentationStatuses.STOPPED) return null
 
@@ -52,26 +64,26 @@ export function Slide() {
     return (
       <Poll
         key={currentSlide.id}
-        slide={currentSlide}
-        votePoll={votePoll}
+        slide={currentSlide as any}
+        onVote={onVote}
         votes={currentSlideResponses}
-        isHost={isHost}
+        isOwner={isHost}
         voted={checkVoted(currentSlideResponses, currentUser)}
       />
     )
   }
 
   if (currentSlide.type === ContentType.GOOGLE_SLIDES) {
-    return <GoogleSlides key={currentSlide.id} slide={currentSlide} />
+    return <GoogleSlides key={currentSlide.id} slide={currentSlide as any} />
   }
   if (currentSlide.type === ContentType.PDF_VIEWER) {
-    return <PDFViewer key={currentSlide.id} slide={currentSlide} />
+    return <PDFViewer key={currentSlide.id} slide={currentSlide as any} />
   }
   if (currentSlide.type === ContentType.REFLECTION) {
     return (
       <Reflection
         key={currentSlide.id}
-        slide={currentSlide}
+        slide={currentSlide as any}
         responses={currentSlideResponses}
         responded={checkVoted(currentSlideResponses, currentUser)}
         user={currentUser}
@@ -82,7 +94,10 @@ export function Slide() {
     )
   }
   if (currentSlide.type === ContentType.VIDEO_EMBED) {
-    return <VideoEmbed key={currentSlide.id} slide={currentSlide} />
+    return <VideoEmbed key={currentSlide.id} slide={currentSlide as any} />
+  }
+  if (currentSlide.type === ContentType.TEXT_IMAGE) {
+    return <TextImage key={currentSlide.id} slide={currentSlide} />
   }
 
   return null

@@ -13,7 +13,12 @@ import { EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
 
 interface VideoEmbedProps {
-  slide: ISlide
+  // TODO: Implement block pattern
+  slide: ISlide & {
+    content: {
+      videoUrl: string
+    }
+  }
 }
 
 const playerStateChangeEvent = 'video-embed-option-changed'
@@ -75,13 +80,16 @@ export function VideoEmbed({ slide }: VideoEmbedProps) {
   )
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center bg-black">
-      <ResponsiveVideoPlayer
-        url={videoUrl}
-        showControls={isHost}
-        playerState={playerState}
-        onPlayerStateChange={handlePlayerStateChange}
-      />
+    <div className="w-full h-full flex justify-center items-center">
+      <div className="w-4/5 overflow-hidden rounded-md">
+        <ResponsiveVideoPlayer
+          url={videoUrl}
+          showControls={isHost}
+          playerState={playerState}
+          viewOnly={!isHost}
+          onPlayerStateChange={handlePlayerStateChange}
+        />
+      </div>
     </div>
   )
 }

@@ -9,7 +9,11 @@ import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import { ISlide, SlideManagerContextType } from '@/types/slide.type'
 
 interface VideoEmbedEditorProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      videoUrl: string
+    }
+  }
 }
 
 export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
@@ -43,6 +47,10 @@ export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
       </Button>
     </div>
   ) : (
-    <ResponsiveVideoPlayer url={videoUrl} />
+    <div className="w-full h-full flex justify-center items-center">
+      <div className="w-4/5 overflow-hidden rounded-md">
+        <ResponsiveVideoPlayer url={videoUrl} />
+      </div>
+    </div>
   )
 }

@@ -10,7 +10,7 @@ import { EventSessionContextType } from '@/types/event-session.type'
 import { checkVoted } from '@/utils/content.util'
 
 export function PresentationSlide() {
-  const { currentSlide, currentSlideResponses, votePoll } = useContext(
+  const { currentSlide, currentSlideResponses, onVote } = useContext(
     EventSessionContext
   ) as EventSessionContextType
   const { currentUser } = useAuth()
@@ -25,8 +25,9 @@ export function PresentationSlide() {
       {currentSlide.type === ContentType.POLL && (
         <Poll
           key={currentSlide.id}
-          slide={currentSlide}
-          votePoll={votePoll}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          slide={currentSlide as any}
+          onVote={onVote}
           votes={currentSlideResponses}
           voted={checkVoted(currentSlideResponses, currentUser)}
         />

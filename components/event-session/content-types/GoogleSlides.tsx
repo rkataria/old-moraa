@@ -3,15 +3,20 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import ReactGoogleSlides from 'react-google-slides'
 
+import { GoogleSlideEmbed } from '@/components/common/GoogleSlideEmbed'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
 import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
 
 interface GoogleSlidesProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      googleSlideURL: string
+      startPosition?: number
+    }
+  }
 }
 
 const PositionChangeEvent = 'g-slide-position-changed'
@@ -87,14 +92,18 @@ export function GoogleSlides({ slide }: GoogleSlidesProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const handleCurrentPageChange = (pageNumber: number) => {
+    if (pageNumber === 0) return
+
+    setPosition(pageNumber)
+  }
+
   return (
-    <div className="flex flex-col items-center h-full">
-      <ReactGoogleSlides
-        width="100%"
-        height="85%"
-        slidesLink={googleSlideURL}
-        position={position}
-      />
-    </div>
+    <GoogleSlideEmbed
+      url={googleSlideURL}
+      showControls={isHost}
+      startPage={position}
+      onPageChange={handleCurrentPageChange}
+    />
   )
 }

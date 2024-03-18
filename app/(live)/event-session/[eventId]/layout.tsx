@@ -1,4 +1,4 @@
-export default function MeetingLayout({
+export default function EventSessionLayout({
   children,
 }: {
   children: React.ReactNode

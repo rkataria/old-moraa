@@ -13,10 +13,8 @@ interface CoverEditorProps {
 }
 
 export function CoverEditor({ slide }: CoverEditorProps) {
-  const [title, setTitle] = useState<string>(slide.content.title)
-  const [description, setDescription] = useState<string>(
-    slide.content.description
-  )
+  const [title, setTitle] = useState(slide.content?.title)
+  const [description, setDescription] = useState(slide.content?.description)
   const throttledTitle = useThrottle(title, 500)
   const throttledDescription = useThrottle(description, 500)
 
@@ -45,18 +43,18 @@ export function CoverEditor({ slide }: CoverEditorProps) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center px-8 bg-white">
+    <div className="w-full h-full flex flex-col justify-center items-center px-8">
       <TextareaAutosize
         maxLength={100}
         placeholder="Title"
-        defaultValue={slide.content.title}
+        defaultValue={slide.content?.title}
         onChange={updateTitle}
         className="w-full p-2 text-center border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold text-gray-800 resize-none"
       />
       <TextareaAutosize
         maxLength={300}
         placeholder="This is a description"
-        defaultValue={slide.content.description}
+        defaultValue={slide.content?.description}
         className="w-full p-2 text-center border-0 bg-transparent outline-none text-gray-400 hover:outline-none focus:ring-0 focus:border-0 text-xl resize-none"
         onChange={updateDescription}
       />

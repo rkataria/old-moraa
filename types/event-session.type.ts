@@ -23,6 +23,8 @@ export type EventSessionContextType = {
   currentSlideResponses: any[] | null
   metaData: MutableRefObject<any>
   participant: any
+  activeStateSession: any
+  syncing: boolean
   syncSlides: () => void
   startPresentation: () => void
   stopPresentation: () => void
@@ -31,8 +33,14 @@ export type EventSessionContextType = {
   nextSlide: () => void
   previousSlide: () => void
   setCurrentSlideByID: (id: string) => void
-  votePoll: (slide: ISlide, option: string) => void
+  onVote: (slide: ISlide, options: string[]) => void
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
   joinMeeting?: () => void
+  handRaisedHandler: (id: string) => void
+  reorderSlide: (result: any) => void
+  moveUpSlide: (id: string) => void
+  moveDownSlide: (id: string) => void
+  deleteSlide: (id: string) => void
+  updateSlide: (slide: ISlide) => void
 }

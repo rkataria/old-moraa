@@ -6,34 +6,28 @@ import {
   DyteParticipantTile,
   DyteSpotlightGrid,
 } from '@dytesdk/react-ui-kit'
-import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { HiMiniHandRaised } from 'react-icons/hi2'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
+import { EventSessionContextType } from '@/types/event-session.type'
+import { cn } from '@/utils/utils'
 
-export function ParticipantTiles() {
+export function ParticipantTiles({
+  spotlightMode,
+  sidebarVisible,
+}: {
+  spotlightMode: boolean
+  sidebarVisible: boolean
+}) {
   const { meeting } = useDyteMeeting()
-  const { presentationStatus } = useContext(
+  const { activeStateSession } = useContext(
     EventSessionContext
   ) as EventSessionContextType
-  const activePlugin = meeting.plugins.active.toArray()?.[0]
-  const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
-  const screensharingParticipant = useDyteSelector((m) =>
-    m.participants.joined.toArray().find((p) => p.screenShareEnabled)
-  )
 
-  const isScreensharing = !!screensharingParticipant || selfScreenShared
-
-  if (
-    !isScreensharing &&
-    !activePlugin &&
-    presentationStatus === PresentationStatuses.STOPPED
-  ) {
+  if (spotlightMode) {
     return (
-      <div className="flex-auto flex justify-center items-center bg-gray-900">
+      <div className="flex-auto flex justify-center items-center h-full">
         <DyteSpotlightGrid
           meeting={meeting}
           layout="row"
@@ -45,30 +39,71 @@ export function ParticipantTiles() {
     )
   }
 
+  const activeParticipants = meeting.participants.active.toArray()
+
   return (
-    <div className="h-36 bg-gray-700 overflow-hidden overflow-x-auto flex justify-start items-center gap-[0.125rem] p-[0.125rem] flex-nowrap scrollbar-transparent scrollbar-thumb-transparent scrollbar-track-transparent scrollbar-track-rounded-full">
+    <div
+      className={cn(
+        'overflow-hidden overflow-x-auto flex gap-2 flex-nowrap scrollbar-none p-2 -mt-[2px]',
+        {
+          'flex-col': !sidebarVisible,
+          'flex-row justify-start items-center h-full': sidebarVisible,
+        }
+      )}>
       <DyteParticipantTile
         meeting={meeting}
         participant={meeting.self}
-        nameTagPosition="bottom-center"
+        nameTagPosition="bottom-right"
         variant="gradient"
-        className="h-[140px] w-64 rounded-none aspect-video flex-none border-2 border-green-500 sticky left-0 z-[1]">
-        <DyteNameTag meeting={meeting} participant={meeting.self}>
+        className={cn('relative aspect-video flex-none z-[1]', {
+          'w-full flex-col': !sidebarVisible,
+          'h-full flex-row': sidebarVisible,
+        })}>
+        <DyteNameTag
+          meeting={meeting}
+          participant={meeting.self}
+          className="left-1/2 -translate-x-1/2">
           <DyteAudioVisualizer slot="start" participant={meeting.self} />
         </DyteNameTag>
+        {activeStateSession?.data?.handsRaised?.includes(meeting.self.id) && (
+          <HiMiniHandRaised className="absolute right-2 top-2 text-xl animate-pulse flex justify-center items-center text-[#FAC036]" />
+        )}
       </DyteParticipantTile>
-      {meeting.participants.active.toArray().map((participant) => (
-        <DyteParticipantTile
-          meeting={meeting}
-          participant={participant}
-          nameTagPosition="bottom-center"
-          variant="gradient"
-          className="h-[140px] w-64 rounded-none aspect-video flex-none">
-          <DyteNameTag meeting={meeting} participant={participant}>
-            <DyteAudioVisualizer slot="start" participant={participant} />
-          </DyteNameTag>
-        </DyteParticipantTile>
-      ))}
+      <div
+        className={cn('gap-2', {
+          'grid grid-cols-2': !sidebarVisible,
+          'flex flex-row justify-start items-center h-full gap-2':
+            sidebarVisible,
+        })}>
+        {activeParticipants?.map((participant) => (
+          <DyteParticipantTile
+            meeting={meeting}
+            participant={participant}
+            nameTagPosition="bottom-right"
+            variant="gradient"
+            className={cn('flex-none !aspect-square relative z-[1]', {
+              'w-full h-auto': !sidebarVisible,
+              'h-full': sidebarVisible,
+            })}>
+            <DyteNameTag
+              meeting={meeting}
+              participant={participant}
+              size="sm"
+              className="left-1/2 -translate-x-1/2">
+              <DyteAudioVisualizer
+                size="sm"
+                slot="start"
+                participant={participant}
+              />
+            </DyteNameTag>
+            {activeStateSession?.data?.handsRaised?.includes(
+              participant.id
+            ) && (
+              <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-[#FAC036]" />
+            )}
+          </DyteParticipantTile>
+        ))}
+      </div>
     </div>
   )
 }

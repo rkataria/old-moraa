@@ -44,8 +44,14 @@ export function EventList() {
             <th
               scope="col"
               className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
-              Last Modified
+              Event start
             </th>
+            <th
+              scope="col"
+              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
+              Event end
+            </th>
+
             <th
               scope="col"
               className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
@@ -76,7 +82,18 @@ export function EventList() {
               </td>
 
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                {getFormattedDate(event.updated_at, { includeTime: true })}
+                {event.start_date
+                  ? getFormattedDate(event.start_date, {
+                      includeTime: true,
+                    })
+                  : '-'}
+              </td>
+              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
+                {event.end_date
+                  ? getFormattedDate(event.end_date, {
+                      includeTime: true,
+                    })
+                  : '-'}
               </td>
 
               <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">

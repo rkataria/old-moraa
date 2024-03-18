@@ -8,7 +8,9 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.js'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
 
-import { Loading } from '@/components/common/Loading'
+import { Skeleton } from '@nextui-org/react'
+
+import { PageControls } from '@/components/common/PageControls'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -17,7 +19,12 @@ import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFViewerProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      pdfPath: string
+      defaultPage: number
+    }
+  }
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
@@ -118,31 +125,38 @@ export function PDFViewer({ slide }: PDFViewerProps) {
   }) => {
     setTotalPages(nextNumPages)
   }
+  const handleCurrentPageChange = (pageNumber: number) => {
+    if ((totalPages && totalPages < pageNumber) || pageNumber === 0) return
+
+    setSelectedPage(pageNumber)
+  }
+
+  if (!downloadPDFMutation.isSuccess) {
+    return <Skeleton className="w-full h-full rounded-md" />
+  }
 
   return (
-    <div className="w-full flex justify-center items-center bg-white overflow-scroll">
-      <div>
-        {downloadPDFMutation.isSuccess ? (
-          <Document
-            file={file}
-            onLoadSuccess={onDocumentLoadSuccess}
-            className="rounded overflow-y-scroll shadow-lg"
-            loading="Please wait! Loading the PDF.">
-            <Page
-              loading={' '}
-              pageNumber={selectedPage}
-              renderAnnotationLayer={false}
-              renderTextLayer={false}
-              className="m-2 w-96"
-            />
-          </Document>
-        ) : (
-          <div className="mt-12 flex justify-center items-center flex-col">
-            <Loading />
-            <div>Loading content...</div>
-          </div>
-        )}
-      </div>
+    <div className="relative w-full h-full flex justify-center items-center">
+      <Document
+        file={file}
+        onLoadSuccess={onDocumentLoadSuccess}
+        className="absolute left-0 top-0 h-full w-full m-0 overflow-y-auto scrollbar-thin"
+        loading="Please wait! Loading the PDF.">
+        <Page
+          loading={' '}
+          pageNumber={selectedPage}
+          renderAnnotationLayer={false}
+          renderTextLayer={false}
+          className="w-full"
+        />
+      </Document>
+      {isHost && (
+        <PageControls
+          currentPage={selectedPage}
+          totalPages={totalPages}
+          handleCurrentPageChange={handleCurrentPageChange}
+        />
+      )}
     </div>
   )
 }

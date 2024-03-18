@@ -17,6 +17,7 @@ import {
   ISlide,
   SlideManagerContextType,
 } from '@/types/slide.type'
+import { getSlideName } from '@/utils/getSlideName'
 import { cn } from '@/utils/utils'
 
 interface SlideListViewProps {
@@ -50,7 +51,7 @@ interface SlideThumbnailViewProps {
 }
 
 function SlideEditableName({ slide }: { slide: ISlide }) {
-  const { updateSlide } = useContext(
+  const { updateSlide, isOwner } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
@@ -62,20 +63,26 @@ function SlideEditableName({ slide }: { slide: ISlide }) {
     setNameEditable(false)
   }
 
+  const slideName = getSlideName(slide)
+
   if (nameEditable) {
     return (
       <input
-        defaultValue={slide.name}
+        defaultValue={slideName}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && handleBlur(e)}
-        className="border-b border-primary outline-none py-1 w-[inherit] pr-2"
+        className="outline-none py-1 w-[inherit] pr-2 bg-transparent"
       />
     )
   }
 
   return (
-    <p className="line-clamp-1 py-1" onClick={() => setNameEditable(true)}>
-      {slide.name}
+    <p
+      className="line-clamp-1 py-1"
+      onClick={() => {
+        if (isOwner) setNameEditable(true)
+      }}>
+      {slideName}
     </p>
   )
 }
@@ -90,7 +97,7 @@ function SlideListView({
   setIsDeleteModalOpen,
   handleDelete,
 }: SlideListViewProps) {
-  const { currentSlide, setCurrentSlide } = useContext(
+  const { currentSlide, setCurrentSlide, isOwner } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
   const Icon = contentTypes.find(
@@ -109,10 +116,8 @@ function SlideListView({
       <div
         {...(mode === 'edit' && draggableProps)}
         className={cn(
-          'rounded-md flex-auto w-full transition-all border flex items-center justify-between capitalize group',
-          currentSlide?.id === slide.id
-            ? 'drop-shadow-md border-black'
-            : 'drop-shadow-none border-black/20'
+          'rounded-md flex-auto w-full transition-all flex items-center justify-between group',
+          currentSlide?.id === slide.id ? 'drop-shadow-md' : 'drop-shadow-none'
         )}
         style={{
           backgroundColor: slide.config?.backgroundColor || '#166534',
@@ -125,14 +130,16 @@ function SlideListView({
           onClick={() => setCurrentSlide(slide)}>
           <SlideEditableName slide={slide} />
         </div>
-        <SlideActions
-          triggerIcon={
-            <div className="h-full w-fit bg-slate-100 rounded mr-1 hidden group-hover:block">
-              <IconDots className="h-6 w-6 text-slate-500 px-1" />
-            </div>
-          }
-          handleActions={(action) => handleActions(action, slide.id)}
-        />
+        {isOwner && (
+          <SlideActions
+            triggerIcon={
+              <div className="h-full w-fit bg-slate-100 rounded mr-1 hidden group-hover:block">
+                <IconDots className="h-6 w-6 text-slate-500 px-1" />
+              </div>
+            }
+            handleActions={(action) => handleActions(action, slide.id)}
+          />
+        )}
       </div>
       <DeleteSlideModal
         isModalOpen={isDeleteModalOpen}
@@ -154,7 +161,7 @@ function SlideThumbnailView({
   setIsDeleteModalOpen,
   handleDelete,
 }: SlideThumbnailViewProps) {
-  const { currentSlide, setCurrentSlide } = useContext(
+  const { currentSlide, setCurrentSlide, isOwner } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
@@ -164,11 +171,10 @@ function SlideThumbnailView({
       key={`mini-slide-${slide.id}`}
       className="flex justify-start items-center gap-2 w-full"
       {...(mode === 'edit' && draggableProps)}>
-      <span className="w-5">{index + 1}</span>
       <div
         onClick={() => setCurrentSlide(slide)}
         className={cn(
-          'relative rounded-md w-full aspect-video cursor-pointer transition-all border-2 capitalize group',
+          'relative rounded-md w-full aspect-video cursor-pointer transition-all border-2 group',
           currentSlide?.id === slide.id
             ? 'drop-shadow-md border-black'
             : 'drop-shadow-none border-black/20'
@@ -176,20 +182,25 @@ function SlideThumbnailView({
         style={{
           backgroundColor: slide.config?.backgroundColor || '#166534',
         }}>
+        <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
+          {index + 1}
+        </div>
         <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
           <div
             className="shrink w-full cursor-pointer"
             onClick={() => setCurrentSlide(slide)}>
             <SlideEditableName slide={slide} />
           </div>
-          <SlideActions
-            triggerIcon={
-              <div className="h-full w-fit bg-slate-100 rounded hidden group-hover:block">
-                <IconDots className="h-6 w-6 text-slate-500 px-1" />
-              </div>
-            }
-            handleActions={(action) => handleActions(action, slide.id)}
-          />
+          {isOwner && (
+            <SlideActions
+              triggerIcon={
+                <div className="h-full w-fit bg-slate-100 rounded hidden group-hover:block">
+                  <IconDots className="h-6 w-6 text-slate-500 px-1" />
+                </div>
+              }
+              handleActions={(action) => handleActions(action, slide.id)}
+            />
+          )}
         </div>
       </div>
       <DeleteSlideModal

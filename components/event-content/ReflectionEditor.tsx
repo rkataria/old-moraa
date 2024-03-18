@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useThrottle } from '@uidotdev/usehooks'
 import TextareaAutosize from 'react-textarea-autosize'
 
+import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import { ISlide, SlideManagerContextType } from '@/types/slide.type'
 
@@ -13,7 +14,7 @@ interface ReflectionEditorProps {
 }
 
 export function ReflectionEditor({ slide }: ReflectionEditorProps) {
-  const [title, setTitle] = useState<string>(slide.content.title)
+  const [title, setTitle] = useState(slide.content?.title)
   const throttledTitle = useThrottle(title, 500)
 
   const { updateSlide } = useContext(
@@ -35,11 +36,11 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center px-8 bg-white">
+    <div className="w-full h-full flex flex-col justify-center items-center px-8">
       <TextareaAutosize
-        maxLength={100}
         placeholder="Title"
-        defaultValue={slide.content.title}
+        defaultValue={slide.content?.title}
+        maxLength={TITLE_CHARACTER_LIMIT}
         onChange={updateTitle}
         className="w-full p-2 text-center border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold text-gray-800 resize-none"
       />

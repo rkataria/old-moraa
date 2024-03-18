@@ -13,9 +13,9 @@ import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
 import { Button, Input } from '@nextui-org/react'
 
 import { FilePicker } from '../common/FilePicker'
+import { NextPrevButtons } from '../common/NextPrevButtons'
 
 import { Loading } from '@/components/common/Loading'
-import { NextPrevButtons } from '@/components/common/NextPrevButtons'
 import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import {
   deletePDFFile,
@@ -27,7 +27,12 @@ import { QueryKeys } from '@/utils/query-keys'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
-  slide: ISlide
+  slide: ISlide & {
+    content: {
+      pdfPath: string
+      defaultPage: number
+    }
+  }
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
@@ -151,22 +156,21 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
 
       case !!downloadPDFQuery.data:
         return (
-          <div>
+          <div className="">
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
-              className="rounded overflow-y-scroll shadow-lg"
+              className="relative aspect-video h-[520px] m-auto overflow-y-auto scrollbar-thin"
               loading={
-                <div className="h-96">
+                <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
                   <Loading />
                 </div>
               }>
               <Page
-                loading={' '}
                 pageNumber={selectedPage}
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
-                className="m-2 w-96"
+                className="w-full"
               />
             </Document>
             <div className="m-4 flex justify-between items-center">

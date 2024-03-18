@@ -9,8 +9,7 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { Slide } from './Slide'
-import { SlideViewControls } from './SlideViewControls'
-import { SlideWrapper } from './SlideWrapper'
+import { SlideControls } from '../common/SlideControls'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import {
@@ -19,7 +18,7 @@ import {
 } from '@/types/event-session.type'
 
 export function ContentContainer() {
-  const { presentationStatus, isHost } = useContext(
+  const { presentationStatus, currentSlide } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -34,51 +33,45 @@ export function ContentContainer() {
 
   if (screensharingParticipant) {
     return (
-      <SlideWrapper>
-        <DyteScreenshareView
-          meeting={meeting}
-          participant={screensharingParticipant}
-          className="h-full">
-          <DyteNameTag participant={screensharingParticipant}>
-            <DyteAudioVisualizer
-              slot="start"
-              participant={screensharingParticipant}
-            />
-          </DyteNameTag>
-        </DyteScreenshareView>
-      </SlideWrapper>
+      <DyteScreenshareView
+        meeting={meeting}
+        participant={screensharingParticipant}
+        className="h-full">
+        <DyteNameTag participant={screensharingParticipant}>
+          <DyteAudioVisualizer
+            slot="start"
+            participant={screensharingParticipant}
+          />
+        </DyteNameTag>
+      </DyteScreenshareView>
     )
   }
 
   if (selfScreenShared) {
     return (
-      <SlideWrapper>
-        <DyteScreenshareView
-          meeting={meeting}
-          participant={meeting.self}
-          className="h-full">
-          <DyteNameTag participant={meeting.self}>
-            <DyteAudioVisualizer slot="start" participant={meeting.self} />
-          </DyteNameTag>
-        </DyteScreenshareView>
-      </SlideWrapper>
+      <DyteScreenshareView
+        meeting={meeting}
+        participant={meeting.self}
+        className="h-full">
+        <DyteNameTag participant={meeting.self}>
+          <DyteAudioVisualizer slot="start" participant={meeting.self} />
+        </DyteNameTag>
+      </DyteScreenshareView>
     )
   }
 
   if (activePlugin) {
-    return (
-      <SlideWrapper>
-        <DytePluginMain meeting={meeting} plugin={activePlugin} />
-      </SlideWrapper>
-    )
+    return <DytePluginMain meeting={meeting} plugin={activePlugin} />
   }
 
-  if (presentationStatus === PresentationStatuses.STOPPED) return null
+  if (presentationStatus === PresentationStatuses.STOPPED || !currentSlide) {
+    return null
+  }
 
   return (
-    <SlideWrapper>
-      <Slide />
-      {isHost && <SlideViewControls />}
-    </SlideWrapper>
+    <div className="relative h-full">
+      <Slide key={`slide-${currentSlide.id}`} />
+      <SlideControls />
+    </div>
   )
 }
