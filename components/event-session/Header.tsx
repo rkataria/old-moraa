@@ -19,6 +19,7 @@ import { Button } from '@nextui-org/react'
 
 import { PresentationControls } from './PresentationControls'
 import { RaiseHand } from './RaiseHand'
+import { WhiteboardToggleButton } from './WhiteboardToggleButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
@@ -117,6 +118,7 @@ export function Header({
             }}
           />
         )}
+        {isHost && <WhiteboardToggleButton meeting={meeting} />}
       </div>
     </div>
   )
