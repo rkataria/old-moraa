@@ -76,9 +76,9 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
 
     if (currentUser.id === event.owner_id) {
       setIsOwner(true)
-      setSlides(meetingSlidesWithContent)
+      setSlides(meetingSlidesWithContent || [])
       setSlideIds(meeting?.slides ?? [])
-      setCurrentSlide(meetingSlidesWithContent[0])
+      setCurrentSlide(meetingSlidesWithContent?.[0] || null)
       setLoading(false)
 
       return

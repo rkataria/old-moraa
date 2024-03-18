@@ -45,7 +45,7 @@ const getEvents = async () => {
         return 1
       }
 
-      return a.updated_at.localeCompare(b.updated_at)
+      return b.updated_at.localeCompare(a.updated_at)
     })
 
   return events
