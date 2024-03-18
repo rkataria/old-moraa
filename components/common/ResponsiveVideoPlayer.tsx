@@ -129,7 +129,7 @@ export function ResponsiveVideoPlayer({
     currentPlayerState
 
   return (
-    <div className="relative w-full pt-[56.25%]">
+    <div className="relative w-full pt-[56.25%] rounded-md overflow-hidden">
       <ReactPlayer
         ref={playerRef}
         url={url}

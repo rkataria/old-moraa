@@ -1,6 +1,6 @@
 // TODO: fix any types
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import dynamic from 'next/dynamic'
 
@@ -40,6 +40,15 @@ export function Slide() {
     isHost,
   } = useContext(EventSessionContext) as EventSessionContextType
   const { currentUser } = useAuth()
+
+  useEffect(() => {
+    if (!currentSlide) return
+
+    document.documentElement.style.setProperty(
+      '--slide-bg-color',
+      currentSlide?.config.backgroundColor || 'rgb(17 24 39)'
+    )
+  }, [currentSlide])
 
   if (presentationStatus === PresentationStatuses.STOPPED) return null
 

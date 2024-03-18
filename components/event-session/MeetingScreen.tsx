@@ -1,4 +1,8 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+
+'use client'
+
 import { useContext, useEffect, useState } from 'react'
 
 import {
@@ -7,46 +11,80 @@ import {
   DyteParticipantsAudio,
   DyteSidebar,
 } from '@dytesdk/react-ui-kit'
-import { useDyteMeeting } from '@dytesdk/react-web-core'
-import clsx from 'clsx'
+import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
-import { ContentContainer } from '@/components/event-session/ContentContainer'
-import { Header } from '@/components/event-session/Header'
-import { MiniSlideManager } from '@/components/event-session/MiniSlideMananger'
-import { ParticipantTiles } from '@/components/event-session/ParticipantTiles'
+import { ContentContainer } from './ContentContainer'
+import { Header } from './Header'
+import { MiniSlideManager } from './MiniSlideMananger'
+import { ParticipantTiles } from './ParticipantTiles'
+import {
+  SlideManagerHeader,
+  SlideManagerLayoutRoot,
+  SlideManagerRightSidebarWrapper,
+} from '../event-content/SlideManager'
+
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import {
   EventSessionContextType,
   PresentationStatuses,
 } from '@/types/event-session.type'
+import { cn } from '@/utils/utils'
+
+export type DyteStates = {
+  [key: string]: string | boolean
+}
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
+  const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(false)
+  const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
+  const [spotlightMode, setSpotlightMode] = useState<boolean>(true)
+  const [dyteStates, setDyteStates] = useState<DyteStates>({})
   const {
     slides,
     currentSlide,
     setCurrentSlide,
+    isHost,
+    presentationStatus,
     previousSlide,
     nextSlide,
-    setCurrentSlideByID,
-    presentationStatus,
     startPresentation,
     pausePresentation,
     stopPresentation,
     syncSlides,
+    setCurrentSlideByID,
   } = useContext(EventSessionContext) as EventSessionContextType
-  const [slidesSidebarVisible, setSlidesSidebarVisibility] =
-    useState<boolean>(true)
-  const [states, setStates] = useState({})
-  const [activeSidebar, setActiveSidebar] = useState<boolean>(false)
-  const [isHost, setIsHost] = useState<boolean>(false)
+  const activePlugin = meeting.plugins.active.toArray()?.[0]
+  const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
+  const screensharingParticipant = useDyteSelector((m) =>
+    m.participants.joined.toArray().find((p) => p.screenShareEnabled)
+  )
+
+  const isScreensharing = !!screensharingParticipant || selfScreenShared
+  const sidebarVisible = leftSidebarVisible || rightSidebarVisible
+
+  useEffect(() => {
+    if (isScreensharing) {
+      setSpotlightMode(false)
+    }
+    if (activePlugin) {
+      setSpotlightMode(false)
+    }
+    if (presentationStatus === PresentationStatuses.STARTED) {
+      setSpotlightMode(false)
+    }
+
+    if (presentationStatus === PresentationStatuses.STOPPED) {
+      setSpotlightMode(true)
+    }
+  }, [isScreensharing, activePlugin, presentationStatus])
 
   useEffect(() => {
     if (!meeting) return
 
-    const preset = meeting.self.presetName
-    if (preset.includes('host')) {
-      setIsHost(true)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleDyteStateUpdate = ({ detail }: any) => {
+      setRightSidebarVisible(!!detail.activeSidebar)
     }
 
     const handleBroadcastedMessage = ({
@@ -94,15 +132,11 @@ export function MeetingScreen() {
           break
       }
     }
+
     meeting.participants.addListener(
       'broadcastedMessage',
       handleBroadcastedMessage
     )
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleDyteStateUpdate = ({ detail }: any) => {
-      setActiveSidebar(!!detail.activeSidebar)
-    }
 
     document.body.addEventListener('dyteStateUpdate', handleDyteStateUpdate)
 
@@ -111,6 +145,7 @@ export function MeetingScreen() {
         'dyteStateUpdate',
         handleDyteStateUpdate
       )
+
       meeting.participants.removeListener(
         'broadcastedMessage',
         handleBroadcastedMessage
@@ -135,50 +170,74 @@ export function MeetingScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [presentationStatus])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const setState = (s: any) => setStates((_states) => ({ ..._states, ...s }))
+  const handleUpdateDyteStates = (states: DyteStates) => {
+    setDyteStates(states)
+  }
 
   return (
-    <div className="flex flex-col h-screen">
-      <Header
-        setState={setState}
-        toggleSlidesSidebarVisiblity={() => {
-          setSlidesSidebarVisibility((v) => !v)
-        }}
-      />
-      <div className="flex flex-auto">
-        {/* {presentationStatus === PresentationStatuses.STARTED && ( */}
-        <MiniSlideManager
-          isHost={isHost}
-          visible={slidesSidebarVisible}
-          slides={slides}
-          currentSlide={currentSlide}
-          setCurrentSlide={(slide) => {
-            meeting.participants.broadcastMessage('set-current-slide-by-id', {
-              slideId: slide.id,
-            })
-            setCurrentSlide(slide)
-          }}
+    <SlideManagerLayoutRoot>
+      <SlideManagerHeader>
+        <Header
+          leftSidebarVisible={leftSidebarVisible}
+          onUpdateDyteStates={handleUpdateDyteStates}
+          toggleLeftSidebar={() => setLeftSidebarVisible((o) => !o)}
         />
-        {/* )} */}
-        <div className="flex flex-col w-full h-full overflow-hidden">
-          <ParticipantTiles />
-          <ContentContainer />
-        </div>
+      </SlideManagerHeader>
+      <div className="flex flex-auto w-full">
         <div
-          className={clsx('flex-none bg-black', {
-            'w-72': activeSidebar,
-            'w-0': !activeSidebar,
+          className={cn('flex-none transition-all duration-300 ease-in-out', {
+            'w-0': !leftSidebarVisible,
+            'w-72': leftSidebarVisible,
           })}>
-          <DyteSidebar
-            meeting={meeting}
-            states={states}
-            className="rounded-none text-white"
-            onDyteStateUpdate={(e) => {
-              setState({ ...states, ...e.detail })
+          <MiniSlideManager
+            isHost={isHost}
+            visible={leftSidebarVisible}
+            slides={slides}
+            currentSlide={currentSlide}
+            setCurrentSlide={(slide) => {
+              meeting.participants.broadcastMessage('set-current-slide-by-id', {
+                slideId: slide.id,
+              })
+              setCurrentSlide(slide)
             }}
           />
         </div>
+        <div
+          className={cn('flex-1 flex justify-start items-start', {
+            'flex-row': !sidebarVisible,
+            'flex-col': sidebarVisible,
+          })}>
+          <div
+            className={cn('w-full', {
+              'h-44': sidebarVisible,
+              'h-[calc(100vh_-_64px)] w-72 order-2 overflow-hidden overflow-y-auto scrollbar-none':
+                !sidebarVisible,
+              'h-full w-full order-1': spotlightMode,
+            })}>
+            <ParticipantTiles
+              spotlightMode={spotlightMode}
+              sidebarVisible={sidebarVisible}
+            />
+          </div>
+          {!spotlightMode && (
+            <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
+              <ContentContainer />
+            </div>
+          )}
+        </div>
+        <SlideManagerRightSidebarWrapper visible={rightSidebarVisible}>
+          <DyteSidebar
+            meeting={meeting}
+            states={dyteStates}
+            className="rounded-none text-white"
+            onDyteStateUpdate={(e) => {
+              setDyteStates((prevDyteStates) => ({
+                ...prevDyteStates,
+                ...e.detail,
+              }))
+            }}
+          />
+        </SlideManagerRightSidebarWrapper>
       </div>
 
       {/* Required Dyte Components */}
@@ -186,11 +245,14 @@ export function MeetingScreen() {
       <DyteNotifications meeting={meeting} />
       <DyteDialogManager
         meeting={meeting}
-        states={states}
+        states={dyteStates}
         onDyteStateUpdate={(e) => {
-          setState({ ...states, ...e.detail })
+          setDyteStates((prevDyteStates) => ({
+            ...prevDyteStates,
+            ...e.detail,
+          }))
         }}
       />
-    </div>
+    </SlideManagerLayoutRoot>
   )
 }

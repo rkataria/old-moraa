@@ -7,13 +7,11 @@ import { useHotkeys } from '@/hooks/useHotkeys'
 interface PageControlsProps {
   currentPage: number
   totalPages?: number | null
-  isHost: boolean
   handleCurrentPageChange: (pageNumber: number) => void
 }
 
 export function PageControls({
   currentPage,
-  isHost,
   totalPages,
   handleCurrentPageChange,
 }: PageControlsProps) {
@@ -26,8 +24,6 @@ export function PageControls({
   const arrowRight = useHotkeys('ArrowRight', () => {
     handleCurrentPageChange(currentPage + 1)
   })
-
-  if (!isHost) return null
 
   return (
     <>

@@ -39,8 +39,14 @@ export function MeetingSetupScreen() {
   const [states, setStates] = useState({})
 
   useEffect(() => {
-    setName(`${profile?.first_name} ${profile?.last_name}`)
-  }, [profile])
+    const fullName = `${profile?.first_name} ${profile?.last_name}`
+
+    if (!fullName) return
+
+    setName(fullName)
+
+    meeting?.self?.setName(fullName)
+  }, [profile, meeting])
 
   useEffect(() => {
     if (!meeting) return

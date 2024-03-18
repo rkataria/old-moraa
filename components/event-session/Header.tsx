@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useContext } from 'react'
 
 import {
@@ -14,47 +12,51 @@ import {
   DyteSettingsToggle,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { IconMenu } from '@tabler/icons-react'
 import { useParams } from 'next/navigation'
+import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 
-import { ControlButton } from './ControlButton'
+import { Button } from '@nextui-org/react'
+
 import { PresentationControls } from './PresentationControls'
 import { RaiseHand } from './RaiseHand'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
+import { EventSessionContextType } from '@/types/event-session.type'
 
 type HeaderProps = {
+  leftSidebarVisible: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setState: any
-  toggleSlidesSidebarVisiblity: () => void
+  onUpdateDyteStates: any
+  toggleLeftSidebar?: () => void
 }
 
 export function Header({
-  setState,
-  toggleSlidesSidebarVisiblity,
+  leftSidebarVisible,
+  onUpdateDyteStates,
+  toggleLeftSidebar = () => {},
 }: HeaderProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const { presentationStatus, isHost } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { isHost } = useContext(EventSessionContext) as EventSessionContextType
 
   if (!event) return null
 
   return (
     <div className="h-16 bg-gray-950 flex justify-between items-center">
       <div className="p-4 flex justify-end items-center gap-2">
-        {presentationStatus !== PresentationStatuses.STOPPED && (
-          <ControlButton onClick={toggleSlidesSidebarVisiblity}>
-            <IconMenu size={16} />
-          </ControlButton>
-        )}
+        <Button
+          variant="light"
+          isIconOnly
+          className="text-white bg-white/5 hover:bg-white/10"
+          onClick={toggleLeftSidebar}>
+          {leftSidebarVisible ? (
+            <GoSidebarCollapse size={24} className="rotate-180" />
+          ) : (
+            <GoSidebarExpand size={24} className="rotate-180" />
+          )}
+        </Button>
         <DyteClock meeting={meeting} />
       </div>
       <div className="p-4 flex justify-end items-center gap-2">
@@ -67,7 +69,7 @@ export function Header({
         <DyteSettingsToggle
           size="lg"
           onClick={() => {
-            setState({
+            onUpdateDyteStates({
               activeSettings: true,
             })
           }}
@@ -75,7 +77,7 @@ export function Header({
         <DyteLeaveButton
           size="lg"
           onClick={() => {
-            setState({
+            onUpdateDyteStates({
               activeLeaveConfirmation: true,
             })
           }}
@@ -87,7 +89,7 @@ export function Header({
           meeting={meeting}
           size="lg"
           onClick={() => {
-            setState({
+            onUpdateDyteStates({
               activeSidebar: true,
               sidebar: 'participants',
             })
@@ -97,7 +99,7 @@ export function Header({
           meeting={meeting}
           size="lg"
           onClick={() => {
-            setState({
+            onUpdateDyteStates({
               activeSidebar: true,
               sidebar: 'chat',
             })
@@ -108,7 +110,7 @@ export function Header({
             meeting={meeting}
             size="lg"
             onClick={() => {
-              setState({
+              onUpdateDyteStates({
                 activeSidebar: true,
                 sidebar: 'plugins',
               })

@@ -171,7 +171,6 @@ function SlideThumbnailView({
       key={`mini-slide-${slide.id}`}
       className="flex justify-start items-center gap-2 w-full"
       {...(mode === 'edit' && draggableProps)}>
-      <span className="w-5">{index + 1}</span>
       <div
         onClick={() => setCurrentSlide(slide)}
         className={cn(
@@ -183,6 +182,9 @@ function SlideThumbnailView({
         style={{
           backgroundColor: slide.config?.backgroundColor || '#166534',
         }}>
+        <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
+          {index + 1}
+        </div>
         <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
           <div
             className="shrink w-full cursor-pointer"

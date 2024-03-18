@@ -150,12 +150,13 @@ export function PDFViewer({ slide }: PDFViewerProps) {
           className="w-full"
         />
       </Document>
-      <PageControls
-        currentPage={selectedPage}
-        isHost={isHost}
-        totalPages={totalPages}
-        handleCurrentPageChange={handleCurrentPageChange}
-      />
+      {isHost && (
+        <PageControls
+          currentPage={selectedPage}
+          totalPages={totalPages}
+          handleCurrentPageChange={handleCurrentPageChange}
+        />
+      )}
     </div>
   )
 }

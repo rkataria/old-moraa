@@ -80,14 +80,16 @@ export function VideoEmbed({ slide }: VideoEmbedProps) {
   )
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center bg-black">
-      <ResponsiveVideoPlayer
-        url={videoUrl}
-        showControls={isHost}
-        playerState={playerState}
-        viewOnly={!isHost}
-        onPlayerStateChange={handlePlayerStateChange}
-      />
+    <div className="w-full h-full flex justify-center items-center">
+      <div className="w-4/5 overflow-hidden rounded-md">
+        <ResponsiveVideoPlayer
+          url={videoUrl}
+          showControls={isHost}
+          playerState={playerState}
+          viewOnly={!isHost}
+          onPlayerStateChange={handlePlayerStateChange}
+        />
+      </div>
     </div>
   )
 }

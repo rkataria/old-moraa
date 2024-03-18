@@ -27,7 +27,7 @@ export function SlideControls() {
   if (!isHost) return null
 
   return (
-    <div className="h-full w-full">
+    <div>
       {currentSlideIndex !== 0 && (
         <div className="absolute left-[50%] top-0 z-10">
           <IconChevronUp

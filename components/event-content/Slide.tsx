@@ -1,12 +1,9 @@
-// TODO: Fix any types
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-'use client'
-
 import React from 'react'
 
-import { IconSettings } from '@tabler/icons-react'
 import dynamic from 'next/dynamic'
+import { TbSettings } from 'react-icons/tb'
+
+import { Button } from '@nextui-org/react'
 
 import { CoverEditor } from './content-types/CoverEditor'
 import { TextImageEditor } from './content-types/TextImageEditor'
@@ -42,7 +39,7 @@ export function Slide({
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className={cn('relative group w-full h-full', {
+      className={cn('relative group w-full h-full p-4', {
         'pointer-events-none': !isOwner,
       })}>
       <div
@@ -51,12 +48,14 @@ export function Slide({
         })}
       />
       {settingsEnabled && (
-        <IconSettings
-          className="absolute right-0 top-0 z-[40] m-1 text-slate-300 hover:text-slate-500 duration-100 cursor-pointer"
-          onClick={() => setSettingsSidebarVisible(true)}
-        />
+        <Button
+          isIconOnly
+          variant="light"
+          className="absolute top-2 right-2 z-10 pointer-events-auto bg-black/20 text-white"
+          onClick={() => setSettingsSidebarVisible(true)}>
+          <TbSettings size={22} />
+        </Button>
       )}
-
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto transition-all">
@@ -65,15 +64,18 @@ export function Slide({
         )}
         {slide.type === ContentType.COVER && <CoverEditor slide={slide} />}
         {slide.type === ContentType.GOOGLE_SLIDES && (
+          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           <GoogleSlidesEditor slide={slide as any} />
         )}
         {slide.type === ContentType.REFLECTION && (
           <ReflectionEditor slide={slide} />
         )}
         {slide.type === ContentType.PDF_VIEWER && (
+          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           <PDFUploader slide={slide as any} />
         )}
         {slide.type === ContentType.VIDEO_EMBED && (
+          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           <VideoEmbedEditor slide={slide as any} />
         )}
         {slide.type === ContentType.TEXT_IMAGE && (

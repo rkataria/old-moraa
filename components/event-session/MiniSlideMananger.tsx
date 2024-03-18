@@ -89,7 +89,7 @@ export function MiniSlideManager({
           <StrictModeDroppable droppableId="droppable-1" type="slide">
             {(provided: DroppableProvided) => (
               <div
-                className="flex flex-col justify-start items-center gap-4 w-full flex-nowrap scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent overflow-y-auto max-h-[calc(100vh_-_120px)] mb-1"
+                className="flex flex-col justify-start items-center gap-4 w-full flex-nowrap scrollbar-none overflow-y-auto"
                 ref={provided.innerRef}
                 {...provided.droppableProps}>
                 {slides.map((slide, index) => (
