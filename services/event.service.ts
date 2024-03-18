@@ -21,8 +21,32 @@ const getEvents = async () => {
     .from('enrollment')
     .select('*,event(*, profile(*))')
     .eq('user_id', user.id)
+  // TODO: fix this someday when the supabase ordering issue is resolved.
+  // .order('start_date', {
+  //   referencedTable: 'event',
+  //   ascending: false,
+  //   nullsFirst: true,
+  // })
+  // .order('updated_at', {
+  //   ascending: false,
+  // })
 
-  const events = data?.map((item) => item.event)
+  const events = data
+    ?.map((item) => item.event)
+    .sort((a, b) => {
+      // Check if both events have start_date
+      if (a.start_date && b.start_date) {
+        return a.start_date.localeCompare(b.start_date) * -1
+      }
+      if (a.start_date) {
+        return -1
+      }
+      if (b.start_date) {
+        return 1
+      }
+
+      return a.updated_at.localeCompare(b.updated_at)
+    })
 
   return events
 }
