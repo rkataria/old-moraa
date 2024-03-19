@@ -62,7 +62,7 @@ export function Slide({
         {slide.type === ContentType.POLL && (
           <PollEditor slide={slide} openSettings={false} />
         )}
-        {slide.type === ContentType.COVER && <CoverEditor slide={slide} />}
+        {slide.type === ContentType.COVER && <CoverEditor />}
         {slide.type === ContentType.GOOGLE_SLIDES && (
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           <GoogleSlidesEditor slide={slide as any} />
@@ -78,9 +78,7 @@ export function Slide({
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           <VideoEmbedEditor slide={slide as any} />
         )}
-        {slide.type === ContentType.TEXT_IMAGE && (
-          <TextImageEditor slide={slide} />
-        )}
+        {slide.type === ContentType.TEXT_IMAGE && <TextImageEditor />}
       </div>
     </div>
   )

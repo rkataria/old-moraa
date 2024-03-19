@@ -85,6 +85,7 @@ export function Header({
               color="success"
               variant="solid"
               size="sm"
+              radius="md"
               onClick={() => publishEventMutation.mutate()}
               isLoading={publishEventMutation.isPending}>
               Publish
@@ -92,7 +93,11 @@ export function Header({
           )}
           {isOwner ? (
             EventStatus.SCHEDULED === event?.status ? (
-              <ButtonGroup variant="solid" color="primary" size="sm">
+              <ButtonGroup
+                variant="solid"
+                color="primary"
+                size="sm"
+                radius="md">
                 <Button title="Start Session">
                   <Link href={`/event-session/${event.id}`}>
                     Start live session
@@ -130,15 +135,9 @@ export function Header({
               <ScheduleEventButtonWithModal eventId={event.id} />
             )
           ) : (
-            <Button
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-              }}
-              href={`/event-session/${event.id}`}
-              title="Start Session">
-              Join live session
-            </Button>
+            <Link href={`/event-session/${event.id}`}>
+              <Button title="Start Session">Join live session</Button>
+            </Link>
           )}
         </div>
       </div>

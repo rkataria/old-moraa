@@ -5,7 +5,7 @@
 
 import React, { useContext, useEffect, useRef, useState } from 'react'
 
-import { useThrottle } from '@uidotdev/usehooks'
+import { useDebounce } from '@uidotdev/usehooks'
 import {
   ImperativePanelGroupHandle,
   Panel,
@@ -27,53 +27,47 @@ import {
 } from '@/types/slide.type'
 import { cn } from '@/utils/utils'
 
-interface TextImageSlideProps {
-  slide: ISlide
-}
-
-export function TextImageEditor({ slide }: TextImageSlideProps) {
-  const [localSlide, setLocalSlide] = useState<ISlide>(slide)
-  const [panelLayoutSizes, setPanelLayoutSizes] = useState<number[]>(
-    slide.content?.panelSizes || [60, 40]
-  )
+export function TextImageEditor() {
+  const [localSlide, setLocalSlide] = useState<ISlide | null>(null)
   const panelGroupRef = useRef<ImperativePanelGroupHandle>(null)
   const [editingBlock, setEditingBlock] = useState<string | null>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const [fileUploaderOpen, setFileUploaderOpen] = useState<boolean>(false)
-  const panelSizesThrottle = useThrottle(panelLayoutSizes, 500)
+  const debouncedLocalSlide = useDebounce(localSlide, 500)
 
-  const { updateSlide } = useContext(
+  const { currentSlide, updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
   useEffect(() => {
-    if (panelGroupRef.current) {
-      panelGroupRef.current.setLayout(panelLayoutSizes)
+    setLocalSlide(currentSlide)
+  }, [currentSlide])
+
+  useEffect(() => {
+    if (!currentSlide?.content) {
+      return
+    }
+
+    updateSlide({
+      ...currentSlide,
+      content: {
+        ...currentSlide.content,
+        ...debouncedLocalSlide?.content,
+      },
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedLocalSlide])
+
+  useEffect(() => {
+    if (panelGroupRef.current && localSlide?.content?.panelSizes) {
+      panelGroupRef.current.setLayout(localSlide.content.panelSizes)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slide])
-
-  useEffect(() => {
-    updateSlide({
-      ...slide,
-      content: {
-        ...slide.content,
-        panelSizes: panelSizesThrottle,
-      },
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panelSizesThrottle])
-
-  useEffect(() => {
-    updateSlide({
-      ...slide,
-      content: {
-        ...slide.content,
-        ...localSlide.content,
-      },
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localSlide])
+
+  if (!localSlide) {
+    return null
+  }
 
   const handleFileUpload = (
     files: {
@@ -121,7 +115,17 @@ export function TextImageEditor({ slide }: TextImageSlideProps) {
     })
   }
 
-  const blocks = slide.content?.blocks || []
+  const handlePanelLayoutChange = (sizes: number[]) => {
+    setLocalSlide({
+      ...localSlide,
+      content: {
+        ...localSlide.content,
+        panelSizes: sizes,
+      },
+    })
+  }
+
+  const blocks = localSlide.content?.blocks || []
 
   const textBlocks = blocks.filter((block) =>
     ['header', 'paragraph'].includes(block.type)
@@ -137,7 +141,7 @@ export function TextImageEditor({ slide }: TextImageSlideProps) {
         direction="horizontal"
         className="w-full"
         ref={panelGroupRef}
-        onLayout={setPanelLayoutSizes}>
+        onLayout={handlePanelLayoutChange}>
         <Panel minSize={30}>
           <div className="h-full flex flex-col justify-center items-center">
             {textBlocks.map((block) => (
@@ -156,7 +160,7 @@ export function TextImageEditor({ slide }: TextImageSlideProps) {
           </div>
         </Panel>
         <PanelResizeHandle className="opacity-50 bg-gray-800 w-2 h-12 rounded-full relative z-10 -right-1 top-1/2 -translate-y-1/2 cursor-col-resize group-hover:opacity-100 transition-opacity duration-500" />
-        <Panel defaultSize={30} minSize={30} maxSize={60}>
+        <Panel minSize={30} maxSize={60}>
           <div className="flex justify-center items-center overflow-hidden rounded-md h-full">
             <div className="relative rounded-md overflow-hidden group">
               <Image
@@ -184,7 +188,7 @@ export function TextImageEditor({ slide }: TextImageSlideProps) {
                 <FileUploader
                   maxNumberOfFiles={1}
                   allowedFileTypes={['.jpg', '.jpeg', '.png']}
-                  folderName={slide.id}
+                  folderName={localSlide.id}
                   triggerProps={{
                     children: 'Upload Image',
                     variant: 'flat',

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
@@ -5,66 +6,45 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 
-import { v4 as uuidv4 } from 'uuid'
+import { useDebounce } from '@uidotdev/usehooks'
 
 import { TextBlockEditor } from '@/components/event-content/BlockEditor'
 import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import { ISlide, SlideManagerContextType, TextBlock } from '@/types/slide.type'
 
-// THIS IS A TEMPORARY FUNCTION TO TRANSFORM SLIDE DATA, IT WILL BE REMOVED WHEN THE BLOCKS ARE ADDED TO THE SLIDE DATA
-const transformSlideData = (slide: ISlide) => ({
-  ...slide,
-  content: {
-    ...slide.content,
-    title: undefined,
-    description: undefined,
-    blocks: slide.content?.title
-      ? [
-          {
-            id: uuidv4(),
-            type: 'header',
-            data: {
-              html: `<h1 style="text-align: center">${slide.content.title}</h1>`,
-            },
-          },
-          {
-            id: uuidv4(),
-            type: 'paragraph',
-            data: {
-              html: `<p style="text-align: center">${slide.content.description}</p>`,
-            },
-          },
-        ]
-      : slide.content?.blocks,
-  },
-})
-
 type CoverSlide = ISlide
 
-interface CoverEditorProps {
-  slide: CoverSlide
-}
-
-export function CoverEditor({ slide }: CoverEditorProps) {
-  const [localSlide, setLocalSlide] = useState<CoverSlide>(
-    transformSlideData(slide)
-  )
+export function CoverEditor() {
+  const [localSlide, setLocalSlide] = useState<CoverSlide | null>(null)
   const [editingBlock, setEditingBlock] = useState<string | null>(null)
+  const debouncedLocalSlide = useDebounce(localSlide, 500)
 
-  const { updateSlide } = useContext(
+  const { currentSlide, updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
   useEffect(() => {
+    setLocalSlide(currentSlide)
+  }, [currentSlide])
+
+  useEffect(() => {
+    if (!currentSlide?.content) {
+      return
+    }
+
     updateSlide({
-      ...slide,
+      ...currentSlide,
       content: {
-        ...slide.content,
-        ...localSlide.content,
+        ...currentSlide.content,
+        ...debouncedLocalSlide?.content,
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localSlide])
+  }, [debouncedLocalSlide])
+
+  if (!localSlide?.content) {
+    return null
+  }
 
   const textBlocks: TextBlock[] = (
     localSlide.content?.blocks as TextBlock[]
@@ -75,7 +55,6 @@ export function CoverEditor({ slide }: CoverEditorProps) {
       <div className="h-full flex flex-col justify-center items-start w-full">
         {textBlocks.map((block) => (
           <div
-            onKeyDown={() => {}}
             onClick={() => setEditingBlock(block.id)}
             id={`block-editor-${block.id}`}
             className="w-full">

@@ -90,6 +90,7 @@ export function ScheduleEventButtonWithModal({
         variant="solid"
         color="primary"
         size="sm"
+        radius="md"
         fullWidth>
         {actionButtonLabel}
       </Button>

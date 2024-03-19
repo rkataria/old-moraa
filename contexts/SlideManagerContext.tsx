@@ -62,13 +62,14 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
       (slide: ISlide) => meetingSlides?.slides?.find((s) => s.id === slide)
     )
 
-    if (meetingSlidesWithContent?.length === 0) {
-      addNewSlide(
-        getDefaultCoverSlide({
-          title: event.name,
-          description: event.description,
-        })
-      )
+    if (!meetingSlidesWithContent || meetingSlidesWithContent.length === 0) {
+      const firstSlide = getDefaultCoverSlide({
+        name: event.name,
+        title: event.name,
+        description: event.description,
+      }) as ISlide
+
+      await addNewSlide(firstSlide)
       setLoading(false)
 
       return
@@ -76,9 +77,9 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
 
     if (currentUser.id === event.owner_id) {
       setIsOwner(true)
-      setSlides(meetingSlidesWithContent || [])
+      setSlides(meetingSlidesWithContent)
       setSlideIds(meeting?.slides ?? [])
-      setCurrentSlide(meetingSlidesWithContent?.[0] || null)
+      setCurrentSlide(meetingSlidesWithContent[0])
       setLoading(false)
 
       return
@@ -107,6 +108,7 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
     }
   }
 
+  // TODO: These queries should be moved to transaction when supabase supports it
   const addNewSlide = async (slide: ISlide) => {
     const newSlide = {
       name: slide.name,
@@ -120,33 +122,52 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
       .insert([newSlide])
       .select('*')
       .single()
+
     if (error) {
       console.error('error while creating slide: ', error)
+
+      return
     }
+
+    await updateSlideIds([...slideIds, data?.id])
+
     setSlides((s) => [...s, { ...newSlide, id: data?.id }])
     setCurrentSlide({ ...newSlide, id: data.id })
-    await updateSlideIds([...slideIds, data?.id])
     setSlideIds((s) => [...s, data?.id])
   }
 
   const updateSlide = async (slide: Partial<ISlide>) => {
-    const _slide = { ...slide }
-    _slide.meeting_id = slide.meeting_id ?? meeting?.id
-    await supabase.from('slide').upsert({
-      id: _slide.id,
-      content: _slide.content,
-      config: _slide.config,
-      name: _slide.name,
-    })
-    setCurrentSlide(_slide as ISlide)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setSlides((s: any) => {
-      if (s.findIndex((i: ISlide) => i.id === _slide.id) >= 0) {
-        return s.map((sl: ISlide) => (sl.id === _slide.id ? _slide : sl))
+    if (isSlideChanged(slide)) {
+      setSyncing(true)
+      const { data, error } = await supabase
+        .from('slide')
+        .upsert({
+          id: slide.id,
+          content: slide.content,
+          config: slide.config,
+          name: slide.name,
+        })
+        .select('*')
+        .single()
+
+      if (error) {
+        console.error('error while updating slide: ', error)
+
+        return
       }
 
-      return [...s, _slide]
-    })
+      setCurrentSlide(data)
+      setSlides((_slides) => _slides.map((s) => (s.id === data?.id ? data : s)))
+      setSyncing(false)
+    }
+  }
+
+  const isSlideChanged = (slide: Partial<ISlide>) => {
+    const _slide = slides.find((s) => s.id === slide.id)
+    if (!_slide) return false
+    if (JSON.stringify(_slide) !== JSON.stringify(slide)) return true
+
+    return false
   }
 
   const deleteSlide = async (id: string) => {

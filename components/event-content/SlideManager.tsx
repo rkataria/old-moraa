@@ -31,7 +31,7 @@ export function SlideManager() {
     id: eventId as string,
     fetchMeetingSlides: true,
   })
-  const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(false)
+  const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
 
   const { currentUser } = useAuth()

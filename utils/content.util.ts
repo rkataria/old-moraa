@@ -2,7 +2,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { ContentType } from '@/components/event-content/ContentTypePicker'
 
-export const getDefaultContent = (contentType: ContentType) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getDefaultContent = (contentType: ContentType, data?: any) => {
   switch (contentType) {
     case ContentType.COVER:
       return {
@@ -11,14 +12,14 @@ export const getDefaultContent = (contentType: ContentType) => {
             id: uuidv4(),
             type: 'header',
             data: {
-              html: '<h1 style="text-align: center">Title</h1>',
+              html: `<h1 style="text-align: center">${data?.title || 'Title'}</h1>`,
             },
           },
           {
             id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: '<p style="text-align: center">lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>',
+              html: `<p style="text-align: center">${data?.description || 'Description'}</p>`,
             },
           },
         ],
@@ -30,14 +31,14 @@ export const getDefaultContent = (contentType: ContentType) => {
             id: uuidv4(),
             type: 'header',
             data: {
-              html: '<h1>Title</h1>',
+              html: `<h1>${data?.title || 'Title'}</h1>`,
             },
           },
           {
             id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
+              html: `<p>${data?.description || 'Description'}</p>`,
             },
           },
           {
@@ -89,10 +90,7 @@ export const getDefaultCoverSlide = ({
     backgroundColor: '#fff',
     textColor: '#000',
   },
-  content: {
-    title,
-    description,
-  },
+  content: getDefaultContent(ContentType.COVER, { title, description }),
   type: ContentType.COVER,
 })
 
