@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { useDyteSelector } from '@dytesdk/react-web-core'
 import { IconPencil } from '@tabler/icons-react'
 
 import {
@@ -83,12 +83,12 @@ export function Reflection({
 }: ReflectionProps) {
   const [reflection, setReflection] = useState('')
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
-  const { meeting } = useDyteMeeting()
   const { data: profile } = useProfile()
+  const selfParticipant = useDyteSelector((m) => m.self)
 
   const getParticipantName = () => {
     if (!profile) {
-      return meeting.self.name
+      return selfParticipant.name
     }
 
     return `${profile.first_name} ${profile.last_name}`

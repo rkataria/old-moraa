@@ -91,7 +91,7 @@ function SlideListView({
   isDeleteModalOpen,
   setIsDeleteModalOpen,
 }: SlideListViewProps) {
-  const { currentSlide, setCurrentSlide, isHost, deleteSlide } = useContext(
+  const { currentSlide, changeCurrentSlide, isHost, deleteSlide } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -128,7 +128,7 @@ function SlideListView({
         <div
           className="shrink w-full cursor-pointer"
           onClick={() => {
-            if (isHost) setCurrentSlide(slide)
+            changeCurrentSlide(slide)
           }}>
           <SlideEditableName slide={slide} />
         </div>
@@ -162,7 +162,7 @@ function SlideThumbnailView({
   isDeleteModalOpen,
   setIsDeleteModalOpen,
 }: SlideThumbnailViewProps) {
-  const { currentSlide, setCurrentSlide, isHost, deleteSlide } = useContext(
+  const { currentSlide, changeCurrentSlide, isHost, deleteSlide } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -180,7 +180,7 @@ function SlideThumbnailView({
       <span className="w-5">{index + 1}</span>
       <div
         onClick={() => {
-          if (isHost) setCurrentSlide(slide)
+          changeCurrentSlide(slide)
         }}
         onKeyDown={() => {}}
         tabIndex={0}

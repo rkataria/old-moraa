@@ -23,13 +23,14 @@ export function ContentContainer() {
   ) as EventSessionContextType
 
   const { meeting } = useDyteMeeting()
-
-  const activePlugin = meeting.plugins.active.toArray()?.[0]
-
-  const selfScreenShared = meeting.self.screenShareEnabled
+  const selfParticipant = useDyteSelector((m) => m.self)
+  const activePlugins = useDyteSelector((m) => m.plugins.active.toArray())
+  const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
   const screensharingParticipant = useDyteSelector((m) =>
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
   )
+
+  const recentActivePlugin = activePlugins?.[activePlugins.length - 1]
 
   if (screensharingParticipant) {
     return (
@@ -51,17 +52,17 @@ export function ContentContainer() {
     return (
       <DyteScreenshareView
         meeting={meeting}
-        participant={meeting.self}
+        participant={selfParticipant}
         className="h-full">
-        <DyteNameTag participant={meeting.self}>
-          <DyteAudioVisualizer slot="start" participant={meeting.self} />
+        <DyteNameTag participant={selfParticipant}>
+          <DyteAudioVisualizer slot="start" participant={selfParticipant} />
         </DyteNameTag>
       </DyteScreenshareView>
     )
   }
 
-  if (activePlugin) {
-    return <DytePluginMain meeting={meeting} plugin={activePlugin} />
+  if (recentActivePlugin) {
+    return <DytePluginMain meeting={meeting} plugin={recentActivePlugin} />
   }
 
   if (presentationStatus === PresentationStatuses.STOPPED || !currentSlide) {

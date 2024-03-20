@@ -19,7 +19,7 @@ interface VideoEmbedEditorProps {
 export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
   const [videoUrl, setVideoUrl] = useState(slide.content.videoUrl || '')
   const [isEditMode, setIsEditMode] = useState(!slide.content.videoUrl)
-  const { updateSlide } = useContext(
+  const { isOwner, updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
 
@@ -49,7 +49,11 @@ export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
   ) : (
     <div className="w-full h-full flex justify-center items-center">
       <div className="w-4/5 overflow-hidden rounded-md">
-        <ResponsiveVideoPlayer url={videoUrl} />
+        <ResponsiveVideoPlayer
+          url={videoUrl}
+          showControls={isOwner}
+          viewOnly={!isOwner}
+        />
       </div>
     </div>
   )

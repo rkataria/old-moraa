@@ -6,7 +6,7 @@ import {
   DyteParticipantTile,
   DyteSpotlightGrid,
 } from '@dytesdk/react-ui-kit'
-import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { HiMiniHandRaised } from 'react-icons/hi2'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -24,6 +24,16 @@ export function ParticipantTiles({
   const { activeStateSession } = useContext(
     EventSessionContext
   ) as EventSessionContextType
+  const activeParticipants = useDyteSelector((m) =>
+    m.participants.active.toArray()
+  )
+  const selfParticipant = useDyteSelector((m) => m.self)
+  const hostParticipant = activeParticipants?.find((p) =>
+    p.presetName?.includes('host')
+  )
+  const activeParticipantsExceptHost = activeParticipants?.filter(
+    (p) => p.id !== hostParticipant?.id
+  )
 
   if (spotlightMode) {
     return (
@@ -31,15 +41,13 @@ export function ParticipantTiles({
         <DyteSpotlightGrid
           meeting={meeting}
           layout="row"
-          participants={meeting.participants.active.toArray()}
-          pinnedParticipants={[meeting.self]}
+          participants={[...activeParticipantsExceptHost, selfParticipant]}
+          pinnedParticipants={[hostParticipant || selfParticipant]}
           style={{ height: '80%', width: '100%' }}
         />
       </div>
     )
   }
-
-  const activeParticipants = meeting.participants.active.toArray()
 
   return (
     <div
@@ -52,7 +60,7 @@ export function ParticipantTiles({
       )}>
       <DyteParticipantTile
         meeting={meeting}
-        participant={meeting.self}
+        participant={selfParticipant}
         nameTagPosition="bottom-right"
         variant="gradient"
         className={cn('relative aspect-video flex-none z-[1]', {
@@ -61,11 +69,13 @@ export function ParticipantTiles({
         })}>
         <DyteNameTag
           meeting={meeting}
-          participant={meeting.self}
+          participant={selfParticipant}
           className="left-1/2 -translate-x-1/2">
-          <DyteAudioVisualizer slot="start" participant={meeting.self} />
+          <DyteAudioVisualizer slot="start" participant={selfParticipant} />
         </DyteNameTag>
-        {activeStateSession?.data?.handsRaised?.includes(meeting.self.id) && (
+        {activeStateSession?.data?.handsRaised?.includes(
+          selfParticipant.id
+        ) && (
           <HiMiniHandRaised className="absolute right-2 top-2 text-xl animate-pulse flex justify-center items-center text-[#FAC036]" />
         )}
       </DyteParticipantTile>

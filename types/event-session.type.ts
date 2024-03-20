@@ -37,10 +37,19 @@ export type EventSessionContextType = {
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
   joinMeeting?: () => void
-  handRaisedHandler: (id: string) => void
   reorderSlide: (result: any) => void
   moveUpSlide: (id: string) => void
   moveDownSlide: (id: string) => void
   deleteSlide: (id: string) => void
   updateSlide: (slide: ISlide) => void
+  changeCurrentSlide: (slide: ISlide) => void
+  onToggleHandRaised: ({
+    handRaise,
+    participantId,
+    participantName,
+  }: {
+    handRaise: boolean
+    participantId: string
+    participantName: string
+  }) => void
 }

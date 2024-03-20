@@ -11,6 +11,7 @@ export const useEnrollment = ({ eventId }: { eventId: string }) => {
     queryFn: () =>
       EnrollmentService.getEnrollment({ eventId, userId: currentUser.id }),
     enabled: !!eventId && !!currentUser,
+    refetchOnWindowFocus: false,
   })
 
   return {

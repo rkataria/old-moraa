@@ -19,7 +19,7 @@ interface VoteUsersProps {
 
 function VoteUsers({ votes, option }: VoteUsersProps) {
   const voteUsers = votes.filter((vote) =>
-    vote.response.selected_options.includes(option)
+    vote.response.selected_options?.includes(option)
   )
 
   if (!voteUsers || voteUsers.length === 0) return null
@@ -149,7 +149,7 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const optionsVoteCount = votes.reduce((acc: any, vote: any) => {
-    vote.response.selected_options.forEach((option: string) => {
+    vote.response.selected_options?.forEach((option: string) => {
       acc[option] = (acc[option] || 0) + 1
     })
 
@@ -160,7 +160,7 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
     votes.some(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (vote: any) =>
-        vote.response.selected_options.includes(option) &&
+        vote.response.selected_options?.includes(option) &&
         vote.participant.enrollment.user_id === currentUser.id
     )
 

@@ -10,6 +10,7 @@ export const useProfile = () => {
     queryKey: ['event', currentUser?.id],
     queryFn: () => ProfileService.getProfile(currentUser.id),
     enabled: !!currentUser?.id,
+    refetchOnWindowFocus: false,
   })
   const isRequiredNames =
     typeof profileQuery?.data?.data?.first_name !== 'string' &&

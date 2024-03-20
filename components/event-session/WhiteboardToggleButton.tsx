@@ -1,23 +1,25 @@
-import DyteClient from '@dytesdk/web-core'
+import { useDyteSelector } from '@dytesdk/react-web-core'
 import { TfiBlackboard } from 'react-icons/tfi'
 
 import { cn } from '@/utils/utils'
 
-const DYTE_WHITEBOARD_PLUGIN_ID = 'ae79b269-24ca-4f8a-8112-f96084c8c19a' // whiteboard id
+const DYTE_WHITEBOARD_PLUGIN_ID = 'ae79b269-24ca-4f8a-8112-f96084c8c19a'
 
-export function WhiteboardToggleButton({ meeting }: { meeting: DyteClient }) {
-  const whiteboard = meeting.plugins.all.get(DYTE_WHITEBOARD_PLUGIN_ID)
+export function WhiteboardToggleButton() {
+  const whiteboardPlugin = useDyteSelector((m) =>
+    m.plugins.all.get(DYTE_WHITEBOARD_PLUGIN_ID)
+  )
 
   const handleWhiteboard = async () => {
-    if (!whiteboard) return
+    if (!whiteboardPlugin) return
 
-    if (whiteboard.active) {
-      await whiteboard.deactivate()
+    if (whiteboardPlugin.active) {
+      await whiteboardPlugin.deactivate()
 
       return
     }
 
-    await whiteboard.activate()
+    await whiteboardPlugin.activate()
   }
 
   return (
@@ -27,8 +29,8 @@ export function WhiteboardToggleButton({ meeting }: { meeting: DyteClient }) {
       className={cn(
         'flex flex-col items-center gap-[5px] p-1 w-[84px] rounded-sm',
         {
-          'bg-white text-black': whiteboard?.active,
-          'hover:bg-[#1E1E1E] text-white': !whiteboard?.active,
+          'bg-white text-black': whiteboardPlugin?.active,
+          'hover:bg-[#1E1E1E] text-white': !whiteboardPlugin?.active,
         }
       )}>
       <TfiBlackboard className="text-2xl" />

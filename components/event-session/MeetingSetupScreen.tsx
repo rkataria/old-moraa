@@ -29,7 +29,7 @@ export function MeetingSetupScreen() {
   const { event } = useEvent({
     id: eventId as string,
   })
-  const self = useDyteSelector((meeting) => meeting.self)
+  const selfParticipant = useDyteSelector((meeting) => meeting.self)
   const { meeting } = useDyteMeeting()
   const [name, setName] = useState<string>('')
   const [isHost, setIsHost] = useState<boolean>(false)
@@ -44,22 +44,27 @@ export function MeetingSetupScreen() {
     if (!fullName) return
 
     setName(fullName)
-
-    meeting?.self?.setName(fullName)
-  }, [profile, meeting])
+  }, [profile])
 
   useEffect(() => {
-    if (!meeting) return
-    const preset = meeting.self.presetName
+    if (!selfParticipant || !name) return
+
+    selfParticipant.setName(name)
+  }, [name, selfParticipant])
+
+  useEffect(() => {
+    if (!selfParticipant) return
+
+    const preset = selfParticipant.presetName
+
     if (preset.includes('host')) {
       setIsHost(true)
     } else {
-      meeting.self.disableAudio()
+      selfParticipant.disableAudio()
     }
-  }, [meeting])
+  }, [selfParticipant])
 
   const handleJoinMeeting = async () => {
-    meeting?.self.setName(name)
     meeting.join()
     joinMeeting?.()
   }
@@ -90,15 +95,15 @@ export function MeetingSetupScreen() {
           <div className="relative">
             <DyteParticipantTile
               meeting={meeting}
-              participant={self}
+              participant={selfParticipant}
               className="relative">
-              <DyteAvatar size="md" participant={self} />
+              <DyteAvatar size="md" participant={selfParticipant} />
               <div className="absolute top-2 left-2">
-                <DyteNameTag meeting={meeting} participant={self}>
+                <DyteNameTag meeting={meeting} participant={selfParticipant}>
                   <DyteAudioVisualizer
                     size="lg"
                     slot="start"
-                    participant={self}
+                    participant={selfParticipant}
                   />
                 </DyteNameTag>
               </div>
@@ -124,7 +129,9 @@ export function MeetingSetupScreen() {
                 : 'You are joining as Learner'}
             </p>
             <input
-              disabled={!meeting.self.permissions.canEditDisplayName ?? false}
+              disabled={
+                !selfParticipant.permissions.canEditDisplayName ?? false
+              }
               className="mt-2 outline-none p-2 rounded font-normal border-2 border-purple-500 bg-white"
               value={name}
               onChange={(e) => {

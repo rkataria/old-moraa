@@ -40,21 +40,11 @@ export function MeetingScreen() {
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
   const [spotlightMode, setSpotlightMode] = useState<boolean>(true)
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
-  const {
-    slides,
-    currentSlide,
-    setCurrentSlide,
-    isHost,
-    presentationStatus,
-    previousSlide,
-    nextSlide,
-    startPresentation,
-    pausePresentation,
-    stopPresentation,
-    syncSlides,
-    setCurrentSlideByID,
-  } = useContext(EventSessionContext) as EventSessionContextType
-  const activePlugin = meeting.plugins.active.toArray()?.[0]
+  const { slides, isHost, presentationStatus } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
+  const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
+
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
   const screensharingParticipant = useDyteSelector((m) =>
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
@@ -64,19 +54,17 @@ export function MeetingScreen() {
   const sidebarVisible = leftSidebarVisible || rightSidebarVisible
 
   useEffect(() => {
-    if (isScreensharing) {
+    if (
+      activePlugin ||
+      isScreensharing ||
+      presentationStatus === PresentationStatuses.STARTED
+    ) {
       setSpotlightMode(false)
-    }
-    if (activePlugin) {
-      setSpotlightMode(false)
-    }
-    if (presentationStatus === PresentationStatuses.STARTED) {
-      setSpotlightMode(false)
+
+      return
     }
 
-    if (presentationStatus === PresentationStatuses.STOPPED) {
-      setSpotlightMode(true)
-    }
+    setSpotlightMode(true)
   }, [isScreensharing, activePlugin, presentationStatus])
 
   useEffect(() => {
@@ -87,57 +75,6 @@ export function MeetingScreen() {
       setRightSidebarVisible(!!detail.activeSidebar)
     }
 
-    const handleBroadcastedMessage = ({
-      type,
-      payload,
-    }: {
-      type: string
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      payload: any
-    }) => {
-      switch (type) {
-        case 'slide-changed': {
-          setCurrentSlide(payload.slide)
-          break
-        }
-        case 'previous-slide': {
-          previousSlide()
-          break
-        }
-        case 'next-slide': {
-          nextSlide()
-          break
-        }
-        case 'start-presentation': {
-          startPresentation()
-          break
-        }
-        case 'pause-presentation': {
-          pausePresentation()
-          break
-        }
-        case 'stop-presentation': {
-          stopPresentation()
-          break
-        }
-        case 'sync-slides': {
-          syncSlides()
-          break
-        }
-        case 'set-current-slide-by-id': {
-          setCurrentSlideByID(payload.slideId)
-          break
-        }
-        default:
-          break
-      }
-    }
-
-    meeting.participants.addListener(
-      'broadcastedMessage',
-      handleBroadcastedMessage
-    )
-
     document.body.addEventListener('dyteStateUpdate', handleDyteStateUpdate)
 
     function onUnmount() {
@@ -145,30 +82,12 @@ export function MeetingScreen() {
         'dyteStateUpdate',
         handleDyteStateUpdate
       )
-
-      meeting.participants.removeListener(
-        'broadcastedMessage',
-        handleBroadcastedMessage
-      )
     }
 
     // eslint-disable-next-line consistent-return
     return onUnmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting])
-
-  useEffect(() => {
-    if (presentationStatus === PresentationStatuses.STARTED) {
-      meeting?.participants.broadcastMessage('start-presentation', {})
-    }
-    if (presentationStatus === PresentationStatuses.PAUSED) {
-      meeting?.participants.broadcastMessage('pause-presentation', {})
-    }
-    if (presentationStatus === PresentationStatuses.STOPPED) {
-      meeting?.participants.broadcastMessage('stop-presentation', {})
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [presentationStatus])
 
   const handleUpdateDyteStates = (states: DyteStates) => {
     setDyteStates(states)
@@ -193,13 +112,6 @@ export function MeetingScreen() {
             isHost={isHost}
             visible={leftSidebarVisible}
             slides={slides}
-            currentSlide={currentSlide}
-            setCurrentSlide={(slide) => {
-              meeting.participants.broadcastMessage('set-current-slide-by-id', {
-                slideId: slide.id,
-              })
-              setCurrentSlide(slide)
-            }}
           />
         </div>
         <div

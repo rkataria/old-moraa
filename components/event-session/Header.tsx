@@ -66,7 +66,7 @@ export function Header({
         {isHost && <DyteScreenShareToggle meeting={meeting} size="lg" />}
 
         <PresentationControls />
-        <RaiseHand meeting={meeting} isHost={isHost} />
+        <RaiseHand />
         <DyteSettingsToggle
           size="lg"
           onClick={() => {
@@ -118,7 +118,7 @@ export function Header({
             }}
           />
         )}
-        {isHost && <WhiteboardToggleButton meeting={meeting} />}
+        {isHost && <WhiteboardToggleButton />}
       </div>
     </div>
   )

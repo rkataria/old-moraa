@@ -38,8 +38,6 @@ interface IMiniSlideManagerProps {
   isHost?: boolean
   visible?: boolean
   slides: ISlide[]
-  currentSlide: ISlide | null
-  setCurrentSlide: (slide: ISlide) => void
 }
 
 export function MiniSlideManager({

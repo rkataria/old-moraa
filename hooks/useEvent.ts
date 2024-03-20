@@ -24,6 +24,7 @@ export const useEvent = ({
         fetchActiveSession,
       }),
     enabled: !!currentUser?.id && !!id,
+    refetchOnWindowFocus: false,
   })
 
   return {
