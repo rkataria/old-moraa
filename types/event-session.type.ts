@@ -9,6 +9,13 @@ export enum PresentationStatuses {
   PAUSED = 'paused',
 }
 
+export type SlideReaction = {
+  id: string
+  reaction: string
+  slide_response_id: string
+  participant_id: string
+}
+
 export type EventSessionContextType = {
   event: any
   loading: boolean
@@ -25,6 +32,7 @@ export type EventSessionContextType = {
   participant: any
   activeStateSession: any
   syncing: boolean
+  slideReactions: SlideReaction[]
   syncSlides: () => void
   startPresentation: () => void
   stopPresentation: () => void
@@ -36,6 +44,17 @@ export type EventSessionContextType = {
   onVote: (slide: ISlide, options: string[]) => void
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
+  emoteOnReflection?: ({
+    participantId,
+    reaction,
+    slideResponseId,
+    reactionId,
+  }: {
+    participantId: string
+    reaction: string
+    slideResponseId?: string
+    reactionId?: string
+  }) => void
   joinMeeting?: () => void
   reorderSlide: (result: any) => void
   moveUpSlide: (id: string) => void

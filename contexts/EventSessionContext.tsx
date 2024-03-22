@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
 import { useEvent } from '@/hooks/useEvent'
+import { useSlideReactions } from '@/hooks/useReactions'
 import { deletePDFFile } from '@/services/pdf.service'
 import {
   EventSessionContextType,
@@ -62,6 +63,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [activeStateSession, setActiveSession] = useState<any>(null)
   const metaData = useRef<object>({})
   const [syncing, setSyncing] = useState<boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [slideReactions, setSlideReactions] = useState<any>([])
+  const { data: fetchedSlideReactions } = useSlideReactions(currentSlide?.id)
 
   // Create a channel for the event
   useEffect(() => {
@@ -120,6 +124,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   useEffect(() => {
     setActiveSession(activeSession)
   }, [activeSession])
+
+  useEffect(() => {
+    setSlideReactions(fetchedSlideReactions)
+  }, [fetchedSlideReactions])
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -405,6 +413,78 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
       if (slideResponse.error) {
         console.error(slideResponse.error)
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (_error: any) {
+      console.error(_error)
+    }
+  }
+
+  useEffect(() => {
+    if (!currentSlideResponses) return
+
+    const channels = supabase
+      .channel('reaction-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'reaction',
+
+          filter: `slide_response_id=in.(${currentSlideResponses.map((s) => s.id).join(',')})`,
+        },
+        (payload) => {
+          console.log('Change reactions received!', payload)
+          let updatedReactions = [...slideReactions]
+          if (payload.eventType === 'DELETE') {
+            updatedReactions = updatedReactions.filter(
+              (r) => r.id !== payload.old.id
+            )
+          }
+          if (payload.eventType === 'INSERT') {
+            updatedReactions.push(payload.new)
+          }
+          setSlideReactions(updatedReactions)
+        }
+      )
+      .subscribe()
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      channels.unsubscribe()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlideResponses, slideReactions])
+
+  const emoteOnReflection = async ({
+    participantId,
+    reaction,
+    slideResponseId,
+    reactionId,
+  }: {
+    participantId: string
+    reaction: string
+    slideResponseId?: string
+    reactionId?: string
+  }) => {
+    try {
+      let reactionQueryResponse
+      if (!reactionId) {
+        reactionQueryResponse = await supabase.from('reaction').upsert({
+          reaction,
+          slide_response_id: slideResponseId,
+          participant_id: participantId,
+        })
+      } else {
+        reactionQueryResponse = await supabase
+          .from('reaction')
+          .delete()
+          .eq('id', reactionId)
+      }
+
+      if (reactionQueryResponse.error) {
+        console.error(reactionQueryResponse.error)
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_error: any) {
@@ -711,6 +791,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         currentUser,
         metaData,
         participant,
+        activeStateSession,
+        syncing,
+        slideReactions,
         syncSlides,
         startPresentation,
         stopPresentation,
@@ -722,9 +805,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         onVote,
         addReflection,
         updateReflection,
+        emoteOnReflection,
         joinMeeting,
-        activeStateSession,
-        syncing,
         reorderSlide,
         moveUpSlide,
         moveDownSlide,
