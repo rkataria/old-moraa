@@ -52,10 +52,6 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
           },
         ],
       }
-    case ContentType.IMAGE:
-      return {
-        url: 'https://picsum.photos/200/300',
-      }
     case ContentType.VIDEO:
       return {
         url: 'https://www.youtube.com/watch?v=5qap5aO4i9A',
@@ -66,6 +62,11 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
         options: ['', '', ''],
       }
     case ContentType.GOOGLE_SLIDES:
+      return {
+        googleSlideURL: '',
+        startPosition: 1,
+      }
+    case ContentType.GOOGLE_SLIDES_IMPORT:
       return {
         googleSlideURL: '',
         startPosition: 1,

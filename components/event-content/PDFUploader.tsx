@@ -12,6 +12,7 @@ import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
 
 import { Button, Input } from '@nextui-org/react'
 
+import { ContentLoading } from '../common/ContentLoading'
 import { FilePicker } from '../common/FilePicker'
 import { NextPrevButtons } from '../common/NextPrevButtons'
 
@@ -128,10 +129,7 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
     switch (true) {
       case uploadPDFMutation.isPending || downloadPDFQuery.isLoading:
         return (
-          <div className="mt-12 flex justify-center items-center flex-col">
-            <Loading />
-            <div>Please wait while we are loading the PDF...</div>
-          </div>
+          <ContentLoading message="Please wait while we are uploading the PDF..." />
         )
 
       case !fileUrl:

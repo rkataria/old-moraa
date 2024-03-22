@@ -22,12 +22,13 @@ interface IContentType {
 export enum ContentType {
   COVER = 'Title',
   POLL = 'Poll',
-  IMAGE = 'Image',
   VIDEO = 'Video',
   GOOGLE_SLIDES = 'Google Slides',
+  GOOGLE_SLIDES_IMPORT = 'Google Slides Import',
   REFLECTION = 'Reflections',
   PDF_VIEWER = 'PDF',
   VIDEO_EMBED = 'Video Embed',
+  IMAGE_VIEWER = 'Image',
   TEXT_IMAGE = 'Text & Image',
 }
 export const INTERACTIVE_SLIDE_TYPES = [
@@ -45,7 +46,7 @@ export const contentTypes: IContentType[] = [
   },
   {
     name: 'Text & Image',
-    icon: <IconLayout />,
+    icon: <IconLayout className="w-full h-full max-w-11 max-h-11" />,
     description: 'Combine text and image to create a visually appealing slide',
     contentType: ContentType.TEXT_IMAGE,
   },
@@ -54,6 +55,12 @@ export const contentTypes: IContentType[] = [
     icon: <IconBrandGoogleDrive className="w-full h-full max-w-11 max-h-11" />,
     description: 'Empower presentations with seamless Google Slides embed',
     contentType: ContentType.GOOGLE_SLIDES,
+  },
+  {
+    name: 'Google Slides Import',
+    icon: <IconBrandGoogleDrive className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Empower presentations with seamless Google Slides import',
+    contentType: ContentType.GOOGLE_SLIDES_IMPORT,
   },
   {
     name: 'PDF',

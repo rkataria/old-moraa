@@ -1,4 +1,5 @@
-import React from 'react'
+// TODO: Fix any types
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import dynamic from 'next/dynamic'
 import { TbSettings } from 'react-icons/tb'
@@ -8,13 +9,15 @@ import { Button } from '@nextui-org/react'
 import { CoverEditor } from './content-types/CoverEditor'
 import { TextImageEditor } from './content-types/TextImageEditor'
 import { ContentType } from './ContentTypePicker'
+import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
 import { GoogleSlidesEditor } from './GoogleSlidesEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
+import { ImageViewer } from '../common/ImageViewer'
 
 import { ISlide } from '@/types/slide.type'
-import { cn } from '@/utils/utils'
+import { cn, getOjectPublicUrl } from '@/utils/utils'
 
 const PDFUploader = dynamic(
   () => import('./PDFUploader').then((mod) => mod.PDFUploader),
@@ -67,6 +70,9 @@ export function Slide({
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           <GoogleSlidesEditor slide={slide as any} />
         )}
+        {slide.type === ContentType.GOOGLE_SLIDES_IMPORT && (
+          <GoogleSlidesImportEditor slide={slide} />
+        )}
         {slide.type === ContentType.REFLECTION && (
           <ReflectionEditor slide={slide} />
         )}
@@ -77,6 +83,9 @@ export function Slide({
         {slide.type === ContentType.VIDEO_EMBED && (
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           <VideoEmbedEditor slide={slide as any} />
+        )}
+        {slide.type === ContentType.IMAGE_VIEWER && (
+          <ImageViewer src={getOjectPublicUrl(slide.content?.path as string)} />
         )}
         {slide.type === ContentType.TEXT_IMAGE && <TextImageEditor />}
       </div>

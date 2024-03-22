@@ -108,6 +108,38 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
     }
   }
 
+  const importGoogleSlides = async ({
+    slideId,
+    googleSlideUrl,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    startPosition,
+  }: {
+    slideId: string
+    googleSlideUrl: string
+    startPosition: number
+  }) => {
+    const { data: extractThumbnailsData, error: extractThumbnailsError } =
+      await supabase.functions.invoke('import-google-slides', {
+        body: { slideId, googleSlideUrl, meetingId: meeting?.id },
+      })
+    if (extractThumbnailsError) {
+      console.error(
+        'error while importing google slides: ',
+        extractThumbnailsError
+      )
+
+      return
+    }
+
+    const { insertedSlides, meeting: updatedMeeting } = extractThumbnailsData
+    setSlides((s) => [
+      ...s.filter((ss) => ss.id !== slideId),
+      ...insertedSlides,
+    ])
+    setCurrentSlide(insertedSlides[0])
+    setSlideIds(() => updatedMeeting.slides)
+  }
+
   // TODO: These queries should be moved to transaction when supabase supports it
   const addNewSlide = async (slide: ISlide) => {
     const newSlide = {
@@ -281,6 +313,7 @@ export function SlideManagerProvider({ children }: SlideManagerProviderProps) {
         isOwner,
         setMiniMode,
         setCurrentSlide,
+        importGoogleSlides,
         addNewSlide,
         updateSlide,
         deleteSlide,

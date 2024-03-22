@@ -10,7 +10,8 @@ import { Poll } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
 import { TextImage } from './content-types/TextImage'
 import { VideoEmbed } from './content-types/VideoEmbed'
-import { SlideLoading } from './SlideLoading'
+import { ContentLoading } from '../common/ContentLoading'
+import { ImageViewer } from '../common/ImageViewer'
 import { ContentType } from '../event-content/ContentTypePicker'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -20,6 +21,7 @@ import {
   PresentationStatuses,
 } from '@/types/event-session.type'
 import { checkVoted } from '@/utils/content.util'
+import { getOjectPublicUrl } from '@/utils/utils'
 
 const PDFViewer = dynamic(
   () => import('./content-types/PDFViewer').then((mod) => mod.PDFViewer),
@@ -58,7 +60,7 @@ export function Slide() {
     return <Cover key={currentSlide.id} slide={currentSlide} />
   }
 
-  if (currentSlideLoading) return <SlideLoading />
+  if (currentSlideLoading) return <ContentLoading />
 
   if (currentSlide.type === ContentType.POLL) {
     return (
@@ -98,6 +100,15 @@ export function Slide() {
   }
   if (currentSlide.type === ContentType.TEXT_IMAGE) {
     return <TextImage key={currentSlide.id} slide={currentSlide} />
+  }
+
+  if (currentSlide.type === ContentType.IMAGE_VIEWER) {
+    return (
+      <ImageViewer
+        key={currentSlide.id}
+        src={getOjectPublicUrl(currentSlide.content?.path as string)}
+      />
+    )
   }
 
   return null

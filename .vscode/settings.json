@@ -1,4 +1,13 @@
 {
+  "cSpell.words": [
+    "clsx",
+    "nextjs",
+    "nextui",
+    "supabase",
+    "tabler",
+    "tailwindcss",
+    "tanstack"
+  ],
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "prettier.configPath": ".prettierrc.json",
   "eslint.alwaysShowStatus": true,

@@ -24,6 +24,7 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
   const [slideLink, setSlideLink] = useState(slide.content.googleSlideURL || '')
   const [position, setPosition] = useState<number>(slide.content.position || 1)
   const [isEditMode, setIsEditMode] = useState(!slide.content.googleSlideURL)
+
   const { updateSlide } = useContext(
     SlideManagerContext
   ) as SlideManagerContextType
@@ -68,9 +69,7 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
             }
           />
         </div>
-        <Button className="mt-4" onClick={saveGoogleSlidesLink}>
-          Embed Slides
-        </Button>
+        <Button onClick={saveGoogleSlidesLink}>Embed Slides</Button>
       </div>
     )
   }

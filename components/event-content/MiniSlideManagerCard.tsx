@@ -120,7 +120,7 @@ function SlideListView({
           currentSlide?.id === slide.id ? 'drop-shadow-md' : 'drop-shadow-none'
         )}
         style={{
-          backgroundColor: slide.config?.backgroundColor || '#166534',
+          backgroundColor: slide.config?.backgroundColor || '#FFFFFF',
         }}>
         <div>
           <IconGripVertical className="h-4 w-4 text-slate-300 group-hover:text-slate-500" />
@@ -180,7 +180,7 @@ function SlideThumbnailView({
             : 'drop-shadow-none border-black/20'
         )}
         style={{
-          backgroundColor: slide.config?.backgroundColor || '#166534',
+          backgroundColor: slide.config?.backgroundColor || '#FFFFFF',
         }}>
         <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
           {index + 1}

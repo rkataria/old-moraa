@@ -60,6 +60,11 @@ export type SlideManagerContextType = {
   addNewSlide: (slide: ISlide) => void
   updateSlide: (slide: Partial<ISlide>) => void
   deleteSlide: (id: string) => void
+  importGoogleSlides: (data: {
+    slideId: string
+    googleSlideUrl: string
+    startPosition: number
+  }) => void
   moveUpSlide: (id: string) => void
   moveDownSlide: (id: string) => void
   reorderSlide: OnDragEndResponder
