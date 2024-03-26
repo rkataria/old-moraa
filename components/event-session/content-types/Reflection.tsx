@@ -3,6 +3,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useDebounce } from '@uidotdev/usehooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import uniqBy from 'lodash.uniqby'
 import { MdOutlineAddReaction } from 'react-icons/md'
@@ -17,6 +18,7 @@ import {
   Chip,
   Divider,
   Textarea,
+  User,
 } from '@nextui-org/react'
 
 import { EmojiPicker } from '@/components/common/EmojiPicker'
@@ -188,10 +190,18 @@ export function Reflection({
   addReflection,
   updateReflection,
 }: ReflectionProps) {
+  const { updateTypingUsers, activeStateSession } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
   const [reflection, setReflection] = useState('')
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
+  const [userTypings, setUserTypings] = useState({
+    hasTyped: false,
+    isTyping: false,
+  })
   const { data: profile } = useProfile()
   const selfParticipant = useDyteSelector((m) => m.self)
+  const debouncedReflection = useDebounce(reflection, 500)
 
   const getParticipantName = () => {
     if (!profile) {
@@ -219,6 +229,42 @@ export function Reflection({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    setUserTypings((prevState) => ({
+      ...prevState,
+      isTyping: false,
+    }))
+  }, [debouncedReflection])
+
+  useEffect(() => {
+    const { hasTyped, isTyping } = userTypings
+    if (hasTyped && !isTyping) {
+      console.log('deleting user>>>')
+      updateTypingUsers({
+        isTyping: false,
+        participantId: selfParticipant.id,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userTypings])
+
+  const onChangeReflection = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!userTypings.isTyping) {
+      console.log('insert user>>>')
+      updateTypingUsers({
+        isTyping: true,
+        participantId: selfParticipant.id,
+        participantName: selfParticipant.name,
+      })
+      setUserTypings({
+        hasTyped: true,
+        isTyping: true,
+      })
+    }
+    setReflection(event.target.value)
+  }
+  console.log('activeStateSession', activeStateSession?.data)
 
   return (
     <div
@@ -256,7 +302,7 @@ export function Reflection({
                     className="text-sm"
                     placeholder="Enter your reflection here."
                     value={reflection}
-                    onChange={(e) => setReflection(e.target.value)}
+                    onChange={onChangeReflection}
                   />
                 </CardBody>
                 <CardFooter>
@@ -311,6 +357,22 @@ export function Reflection({
                   reflection={res.response.reflection}
                   isOwner={false}
                   responseId={res.id}
+                />
+              )
+            )}
+          </div>
+          <div className="mt-4">
+            {activeStateSession?.data?.typingUsers?.map(
+              (typingUser: { participantName: string }) => (
+                <User
+                  classNames={{
+                    base: 'bg-[#DAC8FA] min-w-max bg-primary rounded-xl justify-start p-3',
+                    name: 'font-semibold text-white',
+                  }}
+                  name={`${typingUser.participantName} is typing...`}
+                  avatarProps={{
+                    src: `https://ui-avatars.com/api/?name=${encodeURIComponent(typingUser.participantName)}`,
+                  }}
                 />
               )
             )}

@@ -71,4 +71,13 @@ export type EventSessionContextType = {
     participantId: string
     participantName: string
   }) => void
+  updateTypingUsers: ({
+    isTyping,
+    participantId,
+    participantName,
+  }: {
+    isTyping: boolean
+    participantId: string
+    participantName?: string
+  }) => void
 }
