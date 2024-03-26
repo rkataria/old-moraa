@@ -802,17 +802,15 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       )
     }
 
-    const updateHandUserTypingsResponse = await supabase
-      .from('session')
-      .upsert({
-        id: activeStateSession.id,
-        data: {
-          ...activeSession.data,
-          typingUsers: updatedUserTypings,
-        },
-      })
+    const userTypingsResponse = await supabase.from('session').upsert({
+      id: activeStateSession.id,
+      data: {
+        ...activeSession.data,
+        typingUsers: updatedUserTypings,
+      },
+    })
 
-    if (updateHandUserTypingsResponse.error) {
+    if (userTypingsResponse.error) {
       console.error('failed to update user typings:', error)
     }
   }
