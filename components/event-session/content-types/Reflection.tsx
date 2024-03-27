@@ -3,6 +3,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useDebounce } from '@uidotdev/usehooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import uniqBy from 'lodash.uniqby'
 import { MdOutlineAddReaction } from 'react-icons/md'
@@ -17,6 +18,7 @@ import {
   Chip,
   Divider,
   Textarea,
+  User,
 } from '@nextui-org/react'
 
 import { EmojiPicker } from '@/components/common/EmojiPicker'
@@ -188,10 +190,26 @@ export function Reflection({
   addReflection,
   updateReflection,
 }: ReflectionProps) {
-  const [reflection, setReflection] = useState('')
+  const { updateTypingUsers, activeStateSession } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
+  const [reflection, setReflection] = useState<{
+    typedValue: null | string
+    isTyping: boolean
+    value: string
+  }>({
+    typedValue: null,
+    value: '',
+    isTyping: false,
+  })
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
   const { data: profile } = useProfile()
   const selfParticipant = useDyteSelector((m) => m.self)
+  const debouncedReflection = useDebounce(reflection.typedValue, 500)
+  const typingUsers = activeStateSession?.data?.typingUsers?.filter(
+    (typingUser: { participantId: string }) =>
+      typingUser.participantId !== selfParticipant.id
+  )
 
   const getParticipantName = () => {
     if (!profile) {
@@ -215,10 +233,42 @@ export function Reflection({
 
   useEffect(() => {
     if (responded) {
-      setReflection(selfResponse.response.reflection)
+      setReflection((prev) => ({
+        ...prev,
+        value: selfResponse.response.reflection,
+      }))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (debouncedReflection !== null) {
+      setReflection((prev) => ({
+        ...prev,
+        isTyping: false,
+      }))
+      updateTypingUsers({
+        isTyping: false,
+        participantId: selfParticipant.id,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedReflection])
+
+  const onChangeReflection = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!reflection.isTyping) {
+      updateTypingUsers({
+        isTyping: true,
+        participantId: selfParticipant.id,
+        participantName: selfParticipant.name,
+      })
+    }
+    setReflection({
+      typedValue: event.target.value,
+      isTyping: true,
+      value: event.target.value,
+    })
+  }
 
   return (
     <div
@@ -236,7 +286,7 @@ export function Reflection({
             {slide.content.title}
           </h2>
 
-          <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4 ">
+          <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
             {(!responded || editEnabled) && !isHost && (
               <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl">
                 <CardHeader>
@@ -255,8 +305,8 @@ export function Reflection({
                   <Textarea
                     className="text-sm"
                     placeholder="Enter your reflection here."
-                    value={reflection}
-                    onChange={(e) => setReflection(e.target.value)}
+                    value={reflection.value}
+                    onChange={onChangeReflection}
                   />
                 </CardBody>
                 <CardFooter>
@@ -266,11 +316,11 @@ export function Reflection({
                       size="sm"
                       onClick={() => {
                         if (!responded) {
-                          addReflection?.(slide, reflection, username)
+                          addReflection?.(slide, reflection.value, username)
                         } else {
                           updateReflection?.(
                             selfResponse.id,
-                            reflection,
+                            reflection.value,
                             username
                           )
                         }
@@ -290,7 +340,7 @@ export function Reflection({
             {responded && !editEnabled && (
               <ReflectionCard
                 username={username}
-                reflection={reflection}
+                reflection={reflection.value}
                 isOwner
                 responseId={selfResponse.id}
                 enableEditReflection={() => {
@@ -314,6 +364,20 @@ export function Reflection({
                 />
               )
             )}
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            {typingUsers?.map((typingUser: { participantName: string }) => (
+              <User
+                classNames={{
+                  base: 'bg-[#DAC8FA] min-w-max bg-primary rounded-xl justify-start p-3',
+                  name: 'font-semibold text-white',
+                }}
+                name={`${typingUser.participantName} is typing...`}
+                avatarProps={{
+                  src: `https://ui-avatars.com/api/?name=${encodeURIComponent(typingUser.participantName)}`,
+                }}
+              />
+            ))}
           </div>
         </div>
       </div>

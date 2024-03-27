@@ -3,6 +3,7 @@ import { createContext, useEffect, useRef, useState } from 'react'
 import { sendNotification } from '@dytesdk/react-ui-kit'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { RealtimeChannel } from '@supabase/supabase-js'
+import uniqBy from 'lodash.uniqby'
 import { useParams } from 'next/navigation'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
@@ -773,6 +774,46 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.error('failed to update hands raised:', error)
     }
   }
+  const updateTypingUsers = async ({
+    isTyping,
+    participantId,
+    participantName,
+  }: {
+    isTyping: boolean
+    participantId: string
+    participantName?: string
+  }) => {
+    if (!activeStateSession) return
+
+    const prevSessionUserTypings = activeStateSession?.data?.typingUsers || []
+
+    let updatedUserTypings = prevSessionUserTypings
+
+    if (isTyping) {
+      updatedUserTypings = uniqBy(
+        [...updatedUserTypings, { participantId, participantName }],
+        (user: { participantId: string; participantName?: string }) =>
+          user.participantId
+      )
+    } else {
+      updatedUserTypings = prevSessionUserTypings.filter(
+        (user: { participantId: string; participantName?: string }) =>
+          user.participantId !== participantId
+      )
+    }
+
+    const userTypingsResponse = await supabase.from('session').upsert({
+      id: activeStateSession.id,
+      data: {
+        ...activeSession.data,
+        typingUsers: updatedUserTypings,
+      },
+    })
+
+    if (userTypingsResponse.error) {
+      console.error('failed to update user typings:', error)
+    }
+  }
 
   return (
     <EventSessionContext.Provider
@@ -814,6 +855,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         updateSlide,
         changeCurrentSlide,
         onToggleHandRaised,
+        updateTypingUsers,
       }}>
       {children}
     </EventSessionContext.Provider>
