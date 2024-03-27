@@ -286,7 +286,7 @@ export function Reflection({
             {slide.content.title}
           </h2>
 
-          <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4 ">
+          <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
             {(!responded || editEnabled) && !isHost && (
               <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl">
                 <CardHeader>
@@ -365,7 +365,7 @@ export function Reflection({
               )
             )}
           </div>
-          <div className="mt-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
             {typingUsers?.map((typingUser: { participantName: string }) => (
               <User
                 classNames={{
