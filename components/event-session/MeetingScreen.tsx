@@ -34,24 +34,28 @@ export type DyteStates = {
   [key: string]: string | boolean
 }
 
+export type RightSiderbar = 'participants' | 'chat' | 'plugins'
+
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
+
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(false)
-  const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
+  const [rightSidebar, setRightSidebar] = useState<RightSiderbar | null>(null)
   const [spotlightMode, setSpotlightMode] = useState<boolean>(true)
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
+
   const { slides, isHost, presentationStatus } = useContext(
     EventSessionContext
   ) as EventSessionContextType
-  const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
 
+  const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
   const screensharingParticipant = useDyteSelector((m) =>
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
   )
 
   const isScreensharing = !!screensharingParticipant || selfScreenShared
-  const sidebarVisible = leftSidebarVisible || rightSidebarVisible
+  const sidebarVisible = leftSidebarVisible || !!rightSidebar
 
   useEffect(() => {
     if (
@@ -72,7 +76,7 @@ export function MeetingScreen() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleDyteStateUpdate = ({ detail }: any) => {
-      setRightSidebarVisible(!!detail.activeSidebar)
+      setRightSidebar(detail.activeSidebar)
     }
 
     document.body.addEventListener('dyteStateUpdate', handleDyteStateUpdate)
@@ -91,6 +95,24 @@ export function MeetingScreen() {
 
   const handleUpdateDyteStates = (states: DyteStates) => {
     setDyteStates(states)
+  }
+
+  const renderRightSidebar = () => {
+    if (!rightSidebar) return null
+
+    return (
+      <DyteSidebar
+        meeting={meeting}
+        states={dyteStates}
+        className="rounded-none text-white"
+        onDyteStateUpdate={(e) => {
+          setDyteStates((prevDyteStates) => ({
+            ...prevDyteStates,
+            ...e.detail,
+          }))
+        }}
+      />
+    )
   }
 
   return (
@@ -137,18 +159,8 @@ export function MeetingScreen() {
             </div>
           )}
         </div>
-        <SlideManagerRightSidebarWrapper visible={rightSidebarVisible}>
-          <DyteSidebar
-            meeting={meeting}
-            states={dyteStates}
-            className="rounded-none text-white"
-            onDyteStateUpdate={(e) => {
-              setDyteStates((prevDyteStates) => ({
-                ...prevDyteStates,
-                ...e.detail,
-              }))
-            }}
-          />
+        <SlideManagerRightSidebarWrapper visible={!!rightSidebar}>
+          {renderRightSidebar()}
         </SlideManagerRightSidebarWrapper>
       </div>
 

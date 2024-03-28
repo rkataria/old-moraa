@@ -119,6 +119,13 @@
   resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-1.66.0.tgz#8739683efdcd0fae2f30168abb4c00879801890e"
   integrity sha512-wRG2oyMmGeowMoCw4pcQzexfb7fJ6sLLQKpXxvQLW2TRqAE2Uv3QckObE7Axw6qQVy/IhO31BWpj4bD4AW+WgA==
 
+"@dytesdk/video-background-transformer@^1.1.7":
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/@dytesdk/video-background-transformer/-/video-background-transformer-1.1.7.tgz#0aaf2c712118ffae01c88f80652ff3833adcf2ce"
+  integrity sha512-HkvWxNUcYO+3+GZ8msEQdplDO1rx4TLPc0bQlLnNJN1kJpAN9Fqv7obZu3UWyEBm+bZcH7OPdmFYbu4NtKIihA==
+  dependencies:
+    "@mediapipe/selfie_segmentation" "0.1.1671057942"
+
 "@dytesdk/web-core@^1.29.0":
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-1.29.0.tgz#590e5ca8ff3bd9192cf784bae0f97f471407e620"
@@ -468,6 +475,11 @@
     rimraf "^3.0.2"
     semver "^7.3.5"
     tar "^6.1.11"
+
+"@mediapipe/selfie_segmentation@0.1.1671057942":
+  version "0.1.1671057942"
+  resolved "https://registry.yarnpkg.com/@mediapipe/selfie_segmentation/-/selfie_segmentation-0.1.1671057942.tgz#525d06bb430427e85b90d19ba4e6b8416df87c5f"
+  integrity sha512-K0aR3L7r4DKfK71ZoAYZCyw1P17wqejpI2jaLlSbFo0Hi51jNHmiqw+SD/E1KskdnRFx2zRwW/VWoiY2H5cBwQ==
 
 "@next/env@14.1.0":
   version "14.1.0"

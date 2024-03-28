@@ -13,6 +13,7 @@ import { deletePDFFile } from '@/services/pdf.service'
 import {
   EventSessionContextType,
   PresentationStatuses,
+  VideoMiddlewareConfig,
 } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
 
@@ -64,6 +65,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [activeStateSession, setActiveSession] = useState<any>(null)
   const metaData = useRef<object>({})
   const [syncing, setSyncing] = useState<boolean>(false)
+  const [videoMiddlewareConfig, setVideoMiddlewareConfig] =
+    useState<VideoMiddlewareConfig | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [slideReactions, setSlideReactions] = useState<any>([])
   const { data: fetchedSlideReactions } = useSlideReactions(currentSlide?.id)
@@ -832,6 +835,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         currentUser,
         metaData,
         participant,
+        videoMiddlewareConfig,
         activeStateSession,
         syncing,
         slideReactions,
@@ -855,6 +859,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         updateSlide,
         changeCurrentSlide,
         onToggleHandRaised,
+        setVideoMiddlewareConfig,
         updateTypingUsers,
       }}>
       {children}

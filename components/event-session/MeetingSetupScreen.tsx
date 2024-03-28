@@ -17,6 +17,8 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { useParams } from 'next/navigation'
 
+import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
+
 import { Loading } from '@/components/common/Loading'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
@@ -117,6 +119,11 @@ export function MeetingSetupScreen() {
                   }}
                 />
               </div>
+              <VideoBackgroundSettingsButtonWithModal
+                buttonProps={{
+                  className: 'absolute top-2 right-2',
+                }}
+              />
             </DyteParticipantTile>
           </div>
         </div>

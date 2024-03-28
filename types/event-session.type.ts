@@ -9,6 +9,15 @@ export enum PresentationStatuses {
   PAUSED = 'paused',
 }
 
+export type VideoMiddlewareConfig = {
+  previousConfig?: {
+    type: string
+    value: any
+  }
+  type: string | null
+  value: string | number | null
+}
+
 export type SlideReaction = {
   id: string
   reaction: string
@@ -32,6 +41,7 @@ export type EventSessionContextType = {
   participant: any
   activeStateSession: any
   syncing: boolean
+  videoMiddlewareConfig: VideoMiddlewareConfig | null
   slideReactions: SlideReaction[]
   syncSlides: () => void
   startPresentation: () => void
@@ -71,6 +81,7 @@ export type EventSessionContextType = {
     participantId: string
     participantName: string
   }) => void
+  setVideoMiddlewareConfig: (config: VideoMiddlewareConfig) => void
   updateTypingUsers: ({
     isTyping,
     participantId,

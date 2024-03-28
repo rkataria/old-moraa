@@ -9,6 +9,8 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { HiMiniHandRaised } from 'react-icons/hi2'
 
+import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
+
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
@@ -76,8 +78,13 @@ export function ParticipantTiles({
         {activeStateSession?.data?.handsRaised?.includes(
           selfParticipant.id
         ) && (
-          <HiMiniHandRaised className="absolute right-2 top-2 text-xl animate-pulse flex justify-center items-center text-[#FAC036]" />
+          <HiMiniHandRaised className="absolute left-2 top-2 text-xl animate-pulse flex justify-center items-center text-[#FAC036]" />
         )}
+        <VideoBackgroundSettingsButtonWithModal
+          buttonProps={{
+            className: 'absolute top-2 right-2 w-8',
+          }}
+        />
       </DyteParticipantTile>
       <div
         className={cn('gap-2', {
