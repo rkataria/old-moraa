@@ -205,7 +205,7 @@ export function Reflection({
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
   const { data: profile } = useProfile()
   const selfParticipant = useDyteSelector((m) => m.self)
-  const debouncedReflection = useDebounce(reflection.typedValue, 500)
+  const debouncedReflection = useDebounce(reflection.typedValue, 15000)
   const typingUsers = activeStateSession?.data?.typingUsers?.filter(
     (typingUser: { participantId: string }) =>
       typingUser.participantId !== selfParticipant.id
@@ -241,16 +241,20 @@ export function Reflection({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const removeTyping = () => {
+    setReflection((prev) => ({
+      ...prev,
+      isTyping: false,
+    }))
+    updateTypingUsers({
+      isTyping: false,
+      participantId: selfParticipant.id,
+    })
+  }
+
   useEffect(() => {
     if (debouncedReflection !== null) {
-      setReflection((prev) => ({
-        ...prev,
-        isTyping: false,
-      }))
-      updateTypingUsers({
-        isTyping: false,
-        participantId: selfParticipant.id,
-      })
+      removeTyping()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedReflection])
@@ -315,6 +319,7 @@ export function Reflection({
                       type="button"
                       size="sm"
                       onClick={() => {
+                        removeTyping()
                         if (!responded) {
                           addReflection?.(slide, reflection.value, username)
                         } else {
@@ -324,12 +329,22 @@ export function Reflection({
                             username
                           )
                         }
+
                         setEditEnabled(false)
                       }}>
                       submit
                     </Button>
                     {editEnabled && (
-                      <Button size="sm" onClick={() => setEditEnabled(false)}>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          removeTyping()
+                          setReflection((prev) => ({
+                            ...prev,
+                            value: selfResponse.response.reflection,
+                          }))
+                          setEditEnabled(false)
+                        }}>
                         Cancel
                       </Button>
                     )}
@@ -364,12 +379,10 @@ export function Reflection({
                 />
               )
             )}
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
             {typingUsers?.map((typingUser: { participantName: string }) => (
               <User
                 classNames={{
-                  base: 'bg-[#DAC8FA] min-w-max bg-primary rounded-xl justify-start p-3',
+                  base: 'bg-[#DAC8FA] min-w-max bg-primary rounded-xl justify-start p-3 h-fit',
                   name: 'font-semibold text-white',
                 }}
                 name={`${typingUser.participantName} is typing...`}
