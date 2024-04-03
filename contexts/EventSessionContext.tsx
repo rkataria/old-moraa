@@ -122,6 +122,20 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       sendNotification(dyteNotificationObject, 'message')
     })
 
+    realtimeChannel.on(
+      'broadcast',
+      { event: 'flying-emoji' },
+      ({ payload }) => {
+        const { emoji, name } = payload
+
+        if (!emoji) return
+        console.log('emoji received', emoji)
+        window.dispatchEvent(
+          new CustomEvent('reaction_added', { detail: { emoji, name } })
+        )
+      }
+    )
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId, slides])
 
@@ -818,6 +832,17 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
   }
 
+  const flyEmoji = ({ emoji, name }: { emoji: string; name: string }) => {
+    realtimeChannel.send({
+      type: 'broadcast',
+      event: 'flying-emoji',
+      payload: {
+        emoji,
+        name,
+      },
+    })
+  }
+
   return (
     <EventSessionContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -861,6 +886,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         onToggleHandRaised,
         setVideoMiddlewareConfig,
         updateTypingUsers,
+        flyEmoji,
       }}>
       {children}
     </EventSessionContext.Provider>

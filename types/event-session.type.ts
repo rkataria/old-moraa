@@ -91,4 +91,5 @@ export type EventSessionContextType = {
     participantId: string
     participantName?: string
   }) => void
+  flyEmoji: ({ emoji, name }: { emoji: string; name: string }) => void
 }

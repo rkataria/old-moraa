@@ -12,6 +12,7 @@ import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
 import { Loading } from '../common/Loading'
 import { SyncingStatus } from '../common/SyncingStatus'
+import { FlyingEmojisOverlay } from '../event-session/FlyingEmojisOverlay'
 
 import { SlideManagerContext } from '@/contexts/SlideManagerContext'
 import { useAuth } from '@/hooks/useAuth'
@@ -182,6 +183,7 @@ export function SlideManagerLayoutRoot({
         backgroundColor: 'var(--slide-bg-color)',
       }}>
       {children}
+      <FlyingEmojisOverlay />
     </div>
   )
 }

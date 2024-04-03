@@ -17,6 +17,7 @@ import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 
 import { Button } from '@nextui-org/react'
 
+import { FlyingEmojis } from './FlyingEmojis'
 import { PresentationControls } from './PresentationControls'
 import { RaiseHand } from './RaiseHand'
 import { WhiteboardToggleButton } from './WhiteboardToggleButton'
@@ -67,6 +68,8 @@ export function Header({
 
         <PresentationControls />
         <RaiseHand />
+        <FlyingEmojis />
+
         <DyteSettingsToggle
           size="lg"
           onClick={() => {
