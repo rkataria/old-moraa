@@ -26,7 +26,7 @@ export function FlyingEmojisOverlay() {
       const pElement = document.createElement('p')
       pElement.textContent = name
       pElement.style.cssText =
-        'color:white; font-size:14px; padding:10px; background:rgba(0,0,0,0.8); border-radius:14px; min-width:max-content'
+        'color:white; font-size:14px; padding:10px; background:rgba(0,0,0,0.8); border-radius:14px; min-width:max-content; margin-top:4px'
 
       emojiDiv.appendChild(emojiElement)
       emojiDiv.appendChild(pElement)
