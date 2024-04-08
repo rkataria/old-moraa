@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { Button, Input } from '@nextui-org/react'
 
@@ -19,11 +19,14 @@ interface MiroEmbedEditorProps {
 }
 
 export function MiroEmbedEditor({ slide }: MiroEmbedEditorProps) {
-  const [boardIdentifier, setBoardIdentifier] = useState(
-    slide.content.boardId || ''
-  )
-  const [isEditMode, setIsEditMode] = useState(!slide.content.boardId)
+  const [boardIdentifier, setBoardIdentifier] = useState('')
+  const [isEditMode, setIsEditMode] = useState(false)
   const { updateSlide } = useContext(EventContext) as EventContextType
+
+  useEffect(() => {
+    setIsEditMode(!slide.content?.boardId)
+    setBoardIdentifier(slide.content?.boardId || '')
+  }, [slide.content.boardId])
 
   function isValidURL(url: string) {
     if (

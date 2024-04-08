@@ -238,6 +238,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
             })
 
             setSections(updatedSections)
+            setCurrentSlide(updatedSlide)
           }
 
           if (payload.eventType === 'DELETE') {
