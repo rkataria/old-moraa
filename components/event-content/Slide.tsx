@@ -10,6 +10,7 @@ import { CoverEditor } from './content-types/CoverEditor'
 import { TextImageEditor } from './content-types/TextImageEditor'
 import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
 import { GoogleSlidesEditor } from './GoogleSlidesEditor'
+import { MiroEmbedEditor } from './MiroEmbedEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
@@ -88,6 +89,9 @@ export function Slide({
           <ImageViewer src={getOjectPublicUrl(slide.content?.path as string)} />
         )}
         {slide.type === ContentType.TEXT_IMAGE && <TextImageEditor />}
+        {slide.type === ContentType.MIRO_EMBED && (
+          <MiroEmbedEditor slide={slide as any} />
+        )}
       </div>
     </div>
   )

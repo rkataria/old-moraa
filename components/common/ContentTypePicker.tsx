@@ -10,6 +10,7 @@ import {
   IconLayout,
   IconPhoto,
 } from '@tabler/icons-react'
+import { SiMiro } from 'react-icons/si'
 
 import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/react'
 
@@ -32,6 +33,7 @@ export enum ContentType {
   REFLECTION = 'Reflections',
   PDF_VIEWER = 'PDF',
   VIDEO_EMBED = 'Video Embed',
+  MIRO_EMBED = 'Miro Embed',
   IMAGE_VIEWER = 'Image',
   TEXT_IMAGE = 'Text & Image',
 }
@@ -99,6 +101,13 @@ export const contentTypes: IContentType[] = [
     description:
       'Embed videos from YouTube, Vimeo, or any other video hosting platform',
     contentType: ContentType.VIDEO_EMBED,
+  },
+  {
+    name: 'Miro Embed',
+    icon: <SiMiro className="w-full h-full max-w-11 max-h-11" />,
+    description:
+      'Embed Miro boards to collaborate and brainstorm with your audience',
+    contentType: ContentType.MIRO_EMBED,
   },
 ]
 

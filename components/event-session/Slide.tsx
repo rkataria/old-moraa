@@ -12,6 +12,7 @@ import { TextImage } from './content-types/TextImage'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { ContentLoading } from '../common/ContentLoading'
 import { ImageViewer } from '../common/ImageViewer'
+import { MiroEmbed } from '../common/MiroEmbed'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -109,6 +110,10 @@ export function Slide() {
         src={getOjectPublicUrl(currentSlide.content?.path as string)}
       />
     )
+  }
+
+  if (currentSlide.type === ContentType.MIRO_EMBED) {
+    return <MiroEmbed slide={currentSlide as any} />
   }
 
   return null
