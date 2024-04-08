@@ -345,12 +345,17 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.error(_error)
     }
   }
-
-  const addReflection = async (
-    slide: ISlide,
-    reflection: string,
+  const addReflection = async ({
+    slide,
+    reflection,
+    username,
+    anonymous,
+  }: {
+    slide: ISlide
+    reflection: string
     username: string
-  ) => {
+    anonymous: boolean
+  }) => {
     try {
       const slideResponse = await supabase
         .from('slide_response')
@@ -358,6 +363,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           response: {
             reflection,
             username,
+            anonymous,
           },
           slide_id: slide.id,
           participant_id: participant.id,
@@ -374,18 +380,24 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.error(_error)
     }
   }
-
-  const updateReflection = async (
-    id: string,
-    reflection: string,
+  const updateReflection = async ({
+    id,
+    reflection,
+    username,
+    anonymous,
+  }: {
+    id: string
+    reflection: string
     username: string
-  ) => {
+    anonymous: boolean
+  }) => {
     try {
       const slideResponse = await supabase.from('slide_response').upsert({
         id,
         response: {
           reflection,
           username,
+          anonymous,
         },
       })
 
@@ -423,6 +435,16 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           if (payload.eventType === 'INSERT') {
             updatedReactions.push(payload.new)
           }
+
+          if (payload.eventType === 'UPDATE') {
+            updatedReactions = updatedReactions.map((reaction) => {
+              if (reaction.id === payload.old.id) {
+                return payload.new
+              }
+
+              return reaction
+            })
+          }
           setSlideReactions(updatedReactions)
         }
       )
@@ -440,29 +462,42 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     reaction,
     slideResponseId,
     reactionId,
+    action,
   }: {
     participantId: string
     reaction: string
     slideResponseId?: string
     reactionId?: string
+    action: string
   }) => {
     try {
       let reactionQueryResponse
-      if (!reactionId) {
+
+      if (action === 'INSERT') {
         reactionQueryResponse = await supabase.from('reaction').upsert({
           reaction,
           slide_response_id: slideResponseId,
           participant_id: participantId,
         })
-      } else {
+      }
+      if (action === 'UPDATE') {
+        reactionQueryResponse = await supabase
+          .from('reaction')
+          .update({
+            reaction,
+          })
+          .eq('participant_id', participantId)
+          .eq('slide_response_id', slideResponseId)
+      }
+      if (action === 'DELETE') {
         reactionQueryResponse = await supabase
           .from('reaction')
           .delete()
           .eq('id', reactionId)
       }
 
-      if (reactionQueryResponse.error) {
-        console.error(reactionQueryResponse.error)
+      if (reactionQueryResponse?.error) {
+        console.error(reactionQueryResponse?.error)
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_error: any) {

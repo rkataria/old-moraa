@@ -2,11 +2,8 @@ import { ReactNode, useState } from 'react'
 
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-import { init } from 'emoji-mart'
 
 import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
-
-init({ data })
 
 export function EmojiPicker({
   triggerIcon,

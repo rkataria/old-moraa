@@ -2,6 +2,7 @@ import { IconX } from '@tabler/icons-react'
 
 import { CommonSlideSettings } from '../common/CommonSlideSettings'
 import { PollSlideSettings } from '../common/PollSlideSettings'
+import { ReflectionSlideSettings } from '../common/ReflectionSlideSettings'
 
 import { cn } from '@/utils/utils'
 
@@ -51,6 +52,7 @@ export function SettingsSidebar({
     <SettingsWrapper setSettingsSidebarVisible={setSettingsSidebarVisible}>
       <CommonSlideSettings />
       <PollSlideSettings />
+      <ReflectionSlideSettings />
     </SettingsWrapper>
   )
 }

@@ -15,6 +15,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Checkbox,
   Chip,
   Divider,
   Textarea,
@@ -44,9 +45,6 @@ interface ReflectionProps {
   responded?: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any
-  isHost: boolean
-  addReflection?: (slide: ISlide, reflection: string, username: string) => void
-  updateReflection?: (id: string, reflection: string, username: string) => void
 }
 
 export function ReflectionCard({
@@ -54,12 +52,14 @@ export function ReflectionCard({
   reflection,
   isOwner,
   responseId,
+  isAnonymous,
   enableEditReflection,
 }: {
   username: string
   reflection: string
   isOwner: boolean
   responseId: string
+  isAnonymous?: boolean
   enableEditReflection?: () => void
 }) {
   const { participant, emoteOnReflection, slideReactions } = useContext(
@@ -89,17 +89,31 @@ export function ReflectionCard({
 
   const handleEmojiSelect = (selectedEmojiId: string) => {
     const participantEmote = reactions.find(
-      (reaction: SlideReaction) =>
-        reaction.participant_id === participant.id &&
-        reaction.reaction === selectedEmojiId
+      (reaction: SlideReaction) => reaction.participant_id === participant.id
     )
+    let emoteAction = 'UPDATE'
+    if (!participantEmote) {
+      emoteAction = 'INSERT'
+    }
+    if (participantEmote && participantEmote.reaction === selectedEmojiId) {
+      emoteAction = 'DELETE'
+    }
 
     emoteOnReflection?.({
       participantId: participant.id,
       reaction: selectedEmojiId,
       slideResponseId: responseId,
       reactionId: participantEmote?.id,
+      action: emoteAction,
     })
+  }
+
+  const getAvatar = () => {
+    if (isAnonymous) {
+      return 'https://github.com/shadcn.png'
+    }
+
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(`${username}`)}`
   }
 
   return (
@@ -111,10 +125,10 @@ export function ReflectionCard({
             radius="full"
             size="md"
             className="min-w-fit"
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(`${username}`)}`}
+            src={getAvatar()}
           />
           <h4 className="text-small font-semibold leading-none text-default-600">
-            {username}
+            {isAnonymous ? 'Anonymous' : username}
             {isOwner && '(you)'}
           </h4>
         </div>
@@ -186,13 +200,10 @@ export function Reflection({
   responses = [],
   responded,
   user,
-  isHost,
-  addReflection,
-  updateReflection,
 }: ReflectionProps) {
-  const { updateTypingUsers, activeSession } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { addReflection, updateReflection, updateTypingUsers, activeSession } =
+    useContext(EventSessionContext) as EventSessionContextType
+
   const [reflection, setReflection] = useState<{
     typedValue: null | string
     isTyping: boolean
@@ -202,6 +213,7 @@ export function Reflection({
     value: '',
     isTyping: false,
   })
+  const [anonymous, setAnonymous] = useState(false)
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
   const { data: profile } = useProfile()
   const selfParticipant = useDyteSelector((m) => m.self)
@@ -237,6 +249,7 @@ export function Reflection({
         ...prev,
         value: selfResponse.response.reflection,
       }))
+      setAnonymous(selfResponse.response?.anonymous)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -291,8 +304,8 @@ export function Reflection({
           </h2>
 
           <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {(!responded || editEnabled) && !isHost && (
-              <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl">
+            {(!responded || editEnabled) && (
+              <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl min-w-fit">
                 <CardHeader>
                   <div className="flex justify-start items-center gap-2">
                     <Avatar
@@ -314,40 +327,62 @@ export function Reflection({
                   />
                 </CardBody>
                 <CardFooter>
-                  <div className="flex justify-end items-center gap-2 w-full">
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={() => {
-                        removeTyping()
-                        if (!responded) {
-                          addReflection?.(slide, reflection.value, username)
-                        } else {
-                          updateReflection?.(
-                            selfResponse.id,
-                            reflection.value,
-                            username
-                          )
-                        }
-
-                        setEditEnabled(false)
-                      }}>
-                      submit
-                    </Button>
-                    {editEnabled && (
+                  <div
+                    className={cn('flex items-center gap-2 w-full', {
+                      'justify-between': slide.config?.allowAnonymously,
+                      'justify-end': !slide.config?.allowAnonymously,
+                    })}>
+                    {slide.config?.allowAnonymously && (
+                      <div>
+                        <Checkbox
+                          isSelected={anonymous}
+                          onValueChange={() => setAnonymous(!anonymous)}>
+                          <p className="text-xs">Anonymous</p>
+                        </Checkbox>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
                       <Button
+                        type="button"
                         size="sm"
                         onClick={() => {
                           removeTyping()
-                          setReflection((prev) => ({
-                            ...prev,
-                            value: selfResponse.response.reflection,
-                          }))
+                          if (!responded) {
+                            addReflection?.({
+                              slide,
+                              reflection: reflection.value,
+                              username,
+                              anonymous,
+                            })
+                          } else {
+                            updateReflection?.({
+                              id: selfResponse.id,
+                              reflection: reflection.value,
+                              username,
+                              anonymous,
+                            })
+                          }
+
                           setEditEnabled(false)
                         }}>
-                        Cancel
+                        submit
                       </Button>
-                    )}
+                      {editEnabled && (
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            removeTyping()
+                            setReflection((prev) => ({
+                              ...prev,
+                              value: selfResponse.response.reflection,
+                            }))
+                            setEditEnabled(false)
+                            setAnonymous(selfResponse.response?.anonymous)
+                          }}>
+                          Cancel
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardFooter>
               </Card>
@@ -369,6 +404,7 @@ export function Reflection({
                 response: {
                   username: string
                   reflection: string
+                  anonymous?: boolean
                 }
               }) => (
                 <ReflectionCard
@@ -376,6 +412,7 @@ export function Reflection({
                   reflection={res.response.reflection}
                   isOwner={false}
                   responseId={res.id}
+                  isAnonymous={res.response?.anonymous}
                 />
               )
             )}

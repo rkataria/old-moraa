@@ -2,7 +2,9 @@
 
 import React from 'react'
 
+import data from '@emoji-mart/data'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { init } from 'emoji-mart'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'react-hot-toast'
 
@@ -10,6 +12,8 @@ import { NextUIProvider } from '@nextui-org/react'
 
 import { UserContextProvider } from '@/hooks/useAuth'
 import { ModalProvider } from '@/providers/modal-provider'
+
+init({ data })
 
 const queryClient = new QueryClient()
 

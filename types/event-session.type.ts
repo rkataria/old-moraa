@@ -44,18 +44,40 @@ export type EventSessionContextType = {
   nextSlide: () => void
   previousSlide: () => void
   onVote: (slide: ISlide, options: string[]) => void
-  addReflection?: (slide: ISlide, reflection: string, username: string) => void
-  updateReflection?: (id: string, reflection: string, username: string) => void
+  addReflection?: ({
+    slide,
+    reflection,
+    username,
+    anonymous,
+  }: {
+    slide: ISlide
+    reflection: string
+    username: string
+    anonymous: boolean
+  }) => void
+  updateReflection?: ({
+    id,
+    reflection,
+    username,
+    anonymous,
+  }: {
+    id: string
+    reflection: string
+    username: string
+    anonymous: boolean
+  }) => void
   emoteOnReflection?: ({
     participantId,
     reaction,
     slideResponseId,
     reactionId,
+    action,
   }: {
     participantId: string
     reaction: string
     slideResponseId?: string
     reactionId?: string
+    action: string
   }) => void
   joinMeeting?: () => void
   onToggleHandRaised: ({

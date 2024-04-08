@@ -36,8 +36,6 @@ export function Slide() {
     presentationStatus,
     currentSlide,
     onVote,
-    addReflection,
-    updateReflection,
     currentSlideResponses,
     currentSlideLoading,
     isHost,
@@ -90,9 +88,6 @@ export function Slide() {
         responses={currentSlideResponses}
         responded={checkVoted(currentSlideResponses, currentUser)}
         user={currentUser}
-        isHost={isHost}
-        addReflection={addReflection}
-        updateReflection={updateReflection}
       />
     )
   }
