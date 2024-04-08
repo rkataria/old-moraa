@@ -3,13 +3,13 @@
 import React from 'react'
 
 import { SlideManager } from '@/components/event-content/SlideManager'
-import { SlideManagerProvider } from '@/contexts/SlideManagerContext'
+import { EventProvider } from '@/contexts/EventContext'
 
 function EventSlidesPage() {
   return (
-    <SlideManagerProvider>
+    <EventProvider eventMode="edit">
       <SlideManager />
-    </SlideManagerProvider>
+    </EventProvider>
   )
 }
 

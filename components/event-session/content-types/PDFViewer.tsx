@@ -1,8 +1,7 @@
 'use client'
 
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
-import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useMutation } from '@tanstack/react-query'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.js'
 import { Document, Page, pdfjs } from 'react-pdf'
@@ -15,7 +14,6 @@ import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
-import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFViewerProps {
@@ -29,18 +27,23 @@ interface PDFViewerProps {
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-const PositionChangeEvent = 'pdf-position-changed'
+const positionChangeEvent = 'pdf-position-changed'
 
 export function PDFViewer({ slide }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
-  const { isHost, metaData } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
-  const [totalPages, setTotalPages] = useState<null | number>(null)
-  const [selectedPage, setSelectedPage] = useState<number>(
-    metaData.current.pdfLastPage || slide.content?.defaultPage || 1
+  const { isHost, realtimeChannel, activeSession, updateActiveSession } =
+    useContext(EventSessionContext) as EventSessionContextType
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [position, setPosition] = useState<number>(
+    slide.content?.defaultPage || 1
   )
-  const { meeting } = useDyteMeeting()
+
+  useEffect(() => {
+    if (!activeSession?.data?.PdfSlideLastPosition) return
+
+    setPosition(activeSession?.data?.PdfSlideLastPosition)
+  }, [activeSession?.data?.PdfSlideLastPosition])
+
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
       downloadPDFFile(slide.content?.pdfPath).then((data) =>
@@ -59,76 +62,34 @@ export function PDFViewer({ slide }: PDFViewerProps) {
   }, [slide.content?.pdfPath])
 
   useEffect(() => {
-    if (totalPages === null) return
-
-    const nextPosition = () =>
-      setSelectedPage((pos) => {
-        const newPos = pos + 1 > totalPages ? pos : pos + 1
-        if (isHost) broadcastPagePosition(newPos)
-
-        return newPos
-      })
-    const prevPosition = () =>
-      setSelectedPage((pos) => {
-        const newPos = pos > 1 ? pos - 1 : pos
-        if (isHost) broadcastPagePosition(newPos)
-
-        return newPos
-      })
-
-    const handleBroadcastedMessage = ({
-      type,
-      payload,
-    }: {
-      type: string
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      payload: any
-    }) => {
-      switch (type) {
-        case PositionChangeEvent: {
-          setSelectedPage(payload.position || 1)
-          metaData.current.pdfLastPage = payload.position || 1
-          break
-        }
-        default:
-          break
+    if (!realtimeChannel) return
+    realtimeChannel.on(
+      'broadcast',
+      { event: positionChangeEvent },
+      ({ payload }) => {
+        setPosition(payload.position || 1)
+        updateActiveSession({
+          PdfSlideLastPosition: payload.position || 1,
+        })
       }
-    }
-    meeting.participants.addListener(
-      'broadcastedMessage',
-      handleBroadcastedMessage
     )
-    SlideEvents[SlideEventManagerType.OnRight].subscribe(nextPosition)
-    SlideEvents[SlideEventManagerType.OnLeft].subscribe(prevPosition)
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      meeting.participants.removeListener(
-        'broadcastedMessage',
-        handleBroadcastedMessage
-      )
-      SlideEvents[SlideEventManagerType.OnRight].unsubscribe(nextPosition)
-      SlideEvents[SlideEventManagerType.OnLeft].unsubscribe(prevPosition)
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalPages])
+  }, [realtimeChannel])
 
-  const broadcastPagePosition = useCallback((newPosition: number) => {
-    meeting.participants.broadcastMessage(PositionChangeEvent, {
-      position: newPosition,
+  const handlePositionChange = (newPosition: number) => {
+    if (newPosition < 1 || newPosition > totalPages) return
+
+    realtimeChannel.send({
+      type: 'broadcast',
+      event: positionChangeEvent,
+      payload: { position: newPosition },
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = ({
     numPages: nextNumPages,
   }) => {
     setTotalPages(nextNumPages)
-  }
-  const handleCurrentPageChange = (pageNumber: number) => {
-    if ((totalPages && totalPages < pageNumber) || pageNumber === 0) return
-
-    setSelectedPage(pageNumber)
   }
 
   if (!downloadPDFMutation.isSuccess) {
@@ -144,7 +105,7 @@ export function PDFViewer({ slide }: PDFViewerProps) {
         loading="Please wait! Loading the PDF.">
         <Page
           loading={' '}
-          pageNumber={selectedPage}
+          pageNumber={position}
           renderAnnotationLayer={false}
           renderTextLayer={false}
           className="w-full"
@@ -152,9 +113,9 @@ export function PDFViewer({ slide }: PDFViewerProps) {
       </Document>
       {isHost && (
         <PageControls
-          currentPage={selectedPage}
+          currentPage={position}
           totalPages={totalPages}
-          handleCurrentPageChange={handleCurrentPageChange}
+          handleCurrentPageChange={handlePositionChange}
         />
       )}
     </div>

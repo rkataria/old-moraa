@@ -6,8 +6,9 @@ import { useThrottle } from '@uidotdev/usehooks'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide } from '@/types/slide.type'
 
 interface ReflectionEditorProps {
   slide: ISlide
@@ -17,9 +18,7 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
   const [title, setTitle] = useState(slide.content?.title)
   const throttledTitle = useThrottle(title, 500)
 
-  const { updateSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { updateSlide } = useContext(EventContext) as EventContextType
   useEffect(() => {
     updateSlide({
       ...slide,

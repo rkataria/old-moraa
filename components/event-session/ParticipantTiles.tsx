@@ -23,7 +23,7 @@ export function ParticipantTiles({
   sidebarVisible: boolean
 }) {
   const { meeting } = useDyteMeeting()
-  const { activeStateSession } = useContext(
+  const { activeSession } = useContext(
     EventSessionContext
   ) as EventSessionContextType
   const activeParticipants = useDyteSelector((m) =>
@@ -75,9 +75,7 @@ export function ParticipantTiles({
           className="left-1/2 -translate-x-1/2">
           <DyteAudioVisualizer slot="start" participant={selfParticipant} />
         </DyteNameTag>
-        {activeStateSession?.data?.handsRaised?.includes(
-          selfParticipant.id
-        ) && (
+        {activeSession?.data?.handsRaised?.includes(selfParticipant.id) && (
           <HiMiniHandRaised className="absolute left-2 top-2 text-xl animate-pulse flex justify-center items-center text-[#FAC036]" />
         )}
         <VideoBackgroundSettingsButtonWithModal
@@ -113,9 +111,7 @@ export function ParticipantTiles({
                 participant={participant}
               />
             </DyteNameTag>
-            {activeStateSession?.data?.handsRaised?.includes(
-              participant.id
-            ) && (
+            {activeSession?.data?.handsRaised?.includes(participant.id) && (
               <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-[#FAC036]" />
             )}
           </DyteParticipantTile>

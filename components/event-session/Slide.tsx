@@ -12,8 +12,8 @@ import { TextImage } from './content-types/TextImage'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { ContentLoading } from '../common/ContentLoading'
 import { ImageViewer } from '../common/ImageViewer'
-import { ContentType } from '../event-content/ContentTypePicker'
 
+import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import {

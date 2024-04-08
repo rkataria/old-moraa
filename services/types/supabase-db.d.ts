@@ -119,6 +119,7 @@ export type Database = {
           dyte_meeting_id: string | null
           event_id: string | null
           id: string
+          sections: string[] | null
           slides: string[] | null
           type: string | null
           updated_at: string | null
@@ -128,6 +129,7 @@ export type Database = {
           dyte_meeting_id?: string | null
           event_id?: string | null
           id?: string
+          sections?: string[] | null
           slides?: string[] | null
           type?: string | null
           updated_at?: string | null
@@ -137,6 +139,7 @@ export type Database = {
           dyte_meeting_id?: string | null
           event_id?: string | null
           id?: string
+          sections?: string[] | null
           slides?: string[] | null
           type?: string | null
           updated_at?: string | null
@@ -267,6 +270,41 @@ export type Database = {
           },
         ]
       }
+      section: {
+        Row: {
+          created_at: string
+          id: string
+          meeting_id: string | null
+          name: string | null
+          slides: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          meeting_id?: string | null
+          name?: string | null
+          slides?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          meeting_id?: string | null
+          name?: string | null
+          slides?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'public_section_meeting_id_fkey'
+            columns: ['meeting_id']
+            isOneToOne: false
+            referencedRelation: 'meeting'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       session: {
         Row: {
           created_at: string
@@ -310,6 +348,7 @@ export type Database = {
           id: string
           meeting_id: string | null
           name: string | null
+          section_id: string | null
           status: string | null
           type: string | null
           updated_at: string | null
@@ -321,6 +360,7 @@ export type Database = {
           id?: string
           meeting_id?: string | null
           name?: string | null
+          section_id?: string | null
           status?: string | null
           type?: string | null
           updated_at?: string | null
@@ -332,16 +372,24 @@ export type Database = {
           id?: string
           meeting_id?: string | null
           name?: string | null
+          section_id?: string | null
           status?: string | null
           type?: string | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: 'slide_meeting_id_fkey'
+            foreignKeyName: 'public_slide_meeting_id_fkey'
             columns: ['meeting_id']
             isOneToOne: false
             referencedRelation: 'meeting'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'public_slide_section_id_fkey'
+            columns: ['section_id']
+            isOneToOne: false
+            referencedRelation: 'section'
             referencedColumns: ['id']
           },
         ]
@@ -407,9 +455,11 @@ export type Database = {
   }
 }
 
+type PublicSchema = Database[Extract<keyof Database, 'public'>]
+
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (Database['public']['Tables'] & Database['public']['Views'])
+    | keyof (PublicSchema['Tables'] & PublicSchema['Views'])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
@@ -422,10 +472,10 @@ export type Tables<
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (Database['public']['Tables'] &
-        Database['public']['Views'])
-    ? (Database['public']['Tables'] &
-        Database['public']['Views'])[PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof (PublicSchema['Tables'] &
+        PublicSchema['Views'])
+    ? (PublicSchema['Tables'] &
+        PublicSchema['Views'])[PublicTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -434,7 +484,7 @@ export type Tables<
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof Database['public']['Tables']
+    | keyof PublicSchema['Tables']
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
@@ -445,8 +495,8 @@ export type TablesInsert<
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof Database['public']['Tables']
-    ? Database['public']['Tables'][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
+    ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -455,7 +505,7 @@ export type TablesInsert<
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof Database['public']['Tables']
+    | keyof PublicSchema['Tables']
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
@@ -466,8 +516,8 @@ export type TablesUpdate<
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof Database['public']['Tables']
-    ? Database['public']['Tables'][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
+    ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -476,13 +526,13 @@ export type TablesUpdate<
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof Database['public']['Enums']
+    | keyof PublicSchema['Enums']
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
     : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database['public']['Enums']
-    ? Database['public']['Enums'][PublicEnumNameOrOptions]
+  : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
+    ? PublicSchema['Enums'][PublicEnumNameOrOptions]
     : never

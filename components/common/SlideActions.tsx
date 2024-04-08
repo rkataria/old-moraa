@@ -16,12 +16,12 @@ const slideActions = [
     icon: <IconTrash className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: 'moveUp',
+    key: 'move-up',
     label: 'Move up',
     icon: <IconArrowUp className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: 'moveDown',
+    key: 'move-down',
     label: 'Move down',
     icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
   },

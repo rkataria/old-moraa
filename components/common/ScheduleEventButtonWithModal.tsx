@@ -25,7 +25,7 @@ export function ScheduleEventButtonWithModal({
   eventId: string
   actionButtonLabel?: string
 }) {
-  const event = useEvent({ id: eventId, fetchMeetingSlides: true })
+  const event = useEvent({ id: eventId })
   const [open, setOpen] = useState<boolean>(false)
   const scheduleEventMutation = useMutation({
     mutationFn: (data: {

@@ -17,13 +17,14 @@ import { FilePicker } from '../common/FilePicker'
 import { NextPrevButtons } from '../common/NextPrevButtons'
 
 import { Loading } from '@/components/common/Loading'
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
+import { EventContext } from '@/contexts/EventContext'
 import {
   deletePDFFile,
   downloadPDFFile,
   uploadPDFFile,
 } from '@/services/pdf.service'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide } from '@/types/slide.type'
 import { QueryKeys } from '@/utils/query-keys'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
@@ -41,9 +42,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 const getPDFName = (slideId: string) => `${slideId}_pdf.pdf`
 
 export function PDFUploader({ slide }: PDFUploaderProps) {
-  const { updateSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { updateSlide } = useContext(EventContext) as EventContextType
 
   const [fileUrl, setFileURL] = useState<string | undefined>(
     slide.content?.pdfPath

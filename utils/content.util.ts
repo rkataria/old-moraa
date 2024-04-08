@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { ContentType } from '@/components/event-content/ContentTypePicker'
+import { ContentType } from '@/components/common/ContentTypePicker'
+import { ISlide } from '@/types/slide.type'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getDefaultContent = (contentType: ContentType, data?: any) => {
@@ -102,3 +103,12 @@ export const checkVoted = (votes: any, user: any) => {
 
   return votes.some((vote) => vote.participant.enrollment.user_id === user.id)
 }
+
+export const isSlideInteractive = (slide: ISlide) =>
+  [
+    ContentType.POLL,
+    ContentType.GOOGLE_SLIDES_IMPORT,
+    ContentType.REFLECTION,
+    ContentType.VIDEO_EMBED,
+    ContentType.PDF_VIEWER,
+  ].includes(slide.type)

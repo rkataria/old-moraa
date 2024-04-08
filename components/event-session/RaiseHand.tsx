@@ -9,12 +9,13 @@ import { cn } from '@/utils/utils'
 
 export function RaiseHand() {
   const selfParticipant = useDyteSelector((m) => m.self)
-  const { isHost, activeStateSession, onToggleHandRaised, participant } =
-    useContext(EventSessionContext) as EventSessionContextType
+  const { isHost, activeSession, onToggleHandRaised, participant } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
 
   if (isHost || !participant) return null
 
-  const isHandRaised = activeStateSession?.data?.handsRaised?.includes(
+  const isHandRaised = activeSession?.data?.handsRaised?.includes(
     selfParticipant.id
   )
 

@@ -18,13 +18,9 @@ import { Image } from '@nextui-org/react'
 import { FileUploader } from '../FileUploader'
 
 import { TextBlockEditor } from '@/components/event-content/BlockEditor'
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import {
-  FileBlock,
-  ISlide,
-  SlideManagerContextType,
-  TextBlock,
-} from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+import { FileBlock, ISlide, TextBlock } from '@/types/slide.type'
 import { cn } from '@/utils/utils'
 
 export function TextImageEditor() {
@@ -36,8 +32,8 @@ export function TextImageEditor() {
   const debouncedLocalSlide = useDebounce(localSlide, 500)
 
   const { currentSlide, updateSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+    EventContext
+  ) as EventContextType
 
   useEffect(() => {
     setLocalSlide(currentSlide)

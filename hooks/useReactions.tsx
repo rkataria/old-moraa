@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { ReactionService } from '@/services/reaction.services'
+import { ReactionService } from '@/services/reaction.service'
 
 export const useSlideReactions = (slideId?: string) => {
   const ReactionQuery = useQuery({

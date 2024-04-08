@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { OnDragEndResponder } from 'react-beautiful-dnd'
 
-import { ContentType } from '@/components/event-content/ContentTypePicker'
+import { type AgendaSlideDisplayType } from './event.type'
+
+import { ContentType } from '@/components/common/ContentTypePicker'
 
 export type SlideMode = 'edit' | 'present'
 
@@ -29,6 +30,16 @@ export type FileBlock = Block & {
   }
 }
 
+export interface ISection {
+  id: string
+  name: string
+  created_at?: string
+  updated_at?: string
+  slides: ISlide[]
+  meeting_id?: string
+  status?: string
+}
+
 export interface ISlide {
   id: string
   name: string
@@ -45,37 +56,14 @@ export interface ISlide {
   type: (typeof ContentType)[keyof typeof ContentType]
   order?: number
   meeting_id?: string
+  section_id?: string
   status?: string
-}
-
-export type SlideManagerContextType = {
-  slides: ISlide[]
-  currentSlide: ISlide | null
-  loading: boolean
-  syncing: boolean
-  miniMode: boolean
-  isOwner: boolean
-  setMiniMode: (miniMode: boolean) => void
-  setCurrentSlide: (slide: ISlide) => void
-  addNewSlide: (slide: ISlide) => void
-  updateSlide: (slide: Partial<ISlide>) => void
-  deleteSlide: (id: string) => void
-  importGoogleSlides: (data: {
-    slideId: string
-    googleSlideUrl: string
-    startPosition: number
-  }) => void
-  moveUpSlide: (id: string) => void
-  moveDownSlide: (id: string) => void
-  reorderSlide: OnDragEndResponder
 }
 
 export interface IMiniSlideManagerType {
   slide: ISlide
   index: number
-  currentSlide: ISlide | null
-  setCurrentSlide: (slide: ISlide) => void
+  slideCount: number
   draggableProps: any
-  mode: 'edit' | 'present' | 'read'
-  miniSlideView: 'thumbnail' | 'list'
+  displayType: AgendaSlideDisplayType
 }

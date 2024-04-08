@@ -5,8 +5,9 @@ import React, { useContext, useState } from 'react'
 import { Button, Input } from '@nextui-org/react'
 
 import { ResponsiveVideoPlayer } from '@/components/common/ResponsiveVideoPlayer'
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide } from '@/types/slide.type'
 
 interface VideoEmbedEditorProps {
   slide: ISlide & {
@@ -19,9 +20,7 @@ interface VideoEmbedEditorProps {
 export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
   const [videoUrl, setVideoUrl] = useState(slide.content.videoUrl || '')
   const [isEditMode, setIsEditMode] = useState(!slide.content.videoUrl)
-  const { isOwner, updateSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { isOwner, updateSlide } = useContext(EventContext) as EventContextType
 
   const saveVideoUrl = () => {
     updateSlide({

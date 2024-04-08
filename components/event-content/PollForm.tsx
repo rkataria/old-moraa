@@ -5,8 +5,9 @@ import { useThrottle } from '@uidotdev/usehooks'
 import clsx from 'clsx'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide } from '@/types/slide.type'
 
 interface PollFormProps {
   slide: ISlide & {
@@ -22,9 +23,7 @@ export function PollForm({ slide: slideFromRemote }: PollFormProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const optionsRef = useRef<any>([])
 
-  const { updateSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { updateSlide } = useContext(EventContext) as EventContextType
 
   const [question, setQuestion] = useState<string>(
     slideFromRemote.content.question

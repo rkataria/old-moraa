@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MutableRefObject } from 'react'
+
+import { RealtimeChannel } from '@supabase/supabase-js'
 
 import { ISlide } from './slide.type'
 
@@ -26,31 +27,22 @@ export type SlideReaction = {
 }
 
 export type EventSessionContextType = {
-  event: any
-  loading: boolean
-  error: any
-  meetingToken: string
   isHost: boolean
-  slides: ISlide[]
   currentSlide: ISlide | null
-  currentUser: any
   presentationStatus: PresentationStatuses
   currentSlideLoading: boolean
   currentSlideResponses: any[] | null
-  metaData: MutableRefObject<any>
   participant: any
-  activeStateSession: any
-  syncing: boolean
+  activeSession: any
   videoMiddlewareConfig: VideoMiddlewareConfig | null
   slideReactions: SlideReaction[]
-  syncSlides: () => void
+  realtimeChannel: RealtimeChannel
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void
   setCurrentSlide: (slide: ISlide) => void
   nextSlide: () => void
   previousSlide: () => void
-  setCurrentSlideByID: (id: string) => void
   onVote: (slide: ISlide, options: string[]) => void
   addReflection?: (slide: ISlide, reflection: string, username: string) => void
   updateReflection?: (id: string, reflection: string, username: string) => void
@@ -66,12 +58,6 @@ export type EventSessionContextType = {
     reactionId?: string
   }) => void
   joinMeeting?: () => void
-  reorderSlide: (result: any) => void
-  moveUpSlide: (id: string) => void
-  moveDownSlide: (id: string) => void
-  deleteSlide: (id: string) => void
-  updateSlide: (slide: ISlide) => void
-  changeCurrentSlide: (slide: ISlide) => void
   onToggleHandRaised: ({
     handRaise,
     participantId,
@@ -92,4 +78,5 @@ export type EventSessionContextType = {
     participantName?: string
   }) => void
   flyEmoji: ({ emoji, name }: { emoji: string; name: string }) => void
+  updateActiveSession: (data: any) => void
 }

@@ -3,13 +3,13 @@ import { useContext } from 'react'
 import { TwitterPicker } from 'react-color'
 
 import { SLIDE_BG_COLOR_PALETTE } from '@/constants/common'
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { SlideManagerContextType } from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
 
 export function CommonSlideSettings() {
   const { updateSlide, currentSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+    EventContext
+  ) as EventContextType
 
   const updateSlideColors = (color: string, colorKey: string) => {
     updateSlide({

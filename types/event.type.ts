@@ -14,3 +14,5 @@ export interface IMeetingSlidesPayload {
   description?: string
   slides?: ISlide[]
 }
+
+export type AgendaSlideDisplayType = 'thumbnail' | 'list'

@@ -8,15 +8,19 @@ import {
   IconChartBar,
   IconVideo,
   IconLayout,
+  IconPhoto,
 } from '@tabler/icons-react'
 
 import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/react'
+
+import { cn } from '@/utils/utils'
 
 interface IContentType {
   name: string
   icon: React.ReactNode
   description: string
   contentType: ContentType
+  disabled?: boolean
 }
 
 export enum ContentType {
@@ -49,6 +53,13 @@ export const contentTypes: IContentType[] = [
     icon: <IconLayout className="w-full h-full max-w-11 max-h-11" />,
     description: 'Combine text and image to create a visually appealing slide',
     contentType: ContentType.TEXT_IMAGE,
+  },
+  {
+    name: 'Image',
+    icon: <IconPhoto className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Upload and display images on your slides',
+    contentType: ContentType.IMAGE_VIEWER,
+    disabled: true, // TODO: Enable this slide when Image Viewer Slide is implemented
   },
   {
     name: 'Google Slides',
@@ -125,8 +136,18 @@ export function ContentTypePicker({
                   {contentTypes.map((contentType) => (
                     <div
                       key={contentType.contentType}
-                      className="rounded-md  aspect-video cursor-pointer transition-all flex flex-col justify-center items-center gap-2 p-[20px] text-center bg-[#353535] text-white hover:bg-black hover:border-black"
-                      onClick={() => onChoose(contentType.contentType)}>
+                      className={cn(
+                        'rounded-md  aspect-video cursor-pointer transition-all flex flex-col justify-center items-center gap-2 p-[20px] text-center bg-[#353535] text-white',
+                        {
+                          'hover:bg-black hover:border-black':
+                            !contentType.disabled,
+                          'opacity-30 cursor-not-allowed': contentType.disabled,
+                        }
+                      )}
+                      onClick={() => {
+                        if (contentType.disabled) return
+                        onChoose(contentType.contentType)
+                      }}>
                       <div className="w-11 h-11">{contentType.icon}</div>
                       <h3 className="font-semibold text-xl">
                         {contentType.name}

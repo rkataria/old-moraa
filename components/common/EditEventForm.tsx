@@ -40,7 +40,6 @@ export function EditEventForm({
   const { eventId } = useParams()
   const { event, refetch } = useEvent({
     id: (eventId || _eventId) as string,
-    fetchMeetingSlides: true,
   })
   const editEventMutation = useMutation({
     mutationFn: async (data: { name: string; description: string }) => {

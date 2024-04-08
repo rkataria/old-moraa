@@ -9,8 +9,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useDebounce } from '@uidotdev/usehooks'
 
 import { TextBlockEditor } from '@/components/event-content/BlockEditor'
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { ISlide, SlideManagerContextType, TextBlock } from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide, TextBlock } from '@/types/slide.type'
 
 type CoverSlide = ISlide
 
@@ -20,8 +21,8 @@ export function CoverEditor() {
   const debouncedLocalSlide = useDebounce(localSlide, 500)
 
   const { currentSlide, updateSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+    EventContext
+  ) as EventContextType
 
   useEffect(() => {
     setLocalSlide(currentSlide)

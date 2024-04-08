@@ -7,17 +7,19 @@ import { IconDots, IconGripVertical } from '@tabler/icons-react'
 
 import { Tooltip } from '@nextui-org/react'
 
-import { contentTypes } from './ContentTypePicker'
 import { DeleteSlideModal } from './DeleteSlideModal'
+import { EditableLabel } from './EditableLabel'
 import { SlideActions } from './SlideActions'
 
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import {
-  IMiniSlideManagerType,
-  ISlide,
-  SlideManagerContextType,
-} from '@/types/slide.type'
-import { getSlideName } from '@/utils/getSlideName'
+import type {
+  EventContextType,
+  EventModeType,
+} from '@/types/event-context.type'
+
+import { contentTypes } from '@/components/common/ContentTypePicker'
+import { EventContext } from '@/contexts/EventContext'
+import { type AgendaSlideDisplayType } from '@/types/event.type'
+import { type ISlide } from '@/types/slide.type'
 import { cn } from '@/utils/utils'
 
 interface SlideListViewProps {
@@ -25,14 +27,15 @@ interface SlideListViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   draggableProps: any
   index: number
-  mode: 'edit' | 'present' | 'read'
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleActions: any
+  isDragging: boolean
   isDeleteModalOpen: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setIsDeleteModalOpen: any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDelete: any
+  onChangeSlide: () => void
 }
 
 interface SlideThumbnailViewProps {
@@ -40,66 +43,53 @@ interface SlideThumbnailViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   draggableProps: any
   index: number
-  mode: 'edit' | 'present' | 'read'
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleActions: any
   isDeleteModalOpen: boolean
+  isDragging: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setIsDeleteModalOpen: any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDelete: any
+  onChangeSlide: () => void
 }
 
-function SlideEditableName({ slide }: { slide: ISlide }) {
-  const { updateSlide, isOwner } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
-
-  const [nameEditable, setNameEditable] = useState(false)
-
+export type AgendaSlideCardProps = {
+  slide: ISlide
+  index: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleBlur = (e: any) => {
-    updateSlide({ ...slide, name: e.target.value })
-    setNameEditable(false)
-  }
+  draggableProps: any
+  displayType: AgendaSlideDisplayType
+  isDragging: boolean
+}
 
-  const slideName = getSlideName(slide)
+type IsDraggableArgs = {
+  eventMode: EventModeType
+  isOwner: boolean
+}
 
-  if (nameEditable) {
-    return (
-      <input
-        defaultValue={slideName}
-        onBlur={handleBlur}
-        onKeyDown={(e) => e.key === 'Enter' && handleBlur(e)}
-        className="outline-none py-1 w-[inherit] pr-2 bg-transparent"
-      />
-    )
-  }
+const isDraggable = ({ eventMode, isOwner }: IsDraggableArgs) => {
+  if (eventMode === 'present' && isOwner) return true
 
-  return (
-    <p
-      className="line-clamp-1 py-1"
-      onClick={() => {
-        if (isOwner) setNameEditable(true)
-      }}>
-      {slideName}
-    </p>
-  )
+  if (eventMode === 'edit') return true
+
+  return false
 }
 
 function SlideListView({
   slide,
   draggableProps,
   index,
-  mode,
   handleActions,
   isDeleteModalOpen,
   setIsDeleteModalOpen,
   handleDelete,
+  onChangeSlide,
 }: SlideListViewProps) {
-  const { currentSlide, setCurrentSlide, isOwner } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { eventMode, updateSlide, currentSlide, isOwner } = useContext(
+    EventContext
+  ) as EventContextType
+
   const Icon = contentTypes.find(
     (type) => type.contentType === slide.type
   )?.icon
@@ -108,16 +98,18 @@ function SlideListView({
     <div
       data-minislide-id={slide.id}
       key={`mini-slide-${slide.id}`}
-      className="flex justify-start items-center gap-2 max-w-full">
-      <span className="w-8">{index + 1}</span>
+      className="flex justify-start items-center gap-2 max-w-full pl-8">
+      <div className="flex-none absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
+        {index + 1}
+      </div>
       <Tooltip content={slide.type}>
         <div className="text-slate-500">{Icon}</div>
       </Tooltip>
       <div
-        {...(mode === 'edit' && draggableProps)}
+        {...(isDraggable({ eventMode, isOwner }) && draggableProps)}
         className={cn(
           'rounded-md flex-auto w-full transition-all flex items-center justify-between group',
-          currentSlide?.id === slide.id ? 'drop-shadow-md' : 'drop-shadow-none'
+          currentSlide?.id === slide.id ? 'drop-shadow-sm' : 'drop-shadow-none'
         )}
         style={{
           backgroundColor: slide.config?.backgroundColor || '#FFFFFF',
@@ -125,10 +117,14 @@ function SlideListView({
         <div>
           <IconGripVertical className="h-4 w-4 text-slate-300 group-hover:text-slate-500" />
         </div>
-        <div
-          className="shrink w-full cursor-pointer"
-          onClick={() => setCurrentSlide(slide)}>
-          <SlideEditableName slide={slide} />
+        <div className="shrink w-full cursor-pointer" onClick={onChangeSlide}>
+          <EditableLabel
+            readOnly={!isOwner}
+            label={slide.name}
+            onUpdate={(value) => {
+              updateSlide({ ...slide, name: value })
+            }}
+          />
         </div>
         {isOwner && (
           <SlideActions
@@ -137,7 +133,7 @@ function SlideListView({
                 <IconDots className="h-6 w-6 text-slate-500 px-1" />
               </div>
             }
-            handleActions={(action) => handleActions(action, slide.id)}
+            handleActions={(action) => handleActions(action, slide)}
           />
         )}
       </div>
@@ -155,29 +151,31 @@ function SlideThumbnailView({
   slide,
   draggableProps,
   index,
-  mode,
   handleActions,
   isDeleteModalOpen,
+  isDragging,
   setIsDeleteModalOpen,
   handleDelete,
+  onChangeSlide,
 }: SlideThumbnailViewProps) {
-  const { currentSlide, setCurrentSlide, isOwner } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { eventMode, updateSlide, currentSlide, isOwner } = useContext(
+    EventContext
+  ) as EventContextType
 
   return (
     <div
       data-minislide-id={slide.id}
       key={`mini-slide-${slide.id}`}
-      className="flex justify-start items-center gap-2 w-full"
-      {...(mode === 'edit' && draggableProps)}>
+      className="flex justify-start items-center gap-2 w-full bg-white"
+      {...(isDraggable({ eventMode, isOwner }) && draggableProps)}>
       <div
-        onClick={() => setCurrentSlide(slide)}
+        onClick={onChangeSlide}
         className={cn(
           'relative rounded-md w-full aspect-video cursor-pointer transition-all border-2 group',
           currentSlide?.id === slide.id
             ? 'drop-shadow-md border-black'
-            : 'drop-shadow-none border-black/20'
+            : 'drop-shadow-none border-black/20',
+          isDragging && '!bg-primary/20'
         )}
         style={{
           backgroundColor: slide.config?.backgroundColor || '#FFFFFF',
@@ -186,10 +184,14 @@ function SlideThumbnailView({
           {index + 1}
         </div>
         <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
-          <div
-            className="shrink w-full cursor-pointer"
-            onClick={() => setCurrentSlide(slide)}>
-            <SlideEditableName slide={slide} />
+          <div className="shrink w-full cursor-pointer">
+            <EditableLabel
+              readOnly={!isOwner}
+              label={slide.name}
+              onUpdate={(value) => {
+                updateSlide({ ...slide, name: value })
+              }}
+            />
           </div>
           {isOwner && (
             <SlideActions
@@ -198,7 +200,7 @@ function SlideThumbnailView({
                   <IconDots className="h-6 w-6 text-slate-500 px-1" />
                 </div>
               }
-              handleActions={(action) => handleActions(action, slide.id)}
+              handleActions={(action) => handleActions(action, slide)}
             />
           )}
         </div>
@@ -213,51 +215,63 @@ function SlideThumbnailView({
   )
 }
 
-type SlideActionKey = 'delete' | 'moveUp' | 'moveDown'
+type SlideActionKey = 'delete' | 'move-up' | 'move-down'
 
-export function MiniSlideManagerCard({
+export function AgendaSlideCard({
   slide,
   index,
   draggableProps,
-  mode,
-  miniSlideView,
-}: IMiniSlideManagerType) {
-  const { deleteSlide, moveUpSlide, moveDownSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  displayType,
+  isDragging,
+}: AgendaSlideCardProps) {
+  const {
+    deleteSlide,
+    moveUpSlide,
+    moveDownSlide,
+    setCurrentSlide,
+    isOwner,
+    eventMode,
+  } = useContext(EventContext) as EventContextType
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
   const handleActions = (
     action: { key: SlideActionKey; label: string },
-    id: string
+    actionSlide: ISlide
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const actions: Record<SlideActionKey, any> = {
       delete: () => setIsDeleteModalOpen(true),
-      moveUp: () => moveUpSlide(id),
-      moveDown: () => moveDownSlide(id),
+      'move-up': () => moveUpSlide(actionSlide),
+      'move-down': () => moveDownSlide(actionSlide),
     }
 
     actions[action.key]()
   }
 
   const handleDelete = (_slide: ISlide) => {
-    deleteSlide(_slide.id)
+    deleteSlide(_slide)
     setIsDeleteModalOpen(false)
   }
 
-  if (miniSlideView === 'thumbnail') {
+  const handleChangeSlide = (s: ISlide) => {
+    if (eventMode === 'present' && !isOwner) return
+
+    setCurrentSlide(s)
+  }
+
+  if (displayType === 'thumbnail') {
     return (
       <SlideThumbnailView
         slide={slide}
         draggableProps={draggableProps}
         index={index}
-        mode={mode}
         handleActions={handleActions}
         isDeleteModalOpen={isDeleteModalOpen}
+        isDragging={isDragging}
         setIsDeleteModalOpen={setIsDeleteModalOpen}
         handleDelete={handleDelete}
+        onChangeSlide={() => handleChangeSlide(slide)}
       />
     )
   }
@@ -267,11 +281,12 @@ export function MiniSlideManagerCard({
       slide={slide}
       draggableProps={draggableProps}
       index={index}
-      mode={mode}
       handleActions={handleActions}
       isDeleteModalOpen={isDeleteModalOpen}
+      isDragging={isDragging}
       setIsDeleteModalOpen={setIsDeleteModalOpen}
       handleDelete={handleDelete}
+      onChangeSlide={() => handleChangeSlide(slide)}
     />
   )
 }

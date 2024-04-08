@@ -6,8 +6,9 @@ import { Button, Input } from '@nextui-org/react'
 
 import { ContentLoading } from '../common/ContentLoading'
 
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide } from '@/types/slide.type'
 
 interface GoogleSlidesImportEditorProps {
   slide: ISlide
@@ -25,13 +26,11 @@ export function GoogleSlidesImportEditor({
     (content.position as number | undefined) || 1
   )
   const [isEditMode, setIsEditMode] = useState(!content.googleSlideURL)
-  const { importGoogleSlides } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { importGoogleSlides } = useContext(EventContext) as EventContextType
 
   const handleImportGoogleSlides = () => {
     importGoogleSlides({
-      slideId: slide.id,
+      slide,
       googleSlideUrl: slideLink,
       startPosition: position,
     })

@@ -12,6 +12,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { Loading } from '@/components/common/Loading'
 import { MeetingScreen } from '@/components/event-session/MeetingScreen'
 import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScreen'
+import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
 import { useEnrollment } from '@/hooks/useEnrollment'
 
@@ -94,19 +95,21 @@ function EventSessionPage() {
   }
 
   return (
-    <EventSessionProvider>
-      <div ref={meetingEl}>
-        <DyteProvider
-          value={meeting}
-          fallback={
-            <div className="h-screen flex justify-center items-center">
-              <Loading />
-            </div>
-          }>
-          {roomJoined ? <MeetingScreen /> : <MeetingSetupScreen />}
-        </DyteProvider>
-      </div>
-    </EventSessionProvider>
+    <EventProvider eventMode="present">
+      <EventSessionProvider>
+        <div ref={meetingEl}>
+          <DyteProvider
+            value={meeting}
+            fallback={
+              <div className="h-screen flex justify-center items-center">
+                <Loading />
+              </div>
+            }>
+            {roomJoined ? <MeetingScreen /> : <MeetingSetupScreen />}
+          </DyteProvider>
+        </div>
+      </EventSessionProvider>
+    </EventProvider>
   )
 }
 

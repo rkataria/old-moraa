@@ -8,8 +8,9 @@ import { Button, Input } from '@nextui-org/react'
 
 import { GoogleSlideEmbed } from '../common/GoogleSlideEmbed'
 
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide } from '@/types/slide.type'
 
 interface GoogleSlidesEditorProps {
   slide: ISlide & {
@@ -25,9 +26,7 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
   const [position, setPosition] = useState<number>(slide.content.position || 1)
   const [isEditMode, setIsEditMode] = useState(!slide.content.googleSlideURL)
 
-  const { updateSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { updateSlide } = useContext(EventContext) as EventContextType
 
   const saveGoogleSlidesLink = () => {
     updateSlide({

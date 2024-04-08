@@ -9,8 +9,9 @@ import { SketchPicker } from 'react-color'
 import { PollForm } from './PollForm'
 
 import { Poll } from '@/components/event-session/content-types/Poll'
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide } from '@/types/slide.type'
 
 export function PollEditor({
   slide,
@@ -19,9 +20,7 @@ export function PollEditor({
   slide: ISlide
   openSettings: boolean
 }) {
-  const { updateSlide, isOwner } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+  const { updateSlide, isOwner } = useContext(EventContext) as EventContextType
   const [showSettings, setShowSettings] = useState<boolean>(openSettings)
   const settingsRef = useClickAway(() => {
     setShowSettings(false)

@@ -6,7 +6,6 @@ const supabase = createClientComponentClient()
 
 export type GetEventParams = {
   eventId: string
-  fetchMeetingSlides?: boolean
   fetchActiveSession?: boolean
 }
 
@@ -53,7 +52,6 @@ const getEvents = async () => {
 
 const getEvent = async ({
   eventId,
-  fetchMeetingSlides = false,
   fetchActiveSession = false,
 }: GetEventParams) => {
   const { data: meeting, error } = await supabase
@@ -72,7 +70,6 @@ const getEvent = async ({
     }
   }
 
-  let slides
   let session
   let participants
 
@@ -83,14 +80,6 @@ const getEvent = async ({
       .eq('event_id', eventId)
       .order('created_at', { ascending: true })
     participants = data
-  }
-
-  if (fetchMeetingSlides) {
-    const { data } = await supabase
-      .from('slide')
-      .select('*, meeting:meeting_id(*)')
-      .eq('meeting_id', meeting.id)
-    slides = data
   }
 
   if (fetchActiveSession) {
@@ -109,7 +98,6 @@ const getEvent = async ({
     event: meeting.event,
     participants,
     meeting,
-    meetingSlides: { slides },
     session,
   }
 }

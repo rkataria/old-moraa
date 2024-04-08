@@ -190,7 +190,7 @@ export function Reflection({
   addReflection,
   updateReflection,
 }: ReflectionProps) {
-  const { updateTypingUsers, activeStateSession } = useContext(
+  const { updateTypingUsers, activeSession } = useContext(
     EventSessionContext
   ) as EventSessionContextType
   const [reflection, setReflection] = useState<{
@@ -206,7 +206,7 @@ export function Reflection({
   const { data: profile } = useProfile()
   const selfParticipant = useDyteSelector((m) => m.self)
   const debouncedReflection = useDebounce(reflection.typedValue, 15000)
-  const typingUsers = activeStateSession?.data?.typingUsers?.filter(
+  const typingUsers = activeSession?.data?.typingUsers?.filter(
     (typingUser: { participantId: string }) =>
       typingUser.participantId !== selfParticipant.id
   )

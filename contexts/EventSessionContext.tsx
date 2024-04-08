@@ -1,21 +1,25 @@
-import { createContext, useEffect, useRef, useState } from 'react'
+/* eslint-disable consistent-return */
+import { createContext, useContext, useEffect, useState } from 'react'
 
 import { sendNotification } from '@dytesdk/react-ui-kit'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import uniqBy from 'lodash.uniqby'
 import { useParams } from 'next/navigation'
-import { OnDragEndResponder } from 'react-beautiful-dnd'
 
-import { useEvent } from '@/hooks/useEvent'
+import { EventContext } from './EventContext'
+
+import { useEnrollment } from '@/hooks/useEnrollment'
 import { useSlideReactions } from '@/hooks/useReactions'
-import { deletePDFFile } from '@/services/pdf.service'
+import { SessionService } from '@/services/session.service'
+import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionContextType,
   PresentationStatuses,
   VideoMiddlewareConfig,
 } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
+import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -29,47 +33,76 @@ export const EventSessionContext =
 
 export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventId } = useParams()
-  const {
-    event,
-    meeting,
-    meetingSlides,
-    activeSession,
-    refetch: refetchMeetingSlides,
-  } = useEvent({
-    id: eventId as string,
-    fetchMeetingSlides: true,
-    fetchActiveSession: true,
+  const { enrollment } = useEnrollment({
+    eventId: eventId as string,
   })
+  const {
+    isOwner,
+    meeting,
+    sections,
+    currentSlide,
+    setCurrentSlide,
+    setCurrentSection,
+  } = useContext(EventContext) as EventContextType
 
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string>('')
-  const [meetingToken, setMeetingToken] = useState<string>('')
-  const [isHost, setIsHost] = useState<boolean>(false)
-  const [slides, setSlides] = useState<ISlide[]>([])
-  const [currentSlide, setCurrentSlide] = useState<ISlide | null>(null)
   const [presentationStatus, setPresentationStatus] =
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
   const [currentSlideResponses, setCurrentSlideResponses] = useState<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any[] | null
   >(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [currentUser, setCurrentUser] = useState<any>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [enrollment, setEnrollment] = useState<any>(null)
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [activeStateSession, setActiveSession] = useState<any>(null)
-  const metaData = useRef<object>({})
-  const [syncing, setSyncing] = useState<boolean>(false)
+  const [activeSession, setActiveSession] = useState<any>(null)
   const [videoMiddlewareConfig, setVideoMiddlewareConfig] =
     useState<VideoMiddlewareConfig | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [slideReactions, setSlideReactions] = useState<any>([])
   const { data: fetchedSlideReactions } = useSlideReactions(currentSlide?.id)
+
+  useEffect(() => {
+    if (!meeting?.id) return
+
+    const fetchActiveSession = async () => {
+      const getActiveSessionResponse = await SessionService.getActiveSession({
+        meetingId: meeting.id,
+      })
+
+      if (getActiveSessionResponse?.error || !getActiveSessionResponse?.data) {
+        console.error(
+          'failed to fetch active session:',
+          getActiveSessionResponse
+        )
+
+        return
+      }
+
+      const _activeSession = getActiveSessionResponse.data as {
+        data: {
+          presentationStatus?: PresentationStatuses
+          currentSlideId?: string
+        }
+      }
+
+      if (sections?.length > 0) {
+        const _currentSlide = sections
+          .flatMap((s) => s.slides)
+          .find((s) => s.id === _activeSession.data?.currentSlideId)
+        setCurrentSlide(_currentSlide || (sections[0].slides || [])[0])
+      }
+
+      setPresentationStatus(
+        _activeSession.data?.presentationStatus || PresentationStatuses.STOPPED
+      )
+      setActiveSession(_activeSession)
+    }
+
+    fetchActiveSession()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meeting?.id, sections])
 
   // Create a channel for the event
   useEffect(() => {
@@ -92,7 +125,16 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
         if (!slideId) return
 
-        setCurrentSlideByID(slideId)
+        const section = sections.find((s) =>
+          s.slides.some((slide) => slide.id === slideId)
+        )
+        if (!section) return
+
+        const slide = section.slides.find((s) => s.id === slideId)
+        if (!slide) return
+
+        setCurrentSlide(slide)
+        setCurrentSection(section)
       }
     )
 
@@ -122,6 +164,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       sendNotification(dyteNotificationObject, 'message')
     })
 
+    // Listen for flying emoji events
     realtimeChannel.on(
       'broadcast',
       { event: 'flying-emoji' },
@@ -137,125 +180,44 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     )
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId, slides])
+  }, [eventId, sections])
 
   useEffect(() => {
-    setActiveSession(activeSession)
-  }, [activeSession])
+    if (!fetchedSlideReactions) return
+    if (!fetchedSlideReactions.length) return
 
-  useEffect(() => {
+    if (
+      JSON.stringify(fetchedSlideReactions) === JSON.stringify(slideReactions)
+    ) {
+      return
+    }
+
     setSlideReactions(fetchedSlideReactions)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchedSlideReactions])
 
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      const user = await supabase.auth.getSession()
-
-      setCurrentUser(user.data.session?.user)
-    }
-
-    fetchCurrentUser()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    if (!activeSession) return
-    setCurrentSlideByID(activeSession.data?.currentSlideId)
-    setPresentationStatus(
-      activeSession.data?.presentationStatus || PresentationStatuses.STOPPED
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSession])
-
-  useEffect(() => {
-    if (!isHost) return
+    if (!isOwner) return
     if (!activeSession) return
 
-    const updateSession = async () => {
-      await supabase.from('session').upsert({
-        id: activeSession.id,
-        data: {
-          currentSlideId: currentSlide?.id,
-          presentationStatus,
-          handsRaised: activeStateSession.data?.handsRaised || [],
-        },
-      })
-    }
-
-    updateSession()
+    updateActiveSession({
+      currentSlideId: currentSlide?.id,
+      presentationStatus,
+    })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSlide, presentationStatus])
 
   useEffect(() => {
-    if (!meeting?.id) return
-
-    const getEnrollment = async () => {
-      try {
-        const _currentUser = await supabase.auth.getSession()
-        const { data, error: _error } = await supabase
-          .from('enrollment')
-          .select('*')
-          .eq('event_id', eventId)
-          .eq('user_id', _currentUser.data.session?.user.id)
-          .single()
-
-        if (_error) {
-          console.error(_error)
-          setError(_error.message)
-
-          return
-        }
-        setMeetingToken(data.meeting_token)
-        setIsHost(data?.event_role === 'Host')
-        setEnrollment(data)
-        setLoading(false)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (_error: any) {
-        console.error(_error)
-        setError(_error.message)
-      }
-    }
-    const getActiveSession = async () => {
-      const { error: _error } = await supabase
-        .from('session')
-        .select('*')
-        .eq('meeting_id', meeting.id)
-        .eq('status', 'ACTIVE')
-        .single()
-      if (_error) {
-        console.error(_error)
-        setError(_error.message)
-      }
-    }
-    getEnrollment()
-    getActiveSession()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.id])
-
-  useEffect(
-    () => {
-      if (!meetingSlides) return
-
-      const meetingSlidesWithContent: ISlide[] = meeting?.slides?.map(
-        (slide: ISlide) => meetingSlides?.slides?.find((s) => s.id === slide)
-      )
-
-      if (!meetingSlidesWithContent || meetingSlidesWithContent.length === 0) {
-        return
-      }
-
-      setSlides(meetingSlidesWithContent)
-      setCurrentSlide(meetingSlidesWithContent[0])
-      setLoading(false)
-    },
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [meetingSlides]
-  )
-
-  useEffect(() => {
     if (!currentSlide) return
+
+    if (isOwner) {
+      realtimeChannel.send({
+        type: 'broadcast',
+        event: 'currentslide-change',
+        payload: { slideId: currentSlide.id },
+      })
+    }
 
     setCurrentSlideLoading(true)
 
@@ -307,39 +269,35 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [currentSlide])
 
   const nextSlide = () => {
-    if (!isHost) return
+    if (!isOwner) return null
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const nextSlide = getNextSlide({ sections, currentSlide })
 
-    const currentIndex = slides.findIndex(
-      (slide) => slide.id === currentSlide?.id
-    )
-    if (currentIndex === slides.length - 1) return
+    if (!nextSlide) return null
 
     realtimeChannel.send({
       type: 'broadcast',
       event: 'currentslide-change',
-      payload: { slideId: slides[currentIndex + 1].id },
+      payload: { slideId: nextSlide.id },
     })
+
+    return null
   }
 
   const previousSlide = () => {
-    if (!isHost) return
+    if (!isOwner) return null
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const previousSlide = getPreviousSlide({ sections, currentSlide })
 
-    const currentIndex = slides.findIndex(
-      (slide) => slide.id === currentSlide?.id
-    )
-    if (currentIndex === 0) return
+    if (!previousSlide) return null
 
     realtimeChannel.send({
       type: 'broadcast',
       event: 'currentslide-change',
-      payload: { slideId: slides[currentIndex - 1].id },
+      payload: { slideId: previousSlide.id },
     })
-  }
 
-  const setCurrentSlideByID = (id: string) => {
-    const newSlide = slides.find((slide) => slide.id === id)
-    if (!newSlide) return
-    setCurrentSlide(newSlide)
+    return null
   }
 
   const startPresentation = () => {
@@ -387,6 +345,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.error(_error)
     }
   }
+
   const addReflection = async (
     slide: ISlide,
     reflection: string,
@@ -415,6 +374,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.error(_error)
     }
   }
+
   const updateReflection = async (
     id: string,
     reflection: string,
@@ -510,10 +470,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
   }
 
-  const syncSlides = async () => {
-    await refetchMeetingSlides()
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addParticipant = async (session?: any) => {
     const { data: existingParticipant, error: existingParticipantError } =
@@ -538,7 +494,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           .single()
 
       if (createdParticipantError) {
-        console.error('failed to create participant:', error)
+        console.error('failed to create participant:', createdParticipantError)
 
         return
       }
@@ -551,33 +507,36 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
   const joinMeeting = async () => {
     // check if active session exists, else create one
-    const { data: session, error: _error } = await supabase
-      .from('session')
-      .select()
-      .eq('meeting_id', meeting?.id)
-      .eq('status', 'ACTIVE')
-      .single()
+    const getActiveSessionResponse = await SessionService.getActiveSession({
+      meetingId: meeting?.id,
+    })
 
-    if (_error || !session) {
+    if (getActiveSessionResponse?.error || !getActiveSessionResponse?.data) {
       // create new session in active state
-      const { data: _session, error: createSessionError } = await supabase
-        .from('session')
-        .insert([{ meeting_id: meeting?.id, status: 'ACTIVE' }])
-        .select()
-        .single()
-      if (createSessionError) {
-        console.error('failed to create session, error: ', createSessionError)
+      const createSessionResponse = await SessionService.createSession({
+        meetingId: meeting?.id,
+      })
+
+      if (createSessionResponse?.error || !createSessionResponse?.data) {
+        console.error(
+          'failed to create session, error: ',
+          createSessionResponse
+        )
 
         return
       }
-      await addParticipant(_session)
+
+      await addParticipant(createSessionResponse.data)
 
       return
     }
-    await addParticipant(session)
+
+    await addParticipant(getActiveSessionResponse.data)
   }
 
   useEffect(() => {
+    if (!activeSession?.id) return
+
     const channels = supabase
       .channel('session-channel')
       .on(
@@ -586,7 +545,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           event: '*',
           schema: 'public',
           table: 'session',
-          filter: `id=eq.${activeStateSession?.id}`,
+          filter: `id=eq.${activeSession?.id}`,
         },
         (payload) => {
           setActiveSession(payload?.new)
@@ -598,153 +557,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       channels.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeStateSession?.id])
-
-  const updateSlideIds = async (ids: string[]) => {
-    if (!meeting?.id) return
-
-    const { error: updatedSlideError } = await supabase
-      .from('meeting')
-      .update({ slides: ids })
-      .eq('id', meeting?.id)
-    if (updatedSlideError) {
-      console.error('error while updating slide ids on meeting,error: ', error)
-    }
-  }
-
-  const moveUpSlide = (id: string) => {
-    const index = slides.findIndex((slide) => slide.id === id)
-    const slideIds = slides.map((i) => i.id)
-
-    if (index === 0) return
-
-    const newSlides = [...slides]
-    const temp = newSlides[index - 1]
-    newSlides[index - 1] = newSlides[index]
-    newSlides[index] = temp
-
-    setSlides(newSlides)
-
-    // Reorder the slideIds
-    const idIndex = slideIds.findIndex((i) => i === id)
-    if (idIndex === 0) return
-    const newIds = [...slideIds]
-    const tempId = newIds[index - 1]
-    newIds[index - 1] = newIds[index]
-    newIds[index] = tempId
-    updateSlideIds(newIds)
-  }
-
-  const moveDownSlide = (id: string) => {
-    const index = slides.findIndex((slide) => slide.id === id)
-    const slideIds = slides.map((i) => i.id)
-
-    if (index === slides.length - 1) return
-
-    const newSlides = [...slides]
-    const temp = newSlides[index + 1]
-    newSlides[index + 1] = newSlides[index]
-    newSlides[index] = temp
-
-    setSlides(newSlides)
-
-    // Reorder the slideIds
-    const idIndex = slideIds.findIndex((i) => i === id)
-    if (idIndex === 0) return
-    const newIds = [...slideIds]
-    const tempId = newIds[index + 1]
-    newIds[index + 1] = newIds[index]
-    newIds[index] = tempId
-    updateSlideIds(newIds)
-  }
-
-  const updateSlide = async (slide: ISlide) => {
-    const _slide = { ...slide }
-    _slide.meeting_id = slide.meeting_id ?? meeting?.id
-    await supabase.from('slide').upsert({
-      id: _slide.id,
-      content: _slide.content,
-      config: _slide.config,
-      name: _slide.name,
-    })
-    setCurrentSlide(_slide)
-    setSlides((s) => {
-      if (s.findIndex((i) => i.id === _slide.id) >= 0) {
-        return s.map((sl) => (sl.id === _slide.id ? _slide : sl))
-      }
-
-      return [...s, _slide]
-    })
-  }
-
-  const deleteSlide = async (id: string) => {
-    const { error: deleteSlideError } = await supabase
-      .from('slide')
-      .delete()
-      .eq('id', id)
-
-    if (deleteSlideError) {
-      console.error('failed to delete the slide: ', deleteSlideError)
-    }
-    const index = slides.findIndex((slide) => slide.id === id)
-    // TODO: Implement block pattern
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const slide = slides.find((_slide) => _slide.id === id) as any
-    if (slide?.content?.pdfPath) {
-      deletePDFFile(slide?.content?.pdfPath)
-    }
-
-    const updatedSlides = slides.filter((_slide) => _slide.id !== id)
-    setSlides(updatedSlides)
-    setSlides((s) => s.filter((_slide) => _slide.id !== id))
-    await updateSlideIds(
-      slides.filter((slideData) => slideData.id !== id).map((i) => i.id)
-    )
-
-    if (currentSlide?.id === id) {
-      if (index !== updatedSlides.length) {
-        setCurrentSlide(updatedSlides[index])
-
-        return
-      }
-      if (updatedSlides.length > 0) {
-        setCurrentSlide(updatedSlides[index - 1])
-
-        return
-      }
-      setCurrentSlide(null)
-    }
-  }
-
-  const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
-    const result = list
-    const [removed] = result.splice(startIndex, 1)
-    result.splice(endIndex, 0, removed)
-
-    return result
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const reorderSlide = async (result: OnDragEndResponder | any) => {
-    if (!result.destination) {
-      return
-    }
-    const items = reorder(slides, result.source.index, result.destination.index)
-    setSlides(items)
-    setSyncing(true)
-    await updateSlideIds(items.map((i) => i.id))
-    setSyncing(false)
-  }
-
-  const changeCurrentSlide = (slide: ISlide) => {
-    if (!isHost) return
-
-    realtimeChannel.send({
-      type: 'broadcast',
-      event: 'currentslide-change',
-      payload: { slideId: slide.id },
-    })
-  }
+  }, [activeSession?.id])
 
   const onToggleHandRaised = async ({
     handRaise,
@@ -755,9 +568,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     participantId: string
     participantName: string
   }) => {
-    if (!activeStateSession) return
+    if (!activeSession) return
 
-    const prevSessionRaisedHands = activeStateSession?.data?.handsRaised || []
+    const prevSessionRaisedHands = activeSession?.data?.handsRaised || []
     let updateRaisedHands = prevSessionRaisedHands
     if (handRaise) {
       updateRaisedHands = [
@@ -778,18 +591,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       )
     }
 
-    const updateHandRaisedResponse = await supabase.from('session').upsert({
-      id: activeStateSession.id,
-      data: {
-        currentSlideId: currentSlide?.id,
-        presentationStatus,
-        handsRaised: updateRaisedHands,
-      },
+    await updateActiveSession({
+      handsRaised: updateRaisedHands,
     })
-
-    if (updateHandRaisedResponse.error) {
-      console.error('failed to update hands raised:', error)
-    }
   }
   const updateTypingUsers = async ({
     isTyping,
@@ -800,9 +604,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     participantId: string
     participantName?: string
   }) => {
-    if (!activeStateSession) return
+    if (!activeSession) return
 
-    const prevSessionUserTypings = activeStateSession?.data?.typingUsers || []
+    const prevSessionUserTypings = activeSession?.data?.typingUsers || []
 
     let updatedUserTypings = prevSessionUserTypings
 
@@ -819,17 +623,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       )
     }
 
-    const userTypingsResponse = await supabase.from('session').upsert({
-      id: activeStateSession.id,
-      data: {
-        ...activeSession.data,
-        typingUsers: updatedUserTypings,
-      },
+    await updateActiveSession({
+      typingUsers: updatedUserTypings,
     })
-
-    if (userTypingsResponse.error) {
-      console.error('failed to update user typings:', error)
-    }
   }
 
   const flyEmoji = ({ emoji, name }: { emoji: string; name: string }) => {
@@ -843,50 +639,54 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     })
   }
 
+  const updateActiveSession = async (data: object) => {
+    if (!activeSession) return
+
+    const updateSessionResponse = await SessionService.updateSession({
+      sessionPayload: {
+        data: {
+          ...activeSession.data,
+          ...data,
+        },
+      },
+      sessionId: activeSession.id,
+    })
+
+    if (updateSessionResponse?.error) {
+      console.error('failed to update session:', updateSessionResponse.error)
+    }
+  }
+
   return (
     <EventSessionContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
-        event,
-        loading,
-        error,
-        meetingToken,
-        isHost,
-        slides,
+        isHost: isOwner,
         currentSlide,
         presentationStatus,
         currentSlideResponses,
         currentSlideLoading,
-        currentUser,
-        metaData,
         participant,
         videoMiddlewareConfig,
-        activeStateSession,
-        syncing,
+        activeSession,
         slideReactions,
-        syncSlides,
+        realtimeChannel,
         startPresentation,
         stopPresentation,
         pausePresentation,
         setCurrentSlide,
         nextSlide,
         previousSlide,
-        setCurrentSlideByID,
         onVote,
         addReflection,
         updateReflection,
         emoteOnReflection,
         joinMeeting,
-        reorderSlide,
-        moveUpSlide,
-        moveDownSlide,
-        deleteSlide,
-        updateSlide,
-        changeCurrentSlide,
         onToggleHandRaised,
         setVideoMiddlewareConfig,
         updateTypingUsers,
         flyEmoji,
+        updateActiveSession,
       }}>
       {children}
     </EventSessionContext.Provider>

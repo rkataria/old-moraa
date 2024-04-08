@@ -8,7 +8,6 @@ import { Button } from '@nextui-org/react'
 
 import { CoverEditor } from './content-types/CoverEditor'
 import { TextImageEditor } from './content-types/TextImageEditor'
-import { ContentType } from './ContentTypePicker'
 import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
 import { GoogleSlidesEditor } from './GoogleSlidesEditor'
 import { PollEditor } from './PollEditor'
@@ -16,6 +15,7 @@ import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
 import { ImageViewer } from '../common/ImageViewer'
 
+import { ContentType } from '@/components/common/ContentTypePicker'
 import { ISlide } from '@/types/slide.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 

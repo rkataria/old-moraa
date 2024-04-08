@@ -2,8 +2,8 @@ import React, { useContext } from 'react'
 
 import { Cover } from './content-types/Cover'
 import { Poll } from './content-types/Poll'
-import { ContentType } from '../event-content/ContentTypePicker'
 
+import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'

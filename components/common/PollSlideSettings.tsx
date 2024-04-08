@@ -2,15 +2,14 @@ import { useContext } from 'react'
 
 import { Checkbox } from '@nextui-org/react'
 
-import { ContentType } from '../event-content/ContentTypePicker'
-
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
-import { SlideManagerContextType } from '@/types/slide.type'
+import { ContentType } from '@/components/common/ContentTypePicker'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
 
 export function PollSlideSettings() {
   const { updateSlide, currentSlide } = useContext(
-    SlideManagerContext
-  ) as SlideManagerContextType
+    EventContext
+  ) as EventContextType
 
   if (!currentSlide || currentSlide.type !== ContentType.POLL) return null
 

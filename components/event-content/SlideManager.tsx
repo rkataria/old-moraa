@@ -1,36 +1,35 @@
 'use client'
 
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 
 import { useParams } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid'
 
-import { ContentTypePicker, ContentType } from './ContentTypePicker'
 import { Header } from './Header'
-import { MiniSlideManager } from './MiniSlideManager'
 import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
 import { Loading } from '../common/Loading'
 import { SyncingStatus } from '../common/SyncingStatus'
 import { FlyingEmojisOverlay } from '../event-session/FlyingEmojisOverlay'
 
-import { SlideManagerContext } from '@/contexts/SlideManagerContext'
+import { AgendaPanel } from '@/components/common/AgendaPanel'
+import {
+  ContentTypePicker,
+  ContentType,
+} from '@/components/common/ContentTypePicker'
+import { EventContext } from '@/contexts/EventContext'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { SlideStatus } from '@/services/types/enums'
-import { ISlide, SlideManagerContextType } from '@/types/slide.type'
+import { EventContextType } from '@/types/event-context.type'
+import { ISlide } from '@/types/slide.type'
 import { getDefaultContent } from '@/utils/content.util'
-import { cn } from '@/utils/utils'
+import { cn, getSlideCount } from '@/utils/utils'
 
 export function SlideManager() {
   const { eventId } = useParams()
-  const {
-    event,
-    isLoading: eventLoading,
-    meetingSlides,
-  } = useEvent({
+  const { event, isLoading: eventLoading } = useEvent({
     id: eventId as string,
-    fetchMeetingSlides: true,
   })
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
@@ -40,15 +39,14 @@ export function SlideManager() {
   const isOwner = useMemo(() => userId === event?.owner_id, [userId, event])
 
   const {
-    slides,
     loading,
     syncing,
     currentSlide,
-    setCurrentSlide,
-    addNewSlide,
-    reorderSlide,
-  } = useContext(SlideManagerContext) as SlideManagerContextType
-  const addSlideRef = useRef<HTMLDivElement>(null)
+    sections,
+    insertAfterSlideId,
+    insertInSectionId,
+    addSlideToSection,
+  } = useContext(EventContext) as EventContextType
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
 
@@ -71,9 +69,11 @@ export function SlideManager() {
   const settingsEnabled = getSettingsEnabled()
 
   const handleAddNewSlide = (contentType: ContentType) => {
+    const insertInSection = sections.find((s) => s.id === insertInSectionId)
+
     const newSlide: ISlide = {
       id: uuidv4(),
-      name: `Slide ${slides.length + 1}`,
+      name: `Slide ${(insertInSection?.slides?.length || 0) + 1}`,
       config: {
         backgroundColor: '#fff',
         textColor: '#000',
@@ -86,7 +86,11 @@ export function SlideManager() {
       status: SlideStatus.PUBLISHED,
     }
 
-    addNewSlide(newSlide)
+    addSlideToSection({
+      slide: newSlide,
+      section: insertInSection,
+      afterSlideId: insertAfterSlideId!,
+    })
     setOpenContentTypePicker(false)
   }
 
@@ -98,8 +102,16 @@ export function SlideManager() {
     )
   }
 
+  const getIsSlidePublished = () => {
+    const allSlides = sections.flatMap((s) => s.slides)
+
+    return allSlides.some((slide) => slide.status === SlideStatus.PUBLISHED)
+  }
+
   const renderSlide = () => {
-    if (slides.length === 0) {
+    const slideCount = getSlideCount(sections)
+
+    if (slideCount === 0) {
       return (
         <div className="flex items-center justify-center w-full h-full bg-gray-50">
           <p className="text-2xl font-semibold">Add a slide to get started</p>
@@ -128,24 +140,12 @@ export function SlideManager() {
           event={event}
           leftSidebarVisible={leftSidebarVisible}
           onLeftSidebarToggle={setLeftSidebarVisible}
-          isSlidePublished={
-            meetingSlides?.slides?.some(
-              (slide) => slide.status === SlideStatus.PUBLISHED
-            ) || false
-          }
+          isSlidePublished={getIsSlidePublished()}
         />
       </SlideManagerHeader>
       <div className="flex flex-auto w-full">
         <SlideManagerLeftSidebarWrapper visible={leftSidebarVisible}>
-          <MiniSlideManager
-            mode={isOwner ? 'edit' : 'read'}
-            slides={slides}
-            addSlideRef={addSlideRef}
-            currentSlide={currentSlide}
-            setOpenContentTypePicker={setOpenContentTypePicker}
-            setCurrentSlide={setCurrentSlide}
-            reorderSlide={reorderSlide}
-          />
+          <AgendaPanel setOpenContentTypePicker={setOpenContentTypePicker} />
         </SlideManagerLeftSidebarWrapper>
         <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto">
           {renderSlide()}

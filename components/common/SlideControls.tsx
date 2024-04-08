@@ -4,17 +4,18 @@ import { IconChevronUp, IconChevronDown } from '@tabler/icons-react'
 
 import { cn } from '@nextui-org/react'
 
+import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useHotkeys } from '@/hooks/useHotkeys'
+import { EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
+import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
 
 export function SlideControls() {
-  const { slides, currentSlide, nextSlide, previousSlide, isHost } = useContext(
+  const { sections } = useContext(EventContext) as EventContextType
+  const { currentSlide, nextSlide, previousSlide, isHost } = useContext(
     EventSessionContext
   ) as EventSessionContextType
-  const currentSlideIndex = slides.findIndex(
-    (slide) => slide.id === currentSlide?.id
-  )
 
   const arrowUp = useHotkeys('ArrowUp', () => {
     previousSlide()
@@ -28,7 +29,7 @@ export function SlideControls() {
 
   return (
     <div>
-      {currentSlideIndex !== 0 && (
+      {getPreviousSlide({ sections, currentSlide }) && (
         <div className="absolute left-[50%] top-0 z-10">
           <IconChevronUp
             className={cn(
@@ -41,7 +42,7 @@ export function SlideControls() {
           />
         </div>
       )}
-      {currentSlideIndex < slides.length && (
+      {getNextSlide({ sections, currentSlide }) && (
         <div className="absolute left-[50%] bottom-0 z-10">
           <IconChevronDown
             className={cn(

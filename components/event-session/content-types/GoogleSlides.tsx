@@ -1,14 +1,11 @@
 'use client'
 
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-
-import { useDyteMeeting } from '@dytesdk/react-web-core'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { GoogleSlideEmbed } from '@/components/common/GoogleSlideEmbed'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
-import { SlideEventManagerType, SlideEvents } from '@/utils/events.util'
 
 interface GoogleSlidesProps {
   slide: ISlide & {
@@ -19,83 +16,46 @@ interface GoogleSlidesProps {
   }
 }
 
-const PositionChangeEvent = 'g-slide-position-changed'
+const positionChangeEvent = 'g-slide-position-changed'
 
 export function GoogleSlides({ slide }: GoogleSlidesProps) {
   const {
     content: { googleSlideURL, startPosition },
   } = slide
-  const { meeting } = useDyteMeeting()
-  const { isHost, metaData } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
-  const [position, setPosition] = useState<number>(
-    metaData.current.GSlideLastPosition || startPosition || 1
-  )
+  const { isHost, realtimeChannel, activeSession, updateActiveSession } =
+    useContext(EventSessionContext) as EventSessionContextType
+  const [position, setPosition] = useState<number>(startPosition || 1)
 
   useEffect(() => {
-    const nextPosition = () =>
-      setPosition((pos) => {
-        const newPos = pos + 1
-        if (isHost) broadcastSlidePosition(newPos)
+    if (!activeSession?.data?.GSlideLastPosition) return
 
-        return newPos
-      })
-    const prevPosition = () =>
-      setPosition((pos) => {
-        const newPos = pos > 1 ? pos - 1 : pos
-        if (isHost) broadcastSlidePosition(newPos)
+    setPosition(activeSession?.data?.GSlideLastPosition)
+  }, [activeSession?.data?.GSlideLastPosition])
 
-        return newPos
-      })
+  useEffect(() => {
+    if (!isHost) return
+    if (!realtimeChannel) return
+    realtimeChannel.on(
+      'broadcast',
+      { event: positionChangeEvent },
+      ({ payload }) => {
+        console.log('Received position change event', payload)
+        setPosition(payload.position || 1)
 
-    const handleBroadcastedMessage = ({
-      type,
-      payload,
-    }: {
-      type: string
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      payload: any
-    }) => {
-      switch (type) {
-        case PositionChangeEvent: {
-          setPosition(payload.position || 1)
-          metaData.current.GSlideLastPosition = payload.position || 1
-          break
-        }
-        default:
-          break
+        updateActiveSession({
+          GSlideLastPosition: payload.position || 1,
+        })
       }
-    }
-    meeting.participants.addListener(
-      'broadcastedMessage',
-      handleBroadcastedMessage
     )
-    SlideEvents[SlideEventManagerType.OnRight].subscribe(nextPosition)
-    SlideEvents[SlideEventManagerType.OnLeft].subscribe(prevPosition)
-
-    return () => {
-      meeting.participants.removeListener(
-        'broadcastedMessage',
-        handleBroadcastedMessage
-      )
-      SlideEvents[SlideEventManagerType.OnRight].unsubscribe(nextPosition)
-      SlideEvents[SlideEventManagerType.OnLeft].unsubscribe(prevPosition)
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const broadcastSlidePosition = useCallback((newPosition: number) => {
-    meeting.participants.broadcastMessage(PositionChangeEvent, {
-      position: newPosition,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [realtimeChannel])
 
   const handleCurrentPageChange = (pageNumber: number) => {
-    if (pageNumber === 0) return
-
-    setPosition(pageNumber)
+    realtimeChannel.send({
+      type: 'broadcast',
+      event: positionChangeEvent,
+      payload: { position: pageNumber },
+    })
   }
 
   return (

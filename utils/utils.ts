@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
+import { ISection } from '@/types/slide.type'
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -24,3 +26,6 @@ const formatToPaddedString = (value: number) =>
 
 export const getOjectPublicUrl = (objectPath: string) =>
   `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${objectPath}`
+
+export const getSlideCount = (sections: ISection[]) =>
+  sections.reduce((acc, section) => acc + section.slides.length, 0)

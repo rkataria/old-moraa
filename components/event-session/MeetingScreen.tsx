@@ -15,7 +15,6 @@ import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { ContentContainer } from './ContentContainer'
 import { Header } from './Header'
-import { MiniSlideManager } from './MiniSlideMananger'
 import { ParticipantTiles } from './ParticipantTiles'
 import {
   SlideManagerHeader,
@@ -23,6 +22,7 @@ import {
   SlideManagerRightSidebarWrapper,
 } from '../event-content/SlideManager'
 
+import { AgendaPanel } from '@/components/common/AgendaPanel'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import {
   EventSessionContextType,
@@ -44,7 +44,7 @@ export function MeetingScreen() {
   const [spotlightMode, setSpotlightMode] = useState<boolean>(true)
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
 
-  const { slides, isHost, presentationStatus } = useContext(
+  const { presentationStatus } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -130,11 +130,7 @@ export function MeetingScreen() {
             'w-0': !leftSidebarVisible,
             'w-72': leftSidebarVisible,
           })}>
-          <MiniSlideManager
-            isHost={isHost}
-            visible={leftSidebarVisible}
-            slides={slides}
-          />
+          <AgendaPanel />
         </div>
         <div
           className={cn('flex-1 flex justify-start items-start', {
