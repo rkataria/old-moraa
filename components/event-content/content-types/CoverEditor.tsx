@@ -53,37 +53,35 @@ export function CoverEditor() {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden">
-      <div className="h-full flex flex-col justify-center items-start w-full">
-        {textBlocks.map((block) => (
-          <div
-            onClick={() => setEditingBlock(block.id)}
-            id={`block-editor-${block.id}`}
-            className="w-full">
-            <TextBlockEditor
-              key={block.id}
-              block={block}
-              editable={editingBlock === block.id}
-              onChange={(updatedBlock) => {
-                setLocalSlide({
-                  ...localSlide,
-                  content: {
-                    ...localSlide.content,
-                    blocks: (localSlide.content?.blocks as TextBlock[])?.map(
-                      (b) => {
-                        if (b.id === block.id) {
-                          return updatedBlock
-                        }
-
-                        return b
+      {textBlocks.map((block) => (
+        <div
+          onClick={() => setEditingBlock(block.id)}
+          id={`block-editor-${block.id}`}
+          className="w-full">
+          <TextBlockEditor
+            key={block.id}
+            block={block}
+            editable={editingBlock === block.id}
+            onChange={(updatedBlock) => {
+              setLocalSlide({
+                ...localSlide,
+                content: {
+                  ...localSlide.content,
+                  blocks: (localSlide.content?.blocks as TextBlock[])?.map(
+                    (b) => {
+                      if (b.id === block.id) {
+                        return updatedBlock
                       }
-                    ),
-                  },
-                })
-              }}
-            />
-          </div>
-        ))}
-      </div>
+
+                      return b
+                    }
+                  ),
+                },
+              })
+            }}
+          />
+        </div>
+      ))}
     </div>
   )
 }

@@ -17,6 +17,7 @@ import { ContentContainer } from './ContentContainer'
 import { Header } from './Header'
 import { ParticipantTiles } from './ParticipantTiles'
 import {
+  SlideManagerBody,
   SlideManagerHeader,
   SlideManagerLayoutRoot,
   SlideManagerRightSidebarWrapper,
@@ -124,7 +125,7 @@ export function MeetingScreen() {
           toggleLeftSidebar={() => setLeftSidebarVisible((o) => !o)}
         />
       </SlideManagerHeader>
-      <div className="flex flex-auto w-full">
+      <SlideManagerBody>
         <div
           className={cn('flex-none transition-all duration-300 ease-in-out', {
             'w-0': !leftSidebarVisible,
@@ -158,7 +159,7 @@ export function MeetingScreen() {
         <SlideManagerRightSidebarWrapper visible={!!rightSidebar}>
           {renderRightSidebar()}
         </SlideManagerRightSidebarWrapper>
-      </div>
+      </SlideManagerBody>
 
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />

@@ -43,24 +43,22 @@ export function TextImage({ slide }: TextImageProps) {
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className="w-full h-full flex flex-col justify-center items-center">
+      className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-start">
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>
-          <div className="h-full flex flex-col justify-center items-center">
+          <div className="h-full flex flex-col justify-center items-start">
             {textBlocks.map((block) => (
-              <div key={`block-editor-${block.id}`}>
-                <div
-                  className={
-                    block.type === 'header'
-                      ? 'block-content-header'
-                      : 'block-content-paragraph'
-                  }
-                  // eslint-disable-next-line react/no-danger
-                  dangerouslySetInnerHTML={{
-                    __html: block.data.html,
-                  }}
-                />
-              </div>
+              <div
+                key={`block-editor-${block.id}`}
+                className={cn('w-full', {
+                  'block-content-header': block.type === 'header',
+                  'block-content-paragraph': block.type === 'paragraph',
+                })}
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{
+                  __html: block.data.html,
+                }}
+              />
             ))}
           </div>
         </Panel>

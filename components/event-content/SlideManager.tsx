@@ -200,6 +200,14 @@ export function SlideManagerHeader({
   )
 }
 
+export function SlideManagerBody({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-auto w-full h-[calc(100vh_-_64px)]">
+      {children}
+    </div>
+  )
+}
+
 export function SlideManagerLeftSidebarWrapper({
   children,
   visible,

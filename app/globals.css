@@ -65,6 +65,11 @@
   @apply text-2xl font-bold;
 }
 
+.tiptap ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+}
+
 /* Block Content Styles */
 .block-content-header,
 .block-content-paragraph {

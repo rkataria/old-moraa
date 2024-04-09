@@ -14,6 +14,7 @@ import {
   LuHeading1,
   LuHeading2,
   LuItalic,
+  LuList,
 } from 'react-icons/lu'
 import { MdInvertColors } from 'react-icons/md'
 
@@ -160,6 +161,11 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         active={editor.isActive({ textAlign: 'right' })}
         icon={<LuAlignRight size={18} />}
         onClick={() => editor.chain().focus().setTextAlign('right').run()}
+      />
+      <ControlButton
+        active={editor.isActive('bulletList')}
+        icon={<LuList size={18} />}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
       />
     </>
   )

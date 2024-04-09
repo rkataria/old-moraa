@@ -3,6 +3,7 @@
 import React from 'react'
 
 import { ISlide, TextBlock } from '@/types/slide.type'
+import { cn } from '@/utils/utils'
 
 interface CoverProps {
   slide: ISlide
@@ -19,7 +20,9 @@ export function Cover({ slide }: CoverProps) {
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className="w-full h-full flex flex-col justify-center items-center px-4">
+      className={cn(
+        'tiptap ProseMirror w-full h-full flex flex-col justify-center items-center px-4'
+      )}>
       <div
         className="block-content-header"
         // eslint-disable-next-line react/no-danger
