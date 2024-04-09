@@ -43,7 +43,25 @@ export type EventSessionContextType = {
   setCurrentSlide: (slide: ISlide) => void
   nextSlide: () => void
   previousSlide: () => void
-  onVote: (slide: ISlide, options: string[]) => void
+  onVote: (
+    slide: ISlide,
+    {
+      selectedOptions,
+      anonymous,
+    }: {
+      selectedOptions: string[]
+      anonymous: boolean
+    }
+  ) => void
+  onUpdateVote: (
+    responseId: string,
+    {
+      anonymous,
+      ...rest
+    }: {
+      anonymous: boolean
+    }
+  ) => void
   addReflection?: ({
     slide,
     reflection,

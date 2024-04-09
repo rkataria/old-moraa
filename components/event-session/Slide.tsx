@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 
 import { Cover } from './content-types/Cover'
 import { GoogleSlides } from './content-types/GoogleSlides'
-import { Poll } from './content-types/Poll'
+import { Poll, Vote } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
 import { TextImage } from './content-types/TextImage'
 import { VideoEmbed } from './content-types/VideoEmbed'
@@ -35,7 +35,6 @@ export function Slide() {
   const {
     presentationStatus,
     currentSlide,
-    onVote,
     currentSlideResponses,
     currentSlideLoading,
     isHost,
@@ -66,8 +65,7 @@ export function Slide() {
       <Poll
         key={currentSlide.id}
         slide={currentSlide as any}
-        onVote={onVote}
-        votes={currentSlideResponses}
+        votes={currentSlideResponses as Vote[]}
         isOwner={isHost}
         voted={checkVoted(currentSlideResponses, currentUser)}
       />
