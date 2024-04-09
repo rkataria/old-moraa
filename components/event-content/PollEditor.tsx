@@ -63,7 +63,6 @@ export function PollEditor({
           <h3 className="text-xl font-bold mb-4">Add a background color</h3>
           <div className="relative">
             <div className="my-4">
-              {/* <label className="block mb-2 font-bold">Background Color</label> */}
               <SketchPicker
                 color={slide.config.backgroundColor}
                 onChange={(color) => {
@@ -77,21 +76,6 @@ export function PollEditor({
                 }}
               />
             </div>
-            {/* <div className="my-4">
-              <label className="block mb-2 font-bold">Text Color</label>
-              <SketchPicker
-                color={slide.config.textColor}
-                onChange={(color) => {
-                  updateSlide({
-                    ...slide,
-                    config: {
-                      ...slide.config,
-                      textColor: color.hex,
-                    },
-                  })
-                }}
-              />
-            </div> */}
           </div>
         </div>
       </div>

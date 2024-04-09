@@ -1,16 +1,16 @@
 import React, { useContext } from 'react'
 
 import { Cover } from './content-types/Cover'
-import { Poll } from './content-types/Poll'
+import { Poll, type Vote } from './content-types/Poll'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
-import { EventSessionContextType } from '@/types/event-session.type'
+import { type EventSessionContextType } from '@/types/event-session.type'
 import { checkVoted } from '@/utils/content.util'
 
 export function PresentationSlide() {
-  const { currentSlide, currentSlideResponses, onVote } = useContext(
+  const { currentSlide, currentSlideResponses } = useContext(
     EventSessionContext
   ) as EventSessionContextType
   const { currentUser } = useAuth()
@@ -27,8 +27,7 @@ export function PresentationSlide() {
           key={currentSlide.id}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           slide={currentSlide as any}
-          onVote={onVote}
-          votes={currentSlideResponses}
+          votes={currentSlideResponses as Vote[]}
           voted={checkVoted(currentSlideResponses, currentUser)}
         />
       )}

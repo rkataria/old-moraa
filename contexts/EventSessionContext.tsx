@@ -324,12 +324,21 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     })
   }
 
-  const onVote = async (slide: ISlide, options: string[]) => {
+  const onVote = async (
+    slide: ISlide,
+    {
+      selectedOptions,
+      anonymous,
+    }: {
+      selectedOptions: string[]
+      anonymous: boolean
+    }
+  ) => {
     try {
       const slideResponse = await supabase
         .from('slide_response')
         .upsert({
-          response: { selected_options: options },
+          response: { selected_options: selectedOptions, anonymous },
           slide_id: slide.id,
           participant_id: participant.id,
         })
@@ -345,6 +354,34 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.error(_error)
     }
   }
+
+  const onUpdateVote = async (
+    responseId: string,
+    {
+      anonymous,
+      ...rest
+    }: {
+      anonymous: boolean
+    }
+  ) => {
+    try {
+      const slideResponse = await supabase
+        .from('slide_response')
+        .update({
+          response: { anonymous, ...rest },
+        })
+        .eq('id', responseId)
+        .select()
+
+      if (slideResponse.error) {
+        console.error(slideResponse.error)
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (_error: any) {
+      console.error(_error)
+    }
+  }
+
   const addReflection = async ({
     slide,
     reflection,
@@ -713,6 +750,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         nextSlide,
         previousSlide,
         onVote,
+        onUpdateVote,
         addReflection,
         updateReflection,
         emoteOnReflection,
