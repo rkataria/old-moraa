@@ -20,6 +20,7 @@ import { Button } from '@nextui-org/react'
 import { FlyingEmojis } from './FlyingEmojis'
 import { PresentationControls } from './PresentationControls'
 import { RaiseHand } from './RaiseHand'
+import { Timer } from './Timer'
 import { WhiteboardToggleButton } from './WhiteboardToggleButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -69,6 +70,7 @@ export function Header({
         <PresentationControls />
         <RaiseHand />
         <FlyingEmojis />
+        <Timer />
 
         <DyteSettingsToggle
           size="lg"

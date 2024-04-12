@@ -29,3 +29,6 @@ export const getOjectPublicUrl = (objectPath: string) =>
 
 export const getSlideCount = (sections: ISection[]) =>
   sections.reduce((acc, section) => acc + section.slides.length, 0)
+
+export const zeroPad = (num: number, places: number) =>
+  String(num).padStart(places, '0')
