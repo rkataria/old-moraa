@@ -21,7 +21,7 @@ export function Cover({ slide }: CoverProps) {
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
       className={cn(
-        'tiptap ProseMirror w-full h-full flex flex-col justify-center items-center px-4'
+        'tiptap ProseMirror w-full h-full flex flex-col justify-center items-start px-4'
       )}>
       <div
         className="block-content-header"

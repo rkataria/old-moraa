@@ -2,10 +2,8 @@
 
 import React, { useEffect } from 'react'
 
-import BulletList from '@tiptap/extension-bullet-list'
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
-import ListItem from '@tiptap/extension-list-item'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import { EditorContent, useEditor } from '@tiptap/react'
@@ -29,8 +27,6 @@ const getExtensions = (type: string) => {
         CharacterCount.configure({
           limit: type === 'header' ? TITLE_CHARACTER_LIMIT : null,
         }),
-        BulletList,
-        ListItem,
       ]
   }
 }

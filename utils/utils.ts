@@ -29,3 +29,39 @@ export const getOjectPublicUrl = (objectPath: string) =>
 
 export const getSlideCount = (sections: ISection[]) =>
   sections.reduce((acc, section) => acc + section.slides.length, 0)
+
+export const rgbToHex = (rgb: string) =>
+  `#${rgb
+    .slice(4, -1)
+    .split(',')
+    .map((x) => (+x).toString(16).padStart(2, '0'))
+    .join('')}`
+
+export const hexToRgb = (hex: string) => {
+  const _hex = hex.replace('#', '')
+
+  return `rgb(
+    ${parseInt(_hex.substring(0, 2), 16)},
+    ${parseInt(_hex.substring(2, 4), 16)},
+    ${parseInt(_hex.substring(4, 6), 16)},
+  ]`
+}
+
+export const isColorDark = (color: string) => {
+  if (!color) return true
+
+  let _color = color
+  if (color.startsWith('#')) {
+    _color = hexToRgb(color)
+  }
+
+  const [r, g, b] = _color
+    .slice(4, -1)
+    .split(',')
+    .map((x) => +x)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+
+  return brightness < 128
+}
+
+export const isColorLight = (color: string) => !isColorDark(color)
