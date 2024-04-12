@@ -166,7 +166,13 @@ export function ReflectionCard({
                         }
                       )}
                       variant="flat"
-                      avatar={<em-emoji id={reaction.reaction} size={15} />}>
+                      avatar={
+                        <em-emoji
+                          set="apple"
+                          id={reaction.reaction}
+                          size={20}
+                        />
+                      }>
                       <span className="font-bold text-slate-600 group-hover/item:text-white ">
                         {getReactionCount(reaction.reaction)}
                       </span>

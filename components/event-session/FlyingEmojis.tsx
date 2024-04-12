@@ -3,7 +3,12 @@ import { useContext, useState } from 'react'
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { MdOutlineEmojiEmotions } from 'react-icons/md'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@nextui-org/react'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -47,10 +52,13 @@ export function FlyingEmojis() {
         </button>
       </PopoverTrigger>
       <PopoverContent className="rounded-full overflow-hidden">
-        <div className="bg-[#2C2C2C] px-1 py-[0.3125rem] flex items-center gap-2">
+        <div className="bg-[#2C2C2C] flex items-center gap-2 py-[0.0625rem]">
           {EMOJIS.map((emoji) => (
-            <div className="w-10 h-10 rounded-full hover:bg-[#333333] grid place-items-center cursor-pointer">
+            <Button
+              isIconOnly
+              className="!opacity-100 rounded-full grid place-items-center bg-transparent hover:bg-[#4D4949] duration-300">
               <em-emoji
+                set="apple"
                 id={emoji}
                 size={25}
                 onClick={() =>
@@ -60,7 +68,7 @@ export function FlyingEmojis() {
                   })
                 }
               />
-            </div>
+            </Button>
           ))}
         </div>
       </PopoverContent>

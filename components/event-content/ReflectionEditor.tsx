@@ -79,7 +79,9 @@ function PreviewCard({
                 <Chip
                   className={cn('font-bold')}
                   variant="flat"
-                  avatar={<em-emoji id={reaction.reaction} size={15} />}>
+                  avatar={
+                    <em-emoji set="apple" id={reaction.reaction} size={20} />
+                  }>
                   <span className="font-bold text-slate-600">
                     {getReactionCount(reaction.reaction)}
                   </span>
@@ -89,7 +91,7 @@ function PreviewCard({
                 <Chip
                   className="font-bold mt-4"
                   variant="flat"
-                  avatar={<em-emoji id="heart_eyes" size={15} />}>
+                  avatar={<em-emoji set="apple" id="heart_eyes" size={20} />}>
                   <span className="font-bold text-slate-600">{3}</span>
                 </Chip>
               )}
