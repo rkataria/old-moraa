@@ -19,6 +19,7 @@ export type EventContextType = {
   showSectionPlaceholder: boolean
   showSlidePlaceholder: boolean
   insertInSectionId: string | null
+  error: { slideId: string; message: string } | null
   setInsertAfterSlideId: (slideId: string | null) => void
   setInsertAfterSectionId: (sectionId: string | null) => void
   setCurrentSlide: (slide: ISlide) => void
@@ -37,6 +38,7 @@ export type EventContextType = {
     slide: ISlide
     googleSlideUrl: string
     startPosition: number
+    endPosition: number | undefined
   }) => void
   moveUpSlide: (slide: ISlide) => void
   moveDownSlide: (slide: ISlide) => void

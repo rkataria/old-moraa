@@ -49,6 +49,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const [showSlidePlaceholder, setShowSlidePlaceholder] =
     useState<boolean>(false)
 
+  const [error, setError] = useState<{
+    slideId: string
+    message: string
+  } | null>(null)
+
   useEffect(() => {
     if (!useEventData.meeting) return
 
@@ -564,12 +569,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const importGoogleSlides = async ({
     slide,
     googleSlideUrl,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     startPosition,
+    endPosition,
   }: {
     slide: ISlide
     googleSlideUrl: string
     startPosition: number
+    endPosition: number | undefined
   }) => {
     if (!isOwner) return null
 
@@ -580,14 +586,22 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           googleSlideUrl,
           meetingId: meeting.id,
           sectionId: slide.section_id,
+          startPosition,
+          endPosition,
         },
       }
     )
-    if (importGoogleSlidesResponse.error) {
+    console.log(importGoogleSlidesResponse)
+    if (!importGoogleSlidesResponse.data?.success) {
       console.error(
         'error while importing google slides: ',
-        importGoogleSlidesResponse.error
+        importGoogleSlidesResponse.data?.message
       )
+
+      setError({
+        slideId: slide.id,
+        message: importGoogleSlidesResponse.data?.message,
+      })
 
       return null
     }
@@ -903,6 +917,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         showSectionPlaceholder,
         showSlidePlaceholder,
         insertInSectionId,
+        error,
         setInsertAfterSlideId,
         setInsertAfterSectionId,
         setCurrentSlide,

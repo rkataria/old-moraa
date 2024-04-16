@@ -128,7 +128,7 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
     switch (true) {
       case uploadPDFMutation.isPending || downloadPDFQuery.isLoading:
         return (
-          <ContentLoading message="Please wait while we are uploading the PDF..." />
+          <ContentLoading message="Please wait while we are uploading the PDF. This may take a few minutes!" />
         )
 
       case !fileUrl:

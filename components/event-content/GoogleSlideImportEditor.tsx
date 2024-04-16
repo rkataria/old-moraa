@@ -1,6 +1,8 @@
 'use client'
 
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+
+import { IconExclamationCircle } from '@tabler/icons-react'
 
 import { Button, Input } from '@nextui-org/react'
 
@@ -22,24 +24,36 @@ export function GoogleSlidesImportEditor({
   const [slideLink, setSlideLink] = useState(
     (content.googleSlideURL as string | undefined) || ''
   )
-  const [position, setPosition] = useState<number>(
+  const [startPosition, setStartPosition] = useState<number>(
     (content.position as number | undefined) || 1
   )
+  const [endPosition, setEndPosition] = useState<number | undefined>(undefined)
   const [isEditMode, setIsEditMode] = useState(!content.googleSlideURL)
-  const { importGoogleSlides } = useContext(EventContext) as EventContextType
+  const [isError, setIsError] = useState<boolean>(false)
+  const { error, importGoogleSlides } = useContext(
+    EventContext
+  ) as EventContextType
+
+  useEffect(() => {
+    if (error?.slideId === slide.id) {
+      setIsError(true)
+      setIsEditMode(true)
+    }
+  }, [error, slide])
 
   const handleImportGoogleSlides = () => {
     importGoogleSlides({
       slide,
       googleSlideUrl: slideLink,
-      startPosition: position,
+      startPosition,
+      endPosition,
     })
     setIsEditMode(false)
   }
 
   if (!isEditMode) {
     return (
-      <ContentLoading message="Please wait while we are importing slides..." />
+      <ContentLoading message="Please wait while we are importing slides. This may take a few minutes!" />
     )
   }
 
@@ -60,14 +74,29 @@ export function GoogleSlidesImportEditor({
           <Input
             className="w-96 outline-none mb-4"
             placeholder="Presentation start position"
+            type="number"
+            min={1}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            value={position as any}
+            value={startPosition as any}
             onChange={(e) =>
-              setPosition(
+              setStartPosition(
                 // eslint-disable-next-line no-restricted-globals
                 isNaN(Number(e.target.value))
-                  ? position
+                  ? startPosition
                   : Number(e.target.value)
+              )
+            }
+          />
+          <p>Presentation end position</p>
+          <Input
+            className="w-96 outline-none mb-4"
+            placeholder="Presentation end position"
+            type="number"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            value={endPosition as any}
+            onChange={(e) =>
+              setEndPosition(
+                e.target.value ? Number(e.target.value) : undefined
               )
             }
           />
@@ -75,6 +104,12 @@ export function GoogleSlidesImportEditor({
         <div className="flex gap-2 mt-4">
           <Button onClick={handleImportGoogleSlides}>Import Slides</Button>
         </div>
+        {isError && (
+          <div className="flex gap-2 mt-4 bg-red-100 border border-red-300 px-4 py-3 rounded-md">
+            <IconExclamationCircle />
+            {error?.message}
+          </div>
+        )}
       </div>
     </div>
   )
