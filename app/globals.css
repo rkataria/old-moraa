@@ -46,11 +46,11 @@
 }
 
 .tiptap:hover {
-  @apply bg-gray-50 rounded-sm;
+  @apply bg-black/5 rounded-sm;
 }
 
 .ProseMirror-focused {
-  @apply outline-none;
+  @apply  outline-none;
 }
 
 .tiptap h1 {

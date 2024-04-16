@@ -3,6 +3,7 @@ import { IconX } from '@tabler/icons-react'
 import { CommonSlideSettings } from '../common/CommonSlideSettings'
 import { PollSlideSettings } from '../common/PollSlideSettings'
 import { ReflectionSlideSettings } from '../common/ReflectionSlideSettings'
+import { TextImageSlideSettings } from '../common/TextImageSlideSettings'
 
 import { cn } from '@/utils/utils'
 
@@ -53,6 +54,7 @@ export function SettingsSidebar({
       <CommonSlideSettings />
       <PollSlideSettings />
       <ReflectionSlideSettings />
+      <TextImageSlideSettings />
     </SettingsWrapper>
   )
 }
