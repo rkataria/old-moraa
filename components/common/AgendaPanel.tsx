@@ -87,6 +87,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
     insertAfterSectionId,
     updateSection,
     reorderSlide,
+    reorderSection,
   } = useContext(EventContext) as EventContextType
 
   useEffect(() => {
@@ -184,163 +185,193 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
         />
         <DragDropContext
           onDragEnd={(result, provide) => {
-            reorderSlide(result, provide)
+            if (!isOwner) return
+            if (!result.destination) return
+
+            if (result.type === 'section') reorderSection(result, provide)
+            if (result.type === 'slide') reorderSlide(result, provide)
           }}>
           <StrictModeDroppable droppableId="section-droppable" type="section">
-            {(sectionProvided) => (
+            {(sectionDroppableProvided) => (
               <div
                 className="flex flex-col justify-start items-center gap-6 w-full flex-nowrap scrollbar-none overflow-y-auto h-[calc(100vh_-_168px)]"
-                ref={sectionProvided.innerRef}
-                {...sectionProvided.droppableProps}>
-                {sections.map((section) => (
-                  <React.Fragment key={section.id}>
-                    <StrictModeDroppable
-                      droppableId={`slide-droppable-sectionId-${section.id}`}
-                      type="slide">
-                      {(slideProvided, snapshot) => (
-                        <div
-                          key={`slide-draggable-${section.id}`}
-                          ref={slideProvided.innerRef}
-                          className={cn(
-                            'rounded-sm transition-all w-full',
-                            snapshot.isDraggingOver ? 'bg-gray-100' : ''
-                          )}
-                          {...slideProvided.droppableProps}>
-                          <div className="w-full relative">
-                            <div className="w-full">
+                ref={sectionDroppableProvided.innerRef}
+                {...sectionDroppableProvided.droppableProps}>
+                {sections.map((section, sectinIndex) => (
+                  <Draggable
+                    key={`section-draggable-${section.id}`}
+                    draggableId={`section-draggable-sectionId-${section.id}`}
+                    isDragDisabled={actionDisabled}
+                    index={sectinIndex}>
+                    {(sectionDraggableProvided) => (
+                      <div
+                        className="w-full"
+                        ref={sectionDraggableProvided.innerRef}
+                        {...sectionDraggableProvided.draggableProps}
+                        {...sectionDraggableProvided.dragHandleProps}>
+                        <React.Fragment key={section.id}>
+                          <StrictModeDroppable
+                            droppableId={`slide-droppable-sectionId-${section.id}`}
+                            type="slide">
+                            {(slideProvided, snapshot) => (
                               <div
+                                key={`slide-draggable-${section.id}`}
+                                ref={slideProvided.innerRef}
                                 className={cn(
-                                  'flex justify-start items-center gap-2 px-1',
+                                  'rounded-sm transition-all w-full',
                                   {
-                                    hidden:
-                                      sectionCount === 1 &&
-                                      firstSectionSlidesCount > 0,
+                                    'bg-gray-50': snapshot.isDraggingOver,
+                                    'cursor-grab': !actionDisabled,
                                   }
-                                )}>
-                                <Button
-                                  isIconOnly
-                                  size="sm"
-                                  variant="light"
-                                  radius="full"
-                                  className={cn({
-                                    'rotate-90':
-                                      snapshot.isDraggingOver ||
-                                      expandedSections.includes(section.id),
-                                  })}
-                                  onClick={() =>
-                                    handleExpandSection(section.id)
-                                  }>
-                                  <IconChevronRight />
-                                </Button>
-                                <EditableLabel
-                                  readOnly={actionDisabled}
-                                  label={section.name}
-                                  onUpdate={(value: string) => {
-                                    updateSection({
-                                      sectionPayload: { name: value },
-                                      sectionId: section.id,
-                                    })
-                                  }}
-                                />
-                                <span className="flex-none">
-                                  <Chip size="sm" className="aspect-square">
-                                    {section.slides.length}
-                                  </Chip>
-                                </span>
-                                <SectionDropdownActions
-                                  section={section}
-                                  onDelete={setItemToDelete}
-                                />
-                              </div>
-                              <div>
-                                {(snapshot.isDraggingOver ||
-                                  expandedSections.includes(section.id) ||
-                                  sectionCount === 1) && (
-                                  <div className="flex flex-col justify-start items-center gap-6 w-full p-2 rounded-sm transition-all">
-                                    {getFilteredSlides({
-                                      slides: section.slides,
-                                      isOwner,
-                                      eventMode,
-                                    }).map((slide, slideIndex) => (
-                                      <React.Fragment key={slide.id}>
-                                        <Draggable
-                                          key={`slide-draggable-${slide.id}`}
-                                          draggableId={`slide-draggable-slideId-${slide.id}`}
-                                          isDragDisabled={actionDisabled}
-                                          index={slideIndex}>
-                                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                          {(_provided, _snapshot) => (
-                                            <div
-                                              ref={_provided.innerRef}
-                                              {..._provided.draggableProps}
-                                              {..._provided.dragHandleProps}
-                                              className={cn(
-                                                'w-full relative border-2 border-transparent rounded-sm',
-                                                {
-                                                  'border-gray-200':
-                                                    displayType === 'list' &&
-                                                    currentSlide?.id ===
-                                                      slide.id,
-                                                }
-                                              )}>
-                                              <AgendaSlideCard
-                                                slide={slide}
-                                                index={slideIndex}
-                                                draggableProps={
-                                                  _provided.dragHandleProps
-                                                }
-                                                displayType={displayType}
-                                                isDragging={
-                                                  _snapshot.isDragging
-                                                }
-                                              />
-                                              <AddItemDropdownActions
-                                                sectionId={section.id}
-                                                slideId={slide.id}
-                                                hiddenActionKeys={[
-                                                  'new-section',
-                                                ]}
-                                                hidden={
-                                                  actionDisabled ||
-                                                  _snapshot.isDragging ||
-                                                  section.slides.length - 1 ===
-                                                    slideIndex
-                                                }
-                                                onOpenContentTypePicker={
-                                                  setOpenContentTypePicker
-                                                }
-                                              />
-                                            </div>
-                                          )}
-                                        </Draggable>
-                                        {slide.id === insertAfterSlideId && (
-                                          <SlidePlaceholder
-                                            displayType={displayType}
-                                          />
-                                        )}
-                                      </React.Fragment>
-                                    ))}
-                                  </div>
                                 )}
+                                {...slideProvided.droppableProps}>
+                                <div className="w-full relative">
+                                  <div className="w-full">
+                                    <div
+                                      className={cn(
+                                        'flex justify-start items-center gap-2 px-1',
+                                        {
+                                          hidden:
+                                            sectionCount === 1 &&
+                                            firstSectionSlidesCount > 0,
+                                        }
+                                      )}>
+                                      <Button
+                                        isIconOnly
+                                        size="sm"
+                                        variant="light"
+                                        radius="full"
+                                        className={cn({
+                                          'rotate-90':
+                                            snapshot.isDraggingOver ||
+                                            expandedSections.includes(
+                                              section.id
+                                            ),
+                                        })}
+                                        onClick={() =>
+                                          handleExpandSection(section.id)
+                                        }>
+                                        <IconChevronRight />
+                                      </Button>
+                                      <EditableLabel
+                                        readOnly={actionDisabled}
+                                        label={section.name}
+                                        onUpdate={(value: string) => {
+                                          updateSection({
+                                            sectionPayload: { name: value },
+                                            sectionId: section.id,
+                                          })
+                                        }}
+                                      />
+                                      <span className="flex-none">
+                                        <Chip
+                                          size="sm"
+                                          className="aspect-square">
+                                          {section.slides.length}
+                                        </Chip>
+                                      </span>
+                                      <SectionDropdownActions
+                                        section={section}
+                                        onDelete={setItemToDelete}
+                                      />
+                                    </div>
+                                    <div>
+                                      {(snapshot.isDraggingOver ||
+                                        expandedSections.includes(section.id) ||
+                                        sectionCount === 1) && (
+                                        <div className="flex flex-col justify-start items-center gap-6 w-full p-2 rounded-sm transition-all">
+                                          {getFilteredSlides({
+                                            slides: section.slides,
+                                            isOwner,
+                                            eventMode,
+                                          }).map((slide, slideIndex) => (
+                                            <React.Fragment key={slide.id}>
+                                              <Draggable
+                                                key={`slide-draggable-${slide.id}`}
+                                                draggableId={`slide-draggable-slideId-${slide.id}`}
+                                                isDragDisabled={actionDisabled}
+                                                index={slideIndex}>
+                                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                                {(_provided, _snapshot) => (
+                                                  <div
+                                                    ref={_provided.innerRef}
+                                                    {..._provided.draggableProps}
+                                                    {..._provided.dragHandleProps}
+                                                    className={cn(
+                                                      'w-full relative border-2 border-transparent rounded-sm',
+                                                      {
+                                                        'border-gray-200':
+                                                          displayType ===
+                                                            'list' &&
+                                                          currentSlide?.id ===
+                                                            slide.id,
+                                                      }
+                                                    )}>
+                                                    <AgendaSlideCard
+                                                      slide={slide}
+                                                      index={slideIndex}
+                                                      draggableProps={
+                                                        _provided.dragHandleProps
+                                                      }
+                                                      displayType={displayType}
+                                                      isDragging={
+                                                        _snapshot.isDragging
+                                                      }
+                                                    />
+                                                    <AddItemDropdownActions
+                                                      sectionId={section.id}
+                                                      slideId={slide.id}
+                                                      hiddenActionKeys={[
+                                                        'new-section',
+                                                      ]}
+                                                      hidden={
+                                                        actionDisabled ||
+                                                        _snapshot.isDragging ||
+                                                        section.slides.length -
+                                                          1 ===
+                                                          slideIndex
+                                                      }
+                                                      onOpenContentTypePicker={
+                                                        setOpenContentTypePicker
+                                                      }
+                                                    />
+                                                  </div>
+                                                )}
+                                              </Draggable>
+                                              {slide.id ===
+                                                insertAfterSlideId && (
+                                                <SlidePlaceholder
+                                                  displayType={displayType}
+                                                />
+                                              )}
+                                            </React.Fragment>
+                                          ))}
+                                        </div>
+                                      )}
 
-                                {slideProvided.placeholder}
+                                      {slideProvided.placeholder}
+                                    </div>
+                                  </div>
+                                  <AddItemDropdownActions
+                                    sectionId={section.id}
+                                    hidden={actionDisabled}
+                                    onOpenContentTypePicker={
+                                      setOpenContentTypePicker
+                                    }
+                                  />
+                                </div>
                               </div>
-                            </div>
-                            <AddItemDropdownActions
-                              sectionId={section.id}
-                              hidden={actionDisabled}
-                              onOpenContentTypePicker={setOpenContentTypePicker}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </StrictModeDroppable>
-                    {section.id === insertAfterSectionId && (
-                      <SectionPlaceholder />
+                            )}
+                          </StrictModeDroppable>
+                          {section.id === insertAfterSectionId && (
+                            <SectionPlaceholder />
+                          )}
+                        </React.Fragment>
+                      </div>
                     )}
-                  </React.Fragment>
+                  </Draggable>
                 ))}
-                {sectionProvided.placeholder}
+                {sectionDroppableProvided.placeholder}
               </div>
             )}
           </StrictModeDroppable>

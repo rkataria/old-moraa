@@ -45,6 +45,7 @@ export type EventContextType = {
   moveUpSlide: (slide: ISlide) => void
   moveDownSlide: (slide: ISlide) => void
   reorderSlide: OnDragEndResponder
+  reorderSection: OnDragEndResponder
   addSection: ({
     name,
     afterSectionId,

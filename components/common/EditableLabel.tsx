@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useRef, useState } from 'react'
@@ -38,8 +39,16 @@ export function EditableLabel({
             if (readOnly) return
             setValue(label)
           }}
+          onDoubleClick={() => {
+            if (readOnly) return
+            contentEditableRef.current!.contentEditable = 'true'
+            contentEditableRef.current!.focus()
+          }}
           onBlur={(event) => {
             if (readOnly) return
+
+            contentEditableRef.current!.contentEditable = 'false'
+
             if (event.target.textContent !== label) {
               const newLabel = event.target.textContent || label
               onUpdate(newLabel)
@@ -50,12 +59,13 @@ export function EditableLabel({
           }}
           onKeyDown={(event) => {
             if (readOnly) return
-            if (event.key === 'Enter') {
+            if (event.key === 'Enter' || event.key === 'Escape') {
               event.preventDefault()
+              event.stopPropagation()
               contentEditableRef.current!.blur()
             }
           }}
-          contentEditable={!readOnly}>
+          contentEditable={false}>
           {value}
         </div>
       </Tooltip>

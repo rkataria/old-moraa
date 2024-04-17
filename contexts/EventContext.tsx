@@ -835,7 +835,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return null
   }
 
-  const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
+  const reorder = (list: string[], startIndex: number, endIndex: number) => {
     const result = list
     const [removed] = result.splice(startIndex, 1)
     result.splice(endIndex, 0, removed)
@@ -860,10 +860,14 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       const section = sections.find((s) => s.id === sectionId)
       if (!section) return null
 
-      const items = reorder(section.slides, source.index, destination.index)
+      const items = reorder(
+        section.slides.map((s: ISlide) => s.id),
+        source.index,
+        destination.index
+      )
       await updateSection({
         sectionPayload: {
-          slides: items.map((i: ISlide) => i.id),
+          slides: items,
         },
         sectionId,
       })
@@ -908,6 +912,21 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return null
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const reorderSection = async (result: OnDragEndResponder | any) => {
+    const { source, destination } = result
+    if (destination.droppableId !== 'section-droppable') return
+    if (source.droppableId !== 'section-droppable') return
+
+    const items = reorder(meeting.sections, source.index, destination.index)
+    await updateMeeting({
+      meetingPayload: {
+        sections: items,
+      },
+      meetingId: meeting.id,
+    })
+  }
+
   return (
     <EventContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -938,6 +957,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         moveUpSlide,
         moveDownSlide,
         reorderSlide,
+        reorderSection,
         addSection,
         updateSection,
         addSlideToSection,
