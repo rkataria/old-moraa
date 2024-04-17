@@ -1,6 +1,8 @@
 // TODO: Fix any types
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { useContext } from 'react'
+
 import dynamic from 'next/dynamic'
 import { TbSettings } from 'react-icons/tb'
 
@@ -14,9 +16,12 @@ import { MiroEmbedEditor } from './MiroEmbedEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
-import { ImageViewer } from '../common/ImageViewer'
+import { SlidePreview } from '../common/SlidePreview'
 
+import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
@@ -40,6 +45,12 @@ export function Slide({
   settingsEnabled,
   setSettingsSidebarVisible,
 }: SlideProps) {
+  const { preview } = useContext(EventContext) as EventContextType
+
+  if (preview || !isOwner) {
+    return <SlidePreview slide={slide} />
+  }
+
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
@@ -51,7 +62,7 @@ export function Slide({
           hidden: !isOwner,
         })}
       />
-      {settingsEnabled && (
+      {settingsEnabled && !preview && (
         <Button
           isIconOnly
           variant="light"

@@ -7,17 +7,11 @@ import { EventContextType } from '@/types/event-context.type'
 import { type AgendaSlideDisplayType } from '@/types/event.type'
 
 export function SlidePlaceholder({
-  slideId,
   displayType,
 }: {
-  slideId: string
   displayType: AgendaSlideDisplayType
 }) {
-  const { insertAfterSlideId, showSlidePlaceholder } = useContext(
-    EventContext
-  ) as EventContextType
-
-  if (insertAfterSlideId !== slideId) return null
+  const { showSlidePlaceholder } = useContext(EventContext) as EventContextType
 
   if (!showSlidePlaceholder) return null
 

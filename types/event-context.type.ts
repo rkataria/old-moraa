@@ -19,6 +19,8 @@ export type EventContextType = {
   showSectionPlaceholder: boolean
   showSlidePlaceholder: boolean
   insertInSectionId: string | null
+  preview: boolean
+  setPreview: (preview: boolean) => void
   error: { slideId: string; message: string } | null
   setInsertAfterSlideId: (slideId: string | null) => void
   setInsertAfterSectionId: (sectionId: string | null) => void

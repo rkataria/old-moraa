@@ -10,17 +10,25 @@ import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { Slide } from './Slide'
 import { SlideControls } from '../common/SlideControls'
+import { SlidePreview } from '../common/SlidePreview'
 
+import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionContextType,
   PresentationStatuses,
 } from '@/types/event-session.type'
 
 export function ContentContainer() {
-  const { presentationStatus, currentSlide } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { currentSlide } = useContext(EventContext) as EventContextType
+  const {
+    eventSessionMode,
+    presentationStatus,
+    previousSlide,
+    nextSlide,
+    isHost,
+  } = useContext(EventSessionContext) as EventSessionContextType
 
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
@@ -31,6 +39,15 @@ export function ContentContainer() {
   )
 
   const recentActivePlugin = activePlugins?.[activePlugins.length - 1]
+
+  if (eventSessionMode === 'Preview' && currentSlide && isHost) {
+    return (
+      <>
+        <SlidePreview slide={currentSlide} />
+        <SlideControls onPrevious={previousSlide} onNext={nextSlide} />
+      </>
+    )
+  }
 
   if (screensharingParticipant) {
     return (
@@ -65,14 +82,18 @@ export function ContentContainer() {
     return <DytePluginMain meeting={meeting} plugin={recentActivePlugin} />
   }
 
-  if (presentationStatus === PresentationStatuses.STOPPED || !currentSlide) {
+  if (presentationStatus === PresentationStatuses.STOPPED && !isHost) {
     return null
   }
+
+  if (!currentSlide) return null
 
   return (
     <div className="relative h-full">
       <Slide key={`slide-${currentSlide.id}`} />
-      <SlideControls />
+      {isHost && (
+        <SlideControls onPrevious={previousSlide} onNext={nextSlide} />
+      )}
     </div>
   )
 }

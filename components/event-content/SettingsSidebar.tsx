@@ -1,3 +1,5 @@
+import { useContext } from 'react'
+
 import { IconX } from '@tabler/icons-react'
 
 import { CommonSlideSettings } from '../common/CommonSlideSettings'
@@ -5,6 +7,8 @@ import { PollSlideSettings } from '../common/PollSlideSettings'
 import { ReflectionSlideSettings } from '../common/ReflectionSlideSettings'
 import { TextImageSlideSettings } from '../common/TextImageSlideSettings'
 
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 interface ISlideSetting {
@@ -45,7 +49,9 @@ export function SettingsSidebar({
   settingsEnabled,
   setSettingsSidebarVisible,
 }: ISlideSetting) {
-  if (!settingsEnabled) {
+  const { preview } = useContext(EventContext) as EventContextType
+
+  if (!settingsEnabled || preview) {
     return null
   }
 

@@ -2,14 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useContext, useEffect, useState } from 'react'
 
-import {
-  IconList,
-  IconLayoutGrid,
-  IconChevronRight,
-  IconTrash,
-  IconArrowUp,
-  IconArrowDown,
-} from '@tabler/icons-react'
+import { IconChevronRight } from '@tabler/icons-react'
 import {
   DragDropContext,
   type DroppableProps,
@@ -17,14 +10,16 @@ import {
   Draggable,
 } from 'react-beautiful-dnd'
 import toast from 'react-hot-toast'
-import { BsCardText, BsCollection, BsThreeDotsVertical } from 'react-icons/bs'
 
-import { Button, Chip, Tooltip } from '@nextui-org/react'
+import { Button, Chip } from '@nextui-org/react'
 
+import { AddItemDropdownActions } from './AddItemDropdownActions'
+import { AddItemStickyDropdownActions } from './AddItemStickyDropdownActions'
 import { AgendaSlideCard } from './AgendaSlideCard'
 import { DeleteConfirmationModal } from './DeleteConfirmationModal'
-import { DropdownActions } from './DropdownActions'
+import { DisplayTypeSwitcher } from './DisplayTypeSwitcher'
 import { EditableLabel } from './EditableLabel'
+import { SectionDropdownActions } from './SectionDropdownActions'
 import { SectionPlaceholder } from './SectionPlaceholder'
 import { SlidePlaceholder } from './SlidePlaceholder'
 
@@ -35,37 +30,6 @@ import { type AgendaSlideDisplayType } from '@/types/event.type'
 import { ISection, ISlide } from '@/types/slide.type'
 import { isSlideInteractive } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
-
-const sectionDropdownActions = [
-  {
-    key: 'delete',
-    label: 'Delete',
-    icon: <IconTrash className="h-4 w-4 text-red-500" />,
-  },
-  {
-    key: 'move-up',
-    label: 'Move up',
-    icon: <IconArrowUp className="h-4 w-4 text-slate-500" />,
-  },
-  {
-    key: 'move-down',
-    label: 'Move down',
-    icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
-  },
-]
-
-const addItemDropdownActions = [
-  {
-    key: 'new-section',
-    label: 'New Section',
-    icon: <BsCollection className="h-4 w-4 text-slate-500" />,
-  },
-  {
-    key: 'new-slide',
-    label: 'New Slide',
-    icon: <BsCardText className="h-4 w-4 text-slate-500" />,
-  },
-]
 
 const getFilteredSlides = ({
   slides,
@@ -110,28 +74,36 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
   const [itemToDelete, setItemToDelete] = useState<ISection | null>(null)
   const [displayType, setDisplayType] = useState<AgendaSlideDisplayType>('list')
   const [expandedSections, setExpandedSections] = useState<string[]>([])
-  const [isDragging, setIsDragging] = useState(false)
   const {
+    preview,
+    currentSlide,
     eventMode,
     meeting,
     isOwner,
     sections,
     currentSection,
-    showSectionPlaceholder,
+    insertAfterSlideId,
     insertInSectionId,
-    addSection,
+    insertAfterSectionId,
     updateSection,
-    setInsertAfterSectionId,
-    setInsertAfterSlideId,
     reorderSlide,
-    setInsertInSectionId,
-    moveUpSection,
-    moveDownSection,
   } = useContext(EventContext) as EventContextType
 
   useEffect(() => {
     setExpandedSections(currentSection ? [currentSection.id] : [])
   }, [currentSection])
+
+  useEffect(() => {
+    if (currentSlide) {
+      const section = sections.find(
+        (s) => s.id === currentSlide.section_id
+      ) as ISection
+
+      if (section) {
+        setExpandedSections([section.id])
+      }
+    }
+  }, [currentSlide, sections])
 
   useEffect(() => {
     if (insertInSectionId) {
@@ -201,26 +173,23 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
 
   const sectionCount = sections.length
   const firstSectionSlidesCount = sections?.[0]?.slides?.length || 0
+  const actionDisabled = eventMode !== 'edit' || !isOwner || preview
 
   return (
     <div className={cn('w-full bg-white/95 h-full transition-all')}>
-      <div className="flex flex-col justify-start items-center w-full p-2 pb-0">
+      <div className="flex flex-col justify-start items-center w-full p-2">
         <DisplayTypeSwitcher
           displayType={displayType}
           onDisplayTypeChange={setDisplayType}
         />
         <DragDropContext
           onDragEnd={(result, provide) => {
-            setIsDragging(false)
             reorderSlide(result, provide)
-          }}
-          onDragStart={() => {
-            setIsDragging(true)
           }}>
           <StrictModeDroppable droppableId="section-droppable" type="section">
             {(sectionProvided) => (
               <div
-                className="flex flex-col justify-start items-center gap-6 w-full flex-nowrap scrollbar-none overflow-y-auto h-[calc(100vh_-_112px)]"
+                className="flex flex-col justify-start items-center gap-6 w-full flex-nowrap scrollbar-none overflow-y-auto h-[calc(100vh_-_168px)]"
                 ref={sectionProvided.innerRef}
                 {...sectionProvided.droppableProps}>
                 {sections.map((section) => (
@@ -264,7 +233,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                   <IconChevronRight />
                                 </Button>
                                 <EditableLabel
-                                  readOnly={!isOwner}
+                                  readOnly={actionDisabled}
                                   label={section.name}
                                   onUpdate={(value: string) => {
                                     updateSection({
@@ -278,31 +247,10 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                     {section.slides.length}
                                   </Chip>
                                 </span>
-                                {isOwner && (
-                                  <DropdownActions
-                                    triggerIcon={
-                                      <Button
-                                        isIconOnly
-                                        size="sm"
-                                        variant="light"
-                                        radius="full">
-                                        <BsThreeDotsVertical />
-                                      </Button>
-                                    }
-                                    actions={sectionDropdownActions}
-                                    onAction={(actionKey) => {
-                                      if (actionKey === 'delete') {
-                                        setItemToDelete(section)
-                                      }
-                                      if (actionKey === 'move-up') {
-                                        moveUpSection(section)
-                                      }
-                                      if (actionKey === 'move-down') {
-                                        moveDownSection(section)
-                                      }
-                                    }}
-                                  />
-                                )}
+                                <SectionDropdownActions
+                                  section={section}
+                                  onDelete={setItemToDelete}
+                                />
                               </div>
                               <div>
                                 {(snapshot.isDraggingOver ||
@@ -318,7 +266,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                         <Draggable
                                           key={`slide-draggable-${slide.id}`}
                                           draggableId={`slide-draggable-slideId-${slide.id}`}
-                                          isDragDisabled={!isOwner}
+                                          isDragDisabled={actionDisabled}
                                           index={slideIndex}>
                                           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                           {(_provided, _snapshot) => (
@@ -326,7 +274,15 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                               ref={_provided.innerRef}
                                               {..._provided.draggableProps}
                                               {..._provided.dragHandleProps}
-                                              className="w-full relative">
+                                              className={cn(
+                                                'w-full relative border-2 border-transparent rounded-sm',
+                                                {
+                                                  'border-gray-200':
+                                                    displayType === 'list' &&
+                                                    currentSlide?.id ===
+                                                      slide.id,
+                                                }
+                                              )}>
                                               <AgendaSlideCard
                                                 slide={slide}
                                                 index={slideIndex}
@@ -338,54 +294,30 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                                   _snapshot.isDragging
                                                 }
                                               />
-                                              {!isDragging &&
-                                                section.slides.length - 1 !==
-                                                  slideIndex &&
-                                                isOwner && (
-                                                  <DropdownActions
-                                                    triggerIcon={
-                                                      <div
-                                                        className="flex-none absolute -bottom-5 left-0 py-1.5 h-4 w-full px-2 group cursor-pointer"
-                                                        onClick={() => {
-                                                          setInsertInSectionId(
-                                                            section.id
-                                                          )
-                                                          setInsertAfterSlideId(
-                                                            slide.id
-                                                          )
-                                                        }}>
-                                                        <div className="w-full h-1 bg-gray-50 group-hover:bg-gray-200 rounded-full" />
-                                                      </div>
-                                                    }
-                                                    actions={addItemDropdownActions.filter(
-                                                      (item) =>
-                                                        item.key === 'new-slide'
-                                                    )}
-                                                    onAction={(actionKey) => {
-                                                      if (
-                                                        actionKey ===
-                                                        'new-slide'
-                                                      ) {
-                                                        setInsertAfterSlideId(
-                                                          slide.id
-                                                        )
-                                                        setInsertInSectionId(
-                                                          section.id
-                                                        )
-                                                        setOpenContentTypePicker?.(
-                                                          true
-                                                        )
-                                                      }
-                                                    }}
-                                                  />
-                                                )}
+                                              <AddItemDropdownActions
+                                                sectionId={section.id}
+                                                slideId={slide.id}
+                                                hiddenActionKeys={[
+                                                  'new-section',
+                                                ]}
+                                                hidden={
+                                                  actionDisabled ||
+                                                  _snapshot.isDragging ||
+                                                  section.slides.length - 1 ===
+                                                    slideIndex
+                                                }
+                                                onOpenContentTypePicker={
+                                                  setOpenContentTypePicker
+                                                }
+                                              />
                                             </div>
                                           )}
                                         </Draggable>
-                                        <SlidePlaceholder
-                                          slideId={slide.id}
-                                          displayType={displayType}
-                                        />
+                                        {slide.id === insertAfterSlideId && (
+                                          <SlidePlaceholder
+                                            displayType={displayType}
+                                          />
+                                        )}
                                       </React.Fragment>
                                     ))}
                                   </div>
@@ -394,36 +326,18 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                 {slideProvided.placeholder}
                               </div>
                             </div>
-                            {!showSectionPlaceholder && isOwner && (
-                              <DropdownActions
-                                triggerIcon={
-                                  <div
-                                    className="flex-none absolute -bottom-5 left-0 py-1.5 h-4 w-full px-2 group cursor-pointer"
-                                    onClick={() => {
-                                      setInsertAfterSectionId(section.id)
-                                    }}>
-                                    <div className="w-full h-1 bg-gray-50 group-hover:bg-gray-200 rounded-full" />
-                                  </div>
-                                }
-                                actions={addItemDropdownActions}
-                                onAction={(actionKey) => {
-                                  if (actionKey === 'new-section') {
-                                    addSection({
-                                      afterSectionId: section.id,
-                                    })
-                                  }
-                                  if (actionKey === 'new-slide') {
-                                    setInsertInSectionId(section.id)
-                                    setOpenContentTypePicker?.(true)
-                                  }
-                                }}
-                              />
-                            )}
+                            <AddItemDropdownActions
+                              sectionId={section.id}
+                              hidden={actionDisabled}
+                              onOpenContentTypePicker={setOpenContentTypePicker}
+                            />
                           </div>
-                          <SectionPlaceholder sectionId={section.id} />
                         </div>
                       )}
                     </StrictModeDroppable>
+                    {section.id === insertAfterSectionId && (
+                      <SectionPlaceholder />
+                    )}
                   </React.Fragment>
                 ))}
                 {sectionProvided.placeholder}
@@ -431,6 +345,9 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
             )}
           </StrictModeDroppable>
         </DragDropContext>
+        <AddItemStickyDropdownActions
+          onOpenContentTypePicker={setOpenContentTypePicker}
+        />
       </div>
       <DeleteConfirmationModal
         open={!!itemToDelete}
@@ -438,37 +355,6 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
         onClose={() => setItemToDelete(null)}
         onConfirm={handleDeleteConfirmation}
       />
-    </div>
-  )
-}
-
-function DisplayTypeSwitcher({
-  displayType,
-  onDisplayTypeChange,
-}: {
-  displayType: AgendaSlideDisplayType
-  onDisplayTypeChange: (view: AgendaSlideDisplayType) => void
-}) {
-  return (
-    <div className="flex items-center gap-4 justify-end w-full pb-4">
-      <Tooltip content="Thumbnail View">
-        <IconLayoutGrid
-          className={cn('h-6 w-6 cursor-pointer hover:text-slate-500', {
-            'text-slate-500': displayType === 'thumbnail',
-            'text-slate-300': displayType !== 'thumbnail',
-          })}
-          onClick={() => onDisplayTypeChange('thumbnail')}
-        />
-      </Tooltip>
-      <Tooltip content="List View">
-        <IconList
-          className={cn('h-6 w-6 cursor-pointer hover:text-slate-500', {
-            'text-slate-500': displayType === 'list',
-            'text-slate-300': displayType !== 'list',
-          })}
-          onClick={() => onDisplayTypeChange('list')}
-        />
-      </Tooltip>
     </div>
   )
 }

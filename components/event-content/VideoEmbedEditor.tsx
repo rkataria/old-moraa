@@ -9,20 +9,24 @@ import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 
-interface VideoEmbedEditorProps {
-  slide: ISlide & {
-    content: {
-      videoUrl: string
-    }
+export type VideoEmbedSlideType = ISlide & {
+  content: {
+    videoUrl: string
   }
+}
+interface VideoEmbedEditorProps {
+  slide: VideoEmbedSlideType
 }
 
 export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
   const [videoUrl, setVideoUrl] = useState(slide.content.videoUrl || '')
   const [isEditMode, setIsEditMode] = useState(!slide.content.videoUrl)
-  const { isOwner, updateSlide } = useContext(EventContext) as EventContextType
+  const { preview, isOwner, updateSlide } = useContext(
+    EventContext
+  ) as EventContextType
 
   const saveVideoUrl = () => {
+    if (preview) return
     updateSlide({
       ...slide,
       content: {
@@ -32,7 +36,21 @@ export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
     setIsEditMode(false)
   }
 
-  return isEditMode ? (
+  if (preview || !isEditMode) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <div className="w-4/5 overflow-hidden rounded-md">
+          <ResponsiveVideoPlayer
+            url={videoUrl}
+            showControls={isOwner && !preview}
+            viewOnly={!isOwner || preview}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  return (
     <div className="flex flex-col justify-center items-center gap-4 h-full ">
       <Input
         size="sm"
@@ -44,16 +62,6 @@ export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
       <Button size="lg" color="primary" onClick={saveVideoUrl}>
         Save
       </Button>
-    </div>
-  ) : (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className="w-4/5 overflow-hidden rounded-md">
-        <ResponsiveVideoPlayer
-          url={videoUrl}
-          showControls={isOwner}
-          viewOnly={!isOwner}
-        />
-      </div>
     </div>
   )
 }

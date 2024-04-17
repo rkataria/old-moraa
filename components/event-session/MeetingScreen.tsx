@@ -24,7 +24,9 @@ import {
 } from '../event-content/SlideManager'
 
 import { AgendaPanel } from '@/components/common/AgendaPanel'
+import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionContextType,
   PresentationStatuses,
@@ -42,12 +44,12 @@ export function MeetingScreen() {
 
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(false)
   const [rightSidebar, setRightSidebar] = useState<RightSiderbar | null>(null)
-  const [spotlightMode, setSpotlightMode] = useState<boolean>(true)
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
-
-  const { presentationStatus } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { sections, preview, setCurrentSlide } = useContext(
+    EventContext
+  ) as EventContextType
+  const { isHost, eventSessionMode, presentationStatus, setEventSessionMode } =
+    useContext(EventSessionContext) as EventSessionContextType
 
   const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
@@ -59,18 +61,30 @@ export function MeetingScreen() {
   const sidebarVisible = leftSidebarVisible || !!rightSidebar
 
   useEffect(() => {
+    if (preview) {
+      setLeftSidebarVisible(true)
+      setCurrentSlide(sections[0]?.slides?.[0])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preview, sections])
+
+  useEffect(() => {
     if (
       activePlugin ||
       isScreensharing ||
       presentationStatus === PresentationStatuses.STARTED
     ) {
-      setSpotlightMode(false)
+      setEventSessionMode('Presentation')
 
       return
     }
+    if (isHost) {
+      setEventSessionMode('Preview')
+    }
 
-    setSpotlightMode(true)
-  }, [isScreensharing, activePlugin, presentationStatus])
+    // setEventSessionMode('Lobby')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isScreensharing, activePlugin, presentationStatus, preview, isHost])
 
   useEffect(() => {
     if (!meeting) return
@@ -143,14 +157,14 @@ export function MeetingScreen() {
               'h-44': sidebarVisible,
               'h-[calc(100vh_-_64px)] w-72 order-2 overflow-hidden overflow-y-auto scrollbar-none':
                 !sidebarVisible,
-              'h-full w-full order-1': spotlightMode,
+              'h-full w-full order-1': eventSessionMode === 'Lobby',
             })}>
             <ParticipantTiles
-              spotlightMode={spotlightMode}
+              spotlightMode={eventSessionMode === 'Lobby'}
               sidebarVisible={sidebarVisible}
             />
           </div>
-          {!spotlightMode && (
+          {['Preview', 'Presentation'].includes(eventSessionMode) && (
             <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
               <ContentContainer />
             </div>

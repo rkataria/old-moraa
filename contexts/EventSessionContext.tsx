@@ -25,6 +25,8 @@ interface EventSessionProviderProps {
   children: React.ReactNode
 }
 
+export type EventSessionMode = 'Preview' | 'Lobby' | 'Presentation'
+
 let realtimeChannel: RealtimeChannel
 const supabase = createClientComponentClient()
 
@@ -62,6 +64,14 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [slideReactions, setSlideReactions] = useState<any>([])
   const { data: fetchedSlideReactions } = useSlideReactions(currentSlide?.id)
+  const [eventSessionMode, setEventSessionMode] =
+    useState<EventSessionMode>('Lobby')
+
+  useEffect(() => {
+    if (isOwner) {
+      setEventSessionMode('Preview')
+    }
+  }, [isOwner])
 
   useEffect(() => {
     if (!meeting?.id) return
@@ -143,9 +153,18 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       'broadcast',
       { event: 'presentation-status-change' },
       ({ payload }) => {
-        setPresentationStatus(
-          payload?.presentationStatus || PresentationStatuses.STOPPED
-        )
+        if (payload?.presentationStatus === PresentationStatuses.STARTED) {
+          setEventSessionMode('Presentation')
+          setPresentationStatus(PresentationStatuses.STARTED)
+        } else if (
+          payload?.presentationStatus === PresentationStatuses.PAUSED
+        ) {
+          setEventSessionMode('Presentation')
+          setPresentationStatus(PresentationStatuses.PAUSED)
+        } else {
+          setEventSessionMode(isOwner ? 'Preview' : 'Lobby')
+          setPresentationStatus(PresentationStatuses.STOPPED)
+        }
       }
     )
 
@@ -180,7 +199,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     )
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId, sections])
+  }, [eventId, sections, isOwner])
 
   useEffect(() => {
     if (!fetchedSlideReactions) return
@@ -197,6 +216,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [fetchedSlideReactions])
 
   useEffect(() => {
+    if (eventSessionMode !== 'Presentation') return
     if (!isOwner) return
     if (!activeSession) return
 
@@ -211,7 +231,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   useEffect(() => {
     if (!currentSlide) return
 
-    if (isOwner) {
+    if (isOwner && eventSessionMode === 'Presentation') {
       realtimeChannel.send({
         type: 'broadcast',
         event: 'currentslide-change',
@@ -266,7 +286,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       channels.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide])
+  }, [currentSlide, eventSessionMode])
 
   const nextSlide = () => {
     if (!isOwner) return null
@@ -274,6 +294,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     const nextSlide = getNextSlide({ sections, currentSlide })
 
     if (!nextSlide) return null
+
+    if (eventSessionMode === 'Preview') {
+      setCurrentSlide(nextSlide)
+
+      return null
+    }
 
     realtimeChannel.send({
       type: 'broadcast',
@@ -290,6 +316,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     const previousSlide = getPreviousSlide({ sections, currentSlide })
 
     if (!previousSlide) return null
+
+    if (eventSessionMode === 'Preview') {
+      setCurrentSlide(previousSlide)
+
+      return null
+    }
 
     realtimeChannel.send({
       type: 'broadcast',
@@ -743,6 +775,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         activeSession,
         slideReactions,
         realtimeChannel,
+        eventSessionMode,
+        setEventSessionMode,
         startPresentation,
         stopPresentation,
         pausePresentation,

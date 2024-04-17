@@ -4,6 +4,8 @@ import { RealtimeChannel } from '@supabase/supabase-js'
 
 import { ISlide } from './slide.type'
 
+import { EventSessionMode } from '@/contexts/EventSessionContext'
+
 export enum PresentationStatuses {
   STARTED = 'started',
   STOPPED = 'stopped',
@@ -37,6 +39,8 @@ export type EventSessionContextType = {
   videoMiddlewareConfig: VideoMiddlewareConfig | null
   slideReactions: SlideReaction[]
   realtimeChannel: RealtimeChannel
+  eventSessionMode: EventSessionMode
+  setEventSessionMode: (mode: EventSessionMode) => void
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void

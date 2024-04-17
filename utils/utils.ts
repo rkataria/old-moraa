@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx'
+import toast from 'react-hot-toast'
 import { twMerge } from 'tailwind-merge'
 
 import { ISection } from '@/types/slide.type'
@@ -30,6 +31,9 @@ export const getOjectPublicUrl = (objectPath: string) =>
 export const getSlideCount = (sections: ISection[]) =>
   sections.reduce((acc, section) => acc + section.slides.length, 0)
 
+export const actionPreventedOnPreview = () => {
+  toast.error('Action prevented in preview mode')
+}
 export const rgbToHex = (rgb: string) =>
   `#${rgb
     .slice(4, -1)

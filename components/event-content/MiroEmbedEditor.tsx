@@ -4,24 +4,24 @@ import { useContext, useEffect, useState } from 'react'
 
 import { Button, Input } from '@nextui-org/react'
 
-import { MiroEmbed } from '../common/MiroEmbed'
-
+import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { EventContext } from '@/contexts/EventContext'
 import { type EventContextType } from '@/types/event-context.type'
 import { type ISlide } from '@/types/slide.type'
 
-interface MiroEmbedEditorProps {
-  slide: ISlide & {
-    content: {
-      boardId: string
-    }
+export type MiroEmbedSlideType = ISlide & {
+  content: {
+    boardId: string
   }
+}
+interface MiroEmbedEditorProps {
+  slide: MiroEmbedSlideType
 }
 
 export function MiroEmbedEditor({ slide }: MiroEmbedEditorProps) {
   const [boardIdentifier, setBoardIdentifier] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
-  const { updateSlide } = useContext(EventContext) as EventContextType
+  const { preview, updateSlide } = useContext(EventContext) as EventContextType
 
   useEffect(() => {
     setIsEditMode(!slide.content?.boardId)
@@ -70,7 +70,11 @@ export function MiroEmbedEditor({ slide }: MiroEmbedEditorProps) {
     setIsEditMode(false)
   }
 
-  return isEditMode ? (
+  if (preview || !isEditMode) {
+    return <MiroEmbed slide={slide} />
+  }
+
+  return (
     <div className="flex flex-col justify-center items-center gap-4 h-full">
       <Input
         size="sm"
@@ -83,7 +87,5 @@ export function MiroEmbedEditor({ slide }: MiroEmbedEditorProps) {
         Save
       </Button>
     </div>
-  ) : (
-    <MiroEmbed slide={slide} />
   )
 }

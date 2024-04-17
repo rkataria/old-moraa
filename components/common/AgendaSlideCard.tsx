@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useContext, useState } from 'react'
 
-import { IconDots, IconGripVertical } from '@tabler/icons-react'
+import { IconDots } from '@tabler/icons-react'
 
 import { Tooltip } from '@nextui-org/react'
 
@@ -98,38 +98,43 @@ function SlideListView({
     <div
       data-minislide-id={slide.id}
       key={`mini-slide-${slide.id}`}
-      className="flex justify-start items-center gap-2 max-w-full pl-8">
-      <div className="flex-none absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
+      className={cn('flex justify-start items-center gap-2 px-2 max-w-full', {
+        'cursor-grab': isOwner && eventMode === 'edit',
+      })}>
+      <div className="flex-none w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
         {index + 1}
       </div>
       <Tooltip content={slide.type}>
-        <div className="text-slate-500">{Icon}</div>
+        <div className="text-slate-400 flex-none w-5 h-5">{Icon}</div>
       </Tooltip>
       <div
         {...(isDraggable({ eventMode, isOwner }) && draggableProps)}
         className={cn(
-          'rounded-md flex-auto w-full transition-all flex items-center justify-between group',
-          currentSlide?.id === slide.id ? 'drop-shadow-sm' : 'drop-shadow-none'
+          'rounded-md flex-auto w-full transition-all flex items-center justify-between gap-2 group pl-2',
+          currentSlide?.id === slide.id
+            ? 'drop-shadow-sm rounded-[2px]'
+            : 'drop-shadow-none'
         )}
         style={{
           backgroundColor: slide.config?.backgroundColor || '#FFFFFF',
         }}>
-        <div>
-          <IconGripVertical className="h-4 w-4 text-slate-300 group-hover:text-slate-500" />
-        </div>
-        <div className="shrink w-full cursor-pointer" onClick={onChangeSlide}>
+        <div
+          className={cn('shrink w-full', {
+            'cursor-text': isOwner && eventMode === 'edit',
+          })}
+          onClick={onChangeSlide}>
           <EditableLabel
-            readOnly={!isOwner}
+            readOnly={!isOwner || eventMode !== 'edit'}
             label={slide.name}
             onUpdate={(value) => {
               updateSlide({ ...slide, name: value })
             }}
           />
         </div>
-        {isOwner && (
+        {isOwner && eventMode === 'edit' && (
           <SlideActions
             triggerIcon={
-              <div className="h-full w-fit bg-slate-100 rounded mr-1 hidden group-hover:block">
+              <div className="h-full w-fit bg-slate-100 rounded hidden group-hover:block">
                 <IconDots className="h-6 w-6 text-slate-500 px-1" />
               </div>
             }
@@ -158,7 +163,7 @@ function SlideThumbnailView({
   handleDelete,
   onChangeSlide,
 }: SlideThumbnailViewProps) {
-  const { eventMode, updateSlide, currentSlide, isOwner } = useContext(
+  const { preview, eventMode, updateSlide, currentSlide, isOwner } = useContext(
     EventContext
   ) as EventContextType
 
@@ -186,14 +191,14 @@ function SlideThumbnailView({
         <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
           <div className="shrink w-full cursor-pointer">
             <EditableLabel
-              readOnly={!isOwner}
+              readOnly={preview || !isOwner || eventMode !== 'edit'}
               label={slide.name}
               onUpdate={(value) => {
                 updateSlide({ ...slide, name: value })
               }}
             />
           </div>
-          {isOwner && (
+          {!preview && isOwner && eventMode === 'edit' && (
             <SlideActions
               triggerIcon={
                 <div className="h-full w-fit bg-slate-100 rounded hidden group-hover:block">
@@ -229,8 +234,8 @@ export function AgendaSlideCard({
     moveUpSlide,
     moveDownSlide,
     setCurrentSlide,
-    isOwner,
     eventMode,
+    isOwner,
   } = useContext(EventContext) as EventContextType
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
@@ -255,7 +260,9 @@ export function AgendaSlideCard({
   }
 
   const handleChangeSlide = (s: ISlide) => {
-    if (eventMode === 'present' && !isOwner) return
+    if (!['edit', 'view'].includes(eventMode) && !isOwner) {
+      return
+    }
 
     setCurrentSlide(s)
   }

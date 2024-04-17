@@ -48,6 +48,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     useState<boolean>(false)
   const [showSlidePlaceholder, setShowSlidePlaceholder] =
     useState<boolean>(false)
+  const [preview, setPreview] = useState<boolean>(false)
 
   const [error, setError] = useState<{
     slideId: string
@@ -68,6 +69,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
   useEffect(() => {
     if (!meeting?.id) return
+
+    // Don't subscribe to the changes if the user is not the owner and the event mode is not present
+    // if (eventMode !== 'present' || !isOwner) return
+    if (eventMode === 'edit' && !isOwner) return
 
     // subscribe to the meeting updates
     const meetingUpdateSubscription = supabase
@@ -290,7 +295,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       slideUpdateSubscription.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.id, sections, insertAfterSlideId])
+  }, [meeting?.id, sections, insertAfterSlideId, isOwner])
 
   useEffect(() => {
     if (!meeting) return
@@ -430,6 +435,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       section_id: _section.id!,
       meeting_id: meeting?.id,
     })
+    setShowSlidePlaceholder(false)
 
     if (slideResponse.error) {
       console.error('error while creating slide: ', slideResponse.error)
@@ -499,6 +505,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (afterSectionId) {
       const index = sectionIds.indexOf(afterSectionId)
       sectionIds.splice(index + 1, 0, sectionResponse.data.id)
+    } else {
+      // Add the section at the end
+      sectionIds.push(sectionResponse.data.id)
     }
 
     // Update the sections on meeting
@@ -917,6 +926,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         showSectionPlaceholder,
         showSlidePlaceholder,
         insertInSectionId,
+        preview,
+        setPreview,
         error,
         setInsertAfterSlideId,
         setInsertAfterSectionId,

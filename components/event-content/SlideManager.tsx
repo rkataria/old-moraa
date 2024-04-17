@@ -9,6 +9,7 @@ import { Header } from './Header'
 import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
 import { Loading } from '../common/Loading'
+import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
 import { FlyingEmojisOverlay } from '../event-session/FlyingEmojisOverlay'
 
@@ -39,6 +40,7 @@ export function SlideManager() {
   const isOwner = useMemo(() => userId === event?.owner_id, [userId, event])
 
   const {
+    preview,
     loading,
     syncing,
     currentSlide,
@@ -124,12 +126,15 @@ export function SlideManager() {
     }
 
     return (
-      <Slide
-        isOwner={isOwner}
-        slide={currentSlide}
-        settingsEnabled={settingsEnabled}
-        setSettingsSidebarVisible={setRightSidebarVisible}
-      />
+      <>
+        <Slide
+          isOwner={isOwner}
+          slide={currentSlide}
+          settingsEnabled={settingsEnabled}
+          setSettingsSidebarVisible={setRightSidebarVisible}
+        />
+        {preview && <SlideControls />}
+      </>
     )
   }
 

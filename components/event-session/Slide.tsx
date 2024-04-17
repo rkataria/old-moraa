@@ -4,23 +4,20 @@ import React, { useContext, useEffect } from 'react'
 
 import dynamic from 'next/dynamic'
 
-import { Cover } from './content-types/Cover'
 import { GoogleSlides } from './content-types/GoogleSlides'
 import { Poll, Vote } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
-import { TextImage } from './content-types/TextImage'
 import { VideoEmbed } from './content-types/VideoEmbed'
-import { ContentLoading } from '../common/ContentLoading'
-import { ImageViewer } from '../common/ImageViewer'
-import { MiroEmbed } from '../common/MiroEmbed'
 
+import { Cover } from '@/components/common/content-types/Cover'
+import { ImageViewer } from '@/components/common/content-types/ImageViewer'
+import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
+import { TextImage } from '@/components/common/content-types/TextImage'
+import { ContentLoading } from '@/components/common/ContentLoading'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
+import { EventSessionContextType } from '@/types/event-session.type'
 import { checkVoted } from '@/utils/content.util'
 import { getOjectPublicUrl } from '@/utils/utils'
 
@@ -32,13 +29,8 @@ const PDFViewer = dynamic(
 )
 
 export function Slide() {
-  const {
-    presentationStatus,
-    currentSlide,
-    currentSlideResponses,
-    currentSlideLoading,
-    isHost,
-  } = useContext(EventSessionContext) as EventSessionContextType
+  const { currentSlide, currentSlideResponses, currentSlideLoading, isHost } =
+    useContext(EventSessionContext) as EventSessionContextType
   const { currentUser } = useAuth()
 
   useEffect(() => {
@@ -50,12 +42,10 @@ export function Slide() {
     )
   }, [currentSlide])
 
-  if (presentationStatus === PresentationStatuses.STOPPED) return null
-
   if (!currentSlide) return null
 
   if (currentSlide.type === ContentType.COVER) {
-    return <Cover key={currentSlide.id} slide={currentSlide} />
+    return <Cover key={currentSlide.id} slide={currentSlide as any} />
   }
 
   if (currentSlideLoading) return <ContentLoading />

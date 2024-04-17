@@ -18,6 +18,7 @@ import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 import { Button } from '@nextui-org/react'
 
 import { FlyingEmojis } from './FlyingEmojis'
+import { GalleryViewToggle } from './GalleryViewToggle'
 import { PresentationControls } from './PresentationControls'
 import { RaiseHand } from './RaiseHand'
 import { WhiteboardToggleButton } from './WhiteboardToggleButton'
@@ -41,7 +42,9 @@ export function Header({
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const { isHost } = useContext(EventSessionContext) as EventSessionContextType
+  const { isHost, eventSessionMode } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
 
   if (!event) return null
 
@@ -62,6 +65,7 @@ export function Header({
         <DyteClock meeting={meeting} />
       </div>
       <div className="p-4 flex justify-end items-center gap-2">
+        {eventSessionMode === 'Preview' && isHost && <GalleryViewToggle />}
         <DyteMicToggle meeting={meeting} size="lg" />
         <DyteCameraToggle meeting={meeting} size="lg" />
         {isHost && <DyteScreenShareToggle meeting={meeting} size="lg" />}
@@ -69,7 +73,6 @@ export function Header({
         <PresentationControls />
         <RaiseHand />
         <FlyingEmojis />
-
         <DyteSettingsToggle
           size="lg"
           onClick={() => {
