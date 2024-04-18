@@ -15,6 +15,7 @@ import {
   VideoEmbedEditor,
   VideoEmbedSlideType,
 } from '../event-content/VideoEmbedEditor'
+import { RichText } from '../event-session/content-types/RichText'
 import { TextImage } from '../event-session/content-types/TextImage'
 
 import {
@@ -84,6 +85,7 @@ export function SlidePreview({ slide }: SlideProps) {
         {slide.type === ContentType.MIRO_EMBED && (
           <MiroEmbedEditor slide={slide as MiroEmbedSlideType} />
         )}
+        {slide.type === ContentType.RICH_TEXT && <RichText slide={slide} />}
       </div>
     </div>
   )

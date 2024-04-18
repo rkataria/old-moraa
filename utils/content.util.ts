@@ -53,6 +53,16 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
           },
         ],
       }
+    case ContentType.RICH_TEXT:
+      return {
+        blocks: [
+          {
+            id: uuidv4(),
+            type: 'richtext',
+            data: {},
+          },
+        ],
+      }
     case ContentType.VIDEO:
       return {
         url: 'https://www.youtube.com/watch?v=5qap5aO4i9A',

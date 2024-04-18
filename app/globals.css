@@ -42,7 +42,8 @@
 /* Tiptap Editor */
 
 .tiptap {
-  @apply p-2;
+  @apply p-2 min-h-full;
+
 }
 
 .tiptap:hover {

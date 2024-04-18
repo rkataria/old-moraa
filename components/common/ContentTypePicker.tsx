@@ -9,6 +9,7 @@ import {
   IconVideo,
   IconLayout,
   IconPhoto,
+  IconFileText,
 } from '@tabler/icons-react'
 import { SiMiro } from 'react-icons/si'
 
@@ -36,6 +37,7 @@ export enum ContentType {
   MIRO_EMBED = 'Miro Embed',
   IMAGE_VIEWER = 'Image',
   TEXT_IMAGE = 'Text & Image',
+  RICH_TEXT = 'Rich Text',
 }
 export const INTERACTIVE_SLIDE_TYPES = [
   ContentType.POLL,
@@ -108,6 +110,12 @@ export const contentTypes: IContentType[] = [
     description:
       'Embed Miro boards to collaborate and brainstorm with your audience',
     contentType: ContentType.MIRO_EMBED,
+  },
+  {
+    name: 'Scrollable Page',
+    icon: <IconFileText className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a rich text editor',
+    contentType: ContentType.RICH_TEXT,
   },
 ]
 

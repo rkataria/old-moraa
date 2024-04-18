@@ -37,23 +37,31 @@ import { cn, isColorDark } from '@/utils/utils'
 export function BlockEditorControls({
   editor,
   blockType,
+  hidden = false,
+  autoHide = true,
 }: {
   editor: Editor
   blockType: string
+  hidden?: boolean
+  autoHide?: boolean
 }) {
   const idle = useIdle(3000)
+  if (hidden) {
+    return null
+  }
 
   return (
     <div
       className={cn(
         'absolute top-2 left-1/2 -translate-x-1/2 flex justify-center items-center gap-2 bg-black p-2 rounded-md text-white transition-all duration-500 z-10',
         {
-          'opacity-0': idle,
-          'opacity-100': !idle,
+          'opacity-0': idle && autoHide,
+          'opacity-100': !autoHide || !idle,
         }
       )}>
       {blockType === 'header' && <HeaderBlockControls editor={editor} />}
       {blockType === 'paragraph' && <ParagraphBlockControls editor={editor} />}
+      {blockType === 'richtext' && <RichTextBlockControls editor={editor} />}
       <HistoryControls editor={editor} />
     </div>
   )
@@ -274,6 +282,9 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
       />
     </>
   )
+}
+function RichTextBlockControls({ editor }: { editor: Editor }) {
+  return <ParagraphBlockControls editor={editor} />
 }
 
 export function ControlButton({

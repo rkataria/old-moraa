@@ -45,6 +45,7 @@
     "@tiptap/extension-character-count": "^2.2.4",
     "@tiptap/extension-color": "^2.2.4",
     "@tiptap/extension-list-item": "^2.2.6",
+    "@tiptap/extension-placeholder": "^2.3.0",
     "@tiptap/extension-text-align": "^2.2.4",
     "@tiptap/extension-text-style": "^2.2.4",
     "@tiptap/pm": "^2.2.4",

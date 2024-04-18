@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 import { GoogleSlides } from './content-types/GoogleSlides'
 import { Poll, Vote } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
+import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
 
 import { Cover } from '@/components/common/content-types/Cover'
@@ -93,6 +94,9 @@ export function Slide() {
         src={getOjectPublicUrl(currentSlide.content?.path as string)}
       />
     )
+  }
+  if (currentSlide.type === ContentType.RICH_TEXT) {
+    return <RichText key={currentSlide.id} slide={currentSlide} />
   }
 
   if (currentSlide.type === ContentType.MIRO_EMBED) {
