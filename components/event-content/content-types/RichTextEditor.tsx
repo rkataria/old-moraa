@@ -31,11 +31,13 @@ export function RichTextEditor() {
     }
 
     updateSlide({
-      ...currentSlide,
-      content: {
-        ...currentSlide.content,
-        ...debouncedLocalSlide?.content,
+      slidePayload: {
+        content: {
+          ...currentSlide.content,
+          ...debouncedLocalSlide?.content,
+        },
       },
+      slideId: currentSlide.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedLocalSlide])
@@ -43,7 +45,6 @@ export function RichTextEditor() {
   if (!localSlide) {
     return null
   }
-  console.log('text editor current slide: ', currentSlide)
 
   const handleBlockChange = (block: TextBlock) => {
     setLocalSlide({
