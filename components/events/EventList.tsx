@@ -2,16 +2,17 @@
 
 import { useRouter } from 'next/navigation'
 
+import { EventActionsWithModal } from './EventActionsWithModal'
 import { Loading } from '../common/Loading'
 
+import { useAuth } from '@/hooks/useAuth'
 import { useEvents } from '@/hooks/useEvents'
 import { getFormattedDate } from '@/utils/date'
 
 export function EventList() {
   const router = useRouter()
-  const { events, isLoading } = useEvents()
-  // const { currentUser } = useAuth()
-  // const userId = currentUser?.id
+  const { events, isLoading, refetch } = useEvents()
+  const { currentUser } = useAuth()
 
   const handleRowClick = (id: string) => {
     router.push(`/events/${id}`)
@@ -140,6 +141,14 @@ export function EventList() {
                   )}
                 </div>
               </td> */}
+
+              <td aria-label="event-actions">
+                <EventActionsWithModal
+                  event={event}
+                  isOwner={event.owner_id === currentUser.id}
+                  onDone={refetch}
+                />
+              </td>
             </tr>
           ))}
         </tbody>

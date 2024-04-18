@@ -15,6 +15,7 @@ export const useEvents = () => {
 
   return {
     events: eventsQuery.data,
+    refetch: eventsQuery.refetch,
     isLoading: eventsQuery.isLoading || isUserLoading,
     isFetching: eventsQuery.isFetching,
     error: eventsQuery.error,
