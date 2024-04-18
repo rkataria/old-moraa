@@ -13,7 +13,6 @@ export type EventContextType = {
   syncing: boolean
   isOwner: boolean
   sections: ISection[]
-  currentSection: ISection | null
   insertAfterSectionId: string | null
   insertAfterSlideId: string | null
   showSectionPlaceholder: boolean
@@ -34,7 +33,13 @@ export type EventContextType = {
     section?: Partial<ISection>
     afterSlideId?: string
   }) => void
-  updateSlide: (slide: Partial<ISlide>) => void
+  updateSlide: ({
+    slidePayload,
+    slideId,
+  }: {
+    slidePayload: Partial<ISlide>
+    slideId: string
+  }) => void
   deleteSlide: (slide: ISlide) => void
   importGoogleSlides: (data: {
     slide: ISlide
@@ -69,5 +74,4 @@ export type EventContextType = {
   setInsertInSectionId: (sectionId: string | null) => void
   moveUpSection: (section: ISection) => void
   moveDownSection: (section: ISection) => void
-  setCurrentSection: (section: ISection | null) => void
 }

@@ -62,10 +62,12 @@ export function MiroEmbedEditor({ slide }: MiroEmbedEditorProps) {
     const boardId = getBoardId()
     if (!boardId) return
     updateSlide({
-      ...slide,
-      content: {
-        boardId,
+      slidePayload: {
+        content: {
+          boardId,
+        },
       },
+      slideId: slide.id,
     })
     setIsEditMode(false)
   }

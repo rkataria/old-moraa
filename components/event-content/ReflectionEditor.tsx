@@ -194,11 +194,13 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
     if (preview) return
 
     updateSlide({
-      ...slide,
-      content: {
-        ...slide.content,
-        title: throttledTitle,
+      slidePayload: {
+        content: {
+          ...slide.content,
+          title: throttledTitle,
+        },
       },
+      slideId: slide.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [throttledTitle])

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
 
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react'
 
@@ -20,21 +20,24 @@ export function SlideControls({
     EventContext
   ) as EventContextType
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (eventMode === 'present') onPrevious?.()
 
     const previousSlide = getPreviousSlide({ sections, currentSlide })
 
     if (previousSlide) setCurrentSlide(previousSlide)
-  }
 
-  const handleNext = () => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlide, sections])
+
+  const handleNext = useCallback(() => {
     if (eventMode === 'present') onNext?.()
 
     const nextSlide = getNextSlide({ sections, currentSlide })
 
     if (nextSlide) setCurrentSlide(nextSlide)
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlide, sections])
 
   const arrowUp = useHotkeys('ArrowUp', handlePrevious)
 

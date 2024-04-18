@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 import { ChevronDownIcon } from 'lucide-react'
 import { BsCardText, BsCollection } from 'react-icons/bs'
@@ -59,10 +59,10 @@ export function AddItemStickyDropdownActions({
     setInsertAfterSlideId,
     addSection,
   } = useContext(EventContext) as EventContextType
-  const [selectedOption, setSelectedOption] = useState(new Set(['new-slide']))
 
-  const handleClick = () => {
-    const selectedOptionValue = Array.from(selectedOption)[0]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleAddItem = (itemKey: any) => {
+    const selectedOptionValue = Array.from(itemKey)[0]
     const lastSectionId = meeting.sections[meeting.sections.length - 1]
     const lastSection = sections.find((section) => section.id === lastSectionId)
     const lastSlideOfLastSection =
@@ -85,8 +85,6 @@ export function AddItemStickyDropdownActions({
 
   if (!isOwner || eventMode !== 'edit' || preview) return null
 
-  const selectedOptionValue = Array.from(selectedOption)[0]
-
   return (
     <ButtonGroup
       variant="flat"
@@ -94,8 +92,11 @@ export function AddItemStickyDropdownActions({
       fullWidth
       className="pt-2"
       isDisabled={showSectionPlaceholder || showSlidePlaceholder}>
-      <Button onClick={handleClick}>
-        {labelMap[selectedOptionValue as 'new-section' | 'new-slide']}
+      <Button
+        onClick={() => {
+          handleAddItem(new Set(['new-slide']))
+        }}>
+        {labelMap['new-slide']}
       </Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
@@ -105,12 +106,9 @@ export function AddItemStickyDropdownActions({
         </DropdownTrigger>
         <DropdownMenu
           disallowEmptySelection
-          selectedKeys={selectedOption}
           selectionMode="single"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onSelectionChange={(value: any) => {
-            setSelectedOption(value)
-          }}
+          onSelectionChange={handleAddItem}
           className="max-w-[300px]">
           <DropdownItem
             key="new-slide"

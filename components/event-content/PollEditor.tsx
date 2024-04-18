@@ -67,11 +67,13 @@ export function PollEditor({
                 color={slide.config.backgroundColor}
                 onChange={(color) => {
                   updateSlide({
-                    ...slide,
-                    config: {
-                      ...slide.config,
-                      backgroundColor: color.hex,
+                    slidePayload: {
+                      config: {
+                        ...slide.config,
+                        backgroundColor: color.hex,
+                      },
                     },
+                    slideId: slide.id,
                   })
                 }}
               />

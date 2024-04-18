@@ -22,11 +22,13 @@ export function ReflectionSlideSettings() {
         isSelected={currentSlide.config.allowAnonymously}
         onValueChange={() =>
           updateSlide({
-            ...currentSlide,
-            config: {
-              ...currentSlide.config,
-              allowAnonymously: !currentSlide.config.allowAnonymously,
+            slidePayload: {
+              config: {
+                ...currentSlide.config,
+                allowAnonymously: !currentSlide.config.allowAnonymously,
+              },
             },
+            slideId: currentSlide.id,
           })
         }>
         User can reflect anonymously

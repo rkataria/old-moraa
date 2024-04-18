@@ -33,15 +33,24 @@ export function CoverEditor() {
       return
     }
 
+    if (
+      JSON.stringify(debouncedLocalSlide?.content) ===
+      JSON.stringify(currentSlide.content)
+    ) {
+      return
+    }
+
     updateSlide({
-      ...currentSlide,
-      content: {
-        ...currentSlide.content,
-        ...debouncedLocalSlide?.content,
+      slidePayload: {
+        content: {
+          ...currentSlide.content,
+          ...debouncedLocalSlide?.content,
+        },
       },
+      slideId: currentSlide.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide])
+  }, [debouncedLocalSlide?.content])
 
   if (!localSlide?.content) {
     return null

@@ -56,11 +56,13 @@ export function TextImageSlideSettings() {
   const handleSelectionChange = (keys: Selection) => {
     setSelectedKeys(keys)
     updateSlide({
-      ...currentSlide,
-      config: {
-        ...currentSlide.config,
-        layoutType: Array.from(keys).join(', '),
+      slidePayload: {
+        config: {
+          ...currentSlide.config,
+          layoutType: Array.from(keys).join(', '),
+        },
       },
+      slideId: currentSlide.id,
     })
   }
 

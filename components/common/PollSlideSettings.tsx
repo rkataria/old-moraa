@@ -21,12 +21,14 @@ export function PollSlideSettings() {
         isSelected={currentSlide.config.allowVoteOnMultipleOptions}
         onValueChange={() =>
           updateSlide({
-            ...currentSlide,
-            config: {
-              ...currentSlide.config,
-              allowVoteOnMultipleOptions:
-                !currentSlide.config.allowVoteOnMultipleOptions,
+            slidePayload: {
+              config: {
+                ...currentSlide.config,
+                allowVoteOnMultipleOptions:
+                  !currentSlide.config.allowVoteOnMultipleOptions,
+              },
             },
+            slideId: currentSlide.id,
           })
         }>
         User can vote on multiple options
@@ -38,11 +40,13 @@ export function PollSlideSettings() {
         isSelected={currentSlide.config.allowVoteAnonymously}
         onValueChange={() =>
           updateSlide({
-            ...currentSlide,
-            config: {
-              ...currentSlide.config,
-              allowVoteAnonymously: !currentSlide.config.allowVoteAnonymously,
+            slidePayload: {
+              config: {
+                ...currentSlide.config,
+                allowVoteAnonymously: !currentSlide.config.allowVoteAnonymously,
+              },
             },
+            slideId: currentSlide.id,
           })
         }>
         Allow user to vote anonymously

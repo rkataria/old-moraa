@@ -81,7 +81,6 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
     meeting,
     isOwner,
     sections,
-    currentSection,
     insertAfterSlideId,
     insertInSectionId,
     insertAfterSectionId,
@@ -91,34 +90,44 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
   } = useContext(EventContext) as EventContextType
 
   useEffect(() => {
-    setExpandedSections(currentSection ? [currentSection.id] : [])
-  }, [currentSection])
-
-  useEffect(() => {
     if (currentSlide) {
       const section = sections.find(
         (s) => s.id === currentSlide.section_id
       ) as ISection
 
       if (section) {
-        setExpandedSections([section.id])
+        setExpandedSections((prev) => {
+          if (!prev.includes(section.id)) {
+            return [...prev, section.id]
+          }
+
+          return prev
+        })
       }
     }
   }, [currentSlide, sections])
 
   useEffect(() => {
     if (insertInSectionId) {
-      setExpandedSections([...expandedSections, insertInSectionId])
+      setExpandedSections((prev) => {
+        if (!prev.includes(insertInSectionId)) {
+          return [...prev, insertInSectionId]
+        }
+
+        return prev
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [insertInSectionId])
 
   const handleExpandSection = (sectionId: string) => {
-    if (expandedSections.includes(sectionId)) {
-      setExpandedSections(expandedSections.filter((id) => id !== sectionId))
-    } else {
-      setExpandedSections([...expandedSections, sectionId])
-    }
+    setExpandedSections((prev) => {
+      if (!prev.includes(sectionId)) {
+        return [...prev, sectionId]
+      }
+
+      return prev.filter((id) => id !== sectionId)
+    })
   }
 
   const handleDeleteConfirmation = async () => {
@@ -241,6 +250,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                         size="sm"
                                         variant="light"
                                         radius="full"
+                                        tabIndex={-1}
                                         className={cn({
                                           'rotate-90':
                                             snapshot.isDraggingOver ||

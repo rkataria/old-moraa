@@ -30,11 +30,13 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
 
   const saveGoogleSlidesLink = () => {
     updateSlide({
-      ...slide,
-      content: {
-        googleSlideURL: slideLink,
-        startPosition: position,
+      slidePayload: {
+        content: {
+          googleSlideURL: slideLink,
+          startPosition: position,
+        },
       },
+      slideId: slide.id,
     })
     setIsEditMode(false)
   }

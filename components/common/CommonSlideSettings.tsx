@@ -12,12 +12,16 @@ export function CommonSlideSettings() {
   ) as EventContextType
 
   const updateSlideColors = (color: string, colorKey: string) => {
+    if (!currentSlide) return
+
     updateSlide({
-      ...currentSlide,
-      config: {
-        ...currentSlide?.config,
-        [colorKey]: color,
+      slidePayload: {
+        config: {
+          ...currentSlide.config,
+          [colorKey]: color,
+        },
       },
+      slideId: currentSlide.id,
     })
   }
 

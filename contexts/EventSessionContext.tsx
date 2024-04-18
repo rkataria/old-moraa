@@ -1,5 +1,11 @@
 /* eslint-disable consistent-return */
-import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 import { sendNotification } from '@dytesdk/react-ui-kit'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
@@ -38,14 +44,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
-  const {
-    isOwner,
-    meeting,
-    sections,
-    currentSlide,
-    setCurrentSlide,
-    setCurrentSection,
-  } = useContext(EventContext) as EventContextType
+  const { isOwner, meeting, sections, currentSlide, setCurrentSlide } =
+    useContext(EventContext) as EventContextType
 
   const [presentationStatus, setPresentationStatus] =
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
@@ -144,7 +144,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         if (!slide) return
 
         setCurrentSlide(slide)
-        setCurrentSection(section)
       }
     )
 
@@ -288,7 +287,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSlide, eventSessionMode])
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     if (!isOwner) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const nextSlide = getNextSlide({ sections, currentSlide })
@@ -308,9 +307,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     })
 
     return null
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOwner, sections, currentSlide, eventSessionMode])
 
-  const previousSlide = () => {
+  const previousSlide = useCallback(() => {
     if (!isOwner) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const previousSlide = getPreviousSlide({ sections, currentSlide })
@@ -330,7 +330,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     })
 
     return null
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlide, eventSessionMode, isOwner, sections])
 
   const startPresentation = () => {
     realtimeChannel.send({

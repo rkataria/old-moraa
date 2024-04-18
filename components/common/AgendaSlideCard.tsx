@@ -126,7 +126,10 @@ function SlideListView({
             readOnly={!isOwner || eventMode !== 'edit'}
             label={slide.name}
             onUpdate={(value) => {
-              updateSlide({ ...slide, name: value })
+              updateSlide({
+                slidePayload: { name: value },
+                slideId: slide.id,
+              })
             }}
           />
         </div>
@@ -166,6 +169,8 @@ function SlideThumbnailView({
     EventContext
   ) as EventContextType
 
+  const actionDisabled = eventMode !== 'edit' || !isOwner || preview
+
   return (
     <div
       data-minislide-id={slide.id}
@@ -193,10 +198,13 @@ function SlideThumbnailView({
         <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
           <div className="shrink w-full">
             <EditableLabel
-              readOnly={preview || !isOwner || eventMode !== 'edit'}
+              readOnly={actionDisabled}
               label={slide.name}
               onUpdate={(value) => {
-                updateSlide({ ...slide, name: value })
+                updateSlide({
+                  slidePayload: { name: value },
+                  slideId: slide.id,
+                })
               }}
             />
           </div>

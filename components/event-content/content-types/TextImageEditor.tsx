@@ -38,15 +38,24 @@ export function TextImageEditor() {
       return
     }
 
+    if (
+      JSON.stringify(debouncedLocalSlide?.content) ===
+      JSON.stringify(currentSlide.content)
+    ) {
+      return
+    }
+
     updateSlide({
-      ...currentSlide,
-      content: {
-        ...currentSlide.content,
-        ...debouncedLocalSlide?.content,
+      slidePayload: {
+        content: {
+          ...currentSlide.content,
+          ...debouncedLocalSlide?.content,
+        },
       },
+      slideId: currentSlide.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide])
+  }, [debouncedLocalSlide?.content])
 
   useEffect(() => {
     if (panelGroupRef.current && localSlide?.content?.panelSizes) {

@@ -28,10 +28,12 @@ export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
   const saveVideoUrl = () => {
     if (preview) return
     updateSlide({
-      ...slide,
-      content: {
-        videoUrl,
+      slidePayload: {
+        content: {
+          videoUrl,
+        },
       },
+      slideId: slide.id,
     })
     setIsEditMode(false)
   }
