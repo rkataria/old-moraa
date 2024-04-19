@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { type EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
-import { cn } from '@/utils/utils'
+import { cn, getAvatarForName } from '@/utils/utils'
 
 export type PollSlide = ISlide & {
   content: {
@@ -103,7 +103,9 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
           }
 
           if (enrollment.profile.first_name) {
-            const url = `https://ui-avatars.com/api/?name=${encodeURIComponent(`${enrollment.profile.first_name} ${enrollment.profile.last_name}`)}`
+            const url = getAvatarForName(
+              `${enrollment.profile.first_name} ${enrollment.profile.last_name}`
+            )
 
             return <Avatar src={url} size="sm" />
           }

@@ -62,7 +62,7 @@ export function MeetingSetupScreen() {
     if (preset.includes('host')) {
       setIsHost(true)
     } else {
-      selfParticipant.disableAudio()
+      // selfParticipant.disableAudio()
     }
   }, [selfParticipant])
 

@@ -23,7 +23,7 @@ import { ReflectionService } from '@/services/reflection.service'
 import { EventContextType } from '@/types/event-context.type'
 import { SlideReaction } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
-import { cn } from '@/utils/utils'
+import { cn, getAvatarForName } from '@/utils/utils'
 
 function PreviewCard({
   isAnonymous,
@@ -60,7 +60,7 @@ function PreviewCard({
             radius="full"
             size="md"
             className="min-w-fit"
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(`${isAnonymous ? 'A' : username}`)}`}
+            src={getAvatarForName(`${isAnonymous ? 'A' : username}`)}
           />
           <h4 className="text-small font-semibold leading-none text-default-600">
             {isAnonymous ? 'Anonymous' : username}

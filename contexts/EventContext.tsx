@@ -325,7 +325,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
             )
 
             const updatedSections = sections.map((section) => {
-              if (section.id === deletedSlide.section_id) {
+              if (section.id === deletedSlide?.section_id) {
                 return {
                   ...section,
                   slides: section.slides.filter(

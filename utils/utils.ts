@@ -69,3 +69,6 @@ export const isColorDark = (color: string) => {
 }
 
 export const isColorLight = (color: string) => !isColorDark(color)
+
+export const getAvatarForName = (name: string) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`

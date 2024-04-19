@@ -19,6 +19,7 @@ import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
+import { type IReflectionSlide } from '@/types/slide.type'
 import { checkVoted } from '@/utils/content.util'
 import { getOjectPublicUrl } from '@/utils/utils'
 
@@ -37,22 +38,25 @@ export function Slide() {
   useEffect(() => {
     if (!currentSlide) return
 
+    const DEFAULT_SLIDE_BG_COLOR = 'rgb(17 24 39)'
+
     document.documentElement.style.setProperty(
       '--slide-bg-color',
-      currentSlide?.config.backgroundColor || 'rgb(17 24 39)'
+      currentSlide?.config.backgroundColor || DEFAULT_SLIDE_BG_COLOR
     )
   }, [currentSlide])
 
   if (!currentSlide) return null
 
-  if (currentSlide.type === ContentType.COVER) {
-    return <Cover key={currentSlide.id} slide={currentSlide as any} />
-  }
-
   if (currentSlideLoading) return <ContentLoading />
 
-  if (currentSlide.type === ContentType.POLL) {
-    return (
+  const renderersByContentType: Record<ContentType, React.ReactNode> = {
+    [ContentType.VIDEO]: null,
+    [ContentType.GOOGLE_SLIDES_IMPORT]: null,
+    [ContentType.COVER]: (
+      <Cover key={currentSlide.id} slide={currentSlide as any} />
+    ),
+    [ContentType.POLL]: (
       <Poll
         key={currentSlide.id}
         slide={currentSlide as any}
@@ -60,48 +64,38 @@ export function Slide() {
         isOwner={isHost}
         voted={checkVoted(currentSlideResponses, currentUser)}
       />
-    )
-  }
-
-  if (currentSlide.type === ContentType.GOOGLE_SLIDES) {
-    return <GoogleSlides key={currentSlide.id} slide={currentSlide as any} />
-  }
-  if (currentSlide.type === ContentType.PDF_VIEWER) {
-    return <PDFViewer key={currentSlide.id} slide={currentSlide as any} />
-  }
-  if (currentSlide.type === ContentType.REFLECTION) {
-    return (
+    ),
+    [ContentType.GOOGLE_SLIDES]: (
+      <GoogleSlides key={currentSlide.id} slide={currentSlide as any} />
+    ),
+    [ContentType.PDF_VIEWER]: (
+      <PDFViewer key={currentSlide.id} slide={currentSlide as any} />
+    ),
+    [ContentType.REFLECTION]: (
       <Reflection
         key={currentSlide.id}
-        slide={currentSlide as any}
-        responses={currentSlideResponses}
-        responded={checkVoted(currentSlideResponses, currentUser)}
-        user={currentUser}
+        slide={currentSlide as IReflectionSlide}
       />
-    )
-  }
-  if (currentSlide.type === ContentType.VIDEO_EMBED) {
-    return <VideoEmbed key={currentSlide.id} slide={currentSlide as any} />
-  }
-  if (currentSlide.type === ContentType.TEXT_IMAGE) {
-    return <TextImage key={currentSlide.id} slide={currentSlide} />
-  }
-
-  if (currentSlide.type === ContentType.IMAGE_VIEWER) {
-    return (
+    ),
+    [ContentType.VIDEO_EMBED]: (
+      <VideoEmbed key={currentSlide.id} slide={currentSlide as any} />
+    ),
+    [ContentType.TEXT_IMAGE]: (
+      <TextImage key={currentSlide.id} slide={currentSlide} />
+    ),
+    [ContentType.IMAGE_VIEWER]: (
       <ImageViewer
         key={currentSlide.id}
         src={getOjectPublicUrl(currentSlide.content?.path as string)}
       />
-    )
-  }
-  if (currentSlide.type === ContentType.RICH_TEXT) {
-    return <RichText key={currentSlide.id} slide={currentSlide} />
-  }
-
-  if (currentSlide.type === ContentType.MIRO_EMBED) {
-    return <MiroEmbed slide={currentSlide as any} />
+    ),
+    [ContentType.RICH_TEXT]: (
+      <RichText key={currentSlide.id} slide={currentSlide} />
+    ),
+    [ContentType.MIRO_EMBED]: <MiroEmbed slide={currentSlide as any} />,
   }
 
-  return null
+  const renderer = renderersByContentType[currentSlide.type]
+
+  return renderer
 }

@@ -12,6 +12,7 @@ import { NamesForm } from '../auth/NamesForm'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
+import { getAvatarForName } from '@/utils/utils'
 
 export function UserMenu() {
   const { currentUser, logout } = useAuth()
@@ -24,7 +25,9 @@ export function UserMenu() {
         <DropdownTrigger>
           {!isRequiredNames ? (
             <Avatar
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(`${profile.first_name} ${profile.last_name}`)}`}
+              src={getAvatarForName(
+                `${profile.first_name} ${profile.last_name}`
+              )}
             />
           ) : (
             <Avatar

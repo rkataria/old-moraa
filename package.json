@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "-=-=-=-=-=-=-=-=-=-=-=-=-=": "",
@@ -18,10 +19,10 @@
   },
   "dependencies": {
     "@advisr/pptx-compose-2": "^1.0.3",
-    "@dytesdk/react-ui-kit": "^1.61.1",
-    "@dytesdk/react-web-core": "^1.35.10",
+    "@dytesdk/react-ui-kit": "^1.66.1",
+    "@dytesdk/react-web-core": "^1.36.4",
     "@dytesdk/video-background-transformer": "^1.1.7",
-    "@dytesdk/web-core": "^1.29.0",
+    "@dytesdk/web-core": "^1.31.0",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
     "@emotion/core": "^11.0.0",
@@ -74,6 +75,9 @@
     "emoji-mart": "^5.5.2",
     "emotion-theming": "^11.0.0",
     "framer-motion": "^11.0.6",
+    "lodash.chunk": "^4.2.0",
+    "lodash.countby": "^4.6.0",
+    "lodash.groupby": "^4.6.0",
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
     "lucide-react": "^0.303.0",
@@ -112,6 +116,9 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@types/lodash.chunk": "^4.2.9",
+    "@types/lodash.countby": "^4.6.9",
+    "@types/lodash.groupby": "^4.6.9",
     "@types/node": "20.3.1",
     "@types/react": "18.2.34",
     "@types/react-dom": "18.2.5",

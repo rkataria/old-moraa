@@ -8,6 +8,7 @@ import {
 } from 'react'
 
 import { sendNotification } from '@dytesdk/react-ui-kit'
+import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import uniqBy from 'lodash.uniqby'
@@ -15,16 +16,21 @@ import { useParams } from 'next/navigation'
 
 import { EventContext } from './EventContext'
 
+import type {
+  IPollResponse,
+  IReflectionResponse,
+  ISlide,
+} from '@/types/slide.type'
+
 import { useEnrollment } from '@/hooks/useEnrollment'
 import { useSlideReactions } from '@/hooks/useReactions'
 import { SessionService } from '@/services/session.service'
 import { EventContextType } from '@/types/event-context.type'
 import {
-  EventSessionContextType,
+  type EventSessionContextType,
+  type VideoMiddlewareConfig,
   PresentationStatuses,
-  VideoMiddlewareConfig,
 } from '@/types/event-session.type'
-import { ISlide } from '@/types/slide.type'
 import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
 
 interface EventSessionProviderProps {
@@ -41,6 +47,7 @@ export const EventSessionContext =
 
 export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventId } = useParams()
+  const { meeting: dyteMeeting } = useDyteMeeting()
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
@@ -51,7 +58,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
   const [currentSlideResponses, setCurrentSlideResponses] = useState<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any[] | null
+    IReflectionResponse[] | IPollResponse[] | null
   >(null)
   const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -152,18 +159,31 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       'broadcast',
       { event: 'presentation-status-change' },
       ({ payload }) => {
-        if (payload?.presentationStatus === PresentationStatuses.STARTED) {
-          setEventSessionMode('Presentation')
-          setPresentationStatus(PresentationStatuses.STARTED)
-        } else if (
-          payload?.presentationStatus === PresentationStatuses.PAUSED
-        ) {
-          setEventSessionMode('Presentation')
-          setPresentationStatus(PresentationStatuses.PAUSED)
-        } else {
-          setEventSessionMode(isOwner ? 'Preview' : 'Lobby')
-          setPresentationStatus(PresentationStatuses.STOPPED)
+        const { newPresentationStatus } = payload ?? {}
+        if (!newPresentationStatus) return
+
+        console.log(
+          'realtime handler for presentation-status-change: newPresentationStatus',
+          newPresentationStatus
+        )
+
+        const getNewEventSessionMode = () => {
+          if (newPresentationStatus !== PresentationStatuses.STOPPED) {
+            return 'Presentation'
+          }
+          if (isOwner) return 'Preview'
+
+          return 'Lobby'
         }
+
+        const newEventSessionMode = getNewEventSessionMode()
+        console.log(
+          'realtime handler for presentation-status-change: newEventSessionMode',
+          newEventSessionMode
+        )
+
+        setEventSessionMode(newEventSessionMode)
+        setPresentationStatus(newPresentationStatus)
       }
     )
 
@@ -219,13 +239,17 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     if (!isOwner) return
     if (!activeSession) return
 
-    updateActiveSession({
+    console.log('updating active session:', {
       currentSlideId: currentSlide?.id,
       presentationStatus,
     })
 
+    updateActiveSession({
+      currentSlideId: currentSlide?.id,
+      presentationStatus,
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide, presentationStatus])
+  }, [currentSlide, presentationStatus, eventSessionMode, isOwner])
 
   useEffect(() => {
     if (!currentSlide) return
@@ -248,6 +272,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           '* , participant:participant_id(*, enrollment:enrollment_id(*, profile:user_id(*)))'
         )
         .eq('slide_id', currentSlide.id)
+      // .eq('dyte_meeting_id', dyteMeeting.meta.meetingId)
 
       if (_error) {
         console.error(_error)
@@ -270,7 +295,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           event: '*',
           schema: 'public',
           table: 'slide_response',
-          filter: `slide_id=eq.${currentSlide.id}`,
+          filter: `dyte_meeting_id=eq.${dyteMeeting.meta.meetingId}`,
         },
         (payload) => {
           if (['INSERT', 'UPDATE'].includes(payload.eventType)) {
@@ -337,7 +362,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     realtimeChannel.send({
       type: 'broadcast',
       event: 'presentation-status-change',
-      payload: { presentationStatus: PresentationStatuses.STARTED },
+      payload: { newPresentationStatus: PresentationStatuses.STARTED },
     })
   }
 
@@ -345,7 +370,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     realtimeChannel.send({
       type: 'broadcast',
       event: 'presentation-status-change',
-      payload: { presentationStatus: PresentationStatuses.STOPPED },
+      payload: { newPresentationStatus: PresentationStatuses.STOPPED },
     })
   }
 
@@ -353,7 +378,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     realtimeChannel.send({
       type: 'broadcast',
       event: 'presentation-status-change',
-      payload: { presentationStatus: PresentationStatuses.PAUSED },
+      payload: { newPresentationStatus: PresentationStatuses.PAUSED },
     })
   }
 
@@ -374,6 +399,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           response: { selected_options: selectedOptions, anonymous },
           slide_id: slide.id,
           participant_id: participant.id,
+          dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
         .eq('slide_id', slide.id)
         .eq('participant_id', participant.id)
@@ -437,6 +463,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           },
           slide_id: slide.id,
           participant_id: participant.id,
+          dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
         .eq('slide_id', slide.id)
         .eq('participant_id', participant.id)
@@ -548,6 +575,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           reaction,
           slide_response_id: slideResponseId,
           participant_id: participantId,
+          dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
       }
       if (action === 'UPDATE') {
@@ -799,4 +827,14 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       {children}
     </EventSessionContext.Provider>
   )
+}
+
+export function useEventSession() {
+  const context = useContext(EventSessionContext) as EventSessionContextType
+
+  if (!context) {
+    throw new Error('useEventSession must be used within EventSessionProvider')
+  }
+
+  return context
 }

@@ -55,6 +55,7 @@ export function FlyingEmojis() {
         <div className="bg-[#2C2C2C] flex items-center gap-2 py-[0.0625rem]">
           {EMOJIS.map((emoji) => (
             <Button
+              key={emoji}
               isIconOnly
               className="!opacity-100 rounded-full grid place-items-center bg-transparent hover:bg-[#4D4949] duration-300">
               <em-emoji

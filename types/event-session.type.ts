@@ -2,9 +2,8 @@
 
 import { RealtimeChannel } from '@supabase/supabase-js'
 
-import { ISlide } from './slide.type'
-
-import { EventSessionMode } from '@/contexts/EventSessionContext'
+import type { IPollResponse, IReflectionResponse, ISlide } from './slide.type'
+import type { EventSessionMode } from '@/contexts/EventSessionContext'
 
 export enum PresentationStatuses {
   STARTED = 'started',
@@ -33,7 +32,7 @@ export type EventSessionContextType = {
   currentSlide: ISlide | null
   presentationStatus: PresentationStatuses
   currentSlideLoading: boolean
-  currentSlideResponses: any[] | null
+  currentSlideResponses?: IReflectionResponse[] | IPollResponse[] | null
   participant: any
   activeSession: any
   videoMiddlewareConfig: VideoMiddlewareConfig | null

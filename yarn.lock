@@ -100,24 +100,24 @@
     axios "^0.25.0"
     lodash-es "^4.17.21"
 
-"@dytesdk/react-ui-kit@^1.61.1":
-  version "1.66.0"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-ui-kit/-/react-ui-kit-1.66.0.tgz#edd3380ea57f8213bc530a118539b63e88624e31"
-  integrity sha512-MGHXLq9yI+DKk/vVJDXw+sMSZIpbYuc0l0N6MRTLNM4Qr+PdrDsy473N0iKccV4UXbfdQybAzPaDx5gy6JdxdA==
+"@dytesdk/react-ui-kit@^1.66.1":
+  version "1.66.1"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-ui-kit/-/react-ui-kit-1.66.1.tgz#26c41d4554ea63a1d4f54209c12d0dbd16d347a4"
+  integrity sha512-Jq0FIK6OBkyVbbdb8WKs+v4mATceO+Gd9UTBtLqzyKzbgs8ldhLhQANwdRTQ/I6oKXF7MdotiOU5158lSnqPUw==
   dependencies:
-    "@dytesdk/ui-kit" "1.66.0"
+    "@dytesdk/ui-kit" "1.66.1"
 
-"@dytesdk/react-web-core@^1.35.10":
-  version "1.36.2"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-1.36.2.tgz#946809230f7ad0955f67c46fa89db28209a6723c"
-  integrity sha512-qLl/KGBxkxoMHhNwuP74w6DwQ7ENOaXdBKFFrluhcXGRThoJ3w02YVgshq+cWHiDK3G/x7Knnc9ZdIrbNq8BoQ==
+"@dytesdk/react-web-core@^1.36.4":
+  version "1.36.4"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-1.36.4.tgz#f121f0c5d75655a1f153c1c03f783a6f8a2654b8"
+  integrity sha512-yMmJGTZPtczjAMweomKwDyWhxlG4FTIh3xKZGple93qeYx5Mz/G/LJeBrTa9C9chp0BfqmjmTiaXZ2O9sEtsGA==
   dependencies:
-    "@dytesdk/web-core" "^1.29.0"
+    "@dytesdk/web-core" "^1.31.0"
 
-"@dytesdk/ui-kit@1.66.0":
-  version "1.66.0"
-  resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-1.66.0.tgz#8739683efdcd0fae2f30168abb4c00879801890e"
-  integrity sha512-wRG2oyMmGeowMoCw4pcQzexfb7fJ6sLLQKpXxvQLW2TRqAE2Uv3QckObE7Axw6qQVy/IhO31BWpj4bD4AW+WgA==
+"@dytesdk/ui-kit@1.66.1":
+  version "1.66.1"
+  resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-1.66.1.tgz#bc388d1f248dff810ca754985ff11598dff3fc62"
+  integrity sha512-bX2FDNzERa8+UTyo/39Pu6sXUqce12kAB6ZwieITibmNBhYwFaM2EQleEv13kwVr1UNrKexAUMblaZY2vhWFGQ==
 
 "@dytesdk/video-background-transformer@^1.1.7":
   version "1.1.7"
@@ -126,15 +126,14 @@
   dependencies:
     "@mediapipe/selfie_segmentation" "0.1.1671057942"
 
-"@dytesdk/web-core@^1.29.0":
-  version "1.29.0"
-  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-1.29.0.tgz#590e5ca8ff3bd9192cf784bae0f97f471407e620"
-  integrity sha512-r64hv2QDtsFjrLwGOKz3jM44KyXt51wLYEM81SGJWKItH0+Zs5FB3c3UGZ4fMaPx/dlyyEo13YMIUPiMD/AW5w==
+"@dytesdk/web-core@^1.31.0":
+  version "1.31.0"
+  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-1.31.0.tgz#1173ae6b0a7a64e2546f9364690ed6b669f30dee"
+  integrity sha512-q3IJIySD7zDdtLcWD02iITXJmF2qX01xFDDKL1KOeu+paJJqPBaVMo2MH9KRy6vvr9M2nJ+qspJemY+J9dtySQ==
   dependencies:
     "@dyteinternals/mediasoup-client" "3.6.89"
     "@dyteinternals/utils" "^2.1.0"
     "@protobuf-ts/runtime" "^2.7.0"
-    axios "^0.25.0"
     bowser "^2.11.0"
     sdp-transform "^2.14.1"
     socket.io-client "4.6.2"
@@ -2604,6 +2603,27 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/lodash.chunk@^4.2.9":
+  version "4.2.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.chunk/-/lodash.chunk-4.2.9.tgz#60da44c404dfa8b01b426034c1183e5eb9b09727"
+  integrity sha512-Z9VtFUSnmT0No/QymqfG9AGbfOA4O5qB/uyP89xeZBqDAsKsB4gQFTqt7d0pHjbsTwtQ4yZObQVHuKlSOhIJ5Q==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash.countby@^4.6.9":
+  version "4.6.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.countby/-/lodash.countby-4.6.9.tgz#ca7821679cffa3b7b8ae9b7efe4d596901b90230"
+  integrity sha512-9KPA3nQsnAeaaIHKEPBucaUnII51lKfh89dCQh00Nq+Rk+gifnsqGEhluidGrcukjhP8NRYJ3EEqw2zHBsJtJA==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash.groupby@^4.6.9":
+  version "4.6.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.groupby/-/lodash.groupby-4.6.9.tgz#ea1aa9da1038ca50894d1fe1a3b5dabdf865d99c"
+  integrity sha512-z2xtCX2ko7GrqORnnYea4+ksT7jZNAvaOcLd6mP9M7J09RHvJs06W8BGdQQAX8ARef09VQLdeRilSOcfHlDQJQ==
+  dependencies:
+    "@types/lodash" "*"
 
 "@types/lodash.uniqby@^4.7.9":
   version "4.7.9"
@@ -5484,6 +5504,16 @@ lodash.castarray@^4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.castarray/-/lodash.castarray-4.4.0.tgz#c02513515e309daddd4c24c60cfddcf5976d9115"
   integrity sha512-aVx8ztPv7/2ULbArGJ2Y42bG1mEQ5mGjpdvrbJcJFU3TbYybe+QlLS4pst9zV52ymy2in1KpFPiZnAOATxD4+Q==
 
+lodash.chunk@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.chunk/-/lodash.chunk-4.2.0.tgz#66e5ce1f76ed27b4303d8c6512e8d1216e8106bc"
+  integrity sha512-ZzydJKfUHJwHa+hF5X66zLFCBrWn5GeF28OHEr4WVWtNDXlQ/IjWKPBiikqKo2ne0+v6JgCgJ0GzJp8k8bHC7w==
+
+lodash.countby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.countby/-/lodash.countby-4.6.0.tgz#5351f24de16724a0059b561f920b0d80af78a33c"
+  integrity sha512-RhdqSKPeVL9zWY5jSYHA2PHrV+lm2x/NfZd1uCUMEJXZoqFJ14MlSjnm+otBVdmlrkJ3trLKM07wuMszZ5GIbA==
+
 lodash.foreach@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.foreach/-/lodash.foreach-4.5.0.tgz#1a6a35eace401280c7f06dddec35165ab27e3e53"
@@ -5493,6 +5523,11 @@ lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
   integrity sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==
+
+lodash.groupby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.groupby/-/lodash.groupby-4.6.0.tgz#0b08a1dcf68397c397855c3239783832df7403d1"
+  integrity sha512-5dcWxm23+VAoz+awKmBaiBvzox8+RqMgFhi7UvX9DHZr2HdxHXM/Wrf8cfKpsW37RNrvtPn6hSwNqurSILbmJw==
 
 lodash.isplainobject@^4.0.6:
   version "4.0.6"

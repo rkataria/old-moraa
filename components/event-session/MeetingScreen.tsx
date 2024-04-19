@@ -6,6 +6,9 @@
 import { useContext, useEffect, useState } from 'react'
 
 import {
+  // DyteBreakoutRoomManager,
+  // DyteBreakoutRoomParticipants,
+  // DyteBreakoutRoomsManager,
   DyteDialogManager,
   DyteNotifications,
   DyteParticipantsAudio,
@@ -180,13 +183,13 @@ export function MeetingScreen() {
       <DyteNotifications meeting={meeting} />
       <DyteDialogManager
         meeting={meeting}
-        states={dyteStates}
-        onDyteStateUpdate={(e) => {
-          setDyteStates((prevDyteStates) => ({
-            ...prevDyteStates,
-            ...e.detail,
-          }))
-        }}
+        // states={dyteStates}
+        // onDyteStateUpdate={(e) => {
+        //   setDyteStates((prevDyteStates) => ({
+        //     ...prevDyteStates,
+        //     ...e.detail,
+        //   }))
+        // }}
       />
     </SlideManagerLayoutRoot>
   )

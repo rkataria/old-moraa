@@ -9,7 +9,7 @@ import { Avatar, AvatarGroup, Button, Checkbox } from '@nextui-org/react'
 
 import { useAuth } from '@/hooks/useAuth'
 import { ISlide } from '@/types/slide.type'
-import { cn } from '@/utils/utils'
+import { cn, getAvatarForName } from '@/utils/utils'
 
 export type Vote = {
   participant: {
@@ -54,7 +54,9 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
           <div>
             {voterData.participant.enrollment.profile.first_name ? (
               <Avatar
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(`${voterData.participant.enrollment.profile.first_name} ${voterData.participant.enrollment.profile.last_name}`)}`}
+                src={getAvatarForName(
+                  `${voterData.participant.enrollment.profile.first_name} ${voterData.participant.enrollment.profile.last_name}`
+                )}
                 size="sm"
               />
             ) : (

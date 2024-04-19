@@ -65,6 +65,7 @@ export function EditableLabel({
               contentEditableRef.current!.blur()
             }
           }}
+          suppressContentEditableWarning
           contentEditable={false}>
           {value}
         </div>
