@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { Tldraw } from '@tldraw/tldraw'
+import { useParams } from 'next/navigation'
 
-import { Tldraw, createTLStore } from '@tldraw/tldraw'
-
+import { useYjsStore } from '@/hooks/useYjsStore'
 import { ISlide } from '@/types/slide.type'
 
 export type MoraaBoardSlideType = ISlide & {
@@ -17,18 +17,25 @@ interface MoraaBoardProps {
 }
 
 export function MoraaBoard({ slide }: MoraaBoardProps) {
-  const { snapshot: stringified } = slide.content
-  const [store] = useState(() => {
-    // Create the store
-    const newStore = createTLStore({})
+  const { eventId } = useParams()
+  // const { snapshot: stringified } = slide.content
 
-    const snapshot = JSON.parse(stringified)
-
-    // Load the snapshot
-    newStore.loadSnapshot(snapshot)
-
-    return newStore
+  const store = useYjsStore({
+    roomId: `moraa-board-${slide.id}-${eventId}`,
   })
+  // const [store] = useState(() => {
+  //   // Create the store
+  //   const newStore = createTLStore({})
+
+  //   const snapshot = JSON.parse(stringified || '{}')
+
+  //   // Load the snapshot
+  //   newStore.loadSnapshot(snapshot)
+
+  //   return newStore
+  // })
+
+  console.log('MoraaBoard slide', slide, store)
 
   return (
     <div

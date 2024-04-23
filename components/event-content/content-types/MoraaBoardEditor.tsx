@@ -12,7 +12,7 @@ import { useParams } from 'next/navigation'
 import { Tldraw } from 'tldraw'
 
 import { EventContext } from '@/contexts/EventContext'
-import { useYjsStore } from '@/hooks/useyjsStore'
+import { useYjsStore } from '@/hooks/useYjsStore'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 
