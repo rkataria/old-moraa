@@ -7,10 +7,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { useDebounce } from '@uidotdev/usehooks'
+import { useParams } from 'next/navigation'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Tldraw } from 'tldraw'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useYjsStore } from '@/hooks/useYjsStore'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 
@@ -19,13 +21,16 @@ import 'tldraw/tldraw.css'
 
 type MoraaBoardSlide = ISlide
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function MoraaBoardEditor({ store }: { store: any }) {
+export function MoraaBoardEditor() {
+  const { eventId } = useParams()
   const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
   const debouncedLocalSlide = useDebounce(localSlide, 500)
   const { currentSlide, updateSlide } = useContext(
     EventContext
   ) as EventContextType
+  const store = useYjsStore({
+    roomId: `moraa-board-${currentSlide?.id}-${eventId}`,
+  })
 
   console.log('store', store)
 

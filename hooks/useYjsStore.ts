@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
+import { useDebounce } from '@uidotdev/usehooks'
 import PartySocket from 'partysocket'
 import {
   HistoryEntry,
@@ -12,25 +13,50 @@ import {
   uniqueId,
 } from 'tldraw'
 
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
+
 const clientId = uniqueId()
 
 const HOST_URL = `wss://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID}.supabase.co/realtime/v1/websocket`
 
 export function useYjsStore({
-  version = 1,
   roomId = 'example',
 }: {
   version?: number
   roomId?: string
 }) {
+  const { currentSlide, updateSlide } = useContext(
+    EventContext
+  ) as EventContextType
   const [store] = useState(() => {
     const _store = createTLStore({
       shapeUtils: [...defaultShapeUtils],
     })
-    // store.loadSnapshot(DEFAULT_STORE)
+
+    if (currentSlide?.content?.snapshot) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      _store.loadSnapshot(currentSlide.content.snapshot as any)
+    }
 
     return _store
   })
+  const debouncedSnapshot = useDebounce(store.getSnapshot(), 1000)
+
+  useEffect(() => {
+    if (!currentSlide?.id) return
+
+    updateSlide({
+      slidePayload: {
+        content: {
+          snapshot: debouncedSnapshot,
+        },
+      },
+      slideId: currentSlide.id,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlide?.id, debouncedSnapshot])
+  console.log('useHook', store.getSnapshot())
 
   const [storeWithStatus, setStoreWithStatus] = useState<TLStoreWithStatus>({
     status: 'loading',
@@ -39,7 +65,7 @@ export function useYjsStore({
   useEffect(() => {
     const socket = new PartySocket({
       host: HOST_URL,
-      room: `${roomId}_${version}`,
+      room: roomId,
       query: {
         apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         log_level: 'info',
