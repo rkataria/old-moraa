@@ -9,6 +9,7 @@ import { TbSettings } from 'react-icons/tb'
 import { Button } from '@nextui-org/react'
 
 import { CoverEditor } from './content-types/CoverEditor'
+import { MoraaBoardEditor } from './content-types/MoraaBoardEditor'
 import { RichTextEditor } from './content-types/RichTextEditor'
 import { TextImageEditor } from './content-types/TextImageEditor'
 import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
@@ -105,6 +106,7 @@ export function Slide({
           <MiroEmbedEditor slide={slide as any} />
         )}
         {slide.type === ContentType.RICH_TEXT && <RichTextEditor />}
+        {slide.type === ContentType.MORAA_BOARD && <MoraaBoardEditor />}
       </div>
     </div>
   )
