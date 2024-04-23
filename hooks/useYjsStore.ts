@@ -36,7 +36,7 @@ export function useYjsStore({
 
     if (currentSlide?.content?.snapshot) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      _store.loadSnapshot(currentSlide.content.snapshot as any)
+      _store.loadSnapshot(JSON.parse(currentSlide.content.snapshot as any))
     }
 
     return _store
@@ -45,11 +45,16 @@ export function useYjsStore({
 
   useEffect(() => {
     if (!currentSlide?.id) return
+    const stringifiedSnapshot = JSON.stringify(debouncedSnapshot)
+
+    if (stringifiedSnapshot === currentSlide.content?.snapshot) {
+      return
+    }
 
     updateSlide({
       slidePayload: {
         content: {
-          snapshot: debouncedSnapshot,
+          snapshot: stringifiedSnapshot,
         },
       },
       slideId: currentSlide.id,
