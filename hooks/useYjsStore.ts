@@ -40,6 +40,11 @@ export function useYjsStore({
     const socket = new PartySocket({
       host: HOST_URL,
       room: `${roomId}_${version}`,
+      query: {
+        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        log_level: 'info',
+        vsn: '1.0.0',
+      },
     })
 
     setStoreWithStatus({ status: 'loading' })
