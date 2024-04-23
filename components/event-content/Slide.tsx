@@ -4,6 +4,7 @@
 import { useContext } from 'react'
 
 import dynamic from 'next/dynamic'
+import { useParams } from 'next/navigation'
 import { TbSettings } from 'react-icons/tb'
 
 import { Button } from '@nextui-org/react'
@@ -23,6 +24,7 @@ import { SlidePreview } from '../common/SlidePreview'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
+import { useYjsStore } from '@/hooks/useYjsStore'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
@@ -47,8 +49,11 @@ export function Slide({
   settingsEnabled,
   setSettingsSidebarVisible,
 }: SlideProps) {
+  const { eventId } = useParams()
   const { preview, currentSlide } = useContext(EventContext) as EventContextType
-
+  const moraaBoardStore = useYjsStore({
+    roomId: `moraa-board-${currentSlide?.id}-${eventId}`,
+  })
   if (preview || !isOwner) {
     return <SlidePreview slide={slide} />
   }
@@ -108,7 +113,9 @@ export function Slide({
           <MiroEmbedEditor slide={slide as any} />
         )}
         {slide.type === ContentType.RICH_TEXT && <RichTextEditor />}
-        {slide.type === ContentType.MORAA_BOARD && <MoraaBoardEditor />}
+        {slide.type === ContentType.MORAA_BOARD && (
+          <MoraaBoardEditor store={moraaBoardStore} />
+        )}
       </div>
     </div>
   )
