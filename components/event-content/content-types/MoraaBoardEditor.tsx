@@ -30,7 +30,7 @@ export function MoraaBoardEditor() {
   ) as EventContextType
 
   const store = useYjsStore({
-    roomId: `moraa-board-${localSlide?.id}-${eventId}`,
+    roomId: `moraa-board-${currentSlide?.id}-${eventId}`,
   })
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function MoraaBoardEditor() {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden">
-      <Tldraw key={localSlide.id} autoFocus store={store} />
+      <Tldraw key={localSlide.id} store={store} autoFocus />
     </div>
   )
 }
