@@ -23,7 +23,7 @@ import { YKeyValue } from 'y-utility/y-keyvalue'
 import { WebsocketProvider } from 'y-websocket'
 import * as Y from 'yjs'
 
-const HOST_URL = `wss://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID}.supabase.co/realtime/v1/websocket?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}&log_level=info&vsn=1.0.0`
+const HOST_URL = `wss://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID}.supabase.co/realtime/v1/websocket`
 
 export function useYjsStore({
   roomId = 'example17',
@@ -55,7 +55,14 @@ export function useYjsStore({
       yDoc: _yDoc,
       yStore: _yStore,
       meta: _meta,
-      room: new WebsocketProvider(HOST_URL, roomId, _yDoc, { connect: true }),
+      room: new WebsocketProvider(HOST_URL, roomId, _yDoc, {
+        connect: true,
+        params: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          log_level: 'info',
+          vsn: '1.0.0',
+        },
+      }),
     }
   }, [roomId])
 
