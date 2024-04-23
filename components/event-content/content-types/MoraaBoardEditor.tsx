@@ -33,6 +33,8 @@ export function MoraaBoardEditor() {
     roomId: `moraa-board-${currentSlide?.id}-${eventId}`,
   })
 
+  console.log('store', store)
+
   useEffect(() => {
     setLocalSlide(currentSlide)
   }, [currentSlide])

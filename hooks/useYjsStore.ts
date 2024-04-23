@@ -1,44 +1,33 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-// eslint-disable-next-line import/no-extraneous-dependencies
+import PartySocket from 'partysocket'
 import {
-  InstancePresenceRecordType,
-  TLAnyShapeUtilConstructor,
-  TLInstancePresence,
+  HistoryEntry,
+  StoreListener,
   TLRecord,
   TLStoreWithStatus,
-  computed,
-  createPresenceStateDerivation,
   createTLStore,
   defaultShapeUtils,
-  defaultUserPreferences,
-  getUserPreferences,
-  setUserPreferences,
-  react,
-  compareSchemas,
-  SerializedSchema,
-} from '@tldraw/tldraw'
-import { YKeyValue } from 'y-utility/y-keyvalue'
-import { WebsocketProvider } from 'y-websocket'
-import * as Y from 'yjs'
+  throttle,
+  uniqueId,
+} from 'tldraw'
+
+const clientId = uniqueId()
 
 const HOST_URL = `wss://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID}.supabase.co/realtime/v1/websocket`
 
 export function useYjsStore({
-  roomId = 'example17',
-  shapeUtils = [],
-}: Partial<{
-  roomId: string
-  version: number
-  shapeUtils: TLAnyShapeUtilConstructor[]
-}>) {
-  console.log('useYjsStore', roomId)
-
+  version = 1,
+  roomId = 'example',
+}: {
+  version?: number
+  roomId?: string
+}) {
   const [store] = useState(() => {
     const _store = createTLStore({
-      shapeUtils: [...defaultShapeUtils, ...shapeUtils],
+      shapeUtils: [...defaultShapeUtils],
     })
+    // store.loadSnapshot(DEFAULT_STORE)
 
     return _store
   })
@@ -47,306 +36,133 @@ export function useYjsStore({
     status: 'loading',
   })
 
-  const { yDoc, yStore, meta, room }: any = useMemo(() => {
-    const _yDoc = new Y.Doc({ gc: true })
-    const yArr = _yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${roomId}`)
-    const _yStore = new YKeyValue(yArr)
-    const _meta = _yDoc.getMap<SerializedSchema>('meta')
-
-    return {
-      yDoc: _yDoc,
-      yStore: _yStore,
-      meta: _meta,
-      room: new WebsocketProvider(HOST_URL, roomId, _yDoc, {
-        connect: true,
-        params: {
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-          log_level: 'info',
-          vsn: '1.0.0',
-        },
-      }),
-    }
-  }, [roomId])
-
   useEffect(() => {
+    const socket = new PartySocket({
+      host: HOST_URL,
+      room: `${roomId}_${version}`,
+    })
+
     setStoreWithStatus({ status: 'loading' })
 
     const unsubs: (() => void)[] = []
 
-    function handleSync() {
-      // 1.
-      // Connect store to yjs store and vis versa, for both the document and awareness
+    const handleOpen = () => {
+      socket.removeEventListener('open', handleOpen)
 
-      /* -------------------- Document -------------------- */
-
-      // Sync store changes to the yjs doc
-      unsubs.push(
-        store.listen(
-          ({ changes }) => {
-            yDoc.transact(() => {
-              Object.values(changes.added).forEach((record) => {
-                yStore.set(record.id, record)
-              })
-
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              Object.values(changes.updated).forEach(([_, record]) => {
-                yStore.set(record.id, record)
-              })
-
-              Object.values(changes.removed).forEach((record) => {
-                yStore.delete(record.id)
-              })
-            })
-          },
-          { source: 'user', scope: 'document' } // only sync user's document changes
-        )
-      )
-
-      // Sync the yjs doc changes to the store
-      const handleChange = (
-        changes: Map<
-          string,
-          | { action: 'delete'; oldValue: TLRecord }
-          | { action: 'update'; oldValue: TLRecord; newValue: TLRecord }
-          | { action: 'add'; newValue: TLRecord }
-        >,
-        transaction: Y.Transaction
-      ) => {
-        if (transaction.local) return
-
-        const toRemove: TLRecord['id'][] = []
-        const toPut: TLRecord[] = []
-
-        changes.forEach((change, id) => {
-          // eslint-disable-next-line default-case
-          switch (change.action) {
-            case 'add':
-            case 'update': {
-              const record = yStore.get(id)!
-              toPut.push(record)
-              break
-            }
-            case 'delete': {
-              toRemove.push(id as TLRecord['id'])
-              break
-            }
-          }
-        })
-
-        // put / remove the records in the store
-        store.mergeRemoteChanges(() => {
-          if (toRemove.length) store.remove(toRemove)
-          if (toPut.length) store.put(toPut)
-        })
-      }
-
-      yStore.on('change', handleChange)
-      unsubs.push(() => yStore.off('change', handleChange))
-
-      /* -------------------- Awareness ------------------- */
-
-      const yClientId = room.awareness.clientID.toString()
-      setUserPreferences({ id: yClientId })
-
-      const userPreferences = computed<{
-        id: string
-        color: string
-        name: string
-      }>('userPreferences', () => {
-        const user = getUserPreferences()
-
-        return {
-          id: user.id,
-          color: user.color ?? defaultUserPreferences.color,
-          name: user.name ?? defaultUserPreferences.name,
-        }
+      setStoreWithStatus({
+        status: 'synced-remote',
+        connectionStatus: 'online',
+        store,
       })
 
-      // Create the instance presence derivation
-      const presenceId = InstancePresenceRecordType.createId(yClientId)
-      const presenceDerivation = createPresenceStateDerivation(
-        userPreferences,
-        presenceId
-      )(store)
+      socket.addEventListener('message', handleMessage)
+      unsubs.push(() => socket.removeEventListener('message', handleMessage))
+    }
 
-      // Set our initial presence from the derivation's current value
-      room.awareness.setLocalStateField('presence', presenceDerivation.get())
+    const handleClose = () => {
+      socket.removeEventListener('message', handleMessage)
 
-      // When the derivation change, sync presence to to yjs awareness
-      unsubs.push(
-        react('when presence changes', () => {
-          const presence = presenceDerivation.get()
-          requestAnimationFrame(() => {
-            room.awareness.setLocalStateField('presence', presence)
-          })
-        })
-      )
+      setStoreWithStatus({
+        status: 'synced-remote',
+        connectionStatus: 'offline',
+        store,
+      })
 
-      // Sync yjs awareness changes to the store
-      const handleUpdate = (update: {
-        added: number[]
-        updated: number[]
-        removed: number[]
-      }) => {
-        const states = room.awareness.getStates() as Map<
-          number,
-          { presence: TLInstancePresence }
-        >
+      socket.addEventListener('open', handleOpen)
+    }
 
-        const toRemove: TLInstancePresence['id'][] = []
-        const toPut: TLInstancePresence[] = []
-
-        // Connect records to put / remove
-        // eslint-disable-next-line no-restricted-syntax
-        for (const clientId of update.added) {
-          const state = states.get(clientId)
-          if (state?.presence && state.presence.id !== presenceId) {
-            toPut.push(state.presence)
-          }
-        }
-
-        // eslint-disable-next-line no-restricted-syntax
-        for (const clientId of update.updated) {
-          const state = states.get(clientId)
-          if (state?.presence && state.presence.id !== presenceId) {
-            toPut.push(state.presence)
-          }
-        }
-
-        // eslint-disable-next-line no-restricted-syntax
-        for (const clientId of update.removed) {
-          toRemove.push(
-            InstancePresenceRecordType.createId(clientId.toString())
-          )
-        }
-
-        // put / remove the records in the store
-        store.mergeRemoteChanges(() => {
-          if (toRemove.length) store.remove(toRemove)
-          if (toPut.length) store.put(toPut)
-        })
-      }
-
-      const handleMetaUpdate = () => {
-        const theirSchema = meta.get('schema')
-        if (!theirSchema) {
-          throw new Error('No schema found in the yjs doc')
-        }
-        // If the shared schema is newer than our schema, the user must refresh
-        if (compareSchemas(theirSchema, store.schema.serialize()) === 1) {
-          window.alert('The schema has been updated. Please refresh the page.')
-          yDoc.destroy()
-        }
-      }
-      meta.observe(handleMetaUpdate)
-      unsubs.push(() => meta.unobserve(handleMetaUpdate))
-
-      room.awareness.on('update', handleUpdate)
-      unsubs.push(() => room.awareness.off('update', handleUpdate))
-
-      // 2.
-      // Initialize the store with the yjs doc records—or, if the yjs doc
-      // is empty, initialize the yjs doc with the default store records.
-      if (yStore.yarray.length) {
-        // Replace the store records with the yjs doc records
-        const ourSchema = store.schema.serialize()
-        const theirSchema = meta.get('schema')
-        if (!theirSchema) {
-          throw new Error('No schema found in the yjs doc')
-        }
-
-        const records = yStore.yarray
-          .toJSON()
-          .map(({ val }: { val: any }) => val)
-
-        const migrationResult = store.schema.migrateStoreSnapshot({
-          schema: theirSchema,
-          store: Object.fromEntries(
-            records.map((record: any) => [record.id, record])
-          ),
-        })
-        if (migrationResult.type === 'error') {
-          // if the schema is newer than ours, the user must refresh
-          console.error(migrationResult.reason)
-          window.alert('The schema has been updated. Please refresh the page.')
-
+    const handleMessage = (message: MessageEvent) => {
+      try {
+        const data = JSON.parse(message.data)
+        if (data.clientId === clientId) {
           return
         }
 
-        yDoc.transact(() => {
-          // delete any deleted records from the yjs doc
-          // eslint-disable-next-line no-restricted-syntax
-          for (const r of records) {
-            if (!migrationResult.value[r.id]) {
-              yStore.delete(r.id)
+        // eslint-disable-next-line default-case
+        switch (data.type) {
+          case 'init': {
+            store.loadSnapshot(data.snapshot)
+            break
+          }
+          case 'recovery': {
+            store.loadSnapshot(data.snapshot)
+            break
+          }
+          case 'update': {
+            try {
+              // eslint-disable-next-line no-restricted-syntax
+              for (const update of data.updates) {
+                store.mergeRemoteChanges(() => {
+                  const {
+                    changes: { added, updated, removed },
+                  } = update as HistoryEntry<TLRecord>
+
+                  // eslint-disable-next-line no-restricted-syntax
+                  for (const record of Object.values(added)) {
+                    store.put([record])
+                  }
+                  // eslint-disable-next-line no-restricted-syntax
+                  for (const [, to] of Object.values(updated)) {
+                    store.put([to])
+                  }
+                  // eslint-disable-next-line no-restricted-syntax
+                  for (const record of Object.values(removed)) {
+                    store.remove([record.id])
+                  }
+                })
+              }
+            } catch (e) {
+              console.error(e)
+              socket.send(JSON.stringify({ clientId, type: 'recovery' }))
             }
+            break
           }
-          // eslint-disable-next-line no-restricted-syntax
-          for (const r of Object.values(migrationResult.value) as TLRecord[]) {
-            yStore.set(r.id, r)
-          }
-          meta.set('schema', ourSchema)
-        })
-
-        store.loadSnapshot({
-          store: migrationResult.value,
-          schema: ourSchema,
-        })
-      } else {
-        // Create the initial store records
-        // Sync the store records to the yjs doc
-        yDoc.transact(() => {
-          // eslint-disable-next-line no-restricted-syntax
-          for (const record of store.allRecords()) {
-            yStore.set(record.id, record)
-          }
-          meta.set('schema', store.schema.serialize())
-        })
+        }
+      } catch (e) {
+        console.error(e)
       }
+    }
 
-      setStoreWithStatus({
-        store,
-        status: 'synced-remote',
-        connectionStatus: 'online',
+    const pendingChanges: HistoryEntry<TLRecord>[] = []
+
+    const sendChanges = throttle(() => {
+      if (pendingChanges.length === 0) return
+      socket.send(
+        JSON.stringify({
+          clientId,
+          type: 'update',
+          updates: pendingChanges,
+        })
+      )
+      pendingChanges.length = 0
+    }, 32)
+
+    const handleChange: StoreListener<TLRecord> = (event) => {
+      if (event.source !== 'user') return
+      pendingChanges.push(event)
+      sendChanges()
+    }
+
+    socket.addEventListener('open', handleOpen)
+    socket.addEventListener('close', handleClose)
+
+    unsubs.push(
+      store.listen(handleChange, {
+        source: 'user',
+        scope: 'document',
       })
-    }
+    )
 
-    let hasConnectedBefore = false
-
-    function handleStatusChange({
-      status,
-    }: {
-      status: 'disconnected' | 'connected'
-    }) {
-      // If we're disconnected, set the store status to 'synced-remote' and the connection status to 'offline'
-      if (status === 'disconnected') {
-        setStoreWithStatus({
-          store,
-          status: 'synced-remote',
-          connectionStatus: 'offline',
-        })
-
-        return
-      }
-
-      room.off('synced', handleSync)
-
-      if (status === 'connected') {
-        if (hasConnectedBefore) return
-        hasConnectedBefore = true
-        room.on('synced', handleSync)
-        unsubs.push(() => room.off('synced', handleSync))
-      }
-    }
-
-    room.on('status', handleStatusChange)
-    unsubs.push(() => room.off('status', handleStatusChange))
+    unsubs.push(() => socket.removeEventListener('open', handleOpen))
+    unsubs.push(() => socket.removeEventListener('close', handleClose))
 
     return () => {
       unsubs.forEach((fn) => fn())
       unsubs.length = 0
+      socket.close()
     }
-  }, [room, yDoc, store, yStore, meta])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store])
 
   return storeWithStatus
 }

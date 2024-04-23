@@ -85,6 +85,7 @@
     "luxon": "^3.4.4",
     "next": "latest",
     "next-themes": "^0.2.1",
+    "partysocket": "^1.0.1",
     "pdfjs-dist": "3.11.174",
     "postcss": "8.4.29",
     "react": "18.2.0",
