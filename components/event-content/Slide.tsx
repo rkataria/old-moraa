@@ -47,11 +47,13 @@ export function Slide({
   settingsEnabled,
   setSettingsSidebarVisible,
 }: SlideProps) {
-  const { preview } = useContext(EventContext) as EventContextType
+  const { preview, currentSlide } = useContext(EventContext) as EventContextType
 
   if (preview || !isOwner) {
     return <SlidePreview slide={slide} />
   }
+
+  if (!currentSlide) return null
 
   return (
     <div
