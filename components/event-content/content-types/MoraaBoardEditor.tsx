@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/control-has-associated-label */
@@ -6,18 +7,35 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 
+import { Tldraw, useFileSystem, TDBinding, TDShape } from '@tldraw/tldraw'
 import { useDebounce } from '@uidotdev/usehooks'
 import { useParams } from 'next/navigation'
+import { useUsers } from 'y-presence'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Tldraw } from 'tldraw'
+import { WebsocketProvider } from 'y-websocket'
+import * as Y from 'yjs'
 
 import { EventContext } from '@/contexts/EventContext'
-import { useYjsStore } from '@/hooks/useYjsStore'
+import { useTldrawCollaboration } from '@/hooks/useTldrawCollaboration'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import 'tldraw/tldraw.css'
+export const doc = new Y.Doc()
+
+const HOST_URL = `wss://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID}.supabase.co/realtime/v1/websocket`
+
+export const getProvider = ({ roomId }: { roomId: string }) =>
+  new WebsocketProvider(HOST_URL, roomId, doc, {
+    connect: true,
+    params: {
+      api_key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    },
+  })
+
+export const yShapes: Y.Map<TDShape> = doc.getMap('shapes')
+export const yBindings: Y.Map<TDBinding> = doc.getMap('bindings')
+
+export const undoManager = new Y.UndoManager([yShapes, yBindings])
 
 type MoraaBoardSlide = ISlide
 
@@ -28,11 +46,10 @@ export function MoraaBoardEditor() {
   const { currentSlide, updateSlide } = useContext(
     EventContext
   ) as EventContextType
-  const store = useYjsStore({
-    roomId: `moraa-board-${currentSlide?.id}-${eventId}`,
-  })
-
-  console.log('store', store)
+  const fileSystemEvents = useFileSystem()
+  const roomId = `moraa-board-${currentSlide?.id}-${eventId}`
+  const { awareness } = getProvider({ roomId })
+  const { onMount, ...events } = useTldrawCollaboration(roomId)
 
   useEffect(() => {
     setLocalSlide(currentSlide)
@@ -68,7 +85,28 @@ export function MoraaBoardEditor() {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden">
-      <Tldraw key={localSlide.id} store={store} autoFocus />
+      <Users awareness={awareness} />
+      <Tldraw
+        autofocus
+        disableAssets
+        showPages={false}
+        onMount={onMount}
+        {...fileSystemEvents}
+        {...events}
+      />
+    </div>
+  )
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function Users({ awareness }: { awareness: any }) {
+  const users = useUsers(awareness)
+
+  return (
+    <div className="absolute top-0 left-0 w-full p-md">
+      <div className="flex space-between">
+        <span>Number of connected users: {users.size}</span>
+      </div>
     </div>
   )
 }
