@@ -8,7 +8,7 @@ import {
   undoManager,
   yBindings,
   yShapes,
-} from '@/components/event-content/content-types/MoraaBoardEditor'
+} from '@/utils/tldraw'
 
 export function useTldrawCollaboration(roomId: string) {
   const provider = getProvider({ roomId })
