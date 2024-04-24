@@ -11,16 +11,9 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
         blocks: [
           {
             id: uuidv4(),
-            type: 'header',
-            data: {
-              html: `<h1 style="text-align: center">${data?.title || 'Title'}</h1>`,
-            },
-          },
-          {
-            id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: `<p style="text-align: center">${data?.description || 'Description'}</p>`,
+              html: `<h1 style="text-align: center">${data?.title || 'Title'}</h1><p style="text-align: center">${data?.description || 'This is a description text'}</p>`,
             },
           },
         ],
@@ -30,16 +23,9 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
         blocks: [
           {
             id: uuidv4(),
-            type: 'header',
-            data: {
-              html: `<h1>${data?.title || 'Title'}</h1>`,
-            },
-          },
-          {
-            id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: `<p>${data?.description || 'Description'}</p>`,
+              html: `<h1>${data?.title || 'Title'}</h1><p>${data?.description || 'This is a description text'}</p>`,
             },
           },
           {

@@ -17,6 +17,14 @@ export type TextBlock = Block & {
   }
 }
 
+export type RichTextBlock = {
+  id: string
+  type: string
+  data: {
+    html: string
+  }
+}
+
 export type FileBlock = Block & {
   data: {
     file: {

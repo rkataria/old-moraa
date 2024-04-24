@@ -46,10 +46,6 @@
 
 }
 
-.tiptap:hover {
-  @apply bg-black/5 rounded-sm;
-}
-
 .ProseMirror-focused {
   @apply  outline-none;
 }

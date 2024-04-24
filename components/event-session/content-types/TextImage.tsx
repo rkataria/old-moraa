@@ -6,8 +6,8 @@ import {
   PanelGroup,
 } from 'react-resizable-panels'
 
+import { RichTextView } from '@/components/common/content-types/RichTextView'
 import { ImageBlockView } from '@/components/common/ImageBlockView'
-import { TextBlockView } from '@/components/common/TextBlockView'
 import { LayoutTypes } from '@/components/common/TextImageSlideSettings'
 import { Block, ISlide, TextBlock } from '@/types/slide.type'
 
@@ -34,9 +34,9 @@ export function TextImage({ slide }: TextImageProps) {
 
   const layoutType = slide.config.layoutType || LayoutTypes.IMAGE_RIGHT
 
-  const textBlocks = blocks.filter((block) =>
-    ['header', 'paragraph'].includes(block.type)
-  ) as TextBlock[]
+  const textBlock = blocks.find(
+    (block) => block.type === 'paragraph'
+  ) as TextBlock
 
   const imageBlock = blocks.find(
     (block: Block) => block.type === 'image'
@@ -45,9 +45,9 @@ export function TextImage({ slide }: TextImageProps) {
   if (layoutType === LayoutTypes.NO_IMAGE) {
     return (
       <div
-        className="tiptap ProseMirror relative w-full h-full flex flex-col justify-center items-start group bg-center bg-cover"
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center"
         style={{ backgroundColor: slide.config.backgroundColor }}>
-        <TextBlockView textBlocks={textBlocks} />
+        <RichTextView block={textBlock} />
       </div>
     )
   }
@@ -55,9 +55,9 @@ export function TextImage({ slide }: TextImageProps) {
   if (layoutType === LayoutTypes.IMAGE_BEHIND) {
     return (
       <div
-        className="tiptap ProseMirror relative w-full h-full flex flex-col justify-center items-start group bg-center bg-cover"
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center bg-center bg-cover"
         style={{ backgroundImage: `url(${imageBlock.data.file.url})` }}>
-        <TextBlockView textBlocks={textBlocks} />
+        <RichTextView block={textBlock} />
       </div>
     )
   }
@@ -66,13 +66,15 @@ export function TextImage({ slide }: TextImageProps) {
     return (
       <div
         style={{ backgroundColor: slide.config.backgroundColor }}
-        className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-start">
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center relative">
         <PanelGroup ref={panelGroupRef} direction="horizontal">
           <Panel defaultSize={30} minSize={30} maxSize={60}>
             <ImageBlockView imageBlock={imageBlock} />
           </Panel>
           <Panel minSize={30}>
-            <TextBlockView textBlocks={textBlocks} />
+            <div className="flex justify-center items-center h-full w-full">
+              <RichTextView block={textBlock} />
+            </div>
           </Panel>
         </PanelGroup>
       </div>
@@ -82,10 +84,12 @@ export function TextImage({ slide }: TextImageProps) {
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-start">
+      className="tiptap ProseMirror w-full h-full flex justify-center items-center relative">
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>
-          <TextBlockView textBlocks={textBlocks} />
+          <div className="flex justify-center items-center h-full w-full">
+            <RichTextView block={textBlock} />
+          </div>
         </Panel>
         <Panel defaultSize={30} minSize={30} maxSize={60}>
           <ImageBlockView imageBlock={imageBlock} />

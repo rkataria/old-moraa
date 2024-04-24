@@ -13,19 +13,17 @@ import {
 
 import { ImageBlock } from '../../ImageBlock'
 
-import { TextBlockEditor } from '@/components/event-content/BlockEditor'
+import { TextBlockEditor } from '@/components/event-content/TextBlockEditor'
 import { FileBlock, ISlide, TextBlock } from '@/types/slide.type'
 
 export function ImageLeft({
   slide,
   panelGroupRef,
   handlePanelLayoutChange,
-  setEditingBlock,
   imageRef,
   fileUploaderOpen,
   setFileUploaderOpen,
   handleFileUpload,
-  editingBlock,
   onBlockChange,
 }: {
   imageRef: RefObject<HTMLImageElement>
@@ -35,8 +33,6 @@ export function ImageLeft({
 
   panelGroupRef: React.RefObject<ImperativePanelGroupHandle>
   handlePanelLayoutChange: (sizes: number[]) => void
-  editingBlock: string | null
-  setEditingBlock: (id: string) => void
   onBlockChange: (block: TextBlock) => void
 
   handleFileUpload: (
@@ -49,16 +45,16 @@ export function ImageLeft({
 }) {
   const blocks = slide.content?.blocks || []
 
-  const textBlocks = blocks.filter((block) =>
-    ['header', 'paragraph'].includes(block.type)
-  ) as TextBlock[]
+  const textBlock = blocks.find(
+    (block) => block.type === 'paragraph'
+  ) as TextBlock
 
   const imageBlocks = blocks.find(
     (block) => block.type === 'image'
   ) as FileBlock
 
   return (
-    <div className="w-full h-full flex justify-center items-center group">
+    <div className="w-full h-full flex justify-center items-center group pt-16 relative">
       <PanelGroup
         direction="horizontal"
         className="w-full"
@@ -79,20 +75,12 @@ export function ImageLeft({
         <PanelResizeHandle className="opacity-50 bg-gray-800 w-2 h-12 rounded-full relative z-10 -right-1 top-1/2 -translate-y-1/2 cursor-col-resize group-hover:opacity-100 transition-opacity duration-500" />
 
         <Panel minSize={30}>
-          <div className="h-full flex flex-col justify-center items-center">
-            {textBlocks.map((block) => (
-              <div
-                onClick={() => setEditingBlock(block.id)}
-                id={`block-editor-${block.id}`}
-                className="w-full">
-                <TextBlockEditor
-                  key={block.id}
-                  block={block}
-                  editable={editingBlock === block.id}
-                  onChange={onBlockChange}
-                />
-              </div>
-            ))}
+          <div className="flex justify-center items-center h-full w-full">
+            <TextBlockEditor
+              stickyToolbar
+              block={textBlock}
+              onChange={onBlockChange}
+            />
           </div>
         </Panel>
       </PanelGroup>
