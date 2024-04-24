@@ -104,11 +104,11 @@ export function SlideManager() {
     )
   }
 
-  const getIsSlidePublished = () => {
-    const allSlides = sections.flatMap((s) => s.slides)
+  // const getIsSlidePublished = () => {
+  //   const allSlides = sections.flatMap((s) => s.slides)
 
-    return allSlides.some((slide) => slide.status === SlideStatus.PUBLISHED)
-  }
+  //   return allSlides.some((slide) => slide.status === SlideStatus.PUBLISHED)
+  // }
 
   const renderSlide = () => {
     const slideCount = getSlideCount(sections)
@@ -145,7 +145,7 @@ export function SlideManager() {
           event={event}
           leftSidebarVisible={leftSidebarVisible}
           onLeftSidebarToggle={setLeftSidebarVisible}
-          isSlidePublished={getIsSlidePublished()}
+          // isSlidePublished={getIsSlidePublished()}
         />
       </SlideManagerHeader>
       <div className="flex flex-auto w-full">
