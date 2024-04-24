@@ -28,7 +28,9 @@ export const getProvider = ({ roomId }: { roomId: string }) =>
   new WebsocketProvider(HOST_URL, roomId, doc, {
     connect: true,
     params: {
-      api_key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      log_level: 'info',
+      vsn: '1.0.0',
     },
   })
 
