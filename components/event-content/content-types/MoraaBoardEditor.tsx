@@ -67,6 +67,12 @@ export function MoraaBoardEditor() {
         showPages={false}
         {...fileSystemEvents}
         onChange={(state) => {
+          if (
+            JSON.stringify(state.document) === JSON.stringify(storedDocument)
+          ) {
+            return
+          }
+
           setLocalSlide(
             (prev) =>
               ({
