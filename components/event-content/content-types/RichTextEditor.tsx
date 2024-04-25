@@ -30,6 +30,10 @@ export function RichTextEditor() {
       return
     }
 
+    if (!debouncedLocalSlide?.content) {
+      return
+    }
+
     updateSlide({
       slidePayload: {
         content: {

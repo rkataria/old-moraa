@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState } from 'react'
 
 import { Tldraw, useFileSystem } from '@tldraw/tldraw'
-import { useDebounce } from '@uidotdev/usehooks'
+import { useThrottle } from '@uidotdev/usehooks'
 import { useParams } from 'next/navigation'
 import { useUsers } from 'y-presence'
 
@@ -29,7 +29,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
   const roomId = `moraa-board-${slide.id}-${eventId}`
   const { awareness } = getProvider({ roomId })
   const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
-  const debouncedLocalSlide = useDebounce(localSlide, 500)
+  const throttledSlide = useThrottle(localSlide, 500)
   const { preview, isOwner, currentSlide, updateSlide } = useContext(
     EventContext
   ) as EventContextType
@@ -48,8 +48,12 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
       return
     }
 
+    if (!throttledSlide?.content) {
+      return
+    }
+
     if (
-      JSON.stringify(debouncedLocalSlide?.content) ===
+      JSON.stringify(throttledSlide?.content) ===
       JSON.stringify(currentSlide.content)
     ) {
       return
@@ -59,14 +63,14 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
       slidePayload: {
         content: {
           ...currentSlide.content,
-          ...debouncedLocalSlide?.content,
+          ...throttledSlide?.content,
         },
       },
       slideId: currentSlide.id,
       allowNonOwnerToUpdate: true,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide?.content])
+  }, [throttledSlide?.content])
 
   if (!localSlide?.content) {
     return null
@@ -93,12 +97,6 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
         {...fileSystemEvents}
         {...events}
         onChange={(state) => {
-          if (
-            JSON.stringify(state.document) === JSON.stringify(storedDocument)
-          ) {
-            return
-          }
-
           setLocalSlide(
             (prev) =>
               ({

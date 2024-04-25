@@ -61,6 +61,9 @@ export function MiroEmbedEditor({ slide }: MiroEmbedEditorProps) {
   const saveMiroUrl = () => {
     const boardId = getBoardId()
     if (!boardId) return
+
+    if (slide.content.boardId === boardId) return
+
     updateSlide({
       slidePayload: {
         content: {

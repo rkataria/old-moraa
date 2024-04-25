@@ -8,7 +8,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { Tldraw, useFileSystem } from '@tldraw/tldraw'
-import { useDebounce } from '@uidotdev/usehooks'
+import { useThrottle } from '@uidotdev/usehooks'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
@@ -18,7 +18,7 @@ type MoraaBoardSlide = ISlide
 
 export function MoraaBoardEditor() {
   const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
-  const debouncedLocalSlide = useDebounce(localSlide, 500)
+  const throttledSlide = useThrottle(localSlide, 500)
   const { currentSlide, updateSlide } = useContext(
     EventContext
   ) as EventContextType
@@ -33,8 +33,12 @@ export function MoraaBoardEditor() {
       return
     }
 
+    if (!throttledSlide?.content) {
+      return
+    }
+
     if (
-      JSON.stringify(debouncedLocalSlide?.content) ===
+      JSON.stringify(throttledSlide?.content) ===
       JSON.stringify(currentSlide.content)
     ) {
       return
@@ -44,14 +48,14 @@ export function MoraaBoardEditor() {
       slidePayload: {
         content: {
           ...currentSlide.content,
-          ...debouncedLocalSlide?.content,
+          ...throttledSlide?.content,
         },
       },
       slideId: currentSlide.id,
       allowNonOwnerToUpdate: true,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide?.content])
+  }, [throttledSlide?.content])
 
   if (!localSlide?.content) {
     return null

@@ -31,6 +31,7 @@ import {
   type VideoMiddlewareConfig,
   PresentationStatuses,
 } from '@/types/event-session.type'
+import { slideHasSlideResponses } from '@/utils/content.util'
 import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
 
 interface EventSessionProviderProps {
@@ -239,11 +240,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     if (!isOwner) return
     if (!activeSession) return
 
-    console.log('updating active session:', {
-      currentSlideId: currentSlide?.id,
-      presentationStatus,
-    })
-
     if (
       activeSession?.data?.currentSlideId === currentSlide?.id &&
       activeSession?.data?.presentationStatus === presentationStatus
@@ -267,6 +263,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         event: 'currentslide-change',
         payload: { slideId: currentSlide.id },
       })
+    }
+
+    if (!slideHasSlideResponses(currentSlide)) {
+      setCurrentSlideLoading(false)
+
+      return
     }
 
     setCurrentSlideLoading(true)
