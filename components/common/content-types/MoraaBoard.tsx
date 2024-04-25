@@ -76,7 +76,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
     return null
   }
 
-  const storedDocument = JSON.parse(localSlide.content.document as string)
+  // const storedDocument = JSON.parse(localSlide.content.document as string)
   const readOnly = preview || (!isOwner && currentSlide?.config?.allowToDraw)
 
   return (
@@ -91,7 +91,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
         showMenu={false}
         autofocus
         disableAssets
-        document={storedDocument}
+        // document={storedDocument}
         onMount={onMount}
         {...fileSystemEvents}
         {...events}
