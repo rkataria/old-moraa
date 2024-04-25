@@ -294,10 +294,17 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           console.log('Slide change received!', payload)
 
           if (payload.eventType === 'UPDATE') {
-            const updatedSlide = payload.new
+            let updatedSlide = payload.new
 
             const updatedSections = sections.map((section) => {
               if (section.id === updatedSlide.section_id) {
+                updatedSlide = {
+                  ...section.slides.find(
+                    (slide: ISlide) => slide.id === updatedSlide.id
+                  ),
+                  ...updatedSlide,
+                }
+
                 return {
                   ...section,
                   slides: section.slides.map((slide: ISlide) =>
@@ -713,11 +720,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const updateSlide = async ({
     slidePayload,
     slideId,
+    allowNonOwnerToUpdate = false,
   }: {
     slidePayload: Partial<ISlide>
     slideId: string
+    allowNonOwnerToUpdate?: boolean
   }) => {
-    if (!isOwner) return null
+    if (!isOwner && !allowNonOwnerToUpdate) return null
     if (!slideId) return null
     if (Object.keys(slidePayload).length === 0) return null
 

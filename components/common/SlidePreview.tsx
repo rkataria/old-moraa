@@ -4,6 +4,7 @@
 import { useEffect } from 'react'
 
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
+import { MoraaBoard, MoraaBoardSlide } from './content-types/MoraaBoard'
 import { PDFViewer, PDFViewerSlideType } from './content-types/PDFViewer'
 import { type TextImageSlideType } from './content-types/TextImage'
 import {
@@ -86,6 +87,9 @@ export function SlidePreview({ slide }: SlideProps) {
           <MiroEmbedEditor slide={slide as MiroEmbedSlideType} />
         )}
         {slide.type === ContentType.RICH_TEXT && <RichText slide={slide} />}
+        {slide.type === ContentType.MORAA_BOARD && (
+          <MoraaBoard slide={slide as MoraaBoardSlide} />
+        )}
       </div>
     </div>
   )

@@ -48,6 +48,7 @@ export function MoraaBoardEditor() {
         },
       },
       slideId: currentSlide.id,
+      allowNonOwnerToUpdate: true,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedLocalSlide?.content])
@@ -61,6 +62,9 @@ export function MoraaBoardEditor() {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden">
       <Tldraw
+        showMultiplayerMenu={false}
+        showSponsorLink={false}
+        showMenu={false}
         autofocus
         disableAssets
         document={storedDocument}

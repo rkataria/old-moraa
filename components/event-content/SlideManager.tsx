@@ -65,6 +65,7 @@ export function SlideManager() {
       ContentType.COVER,
       ContentType.REFLECTION,
       ContentType.TEXT_IMAGE,
+      ContentType.MORAA_BOARD,
     ].includes(currentSlide.type)
   }
 
