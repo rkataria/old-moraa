@@ -244,12 +244,19 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       presentationStatus,
     })
 
+    if (
+      activeSession?.data?.currentSlideId === currentSlide?.id &&
+      activeSession?.data?.presentationStatus === presentationStatus
+    ) {
+      return
+    }
+
     updateActiveSession({
       currentSlideId: currentSlide?.id,
       presentationStatus,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide, presentationStatus, eventSessionMode, isOwner])
+  }, [currentSlide, presentationStatus, eventSessionMode])
 
   useEffect(() => {
     if (!currentSlide) return
