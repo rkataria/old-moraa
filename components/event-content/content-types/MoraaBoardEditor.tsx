@@ -72,7 +72,6 @@ export function MoraaBoardEditor() {
         autofocus
         disableAssets
         document={storedDocument}
-        showPages={false}
         {...fileSystemEvents}
         onChange={(state) => {
           if (
