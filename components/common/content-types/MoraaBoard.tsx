@@ -1,9 +1,8 @@
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 
 import { Tldraw, useFileSystem } from '@tldraw/tldraw'
-import { useDebounce } from '@uidotdev/usehooks'
 import { useParams } from 'next/navigation'
 import { useUsers } from 'y-presence'
 
@@ -28,56 +27,17 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
   const fileSystemEvents = useFileSystem()
   const roomId = `moraa-board-${slide.id}-${eventId}`
   const { awareness } = getProvider({ roomId })
-  const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
-  const debouncedLocalSlide = useDebounce(localSlide, 500)
-  const { preview, isOwner, currentSlide, updateSlide } = useContext(
-    EventContext
-  ) as EventContextType
-  const { onMount, ...events } = useTldrawCollaboration(roomId)
+  // const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
+  // const debouncedLocalSlide = useDebounce(localSlide, 500)
+  const { preview, isOwner } = useContext(EventContext) as EventContextType
+  const { ...events } = useTldrawCollaboration(roomId)
 
-  useEffect(() => {
-    if (!currentSlide) {
-      return
-    }
-
-    setLocalSlide(currentSlide as MoraaBoardSlide)
-  }, [currentSlide])
-
-  useEffect(() => {
-    if (!currentSlide?.content) {
-      return
-    }
-
-    if (!debouncedLocalSlide?.content) {
-      return
-    }
-
-    if (
-      JSON.stringify(debouncedLocalSlide?.content) ===
-      JSON.stringify(currentSlide.content)
-    ) {
-      return
-    }
-
-    updateSlide({
-      slidePayload: {
-        content: {
-          ...currentSlide.content,
-          ...debouncedLocalSlide?.content,
-        },
-      },
-      slideId: currentSlide.id,
-      allowNonOwnerToUpdate: true,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide?.content])
-
-  if (!localSlide?.content) {
+  if (!slide?.content) {
     return null
   }
 
-  // const storedDocument = JSON.parse(localSlide.content.document as string)
-  const readOnly = preview || (!isOwner && currentSlide?.config?.allowToDraw)
+  const storedDocument = JSON.parse(slide.content.document as string)
+  const readOnly = preview || (!isOwner && slide.config.allowToDraw)
 
   return (
     <div
@@ -91,22 +51,10 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
         showMenu={false}
         autofocus
         disableAssets
-        // document={storedDocument}
-        onMount={onMount}
+        document={storedDocument}
+        // onMount={onMount}
         {...fileSystemEvents}
         {...events}
-        onChange={(state) => {
-          setLocalSlide(
-            (prev) =>
-              ({
-                ...prev,
-                content: {
-                  document: JSON.stringify(state.document),
-                },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              }) as any
-          )
-        }}
       />
     </div>
   )

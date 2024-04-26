@@ -9,7 +9,7 @@ import { Poll, Vote } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
 import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
-import { MoraaBoardEditor } from '../event-content/content-types/MoraaBoardEditor'
+import { MoraaBoard } from '../common/content-types/MoraaBoard'
 
 import { Cover } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
@@ -94,7 +94,7 @@ export function Slide() {
       <RichText key={currentSlide.id} slide={currentSlide} />
     ),
     [ContentType.MIRO_EMBED]: <MiroEmbed slide={currentSlide as any} />,
-    [ContentType.MORAA_BOARD]: <MoraaBoardEditor />,
+    [ContentType.MORAA_BOARD]: <MoraaBoard slide={currentSlide as any} />,
   }
 
   const renderer = renderersByContentType[currentSlide.type]

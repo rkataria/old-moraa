@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { TDBinding, TDShape, TDUser, TldrawApp } from '@tldraw/tldraw'
 
@@ -11,24 +11,25 @@ import {
 } from '@/utils/tldraw'
 
 export function useTldrawCollaboration(roomId: string) {
-  const provider = getProvider({ roomId })
+  const provider = useMemo(() => getProvider({ roomId }), [roomId])
+
   const { awareness } = provider
   const tldrawRef = useRef<TldrawApp>()
 
-  const onMount = useCallback(
-    (app: TldrawApp) => {
-      app.loadRoom(roomId)
-      app.pause()
-      tldrawRef.current = app
+  // const onMount = useCallback(
+  //   (app: TldrawApp) => {
+  //     app.loadRoom(roomId)
+  //     app.pause()
+  //     tldrawRef.current = app
 
-      app.replacePageContent(
-        Object.fromEntries(yShapes.entries()),
-        Object.fromEntries(yBindings.entries()),
-        {}
-      )
-    },
-    [roomId]
-  )
+  //     app.replacePageContent(
+  //       Object.fromEntries(yShapes.entries()),
+  //       Object.fromEntries(yBindings.entries()),
+  //       {}
+  //     )
+  //   },
+  //   [roomId]
+  // )
 
   const onChangePage = useCallback(
     (
@@ -139,7 +140,7 @@ export function useTldrawCollaboration(roomId: string) {
   }, [])
 
   return {
-    onMount,
+    // onMount,
     onChangePage,
     onUndo,
     onRedo,
