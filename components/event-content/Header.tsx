@@ -1,9 +1,7 @@
 import { useContext } from 'react'
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronDownIcon } from 'lucide-react'
 import Link from 'next/link'
-import toast from 'react-hot-toast'
 import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 
 import {
@@ -21,7 +19,6 @@ import { EditEventButtonWithModal } from '../common/PublishEventButtonWithModal'
 import { ScheduleEventButtonWithModal } from '../common/ScheduleEventButtonWithModal'
 
 import { EventContext } from '@/contexts/EventContext'
-import { EventService } from '@/services/event/event-service'
 import { EventStatus } from '@/services/types/enums'
 import { type EventContextType } from '@/types/event-context.type'
 
@@ -29,34 +26,13 @@ export function Header({
   event,
   leftSidebarVisible,
   onLeftSidebarToggle,
-  isSlidePublished,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   event: any
   leftSidebarVisible: boolean
   onLeftSidebarToggle: (value: boolean) => void
-  isSlidePublished?: boolean
 }) {
   const { isOwner, preview } = useContext(EventContext) as EventContextType
-  const queryClient = useQueryClient()
-  const publishEventMutation = useMutation({
-    mutationFn: () =>
-      EventService.publishEvent({ eventId: event.id }).then(
-        () =>
-          new Promise((resolve, reject) => {
-            setTimeout(async () => {
-              queryClient
-                .refetchQueries({
-                  queryKey: ['event', event.id, true],
-                })
-                .then(resolve)
-                .catch(reject)
-            }, 1000)
-          })
-      ),
-    onSuccess: () => toast.success('Event published'),
-    onError: () => toast.success('Failed to publish even'),
-  })
 
   const renderActionButtons = () => {
     if (preview) return null
@@ -72,17 +48,6 @@ export function Header({
     return (
       <>
         <AddParticipantsButtonWithModal eventId={event.id} />
-        {!isSlidePublished && (
-          <Button
-            color="success"
-            variant="solid"
-            size="sm"
-            radius="md"
-            onClick={() => publishEventMutation.mutate()}
-            isLoading={publishEventMutation.isPending}>
-            Publish
-          </Button>
-        )}
         {EventStatus.SCHEDULED === event?.status ? (
           <ButtonGroup variant="solid" color="primary" size="sm" radius="md">
             <Button title="Start Session">

@@ -63,3 +63,33 @@ export function getBrowserTimeZone(): (typeof TimeZones)[number] {
 
   return timeZone || TimeZones[0]
 }
+
+export function getCurrentTimeInLocalZoneFromTimeZone({
+  dateTimeString,
+  utcTimeZone,
+}: {
+  dateTimeString: string
+  utcTimeZone: string
+}) {
+  const timeZone = TimeZones.filter((tz) => tz.text === utcTimeZone)
+
+  if (timeZone.length === 0) return ''
+  const luxonTimeZone = timeZone[0].utc[0]
+
+  const dateTime = DateTime.fromISO(dateTimeString, {
+    zone: luxonTimeZone,
+  })
+
+  const localDateTime = dateTime.setZone(DateTime.local().zoneName)
+
+  const localDateTimeFormatted = localDateTime.toLocaleString({
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
+
+  return localDateTimeFormatted
+}

@@ -70,16 +70,14 @@ export function TextImage({ slide }: TextImageProps) {
           </div>
         </Panel>
         <Panel defaultSize={30} minSize={30} maxSize={60}>
-          <div className="flex justify-center items-center overflow-hidden rounded-md h-full">
-            <div className="relative rounded-md overflow-hidden group">
-              <Image
-                src={imageBlock?.data.file.url}
-                removeWrapper
-                className={cn(
-                  'relative z-0 flex-none rounded-md overflow-hidden'
-                )}
-              />
-            </div>
+          <div className="relative flex justify-center items-center overflow-hidden rounded-md h-full">
+            <Image
+              src={imageBlock?.data.file.url}
+              removeWrapper
+              className={cn(
+                'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 flex-none rounded-md overflow-hidden w-full h-auto object-contain'
+              )}
+            />
           </div>
         </Panel>
       </PanelGroup>

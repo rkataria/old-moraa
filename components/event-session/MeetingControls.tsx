@@ -7,7 +7,6 @@ import {
   DyteLeaveButton,
   DyteMicToggle,
   DyteParticipantsToggle,
-  DytePluginsToggle,
   DyteScreenShareToggle,
   DyteSettingsToggle,
 } from '@dytesdk/react-ui-kit'
@@ -19,6 +18,7 @@ import { Button } from '@nextui-org/react'
 
 import { FlyingEmojis } from './FlyingEmojis'
 import { GalleryViewToggle } from './GalleryViewToggle'
+import { MoreMeetingControls } from './MoreMeetingControls'
 import { PresentationControls } from './PresentationControls'
 import { RaiseHand } from './RaiseHand'
 import { WhiteboardToggleButton } from './WhiteboardToggleButton'
@@ -27,18 +27,18 @@ import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { EventSessionContextType } from '@/types/event-session.type'
 
-type HeaderProps = {
+type MeetingControlsProps = {
   leftSidebarVisible: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdateDyteStates: any
   toggleLeftSidebar?: () => void
 }
 
-export function Header({
+export function MeetingControls({
   leftSidebarVisible,
   onUpdateDyteStates,
   toggleLeftSidebar = () => {},
-}: HeaderProps) {
+}: MeetingControlsProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
@@ -49,8 +49,8 @@ export function Header({
   if (!event) return null
 
   return (
-    <div className="h-16 bg-gray-950 flex justify-between items-center">
-      <div className="p-4 flex justify-end items-center gap-2">
+    <div className="h-12 bg-transparent flex justify-between items-center">
+      <div className="flex justify-end items-center gap-2">
         <Button
           variant="light"
           isIconOnly
@@ -64,25 +64,34 @@ export function Header({
         </Button>
         <DyteClock meeting={meeting} />
       </div>
-      <div className="p-4 flex justify-end items-center gap-2">
+      <div className="flex justify-end items-center gap-2">
         {eventSessionMode === 'Preview' && isHost && <GalleryViewToggle />}
-        <DyteMicToggle meeting={meeting} size="lg" />
-        <DyteCameraToggle meeting={meeting} size="lg" />
-        {isHost && <DyteScreenShareToggle meeting={meeting} size="lg" />}
+        <DyteMicToggle meeting={meeting} size="sm" />
+        <DyteCameraToggle meeting={meeting} size="sm" />
+        {isHost && <DyteScreenShareToggle meeting={meeting} size="sm" />}
 
         <PresentationControls />
         <RaiseHand />
         <FlyingEmojis />
+        <MoreMeetingControls />
         <DyteSettingsToggle
-          size="lg"
+          iconPack={
+            {
+              settings:
+                '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" aria-hidden="true" height="0.75em" width="0.75em" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>',
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any
+          }
+          size="sm"
           onClick={() => {
             onUpdateDyteStates({
               activeSettings: true,
             })
           }}
         />
+
         <DyteLeaveButton
-          size="lg"
+          size="sm"
           onClick={() => {
             onUpdateDyteStates({
               activeLeaveConfirmation: true,
@@ -91,10 +100,10 @@ export function Header({
         />
       </div>
 
-      <div className="p-4 flex justify-start items-center gap-2">
+      <div className="flex justify-start items-center gap-2">
         <DyteParticipantsToggle
+          size="sm"
           meeting={meeting}
-          size="lg"
           onClick={() => {
             onUpdateDyteStates({
               activeSidebar: true,
@@ -103,8 +112,8 @@ export function Header({
           }}
         />
         <DyteChatToggle
+          size="sm"
           meeting={meeting}
-          size="lg"
           onClick={() => {
             onUpdateDyteStates({
               activeSidebar: true,
@@ -112,18 +121,6 @@ export function Header({
             })
           }}
         />
-        {isHost && (
-          <DytePluginsToggle
-            meeting={meeting}
-            size="lg"
-            onClick={() => {
-              onUpdateDyteStates({
-                activeSidebar: true,
-                sidebar: 'plugins',
-              })
-            }}
-          />
-        )}
         {isHost && <WhiteboardToggleButton />}
       </div>
     </div>

@@ -6,9 +6,6 @@
 import { useContext, useEffect, useState } from 'react'
 
 import {
-  // DyteBreakoutRoomManager,
-  // DyteBreakoutRoomParticipants,
-  // DyteBreakoutRoomsManager,
   DyteDialogManager,
   DyteNotifications,
   DyteParticipantsAudio,
@@ -17,16 +14,11 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { ContentContainer } from './ContentContainer'
-import { Header } from './Header'
+import { FlyingEmojisOverlay } from './FlyingEmojisOverlay'
+import { MeetingControls } from './MeetingControls'
 import { ParticipantTiles } from './ParticipantTiles'
-import {
-  SlideManagerBody,
-  SlideManagerHeader,
-  SlideManagerLayoutRoot,
-  SlideManagerRightSidebarWrapper,
-} from '../event-content/SlideManager'
+import { AgendaPanel } from '../common/AgendaPanel'
 
-import { AgendaPanel } from '@/components/common/AgendaPanel'
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventContextType } from '@/types/event-context.type'
@@ -134,63 +126,66 @@ export function MeetingScreen() {
   }
 
   return (
-    <SlideManagerLayoutRoot>
-      <SlideManagerHeader>
-        <Header
-          leftSidebarVisible={leftSidebarVisible}
-          onUpdateDyteStates={handleUpdateDyteStates}
-          toggleLeftSidebar={() => setLeftSidebarVisible((o) => !o)}
-        />
-      </SlideManagerHeader>
-      <SlideManagerBody>
-        <div
-          className={cn('flex-none transition-all duration-300 ease-in-out', {
-            'w-0': !leftSidebarVisible,
-            'w-72': leftSidebarVisible,
-          })}>
-          <AgendaPanel />
-        </div>
-        <div
-          className={cn('flex-1 flex justify-start items-start', {
-            'flex-row': !sidebarVisible,
-            'flex-col': sidebarVisible,
-          })}>
+    <div>
+      <div className="flex flex-col gap-2 p-2 h-screen max-h-screen overflow-hidden bg-[#202124] dark:bg-gray-900">
+        <div className="flex-auto flex h-full gap-2">
           <div
-            className={cn('w-full', {
-              'h-44': sidebarVisible,
-              'h-[calc(100vh_-_64px)] w-72 order-2 overflow-hidden overflow-y-auto scrollbar-none':
-                !sidebarVisible,
-              'h-full w-full order-1': eventSessionMode === 'Lobby',
-            })}>
-            <ParticipantTiles
-              spotlightMode={eventSessionMode === 'Lobby'}
-              sidebarVisible={sidebarVisible}
-            />
+            className={cn(
+              'flex-none w-72 h-full bg-white rounded-md overflow-hidden',
+              {
+                hidden: !leftSidebarVisible,
+              }
+            )}>
+            <AgendaPanel />
           </div>
-          {['Preview', 'Presentation'].includes(eventSessionMode) && (
-            <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
-              <ContentContainer />
+          <div className="h-full max-h-full flex-auto bg-white rounded-md overflow-hidden flex">
+            <div
+              className={cn('flex-1 flex justify-start items-start', {
+                'flex-row': !sidebarVisible,
+                'flex-col': sidebarVisible,
+              })}>
+              <div
+                className={cn('', {
+                  'w-full h-44': sidebarVisible,
+                  'h-full w-72 order-2 overflow-hidden overflow-y-auto scrollbar-none':
+                    !sidebarVisible,
+                  'h-full w-full order-1': eventSessionMode === 'Lobby',
+                })}>
+                <ParticipantTiles
+                  spotlightMode={eventSessionMode === 'Lobby'}
+                  sidebarVisible={sidebarVisible}
+                />
+              </div>
+              {['Preview', 'Presentation'].includes(eventSessionMode) && (
+                <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto flex-grow min-w-0 flex-shrink">
+                  <ContentContainer />
+                </div>
+              )}
             </div>
-          )}
+          </div>
+          <div
+            className={cn(
+              'flex-none w-72 h-full bg-white rounded-md overflow-hidden',
+              {
+                hidden: !rightSidebar,
+              }
+            )}>
+            {renderRightSidebar()}
+          </div>
         </div>
-        <SlideManagerRightSidebarWrapper visible={!!rightSidebar}>
-          {renderRightSidebar()}
-        </SlideManagerRightSidebarWrapper>
-      </SlideManagerBody>
-
+        <div className="h-12">
+          <MeetingControls
+            leftSidebarVisible={leftSidebarVisible}
+            onUpdateDyteStates={handleUpdateDyteStates}
+            toggleLeftSidebar={() => setLeftSidebarVisible((o) => !o)}
+          />
+        </div>
+      </div>
+      <FlyingEmojisOverlay />
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
       <DyteNotifications meeting={meeting} />
-      <DyteDialogManager
-        meeting={meeting}
-        // states={dyteStates}
-        // onDyteStateUpdate={(e) => {
-        //   setDyteStates((prevDyteStates) => ({
-        //     ...prevDyteStates,
-        //     ...e.detail,
-        //   }))
-        // }}
-      />
-    </SlideManagerLayoutRoot>
+      <DyteDialogManager meeting={meeting} />
+    </div>
   )
 }

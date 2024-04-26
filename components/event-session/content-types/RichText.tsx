@@ -5,8 +5,9 @@
 
 import React from 'react'
 
-import { RichTextView } from '@/components/common/RichTextView'
+import { RichTextView } from '@/components/common/content-types/RichTextView'
 import { ISlide, TextBlock } from '@/types/slide.type'
+import { cn } from '@/utils/utils'
 
 type RichTextProps = {
   slide: ISlide
@@ -17,12 +18,11 @@ export function RichText({ slide }: RichTextProps) {
   const richTextBlock = blocks.find((b) => b.type === 'richtext') as TextBlock
 
   return (
-    <div className="w-full h-full">
-      {richTextBlock && (
-        <div id={`block-editor-${richTextBlock.id}`} className="w-full h-full">
-          <RichTextView key={richTextBlock.id} block={richTextBlock} />
-        </div>
-      )}
+    <div
+      className={cn(
+        'w-full h-full flex justify-start items-start rounded-md overflow-hidden relative'
+      )}>
+      <RichTextView block={richTextBlock} />
     </div>
   )
 }

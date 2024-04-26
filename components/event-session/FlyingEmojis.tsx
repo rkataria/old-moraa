@@ -26,7 +26,7 @@ const EMOJIS = [
   '-1',
 ]
 
-export function FlyingEmojis() {
+export function FlyingEmojis({ showLabel = false }: { showLabel?: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
 
   const selfParticipant = useDyteSelector((m) => m.self)
@@ -43,12 +43,16 @@ export function FlyingEmojis() {
       <PopoverTrigger>
         <button
           type="button"
+          style={{
+            backgroundColor:
+              'var(--dyte-controlbar-button-background-color, rgb(var(--dyte-colors-background-1000, 8 8 8)))',
+          }}
           className={cn(
-            'flex flex-col items-center gap-[5px] p-1 w-[84px] rounded-sm hover:bg-[#1E1E1E] text-white'
+            'flex flex-col justify-center items-center gap-[5px] w-14 h-10 rounded-sm hover:bg-[#1E1E1E] text-white'
           )}>
           <MdOutlineEmojiEmotions className="text-2xl" />
 
-          <p className="text-xs">Emoji</p>
+          {showLabel && <p className="text-xs">Emoji</p>}
         </button>
       </PopoverTrigger>
       <PopoverContent className="rounded-full overflow-hidden">

@@ -20,7 +20,6 @@ import { FileBlock, ISlide, TextBlock } from '@/types/slide.type'
 export function TextImageEditor() {
   const [localSlide, setLocalSlide] = useState<ISlide | null>(null)
   const panelGroupRef = useRef<ImperativePanelGroupHandle>(null)
-  const [editingBlock, setEditingBlock] = useState<string | null>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const [fileUploaderOpen, setFileUploaderOpen] = useState<boolean>(false)
   const debouncedLocalSlide = useDebounce(localSlide, 500)
@@ -135,14 +134,7 @@ export function TextImageEditor() {
   ) as FileBlock
 
   if (currentSlide?.config?.layoutType === LayoutTypes.NO_IMAGE) {
-    return (
-      <NoImage
-        slide={localSlide}
-        editingBlock={editingBlock}
-        setEditingBlock={setEditingBlock}
-        onBlockChange={handleBlockChange}
-      />
-    )
+    return <NoImage slide={localSlide} onBlockChange={handleBlockChange} />
   }
 
   if (currentSlide?.config?.layoutType === LayoutTypes.IMAGE_BEHIND) {
@@ -150,8 +142,6 @@ export function TextImageEditor() {
       <ImageBehind
         slide={localSlide}
         fileUploaderOpen={fileUploaderOpen}
-        editingBlock={editingBlock}
-        setEditingBlock={setEditingBlock}
         onBlockChange={handleBlockChange}
         handleFileUpload={handleFileUpload}
         setFileUploaderOpen={setFileUploaderOpen}
@@ -164,10 +154,8 @@ export function TextImageEditor() {
       <ImageLeft
         slide={localSlide}
         imageRef={imageRef}
-        editingBlock={editingBlock}
         panelGroupRef={panelGroupRef}
         fileUploaderOpen={fileUploaderOpen}
-        setEditingBlock={setEditingBlock}
         onBlockChange={handleBlockChange}
         handleFileUpload={handleFileUpload}
         setFileUploaderOpen={setFileUploaderOpen}
@@ -180,10 +168,8 @@ export function TextImageEditor() {
     <ImageRight
       slide={localSlide}
       imageRef={imageRef}
-      editingBlock={editingBlock}
       panelGroupRef={panelGroupRef}
       fileUploaderOpen={fileUploaderOpen}
-      setEditingBlock={setEditingBlock}
       onBlockChange={handleBlockChange}
       handleFileUpload={handleFileUpload}
       setFileUploaderOpen={setFileUploaderOpen}

@@ -3,7 +3,6 @@
 import { ReactElement } from 'react'
 
 import { Editor } from '@tiptap/react'
-import { useIdle } from '@uidotdev/usehooks'
 import { HexColorPicker } from 'react-colorful'
 import { GoHorizontalRule } from 'react-icons/go'
 import {
@@ -37,26 +36,18 @@ import { cn, isColorDark } from '@/utils/utils'
 export function BlockEditorControls({
   editor,
   blockType,
-  hidden = false,
-  autoHide = true,
+  sticky,
 }: {
   editor: Editor
   blockType: string
-  hidden?: boolean
-  autoHide?: boolean
+  sticky?: boolean
 }) {
-  const idle = useIdle(3000)
-  if (hidden) {
-    return null
-  }
-
   return (
     <div
       className={cn(
-        'absolute top-2 left-1/2 -translate-x-1/2 flex justify-center items-center gap-2 bg-black p-2 rounded-md text-white transition-all duration-500 z-10',
+        'flex justify-center items-center gap-2 bg-black p-2 rounded-md text-white transition-all duration-500 z-[1]',
         {
-          'opacity-0': idle && autoHide,
-          'opacity-100': !autoHide || !idle,
+          'absolute top-0 left-1/2 -translate-x-1/2': sticky,
         }
       )}>
       {blockType === 'header' && <HeaderBlockControls editor={editor} />}
