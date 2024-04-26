@@ -49,6 +49,8 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
       return
     }
 
+    if (!isOwner && !currentSlide.config.allowToDraw) return
+
     updateSlide({
       slidePayload: {
         content: {
