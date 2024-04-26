@@ -2,14 +2,14 @@
 
 import { useContext, useEffect, useState } from 'react'
 
-import { Tldraw, useFileSystem } from '@tldraw/tldraw'
 import { useDebounce } from '@uidotdev/usehooks'
-import { useUsers } from 'y-presence'
+import { Tldraw, track, useEditor } from 'tldraw'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useYjsStore } from '@/hooks/useYjsStore'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
-import { awareness } from '@/utils/tldraw-yjs'
+import 'tldraw/tldraw.css'
 
 export type MoraaBoardSlide = ISlide & {
   content: {
@@ -21,13 +21,21 @@ interface MoraaBoardProps {
   slide: MoraaBoardSlide
 }
 
+// const HOST_URL =
+//   import.meta.env.MODE === 'development'
+//     ? 'ws://localhost:1234'
+//     : 'wss://demos.yjs.dev'
+
 export function MoraaBoard({ slide }: MoraaBoardProps) {
   const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
   const debouncedLocalSlide = useDebounce(localSlide, 500)
-  const { isOwner, preview, currentSlide, updateSlide } = useContext(
+  const { isOwner, currentSlide, updateSlide } = useContext(
     EventContext
   ) as EventContextType
-  const fileSystemEvents = useFileSystem()
+  const store = useYjsStore({
+    roomId: 'example17',
+    hostUrl: 'ws://localhost:1234',
+  })
 
   useEffect(() => {
     setLocalSlide(currentSlide as MoraaBoardSlide)
@@ -68,55 +76,48 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
     return null
   }
 
-  const storedDocument = JSON.parse(localSlide.content.document as string)
-  const readOnly = preview || (!isOwner && localSlide.config?.allowToDraw)
+  // const storedDocument = JSON.parse(localSlide.content.document as string)
+  // const readOnly = preview || (!isOwner && localSlide.config?.allowToDraw)
 
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
       className="relative w-full h-full flex flex-col justify-center items-center px-4">
-      <Users />
       <Tldraw
-        readOnly={readOnly}
-        showMultiplayerMenu={false}
-        showSponsorLink={false}
-        showMenu={false}
-        autofocus
-        disableAssets
-        document={storedDocument}
-        {...fileSystemEvents}
-        onChange={(state) => {
-          if (
-            JSON.stringify(state.document) === JSON.stringify(storedDocument)
-          ) {
-            return
-          }
-
-          setLocalSlide(
-            (prev) =>
-              ({
-                ...prev,
-                content: {
-                  document: JSON.stringify(state.document),
-                },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              }) as any
-          )
+        autoFocus
+        store={store}
+        components={{
+          SharePanel: NameEditor,
         }}
       />
     </div>
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function Users() {
-  const users = useUsers(awareness)
+const NameEditor = track(() => {
+  const editor = useEditor()
+
+  const { color, name } = editor.user.getUserPreferences()
 
   return (
-    <div className="absolute top-0 left-0 w-full p-md z-[1]">
-      <div className="flex space-between">
-        <span>Users: {users.size}</span>
-      </div>
+    <div style={{ pointerEvents: 'all', display: 'flex' }}>
+      <input
+        type="color"
+        value={color}
+        onChange={(e) => {
+          editor.user.updateUserPreferences({
+            color: e.currentTarget.value,
+          })
+        }}
+      />
+      <input
+        value={name}
+        onChange={(e) => {
+          editor.user.updateUserPreferences({
+            name: e.currentTarget.value,
+          })
+        }}
+      />
     </div>
   )
-}
+})
