@@ -5,20 +5,25 @@ import * as Y from 'yjs'
 
 export const doc = new Y.Doc()
 
-const HOST_URL = `wss://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID}.supabase.co/realtime/v1/websocket`
+const HOST_URL = `wss://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID}.supabase.co/realtime/v1/websocket/tldraw`
+
+let provider: WebsocketProvider
 
 export const getProvider = ({ roomId }: { roomId: string }) => {
-  console.log('roomId', roomId)
+  if (provider) return provider
 
-  return new WebsocketProvider(HOST_URL, roomId, doc, {
+  console.log('Creating provider')
+
+  provider = new WebsocketProvider(HOST_URL, roomId, doc, {
     connect: true,
-    resyncInterval: 1000,
     params: {
       apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       log_level: 'info',
       vsn: '1.0.0',
     },
   })
+
+  return provider
 }
 
 export const yShapes: Y.Map<TDShape> = doc.getMap('shapes')

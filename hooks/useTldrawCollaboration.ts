@@ -16,20 +16,20 @@ export function useTldrawCollaboration(roomId: string) {
   const { awareness } = provider
   const tldrawRef = useRef<TldrawApp>()
 
-  // const onMount = useCallback(
-  //   (app: TldrawApp) => {
-  //     app.loadRoom(roomId)
-  //     app.pause()
-  //     tldrawRef.current = app
+  const onMount = useCallback(
+    (app: TldrawApp) => {
+      app.loadRoom(roomId)
+      app.pause()
+      tldrawRef.current = app
 
-  //     app.replacePageContent(
-  //       Object.fromEntries(yShapes.entries()),
-  //       Object.fromEntries(yBindings.entries()),
-  //       {}
-  //     )
-  //   },
-  //   [roomId]
-  // )
+      app.replacePageContent(
+        Object.fromEntries(yShapes.entries()),
+        Object.fromEntries(yBindings.entries()),
+        {}
+      )
+    },
+    [roomId]
+  )
 
   const onChangePage = useCallback(
     (
@@ -140,7 +140,8 @@ export function useTldrawCollaboration(roomId: string) {
   }, [])
 
   return {
-    // onMount,
+    awareness,
+    onMount,
     onChangePage,
     onUndo,
     onRedo,

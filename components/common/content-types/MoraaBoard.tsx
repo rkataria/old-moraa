@@ -1,16 +1,11 @@
 'use client'
 
-import { useContext } from 'react'
-
 import { Tldraw, useFileSystem } from '@tldraw/tldraw'
 import { useParams } from 'next/navigation'
 import { useUsers } from 'y-presence'
 
-import { EventContext } from '@/contexts/EventContext'
 import { useTldrawCollaboration } from '@/hooks/useTldrawCollaboration'
-import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
-import { getProvider } from '@/utils/tldraw'
 
 export type MoraaBoardSlide = ISlide & {
   content: {
@@ -26,18 +21,17 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
   const { eventId } = useParams()
   const fileSystemEvents = useFileSystem()
   const roomId = `moraa-board-${slide.id}-${eventId}`
-  const { awareness } = getProvider({ roomId })
   // const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
   // const debouncedLocalSlide = useDebounce(localSlide, 500)
-  const { preview, isOwner } = useContext(EventContext) as EventContextType
-  const { ...events } = useTldrawCollaboration(roomId)
+  // const { preview, isOwner } = useContext(EventContext) as EventContextType
+  const { awareness, onMount, ...events } = useTldrawCollaboration(roomId)
 
   if (!slide?.content) {
     return null
   }
 
-  const storedDocument = JSON.parse(slide.content.document as string)
-  const readOnly = preview || (!isOwner && slide.config.allowToDraw)
+  // const storedDocument = JSON.parse(slide.content.document as string)
+  // const readOnly = preview || (!isOwner && slide.config.allowToDraw)
 
   return (
     <div
@@ -45,14 +39,14 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
       className="relative w-full h-full flex flex-col justify-center items-center px-4">
       <Users awareness={awareness} />
       <Tldraw
-        readOnly={readOnly}
+        // readOnly={readOnly}
         showMultiplayerMenu={false}
         showSponsorLink={false}
         showMenu={false}
         autofocus
         disableAssets
-        document={storedDocument}
-        // onMount={onMount}
+        // document={storedDocument}
+        onMount={onMount}
         {...fileSystemEvents}
         {...events}
       />
