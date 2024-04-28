@@ -108,7 +108,9 @@ export function Slide({
           <MiroEmbedEditor slide={slide as any} />
         )}
         {slide.type === ContentType.RICH_TEXT && <RichTextEditor />}
-        {slide.type === ContentType.MORAA_BOARD && <MoraaBoardEditor />}
+        {slide.type === ContentType.MORAA_BOARD && (
+          <MoraaBoardEditor slide={slide} />
+        )}
       </div>
     </div>
   )

@@ -1,96 +1,37 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/control-has-associated-label */
-
 'use client'
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 
-import { Tldraw, useFileSystem } from '@tldraw/tldraw'
-import { useDebounce } from '@uidotdev/usehooks'
+import { Tldraw } from 'tldraw'
 
+import { ContentLoading } from '@/components/common/ContentLoading'
 import { EventContext } from '@/contexts/EventContext'
+import { useYjsStoreSupabase } from '@/hooks/useYjsStoreSupabase'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 
 type MoraaBoardSlide = ISlide
 
-export function MoraaBoardEditor() {
-  const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
-  const debouncedLocalSlide = useDebounce(localSlide, 500)
-  const { currentSlide, updateSlide } = useContext(
-    EventContext
-  ) as EventContextType
-  const fileSystemEvents = useFileSystem()
-
-  useEffect(() => {
-    setLocalSlide(currentSlide)
-  }, [currentSlide])
-
-  useEffect(() => {
-    if (!currentSlide?.content) {
-      return
-    }
-
-    if (!debouncedLocalSlide?.content) {
-      return
-    }
-
-    if (
-      JSON.stringify(debouncedLocalSlide?.content) ===
-      JSON.stringify(currentSlide.content)
-    ) {
-      return
-    }
-
-    updateSlide({
-      slidePayload: {
-        content: {
-          ...currentSlide.content,
-          ...debouncedLocalSlide?.content,
-        },
-      },
-      slideId: currentSlide.id,
-      allowNonOwnerToUpdate: true,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide?.content])
-
-  if (!localSlide?.content) {
-    return null
-  }
-
-  const storedDocument = JSON.parse(localSlide.content.document as string)
+export function MoraaBoardEditor({ slide }: { slide: MoraaBoardSlide }) {
+  const roomId = `edit-moraa-board-${slide.id}`
+  const { preview } = useContext(EventContext) as EventContextType
+  const store = useYjsStoreSupabase({
+    roomId,
+    slideId: slide.id,
+  })
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden">
+    <div className="relative w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden z-[0]">
+      {store.status === 'loading' && (
+        <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
+          <ContentLoading />
+        </div>
+      )}
       <Tldraw
-        showMultiplayerMenu={false}
-        showSponsorLink={false}
-        showMenu={false}
-        autofocus
-        disableAssets
-        document={storedDocument}
-        {...fileSystemEvents}
-        onChange={(state) => {
-          if (
-            JSON.stringify(state.document) === JSON.stringify(storedDocument)
-          ) {
-            return
-          }
-
-          setLocalSlide(
-            (prev) =>
-              ({
-                ...prev,
-                content: {
-                  document: JSON.stringify(state.document),
-                },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              }) as any
-          )
-        }}
+        // persistenceKey={roomId}
+        autoFocus
+        store={store}
+        hideUi={preview}
       />
     </div>
   )

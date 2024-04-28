@@ -1,12 +1,13 @@
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 
-import { useDebounce } from '@uidotdev/usehooks'
 import { Tldraw, track, useEditor } from 'tldraw'
 
+import { ContentLoading } from '../ContentLoading'
+
 import { EventContext } from '@/contexts/EventContext'
-import { useYjsStore } from '@/hooks/useYjsStore'
+import { useYjsStoreSupabase } from '@/hooks/useYjsStoreSupabase'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 import 'tldraw/tldraw.css'
@@ -21,73 +22,34 @@ interface MoraaBoardProps {
   slide: MoraaBoardSlide
 }
 
-// const HOST_URL =
-//   import.meta.env.MODE === 'development'
-//     ? 'ws://localhost:1234'
-//     : 'wss://demos.yjs.dev'
-
 export function MoraaBoard({ slide }: MoraaBoardProps) {
-  const [localSlide, setLocalSlide] = useState<MoraaBoardSlide | null>(null)
-  const debouncedLocalSlide = useDebounce(localSlide, 500)
-  const { isOwner, currentSlide, updateSlide } = useContext(
-    EventContext
-  ) as EventContextType
-  const store = useYjsStore({
-    roomId: 'example17',
-    hostUrl: 'ws://localhost:1234',
+  const { preview, isOwner } = useContext(EventContext) as EventContextType
+  const roomId = `present-moraa-board-${slide.id}`
+  const store = useYjsStoreSupabase({
+    roomId,
+    slideId: slide.id,
   })
 
-  useEffect(() => {
-    setLocalSlide(currentSlide as MoraaBoardSlide)
-  }, [currentSlide])
-
-  useEffect(() => {
-    if (!currentSlide?.content) {
-      return
-    }
-
-    if (!debouncedLocalSlide?.content) {
-      return
-    }
-
-    if (
-      JSON.stringify(debouncedLocalSlide?.content) ===
-      JSON.stringify(currentSlide.content)
-    ) {
-      return
-    }
-
-    if (!isOwner && !currentSlide.config.allowToDraw) return
-
-    updateSlide({
-      slidePayload: {
-        content: {
-          ...currentSlide.content,
-          ...debouncedLocalSlide?.content,
-        },
-      },
-      slideId: currentSlide.id,
-      allowNonOwnerToUpdate: true,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide?.content])
-
-  if (!localSlide?.content) {
-    return null
-  }
-
-  // const storedDocument = JSON.parse(localSlide.content.document as string)
-  // const readOnly = preview || (!isOwner && localSlide.config?.allowToDraw)
+  const readOnly = preview || (!isOwner && slide.config?.allowToDraw)
 
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className="relative w-full h-full flex flex-col justify-center items-center px-4">
+      className="relative w-full h-full flex flex-col justify-center items-center px-4 z-[0]">
+      {store.status === 'loading' && (
+        <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
+          <ContentLoading />
+        </div>
+      )}
       <Tldraw
+        // persistenceKey={roomId}
         autoFocus
         store={store}
         components={{
           SharePanel: NameEditor,
+        }}
+        onMount={(editor) => {
+          editor.updateInstanceState({ isReadonly: !!readOnly })
         }}
       />
     </div>

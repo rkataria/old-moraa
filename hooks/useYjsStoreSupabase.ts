@@ -3,34 +3,41 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import { useEffect, useMemo, useState } from 'react'
 
+import { createClient } from '@supabase/supabase-js'
 import {
-  InstancePresenceRecordType,
   TLAnyShapeUtilConstructor,
-  TLInstancePresence,
   TLRecord,
   TLStoreWithStatus,
-  computed,
-  createPresenceStateDerivation,
   createTLStore,
   defaultShapeUtils,
-  defaultUserPreferences,
-  getUserPreferences,
-  setUserPreferences,
-  react,
   SerializedSchema,
+  setUserPreferences,
+  computed,
+  getUserPreferences,
+  defaultUserPreferences,
+  InstancePresenceRecordType,
+  createPresenceStateDerivation,
+  TLInstancePresence,
+  react,
 } from 'tldraw'
 import { YKeyValue } from 'y-utility/y-keyvalue'
-import { WebsocketProvider } from 'y-websocket'
 import * as Y from 'yjs'
 
-export function useYjsStore({
-  roomId = 'example',
-  hostUrl = process.env.NODE_ENV === 'development'
-    ? 'ws://localhost:1234'
-    : 'wss://demos.yjs.dev',
+import { SupabaseProvider } from '../utils/y-supabase'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+let providerInstance: SupabaseProvider
+
+export function useYjsStoreSupabase({
+  slideId,
+  roomId = '',
   shapeUtils = [],
 }: Partial<{
-  hostUrl: string
+  slideId: string
   roomId: string
   version: number
   shapeUtils: TLAnyShapeUtilConstructor[]
@@ -47,19 +54,27 @@ export function useYjsStore({
     status: 'loading',
   })
 
-  const { yDoc, yStore, meta, room } = useMemo(() => {
+  const { yDoc, yStore, meta, provider } = useMemo(() => {
     const yDoc = new Y.Doc({ gc: true })
-    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${roomId}`)
+    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${slideId}`)
     const yStore = new YKeyValue(yArr)
     const meta = yDoc.getMap<SerializedSchema>('meta')
+    providerInstance = new SupabaseProvider(yDoc, supabase, {
+      channel: roomId,
+      id: slideId as string,
+      tableName: 'slide',
+      columnName: 'content',
+      resyncInterval: 1000 * 30,
+    })
 
     return {
       yDoc,
       yStore,
       meta,
-      room: new WebsocketProvider(hostUrl, roomId, yDoc, { connect: true }),
+      provider: providerInstance,
     }
-  }, [hostUrl, roomId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomId, slideId])
 
   useEffect(() => {
     setStoreWithStatus({ status: 'loading' })
@@ -137,7 +152,7 @@ export function useYjsStore({
 
       /* -------------------- Awareness ------------------- */
 
-      const yClientId = room.awareness.clientID.toString()
+      const yClientId = provider.awareness.clientID.toString()
       setUserPreferences({ id: yClientId })
 
       const userPreferences = computed<{
@@ -162,14 +177,17 @@ export function useYjsStore({
       )(store)
 
       // Set our initial presence from the derivation's current value
-      room.awareness.setLocalStateField('presence', presenceDerivation.get())
+      provider.awareness.setLocalStateField(
+        'presence',
+        presenceDerivation.get()
+      )
 
       // When the derivation change, sync presence to to yjs awareness
       unsubs.push(
         react('when presence changes', () => {
           const presence = presenceDerivation.get()
           requestAnimationFrame(() => {
-            room.awareness.setLocalStateField('presence', presence)
+            provider.awareness.setLocalStateField('presence', presence)
           })
         })
       )
@@ -180,7 +198,7 @@ export function useYjsStore({
         updated: number[]
         removed: number[]
       }) => {
-        const states = room.awareness.getStates() as Map<
+        const states = provider.awareness.getStates() as Map<
           number,
           { presence: TLInstancePresence }
         >
@@ -232,8 +250,8 @@ export function useYjsStore({
       meta.observe(handleMetaUpdate)
       unsubs.push(() => meta.unobserve(handleMetaUpdate))
 
-      room.awareness.on('update', handleUpdate)
-      unsubs.push(() => room.awareness.off('update', handleUpdate))
+      provider.awareness.on('update', handleUpdate)
+      unsubs.push(() => provider.awareness.off('update', handleUpdate))
 
       // 2.
       // Initialize the store with the yjs doc records—or, if the yjs doc
@@ -315,24 +333,24 @@ export function useYjsStore({
         return
       }
 
-      room.off('synced', handleSync)
+      provider.off('sync', handleSync)
 
       if (status === 'connected') {
         if (hasConnectedBefore) return
         hasConnectedBefore = true
-        room.on('synced', handleSync)
-        unsubs.push(() => room.off('synced', handleSync))
+        provider.on('sync', handleSync)
+        unsubs.push(() => provider.off('synced', handleSync))
       }
     }
 
-    room.on('status', handleStatusChange)
-    unsubs.push(() => room.off('status', handleStatusChange))
+    provider.on('status', handleStatusChange)
+    unsubs.push(() => provider.off('status', handleStatusChange))
 
     return () => {
       unsubs.forEach((fn) => fn())
       unsubs.length = 0
     }
-  }, [room, yDoc, store, yStore, meta])
+  }, [provider, yDoc, store, yStore, meta])
 
   return storeWithStatus
 }
