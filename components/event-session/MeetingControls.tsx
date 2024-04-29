@@ -17,7 +17,7 @@ import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 import { Button } from '@nextui-org/react'
 
 import { FlyingEmojis } from './FlyingEmojis'
-import { GalleryViewToggle } from './GalleryViewToggle'
+import { LobbyViewToggle } from './LobbyViewToggle'
 import { MoreMeetingControls } from './MoreMeetingControls'
 import { PresentationControls } from './PresentationControls'
 import { RaiseHand } from './RaiseHand'
@@ -65,7 +65,7 @@ export function MeetingControls({
         <DyteClock meeting={meeting} />
       </div>
       <div className="flex justify-end items-center gap-2">
-        {eventSessionMode === 'Preview' && isHost && <GalleryViewToggle />}
+        {eventSessionMode === 'Preview' && isHost && <LobbyViewToggle />}
         <DyteMicToggle meeting={meeting} size="sm" />
         <DyteCameraToggle meeting={meeting} size="sm" />
         {isHost && <DyteScreenShareToggle meeting={meeting} size="sm" />}

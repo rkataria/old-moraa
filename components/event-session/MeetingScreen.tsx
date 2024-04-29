@@ -73,11 +73,8 @@ export function MeetingScreen() {
 
       return
     }
-    if (isHost) {
-      setEventSessionMode('Preview')
-    }
 
-    // setEventSessionMode('Lobby')
+    setEventSessionMode('Lobby')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScreensharing, activePlugin, presentationStatus, preview, isHost])
 
@@ -131,14 +128,21 @@ export function MeetingScreen() {
         <div className="flex-auto flex h-full gap-2">
           <div
             className={cn(
-              'flex-none w-72 h-full bg-white rounded-md overflow-hidden',
+              'flex-none w-72 h-full !bg-white rounded-md overflow-hidden',
               {
                 hidden: !leftSidebarVisible,
               }
             )}>
             <AgendaPanel />
           </div>
-          <div className="h-full max-h-full flex-auto bg-white rounded-md overflow-hidden flex">
+          <div
+            className={cn(
+              'h-full max-h-full flex-auto rounded-md overflow-hidden flex',
+              {
+                'bg-transparent': eventSessionMode === 'Lobby',
+                'bg-white': eventSessionMode !== 'Lobby',
+              }
+            )}>
             <div
               className={cn('flex-1 flex justify-start items-start', {
                 'flex-row': !sidebarVisible,

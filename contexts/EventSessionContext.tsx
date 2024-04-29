@@ -75,10 +75,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     useState<EventSessionMode>('Lobby')
 
   useEffect(() => {
-    if (isOwner) {
+    if (eventSessionMode === 'Lobby' && isOwner) {
       setEventSessionMode('Preview')
     }
-  }, [isOwner])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlide])
 
   useEffect(() => {
     if (!meeting?.id) return
@@ -111,10 +112,15 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         setCurrentSlide(_currentSlide || (sections[0].slides || [])[0])
       }
 
-      setPresentationStatus(
+      const newPresentationStatus =
         _activeSession.data?.presentationStatus || PresentationStatuses.STOPPED
-      )
+
+      setPresentationStatus(newPresentationStatus)
       setActiveSession(_activeSession)
+
+      if (newPresentationStatus === PresentationStatuses.STOPPED) {
+        setEventSessionMode('Lobby')
+      }
     }
 
     fetchActiveSession()
@@ -184,6 +190,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
         setEventSessionMode(newEventSessionMode)
         setPresentationStatus(newPresentationStatus)
+
+        if (newPresentationStatus === PresentationStatuses.STOPPED) {
+          setEventSessionMode('Lobby')
+        }
       }
     )
 
@@ -235,19 +245,16 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [fetchedSlideReactions])
 
   useEffect(() => {
-    if (eventSessionMode !== 'Presentation') return
     if (!isOwner) return
     if (!activeSession) return
 
-    console.log('updating active session:', {
-      currentSlideId: currentSlide?.id,
-      presentationStatus,
-    })
+    if (eventSessionMode === 'Presentation') {
+      updateActiveSession({
+        currentSlideId: currentSlide?.id,
+        presentationStatus,
+      })
+    }
 
-    updateActiveSession({
-      currentSlideId: currentSlide?.id,
-      presentationStatus,
-    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSlide, presentationStatus, eventSessionMode, isOwner])
 
