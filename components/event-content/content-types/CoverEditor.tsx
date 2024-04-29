@@ -34,7 +34,9 @@ export function CoverEditor() {
     if (!currentSlide?.content) {
       return
     }
-
+    if (!debouncedLocalSlide?.content) {
+      return
+    }
     if (
       JSON.stringify(debouncedLocalSlide?.content) ===
       JSON.stringify(currentSlide.content)

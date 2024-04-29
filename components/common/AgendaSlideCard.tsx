@@ -126,6 +126,8 @@ function SlideListView({
             readOnly={!isOwner || eventMode !== 'edit'}
             label={slide.name}
             onUpdate={(value) => {
+              if (slide.name === value) return
+
               updateSlide({
                 slidePayload: { name: value },
                 slideId: slide.id,
@@ -201,6 +203,8 @@ function SlideThumbnailView({
               readOnly={actionDisabled}
               label={slide.name}
               onUpdate={(value) => {
+                if (slide.name === value) return
+
                 updateSlide({
                   slidePayload: { name: value },
                   slideId: slide.id,

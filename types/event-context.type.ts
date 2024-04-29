@@ -36,9 +36,11 @@ export type EventContextType = {
   updateSlide: ({
     slidePayload,
     slideId,
+    allowParticipantToUpdate,
   }: {
     slidePayload: Partial<ISlide>
     slideId: string
+    allowParticipantToUpdate?: boolean
   }) => void
   deleteSlide: (slide: ISlide) => void
   importGoogleSlides: (data: {

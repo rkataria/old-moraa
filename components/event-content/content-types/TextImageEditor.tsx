@@ -37,6 +37,10 @@ export function TextImageEditor() {
       return
     }
 
+    if (!debouncedLocalSlide?.content) {
+      return
+    }
+
     if (
       JSON.stringify(debouncedLocalSlide?.content) ===
       JSON.stringify(currentSlide.content)

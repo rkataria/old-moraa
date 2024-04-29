@@ -31,6 +31,7 @@ import {
   type VideoMiddlewareConfig,
   PresentationStatuses,
 } from '@/types/event-session.type'
+import { slideHasSlideResponses } from '@/utils/content.util'
 import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
 
 interface EventSessionProviderProps {
@@ -248,6 +249,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     if (!isOwner) return
     if (!activeSession) return
 
+    if (
+      activeSession?.data?.currentSlideId === currentSlide?.id &&
+      activeSession?.data?.presentationStatus === presentationStatus
+    ) {
+      return
+    }
     if (eventSessionMode === 'Presentation') {
       updateActiveSession({
         currentSlideId: currentSlide?.id,
@@ -256,7 +263,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide, presentationStatus, eventSessionMode, isOwner])
+  }, [currentSlide, presentationStatus, eventSessionMode])
 
   useEffect(() => {
     if (!currentSlide) return
@@ -267,6 +274,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         event: 'currentslide-change',
         payload: { slideId: currentSlide.id },
       })
+    }
+
+    if (!slideHasSlideResponses(currentSlide)) {
+      setCurrentSlideLoading(false)
+
+      return
     }
 
     setCurrentSlideLoading(true)

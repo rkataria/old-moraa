@@ -107,4 +107,8 @@ export const isSlideInteractive = (slide: ISlide) =>
     ContentType.REFLECTION,
     ContentType.VIDEO_EMBED,
     ContentType.PDF_VIEWER,
+    ContentType.MORAA_BOARD,
   ].includes(slide.type)
+
+export const slideHasSlideResponses = (slide: ISlide) =>
+  [ContentType.POLL, ContentType.REFLECTION].includes(slide.type)

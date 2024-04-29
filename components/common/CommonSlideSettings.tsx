@@ -14,6 +14,8 @@ export function CommonSlideSettings() {
   const updateSlideColors = (color: string, colorKey: string) => {
     if (!currentSlide) return
 
+    if (currentSlide.config?.[colorKey] === color) return
+
     updateSlide({
       slidePayload: {
         config: {

@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import { IconX } from '@tabler/icons-react'
 
 import { CommonSlideSettings } from '../common/CommonSlideSettings'
+import { MoraaBoardSlideSettings } from '../common/MoraaBoardSlideSettings'
 import { PollSlideSettings } from '../common/PollSlideSettings'
 import { ReflectionSlideSettings } from '../common/ReflectionSlideSettings'
 import { TextImageSlideSettings } from '../common/TextImageSlideSettings'
@@ -61,6 +62,7 @@ export function SettingsSidebar({
       <PollSlideSettings />
       <ReflectionSlideSettings />
       <TextImageSlideSettings />
+      <MoraaBoardSlideSettings />
     </SettingsWrapper>
   )
 }
