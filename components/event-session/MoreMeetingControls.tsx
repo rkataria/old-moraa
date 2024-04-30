@@ -4,6 +4,8 @@ import { TbAppsFilled } from 'react-icons/tb'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 
+import { Timer } from './Timer'
+
 import { cn } from '@/utils/utils'
 
 export function MoreMeetingControls() {
@@ -23,8 +25,8 @@ export function MoreMeetingControls() {
           <TbAppsFilled className="text-2xl text-white" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="p-1 bg-black/90 min-w-[500px] aspect-video text-white">
-        <div className="text-small font-bold">More controls coming soon!</div>
+      <PopoverContent className="p-1 bg-black/90 min-w-[500px] aspect-video text-white flex justify-start items-start">
+        <Timer />
       </PopoverContent>
     </Popover>
   )
