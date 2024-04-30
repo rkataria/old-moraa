@@ -6,27 +6,20 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 
 import { useDebounce } from '@uidotdev/usehooks'
-import {
-  ImperativePanelGroupHandle,
-  Panel,
-  PanelGroup,
-  PanelResizeHandle,
-} from 'react-resizable-panels'
+import { ImperativePanelGroupHandle } from 'react-resizable-panels'
 
-import { Image } from '@nextui-org/react'
-
-import { FileUploader } from '../FileUploader'
-
-import { TextBlockEditor } from '@/components/event-content/BlockEditor'
+import { ImageBehind } from '@/components/common/slide-templates/text-image/ImageBehind'
+import { ImageLeft } from '@/components/common/slide-templates/text-image/ImageLeft'
+import { ImageRight } from '@/components/common/slide-templates/text-image/ImageRight'
+import { NoImage } from '@/components/common/slide-templates/text-image/NoImage'
+import { LayoutTypes } from '@/components/common/TextImageSlideSettings'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { FileBlock, ISlide, TextBlock } from '@/types/slide.type'
-import { cn } from '@/utils/utils'
 
 export function TextImageEditor() {
   const [localSlide, setLocalSlide] = useState<ISlide | null>(null)
   const panelGroupRef = useRef<ImperativePanelGroupHandle>(null)
-  const [editingBlock, setEditingBlock] = useState<string | null>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const [fileUploaderOpen, setFileUploaderOpen] = useState<boolean>(false)
   const debouncedLocalSlide = useDebounce(localSlide, 500)
@@ -44,15 +37,28 @@ export function TextImageEditor() {
       return
     }
 
+    if (!debouncedLocalSlide?.content) {
+      return
+    }
+
+    if (
+      JSON.stringify(debouncedLocalSlide?.content) ===
+      JSON.stringify(currentSlide.content)
+    ) {
+      return
+    }
+
     updateSlide({
-      ...currentSlide,
-      content: {
-        ...currentSlide.content,
-        ...debouncedLocalSlide?.content,
+      slidePayload: {
+        content: {
+          ...currentSlide.content,
+          ...debouncedLocalSlide?.content,
+        },
       },
+      slideId: currentSlide.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide])
+  }, [debouncedLocalSlide?.content])
 
   useEffect(() => {
     if (panelGroupRef.current && localSlide?.content?.panelSizes) {
@@ -123,81 +129,51 @@ export function TextImageEditor() {
 
   const blocks = localSlide.content?.blocks || []
 
-  const textBlocks = blocks.filter((block) =>
-    ['header', 'paragraph'].includes(block.type)
-  ) as TextBlock[]
-
   const imageBlocks = blocks.find(
     (block) => block.type === 'image'
   ) as FileBlock
 
+  if (currentSlide?.config?.layoutType === LayoutTypes.NO_IMAGE) {
+    return <NoImage slide={localSlide} onBlockChange={handleBlockChange} />
+  }
+
+  if (currentSlide?.config?.layoutType === LayoutTypes.IMAGE_BEHIND) {
+    return (
+      <ImageBehind
+        slide={localSlide}
+        fileUploaderOpen={fileUploaderOpen}
+        onBlockChange={handleBlockChange}
+        handleFileUpload={handleFileUpload}
+        setFileUploaderOpen={setFileUploaderOpen}
+      />
+    )
+  }
+
+  if (currentSlide?.config?.layoutType === LayoutTypes.IMAGE_LEFT) {
+    return (
+      <ImageLeft
+        slide={localSlide}
+        imageRef={imageRef}
+        panelGroupRef={panelGroupRef}
+        fileUploaderOpen={fileUploaderOpen}
+        onBlockChange={handleBlockChange}
+        handleFileUpload={handleFileUpload}
+        setFileUploaderOpen={setFileUploaderOpen}
+        handlePanelLayoutChange={handlePanelLayoutChange}
+      />
+    )
+  }
+
   return (
-    <div className="w-full h-full flex justify-center items-center group">
-      <PanelGroup
-        direction="horizontal"
-        className="w-full"
-        ref={panelGroupRef}
-        onLayout={handlePanelLayoutChange}>
-        <Panel minSize={30}>
-          <div className="h-full flex flex-col justify-center items-center">
-            {textBlocks.map((block) => (
-              <div
-                onClick={() => setEditingBlock(block.id)}
-                id={`block-editor-${block.id}`}
-                className="w-full">
-                <TextBlockEditor
-                  key={block.id}
-                  block={block}
-                  editable={editingBlock === block.id}
-                  onChange={handleBlockChange}
-                />
-              </div>
-            ))}
-          </div>
-        </Panel>
-        <PanelResizeHandle className="opacity-50 bg-gray-800 w-2 h-12 rounded-full relative z-10 -right-1 top-1/2 -translate-y-1/2 cursor-col-resize group-hover:opacity-100 transition-opacity duration-500" />
-        <Panel minSize={30} maxSize={60}>
-          <div className="flex justify-center items-center overflow-hidden rounded-md h-full">
-            <div className="relative rounded-md overflow-hidden group">
-              <Image
-                ref={imageRef}
-                src={imageBlocks?.data.file.url}
-                loading="lazy"
-                className={cn(
-                  'relative z-0 flex-none rounded-md overflow-hidden'
-                )}
-                onError={() => {
-                  if (imageRef.current) {
-                    imageRef.current.style.opacity = '1'
-                    imageRef.current.src =
-                      'https://placehold.co/400x600?text=Placeholder+Image'
-                  }
-                }}
-              />
-              <div
-                className={cn(
-                  'opacity-0 absolute left-0 top-0 w-full h-full flex justify-center items-center hover:opacity-100',
-                  {
-                    'opacity-100': fileUploaderOpen,
-                  }
-                )}>
-                <FileUploader
-                  maxNumberOfFiles={1}
-                  allowedFileTypes={['.jpg', '.jpeg', '.png']}
-                  folderName={localSlide.id}
-                  triggerProps={{
-                    children: 'Upload Image',
-                    variant: 'flat',
-                    className: 'bg-black text-white',
-                  }}
-                  onFilePickerOpen={setFileUploaderOpen}
-                  onFilesUploaded={handleFileUpload}
-                />
-              </div>
-            </div>
-          </div>
-        </Panel>
-      </PanelGroup>
-    </div>
+    <ImageRight
+      slide={localSlide}
+      imageRef={imageRef}
+      panelGroupRef={panelGroupRef}
+      fileUploaderOpen={fileUploaderOpen}
+      onBlockChange={handleBlockChange}
+      handleFileUpload={handleFileUpload}
+      setFileUploaderOpen={setFileUploaderOpen}
+      handlePanelLayoutChange={handlePanelLayoutChange}
+    />
   )
 }

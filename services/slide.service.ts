@@ -49,24 +49,14 @@ const updateSlide = async ({
   slidePayload,
   slideId,
 }: {
-  slidePayload: {
-    content: ISlide['content']
-    config: ISlide['config']
-    name: string
-    status: ISlide['status']
-    section_id?: string
-  }
+  slidePayload: Partial<ISlide>
   slideId: string
 }) => {
   const query = APIService.supabaseClient
     .from('slide')
     .update({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      content: slidePayload.content as any,
-      config: slidePayload.config,
-      name: slidePayload.name,
-      status: slidePayload.status,
-      section_id: slidePayload.section_id,
+      ...(slidePayload as any),
     })
     .eq('id', slideId)
     .select('*')
@@ -86,24 +76,14 @@ const updateSlides = async ({
   sectionId,
   meetingId,
 }: {
-  slidePayload: {
-    content?: ISlide['content']
-    config?: ISlide['config']
-    name?: string
-    status?: ISlide['status']
-    section_id?: string
-  }
+  slidePayload: Partial<ISlide>
   slideIds?: string[]
   sectionId?: string
   meetingId?: string
 }) => {
   const query = APIService.supabaseClient.from('slide').update({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    content: slidePayload.content as any,
-    config: slidePayload.config,
-    name: slidePayload.name,
-    status: slidePayload.status,
-    section_id: slidePayload.section_id,
+    ...(slidePayload as any),
   })
 
   if (!slideIds && !sectionId && !meetingId) return null

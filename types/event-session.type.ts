@@ -2,7 +2,8 @@
 
 import { RealtimeChannel } from '@supabase/supabase-js'
 
-import { ISlide } from './slide.type'
+import type { IPollResponse, IReflectionResponse, ISlide } from './slide.type'
+import type { EventSessionMode } from '@/contexts/EventSessionContext'
 
 export enum PresentationStatuses {
   STARTED = 'started',
@@ -31,19 +32,39 @@ export type EventSessionContextType = {
   currentSlide: ISlide | null
   presentationStatus: PresentationStatuses
   currentSlideLoading: boolean
-  currentSlideResponses: any[] | null
+  currentSlideResponses?: IReflectionResponse[] | IPollResponse[] | null
   participant: any
   activeSession: any
   videoMiddlewareConfig: VideoMiddlewareConfig | null
   slideReactions: SlideReaction[]
   realtimeChannel: RealtimeChannel
+  eventSessionMode: EventSessionMode
+  setEventSessionMode: (mode: EventSessionMode) => void
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void
   setCurrentSlide: (slide: ISlide) => void
   nextSlide: () => void
   previousSlide: () => void
-  onVote: (slide: ISlide, options: string[]) => void
+  onVote: (
+    slide: ISlide,
+    {
+      selectedOptions,
+      anonymous,
+    }: {
+      selectedOptions: string[]
+      anonymous: boolean
+    }
+  ) => void
+  onUpdateVote: (
+    responseId: string,
+    {
+      anonymous,
+      ...rest
+    }: {
+      anonymous: boolean
+    }
+  ) => void
   addReflection?: ({
     slide,
     reflection,

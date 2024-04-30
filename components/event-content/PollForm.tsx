@@ -97,12 +97,14 @@ export function PollForm({ slide: slideFromRemote }: PollFormProps) {
 
   useEffect(() => {
     updateSlide({
-      ...slideFromRemote,
-      content: {
-        ...slideFromRemote.content,
-        question: throttledQuestion,
-        options: throttledOptions,
+      slidePayload: {
+        content: {
+          ...slideFromRemote.content,
+          question: throttledQuestion,
+          options: throttledOptions,
+        },
       },
+      slideId: slideFromRemote.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [throttledQuestion, throttledOptions])

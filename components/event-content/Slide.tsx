@@ -1,12 +1,16 @@
 // TODO: Fix any types
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { useContext } from 'react'
+
 import dynamic from 'next/dynamic'
 import { TbSettings } from 'react-icons/tb'
 
 import { Button } from '@nextui-org/react'
 
 import { CoverEditor } from './content-types/CoverEditor'
+import { MoraaBoardEditor } from './content-types/MoraaBoardEditor'
+import { RichTextEditor } from './content-types/RichTextEditor'
 import { TextImageEditor } from './content-types/TextImageEditor'
 import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
 import { GoogleSlidesEditor } from './GoogleSlidesEditor'
@@ -14,9 +18,12 @@ import { MiroEmbedEditor } from './MiroEmbedEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
-import { ImageViewer } from '../common/ImageViewer'
+import { SlidePreview } from '../common/SlidePreview'
 
+import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { EventContext } from '@/contexts/EventContext'
+import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
@@ -40,6 +47,14 @@ export function Slide({
   settingsEnabled,
   setSettingsSidebarVisible,
 }: SlideProps) {
+  const { preview, currentSlide } = useContext(EventContext) as EventContextType
+
+  if (preview || !isOwner) {
+    return <SlidePreview slide={slide} />
+  }
+
+  if (!currentSlide) return null
+
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
@@ -51,7 +66,7 @@ export function Slide({
           hidden: !isOwner,
         })}
       />
-      {settingsEnabled && (
+      {settingsEnabled && !preview && (
         <Button
           isIconOnly
           variant="light"
@@ -91,6 +106,10 @@ export function Slide({
         {slide.type === ContentType.TEXT_IMAGE && <TextImageEditor />}
         {slide.type === ContentType.MIRO_EMBED && (
           <MiroEmbedEditor slide={slide as any} />
+        )}
+        {slide.type === ContentType.RICH_TEXT && <RichTextEditor />}
+        {slide.type === ContentType.MORAA_BOARD && (
+          <MoraaBoardEditor slide={slide} />
         )}
       </div>
     </div>

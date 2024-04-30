@@ -9,13 +9,23 @@ import TextStyle from '@tiptap/extension-text-style'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
-import { BlockEditorControls } from './BlockEditorControls'
+import { ScrollShadow } from '@nextui-org/react'
 
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { TextBlock } from '@/types/slide.type'
 
 const getExtensions = (type: string) => {
   switch (type) {
+    case 'richtext':
+      return [
+        StarterKit,
+        TextStyle,
+        Color,
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+        }),
+      ]
+      break
     default:
       return [
         StarterKit,
@@ -31,26 +41,13 @@ const getExtensions = (type: string) => {
   }
 }
 
-export function TextBlockEditor({
-  block,
-  editable = false,
-  onChange,
-}: {
-  block: TextBlock
-  editable?: boolean
-  onChange?: (block: TextBlock) => void
-}) {
+export function RichTextView({ block }: { block: TextBlock }) {
   const editor = useEditor({
     extensions: getExtensions(block.type),
     content: block.data.html,
-    onUpdate: ({ editor: _editor }) => {
-      onChange?.({
-        ...block,
-        data: {
-          ...block.data,
-          html: _editor.getHTML(),
-        },
-      })
+    editable: false,
+    onFocus: (props) => {
+      props.editor.setEditable(false)
     },
   })
 
@@ -62,22 +59,18 @@ export function TextBlockEditor({
     []
   )
 
-  useEffect(() => {
-    if (editor) {
-      editor.setEditable(editable)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editable])
-
   if (!editor) return null
 
   return (
-    <div className="flex justify-center items-center">
-      {editable && (
-        <BlockEditorControls editor={editor} blockType={block.type} />
-      )}
-
-      <EditorContent editor={editor} className="p-2 outline-none w-full" />
-    </div>
+    <ScrollShadow
+      hideScrollBar
+      isEnabled
+      orientation="vertical"
+      className="w-full max-h-full">
+      <EditorContent
+        editor={editor}
+        className="p-2 outline-none w-full h-full min-h-full"
+      />
+    </ScrollShadow>
   )
 }

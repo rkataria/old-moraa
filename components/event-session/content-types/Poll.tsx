@@ -3,17 +3,38 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { Avatar, AvatarGroup, Button, Checkbox } from '@nextui-org/react'
 
+import { EventContext } from '@/contexts/EventContext'
+import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
+import { type EventContextType } from '@/types/event-context.type'
+import { type EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
-import { cn } from '@/utils/utils'
+import { cn, getAvatarForName } from '@/utils/utils'
 
+export type VoteResponse = {
+  selected_options: string[]
+  anonymous: boolean
+}
+
+export type Vote = {
+  id: string
+  participant: {
+    enrollment: {
+      user_id: string
+      profile: {
+        first_name: string
+        last_name: string
+      }
+    }
+  }
+  response: VoteResponse
+}
 interface VoteUsersProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  votes: any[]
+  votes: Vote[]
   option: string
 }
 
@@ -35,23 +56,35 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
             <p className="text-sm font-medium ms-2">+{count - 5} more votes</p>
           )
         }>
-        {voteUsers.map((voterData) => (
-          <div>
-            {voterData.participant.enrollment.profile.first_name ? (
-              <Avatar
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(`${voterData.participant.enrollment.profile.first_name} ${voterData.participant.enrollment.profile.last_name}`)}`}
-                size="sm"
-              />
-            ) : (
+        {voteUsers.map((voterData) => {
+          const { enrollment } = voterData.participant
+          const isAnonymous = voterData.response.anonymous
+
+          if (isAnonymous) {
+            return (
               <Avatar
                 isBordered
+                showFallback
                 className="h-8 w-8 cursor-pointer"
-                src="https://github.com/shadcn.png"
                 size="sm"
               />
-            )}
-          </div>
-        ))}
+            )
+          }
+
+          if (enrollment.profile.first_name) {
+            const name = [
+              enrollment.profile.first_name ?? '',
+              enrollment.profile.last_name ?? '',
+            ].join(' ')
+            const url = getAvatarForName(name)
+
+            return <Avatar src={url} size="sm" />
+          }
+
+          return (
+            <Avatar isBordered className="h-8 w-8 cursor-pointer" size="sm" />
+          )
+        })}
       </AvatarGroup>
     </div>
   )
@@ -105,18 +138,24 @@ interface PollProps {
       options: string[]
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  votes?: any
+  votes?: Vote[]
   voted?: boolean
   isOwner?: boolean
-  onVote?: (slide: ISlide, options: string[]) => void
 }
 
-export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
+export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
   const { options, question } = slide.content
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const { currentUser } = useAuth()
+  const { eventMode } = useContext(EventContext) as EventContextType
+  const { onVote, onUpdateVote } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
+  const [makeMyVoteAnonymous, setMakeMyVoteAnonymous] = useState<boolean>(
+    votes.find((vote) => vote.participant.enrollment.user_id === currentUser.id)
+      ?.response.anonymous || false
+  )
 
   useEffect(() => {
     if (
@@ -147,28 +186,35 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
     ])
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const optionsVoteCount = votes.reduce((acc: any, vote: any) => {
-    vote.response.selected_options?.forEach((option: string) => {
-      acc[option] = (acc[option] || 0) + 1
-    })
+  const optionsVoteCount = votes.reduce(
+    (
+      acc: {
+        [key: string]: number
+      },
+      vote: Vote
+    ) => {
+      vote.response.selected_options?.forEach((option: string) => {
+        acc[option] = (acc[option] || 0) + 1
+      })
 
-    return acc
-  }, {})
-
-  const hasVotedOn = (option: string) =>
-    votes.some(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (vote: any) =>
-        vote.response.selected_options?.includes(option) &&
-        vote.participant.enrollment.user_id === currentUser.id
-    )
+      return acc
+    },
+    {}
+  )
 
   const getOptionWidth = (option: string) => {
     if (votes.length === 0 || !optionsVoteCount[option]) return 0
 
     return Math.round((optionsVoteCount[option] * 100) / votes.length)
   }
+
+  const selfVote = votes.find(
+    (vote: Vote) => vote.participant.enrollment.user_id === currentUser.id
+  )
+
+  const votedOptions = selfVote?.response.selected_options || []
+  const showAnonymousToggle =
+    eventMode === 'present' && !isOwner && slide.config.allowVoteAnonymously
 
   return (
     <div
@@ -185,13 +231,35 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
             }}>
             {question}
           </h2>
+          {showAnonymousToggle && (
+            <div className="my-2 flex justify-end items-center">
+              <Checkbox
+                size="sm"
+                className="items-baseline"
+                isSelected={makeMyVoteAnonymous}
+                onValueChange={(checked) => {
+                  if (!selfVote) {
+                    setMakeMyVoteAnonymous(checked)
 
+                    return
+                  }
+
+                  onUpdateVote(selfVote.id, {
+                    ...selfVote.response,
+                    anonymous: checked,
+                  })
+                  setMakeMyVoteAnonymous(checked)
+                }}>
+                Make my vote anonymous
+              </Checkbox>
+            </div>
+          )}
           <div className="mt-4 grid grid-cols-1 gap-4">
             {options.map((option: string) => (
               <div
                 key={option}
                 className={cn(
-                  'relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden',
+                  'relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 h-12 rounded-lg overflow-hidden',
                   {
                     'cursor-default': voted || isOwner,
                   },
@@ -208,12 +276,17 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
                     return
                   }
 
-                  onVote?.(slide, [option])
+                  onVote(slide, {
+                    selectedOptions: [option],
+                    anonymous: makeMyVoteAnonymous,
+                  })
                 }}>
                 <div
                   className={cn(
                     'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
-                    { 'bg-purple-500': hasVotedOn(option) || isOwner }
+                    {
+                      'bg-purple-500': votedOptions.includes(option) || isOwner,
+                    }
                   )}
                   style={{
                     width: `${getOptionWidth(option)}%`,
@@ -240,7 +313,12 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
                 <Button
                   type="button"
                   color="primary"
-                  onClick={() => onVote?.(slide, selectedOptions)}>
+                  onClick={() =>
+                    onVote(slide, {
+                      selectedOptions,
+                      anonymous: makeMyVoteAnonymous,
+                    })
+                  }>
                   Submit
                 </Button>
               </div>

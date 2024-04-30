@@ -3,7 +3,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { GoogleSlideEmbed } from '@/components/common/GoogleSlideEmbed'
+import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
 
@@ -22,6 +24,7 @@ export function GoogleSlides({ slide }: GoogleSlidesProps) {
   const {
     content: { googleSlideURL, startPosition },
   } = slide
+  const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
     useContext(EventSessionContext) as EventSessionContextType
   const [position, setPosition] = useState<number>(startPosition || 1)
@@ -51,6 +54,8 @@ export function GoogleSlides({ slide }: GoogleSlidesProps) {
   }, [realtimeChannel])
 
   const handleCurrentPageChange = (pageNumber: number) => {
+    if (preview) return
+
     realtimeChannel.send({
       type: 'broadcast',
       event: positionChangeEvent,

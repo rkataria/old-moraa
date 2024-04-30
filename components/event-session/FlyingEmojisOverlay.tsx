@@ -22,6 +22,7 @@ export function FlyingEmojisOverlay() {
       const emojiElement = document.createElement('em-emoji')
       emojiElement.setAttribute('id', emoji)
       emojiElement.setAttribute('size', '40')
+      emojiElement.setAttribute('set', 'apple')
 
       const pElement = document.createElement('p')
       pElement.textContent = name
@@ -33,7 +34,7 @@ export function FlyingEmojisOverlay() {
 
       emojiDiv.className =
         Math.random() * 1 > 0.5 ? 'emoji wiggle-1' : 'emoji wiggle-2'
-      emojiDiv.style.left = `${Math.random() * 100}%`
+      emojiDiv.style.left = `${Math.floor(Math.random() * (80 - 20 + 1)) + 20}%`
       emojiDiv.style.display = 'grid'
       emojiDiv.style.textAlign = 'center'
 

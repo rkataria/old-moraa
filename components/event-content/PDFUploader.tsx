@@ -96,10 +96,12 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
         setFileURL(res.data?.path)
         // Update the slide in background.
         updateSlide({
-          ...slide,
-          content: {
-            pdfPath: res.data?.path,
+          slidePayload: {
+            content: {
+              pdfPath: res.data?.path,
+            },
           },
+          slideId: slide.id,
         })
       },
     })
@@ -114,12 +116,14 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
   const saveDefaultPageNumber = () => {
     if (!fileUrl) return
     updateSlide({
-      ...slide,
-      content: {
-        ...slide.content,
-        defaultPage,
-        pdfPath: fileUrl,
+      slidePayload: {
+        content: {
+          ...slide.content,
+          defaultPage,
+          pdfPath: fileUrl,
+        },
       },
+      slideId: slide.id,
     })
     setSelectedPage(defaultPage || 1)
   }
@@ -128,7 +132,7 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
     switch (true) {
       case uploadPDFMutation.isPending || downloadPDFQuery.isLoading:
         return (
-          <ContentLoading message="Please wait while we are uploading the PDF..." />
+          <ContentLoading message="Please wait while we are uploading the PDF. This may take a few minutes!" />
         )
 
       case !fileUrl:

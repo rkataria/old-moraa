@@ -34,7 +34,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const [isOwner, setIsOwner] = useState<boolean>(false)
   const supabase = createClientComponentClient()
   const [meeting, setMeeting] = useState<any>(null)
-  const [currentSection, setCurrentSection] = useState<ISection | null>(null)
   const [insertAfterSlideId, setInsertAfterSlideId] = useState<string | null>(
     null
   )
@@ -48,6 +47,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     useState<boolean>(false)
   const [showSlidePlaceholder, setShowSlidePlaceholder] =
     useState<boolean>(false)
+  const [preview, setPreview] = useState<boolean>(false)
+
+  const [error, setError] = useState<{
+    slideId: string
+    message: string
+  } | null>(null)
 
   useEffect(() => {
     if (!useEventData.meeting) return
@@ -63,6 +68,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
   useEffect(() => {
     if (!meeting?.id) return
+
+    // Don't subscribe to the changes if the user is not the owner and the event mode is not present
+    // if (eventMode !== 'present' || !isOwner) return
+    if (eventMode === 'edit' && !isOwner) return
 
     // subscribe to the meeting updates
     const meetingUpdateSubscription = supabase
@@ -98,109 +107,172 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         async (payload) => {
           console.log('Section change received!', payload)
 
-          if (payload.eventType === 'UPDATE') {
-            const updatedSection = payload.new
-            const _currentSection = sections.find(
-              (s) => s.id === updatedSection.id
+          /**
+           * Two approaches are considered for handling section updates:
+           *
+           * 1. Fetch the updated section, including all slide contents, and update the section's state.
+           * 2. Update the section's state based on the payload data.
+           *
+           * Currently, the first approach is implemented to maintain slide order consistency and mitigate potential issues with content updates. However, this approach is not optimal, and further optimization or a refinement of the second approach may be necessary.
+           */
+
+          // Approach - 1
+          const updatedSection = payload.new
+
+          const sectionResponse = await SectionService.getSection(
+            updatedSection.id
+          )
+
+          if (sectionResponse.error) {
+            console.error(
+              'error while fetching section: ',
+              sectionResponse.error
             )
 
-            if (!_currentSection) return null
+            return null
+          }
 
-            const newSlideIds = updatedSection.slides
-            const previousSlideIds = _currentSection.slides.map(
-              (slide: ISlide) => slide.id
-            )
-            const diffSlideIds = newSlideIds.filter(
-              (slideId: string) => !previousSlideIds.includes(slideId)
-            )
+          const currentSectionWithSlidesContent = sectionResponse.data
 
-            if (diffSlideIds.length > 0) {
-              const sectionResponse = await SectionService.getSection(
-                updatedSection.id
-              )
-
-              if (sectionResponse.error) {
-                console.error(
-                  'error while fetching section: ',
-                  sectionResponse.error
-                )
-
-                return null
-              }
-
-              const currentSectionWithSlidesContent = sectionResponse.data
-              const firstNewSlide =
-                currentSectionWithSlidesContent.slidesWithContent.find(
-                  (s) => s.id === diffSlideIds[0]
-                )
-
-              const updatedSections = sections.map((section) => {
-                if (section.id === updatedSection.id) {
-                  const updateSlidesOrder =
-                    currentSectionWithSlidesContent.slides?.map(
-                      (slideId: string) =>
-                        currentSectionWithSlidesContent.slidesWithContent.find(
-                          (s) => s.id === slideId
-                        )
-                    )
-
-                  return {
-                    ...sectionResponse.data,
-                    slides: updateSlidesOrder || [],
-                    slidesWithContent: undefined,
-                  }
-                }
-
-                return section
-              })
-
-              setCurrentSlide(firstNewSlide)
-              setSections(updatedSections)
-              setInsertAfterSlideId(null)
-              setShowSlidePlaceholder(false)
-
-              return null
-            }
-
-            const isSlidesOrderedChanged =
-              newSlideIds.join(',') !== previousSlideIds.join(',')
-
-            if (isSlidesOrderedChanged) {
-              // Updated slides order
-              const orderedSlides = newSlideIds.map((slideId: string) =>
-                _currentSection.slides.find(
-                  (slide: ISlide) => slide.id === slideId
-                )
-              )
-              const updatedSections = sections.map((section) => {
-                if (section.id === updatedSection.id) {
-                  return { ...updatedSection, slides: orderedSlides }
-                }
-
-                return section
-              })
-
-              setSections(updatedSections)
-              setInsertAfterSlideId(null)
-              setShowSlidePlaceholder(false)
-
-              return null
-            }
-
-            const updatedSections = sections.map((section) => {
+          setSections((prevSections) => {
+            const updatedSections = prevSections.map((section) => {
               if (section.id === updatedSection.id) {
-                return { ...updatedSection, slides: section.slides }
+                const updateSlidesOrder =
+                  currentSectionWithSlidesContent.slides?.map(
+                    (slideId: string) =>
+                      currentSectionWithSlidesContent.slidesWithContent.find(
+                        (s) => s.id === slideId
+                      )
+                  )
+
+                return {
+                  ...sectionResponse.data,
+                  slides: updateSlidesOrder || [],
+                  slidesWithContent: undefined,
+                }
               }
 
               return section
             })
 
-            setSections(updatedSections)
-            setInsertAfterSlideId(null)
-            setShowSlidePlaceholder(false)
+            return updatedSections
+          })
 
-            return null
-          }
+          // Approach - 2
+          // if (payload.eventType === 'UPDATE') {
+          //   const updatedSection = payload.new
+          //   const _currentSection = sections.find(
+          //     (s) => s.id === updatedSection.id
+          //   )
+
+          //   if (!_currentSection) return null
+
+          //   const newSlideIds = updatedSection.slides // [1, 2, 4]
+          //   const previousSlideIds = _currentSection.slides.map(
+          //     (slide: ISlide) => slide.id
+          //   ) // [1, 2, 3]
+          //   const diffSlideIds = newSlideIds.filter(
+          //     (slideId: string) => !previousSlideIds.includes(slideId)
+          //   )
+
+          //   console.log('diffSlideIds', diffSlideIds)
+          //   console.log('previousSlideIds', previousSlideIds)
+          //   console.log('newSlideIds', newSlideIds)
+
+          //   // Check if the slide is added
+          //   if (diffSlideIds.length > 0) {
+          //     const sectionResponse = await SectionService.getSection(
+          //       updatedSection.id
+          //     )
+
+          //     if (sectionResponse.error) {
+          //       console.error(
+          //         'error while fetching section: ',
+          //         sectionResponse.error
+          //       )
+
+          //       return null
+          //     }
+
+          //     const currentSectionWithSlidesContent = sectionResponse.data
+          //     const firstNewSlide =
+          //       currentSectionWithSlidesContent.slidesWithContent.find(
+          //         (s) => s.id === diffSlideIds[0]
+          //       )
+
+          //     const updatedSections = sections.map((section) => {
+          //       if (section.id === updatedSection.id) {
+          //         const updateSlidesOrder =
+          //           currentSectionWithSlidesContent.slides?.map(
+          //             (slideId: string) =>
+          //               currentSectionWithSlidesContent.slidesWithContent.find(
+          //                 (s) => s.id === slideId
+          //               )
+          //           )
+
+          //         return {
+          //           ...sectionResponse.data,
+          //           slides: updateSlidesOrder || [],
+          //           slidesWithContent: undefined,
+          //         }
+          //       }
+
+          //       return section
+          //     })
+          //     console.log('diffslideIds updatedSections', updatedSections)
+          //     setCurrentSlide(firstNewSlide)
+          //     setSections(updatedSections)
+          //     setInsertAfterSlideId(null)
+          //     setShowSlidePlaceholder(false)
+
+          //     return null
+          //   }
+
+          //   const isSlidesOrderedChanged =
+          //     newSlideIds.join(',') !== previousSlideIds.join(',')
+
+          //   // Check if the slides order is changed
+          //   if (isSlidesOrderedChanged) {
+          //     // Updated slides order
+          //     const orderedSlides = newSlideIds.map((slideId: string) =>
+          //       _currentSection.slides.find(
+          //         (slide: ISlide) => slide.id === slideId
+          //       )
+          //     )
+          //     const updatedSections = sections.map((section) => {
+          //       if (section.id === updatedSection.id) {
+          //         return { ...updatedSection, slides: orderedSlides }
+          //       }
+
+          //       return section
+          //     })
+
+          //     console.log('diffOrder updatedSections', updatedSections)
+          //     setSections(updatedSections)
+          //     setCurrentSlide(
+          //       getNextSlide({ sections: updatedSections, currentSlide })
+          //     )
+          //     setInsertAfterSlideId(null)
+          //     setShowSlidePlaceholder(false)
+
+          //     return null
+          //   }
+
+          //   const updatedSections = sections.map((section) => {
+          //     if (section.id === updatedSection.id) {
+          //       return { ...updatedSection, slides: section.slides }
+          //     }
+
+          //     return section
+          //   })
+
+          //   console.log('updatedSections', updatedSections)
+          //   setSections(updatedSections)
+          //   setInsertAfterSlideId(null)
+          //   setShowSlidePlaceholder(false)
+
+          //   return null
+          // }
 
           return null
         }
@@ -222,10 +294,17 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           console.log('Slide change received!', payload)
 
           if (payload.eventType === 'UPDATE') {
-            const updatedSlide = payload.new
+            let updatedSlide = payload.new
 
             const updatedSections = sections.map((section) => {
               if (section.id === updatedSlide.section_id) {
+                updatedSlide = {
+                  ...section.slides.find(
+                    (slide: ISlide) => slide.id === updatedSlide.id
+                  ),
+                  ...updatedSlide,
+                }
+
                 return {
                   ...section,
                   slides: section.slides.map((slide: ISlide) =>
@@ -253,7 +332,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
             )
 
             const updatedSections = sections.map((section) => {
-              if (section.id === deletedSlide.section_id) {
+              if (section.id === deletedSlide?.section_id) {
                 return {
                   ...section,
                   slides: section.slides.filter(
@@ -285,7 +364,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       slideUpdateSubscription.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.id, sections, insertAfterSlideId])
+  }, [meeting?.id, sections, insertAfterSlideId, isOwner])
 
   useEffect(() => {
     if (!meeting) return
@@ -355,7 +434,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     setShowSectionPlaceholder(false)
     setSections(sectionsWithSlides)
-    setCurrentSection(sectionsWithSlides[0] as any)
 
     if (!currentSlide) {
       setCurrentSlide(sectionsWithSlides[0]?.slides[0])
@@ -425,6 +503,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       section_id: _section.id!,
       meeting_id: meeting?.id,
     })
+    setShowSlidePlaceholder(false)
 
     if (slideResponse.error) {
       console.error('error while creating slide: ', slideResponse.error)
@@ -494,6 +573,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (afterSectionId) {
       const index = sectionIds.indexOf(afterSectionId)
       sectionIds.splice(index + 1, 0, sectionResponse.data.id)
+    } else {
+      // Add the section at the end
+      sectionIds.push(sectionResponse.data.id)
     }
 
     // Update the sections on meeting
@@ -564,12 +646,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const importGoogleSlides = async ({
     slide,
     googleSlideUrl,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     startPosition,
+    endPosition,
   }: {
     slide: ISlide
     googleSlideUrl: string
     startPosition: number
+    endPosition: number | undefined
   }) => {
     if (!isOwner) return null
 
@@ -580,14 +663,22 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           googleSlideUrl,
           meetingId: meeting.id,
           sectionId: slide.section_id,
+          startPosition,
+          endPosition,
         },
       }
     )
-    if (importGoogleSlidesResponse.error) {
+    console.log(importGoogleSlidesResponse)
+    if (!importGoogleSlidesResponse.data?.success) {
       console.error(
         'error while importing google slides: ',
-        importGoogleSlidesResponse.error
+        importGoogleSlidesResponse.data?.message
       )
+
+      setError({
+        slideId: slide.id,
+        message: importGoogleSlidesResponse.data?.message,
+      })
 
       return null
     }
@@ -626,45 +717,34 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return null
   }
 
-  const updateSlide = async (slide: Partial<ISlide>) => {
-    if (!isOwner) return null
+  const updateSlide = async ({
+    slidePayload,
+    slideId,
+    allowParticipantToUpdate = false,
+  }: {
+    slidePayload: Partial<ISlide>
+    slideId: string
+    allowParticipantToUpdate?: boolean
+  }) => {
+    if (!isOwner && !allowParticipantToUpdate) return null
+    if (!slideId) return null
+    if (Object.keys(slidePayload).length === 0) return null
 
-    if (isSlideChanged(slide)) {
-      setSyncing(true)
-      const updateSlideResponse = await SlideService.updateSlide({
-        slidePayload: {
-          content: slide.content,
-          config: slide.config,
-          name: slide.name!,
-          status: slide.status,
-        },
-        slideId: slide.id!,
-      })
+    setSyncing(true)
+    const updateSlideResponse = await SlideService.updateSlide({
+      slidePayload,
+      slideId,
+    })
 
-      if (updateSlideResponse.error) {
-        console.error('error while updating slide: ', updateSlideResponse.error)
-
-        return null
-      }
-
-      setSyncing(false)
+    if (updateSlideResponse.error) {
+      console.error('error while updating slide: ', updateSlideResponse.error)
 
       return null
     }
 
+    setSyncing(false)
+
     return null
-  }
-
-  const isSlideChanged = (slide: Partial<ISlide>) => {
-    const section = sections.find((s) => s.id === slide.section_id)
-    if (!section) return false
-
-    const _slide = section.slides.find((s: ISlide) => s.id === slide.id)
-    if (!_slide) return false
-
-    if (JSON.stringify(_slide) !== JSON.stringify(slide)) return true
-
-    return false
   }
 
   const deleteSlide = async (slide: ISlide) => {
@@ -812,7 +892,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return null
   }
 
-  const reorder = (list: ISlide[], startIndex: number, endIndex: number) => {
+  const reorder = (list: string[], startIndex: number, endIndex: number) => {
     const result = list
     const [removed] = result.splice(startIndex, 1)
     result.splice(endIndex, 0, removed)
@@ -837,10 +917,14 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       const section = sections.find((s) => s.id === sectionId)
       if (!section) return null
 
-      const items = reorder(section.slides, source.index, destination.index)
+      const items = reorder(
+        section.slides.map((s: ISlide) => s.id),
+        source.index,
+        destination.index
+      )
       await updateSection({
         sectionPayload: {
-          slides: items.map((i: ISlide) => i.id),
+          slides: items,
         },
         sectionId,
       })
@@ -869,8 +953,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         sectionId: sourceSectionId,
       })
       await updateSlide({
-        ...removed,
-        section_id: destinationSectionId,
+        slidePayload: {
+          section_id: destinationSectionId,
+        },
+        slideId: removed.id,
       })
       await updateSection({
         sectionPayload: {
@@ -885,6 +971,21 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return null
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const reorderSection = async (result: OnDragEndResponder | any) => {
+    const { source, destination } = result
+    if (destination.droppableId !== 'section-droppable') return
+    if (source.droppableId !== 'section-droppable') return
+
+    const items = reorder(meeting.sections, source.index, destination.index)
+    await updateMeeting({
+      meetingPayload: {
+        sections: items,
+      },
+      meetingId: meeting.id,
+    })
+  }
+
   return (
     <EventContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -897,12 +998,14 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         syncing,
         isOwner,
         sections,
-        currentSection,
         insertAfterSectionId,
         insertAfterSlideId,
         showSectionPlaceholder,
         showSlidePlaceholder,
         insertInSectionId,
+        preview,
+        setPreview,
+        error,
         setInsertAfterSlideId,
         setInsertAfterSectionId,
         setCurrentSlide,
@@ -912,13 +1015,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         moveUpSlide,
         moveDownSlide,
         reorderSlide,
+        reorderSection,
         addSection,
         updateSection,
         addSlideToSection,
         setInsertInSectionId,
         moveUpSection,
         moveDownSection,
-        setCurrentSection,
       }}>
       {children}
     </EventContext.Provider>

@@ -37,6 +37,19 @@ export class EventService extends APIService {
     })
   }
 
+  static async deleteEvent({ eventId }: { eventId: string }) {
+    const query = APIService.supabaseClient
+      .from('event')
+      .delete()
+      .eq('id', eventId)
+
+    return query.then((res) => {
+      if (res.error) throw res.error
+
+      return res
+    })
+  }
+
   static async publishEvent({ eventId }: { eventId: string }) {
     const data = await APIService.supabaseClient
       .from('meeting')

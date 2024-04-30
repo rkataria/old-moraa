@@ -11,16 +11,9 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
         blocks: [
           {
             id: uuidv4(),
-            type: 'header',
-            data: {
-              html: `<h1 style="text-align: center">${data?.title || 'Title'}</h1>`,
-            },
-          },
-          {
-            id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: `<p style="text-align: center">${data?.description || 'Description'}</p>`,
+              html: `<h1 style="text-align: center">${data?.title || 'Title'}</h1><p style="text-align: center">${data?.description || 'This is a description text'}</p>`,
             },
           },
         ],
@@ -30,16 +23,9 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
         blocks: [
           {
             id: uuidv4(),
-            type: 'header',
-            data: {
-              html: `<h1>${data?.title || 'Title'}</h1>`,
-            },
-          },
-          {
-            id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: `<p>${data?.description || 'Description'}</p>`,
+              html: `<h1>${data?.title || 'Title'}</h1><p>${data?.description || 'This is a description text'}</p>`,
             },
           },
           {
@@ -50,6 +36,16 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
                 url: 'https://images.unsplash.com/photo-1708947567920-316933385c73?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
               },
             },
+          },
+        ],
+      }
+    case ContentType.RICH_TEXT:
+      return {
+        blocks: [
+          {
+            id: uuidv4(),
+            type: 'richtext',
+            data: {},
           },
         ],
       }
@@ -111,4 +107,8 @@ export const isSlideInteractive = (slide: ISlide) =>
     ContentType.REFLECTION,
     ContentType.VIDEO_EMBED,
     ContentType.PDF_VIEWER,
+    ContentType.MORAA_BOARD,
   ].includes(slide.type)
+
+export const slideHasSlideResponses = (slide: ISlide) =>
+  [ContentType.POLL, ContentType.REFLECTION].includes(slide.type)

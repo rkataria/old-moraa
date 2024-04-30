@@ -48,7 +48,7 @@ export function CreateEventButtonWithModal({
       {
         name: values.name,
         description: values.description || '',
-        type: 'course', // formData.get("type"),
+        type: values.eventType,
         owner_id: currentUser.id,
         start_date: null,
         end_date: null,
@@ -75,20 +75,27 @@ export function CreateEventButtonWithModal({
         <ModalContent>
           {() => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                <h2 className="font-md text-gray-800 font-semibold">
-                  New Event
+              <ModalHeader className="flex flex-col gap-1 bg-primary text-white h-[9.125rem] p-6">
+                <h2 className="font-md font-semibold">
+                  Create new learning event
                 </h2>
-                <p className="text-gray-500 text-sm font-normal">
-                  Give your event a name and an optional description to get
-                  going!
+                <p className="text-sm font-normal">
+                  Give your learning event a name and an optional description to
+                  get going!
                 </p>
               </ModalHeader>
-              <ModalBody>
+              <ModalBody className="mt-4">
                 <NewEventForm
                   onSubmit={onSubmit}
                   renderAction={() => (
                     <div className="flex justify-end mb-4">
+                      <Button
+                        variant="bordered"
+                        className="mr-2"
+                        onClick={() => setOpen(false)}
+                        isDisabled={createEventMutation.isPending}>
+                        Cancel
+                      </Button>
                       <Button
                         type="submit"
                         color="primary"

@@ -6,10 +6,10 @@ import {
   PanelGroup,
 } from 'react-resizable-panels'
 
-import { Image } from '@nextui-org/react'
-
+import { RichTextView } from '@/components/common/content-types/RichTextView'
+import { ImageBlockView } from '@/components/common/ImageBlockView'
+import { LayoutTypes } from '@/components/common/TextImageSlideSettings'
 import { Block, ISlide, TextBlock } from '@/types/slide.type'
-import { cn } from '@/utils/utils'
 
 type TextImageProps = {
   slide: ISlide
@@ -32,50 +32,67 @@ export function TextImage({ slide }: TextImageProps) {
     panelGroupRef.current?.setLayout(slide.content?.panelSizes || [60, 40])
   }, [slide.content?.panelSizes])
 
-  const textBlocks = blocks.filter((block) =>
-    ['header', 'paragraph'].includes(block.type)
-  ) as TextBlock[]
+  const layoutType = slide.config.layoutType || LayoutTypes.IMAGE_RIGHT
+
+  const textBlock = blocks.find(
+    (block) => block.type === 'paragraph'
+  ) as TextBlock
 
   const imageBlock = blocks.find(
     (block: Block) => block.type === 'image'
   ) as ImageBlock
 
+  if (layoutType === LayoutTypes.NO_IMAGE) {
+    return (
+      <div
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center"
+        style={{ backgroundColor: slide.config.backgroundColor }}>
+        <RichTextView block={textBlock} />
+      </div>
+    )
+  }
+
+  if (layoutType === LayoutTypes.IMAGE_BEHIND) {
+    return (
+      <div
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center bg-center bg-cover"
+        style={{ backgroundImage: `url(${imageBlock.data.file.url})` }}>
+        <RichTextView block={textBlock} />
+      </div>
+    )
+  }
+
+  if (layoutType === LayoutTypes.IMAGE_LEFT) {
+    return (
+      <div
+        style={{ backgroundColor: slide.config.backgroundColor }}
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center relative">
+        <PanelGroup ref={panelGroupRef} direction="horizontal">
+          <Panel defaultSize={30} minSize={30} maxSize={60}>
+            <ImageBlockView imageBlock={imageBlock} />
+          </Panel>
+          <Panel minSize={30}>
+            <div className="flex justify-center items-center h-full w-full">
+              <RichTextView block={textBlock} />
+            </div>
+          </Panel>
+        </PanelGroup>
+      </div>
+    )
+  }
+
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className="w-full h-full flex flex-col justify-center items-center">
+      className="tiptap ProseMirror w-full h-full flex justify-center items-center relative">
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>
-          <div className="h-full flex flex-col justify-center items-center">
-            {textBlocks.map((block) => (
-              <div key={`block-editor-${block.id}`}>
-                <div
-                  className={
-                    block.type === 'header'
-                      ? 'block-content-header'
-                      : 'block-content-paragraph'
-                  }
-                  // eslint-disable-next-line react/no-danger
-                  dangerouslySetInnerHTML={{
-                    __html: block.data.html,
-                  }}
-                />
-              </div>
-            ))}
+          <div className="flex justify-center items-center h-full w-full">
+            <RichTextView block={textBlock} />
           </div>
         </Panel>
         <Panel defaultSize={30} minSize={30} maxSize={60}>
-          <div className="flex justify-center items-center overflow-hidden rounded-md h-full">
-            <div className="relative bg-gray-900 rounded-md overflow-hidden group">
-              <Image
-                src={imageBlock?.data.file.url}
-                removeWrapper
-                className={cn(
-                  'relative z-0 flex-none rounded-md overflow-hidden'
-                )}
-              />
-            </div>
-          </div>
+          <ImageBlockView imageBlock={imageBlock} />
         </Panel>
       </PanelGroup>
     </div>

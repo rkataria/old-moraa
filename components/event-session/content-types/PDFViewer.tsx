@@ -10,8 +10,10 @@ import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
 import { Skeleton } from '@nextui-org/react'
 
 import { PageControls } from '@/components/common/PageControls'
+import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { downloadPDFFile } from '@/services/pdf.service'
+import { EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
 import { getFileObjectFromBlob } from '@/utils/utils'
@@ -31,6 +33,7 @@ const positionChangeEvent = 'pdf-position-changed'
 
 export function PDFViewer({ slide }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
+  const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
     useContext(EventSessionContext) as EventSessionContextType
   const [totalPages, setTotalPages] = useState<number>(0)
@@ -77,6 +80,8 @@ export function PDFViewer({ slide }: PDFViewerProps) {
   }, [realtimeChannel])
 
   const handlePositionChange = (newPosition: number) => {
+    if (preview) return
+
     if (newPosition < 1 || newPosition > totalPages) return
 
     realtimeChannel.send({

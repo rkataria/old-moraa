@@ -29,12 +29,21 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
   const { updateSlide } = useContext(EventContext) as EventContextType
 
   const saveGoogleSlidesLink = () => {
+    if (
+      slide.content.googleSlideURL === slideLink &&
+      slide.content.position === position
+    ) {
+      return
+    }
+
     updateSlide({
-      ...slide,
-      content: {
-        googleSlideURL: slideLink,
-        startPosition: position,
+      slidePayload: {
+        content: {
+          googleSlideURL: slideLink,
+          startPosition: position,
+        },
       },
+      slideId: slide.id,
     })
     setIsEditMode(false)
   }

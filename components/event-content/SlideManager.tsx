@@ -9,6 +9,7 @@ import { Header } from './Header'
 import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
 import { Loading } from '../common/Loading'
+import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
 import { FlyingEmojisOverlay } from '../event-session/FlyingEmojisOverlay'
 
@@ -39,6 +40,7 @@ export function SlideManager() {
   const isOwner = useMemo(() => userId === event?.owner_id, [userId, event])
 
   const {
+    preview,
     loading,
     syncing,
     currentSlide,
@@ -63,6 +65,7 @@ export function SlideManager() {
       ContentType.COVER,
       ContentType.REFLECTION,
       ContentType.TEXT_IMAGE,
+      ContentType.MORAA_BOARD,
     ].includes(currentSlide.type)
   }
 
@@ -102,11 +105,11 @@ export function SlideManager() {
     )
   }
 
-  const getIsSlidePublished = () => {
-    const allSlides = sections.flatMap((s) => s.slides)
+  // const getIsSlidePublished = () => {
+  //   const allSlides = sections.flatMap((s) => s.slides)
 
-    return allSlides.some((slide) => slide.status === SlideStatus.PUBLISHED)
-  }
+  //   return allSlides.some((slide) => slide.status === SlideStatus.PUBLISHED)
+  // }
 
   const renderSlide = () => {
     const slideCount = getSlideCount(sections)
@@ -124,12 +127,15 @@ export function SlideManager() {
     }
 
     return (
-      <Slide
-        isOwner={isOwner}
-        slide={currentSlide}
-        settingsEnabled={settingsEnabled}
-        setSettingsSidebarVisible={setRightSidebarVisible}
-      />
+      <>
+        <Slide
+          isOwner={isOwner}
+          slide={currentSlide}
+          settingsEnabled={settingsEnabled}
+          setSettingsSidebarVisible={setRightSidebarVisible}
+        />
+        {preview && <SlideControls />}
+      </>
     )
   }
 
@@ -140,7 +146,7 @@ export function SlideManager() {
           event={event}
           leftSidebarVisible={leftSidebarVisible}
           onLeftSidebarToggle={setLeftSidebarVisible}
-          isSlidePublished={getIsSlidePublished()}
+          // isSlidePublished={getIsSlidePublished()}
         />
       </SlideManagerHeader>
       <div className="flex flex-auto w-full">
@@ -195,6 +201,14 @@ export function SlideManagerHeader({
 }) {
   return (
     <div className="sticky left-0 top-0 h-16 flex-none w-full z-10">
+      {children}
+    </div>
+  )
+}
+
+export function SlideManagerBody({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-auto w-full h-[calc(100vh_-_64px)]">
       {children}
     </div>
   )

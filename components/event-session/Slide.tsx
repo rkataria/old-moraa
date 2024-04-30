@@ -1,26 +1,26 @@
 // TODO: fix any types
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 
 import dynamic from 'next/dynamic'
 
-import { Cover } from './content-types/Cover'
 import { GoogleSlides } from './content-types/GoogleSlides'
-import { Poll } from './content-types/Poll'
+import { Poll, Vote } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
-import { TextImage } from './content-types/TextImage'
+import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
-import { ContentLoading } from '../common/ContentLoading'
-import { ImageViewer } from '../common/ImageViewer'
-import { MiroEmbed } from '../common/MiroEmbed'
+import { MoraaBoard } from '../common/content-types/MoraaBoard'
 
+import { Cover } from '@/components/common/content-types/Cover'
+import { ImageViewer } from '@/components/common/content-types/ImageViewer'
+import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
+import { TextImage } from '@/components/common/content-types/TextImage'
+import { ContentLoading } from '@/components/common/ContentLoading'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
+import { EventSessionContextType } from '@/types/event-session.type'
+import { type IReflectionSlide } from '@/types/slide.type'
 import { checkVoted } from '@/utils/content.util'
 import { getOjectPublicUrl } from '@/utils/utils'
 
@@ -32,84 +32,77 @@ const PDFViewer = dynamic(
 )
 
 export function Slide() {
-  const {
-    presentationStatus,
-    currentSlide,
-    onVote,
-    currentSlideResponses,
-    currentSlideLoading,
-    isHost,
-  } = useContext(EventSessionContext) as EventSessionContextType
+  const { currentSlide, currentSlideResponses, currentSlideLoading, isHost } =
+    useContext(EventSessionContext) as EventSessionContextType
   const { currentUser } = useAuth()
+
+  const MoraaBoardMemoized = useMemo(
+    () => <MoraaBoard slide={currentSlide as any} />,
+    [currentSlide]
+  )
 
   useEffect(() => {
     if (!currentSlide) return
 
+    const DEFAULT_SLIDE_BG_COLOR = 'rgb(17 24 39)'
+
     document.documentElement.style.setProperty(
       '--slide-bg-color',
-      currentSlide?.config.backgroundColor || 'rgb(17 24 39)'
+      currentSlide?.config.backgroundColor || DEFAULT_SLIDE_BG_COLOR
     )
   }, [currentSlide])
 
-  if (presentationStatus === PresentationStatuses.STOPPED) return null
-
   if (!currentSlide) return null
-
-  if (currentSlide.type === ContentType.COVER) {
-    return <Cover key={currentSlide.id} slide={currentSlide} />
-  }
 
   if (currentSlideLoading) return <ContentLoading />
 
-  if (currentSlide.type === ContentType.POLL) {
-    return (
+  const renderersByContentType: Record<ContentType, React.ReactNode> = {
+    [ContentType.VIDEO]: null,
+    [ContentType.GOOGLE_SLIDES_IMPORT]: null,
+    [ContentType.COVER]: (
+      <Cover key={currentSlide.id} slide={currentSlide as any} />
+    ),
+    [ContentType.POLL]: (
       <Poll
         key={currentSlide.id}
         slide={currentSlide as any}
-        onVote={onVote}
-        votes={currentSlideResponses}
+        votes={currentSlideResponses as Vote[]}
         isOwner={isHost}
         voted={checkVoted(currentSlideResponses, currentUser)}
       />
-    )
-  }
-
-  if (currentSlide.type === ContentType.GOOGLE_SLIDES) {
-    return <GoogleSlides key={currentSlide.id} slide={currentSlide as any} />
-  }
-  if (currentSlide.type === ContentType.PDF_VIEWER) {
-    return <PDFViewer key={currentSlide.id} slide={currentSlide as any} />
-  }
-  if (currentSlide.type === ContentType.REFLECTION) {
-    return (
+    ),
+    [ContentType.GOOGLE_SLIDES]: (
+      <GoogleSlides key={currentSlide.id} slide={currentSlide as any} />
+    ),
+    [ContentType.PDF_VIEWER]: (
+      <PDFViewer key={currentSlide.id} slide={currentSlide as any} />
+    ),
+    [ContentType.REFLECTION]: (
       <Reflection
         key={currentSlide.id}
-        slide={currentSlide as any}
-        responses={currentSlideResponses}
-        responded={checkVoted(currentSlideResponses, currentUser)}
-        user={currentUser}
+        slide={currentSlide as IReflectionSlide}
       />
-    )
-  }
-  if (currentSlide.type === ContentType.VIDEO_EMBED) {
-    return <VideoEmbed key={currentSlide.id} slide={currentSlide as any} />
-  }
-  if (currentSlide.type === ContentType.TEXT_IMAGE) {
-    return <TextImage key={currentSlide.id} slide={currentSlide} />
-  }
-
-  if (currentSlide.type === ContentType.IMAGE_VIEWER) {
-    return (
+    ),
+    [ContentType.VIDEO_EMBED]: (
+      <VideoEmbed key={currentSlide.id} slide={currentSlide as any} />
+    ),
+    [ContentType.TEXT_IMAGE]: (
+      <TextImage key={currentSlide.id} slide={currentSlide} />
+    ),
+    [ContentType.IMAGE_VIEWER]: (
       <ImageViewer
         key={currentSlide.id}
         src={getOjectPublicUrl(currentSlide.content?.path as string)}
       />
-    )
+    ),
+    [ContentType.RICH_TEXT]: (
+      <RichText key={currentSlide.id} slide={currentSlide} />
+    ),
+    [ContentType.MIRO_EMBED]: <MiroEmbed slide={currentSlide as any} />,
+    [ContentType.MORAA_BOARD]: MoraaBoardMemoized,
   }
 
-  if (currentSlide.type === ContentType.MIRO_EMBED) {
-    return <MiroEmbed slide={currentSlide as any} />
-  }
+  const renderer = renderersByContentType[currentSlide.type]
 
-  return null
+  return renderer
 }

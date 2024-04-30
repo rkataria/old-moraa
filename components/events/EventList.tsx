@@ -1,157 +1,190 @@
 'use client'
 
+import { useCallback, useMemo, useState } from 'react'
+
 import { useRouter } from 'next/navigation'
 
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Chip,
+  SortDescriptor,
+} from '@nextui-org/react'
+
+import { EventActionsWithModal } from './EventActionsWithModal'
 import { Loading } from '../common/Loading'
 
+import { useAuth } from '@/hooks/useAuth'
 import { useEvents } from '@/hooks/useEvents'
-import { getFormattedDate } from '@/utils/date'
+import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'SCHEDULED':
+      return 'success'
+    default:
+      return 'default'
+  }
+}
+
+const eventColumns = [
+  {
+    key: 'name',
+    label: 'Name',
+    sortable: true,
+  },
+  {
+    key: 'full_name',
+    label: 'Created by',
+    sortable: true,
+  },
+  {
+    key: 'start_date',
+    label: 'Event start',
+    sortable: true,
+  },
+  {
+    key: 'end_date',
+    label: 'Event end',
+    sortable: true,
+  },
+  {
+    key: 'status',
+    label: 'Status',
+    sortable: true,
+  },
+  { key: 'actions' },
+]
 
 export function EventList() {
   const router = useRouter()
-  const { events, isLoading } = useEvents()
-  // const { currentUser } = useAuth()
-  // const userId = currentUser?.id
+  const { events, isLoading, refetch } = useEvents()
+  const { currentUser } = useAuth()
 
-  const handleRowClick = (id: string) => {
-    router.push(`/events/${id}`)
-  }
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>()
 
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="h-96 flex justify-center items-center">
-          <Loading />
-        </div>
-      )
-    }
+  const renderCell = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (event: any, columnKey: string) => {
+      const cellValue = event[columnKey]
 
-    return (
-      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-800">
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
-              Name
-            </th>
-            <th
-              scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
-              Created by
-            </th>
+      switch (columnKey) {
+        case 'full_name':
+          return `${event.profile.first_name} ${event.profile.last_name}`
 
-            <th
-              scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
-              Event start
-            </th>
-            <th
-              scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 sm:pl-0">
-              Event end
-            </th>
+        case 'start_date':
+          return (
+            getCurrentTimeInLocalZoneFromTimeZone({
+              dateTimeString: event.start_date,
+              utcTimeZone: event.timezone,
+            }) || '-'
+          )
 
-            <th
-              scope="col"
-              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
-              Status
-            </th>
-            <th
-              scope="col"
-              className="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right">
-              <span className="sr-only">Action</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {events?.map((event: any) => (
-            <tr
-              key={event.name}
-              className="hover:bg-purple-700/5 cursor-pointer"
-              onClick={() => handleRowClick(event.id)}>
-              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                {event.name}
-              </td>
-              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                {event.profile.email}
-                {/* TODO: write profile.firstname profile.lastname here
-                Using email as a placeholder
-                 since firstName and lastName are not being captured as of now */}
-              </td>
+        case 'end_date':
+          return (
+            getCurrentTimeInLocalZoneFromTimeZone({
+              dateTimeString: event.end_date,
+              utcTimeZone: event.timezone,
+            }) || '-'
+          )
 
-              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                {event.start_date
-                  ? getFormattedDate(event.start_date, {
-                      includeTime: true,
-                    })
-                  : '-'}
-              </td>
-              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                {event.end_date
-                  ? getFormattedDate(event.end_date, {
-                      includeTime: true,
-                    })
-                  : '-'}
-              </td>
+        case 'actions':
+          return (
+            <EventActionsWithModal
+              event={event}
+              isOwner={event.owner_id === currentUser?.id}
+              onDone={refetch}
+            />
+          )
 
-              <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700  ring-1 ring-inset ring-gray-600/20">
-                  {event.status}
-                </span>
-              </td>
-              {/* {userId === event.owner_id && (
-                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                  <button
-                    className={clsx(
-                      styles.button.default,
-                      "font-semibold text-sm bg-black text-white !rounded-full px-4"
-                    )}
-                    onClick={() => handleRowClick(event.id)}
-                  >
-                    View Content
-                  </button>
-                </td>
-              )} */}
-              {/*
-              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-0">
-                <div className="flex justify-start items-center gap-2 px-2 h-full">
-                  {event?.status === EventType.DRAFT &&
-                    userId === event.owner_id && (
-                      <PublishEventButtonWithModal eventId={event.id} />
-                    )}
-                  {event?.status === EventType.PUBLISHED && (
-                    <>
-                      {userId === event.owner_id && (
-                        <AddParticipantsButtonWithModal eventId={event.id} />
-                      )}
-                      <Link
-                        href={`/event-session/${event.id}`}
-                        className={clsx(
-                          styles.button.default,
-                          "font-semibold text-sm bg-black text-white !rounded-full px-4"
-                        )}
-                        title="Start Session"
-                      >
-                        Join Session
-                      </Link>
-                    </>
-                  )}
-                </div>
-              </td> */}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    )
-  }
+        case 'status':
+          return (
+            <Chip
+              variant="flat"
+              size="sm"
+              radius="md"
+              color={getStatusColor(event.status)}>
+              {event.status}
+            </Chip>
+          )
+        default:
+          return cellValue
+      }
+    },
+    [currentUser?.id, refetch]
+  )
+
+  const getCellValue = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (event: any) => {
+      if (!sortDescriptor?.column) return ''
+      switch (sortDescriptor.column) {
+        case 'full_name':
+          return `${event.profile.first_name} ${event.profile.last_name}`
+
+        default:
+          return event[sortDescriptor.column]
+      }
+    },
+    [sortDescriptor]
+  )
+
+  const eventRows = useMemo(() => {
+    if (!events) return []
+    if (!sortDescriptor) return events
+
+    return [...events].sort((a, b) => {
+      const first = getCellValue(a)?.toLowerCase()
+      const second = getCellValue(b)?.toLowerCase()
+
+      const cmp = first < second ? -1 : first > second ? 1 : 0
+
+      return sortDescriptor.direction === 'descending' ? -cmp : cmp
+    })
+  }, [events, sortDescriptor, getCellValue])
+  console.log('sort descriptor', sortDescriptor)
 
   return (
     <div className="mt-8 flow-root">
       <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          {renderContent()}
+          <Table
+            removeWrapper
+            aria-label="Example table with dynamic content"
+            sortDescriptor={sortDescriptor}
+            onSortChange={setSortDescriptor}
+            selectionMode="single"
+            classNames={{
+              table: isLoading && 'min-h-[25rem]',
+            }}
+            onRowAction={(key) => router.push(`/events/${key}`)}>
+            <TableHeader columns={eventColumns}>
+              {(column) => (
+                <TableColumn key={column.key} allowsSorting={column.sortable}>
+                  {column.label}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody
+              items={eventRows}
+              isLoading={isLoading}
+              loadingContent={<Loading />}
+              emptyContent={!isLoading && 'No events to display.'}>
+              {(item) => (
+                <TableRow key={item.id} className="cursor-pointer">
+                  {(columnKey) => (
+                    <TableCell>
+                      {renderCell(item, columnKey as string)}
+                    </TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

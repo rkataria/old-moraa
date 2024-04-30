@@ -13,12 +13,14 @@ export type EventContextType = {
   syncing: boolean
   isOwner: boolean
   sections: ISection[]
-  currentSection: ISection | null
   insertAfterSectionId: string | null
   insertAfterSlideId: string | null
   showSectionPlaceholder: boolean
   showSlidePlaceholder: boolean
   insertInSectionId: string | null
+  preview: boolean
+  setPreview: (preview: boolean) => void
+  error: { slideId: string; message: string } | null
   setInsertAfterSlideId: (slideId: string | null) => void
   setInsertAfterSectionId: (sectionId: string | null) => void
   setCurrentSlide: (slide: ISlide) => void
@@ -31,16 +33,26 @@ export type EventContextType = {
     section?: Partial<ISection>
     afterSlideId?: string
   }) => void
-  updateSlide: (slide: Partial<ISlide>) => void
+  updateSlide: ({
+    slidePayload,
+    slideId,
+    allowParticipantToUpdate,
+  }: {
+    slidePayload: Partial<ISlide>
+    slideId: string
+    allowParticipantToUpdate?: boolean
+  }) => void
   deleteSlide: (slide: ISlide) => void
   importGoogleSlides: (data: {
     slide: ISlide
     googleSlideUrl: string
     startPosition: number
+    endPosition: number | undefined
   }) => void
   moveUpSlide: (slide: ISlide) => void
   moveDownSlide: (slide: ISlide) => void
   reorderSlide: OnDragEndResponder
+  reorderSection: OnDragEndResponder
   addSection: ({
     name,
     afterSectionId,
@@ -64,5 +76,4 @@ export type EventContextType = {
   setInsertInSectionId: (sectionId: string | null) => void
   moveUpSection: (section: ISection) => void
   moveDownSection: (section: ISection) => void
-  setCurrentSection: (section: ISection | null) => void
 }

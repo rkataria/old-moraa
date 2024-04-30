@@ -15,16 +15,20 @@ export function ReflectionSlideSettings() {
   if (!currentSlide || currentSlide.type !== ContentType.REFLECTION) return null
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-4">
       <Checkbox
+        className="items-baseline"
+        size="sm"
         isSelected={currentSlide.config.allowAnonymously}
         onValueChange={() =>
           updateSlide({
-            ...currentSlide,
-            config: {
-              ...currentSlide.config,
-              allowAnonymously: !currentSlide.config.allowAnonymously,
+            slidePayload: {
+              config: {
+                ...currentSlide.config,
+                allowAnonymously: !currentSlide.config.allowAnonymously,
+              },
             },
+            slideId: currentSlide.id,
           })
         }>
         User can reflect anonymously

@@ -1,31 +1,47 @@
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
 
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react'
 
 import { cn } from '@nextui-org/react'
 
 import { EventContext } from '@/contexts/EventContext'
-import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useHotkeys } from '@/hooks/useHotkeys'
 import { EventContextType } from '@/types/event-context.type'
-import { EventSessionContextType } from '@/types/event-session.type'
 import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
 
-export function SlideControls() {
-  const { sections } = useContext(EventContext) as EventContextType
-  const { currentSlide, nextSlide, previousSlide, isHost } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+export function SlideControls({
+  onPrevious,
+  onNext,
+}: {
+  onPrevious?: () => void
+  onNext?: () => void
+}) {
+  const { sections, currentSlide, setCurrentSlide, eventMode } = useContext(
+    EventContext
+  ) as EventContextType
 
-  const arrowUp = useHotkeys('ArrowUp', () => {
-    previousSlide()
-  })
+  const handlePrevious = useCallback(() => {
+    if (eventMode === 'present') onPrevious?.()
 
-  const arrowDown = useHotkeys('ArrowDown', () => {
-    nextSlide()
-  })
+    const previousSlide = getPreviousSlide({ sections, currentSlide })
 
-  if (!isHost) return null
+    if (previousSlide) setCurrentSlide(previousSlide)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlide, sections])
+
+  const handleNext = useCallback(() => {
+    if (eventMode === 'present') onNext?.()
+
+    const nextSlide = getNextSlide({ sections, currentSlide })
+
+    if (nextSlide) setCurrentSlide(nextSlide)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlide, sections])
+
+  const arrowUp = useHotkeys('ArrowUp', handlePrevious)
+
+  const arrowDown = useHotkeys('ArrowDown', handleNext)
 
   return (
     <div>
@@ -38,7 +54,7 @@ export function SlideControls() {
                 ' opacity-20': !arrowUp,
               }
             )}
-            onClick={() => previousSlide()}
+            onClick={onPrevious}
           />
         </div>
       )}
@@ -51,7 +67,7 @@ export function SlideControls() {
                 'text-[#575656] opacity-20': !arrowDown,
               }
             )}
-            onClick={() => nextSlide()}
+            onClick={onNext}
           />
         </div>
       )}

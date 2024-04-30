@@ -17,6 +17,14 @@ export type TextBlock = Block & {
   }
 }
 
+export type RichTextBlock = {
+  id: string
+  type: string
+  data: {
+    html: string
+  }
+}
+
 export type FileBlock = Block & {
   data: {
     file: {
@@ -66,4 +74,36 @@ export interface IMiniSlideManagerType {
   slideCount: number
   draggableProps: any
   displayType: AgendaSlideDisplayType
+}
+
+export interface IReflectionResponse {
+  id: string
+  dyte_meeting_id: string
+  participant: {
+    enrollment: {
+      user_id: string
+    }
+  }
+  response: {
+    username: string
+    reflection: string
+    anonymous?: boolean
+  }
+}
+
+export interface IPollResponse {
+  id: string
+  participant: {
+    enrollment: {
+      user_id: string
+    }
+  }
+}
+
+export interface IReflectionSlide extends ISlide {
+  content: {
+    backgroundColor: string
+    textColor: string
+    title: string
+  }
 }

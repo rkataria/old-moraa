@@ -23,7 +23,7 @@ import { ReflectionService } from '@/services/reflection.service'
 import { EventContextType } from '@/types/event-context.type'
 import { SlideReaction } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
-import { cn } from '@/utils/utils'
+import { cn, getAvatarForName } from '@/utils/utils'
 
 function PreviewCard({
   isAnonymous,
@@ -60,7 +60,7 @@ function PreviewCard({
             radius="full"
             size="md"
             className="min-w-fit"
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(`${isAnonymous ? 'A' : username}`)}`}
+            src={getAvatarForName(`${isAnonymous ? 'A' : username}`)}
           />
           <h4 className="text-small font-semibold leading-none text-default-600">
             {isAnonymous ? 'Anonymous' : username}
@@ -79,7 +79,9 @@ function PreviewCard({
                 <Chip
                   className={cn('font-bold')}
                   variant="flat"
-                  avatar={<em-emoji id={reaction.reaction} size={15} />}>
+                  avatar={
+                    <em-emoji set="apple" id={reaction.reaction} size={20} />
+                  }>
                   <span className="font-bold text-slate-600">
                     {getReactionCount(reaction.reaction)}
                   </span>
@@ -89,7 +91,7 @@ function PreviewCard({
                 <Chip
                   className="font-bold mt-4"
                   variant="flat"
-                  avatar={<em-emoji id="heart_eyes" size={15} />}>
+                  avatar={<em-emoji set="apple" id="heart_eyes" size={20} />}>
                   <span className="font-bold text-slate-600">{3}</span>
                 </Chip>
               )}
@@ -178,6 +180,7 @@ interface ReflectionEditorProps {
 export function ReflectionEditor({ slide }: ReflectionEditorProps) {
   const [title, setTitle] = useState(slide.content?.title)
   const throttledTitle = useThrottle(title, 500)
+  const { preview, updateSlide } = useContext(EventContext) as EventContextType
 
   const reflectionResponseQuery = useQuery({
     queryKey: ['slide-response-reflection', slide.id],
@@ -187,20 +190,23 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
   })
   const responses = reflectionResponseQuery?.data?.responses || []
 
-  const { updateSlide } = useContext(EventContext) as EventContextType
-
   useEffect(() => {
+    if (preview) return
+
     updateSlide({
-      ...slide,
-      content: {
-        ...slide.content,
-        title: throttledTitle,
+      slidePayload: {
+        content: {
+          ...slide.content,
+          title: throttledTitle,
+        },
       },
+      slideId: slide.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [throttledTitle])
 
   const updateTitle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (preview) return
     setTitle(e.target.value)
   }
 
@@ -208,6 +214,7 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
     <div className="w-full h-full flex flex-col items-center px-8">
       <TextareaAutosize
         placeholder="Title"
+        disabled={preview}
         defaultValue={slide.content?.title}
         maxLength={TITLE_CHARACTER_LIMIT}
         onChange={updateTitle}

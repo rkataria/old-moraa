@@ -10,9 +10,9 @@ export default function EventsPage() {
         <div className="sm:flex-auto" />
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <CreateEventButtonWithModal
-            buttonLabel="Create new event"
+            buttonLabel="Create new"
             buttonProps={{
-              color: 'primary',
+              className: 'bg-black text-white',
             }}
           />
         </div>

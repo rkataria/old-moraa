@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx'
+import toast from 'react-hot-toast'
 import { twMerge } from 'tailwind-merge'
 
 import { ISection } from '@/types/slide.type'
@@ -32,3 +33,44 @@ export const getSlideCount = (sections: ISection[]) =>
 
 export const zeroPad = (num: number, places: number) =>
   String(num).padStart(places, '0')
+export const actionPreventedOnPreview = () => {
+  toast.error('Action prevented in preview mode')
+}
+export const rgbToHex = (rgb: string) =>
+  `#${rgb
+    .slice(4, -1)
+    .split(',')
+    .map((x) => (+x).toString(16).padStart(2, '0'))
+    .join('')}`
+
+export const hexToRgb = (hex: string) => {
+  const _hex = hex.replace('#', '')
+
+  return `rgb(
+    ${parseInt(_hex.substring(0, 2), 16)},
+    ${parseInt(_hex.substring(2, 4), 16)},
+    ${parseInt(_hex.substring(4, 6), 16)},
+  ]`
+}
+
+export const isColorDark = (color: string) => {
+  if (!color) return true
+
+  let _color = color
+  if (color.startsWith('#')) {
+    _color = hexToRgb(color)
+  }
+
+  const [r, g, b] = _color
+    .slice(4, -1)
+    .split(',')
+    .map((x) => +x)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+
+  return brightness < 128
+}
+
+export const isColorLight = (color: string) => !isColorDark(color)
+
+export const getAvatarForName = (name: string) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`
