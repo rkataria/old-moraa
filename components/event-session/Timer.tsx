@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useCallback } from 'react'
 
 import {
   MdOutlineWatchLater,
@@ -7,6 +7,7 @@ import {
   MdOutlinePlayArrow,
   MdOutlinePause,
   MdOutlineReplay,
+  MdClose,
 } from 'react-icons/md'
 
 import {
@@ -20,12 +21,22 @@ import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { cn, zeroPad } from '@/utils/utils'
 
-// Define the Timer component
-export function Timer() {
+interface TimerProps {
+  collapsePopoverContent: () => void
+  // setIsPopoverOpen: React.Dispatch<React.SetStateAction<boolean>>
+  dismissPopover: () => void // Add dismissPopover function
+}
+
+export function Timer({
+  collapsePopoverContent,
+  // setIsPopoverOpen,
+  dismissPopover,
+}: TimerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [remainingDuration, setRemainingDuration] = useState(5 * 60)
   const [isTimerRunning, setIsTimerRunning] = useState(false)
-  const { realtimeChannel, isHost } = useContext(
+
+  const { realtimeChannel } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -51,24 +62,22 @@ export function Timer() {
     )
   }, [realtimeChannel])
 
-  // useEffect hook to handle timer countdown
+  const toggleTimer = useCallback(() => {
+    setIsTimerRunning((prevState) => !prevState) // Toggle timer state directly
+  }, [])
+
   useEffect(() => {
     let timer: NodeJS.Timer
 
     if (isTimerRunning) {
       timer = setInterval(() => {
         setRemainingDuration((time) => {
-          // Check if the remaining duration is already at or below 15 seconds
-
           if (time <= 0) {
-            // If so, stop the timer
-
             setIsTimerRunning(false)
+            setIsOpen(false) // Hide the popover when timer reaches 0
 
             return 0
           }
-
-          // Otherwise, subtract 1 second
 
           return time - 1
         })
@@ -94,13 +103,29 @@ export function Timer() {
       })
     }
   }
+  const handleButtonClick = () => {
+    onTimerToggle()
+    toggleTimer()
+  }
 
-  // Return the Timer component UI
+  const handleTimerButtonClick = () => {
+    collapsePopoverContent()
+  }
+
+  const handleKeyDown = (event: { key: string }) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      dismissPopover()
+    }
+  }
+
   return (
     <Popover
       isOpen={isOpen}
-      onOpenChange={(open) => setIsOpen(open && isHost)}
-      classNames={{ content: 'p-0' }}>
+      onOpenChange={setIsOpen}
+      classNames={{ content: 'p-0' }}
+      placement="top"
+      offset={15}
+      backdrop="blur">
       <PopoverTrigger>
         <Button
           className={cn(
@@ -112,7 +137,8 @@ export function Timer() {
           style={{
             backgroundColor:
               'var(--dyte-controlbar-button-background-color, rgb(var(--dyte-colors-background-1000, 8 8 8)))',
-          }}>
+          }}
+          onClick={handleTimerButtonClick}>
           {isTimerRunning ? (
             <h2 className="text-md font-extrabold px-2">
               <span>{zeroPad(Math.floor(remainingDuration / 60), 2)}</span> :{' '}
@@ -124,68 +150,80 @@ export function Timer() {
         </Button>
       </PopoverTrigger>
       {/* Popover content */}
-      {isHost && (
-        <PopoverContent className="rounded-lg p-4 overflow-hidden transform translate-x-20">
-          {/* Timer controls */}
-          <div className="p-4 flex items-center">
-            <div className="flex justify-between items-center">
-              <Button
-                isIconOnly
-                radius="full"
-                disabled={isTimerRunning}
-                onClick={() => {
-                  if (remainingDuration > 15) {
-                    setRemainingDuration((d) => d - 15)
-                  }
-                }}>
-                <MdRemove />
-              </Button>
-
-              <h2 className="m-2 text-md font-extrabold px-2 text-gray-600">
-                <span className="text-4xl">
-                  {zeroPad(Math.floor(remainingDuration / 60), 2)}
-                </span>{' '}
-                : {zeroPad(remainingDuration % 60, 2)}
-              </h2>
-              <Button
-                isIconOnly
-                radius="full"
-                disabled={isTimerRunning}
-                onClick={() => setRemainingDuration((d) => d + 15)}>
-                <MdAdd />
-              </Button>
-            </div>
-          </div>
-          {/* Timer reset and toggle buttons */}
-          <div className="flex items-center">
+      <PopoverContent className="rounded-lg p-4 overflow-hidden">
+        {/* Dismiss icon */}
+        <div
+          className="absolute top-2 right-2 cursor-pointer"
+          onClick={() => {
+            setIsOpen(false)
+            // setIsPopoverOpen(false)
+            dismissPopover()
+          }}
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
+          role="button"
+          aria-label="Close">
+          <MdClose size={20} />
+        </div>
+        {/* Timer controls */}
+        <div className="p-4 flex items-center">
+          <div className="flex justify-between items-center">
             <Button
               isIconOnly
-              size="sm"
               radius="full"
-              color="secondary"
-              className="mr-4"
+              disabled={isTimerRunning}
               onClick={() => {
-                setIsTimerRunning(false)
-                setRemainingDuration(5 * 60)
+                if (remainingDuration > 15) {
+                  setRemainingDuration((d) => d - 15)
+                }
               }}>
-              <MdOutlineReplay size={18} fill="gray" />
+              <MdRemove />
             </Button>
+
+            <h2 className="m-2 text-md font-extrabold px-2 text-gray-600">
+              <span className="text-4xl">
+                {zeroPad(Math.floor(remainingDuration / 60), 2)}
+              </span>{' '}
+              : {zeroPad(remainingDuration % 60, 2)}
+            </h2>
             <Button
               isIconOnly
-              size="lg"
               radius="full"
-              color="primary"
-              onClick={onTimerToggle}
-              className="ml-4">
-              {!isTimerRunning ? (
-                <MdOutlinePlayArrow size={32} fill="white" />
-              ) : (
-                <MdOutlinePause size={32} fill="white" />
-              )}
+              disabled={isTimerRunning}
+              onClick={() => setRemainingDuration((d) => d + 15)}>
+              <MdAdd />
             </Button>
           </div>
-        </PopoverContent>
-      )}
+        </div>
+        {/* Timer reset and toggle buttons */}
+        <div className="flex items-center">
+          <Button
+            isIconOnly
+            size="sm"
+            radius="full"
+            color="secondary"
+            className="mr-4"
+            onClick={() => {
+              setIsTimerRunning(false)
+              setRemainingDuration(5 * 60)
+            }}>
+            <MdOutlineReplay size={18} fill="gray" />
+          </Button>
+          <Button
+            isIconOnly
+            size="lg"
+            radius="full"
+            color="primary"
+            onClick={handleButtonClick}
+            className="ml-4">
+            {!isTimerRunning ? (
+              <MdOutlinePlayArrow size={32} fill="white" />
+            ) : (
+              <MdOutlinePause size={32} fill="white" />
+            )}
+          </Button>
+        </div>
+      </PopoverContent>
     </Popover>
   )
 }

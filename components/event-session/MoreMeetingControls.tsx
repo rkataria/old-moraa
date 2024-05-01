@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
+import React, { useState } from 'react'
 
 import { TbAppsFilled } from 'react-icons/tb'
 
@@ -9,12 +10,23 @@ import { Timer } from './Timer'
 import { cn } from '@/utils/utils'
 
 export function MoreMeetingControls() {
+  // const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+  const [isContentVisible, setIsContentVisible] = useState(false) // Set initial state to false
+
+  const collapsePopoverContent = () => {
+    setIsContentVisible(false) // Set visibility to false when collapsing
+  }
+
+  const togglePopoverContent = () => {
+    setIsContentVisible(true) // Ensure PopoverContent is always visible when the button is clicked
+  }
+
   return (
     <Popover placement="bottom" offset={32}>
       <PopoverTrigger>
         <button
           type="button"
-          onClick={() => {}}
+          onClick={togglePopoverContent}
           style={{
             backgroundColor:
               'var(--dyte-controlbar-button-background-color, rgb(var(--dyte-colors-background-1000, 8 8 8)))',
@@ -25,8 +37,14 @@ export function MoreMeetingControls() {
           <TbAppsFilled className="text-2xl text-white" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="p-1 bg-black/90 min-w-[500px] aspect-video text-white flex justify-start items-start">
-        <Timer />
+      <PopoverContent
+        hidden={!isContentVisible}
+        className="p-1 bg-black/90 min-w-[500px] aspect-video text-white flex justify-start items-start">
+        <Timer
+          collapsePopoverContent={collapsePopoverContent}
+          // setIsPopoverOpen={setIsPopoverOpen}
+          dismissPopover={collapsePopoverContent} // Pass dismissPopover function
+        />
       </PopoverContent>
     </Popover>
   )
