@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { SlideStatus } from '@/services/types/enums'
 import { ISlide } from '@/types/slide.type'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,6 +91,7 @@ export const getDefaultCoverSlide = ({
   },
   content: getDefaultContent(ContentType.COVER, { title, description }),
   type: ContentType.COVER,
+  status: SlideStatus.PUBLISHED,
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
