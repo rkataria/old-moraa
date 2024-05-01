@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable newline-per-chained-call */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { HexColorPicker } from 'react-colorful'
@@ -10,26 +12,32 @@ import {
   LuAlignLeft,
   LuAlignRight,
   LuBold,
+  LuCheckSquare,
   LuCode,
+  LuFileImage,
   LuHeading,
   LuItalic,
+  LuLink,
   LuList,
   LuListOrdered,
   LuQuote,
-  LuRedo,
   LuStrikethrough,
-  LuUndo,
+  LuTable,
+  LuUnderline,
 } from 'react-icons/lu'
 import { MdInvertColors } from 'react-icons/md'
 
 import {
   Button,
   ButtonProps,
+  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
   Tooltip,
 } from '@nextui-org/react'
+
+import { FileUploader } from './FileUploader'
 
 import { cn, isColorDark } from '@/utils/utils'
 
@@ -53,26 +61,6 @@ export function BlockEditorControls({
       {blockType === 'header' && <HeaderBlockControls editor={editor} />}
       {blockType === 'paragraph' && <ParagraphBlockControls editor={editor} />}
       {blockType === 'richtext' && <RichTextBlockControls editor={editor} />}
-      <HistoryControls editor={editor} />
-    </div>
-  )
-}
-
-function HistoryControls({ editor }: { editor: Editor }) {
-  return (
-    <div className="flex gap-2">
-      <ControlButton
-        active={false}
-        icon={<LuUndo size={18} />}
-        onClick={() => editor.chain().focus().undo().run()}
-        tooltipText="Undo"
-      />
-      <ControlButton
-        active={false}
-        icon={<LuRedo size={18} />}
-        onClick={() => editor.chain().focus().redo().run()}
-        tooltipText="Redo"
-      />
     </div>
   )
 }
@@ -160,17 +148,26 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
     editor.chain().focus().setColor(color).run()
   }
 
+  const toggleLink = (link: string) => {
+    editor.chain().focus().toggleLink({ href: link, target: '_blank' }).run()
+  }
+
   return (
     <>
       <Popover offset={10} placement="bottom" showArrow>
         <PopoverTrigger>
           <Button
-            size="sm"
-            isIconOnly
+            size="md"
             className="text-white"
-            color={editor.isActive('heading') ? 'primary' : 'default'}
-            variant={editor.isActive('heading') ? 'solid' : 'light'}>
-            <LuHeading size={18} />
+            color="default"
+            variant="light">
+            {editor.isActive('heading', { level: 3 }) ? (
+              <div className="text-xl font-semibold">Heading</div>
+            ) : editor.isActive('heading', { level: 5 }) ? (
+              <div className="text-medium font-medium">Subtitle</div>
+            ) : (
+              <div className="text-small font-normal">Paragraph</div>
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="py-3 bg-black w-56">
@@ -178,7 +175,7 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
             <div className="flex flex-col gap-2 w-full">
               <ControlButton
                 active={editor.isActive('heading', { level: 3 })}
-                icon={<h3 className="text-xl font-bold">Sub Heading</h3>}
+                icon={<h3 className="text-xl font-bold">Heading</h3>}
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 3 }).run()
                 }
@@ -190,7 +187,6 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
                   editor.chain().focus().toggleHeading({ level: 5 }).run()
                 }
               />
-
               <ControlButton
                 active={editor.isActive('paragraph')}
                 icon={<p className="text-base">Paragraph</p>}
@@ -202,27 +198,32 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
       </Popover>
       <ControlButton
         active={editor.isActive('bold')}
-        icon={<LuBold />}
+        icon={<LuBold size={18} />}
         tooltipText="Bold"
         onClick={() => editor.chain().focus().toggleBold().run()}
       />
       <ControlButton
         active={editor.isActive('italic')}
-        icon={<LuItalic />}
+        icon={<LuItalic size={18} />}
         tooltipText="Italic"
         onClick={() => editor.chain().focus().toggleItalic().run()}
       />
       <ControlButton
+        active={editor.isActive('underline')}
+        icon={<LuUnderline size={18} />}
+        tooltipText="Underline"
+        onClick={() => editor.chain().focus().toggleUnderline().run()}
+      />
+      <ControlButton
         active={editor.isActive('strike')}
-        icon={<LuStrikethrough />}
+        icon={<LuStrikethrough size={18} />}
         tooltipText="Strikethrough"
         onClick={() => editor.chain().focus().toggleStrike().run()}
       />
-      <ControlButton
-        active={editor.isActive('code')}
-        icon={<LuCode />}
-        tooltipText="Code"
-        onClick={() => editor.chain().focus().toggleCode().run()}
+      <LinkPicker
+        active={editor.isActive('link')}
+        link={editor.getAttributes('link').href}
+        onChange={toggleLink}
       />
       <ColorPicker
         active={editor.isActive('color')}
@@ -260,6 +261,12 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
       />
       <ControlButton
+        active={editor.isActive('taskList')}
+        icon={<LuCheckSquare size={18} />}
+        tooltipText="Checklist"
+        onClick={() => editor.chain().focus().toggleTaskList().run()}
+      />
+      <ControlButton
         active={false}
         icon={<GoHorizontalRule size={18} />}
         tooltipText="Horizontal rule"
@@ -271,21 +278,61 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         tooltipText="Blockquote"
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
       />
+      <ControlButton
+        active={editor.isActive('code')}
+        icon={<LuCode size={18} />}
+        tooltipText="Code"
+        onClick={() => editor.chain().focus().toggleCode().run()}
+      />
     </>
   )
 }
 function RichTextBlockControls({ editor }: { editor: Editor }) {
-  return <ParagraphBlockControls editor={editor} />
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleUpload = (files: any[]) => {
+    const url = files ? files[0]?.signedUrl : ''
+    editor.chain().focus().setImage({ src: url }).run()
+  }
+
+  return (
+    <>
+      <ParagraphBlockControls editor={editor} />
+      <div className="bg-black">
+        <FileUploader
+          triggerProps={{
+            isIconOnly: true,
+            children: <LuFileImage size={18} className="text-white" />,
+            className: 'bg-black',
+          }}
+          allowedFileTypes={['image', 'image/jpeg', 'image/png']}
+          maxNumberOfFiles={1}
+          onFilesUploaded={handleUpload}
+        />
+      </div>
+      <ControlButton
+        active={editor.isActive('table')}
+        icon={<LuTable size={18} />}
+        tooltipText="Insert Table"
+        onClick={() =>
+          editor
+            .chain()
+            .focus()
+            .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+            .run()
+        }
+      />
+    </>
+  )
 }
 
 export function ControlButton({
-  active,
+  active = false,
   icon,
   tooltipText,
   ...props
 }: {
-  active: boolean
-  icon: ReactElement | string
+  active?: boolean
+  icon?: ReactElement | string
   tooltipText?: string
   [key: string]: ButtonProps[keyof ButtonProps]
 }) {
@@ -334,6 +381,63 @@ export function ColorPicker({
 
           return <HexColorPicker color={currentColor} onChange={onChange} />
         }}
+      </PopoverContent>
+    </Popover>
+  )
+}
+export function LinkPicker({
+  active,
+  link,
+  onChange,
+}: {
+  active: boolean
+  link: string
+  onChange: (color: string) => void
+}) {
+  const [newLink, setNewLink] = useState(link)
+
+  return (
+    <Popover offset={10} placement="bottom" shouldCloseOnBlur={false}>
+      <PopoverTrigger>
+        <Button
+          size="sm"
+          isIconOnly
+          title="Insert Link"
+          className="text-white"
+          style={{
+            backgroundColor: 'black',
+          }}
+          color={active ? 'primary' : 'default'}
+          variant={active ? 'solid' : 'light'}>
+          <LuLink size={18} />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-2 bg-transparent">
+        {() => (
+          <form
+            className="flex items-start gap-2 bg-white"
+            onSubmit={(e) => {
+              e.preventDefault()
+              console.log(e)
+              onChange(newLink)
+            }}>
+            <Input
+              label="URL"
+              value={newLink}
+              className="rounded-md border border-gray-300 focus:outline-none focus:ring-1"
+              onChange={(e) => {
+                setNewLink(e.target.value)
+              }}
+            />
+            <Button
+              variant="flat"
+              color="primary"
+              className="inline-flex items-center rounded-md text-white bg-gray-600 px-3 py-2 text-center text-sm font-medium hover:bg-gray-700 focus:outline-none "
+              type="submit">
+              Add Link
+            </Button>
+          </form>
+        )}
       </PopoverContent>
     </Popover>
   )

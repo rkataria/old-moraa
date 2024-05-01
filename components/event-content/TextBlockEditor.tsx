@@ -4,9 +4,18 @@ import React, { useEffect } from 'react'
 
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
+import { Image } from '@tiptap/extension-image'
+import { Link } from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
+import Underline from '@tiptap/extension-underline'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useIdle } from '@uidotdev/usehooks'
@@ -14,6 +23,10 @@ import { useIdle } from '@uidotdev/usehooks'
 import { ScrollShadow } from '@nextui-org/react'
 
 import { BlockEditorControls } from './BlockEditorControls'
+import {
+  InlineTableControls,
+  InlineToolbarControls,
+} from './InlineToolbarControls'
 
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { TextBlock } from '@/types/slide.type'
@@ -26,6 +39,7 @@ const getExtensions = (type: string) => {
         StarterKit,
         TextStyle,
         Color,
+        Underline,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
@@ -34,6 +48,34 @@ const getExtensions = (type: string) => {
           emptyEditorClass:
             'text-gray-500 float-left before:content-[attr(data-placeholder)]',
         }),
+        Image.configure({
+          HTMLAttributes: {
+            class: 'tiptap-image',
+          },
+        }),
+        Link.configure({
+          HTMLAttributes: {
+            class: 'tiptap-link',
+          },
+          openOnClick: false,
+          autolink: true,
+          linkOnPaste: true,
+        }),
+        TaskList.configure({
+          HTMLAttributes: {
+            class: 'list-none',
+          },
+        }),
+        TaskItem.configure({
+          nested: true,
+          HTMLAttributes: {
+            class: 'flex gap-2 ',
+          },
+        }),
+        Table.configure({ resizable: true }),
+        TableRow.configure({}),
+        TableHeader.configure({}),
+        TableCell.configure({}),
       ]
       break
     default:
@@ -41,6 +83,7 @@ const getExtensions = (type: string) => {
         StarterKit,
         TextStyle,
         Color,
+        Underline,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
@@ -64,7 +107,7 @@ export function TextBlockEditor({
   fillAvailableHeight?: boolean
   onChange?: (block: TextBlock) => void
 }) {
-  const idle = useIdle(3000)
+  const idle = useIdle(10000)
   const editor = useEditor({
     extensions: getExtensions(block.type),
     content: block.data?.html,
@@ -113,9 +156,14 @@ export function TextBlockEditor({
         className={cn('w-full max-h-full', {
           'h-full': fillAvailableHeight,
         })}>
+        {/* floating controls */}
+        <InlineTableControls editor={editor} />
+        {/* // bubble menu controls */}
+        <InlineToolbarControls editor={editor} />
+
         <EditorContent
           editor={editor}
-          className="p-2 rounded-sm outline-none w-full h-full min-h-full transition-all duration-500 hover:bg-black/5"
+          className="p-2 rounded-sm outline-none w-full h-full min-h-full transition-all duration-500"
         />
       </ScrollShadow>
     </>
