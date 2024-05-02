@@ -72,7 +72,13 @@ export type EventContextType = {
     sectionId?: string
     meetingId?: string
   }) => void
-  deleteSection?: ({ sectionId }: { sectionId: string }) => void
+  deleteSection: ({
+    sectionId,
+    meetingId,
+  }: {
+    sectionId: string
+    meetingId: string
+  }) => void
   setInsertInSectionId: (sectionId: string | null) => void
   moveUpSection: (section: ISection) => void
   moveDownSection: (section: ISection) => void

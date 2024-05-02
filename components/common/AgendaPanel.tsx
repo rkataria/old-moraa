@@ -24,7 +24,6 @@ import { SectionPlaceholder } from './SectionPlaceholder'
 import { SlidePlaceholder } from './SlidePlaceholder'
 
 import { EventContext } from '@/contexts/EventContext'
-import { MeetingService } from '@/services/meeting.service'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
 import { type AgendaSlideDisplayType } from '@/types/event.type'
 import { ISection, ISlide } from '@/types/slide.type'
@@ -87,6 +86,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
     updateSection,
     reorderSlide,
     reorderSection,
+    deleteSection,
   } = useContext(EventContext) as EventContextType
 
   useEffect(() => {
@@ -132,26 +132,12 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
 
   const handleDeleteConfirmation = async () => {
     if (!itemToDelete) return
-
-    if (itemToDelete.slides) {
-      const response = await MeetingService.updateMeeting({
-        meetingPayload: {
-          sections: meeting.sections.filter(
-            (id: string) => id !== itemToDelete.id
-          ),
-        },
-        meetingId: meeting.id,
-      })
-
-      if (response?.error) {
-        toast.error('Failed to selete section')
-        setItemToDelete(null)
-
-        return
-      }
-      toast.success('Section deleted successfully')
-      setItemToDelete(null)
-    }
+    await deleteSection({
+      sectionId: itemToDelete.id,
+      meetingId: meeting.id,
+    })
+    toast.success('Section deleted successfully')
+    setItemToDelete(null)
   }
 
   const getDeleteConfirmationModalDescription = () => {

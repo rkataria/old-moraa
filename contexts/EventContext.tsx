@@ -616,6 +616,32 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return sectionResponse.data
   }
 
+  const deleteSection = async ({
+    sectionId,
+    meetingId,
+  }: {
+    sectionId: string
+    meetingId: string
+  }) => {
+    const response = await MeetingService.updateMeeting({
+      meetingPayload: {
+        sections: meeting.sections.filter((id: string) => id !== sectionId),
+      },
+      meetingId,
+    })
+
+    if (response.error) {
+      console.error('error while deleting section: ', response.error)
+
+      return null
+    }
+
+    // delete section from db- will also cascade delete to slides, slide-response...
+    await SectionService.deleteSection({ sectionId })
+
+    return null
+  }
+
   const updateMeeting = async ({
     meetingPayload,
     meetingId,
@@ -1018,6 +1044,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         reorderSection,
         addSection,
         updateSection,
+        deleteSection,
         addSlideToSection,
         setInsertInSectionId,
         moveUpSection,
