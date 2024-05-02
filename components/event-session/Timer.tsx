@@ -118,14 +118,18 @@ export function Timer({
     }
   }
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) return
+    setIsOpen(open)
+  }
+
   return (
     <Popover
       isOpen={isOpen}
-      onOpenChange={setIsOpen}
+      onOpenChange={handleOpenChange}
       classNames={{ content: 'p-0' }}
       placement="top"
-      offset={15}
-      backdrop="blur">
+      offset={15}>
       <PopoverTrigger>
         <Button
           className={cn(
