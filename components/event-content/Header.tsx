@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import { ChevronDownIcon } from 'lucide-react'
+import { ChevronDownIcon, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 
@@ -26,11 +26,13 @@ export function Header({
   event,
   leftSidebarVisible,
   onLeftSidebarToggle,
+  onAiChatOverlayToggle,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   event: any
   leftSidebarVisible: boolean
   onLeftSidebarToggle: (value: boolean) => void
+  onAiChatOverlayToggle: () => void
 }) {
   const { isOwner, preview } = useContext(EventContext) as EventContextType
 
@@ -47,6 +49,9 @@ export function Header({
 
     return (
       <>
+        <Button isIconOnly onClick={onAiChatOverlayToggle}>
+          <Sparkles />
+        </Button>
         <AddParticipantsButtonWithModal eventId={event.id} />
         {EventStatus.SCHEDULED === event?.status ? (
           <ButtonGroup variant="solid" color="primary" size="sm" radius="md">

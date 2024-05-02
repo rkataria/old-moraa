@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Header } from './Header'
 import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
+import { AIChat } from '../common/AIChat'
 import { Loading } from '../common/Loading'
 import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
@@ -34,6 +35,7 @@ export function SlideManager() {
   })
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
+  const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(true)
 
   const { currentUser } = useAuth()
   const userId = currentUser?.id
@@ -146,6 +148,7 @@ export function SlideManager() {
           event={event}
           leftSidebarVisible={leftSidebarVisible}
           onLeftSidebarToggle={setLeftSidebarVisible}
+          onAiChatOverlayToggle={() => setAiChatOverlay(!aiChatOverlay)}
           // isSlidePublished={getIsSlidePublished()}
         />
       </SlideManagerHeader>
@@ -164,6 +167,9 @@ export function SlideManager() {
             />
           ) : null}
         </SlideManagerRightSidebarWrapper>
+        <SlideManagerAIChatOverlay visible={aiChatOverlay}>
+          <AIChat />
+        </SlideManagerAIChatOverlay>
       </div>
       <ContentTypePicker
         open={openContentTypePicker}
@@ -236,6 +242,27 @@ export function SlideManagerLeftSidebarWrapper({
 }
 
 export function SlideManagerRightSidebarWrapper({
+  children,
+  visible,
+}: {
+  children: React.ReactNode
+  visible: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)]',
+        {
+          'w-72': visible,
+          'w-0': !visible,
+        }
+      )}>
+      {children}
+    </div>
+  )
+}
+
+export function SlideManagerAIChatOverlay({
   children,
   visible,
 }: {
