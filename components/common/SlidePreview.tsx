@@ -46,7 +46,7 @@ export function SlidePreview({ slide }: SlideProps) {
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className={cn('relative group w-full h-full p-4')}>
+      className={cn('relative group w-full h-full p-4 bg-gray-100')}>
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto transition-all">

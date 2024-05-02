@@ -2,12 +2,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useContext } from 'react'
 
-import { ChevronDownIcon } from 'lucide-react'
 import { BsCardText, BsCollection } from 'react-icons/bs'
+import { LuPlusCircle } from 'react-icons/lu'
 
 import {
   Button,
-  ButtonGroup,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -86,22 +85,14 @@ export function AddItemStickyDropdownActions({
   if (!isOwner || eventMode !== 'edit' || preview) return null
 
   return (
-    <ButtonGroup
-      variant="flat"
-      color="primary"
-      fullWidth
-      className="pt-2"
-      isDisabled={showSectionPlaceholder || showSlidePlaceholder}>
-      <Button
-        onClick={() => {
-          handleAddItem(new Set(['new-slide']))
-        }}>
-        {labelMap['new-slide']}
-      </Button>
-      <Dropdown placement="bottom-end">
+    <div className="pt-2">
+      <Dropdown
+        placement="bottom"
+        isDisabled={showSectionPlaceholder || showSlidePlaceholder}>
         <DropdownTrigger>
-          <Button isIconOnly>
-            <ChevronDownIcon />
+          <Button className="bg-black text-white">
+            <LuPlusCircle />
+            <span>Add new</span>
           </Button>
         </DropdownTrigger>
         <DropdownMenu
@@ -124,6 +115,6 @@ export function AddItemStickyDropdownActions({
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
-    </ButtonGroup>
+    </div>
   )
 }

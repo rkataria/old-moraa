@@ -1,6 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { ContentType } from '@/components/common/ContentTypePicker'
+import {
+  ContentType,
+  contentTypes,
+} from '@/components/common/ContentTypePicker'
 import { SlideStatus } from '@/services/types/enums'
 import { ISlide } from '@/types/slide.type'
 
@@ -86,7 +89,6 @@ export const getDefaultCoverSlide = ({
   id: uuidv4(),
   name,
   config: {
-    backgroundColor: '#fff',
     textColor: '#000',
   },
   content: getDefaultContent(ContentType.COVER, { title, description }),
@@ -114,3 +116,6 @@ export const isSlideInteractive = (slide: ISlide) =>
 
 export const slideHasSlideResponses = (slide: ISlide) =>
   [ContentType.POLL, ContentType.REFLECTION].includes(slide.type)
+
+export const getContentType = (slideType: ContentType) =>
+  contentTypes.find((type) => type.contentType === slideType)

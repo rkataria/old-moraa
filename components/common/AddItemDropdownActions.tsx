@@ -53,7 +53,7 @@ export function AddItemDropdownActions({
     <DropdownActions
       triggerIcon={
         <div
-          className="flex-none absolute -bottom-5 left-0 py-1.5 h-4 w-full px-2 group cursor-pointer"
+          className="flex-none absolute -bottom-5 left-0 py-1 h-4 w-full px-2 group cursor-pointer"
           onClick={() => {
             if (sectionId) setInsertInSectionId(sectionId)
             if (slideId) setInsertAfterSlideId(slideId)

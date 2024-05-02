@@ -2,7 +2,7 @@ import { useContext } from 'react'
 
 import { ChevronDownIcon } from 'lucide-react'
 import Link from 'next/link'
-import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
+import { MdArrowBack } from 'react-icons/md'
 
 import {
   Button,
@@ -24,13 +24,9 @@ import { type EventContextType } from '@/types/event-context.type'
 
 export function Header({
   event,
-  leftSidebarVisible,
-  onLeftSidebarToggle,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   event: any
-  leftSidebarVisible: boolean
-  onLeftSidebarToggle: (value: boolean) => void
 }) {
   const { isOwner, preview } = useContext(EventContext) as EventContextType
 
@@ -47,6 +43,7 @@ export function Header({
 
     return (
       <>
+        <EditEventButtonWithModal eventId={event.id} />
         <AddParticipantsButtonWithModal eventId={event.id} />
         {EventStatus.SCHEDULED === event?.status ? (
           <ButtonGroup variant="solid" color="primary" size="sm" radius="md">
@@ -93,20 +90,12 @@ export function Header({
     <div className="h-full p-2 bg-white">
       <div className="flex justify-between items-center h-12 w-full">
         <div className="flex justify-start items-center gap-2">
-          <Button
-            isIconOnly
-            variant="light"
-            onClick={() => onLeftSidebarToggle(!leftSidebarVisible)}>
-            {leftSidebarVisible ? (
-              <GoSidebarCollapse size={24} className="rotate-180" />
-            ) : (
-              <GoSidebarExpand size={24} className="rotate-180" />
-            )}
-          </Button>
+          <Link href="/events">
+            <Button isIconOnly variant="light">
+              <MdArrowBack size={18} />
+            </Button>
+          </Link>
           <span className="font-bold">{event?.name}</span>
-          {!preview && isOwner && (
-            <EditEventButtonWithModal eventId={event.id} />
-          )}
           {isOwner && <PreviewSwitcher />}
         </div>
         <div className="flex justify-start items-center gap-2 bg-white px-2 h-full">

@@ -16,10 +16,10 @@ import type {
   EventModeType,
 } from '@/types/event-context.type'
 
-import { contentTypes } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
 import { type AgendaSlideDisplayType } from '@/types/event.type'
 import { type ISlide } from '@/types/slide.type'
+import { getContentType } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
 
 interface SlideListViewProps {
@@ -90,68 +90,79 @@ function SlideListView({
     EventContext
   ) as EventContextType
 
-  const Icon = contentTypes.find(
-    (type) => type.contentType === slide.type
-  )?.icon
+  const contentType = getContentType(slide.type)
 
   return (
     <div
-      data-minislide-id={slide.id}
-      key={`mini-slide-${slide.id}`}
-      className={cn('flex justify-start items-center gap-2 pl-2 max-w-full', {
-        'cursor-grab': isOwner && eventMode === 'edit' && !preview,
-        'cursor-pointer': (isOwner && eventMode === 'present') || preview,
-      })}>
-      <div className="flex-none w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
+      className={cn(
+        'relative group border-2 border-transparent rounded-sm hover:border-gray-300',
+        {
+          'bg-gray-200': currentSlide?.id === slide.id,
+        }
+      )}>
+      <div className="absolute -left-2.5 top-1/2 -translate-y-1/2 opacity-0 transition-all duration-500 group-hover:opacity-100 flex-none w-5 h-5 text-xs bg-gray-800 text-white rounded-full flex justify-center items-center">
         {index + 1}
       </div>
       <div
-        {...(isDraggable({ eventMode, isOwner }) && draggableProps)}
+        data-minislide-id={slide.id}
+        key={`mini-slide-${slide.id}`}
         className={cn(
-          'rounded-md flex-auto w-full transition-all flex items-center justify-between gap-2 group px-2',
+          'flex justify-start items-center gap-2 px-[4px] py-[6px] pl-18 max-w-full',
           {
             'cursor-grab': isOwner && eventMode === 'edit' && !preview,
-            'drop-shadow-sm rounded-[2px]': currentSlide?.id === slide.id,
-            'drop-shadow-none': currentSlide?.id !== slide.id,
+            'cursor-pointer': (isOwner && eventMode === 'present') || preview,
           }
-        )}
-        style={{
-          backgroundColor: slide.config?.backgroundColor || '#FFFFFF',
-        }}>
-        <Tooltip content={slide.type}>
-          <div className={cn('text-slate-400 flex-none w-5 h-5')}>{Icon}</div>
-        </Tooltip>
-        <div className={cn('shrink w-full')} onClick={onChangeSlide}>
-          <EditableLabel
-            readOnly={!isOwner || eventMode !== 'edit'}
-            label={slide.name}
-            onUpdate={(value) => {
-              if (slide.name === value) return
-
-              updateSlide({
-                slidePayload: { name: value },
-                slideId: slide.id,
-              })
-            }}
-          />
-        </div>
-        {isOwner && eventMode === 'edit' && (
-          <SlideActions
-            triggerIcon={
-              <div className="h-full w-fit bg-slate-100 rounded hidden group-hover:block">
-                <IconDots className="h-6 w-6 text-slate-500 px-1" />
-              </div>
+        )}>
+        <div
+          {...(isDraggable({ eventMode, isOwner }) && draggableProps)}
+          className={cn(
+            'rounded-md flex-auto w-full transition-all flex items-center justify-between gap-2 group px-2',
+            {
+              'cursor-grab': isOwner && eventMode === 'edit' && !preview,
+              'drop-shadow-sm rounded-[2px]': currentSlide?.id === slide.id,
+              'drop-shadow-none': currentSlide?.id !== slide.id,
             }
-            handleActions={(action) => handleActions(action, slide)}
-          />
-        )}
+          )}>
+          {contentType && (
+            <Tooltip content={contentType.name}>
+              <div className={cn('text-slate-400 flex-none w-5 h-5')}>
+                {contentType.icon}
+              </div>
+            </Tooltip>
+          )}
+          <div className={cn('shrink w-full')} onClick={onChangeSlide}>
+            <EditableLabel
+              readOnly={!isOwner || eventMode !== 'edit'}
+              label={slide.name}
+              className="text-sm"
+              onUpdate={(value) => {
+                if (slide.name === value) return
+
+                updateSlide({
+                  slidePayload: { name: value },
+                  slideId: slide.id,
+                })
+              }}
+            />
+          </div>
+          {isOwner && eventMode === 'edit' && (
+            <SlideActions
+              triggerIcon={
+                <div className="cursor-pointer h-full w-fit bg-black/10 rounded hidden group-hover:block">
+                  <IconDots className="h-5 w-5 text-white px-1" />
+                </div>
+              }
+              handleActions={(action) => handleActions(action, slide)}
+            />
+          )}
+        </div>
+        <DeleteSlideModal
+          isModalOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          handleDelete={handleDelete}
+          slide={slide}
+        />
       </div>
-      <DeleteSlideModal
-        isModalOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        handleDelete={handleDelete}
-        slide={slide}
-      />
     </div>
   )
 }
@@ -172,6 +183,7 @@ function SlideThumbnailView({
   ) as EventContextType
 
   const actionDisabled = eventMode !== 'edit' || !isOwner || preview
+  const contentType = getContentType(slide.type)
 
   return (
     <div
@@ -190,18 +202,25 @@ function SlideThumbnailView({
             ? 'drop-shadow-md border-black'
             : 'drop-shadow-none border-black/20',
           isDragging && '!bg-primary/20'
-        )}
-        style={{
-          backgroundColor: slide.config?.backgroundColor || '#FFFFFF',
-        }}>
+        )}>
         <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
           {index + 1}
         </div>
+        {contentType && (
+          <div className="flex-none absolute right-2 top-2 p-1 bg-black/20 rounded-full flex justify-center items-center">
+            <Tooltip content={contentType.name}>
+              <div className={cn('text-white flex-none w-3 h-3')}>
+                {contentType.icon}
+              </div>
+            </Tooltip>
+          </div>
+        )}
         <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
           <div className="shrink w-full">
             <EditableLabel
               readOnly={actionDisabled}
               label={slide.name}
+              className="text-sm"
               onUpdate={(value) => {
                 if (slide.name === value) return
 
@@ -215,8 +234,8 @@ function SlideThumbnailView({
           {!preview && isOwner && eventMode === 'edit' && (
             <SlideActions
               triggerIcon={
-                <div className="h-full w-fit bg-slate-100 rounded hidden group-hover:block">
-                  <IconDots className="h-6 w-6 text-slate-500 px-1" />
+                <div className="cursor-pointer h-full w-fit bg-black/20 rounded hidden group-hover:block">
+                  <IconDots className="h-5 w-5 text-white px-1" />
                 </div>
               }
               handleActions={(action) => handleActions(action, slide)}
