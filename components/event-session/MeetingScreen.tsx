@@ -23,6 +23,7 @@ import {
 } from './MeetingLayout'
 import { ParticipantTiles } from './ParticipantTiles'
 import { AgendaPanel } from '../common/AgendaPanel'
+import { AIChat } from '../common/AIChat'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -37,7 +38,7 @@ export type DyteStates = {
   [key: string]: string | boolean
 }
 
-export type RightSiderbar = 'participants' | 'chat' | 'plugins'
+export type RightSiderbar = 'participants' | 'chat' | 'plugins' | 'aichat'
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
@@ -111,6 +112,7 @@ export function MeetingScreen() {
 
   const renderRightSidebar = () => {
     if (!rightSidebar) return null
+    if (rightSidebar === 'aichat') return <AIChat />
 
     return (
       <DyteSidebar
@@ -165,7 +167,16 @@ export function MeetingScreen() {
         </MeetingRightSidebarWrapper>
       </div>
       <div className="h-16 px-4 z-10 border-t-2 border-gray-200 bg-black">
-        <MeetingControls onUpdateDyteStates={handleUpdateDyteStates} />
+        <MeetingControls
+          onUpdateDyteStates={handleUpdateDyteStates}
+          onAiChatOverlayToggle={() => {
+            if (rightSidebar === 'aichat') {
+              setRightSidebar(null)
+            } else {
+              setRightSidebar('aichat')
+            }
+          }}
+        />
       </div>
       <FlyingEmojisOverlay />
       {/* Required Dyte Components */}

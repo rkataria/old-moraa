@@ -9,6 +9,7 @@ import { Header } from './Header'
 import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
 import { AgendaPanel } from '../common/AgendaPanel'
+import { AIChat } from '../common/AIChat'
 import { Loading } from '../common/Loading'
 import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
@@ -34,6 +35,7 @@ export function SlideManager() {
   })
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
+  const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(false)
 
   const { currentUser } = useAuth()
   const userId = currentUser?.id
@@ -110,6 +112,22 @@ export function SlideManager() {
   //   return allSlides.some((slide) => slide.status === SlideStatus.PUBLISHED)
   // }
 
+  const renderRightSidebar = () => {
+    if (aiChatOverlay) {
+      return <AIChat />
+    }
+    if (currentSlide) {
+      return (
+        <SettingsSidebar
+          settingsEnabled={settingsEnabled}
+          setSettingsSidebarVisible={setRightSidebarVisible}
+        />
+      )
+    }
+
+    return null
+  }
+
   const renderSlide = () => {
     const slideCount = getSlideCount(sections)
 
@@ -131,7 +149,10 @@ export function SlideManager() {
           isOwner={isOwner}
           slide={currentSlide}
           settingsEnabled={settingsEnabled}
-          setSettingsSidebarVisible={setRightSidebarVisible}
+          setSettingsSidebarVisible={() => {
+            setAiChatOverlay(false)
+            setRightSidebarVisible(true)
+          }}
         />
         {preview && <SlideControls />}
       </Fragment>
@@ -141,7 +162,18 @@ export function SlideManager() {
   return (
     <SlideManagerLayoutRoot>
       <SlideManagerHeader>
-        <Header event={event} />
+        <Header
+          event={event}
+          onAiChatOverlayToggle={() => {
+            if (aiChatOverlay) {
+              setAiChatOverlay(false)
+              setRightSidebarVisible(false)
+            } else {
+              setAiChatOverlay(true)
+              setRightSidebarVisible(true)
+            }
+          }}
+        />
       </SlideManagerHeader>
       <div className="flex flex-auto w-full">
         <SlideManagerLeftSidebarWrapper
@@ -153,12 +185,7 @@ export function SlideManager() {
           {renderSlide()}
         </div>
         <SlideManagerRightSidebarWrapper visible={rightSidebarVisible}>
-          {currentSlide ? (
-            <SettingsSidebar
-              settingsEnabled={settingsEnabled}
-              setSettingsSidebarVisible={setRightSidebarVisible}
-            />
-          ) : null}
+          {renderRightSidebar()}
         </SlideManagerRightSidebarWrapper>
       </div>
       <ContentTypePicker
@@ -250,6 +277,27 @@ export function SlideManagerRightSidebarWrapper({
     <div
       className={cn(
         'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white',
+        {
+          'w-72': visible,
+          'w-0': !visible,
+        }
+      )}>
+      {children}
+    </div>
+  )
+}
+
+export function SlideManagerAIChatOverlay({
+  children,
+  visible,
+}: {
+  children: React.ReactNode
+  visible: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)]',
         {
           'w-72': visible,
           'w-0': !visible,
