@@ -55,8 +55,9 @@ export function MeetingSetupScreen() {
     const fullName = `${profile.first_name} ${profile.last_name}`
 
     setName(fullName)
-
+    console.log('inside out', fullName)
     if (selfParticipant) {
+      console.log('inside it', fullName)
       selfParticipant.setName(fullName)
     }
   }, [selfParticipant, profile?.last_name, profile?.first_name])
