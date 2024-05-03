@@ -55,19 +55,25 @@ export function MeetingSetupScreen() {
     const fullName = `${profile?.first_name} ${profile?.last_name}`
 
     setName(fullName)
-
-    meeting?.self?.setName(fullName)
-  }, [profile, meeting])
+  }, [profile])
 
   useEffect(() => {
-    if (!meeting) return
-    const preset = meeting.self.presetName
+    if (!selfParticipant || !name) return
+
+    selfParticipant.setName(name)
+  }, [name, selfParticipant])
+
+  useEffect(() => {
+    if (!selfParticipant) return
+
+    const preset = selfParticipant.presetName
+
     if (preset.includes('host')) {
       setIsHost(true)
     } else {
-      meeting.self.disableAudio()
+      // selfParticipant.disableAudio()
     }
-  }, [meeting])
+  }, [selfParticipant])
 
   const handleJoinMeeting = async () => {
     meeting.join()
