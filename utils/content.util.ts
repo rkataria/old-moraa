@@ -119,3 +119,16 @@ export const slideHasSlideResponses = (slide: ISlide) =>
 
 export const getContentType = (slideType: ContentType) =>
   contentTypes.find((type) => type.contentType === slideType)
+
+export const isSlideThumbnailAvailable = (slideType: ContentType) =>
+  [
+    ContentType.COVER,
+    ContentType.TEXT_IMAGE,
+    ContentType.IMAGE_VIEWER,
+    ContentType.PDF_VIEWER,
+    ContentType.POLL,
+    ContentType.REFLECTION,
+    ContentType.VIDEO_EMBED,
+    ContentType.MIRO_EMBED,
+    ContentType.RICH_TEXT,
+  ].includes(slideType)

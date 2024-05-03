@@ -6,6 +6,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { useDebounce } from '@uidotdev/usehooks'
+import isEqual from 'lodash.isequal'
 
 import { TextBlockEditor } from '@/components/event-content/TextBlockEditor'
 import { EventContext } from '@/contexts/EventContext'
@@ -30,6 +31,10 @@ export function RichTextEditor() {
     }
 
     if (!debouncedLocalSlide?.content) {
+      return
+    }
+
+    if (isEqual(currentSlide.content, debouncedLocalSlide.content)) {
       return
     }
 

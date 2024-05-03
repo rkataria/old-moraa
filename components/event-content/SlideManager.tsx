@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { Fragment, useContext, useEffect, useMemo, useState } from 'react'
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
@@ -126,7 +126,7 @@ export function SlideManager() {
     }
 
     return (
-      <>
+      <Fragment key={currentSlide.id}>
         <Slide
           isOwner={isOwner}
           slide={currentSlide}
@@ -134,7 +134,7 @@ export function SlideManager() {
           setSettingsSidebarVisible={setRightSidebarVisible}
         />
         {preview && <SlideControls />}
-      </>
+      </Fragment>
     )
   }
 
