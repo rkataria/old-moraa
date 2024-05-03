@@ -20,6 +20,7 @@ import { useParams } from 'next/navigation'
 import { Button } from '@nextui-org/react'
 
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
+import { NamesForm } from '../auth/NamesForm'
 
 import { Loading } from '@/components/common/Loading'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -28,7 +29,11 @@ import { useProfile } from '@/hooks/useProfile'
 import { EventSessionContextType } from '@/types/event-session.type'
 
 export function MeetingSetupScreen() {
-  const { data: profile } = useProfile()
+  const {
+    data: profile,
+    isLoading: isLoadingProfile,
+    isRequiredNames,
+  } = useProfile()
   const { eventId } = useParams()
   const { event } = useEvent({
     id: eventId as string,
@@ -36,44 +41,50 @@ export function MeetingSetupScreen() {
   const selfParticipant = useDyteSelector((meeting) => meeting.self)
   const { meeting } = useDyteMeeting()
   const [name, setName] = useState<string>('')
-  const [isHost, setIsHost] = useState<boolean>(false)
+  // const [isHost, setIsHost] = useState<boolean>(false)
   const { joinMeeting } = useContext(
     EventSessionContext
   ) as EventSessionContextType
   const [states, setStates] = useState({})
 
   useEffect(() => {
-    const fullName = `${profile?.first_name} ${profile?.last_name}`
+    if (!profile?.first_name && !profile?.last_name) {
+      return
+    }
 
-    if (!fullName) return
+    const fullName = `${profile.first_name} ${profile.last_name}`
 
     setName(fullName)
-  }, [profile])
 
-  useEffect(() => {
-    if (!selfParticipant || !name) return
-
-    selfParticipant.setName(name)
-  }, [name, selfParticipant])
-
-  useEffect(() => {
-    if (!selfParticipant) return
-
-    const preset = selfParticipant.presetName
-
-    if (preset.includes('host')) {
-      setIsHost(true)
-    } else {
-      // selfParticipant.disableAudio()
+    if (selfParticipant) {
+      selfParticipant.setName(fullName)
     }
-  }, [selfParticipant])
+  }, [selfParticipant, profile?.last_name, profile?.first_name])
+
+  const isHost = selfParticipant?.presetName?.includes('host') || false
+
+  // useEffect(() => {
+  //   if (!selfParticipant) return
+
+  //   const preset = selfParticipant.presetName
+
+  //   if (preset.includes('host')) {
+  //     setIsHost(true)
+  //   } else {
+  //     // selfParticipant.disableAudio()
+  //   }
+  // }, [selfParticipant])
 
   const handleJoinMeeting = async () => {
     meeting.join()
     joinMeeting?.()
   }
 
-  if (!event || !meeting) {
+  if (isRequiredNames) {
+    return <NamesForm />
+  }
+
+  if (!event || !meeting || isLoadingProfile) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loading />
