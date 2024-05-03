@@ -1,8 +1,11 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
+
 'use client'
 
 import { useChat } from 'ai/react'
+import { FiSend } from 'react-icons/fi'
 
-import { Button, ScrollShadow, Textarea } from '@nextui-org/react'
+import { ScrollShadow, Textarea, Button } from '@nextui-org/react'
 
 import { cn } from '@/utils/utils'
 
@@ -35,7 +38,7 @@ export function AIChat() {
         hideScrollBar
         isEnabled
         orientation="vertical"
-        className="w-full h-[calc(100vh_-_196px)]">
+        className="w-full h-[calc(100vh_-_146px)] p-1">
         {messages.map((m) => (
           <div
             key={m.id}
@@ -50,19 +53,22 @@ export function AIChat() {
         ))}
       </ScrollShadow>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-none sticky bottom-0 items-end align-bottom">
-        <Textarea
-          // className="flex-grow p-2 border border-gray-300 rounded shadow-xl text-black"
-          value={input}
-          placeholder="Say something..."
-          onChange={handleInputChange}
-        />
-        <Button type="submit" className="">
-          Send
-        </Button>
-      </form>
+      <div className="flex-none sticky bottom-0 left-0 w-full">
+        <form onSubmit={handleSubmit} className="relative">
+          <Textarea
+            value={input}
+            placeholder="Say something..."
+            onChange={handleInputChange}
+          />
+          <Button
+            isIconOnly
+            radius="full"
+            type="submit"
+            className="absolute bottom-1 right-1 bg-gray-800 text-white hover:bg-black  transition-all duration-400">
+            <FiSend />
+          </Button>
+        </form>
+      </div>
     </AiChatSidebarWrapper>
   )
 }
