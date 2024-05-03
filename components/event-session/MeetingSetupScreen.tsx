@@ -41,6 +41,7 @@ export function MeetingSetupScreen() {
     EventSessionContext
   ) as EventSessionContextType
   const [states, setStates] = useState({})
+
   useEffect(() => {
     const fullName = `${profile?.first_name} ${profile?.last_name}`
 
