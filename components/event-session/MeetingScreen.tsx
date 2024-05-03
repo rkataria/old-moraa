@@ -18,6 +18,7 @@ import { FlyingEmojisOverlay } from './FlyingEmojisOverlay'
 import { MeetingControls } from './MeetingControls'
 import { ParticipantTiles } from './ParticipantTiles'
 import { AgendaPanel } from '../common/AgendaPanel'
+import { AIChat } from '../common/AIChat'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -40,6 +41,7 @@ export function MeetingScreen() {
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(false)
   const [rightSidebar, setRightSidebar] = useState<RightSiderbar | null>(null)
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
+  const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(false)
   const { sections, preview, setCurrentSlide } = useContext(
     EventContext
   ) as EventContextType
@@ -176,12 +178,14 @@ export function MeetingScreen() {
             )}>
             {renderRightSidebar()}
           </div>
+          <div>{aiChatOverlay && <AIChat />}</div>
         </div>
         <div className="h-12">
           <MeetingControls
             leftSidebarVisible={leftSidebarVisible}
             onUpdateDyteStates={handleUpdateDyteStates}
             toggleLeftSidebar={() => setLeftSidebarVisible((o) => !o)}
+            onAiChatOverlayToggle={() => setAiChatOverlay(!aiChatOverlay)}
           />
         </div>
       </div>

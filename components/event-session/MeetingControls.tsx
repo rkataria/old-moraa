@@ -11,6 +11,7 @@ import {
   DyteSettingsToggle,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { Sparkles } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 
@@ -32,12 +33,14 @@ type MeetingControlsProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdateDyteStates: any
   toggleLeftSidebar?: () => void
+  onAiChatOverlayToggle: () => void
 }
 
 export function MeetingControls({
   leftSidebarVisible,
   onUpdateDyteStates,
   toggleLeftSidebar = () => {},
+  onAiChatOverlayToggle,
 }: MeetingControlsProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
@@ -101,6 +104,12 @@ export function MeetingControls({
       </div>
 
       <div className="flex justify-start items-center gap-2">
+        <Button
+          isIconOnly
+          onClick={onAiChatOverlayToggle}
+          className="flex justify-center items-center transition-all duration-200 cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3">
+          <Sparkles />
+        </Button>
         <DyteParticipantsToggle
           size="sm"
           meeting={meeting}

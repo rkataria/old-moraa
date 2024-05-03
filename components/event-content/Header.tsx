@@ -49,7 +49,10 @@ export function Header({
 
     return (
       <>
-        <Button isIconOnly onClick={onAiChatOverlayToggle}>
+        <Button
+          isIconOnly
+          onClick={onAiChatOverlayToggle}
+          className="flex justify-center items-center transition-all duration-200 cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3">
           <Sparkles />
         </Button>
         <AddParticipantsButtonWithModal eventId={event.id} />
