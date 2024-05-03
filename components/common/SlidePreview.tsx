@@ -46,7 +46,7 @@ export function SlidePreview({ slide }: SlideProps) {
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className={cn('relative group w-full h-full p-4 bg-gray-100')}>
+      className={cn('relative group w-full h-full bg-gray-100')}>
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto transition-all">
@@ -66,7 +66,7 @@ export function SlidePreview({ slide }: SlideProps) {
           <PDFViewer slide={slide as PDFViewerSlideType} />
         )}
         {slide.type === ContentType.POLL && (
-          <Poll slide={slide as PollSlide} votes={[]} voted={false} />
+          <Poll readOnly slide={slide as PollSlide} votes={[]} voted={false} />
         )}
         {slide.type === ContentType.GOOGLE_SLIDES_IMPORT && (
           <div className="w-full h-full flex justify-center items-center">
@@ -77,14 +77,14 @@ export function SlidePreview({ slide }: SlideProps) {
           </div>
         )}
         {slide.type === ContentType.REFLECTION && (
-          <ReflectionEditor slide={slide} />
+          <ReflectionEditor readOnly slide={slide} />
         )}
 
         {slide.type === ContentType.VIDEO_EMBED && (
-          <VideoEmbedEditor slide={slide as VideoEmbedSlideType} />
+          <VideoEmbedEditor readOnly slide={slide as VideoEmbedSlideType} />
         )}
         {slide.type === ContentType.MIRO_EMBED && (
-          <MiroEmbedEditor slide={slide as MiroEmbedSlideType} />
+          <MiroEmbedEditor readOnly slide={slide as MiroEmbedSlideType} />
         )}
         {slide.type === ContentType.RICH_TEXT && <RichText slide={slide} />}
         {slide.type === ContentType.MORAA_BOARD && (

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 
 import { IconDots } from '@tabler/icons-react'
 
@@ -10,6 +10,7 @@ import { Tooltip } from '@nextui-org/react'
 import { DeleteSlideModal } from './DeleteSlideModal'
 import { EditableLabel } from './EditableLabel'
 import { SlideActions } from './SlideActions'
+import { SlidePreview } from './SlidePreview'
 
 import type {
   EventContextType,
@@ -17,6 +18,7 @@ import type {
 } from '@/types/event-context.type'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useDimensions } from '@/hooks/useDimensions'
 import { type AgendaSlideDisplayType } from '@/types/event.type'
 import { type ISlide } from '@/types/slide.type'
 import { getContentType } from '@/utils/content.util'
@@ -182,11 +184,16 @@ function SlideThumbnailView({
     EventContext
   ) as EventContextType
 
+  const myRef = useRef(null)
+
   const actionDisabled = eventMode !== 'edit' || !isOwner || preview
   const contentType = getContentType(slide.type)
 
+  const { width: cardWidth } = useDimensions(myRef)
+
   return (
     <div
+      ref={myRef}
       data-minislide-id={slide.id}
       key={`mini-slide-${slide.id}`}
       className={cn('flex justify-start items-center gap-2 w-full bg-white', {
@@ -197,12 +204,22 @@ function SlideThumbnailView({
       <div
         onClick={onChangeSlide}
         className={cn(
-          'relative rounded-md w-full aspect-video transition-all border-2 group',
+          'relative rounded-md w-full aspect-video transition-all border-2 group overflow-hidden',
           currentSlide?.id === slide.id
             ? 'drop-shadow-md border-black'
             : 'drop-shadow-none border-black/20',
           isDragging && '!bg-primary/20'
         )}>
+        <div
+          className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0"
+          style={{
+            width: `${window.screen.width}px`,
+            height: `${window.screen.height}px`,
+            transformOrigin: 'left top',
+            scale: `${(1 / window.screen.width) * cardWidth}`,
+          }}>
+          <SlidePreview slide={slide} key={JSON.stringify(slide.content)} />
+        </div>
         <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
           {index + 1}
         </div>
@@ -303,6 +320,7 @@ export function AgendaSlideCard({
   if (displayType === 'thumbnail') {
     return (
       <SlideThumbnailView
+        key={slide.id}
         slide={slide}
         draggableProps={draggableProps}
         index={index}
