@@ -164,7 +164,7 @@ export function MeetingScreen() {
           {renderRightSidebar()}
         </MeetingRightSidebarWrapper>
       </div>
-      <div className="h-16 px-4 z-10 border-t-2 border-gray-200 bg-white">
+      <div className="h-16 px-4 z-10 border-t-2 border-gray-200 bg-black">
         <MeetingControls onUpdateDyteStates={handleUpdateDyteStates} />
       </div>
       <FlyingEmojisOverlay />
