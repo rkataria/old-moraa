@@ -80,6 +80,11 @@ export function MeetingSetupScreen() {
     joinMeeting?.()
   }
 
+  selfParticipant?.setName(
+    (profile?.first_name && `${profile?.first_name} ${profile?.last_name}`) ||
+      'Participant'
+  )
+
   if (isRequiredNames) {
     return <NamesForm />
   }
