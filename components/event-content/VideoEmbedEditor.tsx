@@ -16,17 +16,22 @@ export type VideoEmbedSlideType = ISlide & {
 }
 interface VideoEmbedEditorProps {
   slide: VideoEmbedSlideType
+  readOnly?: boolean
 }
 
-export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
+export function VideoEmbedEditor({
+  slide,
+  readOnly = false,
+}: VideoEmbedEditorProps) {
   const [videoUrl, setVideoUrl] = useState(slide.content.videoUrl || '')
   const [isEditMode, setIsEditMode] = useState(!slide.content.videoUrl)
   const { preview, isOwner, updateSlide } = useContext(
     EventContext
   ) as EventContextType
+  const disabled = preview || readOnly
 
   const saveVideoUrl = () => {
-    if (preview) return
+    if (disabled) return
     updateSlide({
       slidePayload: {
         content: {
@@ -38,7 +43,7 @@ export function VideoEmbedEditor({ slide }: VideoEmbedEditorProps) {
     setIsEditMode(false)
   }
 
-  if (preview || !isEditMode) {
+  if (disabled || !isEditMode) {
     return (
       <div className="w-full h-full flex justify-center items-center">
         <div className="w-4/5 overflow-hidden rounded-md">

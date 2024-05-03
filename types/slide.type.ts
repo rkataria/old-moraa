@@ -29,7 +29,7 @@ export type FileBlock = Block & {
   data: {
     file: {
       url: string
-      meta: {
+      meta?: {
         name: string
         size: number
         type: string

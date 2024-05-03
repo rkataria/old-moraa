@@ -51,6 +51,7 @@ interface PollProps {
   }
   votes?: Vote[]
   voted?: boolean
+  readOnly?: boolean
   onVote?: Partial<EventSessionContextType>['onVote']
   onUpdateVote?: Partial<EventSessionContextType>['onUpdateVote']
 }
@@ -150,6 +151,7 @@ export function Poll({
   slide,
   votes = [],
   voted,
+  readOnly = false,
   onVote,
   onUpdateVote,
 }: PollProps) {
@@ -166,8 +168,10 @@ export function Poll({
       ?.response.anonymous || false
   )
 
+  const disabled = preview || readOnly
+
   useEffect(() => {
-    if (preview) return
+    if (disabled) return
     if (
       voted ||
       isOwner ||
@@ -183,13 +187,13 @@ export function Poll({
     isOwner,
     slide.config.allowVoteOnMultipleOptions,
     selectedOptions,
-    preview,
+    disabled,
   ])
 
   const isOptionSelected = (option: string) => selectedOptions.includes(option)
 
   const handleVoteCheckbox = (option: string) => {
-    if (preview) return
+    if (disabled) return
     if (selectedOptions.includes(option)) {
       setSelectedOptions((prevSelectedOptions) =>
         prevSelectedOptions.filter((vote) => vote !== option)
@@ -234,7 +238,7 @@ export function Poll({
     (eventMode === 'present' &&
       !isOwner &&
       slide.config.allowVoteAnonymously) ||
-    (preview && slide.config.allowVoteAnonymously)
+    (disabled && slide.config.allowVoteAnonymously)
 
   return (
     <div
@@ -256,10 +260,10 @@ export function Poll({
               <Checkbox
                 size="sm"
                 className="items-baseline"
-                disabled={preview}
+                disabled={disabled}
                 isSelected={makeMyVoteAnonymous}
                 onValueChange={(checked) => {
-                  if (preview) return
+                  if (disabled) return
                   if (!selfVote) {
                     setMakeMyVoteAnonymous(checked)
 
@@ -290,7 +294,7 @@ export function Poll({
                   }
                 )}
                 onClick={() => {
-                  if (preview) return
+                  if (disabled) return
                   if (
                     voted ||
                     isOwner ||
@@ -322,7 +326,7 @@ export function Poll({
                   slide={slide}
                   pollOption={option}
                   voted={voted}
-                  disabled={preview || isOwner}
+                  disabled={disabled || isOwner}
                   isOptionSelected={isOptionSelected}
                   handleVoteCheckbox={handleVoteCheckbox}
                 />
@@ -336,9 +340,9 @@ export function Poll({
                 <Button
                   type="button"
                   color="primary"
-                  disabled={preview}
+                  disabled={disabled}
                   onClick={() => {
-                    if (preview) return
+                    if (disabled) return
                     onVote?.(slide, {
                       selectedOptions,
                       anonymous: makeMyVoteAnonymous,

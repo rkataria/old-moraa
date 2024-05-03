@@ -15,6 +15,7 @@ import { Button, Chip } from '@nextui-org/react'
 
 import { AddItemDropdownActions } from './AddItemDropdownActions'
 import { AddItemStickyDropdownActions } from './AddItemStickyDropdownActions'
+import { AgendaPanelSearch } from './AgendaPanelSearch'
 import { AgendaSlideCard } from './AgendaSlideCard'
 import { DeleteConfirmationModal } from './DeleteConfirmationModal'
 import { DisplayTypeSwitcher } from './DisplayTypeSwitcher'
@@ -24,7 +25,6 @@ import { SectionPlaceholder } from './SectionPlaceholder'
 import { SlidePlaceholder } from './SlidePlaceholder'
 
 import { EventContext } from '@/contexts/EventContext'
-import { MeetingService } from '@/services/meeting.service'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
 import { type AgendaSlideDisplayType } from '@/types/event.type'
 import { ISection, ISlide } from '@/types/slide.type'
@@ -72,7 +72,8 @@ type AgendaPanelProps = {
 
 export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
   const [itemToDelete, setItemToDelete] = useState<ISection | null>(null)
-  const [displayType, setDisplayType] = useState<AgendaSlideDisplayType>('list')
+  const [displayType, setDisplayType] =
+    useState<AgendaSlideDisplayType>('thumbnail')
   const [expandedSections, setExpandedSections] = useState<string[]>([])
   const {
     preview,
@@ -87,6 +88,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
     updateSection,
     reorderSlide,
     reorderSection,
+    deleteSection,
   } = useContext(EventContext) as EventContextType
 
   useEffect(() => {
@@ -132,26 +134,12 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
 
   const handleDeleteConfirmation = async () => {
     if (!itemToDelete) return
-
-    if (itemToDelete.slides) {
-      const response = await MeetingService.updateMeeting({
-        meetingPayload: {
-          sections: meeting.sections.filter(
-            (id: string) => id !== itemToDelete.id
-          ),
-        },
-        meetingId: meeting.id,
-      })
-
-      if (response?.error) {
-        toast.error('Failed to selete section')
-        setItemToDelete(null)
-
-        return
-      }
-      toast.success('Section deleted successfully')
-      setItemToDelete(null)
-    }
+    await deleteSection({
+      sectionId: itemToDelete.id,
+      meetingId: meeting.id,
+    })
+    toast.success('Section deleted successfully')
+    setItemToDelete(null)
   }
 
   const getDeleteConfirmationModalDescription = () => {
@@ -186,12 +174,15 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
   const actionDisabled = eventMode !== 'edit' || !isOwner || preview
 
   return (
-    <div className={cn('w-full bg-white/95 h-full transition-all')}>
+    <div className={cn('w-full bg-white h-full transition-all')}>
       <div className="flex flex-col justify-start items-center w-full p-2">
-        <DisplayTypeSwitcher
-          displayType={displayType}
-          onDisplayTypeChange={setDisplayType}
-        />
+        <div className="flex justify-between items-center gap-2 px-2 pb-2">
+          <AgendaPanelSearch setExpandedSections={setExpandedSections} />
+          <DisplayTypeSwitcher
+            displayType={displayType}
+            onDisplayTypeChange={setDisplayType}
+          />
+        </div>
         <DragDropContext
           onDragEnd={(result, provide) => {
             if (!isOwner) return
@@ -203,7 +194,13 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
           <StrictModeDroppable droppableId="section-droppable" type="section">
             {(sectionDroppableProvided) => (
               <div
-                className="flex flex-col justify-start items-center gap-6 w-full flex-nowrap scrollbar-none overflow-y-auto h-[calc(100vh_-_168px)]"
+                className={cn(
+                  'flex flex-col justify-start items-center gap-6 w-full flex-nowrap scrollbar-none overflow-y-auto',
+                  {
+                    'h-[calc(100vh_-_176px)]': !preview,
+                    'h-[calc(100vh_-_120px)]': preview,
+                  }
+                )}
                 ref={sectionDroppableProvided.innerRef}
                 {...sectionDroppableProvided.droppableProps}>
                 {sections.map((section, sectinIndex) => (
@@ -238,7 +235,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                   <div className="w-full">
                                     <div
                                       className={cn(
-                                        'flex justify-start items-center gap-2 px-1',
+                                        'flex justify-start items-center gap-0.5 px-1',
                                         {
                                           hidden:
                                             sectionCount === 1 &&
@@ -289,7 +286,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                       {(snapshot.isDraggingOver ||
                                         expandedSections.includes(section.id) ||
                                         sectionCount === 1) && (
-                                        <div className="flex flex-col justify-start items-center gap-6 w-full p-2 rounded-sm transition-all">
+                                        <div className="flex flex-col justify-start items-start gap-5 w-full p-2 rounded-sm transition-all">
                                           {getFilteredSlides({
                                             slides: section.slides,
                                             isOwner,
@@ -307,16 +304,13 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                                     ref={_provided.innerRef}
                                                     {..._provided.draggableProps}
                                                     {..._provided.dragHandleProps}
-                                                    className={cn(
-                                                      'w-full relative border-2 border-transparent rounded-sm',
-                                                      {
-                                                        'border-gray-200':
-                                                          displayType ===
-                                                            'list' &&
-                                                          currentSlide?.id ===
-                                                            slide.id,
-                                                      }
-                                                    )}>
+                                                    className={cn('relative', {
+                                                      'w-[86%]':
+                                                        displayType ===
+                                                        'thumbnail',
+                                                      'w-full':
+                                                        displayType === 'list',
+                                                    })}>
                                                     <AgendaSlideCard
                                                       slide={slide}
                                                       index={slideIndex}

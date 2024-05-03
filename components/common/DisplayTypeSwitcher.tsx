@@ -14,7 +14,7 @@ export function DisplayTypeSwitcher({
   onDisplayTypeChange: (view: AgendaSlideDisplayType) => void
 }) {
   return (
-    <div className="flex items-center gap-4 justify-end w-full pb-4">
+    <div className="flex justify-center items-center gap-2">
       <Tooltip content="Thumbnail View">
         <IconLayoutGrid
           className={cn('h-6 w-6 cursor-pointer hover:text-slate-500', {

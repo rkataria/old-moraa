@@ -1,19 +1,19 @@
-'use client'
-
+/* eslint-disable react/button-has-type */
 import { useContext, useEffect, useMemo, useState } from 'react'
 
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Header } from './Header'
 import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
+import { AgendaPanel } from '../common/AgendaPanel'
 import { Loading } from '../common/Loading'
 import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
 import { FlyingEmojisOverlay } from '../event-session/FlyingEmojisOverlay'
 
-import { AgendaPanel } from '@/components/common/AgendaPanel'
 import {
   ContentTypePicker,
   ContentType,
@@ -78,7 +78,6 @@ export function SlideManager() {
       id: uuidv4(),
       name: `Slide ${(insertInSection?.slides?.length || 0) + 1}`,
       config: {
-        backgroundColor: '#fff',
         textColor: '#000',
         allowVoteOnMultipleOptions: false,
       },
@@ -116,7 +115,7 @@ export function SlideManager() {
 
     if (slideCount === 0) {
       return (
-        <div className="flex items-center justify-center w-full h-full bg-gray-50">
+        <div className="flex items-center justify-center w-full h-full">
           <p className="text-2xl font-semibold">Add a slide to get started</p>
         </div>
       )
@@ -142,18 +141,15 @@ export function SlideManager() {
   return (
     <SlideManagerLayoutRoot>
       <SlideManagerHeader>
-        <Header
-          event={event}
-          leftSidebarVisible={leftSidebarVisible}
-          onLeftSidebarToggle={setLeftSidebarVisible}
-          // isSlidePublished={getIsSlidePublished()}
-        />
+        <Header event={event} />
       </SlideManagerHeader>
       <div className="flex flex-auto w-full">
-        <SlideManagerLeftSidebarWrapper visible={leftSidebarVisible}>
+        <SlideManagerLeftSidebarWrapper
+          visible={leftSidebarVisible}
+          setLeftSidebarVisible={setLeftSidebarVisible}>
           <AgendaPanel setOpenContentTypePicker={setOpenContentTypePicker} />
         </SlideManagerLeftSidebarWrapper>
-        <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto">
+        <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
           {renderSlide()}
         </div>
         <SlideManagerRightSidebarWrapper visible={rightSidebarVisible}>
@@ -200,7 +196,7 @@ export function SlideManagerHeader({
   children: React.ReactNode
 }) {
   return (
-    <div className="sticky left-0 top-0 h-16 flex-none w-full z-10">
+    <div className="sticky left-0 top-0 h-16 flex-none w-full z-10 border-b-2 border-gray-200">
       {children}
     </div>
   )
@@ -217,20 +213,28 @@ export function SlideManagerBody({ children }: { children: React.ReactNode }) {
 export function SlideManagerLeftSidebarWrapper({
   children,
   visible,
+  setLeftSidebarVisible,
 }: {
   children: React.ReactNode
   visible: boolean
+  setLeftSidebarVisible: (visible: boolean) => void
 }) {
   return (
     <div
       className={cn(
-        'flex-none transition-all duration-300 ease-in-out max-h-[calc(100vh_-_64px)]',
+        'relative flex-none transition-all duration-300 ease-in-out max-h-[calc(100vh_-_64px)] border-r-2 border-gray-200 bg-white',
         {
-          'w-0': !visible,
+          'w-5': !visible,
           'w-72': visible,
         }
       )}>
-      {children}
+      {visible ? children : null}
+
+      <button
+        className="absolute -right-4 top-1/2 -translate-y-1/2 z-[1] p-1 aspect-square rounded-full border-2 border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+        onClick={() => setLeftSidebarVisible(!visible)}>
+        {visible ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+      </button>
     </div>
   )
 }
@@ -245,7 +249,7 @@ export function SlideManagerRightSidebarWrapper({
   return (
     <div
       className={cn(
-        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)]',
+        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white',
         {
           'w-72': visible,
           'w-0': !visible,

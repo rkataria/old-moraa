@@ -23,35 +23,51 @@ import { cn, zeroPad } from '@/utils/utils'
 
 interface TimerProps {
   collapsePopoverContent: () => void
-  // setIsPopoverOpen: React.Dispatch<React.SetStateAction<boolean>>
-  dismissPopover: () => void // Add dismissPopover function
+  dismissPopover: () => void
 }
 
-export function Timer({
-  collapsePopoverContent,
-  // setIsPopoverOpen,
-  dismissPopover,
-}: TimerProps) {
+export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [remainingDuration, setRemainingDuration] = useState(5 * 60)
   const [isTimerRunning, setIsTimerRunning] = useState(false)
 
-  const { realtimeChannel } = useContext(
+  const { realtimeChannel, isHost } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
   // useEffect hooks to handle realtime channel events
+  // useEffect(() => {
+  //   // Event listeners for timer start and stop events
+  //   if (!realtimeChannel) return
+  //   realtimeChannel.on(
+  //     'broadcast',
+  //     { event: 'timer-start-event' },
+  //     ({ payload }) => {
+  //       setRemainingDuration(payload.remainingDuration)
+  //       setIsTimerRunning(true)
+  //     }
+  //   )
+  //   realtimeChannel.on(
+  //     'broadcast',
+  //     { event: 'timer-stop-event' },
+  //     ({ payload }) => {
+  //       setRemainingDuration(payload.remainingDuration)
+  //       setIsTimerRunning(false)
+  //     }
+  //   )
+  // }, [realtimeChannel])
+
   useEffect(() => {
-    // Event listeners for timer start and stop events
-    if (!realtimeChannel) return
     realtimeChannel.on(
       'broadcast',
       { event: 'timer-start-event' },
       ({ payload }) => {
         setRemainingDuration(payload.remainingDuration)
         setIsTimerRunning(true)
+        setIsOpen(true)
       }
     )
+
     realtimeChannel.on(
       'broadcast',
       { event: 'timer-stop-event' },
@@ -60,21 +76,21 @@ export function Timer({
         setIsTimerRunning(false)
       }
     )
-  }, [realtimeChannel])
 
-  const toggleTimer = useCallback(() => {
-    setIsTimerRunning((prevState) => !prevState) // Toggle timer state directly
-  }, [])
+    realtimeChannel.on('broadcast', { event: 'timer-close-event' }, () => {
+      setIsOpen(false) // Close the popover in response to the close event
+    })
+  }, [realtimeChannel])
 
   useEffect(() => {
     let timer: NodeJS.Timer
-
     if (isTimerRunning) {
       timer = setInterval(() => {
         setRemainingDuration((time) => {
           if (time <= 0) {
+            clearInterval(timer)
             setIsTimerRunning(false)
-            setIsOpen(false) // Hide the popover when timer reaches 0
+            setIsOpen(false)
 
             return 0
           }
@@ -84,28 +100,40 @@ export function Timer({
       }, 1000)
     }
 
-    return () => clearInterval(timer)
+    return () => {
+      if (timer) clearInterval(timer)
+    }
   }, [isTimerRunning])
 
-  // Function to handle timer toggle
-  const onTimerToggle = () => {
+  const handleTimerToggle = useCallback(() => {
     if (isTimerRunning) {
       realtimeChannel.send({
         type: 'broadcast',
         event: 'timer-stop-event',
         payload: { remainingDuration },
       })
+      setIsTimerRunning(false)
     } else {
       realtimeChannel.send({
         type: 'broadcast',
         event: 'timer-start-event',
         payload: { remainingDuration },
       })
+      setIsTimerRunning(true)
+      setIsOpen(true)
     }
-  }
-  const handleButtonClick = () => {
-    onTimerToggle()
-    toggleTimer()
+  }, [isTimerRunning, remainingDuration, realtimeChannel])
+
+  const handleClosePopover = () => {
+    setIsOpen(false)
+    dismissPopover()
+    if (isHost) {
+      // Only broadcast close if the user is the host
+      realtimeChannel.send({
+        type: 'broadcast',
+        event: 'timer-close-event',
+      })
+    }
   }
 
   const handleTimerButtonClick = () => {
@@ -114,7 +142,7 @@ export function Timer({
 
   const handleKeyDown = (event: { key: string }) => {
     if (event.key === 'Enter' || event.key === ' ') {
-      dismissPopover()
+      handleClosePopover()
     }
   }
 
@@ -153,23 +181,16 @@ export function Timer({
           )}
         </Button>
       </PopoverTrigger>
-      {/* Popover content */}
       <PopoverContent className="rounded-lg p-4 overflow-hidden">
-        {/* Dismiss icon */}
         <div
           className="absolute top-2 right-2 cursor-pointer"
-          onClick={() => {
-            setIsOpen(false)
-            // setIsPopoverOpen(false)
-            dismissPopover()
-          }}
+          onClick={handleClosePopover}
           onKeyDown={handleKeyDown}
           tabIndex={0}
           role="button"
           aria-label="Close">
           <MdClose size={20} />
         </div>
-        {/* Timer controls */}
         <div className="p-4 flex items-center">
           <div className="flex justify-between items-center">
             <Button
@@ -183,7 +204,6 @@ export function Timer({
               }}>
               <MdRemove />
             </Button>
-
             <h2 className="m-2 text-md font-extrabold px-2 text-gray-600">
               <span className="text-4xl">
                 {zeroPad(Math.floor(remainingDuration / 60), 2)}
@@ -199,7 +219,6 @@ export function Timer({
             </Button>
           </div>
         </div>
-        {/* Timer reset and toggle buttons */}
         <div className="flex items-center">
           <Button
             isIconOnly
@@ -218,12 +237,12 @@ export function Timer({
             size="lg"
             radius="full"
             color="primary"
-            onClick={handleButtonClick}
+            onClick={handleTimerToggle}
             className="ml-4">
             {!isTimerRunning ? (
               <MdOutlinePlayArrow size={32} fill="white" />
             ) : (
-              <MdOutlinePause size={32} fill="white" />
+              <MdOutlinePause size="{32}" fill="white" />
             )}
           </Button>
         </div>

@@ -84,9 +84,19 @@ const updateSection = async ({
   )
 }
 
+const deleteSection = async ({ sectionId }: { sectionId: string }) => {
+  const res = await APIService.supabaseClient
+    .from('section')
+    .delete()
+    .eq('id', sectionId)
+
+  return res
+}
+
 export const SectionService = {
   getSections,
   getSection,
   createSection,
   updateSection,
+  deleteSection,
 }

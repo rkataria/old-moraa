@@ -4,6 +4,14 @@ import React, { useEffect } from 'react'
 
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
+import { Image } from '@tiptap/extension-image'
+import { Link } from '@tiptap/extension-link'
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import { EditorContent, useEditor } from '@tiptap/react'
@@ -23,6 +31,47 @@ const getExtensions = (type: string) => {
         Color,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
+        }),
+        Image.configure({
+          HTMLAttributes: {
+            class: 'tiptap-image',
+          },
+        }),
+        Link.configure({
+          HTMLAttributes: {
+            class: 'tiptap-link',
+          },
+        }),
+        TaskList.configure({
+          HTMLAttributes: {
+            class: 'list-none',
+          },
+        }),
+        TaskItem.configure({
+          nested: true,
+          HTMLAttributes: {
+            class: 'flex gap-2 ',
+          },
+        }),
+        Table.configure({
+          HTMLAttributes: {
+            class: 'border border-black',
+          },
+        }),
+        TableRow.configure({
+          HTMLAttributes: {
+            class: 'table-row',
+          },
+        }),
+        TableHeader.configure({
+          HTMLAttributes: {
+            class: 'table-header border border-gray-500',
+          },
+        }),
+        TableCell.configure({
+          HTMLAttributes: {
+            class: 'table-cell border border-gray-300',
+          },
         }),
       ]
       break
