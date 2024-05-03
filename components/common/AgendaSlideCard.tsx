@@ -21,7 +21,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { type AgendaSlideDisplayType } from '@/types/event.type'
 import { type ISlide } from '@/types/slide.type'
-import { getContentType } from '@/utils/content.util'
+import { getContentType, isSlideThumbnailAvailable } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
 
 interface SlideListViewProps {
@@ -189,6 +189,25 @@ function SlideThumbnailView({
   const actionDisabled = eventMode !== 'edit' || !isOwner || preview
   const contentType = getContentType(slide.type)
 
+  const renderSlideThumbnail = () => {
+    if (isSlideThumbnailAvailable(slide.type)) {
+      return (
+        <div
+          className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0"
+          style={{
+            width: `${window.screen.width}px`,
+            height: `${window.screen.height}px`,
+            transformOrigin: 'left top',
+            scale: `${(1 / window.screen.width) * cardWidth}`,
+          }}>
+          <SlidePreview slide={slide} key={JSON.stringify(slide.content)} />
+        </div>
+      )
+    }
+
+    return null
+  }
+
   const { width: cardWidth } = useDimensions(myRef)
 
   return (
@@ -210,16 +229,7 @@ function SlideThumbnailView({
             : 'drop-shadow-none border-black/20',
           isDragging && '!bg-primary/20'
         )}>
-        <div
-          className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0"
-          style={{
-            width: `${window.screen.width}px`,
-            height: `${window.screen.height}px`,
-            transformOrigin: 'left top',
-            scale: `${(1 / window.screen.width) * cardWidth}`,
-          }}>
-          <SlidePreview slide={slide} key={JSON.stringify(slide.content)} />
-        </div>
+        {renderSlideThumbnail()}
         <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
           {index + 1}
         </div>

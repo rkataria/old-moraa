@@ -198,6 +198,9 @@ export function ReflectionEditor({
 
   useEffect(() => {
     if (disabled) return
+
+    if (slide.content?.title === throttledTitle) return
+
     updateSlide({
       slidePayload: {
         content: {
