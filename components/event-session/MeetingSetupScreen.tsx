@@ -41,7 +41,7 @@ export function MeetingSetupScreen() {
   const selfParticipant = useDyteSelector((meeting) => meeting.self)
   const { meeting } = useDyteMeeting()
   const [name, setName] = useState<string>('')
-  // const [isHost, setIsHost] = useState<boolean>(false)
+  const [isHost, setIsHost] = useState<boolean>(false)
   const { joinMeeting } = useContext(
     EventSessionContext
   ) as EventSessionContextType
@@ -52,29 +52,22 @@ export function MeetingSetupScreen() {
       return
     }
 
-    const fullName = `${profile.first_name} ${profile.last_name}`
+    const fullName = `${profile?.first_name} ${profile?.last_name}`
 
     setName(fullName)
-    console.log('inside out', fullName)
-    if (selfParticipant) {
-      console.log('inside it', fullName)
-      selfParticipant.setName(fullName)
+
+    meeting?.self?.setName(fullName)
+  }, [profile, meeting])
+
+  useEffect(() => {
+    if (!meeting) return
+    const preset = meeting.self.presetName
+    if (preset.includes('host')) {
+      setIsHost(true)
+    } else {
+      meeting.self.disableAudio()
     }
-  }, [selfParticipant, profile?.last_name, profile?.first_name])
-
-  const isHost = selfParticipant?.presetName?.includes('host') || false
-
-  // useEffect(() => {
-  //   if (!selfParticipant) return
-
-  //   const preset = selfParticipant.presetName
-
-  //   if (preset.includes('host')) {
-  //     setIsHost(true)
-  //   } else {
-  //     // selfParticipant.disableAudio()
-  //   }
-  // }, [selfParticipant])
+  }, [meeting])
 
   const handleJoinMeeting = async () => {
     meeting.join()
