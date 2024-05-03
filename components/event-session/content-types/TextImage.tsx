@@ -29,7 +29,7 @@ export function TextImage({ slide }: TextImageProps) {
   const blocks = slide.content?.blocks || []
 
   useEffect(() => {
-    panelGroupRef.current?.setLayout(slide.content?.panelSizes || [60, 40])
+    panelGroupRef.current?.setLayout(slide.content?.panelSizes || [50, 50])
   }, [slide.content?.panelSizes])
 
   const layoutType = slide.config.layoutType || LayoutTypes.IMAGE_RIGHT
@@ -45,7 +45,7 @@ export function TextImage({ slide }: TextImageProps) {
   if (layoutType === LayoutTypes.NO_IMAGE) {
     return (
       <div
-        className="tiptap ProseMirror w-full h-full flex justify-center items-center"
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center !p-0"
         style={{ backgroundColor: slide.config.backgroundColor }}>
         <RichTextView block={textBlock} />
       </div>
@@ -55,7 +55,7 @@ export function TextImage({ slide }: TextImageProps) {
   if (layoutType === LayoutTypes.IMAGE_BEHIND) {
     return (
       <div
-        className="tiptap ProseMirror w-full h-full flex justify-center items-center bg-center bg-cover"
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center bg-center bg-cover !p-0"
         style={{ backgroundImage: `url(${imageBlock.data.file.url})` }}>
         <RichTextView block={textBlock} />
       </div>
@@ -66,7 +66,7 @@ export function TextImage({ slide }: TextImageProps) {
     return (
       <div
         style={{ backgroundColor: slide.config.backgroundColor }}
-        className="tiptap ProseMirror w-full h-full flex justify-center items-center relative">
+        className="tiptap ProseMirror w-full h-full flex justify-center items-center relative !p-0">
         <PanelGroup ref={panelGroupRef} direction="horizontal">
           <Panel defaultSize={30} minSize={30} maxSize={60}>
             <ImageBlockView imageBlock={imageBlock} />
@@ -84,7 +84,7 @@ export function TextImage({ slide }: TextImageProps) {
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className="tiptap ProseMirror w-full h-full flex justify-center items-center relative">
+      className="tiptap ProseMirror w-full h-full flex justify-center items-center relative !p-0">
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>
           <div className="flex justify-center items-center h-full w-full">

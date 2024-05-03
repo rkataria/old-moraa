@@ -133,6 +133,21 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           }
 
           const currentSectionWithSlidesContent = sectionResponse.data
+          const previousSlideIds = sections
+            .find((s) => s.id === updatedSection.id)
+            ?.slides.map((slide: ISlide) => slide.id)
+          const newSlideIds = currentSectionWithSlidesContent.slides || []
+          const diffSlideIds = newSlideIds.filter(
+            (slideId: string) => !previousSlideIds?.includes(slideId)
+          )
+
+          if (diffSlideIds.length > 0) {
+            setCurrentSlide(
+              currentSectionWithSlidesContent.slidesWithContent.find(
+                (s) => s.id === diffSlideIds[0]
+              )
+            )
+          }
 
           setSections((prevSections) => {
             const updatedSections = prevSections.map((section) => {
@@ -351,7 +366,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
               sectionSlideDeletedFrom?.slides[deletedSlideIndex - 1]
 
             setSections(updatedSections)
-            setCurrentSlide(previousSlide || sections[0]?.slides[0])
+
+            if (previousSlide) {
+              setCurrentSlide(previousSlide)
+            }
           }
         }
       )
@@ -614,6 +632,32 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
 
     return sectionResponse.data
+  }
+
+  const deleteSection = async ({
+    sectionId,
+    meetingId,
+  }: {
+    sectionId: string
+    meetingId: string
+  }) => {
+    const response = await MeetingService.updateMeeting({
+      meetingPayload: {
+        sections: meeting.sections.filter((id: string) => id !== sectionId),
+      },
+      meetingId,
+    })
+
+    if (response.error) {
+      console.error('error while deleting section: ', response.error)
+
+      return null
+    }
+
+    // delete section from db- will also cascade delete to slides, slide-response...
+    await SectionService.deleteSection({ sectionId })
+
+    return null
   }
 
   const updateMeeting = async ({
@@ -1018,6 +1062,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         reorderSection,
         addSection,
         updateSection,
+        deleteSection,
         addSlideToSection,
         setInsertInSectionId,
         moveUpSection,

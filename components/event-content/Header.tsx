@@ -2,7 +2,7 @@ import { useContext } from 'react'
 
 import { ChevronDownIcon, Sparkles } from 'lucide-react'
 import Link from 'next/link'
-import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
+import { MdArrowBack } from 'react-icons/md'
 
 import {
   Button,
@@ -24,14 +24,10 @@ import { type EventContextType } from '@/types/event-context.type'
 
 export function Header({
   event,
-  leftSidebarVisible,
-  onLeftSidebarToggle,
   onAiChatOverlayToggle,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   event: any
-  leftSidebarVisible: boolean
-  onLeftSidebarToggle: (value: boolean) => void
   onAiChatOverlayToggle: () => void
 }) {
   const { isOwner, preview } = useContext(EventContext) as EventContextType
@@ -55,6 +51,7 @@ export function Header({
           className="flex justify-center items-center transition-all duration-200 cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3">
           <Sparkles />
         </Button>
+        <EditEventButtonWithModal eventId={event.id} />
         <AddParticipantsButtonWithModal eventId={event.id} />
         {EventStatus.SCHEDULED === event?.status ? (
           <ButtonGroup variant="solid" color="primary" size="sm" radius="md">
@@ -101,20 +98,12 @@ export function Header({
     <div className="h-full p-2 bg-white">
       <div className="flex justify-between items-center h-12 w-full">
         <div className="flex justify-start items-center gap-2">
-          <Button
-            isIconOnly
-            variant="light"
-            onClick={() => onLeftSidebarToggle(!leftSidebarVisible)}>
-            {leftSidebarVisible ? (
-              <GoSidebarCollapse size={24} className="rotate-180" />
-            ) : (
-              <GoSidebarExpand size={24} className="rotate-180" />
-            )}
-          </Button>
+          <Link href="/events">
+            <Button isIconOnly variant="light">
+              <MdArrowBack size={18} />
+            </Button>
+          </Link>
           <span className="font-bold">{event?.name}</span>
-          {!preview && isOwner && (
-            <EditEventButtonWithModal eventId={event.id} />
-          )}
           {isOwner && <PreviewSwitcher />}
         </div>
         <div className="flex justify-start items-center gap-2 bg-white px-2 h-full">

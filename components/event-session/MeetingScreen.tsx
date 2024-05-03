@@ -16,6 +16,11 @@ import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { ContentContainer } from './ContentContainer'
 import { FlyingEmojisOverlay } from './FlyingEmojisOverlay'
 import { MeetingControls } from './MeetingControls'
+import {
+  MeetingLayoutRoot,
+  MeetingLeftSidebarWrapper,
+  MeetingRightSidebarWrapper,
+} from './MeetingLayout'
 import { ParticipantTiles } from './ParticipantTiles'
 import { AgendaPanel } from '../common/AgendaPanel'
 import { AIChat } from '../common/AIChat'
@@ -125,80 +130,59 @@ export function MeetingScreen() {
   }
 
   return (
-    <div>
-      <div className="flex flex-col gap-2 p-2 h-screen max-h-screen overflow-hidden bg-[#202124] dark:bg-gray-900">
-        <div className="flex-auto flex h-full gap-2">
+    <MeetingLayoutRoot>
+      <div className="flex flex-auto w-full">
+        <MeetingLeftSidebarWrapper
+          visible={leftSidebarVisible}
+          setLeftSidebarVisible={setLeftSidebarVisible}>
+          <AgendaPanel />
+        </MeetingLeftSidebarWrapper>
+        <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
           <div
-            className={cn(
-              'flex-none w-72 h-full !bg-white rounded-md overflow-hidden',
-              {
-                hidden: !leftSidebarVisible,
-              }
-            )}>
-            <AgendaPanel />
-          </div>
-          <div
-            className={cn(
-              'h-full max-h-full flex-auto rounded-md overflow-hidden flex',
-              {
-                'bg-transparent': eventSessionMode === 'Lobby',
-                'bg-white': eventSessionMode !== 'Lobby',
-              }
-            )}>
+            className={cn('flex-1 flex justify-start items-start h-full', {
+              'flex-row': !sidebarVisible,
+              'flex-col': sidebarVisible,
+            })}>
             <div
-              className={cn('flex-1 flex justify-start items-start', {
-                'flex-row': !sidebarVisible,
-                'flex-col': sidebarVisible,
+              className={cn('', {
+                'w-full h-44': sidebarVisible,
+                'h-full w-72 order-2 overflow-hidden overflow-y-auto scrollbar-none':
+                  !sidebarVisible,
+                'h-full w-full order-1': eventSessionMode === 'Lobby',
               })}>
-              <div
-                className={cn('', {
-                  'w-full h-44': sidebarVisible,
-                  'h-full w-72 order-2 overflow-hidden overflow-y-auto scrollbar-none':
-                    !sidebarVisible,
-                  'h-full w-full order-1': eventSessionMode === 'Lobby',
-                })}>
-                <ParticipantTiles
-                  spotlightMode={eventSessionMode === 'Lobby'}
-                  sidebarVisible={sidebarVisible}
-                />
-              </div>
-              {['Preview', 'Presentation'].includes(eventSessionMode) && (
-                <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto flex-grow min-w-0 flex-shrink">
-                  <ContentContainer />
-                </div>
-              )}
+              <ParticipantTiles
+                spotlightMode={eventSessionMode === 'Lobby'}
+                sidebarVisible={sidebarVisible}
+              />
             </div>
-          </div>
-          <div
-            className={cn(
-              'flex-none w-72 h-full bg-white rounded-md overflow-hidden',
-              {
-                hidden: !rightSidebar,
-              }
-            )}>
-            {renderRightSidebar()}
+            {['Preview', 'Presentation'].includes(eventSessionMode) && (
+              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto flex-grow min-w-0 flex-shrink">
+                <ContentContainer />
+              </div>
+            )}
           </div>
         </div>
-        <div className="h-12">
-          <MeetingControls
-            leftSidebarVisible={leftSidebarVisible}
-            onUpdateDyteStates={handleUpdateDyteStates}
-            toggleLeftSidebar={() => setLeftSidebarVisible((o) => !o)}
-            onAiChatOverlayToggle={() => {
-              if (rightSidebar === 'aichat') {
-                setRightSidebar(null)
-              } else {
-                setRightSidebar('aichat')
-              }
-            }}
-          />
-        </div>
+        <MeetingRightSidebarWrapper visible={!!rightSidebar}>
+          {renderRightSidebar()}
+        </MeetingRightSidebarWrapper>
+      </div>
+      <div className="h-16 px-4 z-10 border-t-2 border-gray-200 bg-white">
+        <MeetingControls
+          onUpdateDyteStates={handleUpdateDyteStates}
+          onAiChatOverlayToggle={() => {
+            if (rightSidebar === 'aichat') {
+              setRightSidebar(null)
+            } else {
+              setRightSidebar('aichat')
+            }
+          }}
+        />
       </div>
       <FlyingEmojisOverlay />
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
       <DyteNotifications meeting={meeting} />
       <DyteDialogManager meeting={meeting} />
-    </div>
+    </MeetingLayoutRoot>
   )
 }

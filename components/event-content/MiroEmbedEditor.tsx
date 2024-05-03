@@ -16,12 +16,18 @@ export type MiroEmbedSlideType = ISlide & {
 }
 interface MiroEmbedEditorProps {
   slide: MiroEmbedSlideType
+  readOnly?: boolean
 }
 
-export function MiroEmbedEditor({ slide }: MiroEmbedEditorProps) {
+export function MiroEmbedEditor({
+  slide,
+  readOnly = false,
+}: MiroEmbedEditorProps) {
   const [boardIdentifier, setBoardIdentifier] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
   const { preview, updateSlide } = useContext(EventContext) as EventContextType
+
+  const disabled = preview || readOnly
 
   useEffect(() => {
     setIsEditMode(!slide.content?.boardId)
@@ -75,7 +81,7 @@ export function MiroEmbedEditor({ slide }: MiroEmbedEditorProps) {
     setIsEditMode(false)
   }
 
-  if (preview || !isEditMode) {
+  if (disabled || !isEditMode) {
     return <MiroEmbed slide={slide} />
   }
 

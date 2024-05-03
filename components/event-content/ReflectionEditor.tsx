@@ -175,9 +175,13 @@ function Responses({
 
 interface ReflectionEditorProps {
   slide: ISlide
+  readOnly?: boolean
 }
 
-export function ReflectionEditor({ slide }: ReflectionEditorProps) {
+export function ReflectionEditor({
+  slide,
+  readOnly = false,
+}: ReflectionEditorProps) {
   const [title, setTitle] = useState(slide.content?.title)
   const throttledTitle = useThrottle(title, 500)
   const { preview, updateSlide } = useContext(EventContext) as EventContextType
@@ -190,8 +194,12 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
   })
   const responses = reflectionResponseQuery?.data?.responses || []
 
+  const disabled = preview || readOnly
+
   useEffect(() => {
-    if (preview) return
+    if (disabled) return
+
+    if (slide.content?.title === throttledTitle) return
 
     updateSlide({
       slidePayload: {
@@ -206,7 +214,7 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
   }, [throttledTitle])
 
   const updateTitle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (preview) return
+    if (disabled) return
     setTitle(e.target.value)
   }
 
@@ -214,7 +222,7 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
     <div className="w-full h-full flex flex-col items-center px-8">
       <TextareaAutosize
         placeholder="Title"
-        disabled={preview}
+        disabled={disabled}
         defaultValue={slide.content?.title}
         maxLength={TITLE_CHARACTER_LIMIT}
         onChange={updateTitle}

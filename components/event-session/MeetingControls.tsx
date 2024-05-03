@@ -13,7 +13,6 @@ import {
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { Sparkles } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go'
 
 import { Button } from '@nextui-org/react'
 
@@ -29,17 +28,13 @@ import { useEvent } from '@/hooks/useEvent'
 import { EventSessionContextType } from '@/types/event-session.type'
 
 type MeetingControlsProps = {
-  leftSidebarVisible: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdateDyteStates: any
-  toggleLeftSidebar?: () => void
   onAiChatOverlayToggle: () => void
 }
 
 export function MeetingControls({
-  leftSidebarVisible,
   onUpdateDyteStates,
-  toggleLeftSidebar = () => {},
   onAiChatOverlayToggle,
 }: MeetingControlsProps) {
   const { eventId } = useParams()
@@ -52,20 +47,21 @@ export function MeetingControls({
   if (!event) return null
 
   return (
-    <div className="h-12 bg-transparent flex justify-between items-center">
+    <div className="h-16 bg-transparent flex justify-between items-center">
       <div className="flex justify-end items-center gap-2">
-        <Button
-          variant="light"
-          isIconOnly
-          className="text-white bg-white/5 hover:bg-white/10"
-          onClick={toggleLeftSidebar}>
-          {leftSidebarVisible ? (
-            <GoSidebarCollapse size={24} className="rotate-180" />
-          ) : (
-            <GoSidebarExpand size={24} className="rotate-180" />
-          )}
-        </Button>
-        <DyteClock meeting={meeting} />
+        {/* <Link href="/events">
+          <Button isIconOnly variant="light">
+            <MdArrowBack size={18} />
+          </Button>
+        </Link> */}
+        <div
+          className="flex flex-col justify-center items-center px-2 h-10 rounded-sm"
+          style={{
+            backgroundColor:
+              'var(--dyte-controlbar-button-background-color, rgb(var(--dyte-colors-background-1000, 8 8 8))',
+          }}>
+          <DyteClock meeting={meeting} />
+        </div>
       </div>
       <div className="flex justify-end items-center gap-2">
         {eventSessionMode === 'Preview' && isHost && <LobbyViewToggle />}

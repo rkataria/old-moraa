@@ -58,7 +58,7 @@ export function Slide({
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className={cn('relative group w-full h-full p-4', {
+      className={cn('relative group w-full h-full p-4 bg-gray-100', {
         'pointer-events-none': !isOwner,
       })}>
       <div
@@ -70,8 +70,8 @@ export function Slide({
         <Button
           isIconOnly
           variant="light"
-          className="absolute top-2 right-2 z-10 pointer-events-auto bg-black/20 text-white"
-          onClick={() => setSettingsSidebarVisible(true)}>
+          className="absolute bottom-10 right-0 z-10 pointer-events-auto bg-black text-white hover:bg-gray-900 rounded-r-none"
+          onClick={() => setSettingsSidebarVisible((o) => !o)}>
           <TbSettings size={22} />
         </Button>
       )}

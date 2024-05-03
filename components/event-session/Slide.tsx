@@ -66,7 +66,7 @@ export function Slide() {
       <Poll
         key={currentSlide.id}
         slide={currentSlide as any}
-        votes={currentSlideResponses as Vote[]}
+        votes={(currentSlideResponses as Vote[]) || undefined}
         isOwner={isHost}
         voted={checkVoted(currentSlideResponses, currentUser)}
       />

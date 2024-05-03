@@ -48,7 +48,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
         autoFocus
         store={store}
         components={{
-          SharePanel: NameEditor,
+          SharePanel: preview ? null : NameEditor,
         }}
         onMount={(editor) => {
           editor.updateInstanceState({ isReadonly: !!readOnly })

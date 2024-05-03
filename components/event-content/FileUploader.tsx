@@ -8,7 +8,7 @@ import DropTarget from '@uppy/drop-target'
 import ImageEditor from '@uppy/image-editor'
 import { Dashboard as DashboardUI } from '@uppy/react'
 import RemoteSources from '@uppy/remote-sources'
-import ScreenCapture from '@uppy/screen-capture'
+import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Tus from '@uppy/tus'
 import XHRUpload from '@uppy/xhr-upload'
 import toast from 'react-hot-toast'
@@ -30,12 +30,13 @@ import '@uppy/image-editor/dist/style.css'
 
 type File = UppyFile<Record<string, unknown>, Record<string, unknown>>
 
-type FileWithSignedUrl = File & {
+const TRANSLOADIT_AUTH_KEY = process.env.NEXT_PUBLIC_TRANSLOADIT_KEY ?? ''
+const TEMPLATE_ID = process.env.NEXT_PUBLIC_TRANSLOADIT_TEMPLATE_ID ?? ''
+
+type FileWithSignedUrl = {
   signedUrl: string
   meta: { name: string; size: number; type: string }
 }
-
-const COMPANION_URL = 'http://companion.uppy.io'
 
 type FileUploaderProps = {
   title?: string
@@ -71,6 +72,7 @@ export function FileUploader({
 
     const _uppy = new Uppy({
       debug: false,
+
       restrictions: { maxNumberOfFiles, allowedFileTypes },
     })
       .use(Dashboard, {
@@ -79,14 +81,22 @@ export function FileUploader({
       })
       .use(RemoteSources, {
         companionUrl: COMPANION_URL,
-        sources: ['Dropbox', 'GoogleDrive', 'OneDrive', 'Unsplash', 'Url'],
+        sources: ['GoogleDrive', 'Url', 'Unsplash'],
       })
-      .use(ScreenCapture)
       .use(ImageEditor)
       .use(DropTarget, {
         target: document.body,
       })
       .use(Compressor)
+      .use(Transloadit, {
+        waitForEncoding: true,
+        params: {
+          auth: {
+            key: TRANSLOADIT_AUTH_KEY,
+          },
+          template_id: TEMPLATE_ID,
+        },
+      })
 
     setUppyInstance(_uppy)
 
@@ -104,6 +114,19 @@ export function FileUploader({
         objectName,
         contentType: file.type,
       }
+    })
+    _uppy.on('transloadit:upload', async (file, _assembly) => {
+      console.log(_assembly)
+      onFilesUploaded([
+        {
+          meta: { name: file.original_name, size: file.size, type: file.type },
+          signedUrl: file.ssl_url,
+        },
+      ])
+      _uppy.setState({ files: [] })
+      setOpen(false)
+      onFilePickerOpen?.(false)
+      toast.success('Upload successful')
     })
 
     _uppy.on('complete', async (result) => {
@@ -153,7 +176,7 @@ export function FileUploader({
           authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
         },
         limit: 6,
-        bundle: true,
+        bundle: false, // remote file upload not allowed with bundle:true
       })
     }
   }, [useTUS, uppyInstance, bucketName])
