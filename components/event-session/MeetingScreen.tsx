@@ -33,7 +33,7 @@ export type DyteStates = {
   [key: string]: string | boolean
 }
 
-export type RightSiderbar = 'participants' | 'chat' | 'plugins'
+export type RightSiderbar = 'participants' | 'chat' | 'plugins' | 'aichat'
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
@@ -41,7 +41,6 @@ export function MeetingScreen() {
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(false)
   const [rightSidebar, setRightSidebar] = useState<RightSiderbar | null>(null)
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
-  const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(false)
   const { sections, preview, setCurrentSlide } = useContext(
     EventContext
   ) as EventContextType
@@ -108,6 +107,7 @@ export function MeetingScreen() {
 
   const renderRightSidebar = () => {
     if (!rightSidebar) return null
+    if (rightSidebar === 'aichat') return <AIChat />
 
     return (
       <DyteSidebar
@@ -178,14 +178,19 @@ export function MeetingScreen() {
             )}>
             {renderRightSidebar()}
           </div>
-          <div>{aiChatOverlay && <AIChat />}</div>
         </div>
         <div className="h-12">
           <MeetingControls
             leftSidebarVisible={leftSidebarVisible}
             onUpdateDyteStates={handleUpdateDyteStates}
             toggleLeftSidebar={() => setLeftSidebarVisible((o) => !o)}
-            onAiChatOverlayToggle={() => setAiChatOverlay(!aiChatOverlay)}
+            onAiChatOverlayToggle={() => {
+              if (rightSidebar === 'aichat') {
+                setRightSidebar(null)
+              } else {
+                setRightSidebar('aichat')
+              }
+            }}
           />
         </div>
       </div>

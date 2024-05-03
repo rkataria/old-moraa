@@ -35,7 +35,7 @@ export function SlideManager() {
   })
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
-  const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(true)
+  const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(false)
 
   const { currentUser } = useAuth()
   const userId = currentUser?.id
@@ -113,6 +113,22 @@ export function SlideManager() {
   //   return allSlides.some((slide) => slide.status === SlideStatus.PUBLISHED)
   // }
 
+  const renderRightSidebar = () => {
+    if (aiChatOverlay) {
+      return <AIChat />
+    }
+    if (currentSlide) {
+      return (
+        <SettingsSidebar
+          settingsEnabled={settingsEnabled}
+          setSettingsSidebarVisible={setRightSidebarVisible}
+        />
+      )
+    }
+
+    return null
+  }
+
   const renderSlide = () => {
     const slideCount = getSlideCount(sections)
 
@@ -134,7 +150,10 @@ export function SlideManager() {
           isOwner={isOwner}
           slide={currentSlide}
           settingsEnabled={settingsEnabled}
-          setSettingsSidebarVisible={setRightSidebarVisible}
+          setSettingsSidebarVisible={() => {
+            setAiChatOverlay(false)
+            setRightSidebarVisible(true)
+          }}
         />
         {preview && <SlideControls />}
       </>
@@ -148,7 +167,15 @@ export function SlideManager() {
           event={event}
           leftSidebarVisible={leftSidebarVisible}
           onLeftSidebarToggle={setLeftSidebarVisible}
-          onAiChatOverlayToggle={() => setAiChatOverlay(!aiChatOverlay)}
+          onAiChatOverlayToggle={() => {
+            if (aiChatOverlay) {
+              setAiChatOverlay(false)
+              setRightSidebarVisible(false)
+            } else {
+              setAiChatOverlay(true)
+              setRightSidebarVisible(true)
+            }
+          }}
           // isSlidePublished={getIsSlidePublished()}
         />
       </SlideManagerHeader>
@@ -160,16 +187,8 @@ export function SlideManager() {
           {renderSlide()}
         </div>
         <SlideManagerRightSidebarWrapper visible={rightSidebarVisible}>
-          {currentSlide ? (
-            <SettingsSidebar
-              settingsEnabled={settingsEnabled}
-              setSettingsSidebarVisible={setRightSidebarVisible}
-            />
-          ) : null}
+          {renderRightSidebar()}
         </SlideManagerRightSidebarWrapper>
-        <SlideManagerAIChatOverlay visible={aiChatOverlay}>
-          <AIChat />
-        </SlideManagerAIChatOverlay>
       </div>
       <ContentTypePicker
         open={openContentTypePicker}
