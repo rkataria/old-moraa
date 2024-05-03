@@ -182,8 +182,23 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
             }}>
             {isTimerRunning ? (
               <div className="text-md font-extrabold flex justify-center items-center">
-                <span>{zeroPad(Math.floor(remainingDuration / 60), 2)}</span>:
-                <span>{zeroPad(remainingDuration % 60, 2)}</span>
+                <span
+                  style={{
+                    width: '24px',
+                    display: 'inline-block',
+                    textAlign: 'center',
+                  }}>
+                  {zeroPad(Math.floor(remainingDuration / 60), 2)}
+                </span>
+                :
+                <span
+                  style={{
+                    width: '24px',
+                    display: 'inline-block',
+                    textAlign: 'center',
+                  }}>
+                  {zeroPad(remainingDuration % 60, 2)}
+                </span>
               </div>
             ) : (
               <MdOutlineWatchLater className="text-2xl" />
@@ -220,10 +235,24 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
               <MdRemove />
             </Button>
             <h2 className="m-2 text-md font-extrabold px-2 text-gray-600">
-              <span className="text-4xl">
+              <span
+                className="text-4xl"
+                style={{
+                  width: '48px',
+                  display: 'inline-block',
+                  textAlign: 'center',
+                }}>
                 {zeroPad(Math.floor(remainingDuration / 60), 2)}
               </span>{' '}
-              : {zeroPad(remainingDuration % 60, 2)}
+              :
+              <span
+                style={{
+                  width: '48px',
+                  display: 'inline-block',
+                  textAlign: 'center',
+                }}>
+                {zeroPad(remainingDuration % 60, 2)}
+              </span>
             </h2>
             <Button
               isIconOnly
