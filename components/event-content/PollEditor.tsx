@@ -8,7 +8,6 @@ import { SketchPicker } from 'react-color'
 
 import { PollForm } from './PollForm'
 
-import { Poll } from '@/components/event-session/content-types/Poll'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
@@ -20,12 +19,11 @@ export function PollEditor({
   slide: ISlide
   openSettings: boolean
 }) {
-  const { updateSlide, isOwner } = useContext(EventContext) as EventContextType
+  const { updateSlide } = useContext(EventContext) as EventContextType
   const [showSettings, setShowSettings] = useState<boolean>(openSettings)
   const settingsRef = useClickAway(() => {
     setShowSettings(false)
   })
-  const [preview, setPreview] = useState<boolean>(false)
 
   useEffect(() => {
     setShowSettings(openSettings)
@@ -33,20 +31,8 @@ export function PollEditor({
 
   return (
     <div className={clsx('relative w-full h-full overflow-hidden')}>
-      <div className="absolute right-2 bottom-2 z-10">
-        <button
-          type="button"
-          className="bg-gray-800 text-white px-2 py-1 rounded-sm text-xs mr-2 cursor-pointer"
-          onClick={() => setPreview((prev) => !prev)}>
-          {preview ? 'Edit' : 'Preview'}
-        </button>
-      </div>
       <div className="relative w-full h-full overflow-x-hidden overflow-y-auto scrollbar-thin">
-        {preview ? (
-          <Poll slide={slide as any} isOwner={isOwner} />
-        ) : (
-          <PollForm slide={slide as any} />
-        )}
+        <PollForm slide={slide as any} />
       </div>
       <div
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

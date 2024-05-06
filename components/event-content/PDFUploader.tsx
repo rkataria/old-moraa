@@ -26,7 +26,7 @@ import {
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 import { QueryKeys } from '@/utils/query-keys'
-import { getFileObjectFromBlob } from '@/utils/utils'
+import { cn, getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
   slide: ISlide & {
@@ -98,6 +98,7 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
         updateSlide({
           slidePayload: {
             content: {
+              ...slide.content,
               pdfPath: res.data?.path,
             },
           },
@@ -137,8 +138,7 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
 
       case !fileUrl:
         return (
-          <div className="h-96 flex flex-col justify-center items-center">
-            <p className="mb-4">Select the PDF file.</p>
+          <div className="flex flex-col justify-center items-center">
             <FilePicker
               label="Select PDF file"
               supportedFormats={['application/pdf']}
@@ -157,7 +157,7 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
 
       case !!downloadPDFQuery.data:
         return (
-          <div className="">
+          <div>
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -212,7 +212,13 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center px-8 bg-white">
+    <div
+      className={cn(
+        'w-full h-full flex flex-col justify-center items-center px-8 bg-white',
+        {
+          'pt-[5rem]': !!downloadPDFQuery.data,
+        }
+      )}>
       {getInnerContent()}
     </div>
   )

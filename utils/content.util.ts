@@ -7,6 +7,21 @@ import {
 import { SlideStatus } from '@/services/types/enums'
 import { ISlide } from '@/types/slide.type'
 
+export const headerBlock = {
+  id: uuidv4(),
+  type: 'header',
+  data: {
+    html: '',
+  },
+}
+export const paragraphBlock = {
+  id: uuidv4(),
+  type: 'paragraph',
+  data: {
+    html: '<p style="text-align: left">This is a description text</p>',
+  },
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getDefaultContent = (contentType: ContentType, data?: any) => {
   switch (contentType) {
@@ -15,21 +30,36 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
         blocks: [
           {
             id: uuidv4(),
+            type: 'header',
+            data: {
+              html: `<h1 style="text-align: center">${data?.title || 'Title'}</h1>`,
+            },
+          },
+          {
+            id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: `<h1 style="text-align: center">${data?.title || 'Title'}</h1><p style="text-align: center">${data?.description || 'This is a description text'}</p>`,
+              html: `<p style="text-align: center">${data?.description || 'This is a description text'}</p>`,
             },
           },
         ],
       }
+
     case ContentType.TEXT_IMAGE:
       return {
         blocks: [
           {
             id: uuidv4(),
+            type: 'header',
+            data: {
+              html: `<h1>${data?.title || 'Title'}</h1>`,
+            },
+          },
+          {
+            id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: `<h1>${data?.title || 'Title'}</h1><p>${data?.description || 'This is a description text'}</p>`,
+              html: `<p>${data?.description || 'This is a description text'}</p>`,
             },
           },
           {
@@ -43,6 +73,7 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
           },
         ],
       }
+
     case ContentType.RICH_TEXT:
       return {
         blocks: [
@@ -51,27 +82,65 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
             type: 'richtext',
             data: {},
           },
+          headerBlock,
+          paragraphBlock,
         ],
       }
+
     case ContentType.VIDEO:
       return {
         url: 'https://www.youtube.com/watch?v=5qap5aO4i9A',
+        blocks: [headerBlock, paragraphBlock],
       }
+
+    case ContentType.VIDEO_EMBED:
+      return {
+        blocks: [headerBlock, paragraphBlock],
+      }
+
     case ContentType.POLL:
       return {
         question: '',
         options: ['', '', ''],
+        blocks: [paragraphBlock],
       }
+
+    case ContentType.REFLECTION:
+      return {
+        blocks: [paragraphBlock],
+      }
+
     case ContentType.GOOGLE_SLIDES:
       return {
         googleSlideURL: '',
         startPosition: 1,
+        blocks: [headerBlock, paragraphBlock],
       }
+
     case ContentType.GOOGLE_SLIDES_IMPORT:
       return {
         googleSlideURL: '',
         startPosition: 1,
+        blocks: [headerBlock, paragraphBlock],
       }
+
+    case ContentType.PDF_VIEWER:
+      return {
+        googleSlideURL: '',
+        startPosition: 1,
+        blocks: [headerBlock, paragraphBlock],
+      }
+
+    case ContentType.MIRO_EMBED:
+      return {
+        blocks: [headerBlock, paragraphBlock],
+      }
+
+    case ContentType.MORAA_BOARD:
+      return {
+        blocks: [headerBlock, paragraphBlock],
+      }
+
     default:
       return {}
   }
@@ -90,6 +159,8 @@ export const getDefaultCoverSlide = ({
   name,
   config: {
     textColor: '#000',
+    showTitle: true,
+    showDescription: true,
   },
   content: getDefaultContent(ContentType.COVER, { title, description }),
   type: ContentType.COVER,

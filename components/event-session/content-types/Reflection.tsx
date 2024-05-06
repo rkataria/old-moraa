@@ -5,7 +5,6 @@ import React from 'react'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import groupBy from 'lodash.groupby'
 
-import { SlideTitle } from './common/SlideTitle'
 import { BreakoutRoomStatus } from './reflection/BreakoutRoomStatus'
 import { ReflectionCard } from './reflection/ReflectionCard'
 import { SelfReflectionCard } from './reflection/SelfReflectionCard'
@@ -146,11 +145,10 @@ export function Reflection({ slide }: ReflectionProps) {
         </div>
 
         <div className="p-4">
-          <SlideTitle
+          {/* <SlideTitle
             textColor={slide.content.textColor}
             title={slide.content.title}
-          />
-
+          /> */}
           {isHost ? <HostView /> : <ParticipantView />}
         </div>
       </div>

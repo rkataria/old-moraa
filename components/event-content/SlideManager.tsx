@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-import { Fragment, useContext, useEffect, useMemo, useState } from 'react'
+import { Fragment, useContext, useMemo, useState } from 'react'
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
@@ -54,21 +54,15 @@ export function SlideManager() {
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
 
-  useEffect(() => {
-    setRightSidebarVisible(false)
-  }, [currentSlide?.id])
+  // useEffect(() => {
+  //   setRightSidebarVisible(false)
+  // }, [currentSlide?.id])
 
   const getSettingsEnabled = () => {
     if (!currentSlide) return false
     if (!isOwner) return false
 
-    return [
-      ContentType.POLL,
-      ContentType.COVER,
-      ContentType.REFLECTION,
-      ContentType.TEXT_IMAGE,
-      ContentType.MORAA_BOARD,
-    ].includes(currentSlide.type)
+    return true
   }
 
   const settingsEnabled = getSettingsEnabled()
@@ -82,6 +76,10 @@ export function SlideManager() {
       config: {
         textColor: '#000',
         allowVoteOnMultipleOptions: false,
+        showTitle: true,
+        showDescription: [ContentType.COVER, ContentType.TEXT_IMAGE].includes(
+          contentType
+        ),
       },
       // TODO: Fix any
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

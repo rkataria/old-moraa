@@ -22,17 +22,21 @@ export function ImageLeft({
   handlePanelLayoutChange,
   imageRef,
   fileUploaderOpen,
+  editingBlock,
   setFileUploaderOpen,
   handleFileUpload,
+  setEditingBlock,
   onBlockChange,
 }: {
   imageRef: RefObject<HTMLImageElement>
 
   slide: ISlide
   fileUploaderOpen: boolean
-
+  editingBlock: string | null
   panelGroupRef: React.RefObject<ImperativePanelGroupHandle>
+
   handlePanelLayoutChange: (sizes: number[]) => void
+  setEditingBlock: (id: string) => void
   onBlockChange: (block: TextBlock) => void
 
   handleFileUpload: (
@@ -47,6 +51,10 @@ export function ImageLeft({
 
   const textBlock = blocks.find(
     (block) => block.type === 'paragraph'
+  ) as TextBlock
+
+  const headerBlock = blocks.find(
+    (block) => block.type === 'header'
   ) as TextBlock
 
   const imageBlocks = blocks.find(
@@ -75,12 +83,27 @@ export function ImageLeft({
         <PanelResizeHandle className="opacity-50 bg-gray-800 w-2 h-12 rounded-full relative z-10 -right-1 top-1/2 -translate-y-1/2 cursor-col-resize group-hover:opacity-100 transition-opacity duration-500" />
 
         <Panel minSize={30}>
-          <div className="flex justify-center items-center h-full w-full">
-            <TextBlockEditor
-              stickyToolbar
-              block={textBlock}
-              onChange={onBlockChange}
-            />
+          <div className="flex flex-col h-full">
+            <div onClick={() => setEditingBlock(headerBlock.id)}>
+              {slide.config.showTitle && (
+                <TextBlockEditor
+                  stickyToolbar
+                  block={headerBlock}
+                  editable={editingBlock === headerBlock.id}
+                  onChange={onBlockChange}
+                />
+              )}
+            </div>
+            {slide.config.showDescription && (
+              <div onClick={() => setEditingBlock(textBlock.id)}>
+                <TextBlockEditor
+                  stickyToolbar
+                  block={textBlock}
+                  editable={editingBlock === textBlock.id}
+                  onChange={onBlockChange}
+                />
+              </div>
+            )}
           </div>
         </Panel>
       </PanelGroup>

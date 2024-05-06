@@ -1,6 +1,10 @@
-import { useContext } from 'react'
+import { ChangeEvent, useContext } from 'react'
 
 import { TwitterPicker } from 'react-color'
+
+import { Checkbox } from '@nextui-org/react'
+
+import { ContentType } from './ContentTypePicker'
 
 import { SLIDE_BG_COLOR_PALETTE } from '@/constants/common'
 import { EventContext } from '@/contexts/EventContext'
@@ -10,6 +14,7 @@ export function CommonSlideSettings() {
   const { updateSlide, currentSlide } = useContext(
     EventContext
   ) as EventContextType
+  if (!currentSlide) return null
 
   const updateSlideColors = (color: string, colorKey: string) => {
     if (!currentSlide) return
@@ -27,7 +32,23 @@ export function CommonSlideSettings() {
     })
   }
 
-  if (!currentSlide) return null
+  const onToggleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!currentSlide) return
+    const changedKey = e.target.name
+    updateSlide({
+      slidePayload: {
+        config: {
+          ...currentSlide.config,
+          [changedKey]: !currentSlide.config[changedKey],
+        },
+      },
+      slideId: currentSlide.id,
+    })
+  }
+
+  const showTitleToggle = ![ContentType.REFLECTION, ContentType.POLL].includes(
+    currentSlide.type
+  )
 
   return (
     <div className="flex items-center gap-2px-4 my-4 text-xs gap-3">
@@ -50,6 +71,25 @@ export function CommonSlideSettings() {
           color={currentSlide.config.backgroundColor}
           onChange={(color) => updateSlideColors(color.hex, 'backgroundColor')}
         />
+
+        <div className="grid gap-2 w-full mt-4">
+          {showTitleToggle && (
+            <Checkbox
+              name="showTitle"
+              size="sm"
+              isSelected={currentSlide.config.showTitle}
+              onChange={onToggleChange}>
+              Title
+            </Checkbox>
+          )}
+          <Checkbox
+            name="showDescription"
+            size="sm"
+            isSelected={currentSlide.config.showDescription}
+            onChange={onToggleChange}>
+            Description
+          </Checkbox>
+        </div>
       </div>
     </div>
   )

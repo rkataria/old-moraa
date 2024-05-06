@@ -144,7 +144,7 @@ interface PollProps {
 }
 
 export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
-  const { options, question } = slide.content
+  const { options } = slide.content
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const { currentUser } = useAuth()
@@ -218,19 +218,19 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
 
   return (
     <div
-      className="w-full min-h-full flex justify-center items-start"
+      className="w-full min-h-full flex justify-start items-start"
       style={{
         backgroundColor: slide.config.backgroundColor,
       }}>
       <div className="w-4/5 mt-10 rounded-md relative">
         <div className="p-4">
-          <h2
+          {/* <h2
             className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
             style={{
               color: slide.config.textColor,
             }}>
             {question}
-          </h2>
+          </h2> */}
           {showAnonymousToggle && (
             <div className="my-2 flex justify-end items-center">
               <Checkbox

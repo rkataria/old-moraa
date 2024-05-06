@@ -8,7 +8,6 @@ import { FiSend } from 'react-icons/fi'
 import { ScrollShadow, Textarea, Button } from '@nextui-org/react'
 
 import { cn } from '@/utils/utils'
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function AiChatSidebarWrapper({ contentClass, children }: any) {
   return (
@@ -23,12 +22,10 @@ function AiChatSidebarWrapper({ contentClass, children }: any) {
           className="cursor-pointer"
         /> */}
       </div>
-
       <div className={cn(contentClass)}>{children}</div>
     </div>
   )
 }
-
 export function AIChat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat()
 
@@ -52,7 +49,6 @@ export function AIChat() {
           </div>
         ))}
       </ScrollShadow>
-
       <div className="flex-none sticky bottom-0 left-0 w-full">
         <form onSubmit={handleSubmit} className="relative">
           <Textarea

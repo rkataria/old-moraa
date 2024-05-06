@@ -16,18 +16,27 @@ interface CoverProps {
 }
 
 export function Cover({ slide }: CoverProps) {
-  const paragraphTextBlock = (slide.content?.blocks as TextBlock[])?.find(
-    (block) => block.type === 'paragraph'
-  )
+  const textBlocks = slide.content.blocks.filter((block) =>
+    ['header', 'paragraph'].includes(block.type)
+  ) as TextBlock[]
 
-  if (!paragraphTextBlock) return null
+  if (textBlocks.length === 0) return null
 
   return (
     <div
       className={cn(
         'w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden relative'
       )}>
-      <RichTextView block={paragraphTextBlock} />
+      {textBlocks.map((block) => {
+        const renderHeader = slide.config.showTitle && block.type === 'header'
+
+        const renderParagraph =
+          slide.config.showDescription && block.type === 'paragraph'
+
+        if (!renderHeader && !renderParagraph) return null
+
+        return <RichTextView block={block} />
+      })}
     </div>
   )
 }

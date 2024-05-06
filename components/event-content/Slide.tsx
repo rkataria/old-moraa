@@ -17,6 +17,7 @@ import { GoogleSlidesEditor } from './GoogleSlidesEditor'
 import { MiroEmbedEditor } from './MiroEmbedEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
+import { SlideTitleDescriptionPanel } from './SlideTitleDescriptionPanel'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
 import { SlidePreview } from '../common/SlidePreview'
 
@@ -77,7 +78,8 @@ export function Slide({
       )}
       <div
         data-slide-id={slide.id}
-        className="relative w-full h-full rounded-md overflow-auto transition-all">
+        className="relative flex flex-col w-full h-full rounded-md overflow-auto transition-all">
+        <SlideTitleDescriptionPanel key={slide.id} />
         {slide.type === ContentType.POLL && (
           <PollEditor slide={slide} openSettings={false} />
         )}

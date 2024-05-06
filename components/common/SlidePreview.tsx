@@ -7,6 +7,7 @@ import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardSlide } from './content-types/MoraaBoard'
 import { PDFViewer, PDFViewerSlideType } from './content-types/PDFViewer'
 import { type TextImageSlideType } from './content-types/TextImage'
+import { SlideTitleDescriptionPreview } from './SlideTitleDescriptionPreview'
 import {
   MiroEmbedEditor,
   MiroEmbedSlideType,
@@ -47,6 +48,8 @@ export function SlidePreview({ slide }: SlideProps) {
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
       className={cn('relative group w-full h-full bg-gray-100')}>
+      <SlideTitleDescriptionPreview slide={slide as any} />
+
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto transition-all">
@@ -77,7 +80,7 @@ export function SlidePreview({ slide }: SlideProps) {
           </div>
         )}
         {slide.type === ContentType.REFLECTION && (
-          <ReflectionEditor readOnly slide={slide} />
+          <ReflectionEditor slide={slide} />
         )}
 
         {slide.type === ContentType.VIDEO_EMBED && (

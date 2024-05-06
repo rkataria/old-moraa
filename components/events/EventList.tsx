@@ -146,7 +146,6 @@ export function EventList() {
       return sortDescriptor.direction === 'descending' ? -cmp : cmp
     })
   }, [events, sortDescriptor, getCellValue])
-  console.log('sort descriptor', sortDescriptor)
 
   return (
     <div className="mt-8 flow-root">

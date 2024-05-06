@@ -9,7 +9,9 @@ import { FileBlock, ISlide, TextBlock } from '@/types/slide.type'
 export type ImageBehindProps = {
   showImage?: boolean
   slide: ISlide
+  editingBlock: string | null
   fileUploaderOpen: boolean
+  setEditingBlock: (id: string) => void
   onBlockChange: (block: TextBlock) => void
   handleFileUpload: (
     files: {
@@ -24,14 +26,20 @@ export function ImageBehind({
   showImage = true,
   slide,
   fileUploaderOpen,
+  editingBlock,
   setFileUploaderOpen,
   onBlockChange,
   handleFileUpload,
+  setEditingBlock,
 }: ImageBehindProps) {
   const blocks = slide.content?.blocks || []
 
   const textBlock = blocks.find(
     (block) => block.type === 'paragraph'
+  ) as TextBlock
+
+  const headerBlock = blocks.find(
+    (block) => block.type === 'header'
   ) as TextBlock
 
   const imageBlocks = blocks.find(
@@ -41,17 +49,35 @@ export function ImageBehind({
   return (
     <div className="relative w-full h-full pt-16">
       <div
-        className="w-full h-full flex justify-center items-center bg-center bg-cover"
+        className="w-full h-full flex flex-col justify-center items-center bg-center bg-cover"
         style={{
           backgroundImage: showImage
             ? `url(${imageBlocks?.data.file.url})`
             : undefined,
         }}>
-        <TextBlockEditor
-          stickyToolbar
-          block={textBlock}
-          onChange={onBlockChange}
-        />
+        <div className="flex flex-col h-full w-full">
+          {slide.config.showTitle && (
+            <div onClick={() => setEditingBlock(headerBlock.id)}>
+              <TextBlockEditor
+                stickyToolbar
+                block={headerBlock}
+                editable={editingBlock === headerBlock.id}
+                onChange={onBlockChange}
+              />
+            </div>
+          )}
+          {slide.config.showDescription && (
+            <div onClick={() => setEditingBlock(textBlock.id)}>
+              <TextBlockEditor
+                stickyToolbar
+                block={textBlock}
+                editable={editingBlock === textBlock.id}
+                onChange={onBlockChange}
+              />
+            </div>
+          )}
+        </div>
+
         {showImage ? (
           <div className="absolute right-2 bottom-2">
             <FileUploader
