@@ -94,7 +94,7 @@ export function ParticipantTiles({
         })}>
         {activeParticipants?.map((participant) => (
           <DyteParticipantTile
-            key={participant.id}
+            key={`${participant.id} ${sidebarVisible}`}
             meeting={meeting}
             participant={participant}
             nameTagPosition="bottom-right"
