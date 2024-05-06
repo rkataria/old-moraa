@@ -80,6 +80,10 @@ export function SlideTextBlock({
       return
     }
 
+    if (!debouncedLocalSlide?.content) {
+      return
+    }
+
     if (isEqual(debouncedLocalSlide?.content, currentSlide.content)) {
       return
     }

@@ -34,7 +34,7 @@ export function SlideManager() {
     id: eventId as string,
   })
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
-  const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
+  const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(true)
   const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(false)
 
   const { currentUser } = useAuth()

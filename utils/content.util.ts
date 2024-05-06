@@ -18,7 +18,7 @@ export const paragraphBlock = {
   id: uuidv4(),
   type: 'paragraph',
   data: {
-    html: '<p style="text-align: left">This is a description text</p>',
+    html: '',
   },
 }
 
@@ -52,14 +52,14 @@ export const getDefaultContent = (contentType: ContentType, data?: any) => {
             id: uuidv4(),
             type: 'header',
             data: {
-              html: `<h1>${data?.title || 'Title'}</h1>`,
+              html: '',
             },
           },
           {
             id: uuidv4(),
             type: 'paragraph',
             data: {
-              html: `<p>${data?.description || 'This is a description text'}</p>`,
+              html: '',
             },
           },
           {

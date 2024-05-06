@@ -16,14 +16,16 @@ interface GoogleSlidesEditorProps {
   slide: ISlide & {
     content: {
       googleSlideURL: string
-      position?: number
+      startPosition?: number
     }
   }
 }
 
 export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
   const [slideLink, setSlideLink] = useState(slide.content.googleSlideURL || '')
-  const [position, setPosition] = useState<number>(slide.content.position || 1)
+  const [position, setPosition] = useState<number>(
+    slide.content.startPosition || 1
+  )
   const [isEditMode, setIsEditMode] = useState(!slide.content.googleSlideURL)
 
   const { updateSlide } = useContext(EventContext) as EventContextType
@@ -31,7 +33,7 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
   const saveGoogleSlidesLink = () => {
     if (
       slide.content.googleSlideURL === slideLink &&
-      slide.content.position === position
+      slide.content.startPosition === position
     ) {
       return
     }

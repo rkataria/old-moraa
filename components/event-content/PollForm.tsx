@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { IconTrash } from '@tabler/icons-react'
 import { useThrottle } from '@uidotdev/usehooks'
 import clsx from 'clsx'
+import isEqual from 'lodash.isequal'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 
 import { SlideText } from './SlideText'
@@ -99,6 +100,10 @@ export function PollForm({ slide: slideFromRemote }: PollFormProps) {
   // }
 
   useEffect(() => {
+    if (isEqual(throttledOptions, slideFromRemote.content.options)) {
+      return
+    }
+
     updateSlide({
       slidePayload: {
         content: {
