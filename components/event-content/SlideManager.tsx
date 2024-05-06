@@ -111,6 +111,7 @@ export function SlideManager() {
   // }
 
   const renderRightSidebar = () => {
+    if (!isOwner) return null
     if (aiChatOverlay) {
       return <AIChat />
     }
@@ -182,7 +183,8 @@ export function SlideManager() {
         <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
           {renderSlide()}
         </div>
-        <SlideManagerRightSidebarWrapper visible={rightSidebarVisible}>
+        <SlideManagerRightSidebarWrapper
+          visible={rightSidebarVisible && isOwner}>
           {renderRightSidebar()}
         </SlideManagerRightSidebarWrapper>
       </div>
