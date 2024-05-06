@@ -17,7 +17,10 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { useParams } from 'next/navigation'
 
+import { Button } from '@nextui-org/react'
+
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
+import { NamesForm } from '../auth/NamesForm'
 
 import { Loading } from '@/components/common/Loading'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -26,7 +29,11 @@ import { useProfile } from '@/hooks/useProfile'
 import { EventSessionContextType } from '@/types/event-session.type'
 
 export function MeetingSetupScreen() {
-  const { data: profile } = useProfile()
+  const {
+    data: profile,
+    isLoading: isLoadingProfile,
+    isRequiredNames,
+  } = useProfile()
   const { eventId } = useParams()
   const { event } = useEvent({
     id: eventId as string,
@@ -41,9 +48,11 @@ export function MeetingSetupScreen() {
   const [states, setStates] = useState({})
 
   useEffect(() => {
-    const fullName = `${profile?.first_name} ${profile?.last_name}`
+    if (!profile?.first_name && !profile?.last_name) {
+      return
+    }
 
-    if (!fullName) return
+    const fullName = `${profile?.first_name} ${profile?.last_name}`
 
     setName(fullName)
   }, [profile])
@@ -71,7 +80,16 @@ export function MeetingSetupScreen() {
     joinMeeting?.()
   }
 
-  if (!event || !meeting) {
+  selfParticipant?.setName(
+    (profile?.first_name && `${profile?.first_name} ${profile?.last_name}`) ||
+      'Participant'
+  )
+
+  if (isRequiredNames) {
+    return <NamesForm />
+  }
+
+  if (!event || !meeting || isLoadingProfile) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loading />
@@ -103,17 +121,17 @@ export function MeetingSetupScreen() {
               <div className="absolute top-2 left-2">
                 <DyteNameTag meeting={meeting} participant={selfParticipant}>
                   <DyteAudioVisualizer
-                    size="lg"
+                    size="sm"
                     slot="start"
                     participant={selfParticipant}
                   />
                 </DyteNameTag>
               </div>
               <div className="absolute bottom-2 w-full flex justify-center items-center gap-2">
-                <DyteMicToggle size="lg" meeting={meeting} />
-                <DyteCameraToggle size="lg" meeting={meeting} />
+                <DyteMicToggle size="sm" meeting={meeting} />
+                <DyteCameraToggle size="sm" meeting={meeting} />
                 <DyteSettingsToggle
-                  size="lg"
+                  size="sm"
                   onClick={() => {
                     setStates({ activeSettings: true })
                   }}
@@ -145,12 +163,11 @@ export function MeetingSetupScreen() {
                 setName(e.target.value)
               }}
             />
-            <button
-              type="button"
-              className="mt-2 outline-none p-2 rounded font-normal border-2 border-purple-500 bg-purple-500 text-white"
+            <Button
+              className="bg-black text-white mt-2"
               onClick={handleJoinMeeting}>
               Join Meeting
-            </button>
+            </Button>
           </div>
         </div>
       </div>
