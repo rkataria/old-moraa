@@ -52,7 +52,7 @@ export function BlockEditorControls({
   return (
     <div
       className={cn(
-        'flex justify-center items-center gap-2 bg-black p-2 rounded-md text-white transition-all duration-500 z-[1]',
+        'flex justify-center items-center gap-2 bg-[#545455] backdrop-blur-sm p-2 rounded-md text-white transition-all duration-500 z-[1]',
         {
           'absolute top-0 left-1/2 -translate-x-1/2': sticky,
         }
@@ -125,7 +125,7 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="py-3 bg-black w-56">
+        <PopoverContent className="py-3 bg-[#2c3227] w-56">
           {() => (
             <div className="flex flex-col gap-2 w-full">
               <ControlButton
