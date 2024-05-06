@@ -8,12 +8,10 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { useDebounce } from '@uidotdev/usehooks'
 
-import { ContentType } from '@/components/common/ContentTypePicker'
 import { TextBlockEditor } from '@/components/event-content/TextBlockEditor'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide, RichTextBlock, TextBlock } from '@/types/slide.type'
-import { getDefaultContent } from '@/utils/content.util'
+import { ISlide, TextBlock } from '@/types/slide.type'
 import { cn } from '@/utils/utils'
 
 type CoverSlide = ISlide
@@ -21,6 +19,7 @@ type CoverSlide = ISlide
 export function CoverEditor() {
   const [localSlide, setLocalSlide] = useState<CoverSlide | null>(null)
   const debouncedLocalSlide = useDebounce(localSlide, 500)
+  const [editingBlock, setEditingBlock] = useState<string | null>(null)
 
   const { currentSlide, updateSlide } = useContext(
     EventContext
@@ -60,35 +59,55 @@ export function CoverEditor() {
     return null
   }
 
-  const textBlock =
-    (localSlide.content?.blocks as TextBlock[])?.find((block) =>
-      ['paragraph'].includes(block.type)
-    ) || (getDefaultContent(ContentType.COVER).blocks?.[0] as RichTextBlock)
+  const textBlocks: TextBlock[] = (
+    localSlide.content?.blocks as TextBlock[]
+  )?.filter((block) => ['header', 'paragraph'].includes(block.type))
 
   return (
     <div
       className={cn(
         'w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden relative pt-16'
       )}>
-      <TextBlockEditor
-        stickyToolbar
-        block={textBlock}
-        onChange={(updatedBlock) => {
-          setLocalSlide({
-            ...localSlide,
-            content: {
-              ...localSlide.content,
-              blocks: (localSlide.content?.blocks as TextBlock[])?.map((b) => {
-                if (b.id === textBlock.id) {
-                  return updatedBlock
-                }
+      {textBlocks.map((block) => {
+        const renderHeader =
+          localSlide.config.showTitle && block.type === 'header'
 
-                return b
-              }),
-            },
-          })
-        }}
-      />
+        const renderParagraph =
+          localSlide.config.showDescription && block.type === 'paragraph'
+
+        if (!renderHeader && !renderParagraph) return null
+
+        return (
+          <div
+            onClick={() => setEditingBlock(block.id)}
+            id={`block-editor-${block.id}`}
+            className="w-full">
+            <TextBlockEditor
+              stickyToolbar
+              key={block.id}
+              block={block}
+              editable={editingBlock === block.id}
+              onChange={(updatedBlock) => {
+                setLocalSlide({
+                  ...localSlide,
+                  content: {
+                    ...localSlide.content,
+                    blocks: (localSlide.content?.blocks as TextBlock[])?.map(
+                      (b) => {
+                        if (b.id === block.id) {
+                          return updatedBlock
+                        }
+
+                        return b
+                      }
+                    ),
+                  },
+                })
+              }}
+            />
+          </div>
+        )
+      })}
     </div>
   )
 }

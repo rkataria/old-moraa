@@ -1,11 +1,9 @@
 'use client'
 
-import React, { useContext, useEffect, useState } from 'react'
+import React from 'react'
 
 import { useQuery } from '@tanstack/react-query'
-import { useThrottle } from '@uidotdev/usehooks'
 import uniqBy from 'lodash.uniqby'
-import TextareaAutosize from 'react-textarea-autosize'
 
 import {
   Avatar,
@@ -17,10 +15,7 @@ import {
   Skeleton,
 } from '@nextui-org/react'
 
-import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
-import { EventContext } from '@/contexts/EventContext'
 import { ReflectionService } from '@/services/reflection.service'
-import { EventContextType } from '@/types/event-context.type'
 import { SlideReaction } from '@/types/event-session.type'
 import { ISlide } from '@/types/slide.type'
 import { cn, getAvatarForName } from '@/utils/utils'
@@ -175,17 +170,9 @@ function Responses({
 
 interface ReflectionEditorProps {
   slide: ISlide
-  readOnly?: boolean
 }
 
-export function ReflectionEditor({
-  slide,
-  readOnly = false,
-}: ReflectionEditorProps) {
-  const [title, setTitle] = useState(slide.content?.title)
-  const throttledTitle = useThrottle(title, 500)
-  const { preview, updateSlide } = useContext(EventContext) as EventContextType
-
+export function ReflectionEditor({ slide }: ReflectionEditorProps) {
   const reflectionResponseQuery = useQuery({
     queryKey: ['slide-response-reflection', slide.id],
     queryFn: () => ReflectionService.getResponses(slide.id),
@@ -194,37 +181,8 @@ export function ReflectionEditor({
   })
   const responses = reflectionResponseQuery?.data?.responses || []
 
-  const disabled = preview || readOnly
-
-  useEffect(() => {
-    if (disabled) return
-    updateSlide({
-      slidePayload: {
-        content: {
-          ...slide.content,
-          title: throttledTitle,
-        },
-      },
-      slideId: slide.id,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [throttledTitle])
-
-  const updateTitle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (disabled) return
-    setTitle(e.target.value)
-  }
-
   return (
-    <div className="w-full h-full flex flex-col items-center px-8">
-      <TextareaAutosize
-        placeholder="Title"
-        disabled={disabled}
-        defaultValue={slide.content?.title}
-        maxLength={TITLE_CHARACTER_LIMIT}
-        onChange={updateTitle}
-        className="w-full p-2 text-justify border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold text-gray-800 resize-none"
-      />
+    <div className="w-full h-full flex flex-col items-center">
       <div className="w-full mt-10 grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
         <Responses
           isLoading={reflectionResponseQuery.isLoading}

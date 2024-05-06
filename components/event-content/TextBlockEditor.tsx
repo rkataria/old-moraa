@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
+import Document from '@tiptap/extension-document'
 import { Image } from '@tiptap/extension-image'
 import { Link } from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -32,6 +33,10 @@ import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { TextBlock } from '@/types/slide.type'
 import { cn } from '@/utils/utils'
 
+const CustomDocument = Document.extend({
+  content: 'heading block*',
+})
+
 const getExtensions = (type: string) => {
   switch (type) {
     case 'richtext':
@@ -46,7 +51,7 @@ const getExtensions = (type: string) => {
         Placeholder.configure({
           placeholder: 'Start writing…',
           emptyEditorClass:
-            'text-gray-500 float-left before:content-[attr(data-placeholder)]',
+            'text-gray-500 float-center before:content-[attr(data-placeholder)]',
         }),
         Image.configure({
           HTMLAttributes: {
@@ -77,7 +82,29 @@ const getExtensions = (type: string) => {
         TableHeader.configure({}),
         TableCell.configure({}),
       ]
-      break
+
+    case 'header':
+      return [
+        CustomDocument,
+        Color,
+        TextStyle,
+        Underline,
+        StarterKit.configure({
+          document: false,
+        }),
+        TextAlign.configure({
+          types: ['heading'],
+        }),
+        CharacterCount.configure({
+          limit: TITLE_CHARACTER_LIMIT,
+        }),
+        Placeholder.configure({
+          placeholder: "What's the title?",
+          emptyEditorClass:
+            'text-gray-500 text-left before:content-[attr(data-placeholder)]',
+        }),
+      ]
+
     default:
       return [
         StarterKit,
@@ -90,18 +117,25 @@ const getExtensions = (type: string) => {
         CharacterCount.configure({
           limit: type === 'header' ? TITLE_CHARACTER_LIMIT : null,
         }),
+        Placeholder.configure({
+          placeholder: 'Can you add some further context?',
+          emptyEditorClass:
+            'text-gray-500 text-left before:content-[attr(data-placeholder)]',
+        }),
       ]
   }
 }
 
 export function TextBlockEditor({
   block,
+  editable = true,
   autohideToolbar = true,
   stickyToolbar = false,
   fillAvailableHeight = false,
   onChange,
 }: {
   block: TextBlock
+  editable?: boolean
   autohideToolbar?: boolean
   stickyToolbar?: boolean
   fillAvailableHeight?: boolean
@@ -137,6 +171,10 @@ export function TextBlockEditor({
       return null
     }
 
+    if (!editable) {
+      return null
+    }
+
     return (
       <BlockEditorControls
         editor={editor}
@@ -158,7 +196,7 @@ export function TextBlockEditor({
         })}>
         {/* floating controls */}
         <InlineTableControls editor={editor} />
-        {/* // bubble menu controls */}
+        {/* // bubble menu controls  */}
         <InlineToolbarControls editor={editor} />
 
         <EditorContent

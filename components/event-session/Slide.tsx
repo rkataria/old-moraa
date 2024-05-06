@@ -10,13 +10,14 @@ import { Reflection } from './content-types/Reflection'
 import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { MoraaBoard } from '../common/content-types/MoraaBoard'
+import { SlideTitleDescriptionPreview } from '../common/SlideTitleDescriptionPreview'
 
 import { Cover } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
-import { TextImage } from '@/components/common/content-types/TextImage'
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { TextImage } from '@/components/event-session/content-types/TextImage'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -66,7 +67,7 @@ export function Slide() {
       <Poll
         key={currentSlide.id}
         slide={currentSlide as any}
-        votes={currentSlideResponses as Vote[]}
+        votes={(currentSlideResponses as Vote[]) || undefined}
         isOwner={isHost}
         voted={checkVoted(currentSlideResponses, currentUser)}
       />
@@ -104,5 +105,10 @@ export function Slide() {
 
   const renderer = renderersByContentType[currentSlide.type]
 
-  return renderer
+  return (
+    <>
+      <SlideTitleDescriptionPreview slide={currentSlide as any} />
+      {renderer}
+    </>
+  )
 }

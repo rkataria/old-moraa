@@ -38,6 +38,10 @@ export function TextImage({ slide }: TextImageProps) {
     (block) => block.type === 'paragraph'
   ) as TextBlock
 
+  const headerBlock = blocks.find(
+    (block) => block.type === 'header'
+  ) as TextBlock
+
   const imageBlock = blocks.find(
     (block: Block) => block.type === 'image'
   ) as ImageBlock
@@ -47,7 +51,10 @@ export function TextImage({ slide }: TextImageProps) {
       <div
         className="tiptap ProseMirror w-full h-full flex justify-center items-center !p-0"
         style={{ backgroundColor: slide.config.backgroundColor }}>
-        <RichTextView block={textBlock} />
+        <div className="flex flex-col w-full h-full">
+          {slide.config.showTitle && <RichTextView block={headerBlock} />}
+          {slide.config.showDescription && <RichTextView block={textBlock} />}
+        </div>
       </div>
     )
   }
@@ -57,7 +64,10 @@ export function TextImage({ slide }: TextImageProps) {
       <div
         className="tiptap ProseMirror w-full h-full flex justify-center items-center bg-center bg-cover !p-0"
         style={{ backgroundImage: `url(${imageBlock.data.file.url})` }}>
-        <RichTextView block={textBlock} />
+        <div className="flex flex-col w-full h-full">
+          {slide.config.showTitle && <RichTextView block={headerBlock} />}
+          {slide.config.showDescription && <RichTextView block={textBlock} />}
+        </div>
       </div>
     )
   }
@@ -72,8 +82,11 @@ export function TextImage({ slide }: TextImageProps) {
             <ImageBlockView imageBlock={imageBlock} />
           </Panel>
           <Panel minSize={30}>
-            <div className="flex justify-center items-center h-full w-full">
-              <RichTextView block={textBlock} />
+            <div className="flex flex-col h-full">
+              {slide.config.showTitle && <RichTextView block={headerBlock} />}
+              {slide.config.showDescription && (
+                <RichTextView block={textBlock} />
+              )}
             </div>
           </Panel>
         </PanelGroup>
@@ -87,8 +100,9 @@ export function TextImage({ slide }: TextImageProps) {
       className="tiptap ProseMirror w-full h-full flex justify-center items-center relative !p-0">
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>
-          <div className="flex justify-center items-center h-full w-full">
-            <RichTextView block={textBlock} />
+          <div className="flex flex-col h-full">
+            {slide.config.showTitle && <RichTextView block={headerBlock} />}
+            {slide.config.showDescription && <RichTextView block={textBlock} />}
           </div>
         </Panel>
         <Panel defaultSize={30} minSize={30} maxSize={60}>

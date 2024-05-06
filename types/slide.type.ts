@@ -105,5 +105,6 @@ export interface IReflectionSlide extends ISlide {
     backgroundColor: string
     textColor: string
     title: string
+    description?: string
   }
 }

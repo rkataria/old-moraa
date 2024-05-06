@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useState, useContext } from 'react'
 
-import { TbAppsFilled } from 'react-icons/tb'
+import { TbApps } from 'react-icons/tb'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 
@@ -12,7 +12,6 @@ import { EventSessionContextType } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 export function MoreMeetingControls() {
-  // const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [isContentVisible, setIsContentVisible] = useState(false) // Set initial state to false
   const { isHost } = useContext(EventSessionContext) as EventSessionContextType
 
@@ -38,7 +37,7 @@ export function MoreMeetingControls() {
             className={cn(
               'flex flex-col justify-center items-center gap-[5px] w-14 h-10 rounded-sm hover:bg-[#1E1E1E] text-white'
             )}>
-            <TbAppsFilled className="text-2xl text-white" />
+            <TbApps className="text-2xl text-white" />
           </button>
         </PopoverTrigger>
       )}
@@ -47,7 +46,6 @@ export function MoreMeetingControls() {
         className="p-1 bg-black/90 min-w-[500px] aspect-video text-white flex justify-start items-start">
         <Timer
           collapsePopoverContent={collapsePopoverContent}
-          // setIsPopoverOpen={setIsPopoverOpen}
           dismissPopover={collapsePopoverContent} // Pass dismissPopover function
         />
       </PopoverContent>

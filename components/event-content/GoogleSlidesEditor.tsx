@@ -39,6 +39,7 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
     updateSlide({
       slidePayload: {
         content: {
+          ...slide.content,
           googleSlideURL: slideLink,
           startPosition: position,
         },

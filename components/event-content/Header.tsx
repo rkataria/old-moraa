@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import { ChevronDownIcon } from 'lucide-react'
+import { ChevronDownIcon, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { MdArrowBack } from 'react-icons/md'
 
@@ -24,9 +24,11 @@ import { type EventContextType } from '@/types/event-context.type'
 
 export function Header({
   event,
+  onAiChatOverlayToggle,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   event: any
+  onAiChatOverlayToggle: () => void
 }) {
   const { isOwner, preview } = useContext(EventContext) as EventContextType
 
@@ -43,6 +45,12 @@ export function Header({
 
     return (
       <>
+        <Button
+          isIconOnly
+          onClick={onAiChatOverlayToggle}
+          className="flex justify-center items-center transition-all duration-200 cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3">
+          <Sparkles />
+        </Button>
         <EditEventButtonWithModal eventId={event.id} />
         <AddParticipantsButtonWithModal eventId={event.id} />
         {EventStatus.SCHEDULED === event?.status ? (

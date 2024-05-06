@@ -73,6 +73,7 @@ export function MiroEmbedEditor({
     updateSlide({
       slidePayload: {
         content: {
+          ...slide.content,
           boardId,
         },
       },

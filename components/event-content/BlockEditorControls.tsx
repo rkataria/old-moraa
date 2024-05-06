@@ -15,7 +15,6 @@ import {
   LuCheckSquare,
   LuCode,
   LuFileImage,
-  LuHeading,
   LuItalic,
   LuLink,
   LuList,
@@ -72,55 +71,6 @@ function HeaderBlockControls({ editor }: { editor: Editor }) {
 
   return (
     <>
-      <Popover offset={10} placement="bottom">
-        <PopoverTrigger>
-          <Button
-            size="sm"
-            isIconOnly
-            className="text-white"
-            color={editor.isActive('heading') ? 'primary' : 'default'}
-            variant={editor.isActive('heading') ? 'solid' : 'light'}>
-            <LuHeading size={18} />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="py-3 bg-black w-full">
-          {() => (
-            <div className="flex flex-col gap-2 w-full">
-              <ControlButton
-                active={editor.isActive('heading', { level: 1 })}
-                icon={<h1 className="text-3xl font-bold">Heading 1</h1>}
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 1 }).run()
-                }
-              />
-              <ControlButton
-                active={editor.isActive('heading', { level: 2 })}
-                icon={<h3 className="text-2xl font-bold">Heading 2</h3>}
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 2 }).run()
-                }
-              />
-            </div>
-          )}
-        </PopoverContent>
-      </Popover>
-      <ControlButton
-        active={editor.isActive('bold')}
-        icon={<LuBold size={18} />}
-        tooltipText="Bold"
-        onClick={() => editor.chain().focus().toggleBold().run()}
-      />
-      <ControlButton
-        active={editor.isActive('italic')}
-        icon={<LuItalic size={18} />}
-        tooltipText="Italic"
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-      />
-      <ColorPicker
-        active={editor.isActive('color')}
-        color={editor.getAttributes('textStyle').color}
-        onChange={handleColorChange}
-      />
       <ControlButton
         active={editor.isActive({ textAlign: 'left' })}
         icon={<LuAlignLeft size={18} />}
@@ -138,6 +88,11 @@ function HeaderBlockControls({ editor }: { editor: Editor }) {
         icon={<LuAlignRight size={18} />}
         tooltipText="Align right"
         onClick={() => editor.chain().focus().setTextAlign('right').run()}
+      />
+      <ColorPicker
+        active={editor.isActive('color')}
+        color={editor.getAttributes('textStyle').color}
+        onChange={handleColorChange}
       />
     </>
   )
@@ -173,6 +128,20 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         <PopoverContent className="py-3 bg-black w-56">
           {() => (
             <div className="flex flex-col gap-2 w-full">
+              <ControlButton
+                active={editor.isActive('heading', { level: 1 })}
+                icon={<h1 className="text-3xl font-bold">Heading 1</h1>}
+                onClick={() =>
+                  editor.chain().focus().toggleHeading({ level: 1 }).run()
+                }
+              />
+              <ControlButton
+                active={editor.isActive('heading', { level: 2 })}
+                icon={<h3 className="text-2xl font-bold">Heading 2</h3>}
+                onClick={() =>
+                  editor.chain().focus().toggleHeading({ level: 2 }).run()
+                }
+              />
               <ControlButton
                 active={editor.isActive('heading', { level: 3 })}
                 icon={<h3 className="text-xl font-bold">Heading</h3>}

@@ -35,6 +35,7 @@ export function VideoEmbedEditor({
     updateSlide({
       slidePayload: {
         content: {
+          ...slide.content,
           videoUrl,
         },
       },
