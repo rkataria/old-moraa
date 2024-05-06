@@ -223,18 +223,25 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
           <div className="p-4 flex items-center">
             <div className="flex justify-between items-center">
               {/* Inside the Button component for decreasing timer duration */}
-              <Button
-                isIconOnly
-                radius="full"
-                disabled={!isHost}
-                onClick={() => {
-                  if (remainingDuration > 15) {
-                    setRemainingDurationAndUpdate(remainingDuration - 15) // Update duration and broadcast the change
-                  }
-                }}
-                className={!isHost ? 'cursor-not-allowed' : ''}>
-                <MdRemove />
-              </Button>
+              {!isHost && (
+                <h2 className="m-1 font-normal px-1 text-gray-600">
+                  <span className="text-lg inline-block text-center w-[full]">
+                    Time Left
+                  </span>
+                </h2>
+              )}
+              {isHost && (
+                <Button
+                  isIconOnly
+                  radius="full"
+                  onClick={() => {
+                    if (remainingDuration > 15) {
+                      setRemainingDurationAndUpdate(remainingDuration - 15) // Update duration and broadcast the change
+                    }
+                  }}>
+                  <MdRemove />
+                </Button>
+              )}
               <h2 className="m-2 text-md font-extrabold px-2 text-gray-600">
                 <span className="text-4xl inline-block text-center w-[48px]">
                   {zeroPad(Math.floor(remainingDuration / 60), 2)}
@@ -245,47 +252,48 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
                 </span>
               </h2>
               {/* Inside the Button component for increasing timer duration */}
-              <Button
-                isIconOnly
-                radius="full"
-                disabled={!isHost}
-                onClick={() => {
-                  setRemainingDurationAndUpdate(remainingDuration + 15) // Update duration and broadcast the change
-                }}
-                className={!isHost ? 'cursor-not-allowed' : ''}>
-                <MdAdd />
-              </Button>
+              {isHost && (
+                <Button
+                  isIconOnly
+                  radius="full"
+                  onClick={() => {
+                    setRemainingDurationAndUpdate(remainingDuration + 15) // Update duration and broadcast the change
+                  }}
+                  className={!isHost ? 'cursor-not-allowed' : ''}>
+                  <MdAdd />
+                </Button>
+              )}
             </div>
           </div>
-          <div className="flex items-center">
-            <Button
-              isIconOnly
-              size="sm"
-              radius="full"
-              color="secondary"
-              className={!isHost ? 'cursor-not-allowed mr-4' : 'mr-4'}
-              disabled={!isHost}
-              onClick={() => {
-                setIsTimerRunning(false)
-                setRemainingDuration(5 * 60)
-              }}>
-              <MdOutlineReplay size={18} fill="gray" />
-            </Button>
-            <Button
-              isIconOnly
-              size="lg"
-              radius="full"
-              color="primary"
-              onClick={handleTimerToggle}
-              className={!isHost ? 'cursor-not-allowed ml-4' : 'ml-4'}
-              disabled={!isHost}>
-              {!isTimerRunning ? (
-                <MdOutlinePlayArrow size={32} fill="white" />
-              ) : (
-                <MdOutlinePause size="{32}" fill="white" />
-              )}
-            </Button>
-          </div>
+          {isHost && (
+            <div className="flex items-center">
+              <Button
+                isIconOnly
+                size="sm"
+                radius="full"
+                color="secondary"
+                className="mr-4"
+                onClick={() => {
+                  setIsTimerRunning(false)
+                  setRemainingDuration(5 * 60)
+                }}>
+                <MdOutlineReplay size={18} fill="gray" />
+              </Button>
+              <Button
+                isIconOnly
+                size="lg"
+                radius="full"
+                color="primary"
+                onClick={handleTimerToggle}
+                className="ml-4">
+                {!isTimerRunning ? (
+                  <MdOutlinePlayArrow size={32} fill="white" />
+                ) : (
+                  <MdOutlinePause size="{32}" fill="white" />
+                )}
+              </Button>
+            </div>
+          )}
         </PopoverContent>
       </Popover>
     </Draggable>
