@@ -215,34 +215,53 @@ function SlideThumbnailView({
       ref={myRef}
       data-minislide-id={slide.id}
       key={`mini-slide-${slide.id}`}
-      className={cn('flex justify-start items-center gap-2 w-full bg-white', {
-        'cursor-grab': isOwner && eventMode === 'edit' && !preview,
-        'cursor-pointer': isOwner && eventMode === 'present' && !preview,
-      })}
+      className={cn(
+        'flex justify-start items-center gap-2 w-full bg-white border-1 rounded-md overflow-hidden ',
+        {
+          'cursor-grab': isOwner && eventMode === 'edit' && !preview,
+          'cursor-pointer': isOwner && eventMode === 'present' && !preview,
+          'drop-shadow-md border-black': currentSlide?.id === slide.id,
+          'drop-shadow-none border-black/20': currentSlide?.id !== slide.id,
+          'group/card': eventMode === 'edit',
+        }
+      )}
       {...(isDraggable({ eventMode, isOwner }) && draggableProps)}>
-      <div
-        onClick={onChangeSlide}
-        className={cn(
-          'relative rounded-md w-full aspect-video transition-all border-2 group overflow-hidden',
-          currentSlide?.id === slide.id
-            ? 'drop-shadow-md border-black'
-            : 'drop-shadow-none border-black/20',
-          isDragging && '!bg-primary/20'
-        )}>
-        {renderSlideThumbnail()}
-        <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center">
-          {index + 1}
-        </div>
-        {contentType && (
-          <div className="flex-none absolute right-2 top-2 p-1 bg-black/20 rounded-full flex justify-center items-center">
-            <Tooltip content={contentType.name}>
-              <div className={cn('text-white flex-none w-3 h-3')}>
-                {contentType.icon}
-              </div>
-            </Tooltip>
+      <div className={cn('w-full  ')}>
+        <div
+          onClick={onChangeSlide}
+          className={cn(
+            'relative w-full aspect-video transition-all group overflow-hidden',
+
+            isDragging && '!bg-primary/20'
+          )}>
+          {renderSlideThumbnail()}
+          <div className="flex justify-end bg-[rgba(0,0,0,0.6)] absolute w-full h-full group-hover/card:opacity-100 opacity-0 duration-300">
+            {!preview && isOwner && eventMode === 'edit' && (
+              <SlideActions
+                triggerIcon={
+                  <div className="cursor-pointer h-fit w-fit bg-black/20 rounded m-3">
+                    <IconDots className="text-lg text-white px-1" />
+                  </div>
+                }
+                handleActions={(action) => handleActions(action, slide)}
+              />
+            )}
           </div>
-        )}
-        <div className="absolute left-0 px-2 bottom-1 flex items-center justify-between w-full">
+
+          <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center group-hover/card:hidden">
+            {index + 1}
+          </div>
+          {contentType && (
+            <div className="flex-none absolute right-2 top-2 p-1 bg-black/20 rounded-full flex justify-center items-center group-hover/card:hidden">
+              <Tooltip content={contentType.name}>
+                <div className={cn('text-white flex-none w-3 h-3')}>
+                  {contentType.icon}
+                </div>
+              </Tooltip>
+            </div>
+          )}
+        </div>
+        <div className="p-2 bg-white flex items-center justify-between w-full">
           <div className="shrink w-full">
             <EditableLabel
               readOnly={actionDisabled}
@@ -258,18 +277,9 @@ function SlideThumbnailView({
               }}
             />
           </div>
-          {!preview && isOwner && eventMode === 'edit' && (
-            <SlideActions
-              triggerIcon={
-                <div className="cursor-pointer h-full w-fit bg-black/20 rounded hidden group-hover:block">
-                  <IconDots className="h-5 w-5 text-white px-1" />
-                </div>
-              }
-              handleActions={(action) => handleActions(action, slide)}
-            />
-          )}
         </div>
       </div>
+
       <DeleteSlideModal
         isModalOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
