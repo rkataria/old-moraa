@@ -1,0 +1,40 @@
+import { useState } from 'react'
+
+import { DyteDialogManager } from '@dytesdk/react-ui-kit'
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { IoCall } from 'react-icons/io5'
+
+import { ControlButton } from '../common/ControlButton'
+
+import { cn } from '@/utils/utils'
+
+export function LeaveMeetingToggle() {
+  const { meeting } = useDyteMeeting()
+  const [states, setStates] = useState({})
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-explicit-any
+  const setState = (s: any) => setStates((states: any) => ({ ...states, ...s }))
+
+  return (
+    <>
+      <ControlButton
+        buttonProps={{
+          isIconOnly: true,
+          radius: 'full',
+          variant: 'flat',
+          className: cn('transition-all duration-300 bg-red-500 text-white'),
+        }}
+        tooltipProps={{
+          content: 'Leave meeting',
+        }}
+        onClick={() => setState({ activeLeaveConfirmation: true })}>
+        <IoCall size={16} />
+      </ControlButton>
+      <DyteDialogManager
+        meeting={meeting}
+        states={states}
+        onDyteStateUpdate={(e) => setState(e.detail)}
+      />
+    </>
+  )
+}

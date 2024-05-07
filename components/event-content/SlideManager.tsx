@@ -13,7 +13,6 @@ import { AIChat } from '../common/AIChat'
 import { Loading } from '../common/Loading'
 import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
-import { FlyingEmojisOverlay } from '../event-session/FlyingEmojisOverlay'
 
 import {
   ContentTypePicker,
@@ -212,7 +211,6 @@ export function SlideManagerLayoutRoot({
         backgroundColor: 'var(--slide-bg-color)',
       }}>
       {children}
-      <FlyingEmojisOverlay />
     </div>
   )
 }
