@@ -13,7 +13,6 @@ import { AIChat } from '../common/AIChat'
 import { Loading } from '../common/Loading'
 import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
-import { FlyingEmojisOverlay } from '../event-session/FlyingEmojisOverlay'
 
 import {
   ContentTypePicker,
@@ -34,7 +33,7 @@ export function SlideManager() {
     id: eventId as string,
   })
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
-  const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(false)
+  const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(true)
   const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(false)
 
   const { currentUser } = useAuth()
@@ -111,6 +110,7 @@ export function SlideManager() {
   // }
 
   const renderRightSidebar = () => {
+    if (!isOwner) return null
     if (aiChatOverlay) {
       return <AIChat />
     }
@@ -182,7 +182,8 @@ export function SlideManager() {
         <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
           {renderSlide()}
         </div>
-        <SlideManagerRightSidebarWrapper visible={rightSidebarVisible}>
+        <SlideManagerRightSidebarWrapper
+          visible={rightSidebarVisible && isOwner}>
           {renderRightSidebar()}
         </SlideManagerRightSidebarWrapper>
       </div>
@@ -210,7 +211,6 @@ export function SlideManagerLayoutRoot({
         backgroundColor: 'var(--slide-bg-color)',
       }}>
       {children}
-      <FlyingEmojisOverlay />
     </div>
   )
 }

@@ -117,7 +117,7 @@
     "react-multi-email": "^1.0.21",
     "react-pdf": "^7.7.0",
     "react-player": "^2.14.1",
-    "react-resizable-panels": "^2.0.12",
+    "react-resizable-panels": "2.0.12",
     "react-textarea-autosize": "^8.5.3",
     "supabase": "^1.148.6",
     "sweetalert2": "^11.9.0",

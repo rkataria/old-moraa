@@ -67,7 +67,7 @@ export function MeetingRightSidebarWrapper({
   return (
     <div
       className={cn(
-        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white',
+        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white border-l-2 border-gray-200',
         {
           'w-72': visible,
           'w-0': !visible,

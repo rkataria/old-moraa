@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from 'react'
 
-import { useThrottle } from '@uidotdev/usehooks'
+import { useDebounce } from '@uidotdev/usehooks'
+import isEqual from 'lodash.isequal'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import { ContentType } from '../common/ContentTypePicker'
@@ -41,7 +42,7 @@ export function SlideText({
   const [updatedText, setUpdatedText] = useState<string | undefined>(
     currentSlide?.content?.[changedKey] as string
   )
-  const throttledText = useThrottle(updatedText, 500)
+  const debouncedText = useDebounce(updatedText, 500)
   const [successiveEnterPressCount, setSuccessiveEnterPressCount] = useState(0)
 
   const updateText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -69,17 +70,22 @@ export function SlideText({
 
   useEffect(() => {
     if (!currentSlide) return
+
+    if (isEqual(debouncedText, currentSlide?.content?.[changedKey])) {
+      return
+    }
+
     updateSlide({
       slidePayload: {
         content: {
           ...currentSlide.content,
-          [changedKey]: throttledText,
+          [changedKey]: debouncedText,
         },
       },
       slideId: currentSlide.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [throttledText])
+  }, [debouncedText])
 
   if (!currentSlide?.config.showTitle && type === 'header') {
     return null

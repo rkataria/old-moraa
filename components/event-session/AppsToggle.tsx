@@ -1,17 +1,19 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useState, useContext } from 'react'
+
+import { useContext, useState } from 'react'
 
 import { TbApps } from 'react-icons/tb'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 
 import { Timer } from './Timer'
+import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
-export function MoreMeetingControls() {
+export function AppsToggle() {
   const [isContentVisible, setIsContentVisible] = useState(false) // Set initial state to false
   const { isHost } = useContext(EventSessionContext) as EventSessionContextType
 
@@ -24,21 +26,26 @@ export function MoreMeetingControls() {
   }
 
   return (
-    <Popover placement="bottom" offset={32}>
-      {isHost && ( // Render the button only if isHost is true
+    <Popover placement="bottom" offset={15}>
+      {isHost && (
         <PopoverTrigger>
-          <button
-            type="button"
-            onClick={togglePopoverContent}
-            style={{
-              backgroundColor:
-                'var(--dyte-controlbar-button-background-color, rgb(var(--dyte-colors-background-1000, 8 8 8)))',
-            }}
-            className={cn(
-              'flex flex-col justify-center items-center gap-[5px] w-14 h-10 rounded-sm hover:bg-[#1E1E1E] text-white'
-            )}>
-            <TbApps className="text-2xl text-white" />
-          </button>
+          <div>
+            <ControlButton
+              buttonProps={{
+                isIconOnly: true,
+                radius: 'full',
+                variant: 'flat',
+                className: cn('transition-all duration-300', {
+                  'bg-black text-white': isContentVisible,
+                }),
+              }}
+              tooltipProps={{
+                content: 'Mora apps',
+              }}
+              onClick={togglePopoverContent}>
+              <TbApps size={16} />
+            </ControlButton>
+          </div>
         </PopoverTrigger>
       )}
       <PopoverContent

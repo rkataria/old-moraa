@@ -2,13 +2,15 @@ import { useContext, useEffect, useState } from 'react'
 
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { useDebounce } from '@uidotdev/usehooks'
-import { HiOutlineHandRaised } from 'react-icons/hi2'
+import { IoHandRight } from 'react-icons/io5'
+
+import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
-export function RaiseHand({ showLabel = false }: { showLabel?: boolean }) {
+export function RaiseHandToggle() {
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
   const [selfSpeaker, setSelfSpeaker] = useState('')
@@ -44,30 +46,26 @@ export function RaiseHand({ showLabel = false }: { showLabel?: boolean }) {
   if (!participant) return null
 
   return (
-    <button
-      type="button"
-      onClick={() =>
+    <ControlButton
+      buttonProps={{
+        isIconOnly: true,
+        radius: 'full',
+        variant: 'flat',
+        className: cn('transition-all duration-300', {
+          'bg-black text-white': isHandRaised,
+        }),
+      }}
+      tooltipProps={{
+        content: isHandRaised ? 'Lower hand' : 'Raise hand',
+      }}
+      onClick={() => {
         onToggleHandRaised({
           handRaise: !isHandRaised,
           participantId: selfParticipant.id,
           participantName: selfParticipant.name,
         })
-      }
-      style={{
-        backgroundColor: isHandRaised
-          ? 'white'
-          : 'var(--dyte-controlbar-button-background-color, rgb(var(--dyte-colors-background-1000, 8 8 8)))',
-      }}
-      className={cn(
-        'flex flex-col justify-center items-center gap-[5px] w-14 h-10 rounded-sm',
-        {
-          'hover:bg-[#1E1E1E] text-white': !isHandRaised,
-        }
-      )}>
-      <HiOutlineHandRaised className="text-2xl" />
-      {showLabel && (
-        <p className="text-xs">{isHandRaised ? 'Lower hand' : 'Raise Hand'}</p>
-      )}
-    </button>
+      }}>
+      <IoHandRight size={16} />
+    </ControlButton>
   )
 }
