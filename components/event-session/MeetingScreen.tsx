@@ -149,6 +149,7 @@ export function MeetingScreen() {
           <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
             <Panel
               minSize={50}
+              maxSize={100}
               defaultSize={80}
               collapsedSize={50}
               className={cn({
@@ -186,7 +187,16 @@ export function MeetingScreen() {
                     'order-2 overflow-hidden overflow-y-auto scrollbar-none':
                       !sidebarVisible,
                     'h-full w-full order-1': spotlightMode,
-                  })}>
+                  })}
+                  style={{
+                    minWidth: '200px',
+                    maxWidth: '350px',
+                    maxHeight: '350px',
+                    flexGrow: 1,
+                    flexShrink: 1,
+                    display: 'flex',
+                    flexDirection: 'row-reverse',
+                  }}>
                   <ParticipantTiles
                     spotlightMode={spotlightMode}
                     sidebarVisible={sidebarVisible}
