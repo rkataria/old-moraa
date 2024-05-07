@@ -226,7 +226,7 @@ function SlideThumbnailView({
         }
       )}
       {...(isDraggable({ eventMode, isOwner }) && draggableProps)}>
-      <div className={cn('w-full  ')}>
+      <div className="w-full">
         <div
           onClick={onChangeSlide}
           className={cn(
