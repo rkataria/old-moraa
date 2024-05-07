@@ -5,21 +5,21 @@ import { useContext, useEffect, useState } from 'react'
 import {
   DyteAudioVisualizer,
   DyteAvatar,
-  DyteCameraToggle,
   DyteDialogManager,
-  DyteMicToggle,
   DyteNameTag,
   DyteNotifications,
   DyteParticipantTile,
   DyteParticipantsAudio,
-  DyteSettingsToggle,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { useParams } from 'next/navigation'
 
 import { Button } from '@nextui-org/react'
 
+import { MediaSettingsToggle } from './MediaSettingsToggle'
+import { MicToggle } from './MicToggle'
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
+import { VideoToggle } from './VideoToggle'
 import { NamesForm } from '../auth/NamesForm'
 
 import { Loading } from '@/components/common/Loading'
@@ -128,13 +128,11 @@ export function MeetingSetupScreen() {
                 </DyteNameTag>
               </div>
               <div className="absolute bottom-2 w-full flex justify-center items-center gap-2">
-                <DyteMicToggle size="sm" meeting={meeting} />
-                <DyteCameraToggle size="sm" meeting={meeting} />
-                <DyteSettingsToggle
-                  size="sm"
-                  onClick={() => {
-                    setStates({ activeSettings: true })
-                  }}
+                <MicToggle className="bg-white" />
+                <VideoToggle className="bg-white" />
+                <MediaSettingsToggle
+                  className="bg-white"
+                  onClick={() => setStates({ activeSettings: true })}
                 />
               </div>
               <VideoBackgroundSettingsButtonWithModal

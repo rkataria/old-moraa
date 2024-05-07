@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
-import { MdOutlineEmojiEmotions } from 'react-icons/md'
+import { IoHappy } from 'react-icons/io5'
 
 import {
   Button,
@@ -9,6 +9,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@nextui-org/react'
+
+import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -26,7 +28,7 @@ const EMOJIS = [
   '-1',
 ]
 
-export function FlyingEmojis({ showLabel = false }: { showLabel?: boolean }) {
+export function ReactWithEmojiToggle() {
   const [isOpen, setIsOpen] = useState(false)
 
   const selfParticipant = useDyteSelector((m) => m.self)
@@ -37,23 +39,30 @@ export function FlyingEmojis({ showLabel = false }: { showLabel?: boolean }) {
 
   return (
     <Popover
+      offset={15}
       isOpen={isOpen}
       onOpenChange={(open) => setIsOpen(open)}
       classNames={{ content: 'p-0' }}>
       <PopoverTrigger>
-        <button
-          type="button"
-          style={{
-            backgroundColor:
-              'var(--dyte-controlbar-button-background-color, rgb(var(--dyte-colors-background-1000, 8 8 8)))',
-          }}
-          className={cn(
-            'flex flex-col justify-center items-center gap-[5px] w-14 h-10 rounded-sm hover:bg-[#1E1E1E] text-white'
-          )}>
-          <MdOutlineEmojiEmotions className="text-2xl" />
-
-          {showLabel && <p className="text-xs">Emoji</p>}
-        </button>
+        <div>
+          <ControlButton
+            buttonProps={{
+              isIconOnly: true,
+              radius: 'full',
+              variant: 'flat',
+              className: cn('transition-all duration-300', {
+                'bg-black text-white': isOpen,
+              }),
+            }}
+            tooltipProps={{
+              content: 'React with emoji',
+            }}
+            onClick={() => {
+              setIsOpen((o) => !o)
+            }}>
+            <IoHappy size={16} />
+          </ControlButton>
+        </div>
       </PopoverTrigger>
       <PopoverContent className="rounded-full overflow-hidden">
         <div className="bg-[#2C2C2C] flex items-center gap-2 py-[0.0625rem]">

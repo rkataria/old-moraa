@@ -65,7 +65,7 @@ export function ParticipantTiles({
         meeting={meeting}
         participant={selfParticipant}
         nameTagPosition="bottom-right"
-        variant="gradient"
+        // variant="gradient"
         className={cn('relative aspect-video flex-none z-[1]', {
           'w-full flex-col': !sidebarVisible,
           'h-full flex-row': sidebarVisible,

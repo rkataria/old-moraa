@@ -14,7 +14,6 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { ContentContainer } from './ContentContainer'
-import { FlyingEmojisOverlay } from './FlyingEmojisOverlay'
 import { MeetingControls } from './MeetingControls'
 import {
   MeetingLayoutRoot,
@@ -106,10 +105,6 @@ export function MeetingScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting])
 
-  const handleUpdateDyteStates = (states: DyteStates) => {
-    setDyteStates(states)
-  }
-
   const renderRightSidebar = () => {
     if (!rightSidebar) return null
 
@@ -119,7 +114,15 @@ export function MeetingScreen() {
       <DyteSidebar
         meeting={meeting}
         states={dyteStates}
-        className="rounded-none text-white"
+        className="bg-white"
+        // Bug: Applying this show only the sidebar and not the main content
+        // config={{
+        //   styles: {
+        //     'dyte-sidebar-ui': {
+        //       backgroundColor: 'white',
+        //     },
+        //   },
+        // }}
         onDyteStateUpdate={(e) => {
           setDyteStates((prevDyteStates) => ({
             ...prevDyteStates,
@@ -169,7 +172,31 @@ export function MeetingScreen() {
       </div>
       <div className="h-16 px-4 z-10 border-t-2 border-gray-200 bg-white">
         <MeetingControls
-          onUpdateDyteStates={handleUpdateDyteStates}
+          rightSidebar={rightSidebar}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onDyteStateUpdate={(data: any) => {
+            setDyteStates((prevDyteStates) => ({
+              ...prevDyteStates,
+              ...data,
+            }))
+          }}
+          onSidebarOpen={(data) => {
+            if (rightSidebar) {
+              setRightSidebar(null)
+              setDyteStates({
+                ...dyteStates,
+                [rightSidebar]: false,
+              })
+
+              return
+            }
+
+            if (['participants', 'chat', 'plugins'].includes(data.sidebar)) {
+              setDyteStates(data)
+            }
+
+            setRightSidebar(data.sidebar)
+          }}
           onAiChatOverlayToggle={() => {
             if (rightSidebar === 'aichat') {
               setRightSidebar(null)
@@ -179,11 +206,19 @@ export function MeetingScreen() {
           }}
         />
       </div>
-      <FlyingEmojisOverlay />
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
       <DyteNotifications meeting={meeting} />
-      <DyteDialogManager meeting={meeting} />
+      <DyteDialogManager
+        meeting={meeting}
+        states={dyteStates}
+        onDyteStateUpdate={(e) => {
+          setDyteStates((prevDyteStates) => ({
+            ...prevDyteStates,
+            ...e.detail,
+          }))
+        }}
+      />
     </MeetingLayoutRoot>
   )
 }

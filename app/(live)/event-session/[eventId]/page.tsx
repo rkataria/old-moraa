@@ -110,7 +110,6 @@ const useBreakoutRoom = () => {
     if (connectedMeetingsIsActive && !roomJoined) {
       // if (roomJoined) return
 
-      console.log('Joining breakout room:', dyteMeetingId)
       dyteMeeting.join()
       // setIsBreakoutLoading(() => false)
     }
@@ -301,30 +300,6 @@ function EventSessionPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enrollment?.meeting_token])
 
-  useEffect(() => {
-    if (!meetingEl.current) return
-
-    provideDyteDesignSystem(meetingEl.current, {
-      googleFont: 'Inter',
-      // sets light background colors
-      // theme: 'dark',
-      // colors: {
-      //   danger: '#ffac00',
-      //   brand: {
-      //     300: '#00FFE1',
-      //     400: '#00FFFF',
-      //     500: '#00E1D4',
-      //     600: '#007B74',
-      //     700: '#00655F',
-      //   },
-      //   text: '#071428',
-      //   'text-on-brand': '#ffffff',
-      //   'video-bg': '#E5E7EB',
-      // },
-      // borderRadius: 'sharp',
-    })
-  }, [enrollment?.meeting_token])
-
   if (!enrollment?.meeting_token) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
@@ -332,6 +307,28 @@ function EventSessionPage() {
         <Loading message="Finding your live session" />
       </div>
     )
+  }
+
+  if (meetingEl.current) {
+    provideDyteDesignSystem(meetingEl.current, {
+      googleFont: 'Inter',
+      // sets light background colors
+      theme: 'light',
+      colors: {
+        danger: '#e40909',
+        brand: {
+          300: '#b089f4',
+          400: '#9661f1',
+          500: '#7c3aed',
+          600: '#632ebe',
+          700: '#4a238e',
+        },
+        text: '#000000',
+        'text-on-brand': '#ffffff',
+        'video-bg': '#0c0618',
+      },
+      borderRadius: 'rounded',
+    })
   }
 
   // console.log('roomJoined', roomJoined)
