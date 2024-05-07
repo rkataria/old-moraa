@@ -12,6 +12,7 @@ import {
   DyteSidebar,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
 import { MeetingControls } from './MeetingControls'
@@ -133,6 +134,8 @@ export function MeetingScreen() {
     )
   }
 
+  const spotlightMode = eventSessionMode === 'Lobby'
+
   return (
     <MeetingLayoutRoot>
       <div className="flex flex-auto w-full">
@@ -142,29 +145,50 @@ export function MeetingScreen() {
           <AgendaPanel />
         </MeetingLeftSidebarWrapper>
         <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
-          <div
-            className={cn('flex-1 flex justify-start items-start h-full', {
-              'flex-row': !sidebarVisible,
-              'flex-col': sidebarVisible,
-            })}>
-            <div
-              className={cn('', {
-                'w-full h-44': sidebarVisible,
-                'h-full w-72 order-2 overflow-hidden overflow-y-auto scrollbar-none':
-                  !sidebarVisible,
-                'h-full w-full order-1': eventSessionMode === 'Lobby',
+          {/* Resizable Panel Group */}
+          <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
+            <Panel
+              minSize={50}
+              defaultSize={70}
+              collapsedSize={50}
+              className={cn({
+                hidden: spotlightMode,
               })}>
-              <ParticipantTiles
-                spotlightMode={eventSessionMode === 'Lobby'}
-                sidebarVisible={sidebarVisible}
-              />
-            </div>
-            {['Preview', 'Presentation'].includes(eventSessionMode) && (
-              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto flex-grow min-w-0 flex-shrink">
-                <ContentContainer />
+              {['Preview', 'Presentation'].includes(eventSessionMode) && (
+                <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto flex-grow min-w-0 flex-shrink">
+                  <ContentContainer />
+                </div>
+              )}
+            </Panel>
+            <PanelResizeHandle
+              className={cn('w-1.5 bg-slate-200 cursor-col-resize', {
+                hidden: spotlightMode,
+              })}
+            />
+            <Panel
+              minSize={spotlightMode ? 100 : 20}
+              collapsedSize={spotlightMode ? 100 : 20}
+              defaultSize={spotlightMode ? 100 : 20}>
+              <div
+                className={cn('flex-1 flex justify-start items-start h-full', {
+                  'flex-row': !sidebarVisible,
+                  'flex-col': sidebarVisible,
+                })}>
+                <div
+                  className={cn('w-full', {
+                    'h-44': sidebarVisible,
+                    'order-2 overflow-hidden overflow-y-auto scrollbar-none':
+                      !sidebarVisible,
+                    'h-full w-full order-1': spotlightMode,
+                  })}>
+                  <ParticipantTiles
+                    spotlightMode={spotlightMode}
+                    sidebarVisible={sidebarVisible}
+                  />
+                </div>
               </div>
-            )}
-          </div>
+            </Panel>
+          </PanelGroup>
         </div>
         <MeetingRightSidebarWrapper visible={!!rightSidebar}>
           {renderRightSidebar()}
