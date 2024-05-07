@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 
 import {
   DyteAudioVisualizer,
+  DyteAvatar,
   DyteNameTag,
   DyteParticipantTile,
   DyteSpotlightGrid,
@@ -69,6 +70,7 @@ export function ParticipantTiles({
           'w-full flex-col': !sidebarVisible,
           'h-full flex-row': sidebarVisible,
         })}>
+        <DyteAvatar size="md" participant={selfParticipant} />
         <DyteNameTag
           meeting={meeting}
           participant={selfParticipant}
@@ -92,7 +94,7 @@ export function ParticipantTiles({
         })}>
         {activeParticipants?.map((participant) => (
           <DyteParticipantTile
-            key={participant.id}
+            key={`${participant.id} ${sidebarVisible}`}
             meeting={meeting}
             participant={participant}
             nameTagPosition="bottom-right"
@@ -101,6 +103,7 @@ export function ParticipantTiles({
               'w-full h-auto': !sidebarVisible,
               'h-full': sidebarVisible,
             })}>
+            <DyteAvatar size="md" participant={participant} />
             <DyteNameTag
               meeting={meeting}
               participant={participant}
