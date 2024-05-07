@@ -221,7 +221,7 @@ function SlideThumbnailView({
           'cursor-grab': isOwner && eventMode === 'edit' && !preview,
           'cursor-pointer': isOwner && eventMode === 'present' && !preview,
           'drop-shadow-md border-2 border-black': currentSlide?.id === slide.id,
-          'drop-shadow-none border-slate-300': currentSlide?.id !== slide.id,
+          'drop-shadow-none border-slate-200': currentSlide?.id !== slide.id,
           'group/card': eventMode === 'edit',
         }
       )}
