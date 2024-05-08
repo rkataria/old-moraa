@@ -226,9 +226,8 @@ function SlideThumbnailView({
         }
       )}
       {...(isDraggable({ eventMode, isOwner }) && draggableProps)}>
-      <div className="w-full">
+      <div className="w-full" onClick={onChangeSlide}>
         <div
-          onClick={onChangeSlide}
           className={cn(
             'relative w-full aspect-video transition-all group overflow-hidden',
 
