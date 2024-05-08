@@ -235,18 +235,7 @@ function SlideThumbnailView({
             isDragging && '!bg-primary/20'
           )}>
           {renderSlideThumbnail()}
-          <div className="flex justify-end bg-[rgba(0,0,0,0.6)] absolute w-full h-full group-hover/card:opacity-100 opacity-0 duration-300">
-            {!preview && isOwner && eventMode === 'edit' && (
-              <SlideActions
-                triggerIcon={
-                  <div className="cursor-pointer h-fit w-fit bg-black/20 rounded m-3">
-                    <IconDots className="text-lg text-white px-1" />
-                  </div>
-                }
-                handleActions={(action) => handleActions(action, slide)}
-              />
-            )}
-          </div>
+          <div className="flex justify-end bg-[rgba(0,0,0,0.6)] absolute w-full h-full group-hover/card:opacity-100 opacity-0 duration-300" />
 
           <div className="flex-none absolute left-2 top-2 w-5 h-5 text-xs bg-black/20 text-white rounded-full flex justify-center items-center group-hover/card:hidden">
             {index + 1}
@@ -277,6 +266,16 @@ function SlideThumbnailView({
               }}
             />
           </div>
+          {!preview && isOwner && eventMode === 'edit' && (
+            <SlideActions
+              triggerIcon={
+                <div className="cursor-pointer h-fit w-fit bg-black/20 rounded group-hover/card:opacity-100 opacity-0">
+                  <IconDots className="text-lg text-white px-1" />
+                </div>
+              }
+              handleActions={(action) => handleActions(action, slide)}
+            />
+          )}
         </div>
       </div>
 
