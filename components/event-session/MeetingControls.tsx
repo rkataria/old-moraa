@@ -1,40 +1,44 @@
 import React, { useContext } from 'react'
 
-import {
-  DyteCameraToggle,
-  DyteChatToggle,
-  DyteClock,
-  DyteLeaveButton,
-  DyteMicToggle,
-  DyteParticipantsToggle,
-  DyteScreenShareToggle,
-  DyteSettingsToggle,
-} from '@dytesdk/react-ui-kit'
+import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { Sparkles } from 'lucide-react'
 import { useParams } from 'next/navigation'
 
-import { Button } from '@nextui-org/react'
-
-import { FlyingEmojis } from './FlyingEmojis'
+import { AiToggle } from './AiToggle'
+import { AppsToggle } from './AppsToggle'
+import { ChatsToggle } from './ChatsToggle'
+import { LeaveMeetingToggle } from './LeaveMeetingToggle'
 import { LobbyViewToggle } from './LobbyViewToggle'
-import { MoreMeetingControls } from './MoreMeetingControls'
-import { PresentationControls } from './PresentationControls'
-import { RaiseHand } from './RaiseHand'
-import { WhiteboardToggleButton } from './WhiteboardToggleButton'
+import { MediaSettingsToggle } from './MediaSettingsToggle'
+import { type RightSiderbar } from './MeetingScreen'
+import { MicToggle } from './MicToggle'
+import { ParticipantsToggle } from './ParticipantsToggle'
+import { PresentationToggle } from './PresentationToggle'
+import { RaiseHandToggle } from './RaiseHandToggle'
+import { ReactWithEmojiToggle } from './ReactWithEmojiToggle'
+import { ScreenShareToggle } from './ScreenShareToggle'
+import { VideoToggle } from './VideoToggle'
+import { WhiteBoardToggle } from './WhiteBoardToggle'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { EventSessionContextType } from '@/types/event-session.type'
 
 type MeetingControlsProps = {
+  rightSidebar: RightSiderbar | null
+  onDyteStateUpdate: (data: { [key: string]: string | boolean }) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onUpdateDyteStates: any
+  onSidebarOpen: (data: {
+    activeSidebar: boolean
+    sidebar: RightSiderbar
+  }) => void
   onAiChatOverlayToggle: () => void
 }
 
 export function MeetingControls({
-  onUpdateDyteStates,
+  rightSidebar,
+  onDyteStateUpdate,
+  onSidebarOpen,
   onAiChatOverlayToggle,
 }: MeetingControlsProps) {
   const { eventId } = useParams()
@@ -63,70 +67,50 @@ export function MeetingControls({
           <DyteClock meeting={meeting} />
         </div>
       </div>
-      <div className="flex justify-end items-center gap-2">
+      <div className="flex justify-end items-center gap-3">
         {eventSessionMode === 'Preview' && isHost && <LobbyViewToggle />}
-        <DyteMicToggle meeting={meeting} size="sm" />
-        <DyteCameraToggle meeting={meeting} size="sm" />
-        {isHost && <DyteScreenShareToggle meeting={meeting} size="sm" />}
-
-        <PresentationControls />
-        <RaiseHand />
-        <FlyingEmojis />
-        <MoreMeetingControls />
-        <DyteSettingsToggle
-          iconPack={
-            {
-              settings:
-                '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" aria-hidden="true" height="0.75em" width="0.75em" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>',
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } as any
-          }
-          size="sm"
-          onClick={() => {
-            onUpdateDyteStates({
+        {/* <DyteMicToggle meeting={meeting} size="sm" /> */}
+        <MicToggle />
+        <VideoToggle />
+        {isHost && <ScreenShareToggle />}
+        {isHost && <PresentationToggle />}
+        <RaiseHandToggle />
+        <ReactWithEmojiToggle />
+        <AppsToggle />
+        <MediaSettingsToggle
+          onClick={() =>
+            onDyteStateUpdate({
               activeSettings: true,
             })
-          }}
+          }
         />
-
-        <DyteLeaveButton
-          size="sm"
-          onClick={() => {
-            onUpdateDyteStates({
-              activeLeaveConfirmation: true,
-            })
-          }}
-        />
+        <LeaveMeetingToggle />
       </div>
 
-      <div className="flex justify-start items-center gap-2">
-        <Button
-          isIconOnly
+      <div className="flex justify-start items-center gap-3">
+        <AiToggle
+          isAiSidebarOpen={rightSidebar === 'aichat'}
           onClick={onAiChatOverlayToggle}
-          className="flex justify-center items-center transition-all duration-200 cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3">
-          <Sparkles />
-        </Button>
-        <DyteParticipantsToggle
-          size="sm"
-          meeting={meeting}
+        />
+        <ParticipantsToggle
+          isParticipantsSidebarOpen={rightSidebar === 'participants'}
           onClick={() => {
-            onUpdateDyteStates({
+            onSidebarOpen({
               activeSidebar: true,
               sidebar: 'participants',
             })
           }}
         />
-        <DyteChatToggle
-          size="sm"
-          meeting={meeting}
+        <ChatsToggle
+          isChatsSidebarOpen={rightSidebar === 'chat'}
           onClick={() => {
-            onUpdateDyteStates({
+            onSidebarOpen({
               activeSidebar: true,
               sidebar: 'chat',
             })
           }}
         />
-        {isHost && <WhiteboardToggleButton />}
+        {isHost && <WhiteBoardToggle />}
       </div>
     </div>
   )
