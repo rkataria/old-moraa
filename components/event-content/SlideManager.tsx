@@ -110,6 +110,7 @@ export function SlideManager() {
   // }
 
   const renderRightSidebar = () => {
+    if (preview) return null
     if (!isOwner) return null
     if (aiChatOverlay) {
       return <AIChat />
@@ -183,7 +184,7 @@ export function SlideManager() {
           {renderSlide()}
         </div>
         <SlideManagerRightSidebarWrapper
-          visible={rightSidebarVisible && isOwner}>
+          visible={rightSidebarVisible && isOwner && !preview}>
           {renderRightSidebar()}
         </SlideManagerRightSidebarWrapper>
       </div>
