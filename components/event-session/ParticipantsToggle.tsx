@@ -15,8 +15,8 @@ export function ParticipantsToggle({
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'full',
-        variant: 'flat',
+        radius: 'md',
+        variant: 'light',
         className: cn('transition-all duration-300', {
           'bg-black text-white': isParticipantsSidebarOpen,
         }),
@@ -27,7 +27,7 @@ export function ParticipantsToggle({
           : 'Show Participants',
       }}
       onClick={onClick}>
-      <IoPeopleSharp size={16} />
+      <IoPeopleSharp size={20} />
     </ControlButton>
   )
 }

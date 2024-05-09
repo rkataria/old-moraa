@@ -15,7 +15,7 @@ export function MediaSettingsToggle({
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'full',
+        radius: 'md',
         variant: 'flat',
         className: cn('transition-all duration-300', className),
       }}
@@ -23,7 +23,7 @@ export function MediaSettingsToggle({
         content: 'Media Setting',
       }}
       onClick={onClick}>
-      <IoEllipsisVertical size={16} />
+      <IoEllipsisVertical size={20} />
     </ControlButton>
   )
 }

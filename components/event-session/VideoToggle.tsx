@@ -13,7 +13,7 @@ export function VideoToggle({ className = '' }: { className?: string }) {
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'full',
+        radius: 'md',
         variant: 'flat',
         className: cn('transition-all duration-300', className, {
           'bg-red-500 text-white': !isVideoEnabled,
@@ -31,7 +31,7 @@ export function VideoToggle({ className = '' }: { className?: string }) {
 
         self.enableVideo()
       }}>
-      {isVideoEnabled ? <IoVideocam size={16} /> : <IoVideocamOff size={16} />}
+      {isVideoEnabled ? <IoVideocam size={20} /> : <IoVideocamOff size={20} />}
     </ControlButton>
   )
 }

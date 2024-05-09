@@ -15,8 +15,8 @@ export function AiToggle({
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'full',
-        variant: 'flat',
+        radius: 'md',
+        variant: 'light',
         className: cn('transition-all duration-300', {
           'bg-black text-white': isAiSidebarOpen,
         }),
@@ -25,7 +25,7 @@ export function AiToggle({
         content: isAiSidebarOpen ? 'Close AI Sidebar' : 'Talk AI',
       }}
       onClick={onClick}>
-      <IoSparkles size={16} />
+      <IoSparkles size={20} />
     </ControlButton>
   )
 }

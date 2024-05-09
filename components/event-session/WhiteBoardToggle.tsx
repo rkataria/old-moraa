@@ -18,8 +18,8 @@ export function WhiteBoardToggle() {
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'full',
-        variant: 'flat',
+        radius: 'md',
+        variant: 'light',
         className: cn('transition-all duration-300', {
           'bg-black text-white': isWhiteboardActive,
         }),
@@ -38,7 +38,7 @@ export function WhiteBoardToggle() {
 
         await whiteboardPlugin.activate()
       }}>
-      <IoEasel size={16} />
+      <IoEasel size={20} />
     </ControlButton>
   )
 }

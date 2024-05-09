@@ -48,7 +48,7 @@ export function ReactWithEmojiToggle() {
           <ControlButton
             buttonProps={{
               isIconOnly: true,
-              radius: 'full',
+              radius: 'md',
               variant: 'flat',
               className: cn('transition-all duration-300', {
                 'bg-black text-white': isOpen,
@@ -60,7 +60,7 @@ export function ReactWithEmojiToggle() {
             onClick={() => {
               setIsOpen((o) => !o)
             }}>
-            <IoHappy size={16} />
+            <IoHappy size={20} />
           </ControlButton>
         </div>
       </PopoverTrigger>

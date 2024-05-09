@@ -21,13 +21,17 @@ export function PresentationToggle() {
   return (
     <ControlButton
       buttonProps={{
-        isIconOnly: true,
-        radius: 'full',
+        radius: 'md',
         variant: 'flat',
         className: cn('transition-all duration-300', {
           'bg-green-500 text-white': !presentationStarted,
           'bg-red-500 text-white': presentationStarted,
         }),
+        startContent: presentationStarted ? (
+          <IoSquare size={16} />
+        ) : (
+          <IoPlay size={16} />
+        ),
       }}
       tooltipProps={{
         content: presentationStarted ? 'Stop presenting' : 'Start presenting',
@@ -41,7 +45,7 @@ export function PresentationToggle() {
 
         stopPresentation()
       }}>
-      {presentationStarted ? <IoSquare size={16} /> : <IoPlay size={16} />}
+      {presentationStarted ? 'Stop' : 'Start'}
     </ControlButton>
   )
 }

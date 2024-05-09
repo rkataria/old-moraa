@@ -71,9 +71,12 @@ export function Slide({
         <Button
           isIconOnly
           variant="light"
-          className="absolute bottom-10 right-0 z-10 pointer-events-auto bg-black text-white hover:bg-gray-900 rounded-r-none"
+          className="absolute top-12 right-0 z-10 pointer-events-auto bg-gray-900 text-white hover:bg-black rounded-r-none transition-all duration-200 ease-in-out group/slide-settings"
           onClick={() => setSettingsSidebarVisible((o) => !o)}>
-          <TbSettings size={22} />
+          <TbSettings
+            size={22}
+            className="rotate-0 group-hover/slide-settings:rotate-45 transition-all duration-200 ease-in-out"
+          />
         </Button>
       )}
       <div

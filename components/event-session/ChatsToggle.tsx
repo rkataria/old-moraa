@@ -15,8 +15,8 @@ export function ChatsToggle({
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'full',
-        variant: 'flat',
+        radius: 'md',
+        variant: 'light',
         className: cn('transition-all duration-300', {
           'bg-black text-white': isChatsSidebarOpen,
         }),
@@ -25,7 +25,7 @@ export function ChatsToggle({
         content: isChatsSidebarOpen ? 'Hide Chats' : 'Show Chats',
       }}
       onClick={onClick}>
-      <IoChatbubblesSharp size={16} />
+      <IoChatbubblesSharp size={20} />
     </ControlButton>
   )
 }

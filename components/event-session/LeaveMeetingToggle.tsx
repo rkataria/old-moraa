@@ -2,7 +2,6 @@ import { useState } from 'react'
 
 import { DyteDialogManager } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { IoCall } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -16,11 +15,10 @@ export function LeaveMeetingToggle() {
   const setState = (s: any) => setStates((states: any) => ({ ...states, ...s }))
 
   return (
-    <>
+    <div>
       <ControlButton
         buttonProps={{
-          isIconOnly: true,
-          radius: 'full',
+          radius: 'md',
           variant: 'flat',
           className: cn('transition-all duration-300 bg-red-500 text-white'),
         }}
@@ -28,13 +26,14 @@ export function LeaveMeetingToggle() {
           content: 'Leave meeting',
         }}
         onClick={() => setState({ activeLeaveConfirmation: true })}>
-        <IoCall size={16} />
+        Leave
       </ControlButton>
+
       <DyteDialogManager
         meeting={meeting}
         states={states}
         onDyteStateUpdate={(e) => setState(e.detail)}
       />
-    </>
+    </div>
   )
 }

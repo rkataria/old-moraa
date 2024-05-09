@@ -4,6 +4,8 @@ import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from 'next/navigation'
 
+import { Tooltip } from '@nextui-org/tooltip'
+
 import { AiToggle } from './AiToggle'
 import { AppsToggle } from './AppsToggle'
 import { ChatsToggle } from './ChatsToggle'
@@ -19,6 +21,7 @@ import { ReactWithEmojiToggle } from './ReactWithEmojiToggle'
 import { ScreenShareToggle } from './ScreenShareToggle'
 import { VideoToggle } from './VideoToggle'
 import { WhiteBoardToggle } from './WhiteBoardToggle'
+import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
@@ -53,30 +56,20 @@ export function MeetingControls({
   return (
     <div className="h-16 bg-transparent flex justify-between items-center">
       <div className="flex justify-end items-center gap-2">
-        {/* <Link href="/events">
-          <Button isIconOnly variant="light">
-            <MdArrowBack size={18} />
-          </Button>
-        </Link> */}
-        <div
-          className="flex flex-col justify-center items-center px-2 h-10 rounded-sm"
-          style={{
-            backgroundColor:
-              'var(--dyte-controlbar-button-background-color, rgb(var(--dyte-colors-background-1000, 8 8 8))',
-          }}>
-          <DyteClock meeting={meeting} />
-        </div>
+        <Tooltip content={event.name} closeDelay={100}>
+          <span className="pr-2 w-[175px] overflow-hidden !whitespace-nowrap text-ellipsis">
+            {event.name}
+          </span>
+        </Tooltip>
+        {isHost && <PresentationToggle />}
       </div>
       <div className="flex justify-end items-center gap-3">
         {eventSessionMode === 'Preview' && isHost && <LobbyViewToggle />}
-        {/* <DyteMicToggle meeting={meeting} size="sm" /> */}
         <MicToggle />
         <VideoToggle />
         {isHost && <ScreenShareToggle />}
-        {isHost && <PresentationToggle />}
         <RaiseHandToggle />
         <ReactWithEmojiToggle />
-        <AppsToggle />
         <MediaSettingsToggle
           onClick={() =>
             onDyteStateUpdate({
@@ -84,10 +77,10 @@ export function MeetingControls({
             })
           }
         />
-        <LeaveMeetingToggle />
+        <AppsToggle />
       </div>
 
-      <div className="flex justify-start items-center gap-3">
+      <div className="flex justify-end items-center gap-3">
         <AiToggle
           isAiSidebarOpen={rightSidebar === 'aichat'}
           onClick={onAiChatOverlayToggle}
@@ -111,6 +104,19 @@ export function MeetingControls({
           }}
         />
         {isHost && <WhiteBoardToggle />}
+        <ControlButton
+          buttonProps={{
+            variant: 'flat',
+            radius: 'full',
+            className: 'px-1',
+          }}
+          tooltipProps={{
+            content: 'Meeting time',
+          }}
+          onClick={() => {}}>
+          <DyteClock meeting={meeting} />
+        </ControlButton>
+        <LeaveMeetingToggle />
       </div>
     </div>
   )

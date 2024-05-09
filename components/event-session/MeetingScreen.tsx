@@ -3,7 +3,7 @@
 
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import {
   DyteDialogManager,
@@ -12,7 +12,6 @@ import {
   DyteSidebar,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
 import { MeetingControls } from './MeetingControls'
@@ -42,11 +41,11 @@ export type RightSiderbar = 'participants' | 'chat' | 'plugins' | 'aichat'
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
-
+  const mainContentRef = useRef<HTMLDivElement>(null)
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(false)
   const [rightSidebar, setRightSidebar] = useState<RightSiderbar | null>(null)
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
-  const { sections, preview, setCurrentSlide } = useContext(
+  const { sections, preview, currentSlide, setCurrentSlide } = useContext(
     EventContext
   ) as EventContextType
   const { isHost, eventSessionMode, presentationStatus, setEventSessionMode } =
@@ -136,81 +135,15 @@ export function MeetingScreen() {
 
   const spotlightMode = eventSessionMode === 'Lobby'
 
+  const currentSlideBgColor = currentSlide?.config?.backgroundColor || '#f3f4f6'
+
+  if (mainContentRef.current) {
+    mainContentRef.current.style.backgroundColor = currentSlideBgColor
+  }
+
   return (
     <MeetingLayoutRoot>
-      <div className="flex flex-auto w-full">
-        <MeetingLeftSidebarWrapper
-          visible={leftSidebarVisible}
-          setLeftSidebarVisible={setLeftSidebarVisible}>
-          <AgendaPanel />
-        </MeetingLeftSidebarWrapper>
-        <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
-          {/* Resizable Panel Group */}
-          <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
-            <Panel
-              minSize={50}
-              maxSize={100}
-              defaultSize={80}
-              collapsedSize={50}
-              className={cn({
-                hidden: spotlightMode,
-              })}>
-              {['Preview', 'Presentation'].includes(eventSessionMode) && (
-                <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto flex-grow min-w-0 flex-shrink">
-                  <ContentContainer />
-                </div>
-              )}
-            </Panel>
-            <PanelResizeHandle
-              className={cn('w-1.5 bg-slate-200 cursor-col-resize', {
-                hidden: spotlightMode,
-              })}
-            />
-            <Panel
-              minSize={spotlightMode ? 100 : 20}
-              collapsedSize={spotlightMode ? 100 : 20}
-              defaultSize={spotlightMode ? 100 : 20}>
-              <div
-                className={cn('flex-1 flex justify-start items-start h-full', {
-                  'flex-row': !sidebarVisible,
-                  'flex-col': sidebarVisible,
-                })}
-                style={{
-                  minWidth: '350px',
-                  flexGrow: 1,
-                  display: 'flex',
-                  flexDirection: 'row-reverse',
-                }}>
-                <div
-                  className={cn('max-w-min', {
-                    'h-44': sidebarVisible,
-                    'order-2 overflow-hidden overflow-y-auto scrollbar-none':
-                      !sidebarVisible,
-                    'h-full w-full order-1': spotlightMode,
-                  })}
-                  style={{
-                    minWidth: '200px',
-                    maxWidth: '350px',
-                    maxHeight: '350px',
-                    flexGrow: 1,
-                    flexShrink: 1,
-                    display: 'flex',
-                    flexDirection: 'row-reverse',
-                  }}>
-                  <ParticipantTiles
-                    spotlightMode={spotlightMode}
-                    sidebarVisible={sidebarVisible}
-                  />
-                </div>
-              </div>
-            </Panel>
-          </PanelGroup>
-        </div>
-        <MeetingRightSidebarWrapper visible={!!rightSidebar}>
-          {renderRightSidebar()}
-        </MeetingRightSidebarWrapper>
-      </div>
-      <div className="h-16 px-4 z-10 border-t-2 border-gray-200 bg-white">
+      <div className="h-16 px-4 z-10 border-b-2 border-gray-200 bg-white">
         <MeetingControls
           rightSidebar={rightSidebar}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -246,6 +179,44 @@ export function MeetingScreen() {
           }}
         />
       </div>
+      <div className="flex flex-auto w-full">
+        <MeetingLeftSidebarWrapper
+          visible={leftSidebarVisible}
+          setLeftSidebarVisible={setLeftSidebarVisible}>
+          <AgendaPanel />
+        </MeetingLeftSidebarWrapper>
+        <div
+          className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100"
+          ref={mainContentRef}>
+          <div
+            className={cn('flex-1 flex justify-start items-start h-full', {
+              'flex-row': !sidebarVisible,
+              'flex-col': sidebarVisible,
+            })}>
+            <div
+              className={cn('', {
+                'w-full h-44': sidebarVisible,
+                'h-full w-72 order-2 overflow-hidden overflow-y-auto scrollbar-none':
+                  !sidebarVisible,
+                'h-full w-full order-1': spotlightMode,
+              })}>
+              <ParticipantTiles
+                spotlightMode={spotlightMode}
+                sidebarVisible={sidebarVisible}
+              />
+            </div>
+            {['Preview', 'Presentation'].includes(eventSessionMode) && (
+              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto flex-grow min-w-0 flex-shrink">
+                <ContentContainer />
+              </div>
+            )}
+          </div>
+        </div>
+        <MeetingRightSidebarWrapper visible={!!rightSidebar}>
+          {renderRightSidebar()}
+        </MeetingRightSidebarWrapper>
+      </div>
+
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
       <DyteNotifications meeting={meeting} />

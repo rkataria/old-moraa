@@ -49,7 +49,7 @@ export function RaiseHandToggle() {
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'full',
+        radius: 'md',
         variant: 'flat',
         className: cn('transition-all duration-300', {
           'bg-black text-white': isHandRaised,
@@ -65,7 +65,7 @@ export function RaiseHandToggle() {
           participantName: selfParticipant.name,
         })
       }}>
-      <IoHandRight size={16} />
+      <IoHandRight size={20} />
     </ControlButton>
   )
 }

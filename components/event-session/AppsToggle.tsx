@@ -33,7 +33,7 @@ export function AppsToggle() {
             <ControlButton
               buttonProps={{
                 isIconOnly: true,
-                radius: 'full',
+                radius: 'md',
                 variant: 'flat',
                 className: cn('transition-all duration-300', {
                   'bg-black text-white': isContentVisible,
@@ -43,7 +43,7 @@ export function AppsToggle() {
                 content: 'Mora apps',
               }}
               onClick={togglePopoverContent}>
-              <TbApps size={16} />
+              <TbApps size={20} />
             </ControlButton>
           </div>
         </PopoverTrigger>

@@ -13,7 +13,7 @@ export function MicToggle({ className = '' }: { className?: string }) {
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'full',
+        radius: 'md',
         variant: 'flat',
         className: cn('transition-all duration-300', className, {
           'bg-red-500 text-white': !isMicEnabled,
@@ -31,7 +31,7 @@ export function MicToggle({ className = '' }: { className?: string }) {
 
         self.enableAudio()
       }}>
-      {isMicEnabled ? <IoMicSharp size={16} /> : <IoMicOffSharp size={16} />}
+      {isMicEnabled ? <IoMicSharp size={20} /> : <IoMicOffSharp size={20} />}
     </ControlButton>
   )
 }
