@@ -105,7 +105,7 @@ export function SlideText({
       onChange={updateText}
       onKeyDown={onTextKeyDown}
       className={cn(
-        'w-full text-justify border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0  font-bold text-gray-800 placeholder-gray-500 resize-none',
+        'w-full text-start border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 font-bold text-gray-800 placeholder-gray-500 resize-none',
         className,
         {
           'text-4xl': ['question', 'title'].includes(changedKey),

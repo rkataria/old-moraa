@@ -32,9 +32,10 @@ import { cn, getOjectPublicUrl } from '@/utils/utils'
 
 interface SlideProps {
   slide: ISlide
+  readOnly?: boolean
 }
 
-export function SlidePreview({ slide }: SlideProps) {
+export function SlidePreview({ slide, readOnly }: SlideProps) {
   useEffect(() => {
     if (!slide) return
 
@@ -71,7 +72,12 @@ export function SlidePreview({ slide }: SlideProps) {
           <PDFViewer slide={slide as PDFViewerSlideType} />
         )}
         {slide.type === ContentType.POLL && (
-          <Poll readOnly slide={slide as PollSlide} votes={[]} voted={false} />
+          <Poll
+            readOnly={readOnly}
+            slide={slide as PollSlide}
+            votes={[]}
+            voted={false}
+          />
         )}
         {slide.type === ContentType.GOOGLE_SLIDES_IMPORT && (
           <div className="w-full h-full flex justify-center items-center">
@@ -86,10 +92,16 @@ export function SlidePreview({ slide }: SlideProps) {
         )}
 
         {slide.type === ContentType.VIDEO_EMBED && (
-          <VideoEmbedEditor readOnly slide={slide as VideoEmbedSlideType} />
+          <VideoEmbedEditor
+            readOnly={readOnly}
+            slide={slide as VideoEmbedSlideType}
+          />
         )}
         {slide.type === ContentType.MIRO_EMBED && (
-          <MiroEmbedEditor readOnly slide={slide as MiroEmbedSlideType} />
+          <MiroEmbedEditor
+            readOnly={readOnly}
+            slide={slide as MiroEmbedSlideType}
+          />
         )}
         {slide.type === ContentType.RICH_TEXT && <RichText slide={slide} />}
         {slide.type === ContentType.MORAA_BOARD && (

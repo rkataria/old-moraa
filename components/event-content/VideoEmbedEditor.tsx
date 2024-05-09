@@ -50,8 +50,8 @@ export function VideoEmbedEditor({
         <div className="w-4/5 overflow-hidden rounded-md">
           <ResponsiveVideoPlayer
             url={videoUrl}
-            showControls={isOwner && !preview}
-            viewOnly={!isOwner || preview}
+            showControls={isOwner && !readOnly}
+            viewOnly={!isOwner}
           />
         </div>
       </div>

@@ -153,7 +153,7 @@ export function SlideManager() {
             setRightSidebarVisible(true)
           }}
         />
-        {preview && <SlideControls />}
+        <SlideControls />
       </Fragment>
     )
   }

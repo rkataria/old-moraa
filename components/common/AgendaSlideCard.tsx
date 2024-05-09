@@ -200,7 +200,11 @@ function SlideThumbnailView({
             transformOrigin: 'left top',
             scale: `${(1 / window.screen.width) * cardWidth}`,
           }}>
-          <SlidePreview slide={slide} key={JSON.stringify(slide.content)} />
+          <SlidePreview
+            readOnly
+            slide={slide}
+            key={JSON.stringify(slide.content)}
+          />
         </div>
       )
     }
