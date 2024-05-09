@@ -120,7 +120,7 @@ export function SlideTextBlock({
     <div onClick={() => onClick?.(block.id)} className={className}>
       <TextBlockEditor
         stickyToolbar
-        autohideToolbar
+        showToolbar={blockType !== 'header'}
         fillAvailableHeight={fillAvailableHeight}
         block={block}
         editable={editableId === block.id}

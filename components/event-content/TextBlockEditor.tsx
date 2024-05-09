@@ -19,7 +19,6 @@ import TextStyle from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { useIdle } from '@uidotdev/usehooks'
 
 import { ScrollShadow } from '@nextui-org/react'
 
@@ -128,20 +127,19 @@ const getExtensions = (type: string) => {
 
 export function TextBlockEditor({
   block,
+  showToolbar = true,
   editable = true,
-  autohideToolbar = true,
   stickyToolbar = false,
   fillAvailableHeight = false,
   onChange,
 }: {
   block: TextBlock
+  showToolbar?: boolean
   editable?: boolean
-  autohideToolbar?: boolean
   stickyToolbar?: boolean
   fillAvailableHeight?: boolean
   onChange?: (block: TextBlock) => void
 }) {
-  const idle = useIdle(10000)
   const editor = useEditor({
     extensions: getExtensions(block.type),
     content: block.data?.html,
@@ -167,11 +165,7 @@ export function TextBlockEditor({
   if (!editor) return null
 
   const renderToolbar = () => {
-    if (idle && autohideToolbar) {
-      return null
-    }
-
-    if (!editable) {
+    if (!showToolbar || !editable || block.type === 'header') {
       return null
     }
 

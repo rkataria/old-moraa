@@ -83,6 +83,7 @@ export function CoverEditor() {
             <TextBlockEditor
               stickyToolbar
               key={block.id}
+              showToolbar={block.type !== 'header'}
               block={block}
               editable={editingBlock === block.id}
               onChange={(updatedBlock) => {

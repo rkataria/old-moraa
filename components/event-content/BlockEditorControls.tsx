@@ -52,7 +52,7 @@ export function BlockEditorControls({
   return (
     <div
       className={cn(
-        'flex justify-center items-center gap-2 bg-[#545455] backdrop-blur-sm p-2 rounded-md text-white transition-all duration-500 z-[1]',
+        'flex justify-center items-center gap-2 bg-black bg-opacity-75 p-1 rounded-md text-white z-[1]',
         {
           'absolute top-0 left-1/2 -translate-x-1/2': sticky,
         }
@@ -106,6 +106,26 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
   const toggleLink = (link: string) => {
     editor.chain().focus().toggleLink({ href: link, target: '_blank' }).run()
   }
+  function renderHeading() {
+    const headings = {
+      1: { size: 'text-xl', weight: 'font-semibold', text: 'Heading 1' },
+      2: { size: 'text-xl', weight: 'font-semibold', text: 'Heading 2' },
+      3: { size: 'text-xl', weight: 'font-semibold', text: 'Heading 3' },
+      5: { size: 'text-medium', weight: 'font-medium', text: 'Subtitle' },
+    }
+
+    const activeLevel = [1, 2, 3, 5].find((level) =>
+      editor.isActive('heading', { level })
+    )
+    if (activeLevel) {
+      const { size, weight, text } =
+        headings[activeLevel as keyof typeof headings]
+
+      return <div className={`${size} ${weight}`}>{text}</div>
+    }
+
+    return <div className="text-small font-normal">Paragraph</div>
+  }
 
   return (
     <>
@@ -113,54 +133,96 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         <PopoverTrigger>
           <Button
             size="md"
-            className="text-white"
+            className="text-white flex-grow-0 w-auto"
             color="default"
             variant="light">
-            {editor.isActive('heading', { level: 3 }) ? (
-              <div className="text-xl font-semibold">Heading</div>
-            ) : editor.isActive('heading', { level: 5 }) ? (
-              <div className="text-medium font-medium">Subtitle</div>
-            ) : (
-              <div className="text-small font-normal">Paragraph</div>
-            )}
+            {renderHeading()}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="py-3 bg-[#2c3227] w-56">
           {() => (
             <div className="flex flex-col gap-2 w-full">
-              <ControlButton
-                active={editor.isActive('heading', { level: 1 })}
-                icon={<h1 className="text-3xl font-bold">Heading 1</h1>}
+              <Button
+                size="sm"
+                isIconOnly
+                className="text-white flex-grow-0 w-auto"
+                color={
+                  editor.isActive('heading', { level: 1 })
+                    ? 'primary'
+                    : 'default'
+                }
+                variant={
+                  editor.isActive('heading', { level: 1 }) ? 'solid' : 'light'
+                }
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 1 }).run()
+                }>
+                <h1 className="text-3xl font-bold">Heading 1</h1>
+              </Button>
+
+              <Button
+                size="sm"
+                isIconOnly
+                className="text-white flex-grow-0 w-auto"
+                color={
+                  editor.isActive('heading', { level: 2 })
+                    ? 'primary'
+                    : 'default'
                 }
-              />
-              <ControlButton
-                active={editor.isActive('heading', { level: 2 })}
-                icon={<h3 className="text-2xl font-bold">Heading 2</h3>}
+                variant={
+                  editor.isActive('heading', { level: 2 }) ? 'solid' : 'light'
+                }
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 2 }).run()
+                }>
+                <h3 className="text-2xl font-bold">Heading 2</h3>
+              </Button>
+
+              <Button
+                size="sm"
+                isIconOnly
+                className="text-white flex-grow-0 w-auto"
+                color={
+                  editor.isActive('heading', { level: 3 })
+                    ? 'primary'
+                    : 'default'
                 }
-              />
-              <ControlButton
-                active={editor.isActive('heading', { level: 3 })}
-                icon={<h3 className="text-xl font-bold">Heading</h3>}
+                variant={
+                  editor.isActive('heading', { level: 3 }) ? 'solid' : 'light'
+                }
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 3 }).run()
+                }>
+                <h3 className="text-xl font-bold">Heading 3</h3>
+              </Button>
+
+              <Button
+                size="sm"
+                isIconOnly
+                className="text-white flex-grow-0 w-auto"
+                color={
+                  editor.isActive('heading', { level: 5 })
+                    ? 'primary'
+                    : 'default'
                 }
-              />
-              <ControlButton
-                active={editor.isActive('heading', { level: 5 })}
-                icon={<h5 className="text-lg font-bold">Subtitle</h5>}
+                variant={
+                  editor.isActive('heading', { level: 5 }) ? 'solid' : 'light'
+                }
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 5 }).run()
-                }
-              />
-              <ControlButton
-                active={editor.isActive('paragraph')}
-                icon={<p className="text-base">Paragraph</p>}
-                onClick={() => editor.chain().focus().setParagraph().run()}
-              />
+                }>
+                <h5 className="text-lg font-bold">Subtitle</h5>
+              </Button>
+
+              <Button
+                size="sm"
+                isIconOnly
+                className="text-white flex-grow-0 w-auto"
+                color={editor.isActive('paragraph') ? 'primary' : 'default'}
+                variant={editor.isActive('paragraph') ? 'solid' : 'light'}
+                onClick={() => editor.chain().focus().setParagraph().run()}>
+                <p className="text-base">Paragraph</p>
+              </Button>
             </div>
           )}
         </PopoverContent>
@@ -310,7 +372,7 @@ export function ControlButton({
       <Button
         size="sm"
         isIconOnly
-        className="text-white w-full"
+        className="text-white flex-grow-0 "
         color={active ? 'primary' : 'default'}
         variant={active ? 'solid' : 'light'}
         {...props}>
@@ -387,7 +449,6 @@ export function LinkPicker({
             className="flex items-start gap-2 bg-white"
             onSubmit={(e) => {
               e.preventDefault()
-              console.log(e)
               onChange(newLink)
             }}>
             <Input

@@ -5,6 +5,9 @@
 
 import { BubbleMenu, Editor, FloatingMenu } from '@tiptap/react'
 import {
+  LuAlignCenter,
+  LuAlignLeft,
+  LuAlignRight,
   LuBold,
   LuBookMinus,
   LuBookPlus,
@@ -85,6 +88,12 @@ function InlineTextControls({ editor }: { editor: Editor }) {
     editor.chain().focus().setColor(color).run()
   }
 
+  if (editor.isActive('heading')) {
+    return (
+      <HeaderControls editor={editor} handleColorChange={handleColorChange} />
+    )
+  }
+
   return (
     <div className="flex justify-center items-center gap-2 bg-black bg-opacity-75 p-2 rounded-md text-white transition-all duration-500 z-[1]">
       <ControlButton
@@ -110,6 +119,42 @@ function InlineTextControls({ editor }: { editor: Editor }) {
         icon={<LuStrikethrough size={18} />}
         tooltipText="Strikethrough"
         onClick={() => editor.chain().focus().toggleStrike().run()}
+      />
+      <ColorPicker
+        active={editor.isActive('color')}
+        color={editor.getAttributes('textStyle').color}
+        onChange={handleColorChange}
+      />
+    </div>
+  )
+}
+
+function HeaderControls({
+  editor,
+  handleColorChange,
+}: {
+  editor: Editor
+  handleColorChange: (color: string) => void
+}) {
+  return (
+    <div className="flex justify-center items-center gap-2 bg-black bg-opacity-75 p-2 rounded-md text-white transition-all duration-500 z-[1]">
+      <ControlButton
+        active={editor.isActive({ textAlign: 'left' })}
+        icon={<LuAlignLeft size={18} />}
+        tooltipText="Align left"
+        onClick={() => editor.chain().focus().setTextAlign('left').run()}
+      />
+      <ControlButton
+        active={editor.isActive({ textAlign: 'center' })}
+        icon={<LuAlignCenter size={18} />}
+        tooltipText="Align center"
+        onClick={() => editor.chain().focus().setTextAlign('center').run()}
+      />
+      <ControlButton
+        active={editor.isActive({ textAlign: 'right' })}
+        icon={<LuAlignRight size={18} />}
+        tooltipText="Align right"
+        onClick={() => editor.chain().focus().setTextAlign('right').run()}
       />
       <ColorPicker
         active={editor.isActive('color')}
