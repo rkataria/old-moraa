@@ -11,6 +11,7 @@ import { sendNotification } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { RealtimeChannel } from '@supabase/supabase-js'
+import isEqual from 'lodash.isequal'
 import uniqBy from 'lodash.uniqby'
 import { useParams } from 'next/navigation'
 
@@ -157,6 +158,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         const slide = section.slides.find((s) => s.id === slideId)
         if (!slide) return
 
+        if (slide.id === currentSlide?.id) return
+
         setCurrentSlide(slide)
       }
     )
@@ -221,7 +224,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         const { emoji, name } = payload
 
         if (!emoji) return
-        console.log('emoji received', emoji)
         window.dispatchEvent(
           new CustomEvent('reaction_added', { detail: { emoji, name } })
         )
@@ -255,7 +257,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     ) {
       return
     }
-    if (eventSessionMode === 'Presentation') {
+    if (eventSessionMode !== 'Preview') {
       updateActiveSession({
         currentSlideId: currentSlide?.id,
         presentationStatus,
@@ -306,6 +308,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
 
     fetchCurrentSlideResponses()
+
+    if (!slideHasSlideResponses(currentSlide)) return
 
     const channels = supabase
       .channel('slide-response-channel')
@@ -701,6 +705,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           filter: `id=eq.${activeSession?.id}`,
         },
         (payload) => {
+          if (!payload?.new) return
+
+          if (isEqual(payload?.new, activeSession)) return
+
           setActiveSession(payload?.new)
         }
       )

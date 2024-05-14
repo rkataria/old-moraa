@@ -89,7 +89,7 @@ export function ContentContainer() {
   if (!currentSlide) return null
 
   return (
-    <div className="relative flex flex-col h-full">
+    <div className="relative h-full flex flex-col">
       <Slide key={`slide-${currentSlide.id}`} />
       {isHost && (
         <SlideControls onPrevious={previousSlide} onNext={nextSlide} />

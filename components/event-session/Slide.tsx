@@ -1,6 +1,6 @@
 // TODO: fix any types
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import dynamic from 'next/dynamic'
 
@@ -36,11 +36,6 @@ export function Slide() {
   const { currentSlide, currentSlideResponses, currentSlideLoading, isHost } =
     useContext(EventSessionContext) as EventSessionContextType
   const { currentUser } = useAuth()
-
-  const MoraaBoardMemoized = useMemo(
-    () => <MoraaBoard slide={currentSlide as any} />,
-    [currentSlide]
-  )
 
   useEffect(() => {
     if (!currentSlide) return
@@ -100,7 +95,7 @@ export function Slide() {
       <RichText key={currentSlide.id} slide={currentSlide} />
     ),
     [ContentType.MIRO_EMBED]: <MiroEmbed slide={currentSlide as any} />,
-    [ContentType.MORAA_BOARD]: MoraaBoardMemoized,
+    [ContentType.MORAA_BOARD]: <MoraaBoard slide={currentSlide as any} />,
   }
 
   const renderer = renderersByContentType[currentSlide.type]

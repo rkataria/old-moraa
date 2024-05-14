@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { EventEmitter } from 'events'
 
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs'
@@ -26,6 +27,9 @@ export class SupabaseProvider extends EventEmitter {
   protected logger: debug.Debugger
   public readonly id: number
 
+  public isChannelSubscribed: boolean = false
+  public dbSyncTimeout: NodeJS.Timeout | null = null
+
   public version: number = 0
 
   constructor(
@@ -40,6 +44,8 @@ export class SupabaseProvider extends EventEmitter {
 
     this.config = config || {}
     this.id = doc.clientID
+
+    this.isChannelSubscribed = false
 
     this.supabase = supabase
     this.on('connect', this.onConnect)
@@ -65,7 +71,8 @@ export class SupabaseProvider extends EventEmitter {
       this.resyncInterval = setInterval(() => {
         this.logger('resyncing (resync interval elapsed)')
         this.emit('message', Y.encodeStateAsUpdate(this.doc))
-        if (this.channel) {
+        // Only broadcast if current user is subscribed the channel to avoid unnecessary rest calls
+        if (this.channel && this.isChannelSubscribed) {
           this.channel.send({
             type: 'broadcast',
             event: 'message',
@@ -86,7 +93,8 @@ export class SupabaseProvider extends EventEmitter {
       process.on('exit', () => this.removeSelfFromAwarenessOnUnload)
     }
     this.on('awareness', (update) => {
-      if (this.channel) {
+      // Only broadcast if current user is subscribed the channel to avoid unnecessary rest calls
+      if (this.channel && this.isChannelSubscribed) {
         // TODO: use supabase presence event instead of yjs awareness
         this.channel.send({
           type: 'broadcast',
@@ -98,7 +106,8 @@ export class SupabaseProvider extends EventEmitter {
       }
     })
     this.on('message', (update) => {
-      if (this.channel) {
+      // Only broadcast if current user is subscribed the channel to avoid unnecessary rest calls
+      if (this.channel && this.isChannelSubscribed) {
         this.channel.send({
           type: 'broadcast',
           event: 'message',
@@ -152,18 +161,39 @@ export class SupabaseProvider extends EventEmitter {
   }
 
   async save() {
-    const content = Array.from(Y.encodeStateAsUpdate(this.doc))
-
-    const { error } = await this.supabase
-      .from(this.config.tableName)
-      .update({ [this.config.columnName]: { document: content } })
-      .eq(this.config.idName || 'id', this.config.id)
-
-    if (error) {
-      throw error
+    // Saving to the database is debounced to avoid excessive writes
+    if (this.dbSyncTimeout) {
+      clearTimeout(this.dbSyncTimeout)
     }
+    this.dbSyncTimeout = setTimeout(async () => {
+      const content = Array.from(Y.encodeStateAsUpdate(this.doc))
 
-    this.emit('save', this.version)
+      const { data, error: fetchSlideError } = await this.supabase
+        .from(this.config.tableName)
+        .select('*')
+        .eq(this.config.idName || 'id', this.config.id)
+        .single()
+
+      if (fetchSlideError) {
+        return
+      }
+
+      const { error } = await this.supabase
+        .from(this.config.tableName)
+        .update({
+          [this.config.columnName]: {
+            ...data[this.config.columnName],
+            document: content,
+          },
+        })
+        .eq(this.config.idName || 'id', this.config.id)
+
+      if (error) {
+        throw error
+      }
+
+      this.emit('save', this.version)
+    }, 2000)
   }
 
   private async onConnect() {
@@ -243,19 +273,23 @@ export class SupabaseProvider extends EventEmitter {
         .subscribe((status, err) => {
           if (status === 'SUBSCRIBED') {
             this.emit('connect', this)
+            this.isChannelSubscribed = true
           }
 
           if (status === 'CHANNEL_ERROR') {
             this.logger('CHANNEL_ERROR', err)
             this.emit('error', this)
+            this.isChannelSubscribed = false
           }
 
           if (status === 'TIMED_OUT') {
             this.emit('disconnect', this)
+            this.isChannelSubscribed = false
           }
 
           if (status === 'CLOSED') {
             this.emit('disconnect', this)
+            this.isChannelSubscribed = false
           }
         })
     }

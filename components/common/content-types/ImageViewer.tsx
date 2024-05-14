@@ -7,7 +7,12 @@ type ImageViewerProps = {
 export function ImageViewer({ src }: ImageViewerProps) {
   return (
     <div className="flex justify-center items-center h-full w-full">
-      <Image src={src} loading="lazy" className="h-full" />
+      <Image
+        src={src}
+        loading="lazy"
+        className="h-full"
+        classNames={{ wrapper: 'h-full' }}
+      />
     </div>
   )
 }

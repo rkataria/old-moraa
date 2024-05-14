@@ -37,7 +37,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className="relative w-full h-full flex flex-col justify-center items-center px-4 z-[0]">
+      className="relative w-full flex-auto flex flex-col justify-center items-center px-4 z-[0]">
       {store.status === 'loading' && (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <ContentLoading />

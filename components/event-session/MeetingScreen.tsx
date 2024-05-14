@@ -12,6 +12,7 @@ import {
   DyteSidebar,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { DyteParticipant } from '@dytesdk/web-core'
 
 import { ContentContainer } from './ContentContainer'
 import { MeetingControls } from './MeetingControls'
@@ -48,8 +49,13 @@ export function MeetingScreen() {
   const { sections, preview, currentSlide, setCurrentSlide } = useContext(
     EventContext
   ) as EventContextType
-  const { isHost, eventSessionMode, presentationStatus, setEventSessionMode } =
-    useContext(EventSessionContext) as EventSessionContextType
+  const {
+    isHost,
+    eventSessionMode,
+    presentationStatus,
+    setEventSessionMode,
+    updateActiveSession,
+  } = useContext(EventSessionContext) as EventSessionContextType
 
   const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
@@ -91,19 +97,33 @@ export function MeetingScreen() {
       setRightSidebar(detail.activeSidebar)
     }
 
+    const handleHostLeft = (participant: DyteParticipant) => {
+      if (
+        participant.presetName?.includes('host') &&
+        eventSessionMode === 'Presentation'
+      ) {
+        setEventSessionMode('Lobby')
+        updateActiveSession({
+          presentationStatus: PresentationStatuses.STOPPED,
+        })
+      }
+    }
+
     document.body.addEventListener('dyteStateUpdate', handleDyteStateUpdate)
+    meeting.participants.joined.on('participantLeft', handleHostLeft)
 
     function onUnmount() {
       document.body.removeEventListener(
         'dyteStateUpdate',
         handleDyteStateUpdate
       )
+      meeting.participants.joined.off('participantLeft', handleHostLeft)
     }
 
     // eslint-disable-next-line consistent-return
     return onUnmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting])
+  }, [meeting, eventSessionMode])
 
   const renderRightSidebar = () => {
     if (!rightSidebar) return null
@@ -135,7 +155,10 @@ export function MeetingScreen() {
 
   const spotlightMode = eventSessionMode === 'Lobby'
 
-  const currentSlideBgColor = currentSlide?.config?.backgroundColor || '#f3f4f6'
+  const currentSlideBgColor =
+    presentationStatus === PresentationStatuses.STARTED
+      ? currentSlide?.config?.backgroundColor || '#f3f4f6'
+      : '#f3f4f6'
 
   if (mainContentRef.current) {
     mainContentRef.current.style.backgroundColor = currentSlideBgColor
