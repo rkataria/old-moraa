@@ -2,10 +2,12 @@
 
 'use client'
 
-import { useChat } from 'ai/react'
-import { FiSend } from 'react-icons/fi'
+import { useEffect, useRef } from 'react'
 
-import { ScrollShadow, Textarea, Button } from '@nextui-org/react'
+import { useChat } from 'ai/react'
+import { LuArrowUp } from 'react-icons/lu'
+
+import { ScrollShadow } from '@nextui-org/react'
 
 import { cn } from '@/utils/utils'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,19 +29,49 @@ function AiChatSidebarWrapper({ contentClass, children }: any) {
   )
 }
 export function AIChat() {
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
   const { messages, input, handleInputChange, handleSubmit } = useChat()
 
+  useEffect(() => {
+    if (lastMessagePlaceholderRef.current) {
+      lastMessagePlaceholderRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages])
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function autosize(event: any) {
+    const el = event.target
+
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      handleSubmit(event)
+
+      return
+    }
+
+    setTimeout(() => {
+      el.style.cssText = 'height:auto;'
+      el.style.cssText = `height:${el.scrollHeight}px`
+    }, 0)
+  }
+
+  const formHeight = textareaRef.current?.style.height
+
   return (
-    <AiChatSidebarWrapper contentClass="flex flex-col w-full h-full">
+    <AiChatSidebarWrapper contentClass="relative flex flex-col w-full h-[calc(100%_-_32px)]">
       <ScrollShadow
         hideScrollBar
         isEnabled
         orientation="vertical"
-        className="w-full h-[calc(100vh_-_146px)] p-1">
+        className="w-full p-1 flex-auto"
+        style={{
+          height: `calc(100% - ${formHeight})`,
+        }}>
         {messages.map((m) => (
           <div
             key={m.id}
-            className={`whitespace-pre-wrap p-4 rounded-lg shadow ${
+            className={`text-sm mb-1 whitespace-pre-wrap p-4 rounded-lg shadow ${
               m.role === 'user'
                 ? 'bg-blue-100 text-blue-800 text-right self-end'
                 : 'bg-gray-100 text-gray-800 text-left self-start'
@@ -48,23 +80,32 @@ export function AIChat() {
             {m.content}
           </div>
         ))}
+        <div ref={lastMessagePlaceholderRef} />
       </ScrollShadow>
-      <div className="flex-none sticky bottom-0 left-0 w-full">
-        <form onSubmit={handleSubmit} className="relative">
-          <Textarea
-            value={input}
-            placeholder="Say something..."
-            onChange={handleInputChange}
-          />
-          <Button
-            isIconOnly
-            radius="full"
-            type="submit"
-            className="absolute bottom-1 right-1 bg-gray-800 text-white hover:bg-black  transition-all duration-400">
-            <FiSend />
-          </Button>
-        </form>
-      </div>
+      <form
+        onSubmit={handleSubmit}
+        className="flex-none bg-gray-100 flex justify-start items-end p-1">
+        <textarea
+          ref={textareaRef}
+          rows={1}
+          value={input}
+          onKeyDown={autosize}
+          placeholder="Ask AI..."
+          className="overflow-hidden w-[calc(100%_-_4rem)] p-2 block text-sm resize-none bg-transparent border-none focus:outline-none flex-auto"
+          onChange={handleInputChange}
+        />
+        <button
+          type="submit"
+          className={cn(
+            'flex-none p-2.5 flex justify-center items-center transition-all text-white rounded-sm',
+            {
+              'bg-black/20': !input,
+              'bg-black': input,
+            }
+          )}>
+          <LuArrowUp />
+        </button>
+      </form>
     </AiChatSidebarWrapper>
   )
 }
