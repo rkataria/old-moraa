@@ -218,7 +218,7 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
 
   return (
     <div
-      className="w-full min-h-full flex justify-start items-start"
+      className="w-full flex justify-start items-start"
       style={{
         backgroundColor: slide.config.backgroundColor,
       }}>

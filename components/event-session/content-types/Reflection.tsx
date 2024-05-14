@@ -131,7 +131,7 @@ export function Reflection({ slide }: ReflectionProps) {
 
   return (
     <div
-      className="w-full min-h-full flex justify-center items-start"
+      className="w-full flex justify-center items-start"
       style={{
         backgroundColor: slide.content.backgroundColor,
       }}>

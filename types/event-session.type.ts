@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { VideoMiddleware } from '@dytesdk/web-core'
 import { RealtimeChannel } from '@supabase/supabase-js'
 
 import type { IPollResponse, IReflectionResponse, ISlide } from './slide.type'
@@ -18,6 +19,7 @@ export type VideoMiddlewareConfig = {
   }
   type: string | null
   value: string | number | null
+  currentMiddleware?: VideoMiddleware
 }
 
 export type SlideReaction = {

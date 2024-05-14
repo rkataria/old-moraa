@@ -6,6 +6,7 @@ export function TextBlockView({ block }: { block: TextBlock }) {
 
   return (
     <div
+      style={{ wordBreak: 'break-word' }}
       key={`block-editor-${block.id}`}
       className={cn('w-full', {
         'block-content-header': block.type === 'header',

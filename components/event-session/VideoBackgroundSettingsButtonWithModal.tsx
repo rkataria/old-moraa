@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { DyteParticipantTile } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
@@ -42,54 +42,60 @@ export function VideoBackgroundSettingsButtonWithModal({
     EventSessionContext
   ) as EventSessionContextType
 
-  useEffect(() => {
-    if (!videoMiddlewareConfig) return
+  const addMiddleWare = async ({
+    type,
+    value,
+  }: {
+    type: string
+    value: string | number
+  }) => {
+    const videoBackgroundTransformer =
+      await DyteVideoBackgroundTransformer.init()
 
-    const applyVideoMiddleware = async () => {
-      const videoBackgroundTransformer =
-        await DyteVideoBackgroundTransformer.init()
+    let middleWare
 
-      if (videoMiddlewareConfig.previousConfig) {
-        let previousVideoMiddleware = null
-
-        if (videoMiddlewareConfig.previousConfig.type === 'blur') {
-          previousVideoMiddleware =
-            await videoBackgroundTransformer.createBackgroundBlurVideoMiddleware(
-              videoMiddlewareConfig.value as number
-            )
-        }
-
-        if (videoMiddlewareConfig.previousConfig.type === 'background') {
-          previousVideoMiddleware =
-            await videoBackgroundTransformer.createStaticBackgroundVideoMiddleware(
-              videoMiddlewareConfig.previousConfig.value as string
-            )
-        }
-
-        meeting.self.removeVideoMiddleware(previousVideoMiddleware!)
-      }
-
-      if (videoMiddlewareConfig.type === 'blur') {
-        const blurVideoMiddleware =
-          await videoBackgroundTransformer.createBackgroundBlurVideoMiddleware(
-            videoMiddlewareConfig.value as number
-          )
-        meeting.self.addVideoMiddleware(blurVideoMiddleware)
-      }
-
-      if (videoMiddlewareConfig.type === 'background') {
-        const backgroundVideoMiddleware =
+    switch (type) {
+      case 'background':
+        middleWare =
           await videoBackgroundTransformer.createStaticBackgroundVideoMiddleware(
-            videoMiddlewareConfig.value as string
+            value as string
           )
-        meeting.self.addVideoMiddleware(backgroundVideoMiddleware)
-      }
+
+        break
+
+      default:
+        middleWare =
+          await videoBackgroundTransformer.createBackgroundBlurVideoMiddleware(
+            value as number
+          )
+        break
     }
 
-    applyVideoMiddleware()
+    meeting.self.addVideoMiddleware(middleWare!)
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoMiddlewareConfig])
+    setVideoMiddlewareConfig({
+      type,
+      value,
+      currentMiddleware: middleWare,
+    })
+  }
+
+  const removeMiddleWare = async () => {
+    if (!videoMiddlewareConfig) return null
+    const removedRes = await meeting.self.removeVideoMiddleware(
+      videoMiddlewareConfig.currentMiddleware!
+    )
+    setVideoMiddlewareConfig({
+      previousConfig: {
+        type: videoMiddlewareConfig.type!,
+        value: videoMiddlewareConfig?.value,
+      },
+      type: null,
+      value: null,
+    })
+
+    return removedRes
+  }
 
   const applyVideoMiddleware = async ({
     type,
@@ -102,35 +108,19 @@ export function VideoBackgroundSettingsButtonWithModal({
       videoMiddlewareConfig?.type === type &&
       videoMiddlewareConfig?.value === value
     ) {
-      setVideoMiddlewareConfig({
-        previousConfig: {
-          type: videoMiddlewareConfig.type,
-          value: videoMiddlewareConfig?.value,
-        },
-        type: null,
-        value: null,
-      })
+      removeMiddleWare()
 
       return
     }
+    if (videoMiddlewareConfig?.currentMiddleware) {
+      const removedResponse = await removeMiddleWare()
+      if (removedResponse?.success) {
+        addMiddleWare({ type, value })
 
-    if (videoMiddlewareConfig?.previousConfig) {
-      setVideoMiddlewareConfig({
-        previousConfig: {
-          type: videoMiddlewareConfig.type!,
-          value: videoMiddlewareConfig?.value,
-        },
-        type,
-        value,
-      })
-
-      return
+        return
+      }
     }
-
-    setVideoMiddlewareConfig({
-      type,
-      value,
-    })
+    addMiddleWare({ type, value })
   }
 
   return (
