@@ -7,7 +7,6 @@ import { TbApps } from 'react-icons/tb'
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 
 import { Timer } from './Timer'
-import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -30,21 +29,28 @@ export function AppsToggle() {
       {isHost && (
         <PopoverTrigger>
           <div>
-            <ControlButton
-              buttonProps={{
-                isIconOnly: true,
-                radius: 'md',
-                variant: 'flat',
-                className: cn('transition-all duration-300', {
-                  'bg-black text-white': isContentVisible,
-                }),
+            <button
+              type="button"
+              onClick={togglePopoverContent}
+              style={{
+                backgroundColor: isContentVisible
+                  ? 'rgb(8, 8, 8)'
+                  : 'rgb(241, 241, 242)', // Corrected colors
+                color: isContentVisible ? 'white' : 'black', // Ensures text color is black initially and white when active
+                border: 'none',
+                padding: '10px',
+                borderRadius: '6px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
               }}
-              tooltipProps={{
-                content: 'Mora apps',
-              }}
-              onClick={togglePopoverContent}>
+              className={cn('hover:bg-[#1E1E1E]', {
+                'text-white': isContentVisible, // This class is now redundant given the inline style but kept for hover handling
+              })}>
               <TbApps size={20} />
-            </ControlButton>
+            </button>
           </div>
         </PopoverTrigger>
       )}
