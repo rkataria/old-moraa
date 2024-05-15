@@ -26,7 +26,7 @@ function AiChatSidebarWrapper({
         'w-full bg-white/95 h-full transition-all border-l bg-white'
       )}>
       <div className="flex items-center justify-between font-semibold w-full bg-slate-100 py-2 px-4">
-        <p className="text-xs">AI Copilot</p>
+        <p className="text-sm">AI Copilot</p>
         <IconX onClick={onClose} className="cursor-pointer" />
       </div>
       <div className={cn(contentClass)}>{children}</div>
@@ -79,9 +79,9 @@ export function AIChat({ onClose }: { onClose: () => void }) {
         {messages.map((m) => (
           <div
             key={m.id}
-            className={`text-sm mb-1 whitespace-pre-wrap p-4 rounded-lg shadow ${
+            className={`text-sm mb-1 whitespace-pre-wrap p-4 rounded-md ${
               m.role === 'user'
-                ? 'bg-blue-100 text-blue-800 text-right self-end'
+                ? 'bg-primary/20 text-right self-end'
                 : 'bg-gray-100 text-gray-800 text-left self-start'
             }`}>
             {m.role === 'user' ? 'User: ' : 'AI: '}
@@ -105,10 +105,10 @@ export function AIChat({ onClose }: { onClose: () => void }) {
         <button
           type="submit"
           className={cn(
-            'flex-none p-2.5 flex justify-center items-center transition-all text-white rounded-md',
+            'flex-none p-2.5 flex justify-center items-center transition-all rounded-md',
             {
-              'bg-primary/25': !input,
-              'bg-primary': input,
+              'bg-gray-100 text-black': !input,
+              'bg-black text-white': input,
             }
           )}>
           <LuArrowUp />

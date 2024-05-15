@@ -34,7 +34,7 @@ function SettingsWrapper({
         'w-full bg-white/95 h-full transition-all pb-4 border-l bg-white'
       )}>
       <div className="flex items-center justify-between font-semibold w-full bg-slate-100 py-2 px-4">
-        <p className="text-xs">Settings</p>
+        <p className="text-sm">Settings</p>
         <IconX
           onClick={() => setSettingsSidebarVisible(false)}
           className="cursor-pointer"
