@@ -14,8 +14,6 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
-  Tabs,
-  Tab,
 } from '@nextui-org/react'
 
 import { VIRTUAL_BACKGROUND_IMAGES } from '@/constants/dyte'
@@ -162,58 +160,52 @@ export function VideoBackgroundSettingsButtonWithModal({
                   </div>
 
                   <div className="w-1/3">
-                    <Tabs
-                      disabledKeys={['appearance']}
-                      aria-label="Options"
-                      className="w-full">
-                      <Tab key="backgrounds" title="Backgrounds">
-                        <div className="flex flex-col gap-2 mb-4">
-                          <h3 className="text-gray-800 font-semibold">Blur</h3>
-                          <div className="grid grid-cols-3 gap-2">
-                            <Button
+                    <div className="flex flex-col gap-2 mb-4">
+                      <h3 className="text-gray-800 font-semibold">Blur</h3>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Button
+                          onClick={() =>
+                            applyVideoMiddleware({
+                              type: 'blur',
+                              value: 10,
+                            })
+                          }>
+                          <MdBlurOn size={24} />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-gray-800 font-semibold">
+                        Backgrounds
+                      </h3>
+                      <div className="grid grid-cols-4 gap-2">
+                        {VIRTUAL_BACKGROUND_IMAGES.map(({ name, url }) => (
+                          <div key={name} className="cursor-pointer">
+                            <NextUiImage
+                              shadow="none"
+                              src={url}
+                              width="100%"
+                              className={cn(
+                                'aspect-square object-cover rounded-2xl !shadow-none border-2 border-transparent',
+                                {
+                                  'border-primary':
+                                    videoMiddlewareConfig?.value === url,
+                                }
+                              )}
                               onClick={() =>
                                 applyVideoMiddleware({
-                                  type: 'blur',
-                                  value: 10,
+                                  type: 'background',
+                                  value: url,
                                 })
-                              }>
-                              <MdBlurOn size={24} />
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <h3 className="text-gray-800 font-semibold">
-                            Backgrounds
-                          </h3>
-                          <div className="grid grid-cols-3 gap-2">
-                            {VIRTUAL_BACKGROUND_IMAGES.map(({ name, url }) => (
-                              <div key={name} className="cursor-pointer">
-                                <NextUiImage
-                                  src={url}
-                                  width="100%"
-                                  className={cn('aspect-square border-2', {
-                                    'border-primary':
-                                      videoMiddlewareConfig?.value === url,
-                                  })}
-                                  onClick={() =>
-                                    applyVideoMiddleware({
-                                      type: 'background',
-                                      value: url,
-                                    })
-                                  }
-                                />
-                                <p className="text-center text-gray-800 font-sm">
+                              }
+                            />
+                            {/* <p className="text-center text-gray-800 font-sm">
                                   {name}
-                                </p>
-                              </div>
-                            ))}
+                                </p> */}
                           </div>
-                        </div>
-                      </Tab>
-                      <Tab disabled key="appearance" title="Appearance">
-                        Appearance
-                      </Tab>
-                    </Tabs>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </ModalBody>

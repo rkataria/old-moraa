@@ -48,7 +48,7 @@ export function SlidePreview({ slide, readOnly }: SlideProps) {
   return (
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
-      className={cn('relative group w-full h-full bg-gray-100', {
+      className={cn('relative group w-full h-full bg-gray-100 flex flex-col', {
         'p-4': slide.type !== ContentType.TEXT_IMAGE,
       })}>
       <SlideTitleDescriptionPreview slide={slide as any} />
