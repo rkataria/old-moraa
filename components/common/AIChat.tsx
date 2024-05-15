@@ -1,34 +1,40 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-'use client'
+import { ReactNode, useEffect, useRef } from 'react'
 
-import { useEffect, useRef } from 'react'
-
+import { IconX } from '@tabler/icons-react'
 import { useChat } from 'ai/react'
 import { LuArrowUp } from 'react-icons/lu'
 
 import { ScrollShadow } from '@nextui-org/react'
 
+import { useProfile } from '@/hooks/useProfile'
 import { cn } from '@/utils/utils'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function AiChatSidebarWrapper({ contentClass, children }: any) {
+function AiChatSidebarWrapper({
+  contentClass,
+  children,
+  onClose,
+}: {
+  contentClass: string
+  children: ReactNode
+  onClose: () => void
+}) {
   return (
     <div
       className={cn(
         'w-full bg-white/95 h-full transition-all border-l bg-white'
       )}>
       <div className="flex items-center justify-between font-semibold w-full bg-slate-100 py-2 px-4">
-        <p className="text-xs">AI Chat</p>
-        {/* <IconX
-          onClick={() => setSettingsSidebarVisible(false)}
-          className="cursor-pointer"
-        /> */}
+        <p className="text-xs">AI Copilot</p>
+        <IconX onClick={onClose} className="cursor-pointer" />
       </div>
       <div className={cn(contentClass)}>{children}</div>
     </div>
   )
 }
-export function AIChat() {
+export function AIChat({ onClose }: { onClose: () => void }) {
+  const { data: userProfile } = useProfile()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
   const { messages, input, handleInputChange, handleSubmit } = useChat()
@@ -59,7 +65,9 @@ export function AIChat() {
   const formHeight = textareaRef.current?.style.height
 
   return (
-    <AiChatSidebarWrapper contentClass="relative flex flex-col w-full h-[calc(100%_-_32px)]">
+    <AiChatSidebarWrapper
+      contentClass="relative flex flex-col w-full h-[calc(100%_-_40px)]"
+      onClose={onClose}>
       <ScrollShadow
         hideScrollBar
         isEnabled
@@ -84,23 +92,23 @@ export function AIChat() {
       </ScrollShadow>
       <form
         onSubmit={handleSubmit}
-        className="flex-none bg-gray-100 flex justify-start items-end p-1">
+        className="flex-none flex justify-start items-end p-1 border-2 border-gray-300 bg-white m-1 rounded-md">
         <textarea
           ref={textareaRef}
           rows={1}
           value={input}
           onKeyDown={autosize}
-          placeholder="Ask AI..."
+          placeholder={`Hey ${userProfile?.first_name}! how can I help?`}
           className="overflow-hidden w-[calc(100%_-_4rem)] p-2 block text-sm resize-none bg-transparent border-none focus:outline-none flex-auto"
           onChange={handleInputChange}
         />
         <button
           type="submit"
           className={cn(
-            'flex-none p-2.5 flex justify-center items-center transition-all text-white rounded-sm',
+            'flex-none p-2.5 flex justify-center items-center transition-all text-white rounded-md',
             {
-              'bg-black/20': !input,
-              'bg-black': input,
+              'bg-primary/25': !input,
+              'bg-primary': input,
             }
           )}>
           <LuArrowUp />

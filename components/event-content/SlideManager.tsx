@@ -113,9 +113,9 @@ export function SlideManager() {
     if (preview) return null
     if (!isOwner) return null
     if (aiChatOverlay) {
-      return <AIChat />
+      return <AIChat onClose={() => setRightSidebarVisible(false)} />
     }
-    if (currentSlide) {
+    if (currentSlide && settingsEnabled) {
       return (
         <SettingsSidebar
           settingsEnabled={settingsEnabled}

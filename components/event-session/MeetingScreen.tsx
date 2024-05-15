@@ -143,7 +143,9 @@ export function MeetingScreen() {
   const renderRightSidebar = () => {
     if (!rightSidebar) return null
 
-    if (rightSidebar === 'aichat') return <AIChat />
+    if (rightSidebar === 'aichat') {
+      return <AIChat onClose={() => setRightSidebar(null)} />
+    }
 
     return (
       <DyteSidebar
@@ -192,7 +194,7 @@ export function MeetingScreen() {
             }))
           }}
           onSidebarOpen={(data) => {
-            if (rightSidebar) {
+            if (rightSidebar === data.sidebar) {
               setRightSidebar(null)
               setDyteStates({
                 ...dyteStates,
@@ -204,9 +206,8 @@ export function MeetingScreen() {
 
             if (['participants', 'chat', 'plugins'].includes(data.sidebar)) {
               setDyteStates(data)
+              setRightSidebar(data.sidebar)
             }
-
-            setRightSidebar(data.sidebar)
           }}
           onAiChatOverlayToggle={() => {
             if (rightSidebar === 'aichat') {
