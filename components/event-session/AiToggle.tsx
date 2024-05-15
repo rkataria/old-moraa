@@ -22,7 +22,7 @@ export function AiToggle({
         }),
       }}
       tooltipProps={{
-        content: isAiSidebarOpen ? 'Close AI Sidebar' : 'Talk AI',
+        content: isAiSidebarOpen ? 'Close AI Copilot' : 'AI Copilot',
       }}
       onClick={onClick}>
       <IoSparkles size={20} />
