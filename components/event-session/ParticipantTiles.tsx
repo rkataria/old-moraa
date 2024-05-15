@@ -18,10 +18,10 @@ import { cn } from '@/utils/utils'
 
 export function ParticipantTiles({
   spotlightMode,
-  sidebarVisible,
+  panelSize,
 }: {
   spotlightMode: boolean
-  sidebarVisible: boolean
+  panelSize: number
 }) {
   const { meeting } = useDyteMeeting()
   const { activeSession } = useContext(
@@ -53,72 +53,63 @@ export function ParticipantTiles({
   }
 
   return (
-    <div
-      className={cn(
-        'overflow-hidden overflow-x-auto flex gap-2 flex-nowrap scrollbar-none p-2 -mt-[2px]',
-        {
-          'flex-col': !sidebarVisible,
-          'flex-row justify-start items-center h-full': sidebarVisible,
-        }
-      )}>
-      <DyteParticipantTile
-        meeting={meeting}
-        participant={selfParticipant}
-        nameTagPosition="bottom-right"
-        // variant="gradient"
-        className={cn('relative aspect-video flex-none z-[1]', {
-          'w-full flex-col': !sidebarVisible,
-          'h-full flex-row': sidebarVisible,
-        })}>
-        <DyteAvatar size="md" participant={selfParticipant} />
-        <DyteNameTag
-          meeting={meeting}
-          participant={selfParticipant}
-          className="left-1/2 -translate-x-1/2">
-          <DyteAudioVisualizer slot="start" participant={selfParticipant} />
-        </DyteNameTag>
-        {activeSession?.data?.handsRaised?.includes(selfParticipant.id) && (
-          <HiMiniHandRaised className="absolute left-2 top-2 text-xl animate-pulse flex justify-center items-center text-[#FAC036]" />
-        )}
-        <VideoBackgroundSettingsButtonWithModal
-          buttonProps={{
-            className: 'absolute top-2 right-2 w-8',
-          }}
-        />
-      </DyteParticipantTile>
+    <div className="overflow-auto scrollbar-none h-full p-4">
       <div
-        className={cn('gap-2', {
-          'grid grid-cols-2': !sidebarVisible,
-          'flex flex-row justify-start items-center h-full gap-2':
-            sidebarVisible,
-        })}>
-        {activeParticipants?.map((participant) => (
-          <DyteParticipantTile
-            key={`${participant.id} ${sidebarVisible}`}
-            meeting={meeting}
-            participant={participant}
-            nameTagPosition="bottom-right"
-            variant="gradient"
-            className={cn('flex-none !aspect-square relative z-[1]', {
-              'w-full h-auto': !sidebarVisible,
-              'h-full': sidebarVisible,
+        className={cn(
+          'flex gap-0 w-full justify-center items-center h-full content-center',
+          {
+            'flex-col flex-nowrap':
+              panelSize <= 30 || activeParticipants.length < 3,
+            'flex-row flex-wrap':
+              activeParticipants.length > 2 &&
+              (panelSize > 30 ||
+                (activeParticipants.length > 3 && panelSize > 23)),
+          }
+        )}>
+        {[...activeParticipants, selfParticipant]?.map((participant) => (
+          <div
+            key={participant.id}
+            className={cn('relative flex-none z-[1] w-full aspect-video p-2', {
+              'w-4/5':
+                (activeParticipants.length === 1 && panelSize > 44) ||
+                (activeParticipants.length === 2 && panelSize > 30) ||
+                (activeParticipants.length === 3 && panelSize > 23),
+              'w-1/2':
+                (panelSize > 30 && activeParticipants.length > 2) ||
+                (activeParticipants.length > 3 && panelSize > 22),
+              'w-1/3': panelSize > 50 && activeParticipants.length > 2,
+              'w-3/5': activeParticipants.length === 2 && panelSize > 35,
             })}>
-            <DyteAvatar size="md" participant={participant} />
-            <DyteNameTag
+            <DyteParticipantTile
               meeting={meeting}
               participant={participant}
-              size="sm"
-              className="left-1/2 -translate-x-1/2">
-              <DyteAudioVisualizer
-                size="sm"
-                slot="start"
+              nameTagPosition="bottom-right"
+              // variant="gradient"
+              className="h-full w-full">
+              <DyteAvatar size="md" participant={participant} />
+              <DyteNameTag
+                meeting={meeting}
                 participant={participant}
-              />
-            </DyteNameTag>
-            {activeSession?.data?.handsRaised?.includes(participant.id) && (
-              <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-[#FAC036]" />
-            )}
-          </DyteParticipantTile>
+                size="sm"
+                className="left-1/2 -translate-x-1/2">
+                <DyteAudioVisualizer
+                  size="sm"
+                  slot="start"
+                  participant={participant}
+                />
+              </DyteNameTag>
+              {activeSession?.data?.handsRaised?.includes(participant.id) && (
+                <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-[#FAC036]" />
+              )}
+              {participant.id === selfParticipant.id && (
+                <VideoBackgroundSettingsButtonWithModal
+                  buttonProps={{
+                    className: 'absolute top-2 right-2 w-8 h-8 flex-none',
+                  }}
+                />
+              )}
+            </DyteParticipantTile>
+          </div>
         ))}
       </div>
     </div>

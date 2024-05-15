@@ -132,7 +132,7 @@ export function VideoBackgroundSettingsButtonWithModal({
         className={cn('flex justify-center items-center')}
         {...buttonProps}
         onClick={() => setOpen(true)}>
-        <RiSparkling2Fill size={22} className="text-white" />
+        <RiSparkling2Fill size={20} className="text-white" />
       </Button>
 
       <Modal
