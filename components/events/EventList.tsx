@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -13,6 +13,7 @@ import {
   TableCell,
   Chip,
   SortDescriptor,
+  Pagination,
 } from '@nextui-org/react'
 
 import { EventActionsWithModal } from './EventActionsWithModal'
@@ -21,6 +22,8 @@ import { Loading } from '../common/Loading'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvents } from '@/hooks/useEvents'
 import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
+
+const rowsPerPage = 10
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -62,10 +65,22 @@ const eventColumns = [
 
 export function EventList() {
   const router = useRouter()
-  const { events, isLoading, refetch } = useEvents()
   const { currentUser } = useAuth()
-
+  const [currentPage, setCurrentPage] = useState(1)
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>()
+  const { events, count, isLoading, refetch } = useEvents({
+    from: (currentPage - 1) * rowsPerPage,
+    to: currentPage * rowsPerPage - 1,
+  })
+  const [totalEventsCount, setTotalEventsCount] = useState(0)
+
+  const pages = Math.ceil(totalEventsCount / rowsPerPage)
+
+  useEffect(() => {
+    if (count) {
+      setTotalEventsCount(count)
+    }
+  }, [count])
 
   const renderCell = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -147,9 +162,31 @@ export function EventList() {
     })
   }, [events, sortDescriptor, getCellValue])
 
+  const getPagination = () => {
+    if (!pages) return null
+
+    return (
+      <div className="flex w-full justify-center">
+        <Pagination
+          variant="bordered"
+          showShadow
+          boundaries={2}
+          color="primary"
+          showControls
+          page={currentPage}
+          total={pages}
+          initialPage={1}
+          onChange={(page) => {
+            setCurrentPage(page)
+          }}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="mt-8 flow-root">
-      <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <Table
             removeWrapper
@@ -160,7 +197,8 @@ export function EventList() {
             classNames={{
               table: isLoading && 'min-h-[25rem]',
             }}
-            onRowAction={(key) => router.push(`/events/${key}`)}>
+            onRowAction={(key) => router.push(`/events/${key}`)}
+            bottomContent={getPagination()}>
             <TableHeader columns={eventColumns}>
               {(column) => (
                 <TableColumn key={column.key} allowsSorting={column.sortable}>

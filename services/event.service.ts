@@ -9,17 +9,19 @@ export type GetEventParams = {
   fetchActiveSession?: boolean
 }
 
-const getEvents = async () => {
+const getEvents = async (range: { from: number; to: number }) => {
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   if (!user) return []
 
-  const { data } = await supabase
+  const { data, count } = await supabase
     .from('enrollment')
-    .select('*,event(*, profile(*))')
+    .select('*, event(*, profile(*))', { count: 'exact' })
     .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .range(range.from, range.to)
   // TODO: fix this someday when the supabase ordering issue is resolved.
   // .order('start_date', {
   //   referencedTable: 'event',
@@ -29,7 +31,6 @@ const getEvents = async () => {
   // .order('updated_at', {
   //   ascending: false,
   // })
-
   const events = data
     ?.map((item) => item.event)
     .sort((a, b) => {
@@ -47,7 +48,7 @@ const getEvents = async () => {
       return b.updated_at.localeCompare(a.updated_at)
     })
 
-  return events
+  return { events, count }
 }
 
 const getEvent = async ({

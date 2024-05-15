@@ -18,6 +18,7 @@ import {
   ModalHeader,
 } from '@nextui-org/react'
 
+import { ContentLoading } from './ContentLoading'
 import { CreateEventFormData, NewEventForm } from './NewEventForm'
 
 import { useAuth } from '@/hooks/useAuth'
@@ -34,6 +35,7 @@ export function CreateEventButtonWithModal({
 }: ICreateEventButtonWithModal) {
   const [open, setOpen] = useState<boolean>(false)
   const { currentUser } = useAuth()
+  const [showPageLoader, setShowPageLoader] = useState(false)
 
   const router = useRouter()
 
@@ -59,10 +61,15 @@ export function CreateEventButtonWithModal({
             setOpen(false)
             toast.success('Event has been created!')
             router.push(`/events/${data.id}`)
+            setShowPageLoader(true)
           }
         },
       }
     )
+  }
+
+  if (showPageLoader) {
+    return <ContentLoading fullPage />
   }
 
   return (
