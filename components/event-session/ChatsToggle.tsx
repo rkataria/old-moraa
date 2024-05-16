@@ -1,4 +1,9 @@
+import { useEffect, useState } from 'react'
+
+import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { IoChatbubblesSharp } from 'react-icons/io5'
+
+import { Badge } from '@nextui-org/react'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -11,21 +16,43 @@ export function ChatsToggle({
   isChatsSidebarOpen: boolean
   onClick: () => void
 }) {
+  const { meeting } = useDyteMeeting()
+  const selfParticipant = useDyteSelector((m) => m.self)
+  const [newMessageReceived, setNewMessageReceived] = useState<boolean>(false)
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    meeting.chat.on('chatUpdate', ({ message }: { message: any }) => {
+      if (message.userId === selfParticipant.userId) return
+      setNewMessageReceived(true)
+    })
+  }, [meeting, selfParticipant.userId])
+
   return (
-    <ControlButton
-      buttonProps={{
-        isIconOnly: true,
-        radius: 'md',
-        variant: 'light',
-        className: cn('transition-all duration-300', {
-          'bg-black text-white': isChatsSidebarOpen,
-        }),
-      }}
-      tooltipProps={{
-        content: isChatsSidebarOpen ? 'Hide Chats' : 'Show Chats',
-      }}
-      onClick={onClick}>
-      <IoChatbubblesSharp size={20} />
-    </ControlButton>
+    <Badge
+      content=""
+      color="danger"
+      size="sm"
+      isDot
+      isInvisible={!newMessageReceived}>
+      <ControlButton
+        buttonProps={{
+          isIconOnly: true,
+          radius: 'md',
+          variant: 'light',
+          className: cn('transition-all duration-300', {
+            'bg-black text-white': isChatsSidebarOpen,
+          }),
+        }}
+        tooltipProps={{
+          content: isChatsSidebarOpen ? 'Hide Chats' : 'Show Chats',
+        }}
+        onClick={() => {
+          setNewMessageReceived(false)
+          onClick()
+        }}>
+        <IoChatbubblesSharp size={20} />
+      </ControlButton>
+    </Badge>
   )
 }
