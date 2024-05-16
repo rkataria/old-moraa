@@ -27,6 +27,12 @@ const textStyle = `
   .text-white-border {
     text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
   }
+  .glass-effect {
+    background-color: rgba(248, 250, 252, 0.25); /* bg-slate-50 with opacity */
+    backdrop-filter: blur(10px) saturate(200%) contrast(50%);
+    -webkit-backdrop-filter: blur(10px) saturate(200%) contrast(50%);
+    background-clip: padding-box;
+  }
 `
 
 interface TimerProps {
@@ -52,6 +58,7 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
       ({ payload }) => {
         setRemainingDuration(payload.remainingDuration)
         setIsTimerRunning(true)
+        setIsOpen(true)
       }
     )
     realtimeChannel.on(
@@ -62,9 +69,54 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
         setIsTimerRunning(false)
       }
     )
-  }, [realtimeChannel])
+    realtimeChannel.on(
+      'broadcast',
+      { event: 'timer-reset-event' },
+      ({ payload }) => {
+        setRemainingDuration(payload.remainingDuration)
+        setIsTimerRunning(false)
+        setIsOpen(true)
+      }
+    )
+    realtimeChannel.on(
+      'broadcast',
+      { event: 'timer-update-event' },
+      ({ payload }) => {
+        setRemainingDuration(payload.remainingDuration)
+      }
+    )
+    realtimeChannel.on('broadcast', { event: 'timer-open-event' }, () => {
+      setIsOpen(true)
+    })
+
+    // Non-host user sends join event to the host
+    if (!isHost) {
+      realtimeChannel.send({
+        type: 'broadcast',
+        event: 'join-event',
+      })
+    }
+  }, [realtimeChannel, isHost])
 
   useEffect(() => {
+    if (!realtimeChannel) return
+
+    realtimeChannel.on('broadcast', { event: 'join-event' }, () => {
+      if (isHost) {
+        // Send the current timer state to the new user
+        realtimeChannel.send({
+          type: 'broadcast',
+          event: isTimerRunning ? 'timer-start-event' : 'timer-stop-event',
+          payload: { remainingDuration },
+        })
+        // Also send the timer open state
+        realtimeChannel.send({
+          type: 'broadcast',
+          event: 'timer-open-event',
+        })
+      }
+    })
+
     realtimeChannel.on(
       'broadcast',
       { event: 'timer-start-event' },
@@ -95,7 +147,7 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
         setRemainingDuration(payload.remainingDuration)
       }
     )
-  }, [realtimeChannel])
+  }, [realtimeChannel, isHost, isTimerRunning, remainingDuration])
 
   useEffect(() => {
     let timer: NodeJS.Timer
@@ -153,6 +205,13 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
 
   const handleTimerButtonClick = () => {
     collapsePopoverContent()
+    if (isHost) {
+      // Broadcast the timer open event when the host opens the timer
+      realtimeChannel.send({
+        type: 'broadcast',
+        event: 'timer-open-event',
+      })
+    }
   }
 
   const handleKeyDown = (event: { key: string }) => {
@@ -175,6 +234,18 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
     })
     // Update the remaining duration locally
     setRemainingDuration(newDuration)
+  }
+
+  const handleResetTimer = () => {
+    const defaultDuration = 5 * 60
+    setRemainingDuration(defaultDuration)
+    setIsTimerRunning(false)
+    // Broadcast reset event
+    realtimeChannel.send({
+      type: 'broadcast',
+      event: 'timer-reset-event',
+      payload: { remainingDuration: defaultDuration },
+    })
   }
 
   return (
@@ -216,9 +287,11 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className="rounded-lg p-4 overflow-hidden w-[300px] bg-slate-50 bg-opacity-25 bg-clip-padding backdrop-filter backdrop-blur-sm backdrop-saturate-200 backdrop-contrast-50">
+          <PopoverContent className="rounded-lg p-4 overflow-hidden w-[300px] glass-effect">
             <div
-              className={`absolute top-2 right-2 cursor-pointer ${!isHost ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`absolute top-2 right-2 cursor-pointer ${
+                !isHost ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
               onClick={() => isHost && handleClosePopover()} // Only handle click if isHost is true
               onKeyDown={(event) => isHost && handleKeyDown(event)} // Only handle key down if isHost is true
               tabIndex={isHost ? 0 : -1} // Disable tab navigation for non-hosts
@@ -231,8 +304,7 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
             </div>
             <div className="p-4 flex items-center">
               <div className="flex justify-between items-center">
-                {' '}
-                {/* Inside the Button component for decreasing timer duration */}{' '}
+                {/* Inside the Button component for decreasing timer duration */}
                 {!isHost && (
                   <h2 className="m-1 font-normal px-1 text-gray-600">
                     <span className="text-lg inline-block text-center w-[full]">
@@ -283,10 +355,8 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
                   radius="full"
                   color="secondary"
                   className="mr-4"
-                  onClick={() => {
-                    setIsTimerRunning(false)
-                    setRemainingDuration(5 * 60)
-                  }}>
+                  onClick={handleResetTimer} // Update the reset button click handler
+                >
                   <MdOutlineReplay size={18} fill="gray" />
                 </Button>
                 <Button
@@ -299,7 +369,7 @@ export function Timer({ collapsePopoverContent, dismissPopover }: TimerProps) {
                   {!isTimerRunning ? (
                     <MdOutlinePlayArrow size={32} fill="white" />
                   ) : (
-                    <MdOutlinePause size="{32}" fill="white" />
+                    <MdOutlinePause size={32} fill="white" />
                   )}
                 </Button>
               </div>
