@@ -1,6 +1,6 @@
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
 
-import { cn } from '@nextui-org/react'
+import { Button, Tooltip, cn } from '@nextui-org/react'
 
 import { useHotkeys } from '@/hooks/useHotkeys'
 
@@ -15,44 +15,51 @@ export function PageControls({
   totalPages,
   handleCurrentPageChange,
 }: PageControlsProps) {
-  const arrowLeft = useHotkeys('ArrowLeft', () => {
+  const handlePrevious = () => {
     if (currentPage === 1) return
 
     handleCurrentPageChange(currentPage - 1)
-  })
+  }
 
-  const arrowRight = useHotkeys('ArrowRight', () => {
+  const handleNext = () => {
     handleCurrentPageChange(currentPage + 1)
-  })
+  }
+
+  const arrowLeft = useHotkeys('ArrowLeft', handlePrevious)
+
+  const arrowRight = useHotkeys('ArrowRight', handleNext)
 
   return (
-    <>
-      {currentPage !== 1 && (
-        <div className="absolute left-0 top-[50%] z-10">
-          <IconChevronLeft
-            className={cn(
-              'w-8 h-8 text-[#575656] hover:opacity-100 cursor-pointer',
-              {
-                'opacity-20': !arrowLeft,
-              }
-            )}
-            onClick={() => handleCurrentPageChange(currentPage - 1)}
-          />
-        </div>
-      )}
-      {currentPage !== totalPages && (
-        <div className="absolute right-0 top-[50%] z-10">
-          <IconChevronRight
-            className={cn(
-              'w-8 h-8 text-[#575656] hover:opacity-100 cursor-pointer',
-              {
-                'opacity-20': !arrowRight,
-              }
-            )}
-            onClick={() => handleCurrentPageChange(currentPage + 1)}
-          />
-        </div>
-      )}
-    </>
+    <div className={cn('absolute right-2 top-2 flex gap-1')}>
+      <Tooltip content="Previous page" placement="top">
+        <Button
+          variant="flat"
+          isIconOnly
+          size="sm"
+          radius="full"
+          className={cn('transition-all duration-200 cursor-pointer ring-0', {
+            'bg-black text-white': currentPage > 1 && arrowLeft,
+            'opacity-20 cursor-not-allowed': currentPage === 1,
+          })}
+          disabled={currentPage === 1}
+          onClick={handlePrevious}>
+          <IconChevronLeft />
+        </Button>
+      </Tooltip>
+      <Tooltip content="Next page" placement="top">
+        <Button
+          variant="flat"
+          isIconOnly
+          size="sm"
+          radius="full"
+          className={cn('transition-all duration-200 cursor-pointer ring-0', {
+            'bg-black text-white': totalPages !== currentPage && arrowRight,
+            'opacity-20 cursor-not-allowed': totalPages === currentPage,
+          })}
+          onClick={handleNext}>
+          <IconChevronRight />
+        </Button>
+      </Tooltip>
+    </div>
   )
 }
