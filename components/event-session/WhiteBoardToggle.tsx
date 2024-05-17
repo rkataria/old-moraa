@@ -19,10 +19,10 @@ export function WhiteBoardToggle() {
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
-        variant: 'light',
-        className: cn('transition-all duration-300', {
-          'bg-black text-white': isWhiteboardActive,
-        }),
+        variant: 'solid',
+        className: cn(
+          'w-[120px] h-[50px] flex items-center justify-center gap-2 p-1 rounded-sm bg-black text-white0'
+        ),
       }}
       tooltipProps={{
         content: isWhiteboardActive ? 'Close whiteboard' : 'Open whiteboard',

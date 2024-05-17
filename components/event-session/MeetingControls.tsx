@@ -20,7 +20,6 @@ import { RaiseHandToggle } from './RaiseHandToggle'
 import { ReactWithEmojiToggle } from './ReactWithEmojiToggle'
 import { ScreenShareToggle } from './ScreenShareToggle'
 import { VideoToggle } from './VideoToggle'
-import { WhiteBoardToggle } from './WhiteBoardToggle'
 import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -103,7 +102,6 @@ export function MeetingControls({
             })
           }}
         />
-        {isHost && <WhiteBoardToggle />}
         <ControlButton
           buttonProps={{
             variant: 'flat',

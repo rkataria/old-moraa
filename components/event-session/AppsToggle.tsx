@@ -6,7 +6,9 @@ import { TbApps } from 'react-icons/tb'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 
+import { CodeEditorToggle } from './CodeEditorToggle'
 import { Timer } from './Timer'
+import { WhiteBoardToggle } from './WhiteBoardToggle'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -56,11 +58,15 @@ export function AppsToggle() {
       )}
       <PopoverContent
         hidden={!isContentVisible}
-        className="p-1 bg-black/90 min-w-[500px] aspect-video text-white flex justify-start items-start">
+        className={cn(
+          'pt-2 bg-black/90 min-w-[500px] aspect-video text-white flex flex-row gap-2 justify-normal items-start'
+        )}>
         <Timer
           collapsePopoverContent={collapsePopoverContent}
           dismissPopover={collapsePopoverContent} // Pass dismissPopover function
         />
+        <WhiteBoardToggle />
+        <CodeEditorToggle />
       </PopoverContent>
     </Popover>
   )
