@@ -26,8 +26,8 @@ export function UserContextProvider({
   const supabase = createClientComponentClient()
   const userQuery = useQuery({
     queryKey: ['CURRENT_USER'],
-    queryFn: () => supabase.auth.getUser(),
-    select: (data) => data.data.user,
+    queryFn: () => supabase.auth.getSession(),
+    select: (data) => data.data.session?.user,
   })
 
   useEffect(() => {
