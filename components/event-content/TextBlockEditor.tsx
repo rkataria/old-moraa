@@ -5,7 +5,6 @@ import React, { useEffect } from 'react'
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
 import Document from '@tiptap/extension-document'
-import { Image } from '@tiptap/extension-image'
 import { Link } from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import Table from '@tiptap/extension-table'
@@ -19,6 +18,7 @@ import TextStyle from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import ImageResize from 'tiptap-extension-resize-image'
 
 import { ScrollShadow } from '@nextui-org/react'
 
@@ -52,11 +52,7 @@ const getExtensions = (type: string) => {
           emptyEditorClass:
             'text-gray-500 float-center before:content-[attr(data-placeholder)]',
         }),
-        Image.configure({
-          HTMLAttributes: {
-            class: 'tiptap-image',
-          },
-        }),
+
         Link.configure({
           HTMLAttributes: {
             class: 'tiptap-link',
@@ -80,6 +76,7 @@ const getExtensions = (type: string) => {
         TableRow.configure({}),
         TableHeader.configure({}),
         TableCell.configure({}),
+        ImageResize,
       ]
 
     case 'header':

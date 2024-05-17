@@ -4,7 +4,6 @@ import React, { useEffect } from 'react'
 
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
-import { Image } from '@tiptap/extension-image'
 import { Link } from '@tiptap/extension-link'
 import Table from '@tiptap/extension-table'
 import TableCell from '@tiptap/extension-table-cell'
@@ -16,6 +15,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import ImageResize from 'tiptap-extension-resize-image'
 
 import { ScrollShadow } from '@nextui-org/react'
 
@@ -32,11 +32,7 @@ const getExtensions = (type: string) => {
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
-        Image.configure({
-          HTMLAttributes: {
-            class: 'tiptap-image',
-          },
-        }),
+
         Link.configure({
           HTMLAttributes: {
             class: 'tiptap-link',
@@ -73,6 +69,7 @@ const getExtensions = (type: string) => {
             class: 'table-cell border border-gray-300',
           },
         }),
+        ImageResize,
       ]
       break
     default:
@@ -86,6 +83,7 @@ const getExtensions = (type: string) => {
         CharacterCount.configure({
           limit: type === 'header' ? TITLE_CHARACTER_LIMIT : null,
         }),
+        ImageResize,
       ]
   }
 }
