@@ -1,61 +1,95 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react'
+import React, { useCallback } from 'react'
+
+import clsx from 'clsx'
+import { Accept, useDropzone } from 'react-dropzone'
 
 export type FilePickerType = {
-  label: string
-  supportedFormats: string[]
-  onUpload: (files: FileList | null) => void
+  supportedFormats: Accept
+  onUpload: (files: File[] | null) => void
+  fullWidth?: boolean
+  // Upload progress is a number from 1 to 100 which represent the upload status.
+  uploadProgress?: number
+  classNames?: {
+    wrapper: string
+  }
 }
 
 export function FilePicker({
-  label,
   onUpload,
   supportedFormats,
+  fullWidth,
+  classNames,
+  uploadProgress,
 }: FilePickerType) {
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles[0]) onUpload(acceptedFiles)
+    },
+    [onUpload]
+  )
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: supportedFormats,
+  })
+
   return (
-    <div>
-      <div className="font-sans border-box">
-        <div className="flex justify-center w-96 mx-auto">
-          <div className="flex flex-col items-center justify-center w-full h-auto my-20">
-            <div className="mt-10 mb-10 text-center">
-              <h4 className="text-2xl font-semibold mb-2">
-                {label || 'Upload your file(s)'}
-              </h4>
-              {supportedFormats ? (
-                <p className="text-xs text-gray-500">
-                  File should be of format{' '}
-                  {supportedFormats.map((f) => f.split('/')[1]).join(', ')}
-                </p>
-              ) : null}
-            </div>
-            <form
-              action="#"
-              className="relative w-4/5 h-32 max-w-xs mb-10 bg-white bg-gray-100 rounded-lg border border-gray-400">
-              <input
-                type="file"
-                id="file-upload"
-                className="hidden"
-                accept={supportedFormats.join(', ')}
-                onChange={(e) => onUpload(e.target.files)}
-              />
-              <label
-                htmlFor="file-upload"
-                className="z-20 flex flex-col-reverse items-center justify-center w-full h-full cursor-pointer">
-                <p className="z-10 text-xs font-light text-center text-gray-500">
-                  Drag & Drop your file(s) here
-                </p>
-                <svg
-                  className="z-10 w-8 h-8 text-indigo-400"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-                </svg>
-              </label>
-            </form>
+    <div
+      className={clsx(
+        'font-sans border-box flex justify-center mx-auto rounded-lg relative overflow-hidden',
+        'border-2 border-dashed border-gray-200',
+        { 'w-96': !fullWidth, 'w-full': fullWidth },
+        classNames?.wrapper
+      )}>
+      <div
+        className={clsx(
+          'flex flex-col items-center justify-center w-full h-auto',
+          'relative mb-10 bg-white bg-gray-100',
+          {
+            'w-4/5 h-32 max-w-xs': !fullWidth,
+            'w-full h-full py-[20%]': fullWidth,
+          }
+        )}
+        {...getRootProps()}>
+        <form action="#" className="w-full h-full">
+          <input {...getInputProps()} id="file-upload" />
+          <div className="z-20 flex flex-col-reverse items-center justify-center w-full h-full cursor-pointer">
+            <p className="z-10 text-xs font-light text-center text-gray-500">
+              Drag & Drop your file(s) here
+            </p>
+            <svg
+              className="z-10 w-8 h-8 text-indigo-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+            </svg>
           </div>
-        </div>
+        </form>
       </div>
+      {uploadProgress ? (
+        <>
+          <div
+            className={clsx(
+              'absolute rounded-lg top-0 bottom-0 left-0 right-0 flex items-center justify-center'
+            )}
+            style={{ backdropFilter: 'blur(4px)', zIndex: 200 }}>
+            Uploading... ({uploadProgress}%)
+          </div>
+          <div
+            style={{
+              right: `${100 - uploadProgress}%`,
+              zIndex: 300,
+              transition: 'right 200ms ease',
+            }}
+            className={clsx(
+              'rounded-lg bg-[#7c3aed] opacity-10 absolute top-0 bottom-0 left-0'
+            )}
+          />
+        </>
+      ) : null}
     </div>
   )
 }

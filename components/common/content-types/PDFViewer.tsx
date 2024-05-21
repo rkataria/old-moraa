@@ -25,11 +25,12 @@ export type PDFViewerSlideType = ISlide & {
 
 interface PDFViewerProps {
   slide: PDFViewerSlideType
+  blockPageChange?: boolean
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-export function PDFViewer({ slide }: PDFViewerProps) {
+export function PDFViewer({ slide, blockPageChange = false }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
   const { isOwner } = useContext(EventContext) as EventContextType
   const [totalPages, setTotalPages] = useState<number>(0)
@@ -85,11 +86,13 @@ export function PDFViewer({ slide }: PDFViewerProps) {
           className="w-full"
         />
       </Document>
-      {isOwner && (
+      {isOwner && !blockPageChange && (
         <PageControls
           currentPage={position}
           totalPages={totalPages}
-          handleCurrentPageChange={handlePositionChange}
+          handleCurrentPageChange={(page) => {
+            handlePositionChange(page <= totalPages ? page : totalPages)
+          }}
         />
       )}
     </div>

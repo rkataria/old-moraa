@@ -5,6 +5,7 @@ import { RxCross1 } from 'react-icons/rx'
 
 import { Button } from '@nextui-org/react'
 
+import { PDFSlideSettings } from './PDFSlideSettings'
 import { CommonSlideSettings } from '../common/CommonSlideSettings'
 import { MoraaBoardSlideSettings } from '../common/MoraaBoardSlideSettings'
 import { PollSlideSettings } from '../common/PollSlideSettings'
@@ -71,6 +72,7 @@ export function SettingsSidebar({
       <CommonSlideSettings />
       <PollSlideSettings />
       <ReflectionSlideSettings />
+      <PDFSlideSettings />
       <TextImageSlideSettings />
       <MoraaBoardSlideSettings />
     </SettingsWrapper>

@@ -69,7 +69,10 @@ export function SlidePreview({ slide, readOnly }: SlideProps) {
           <ImageViewer src={getOjectPublicUrl(slide.content?.path as string)} />
         )}
         {slide.type === ContentType.PDF_VIEWER && (
-          <PDFViewer slide={slide as PDFViewerSlideType} />
+          <PDFViewer
+            slide={slide as PDFViewerSlideType}
+            blockPageChange={readOnly}
+          />
         )}
         {slide.type === ContentType.POLL && (
           <Poll

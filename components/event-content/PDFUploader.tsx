@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.js'
@@ -10,11 +10,8 @@ import toast from 'react-hot-toast'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
 
-import { Button, Input } from '@nextui-org/react'
-
-import { ContentLoading } from '../common/ContentLoading'
 import { FilePicker } from '../common/FilePicker'
-import { NextPrevButtons } from '../common/NextPrevButtons'
+import { PageControls } from '../common/PageControls'
 
 import { Loading } from '@/components/common/Loading'
 import { EventContext } from '@/contexts/EventContext'
@@ -47,10 +44,8 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
   const [fileUrl, setFileURL] = useState<string | undefined>(
     slide.content?.pdfPath
   )
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [totalPages, setTotalPages] = useState<null | number>(null)
-  const [defaultPage, setDefaultPage] = useState<null | number>(
-    slide.content?.defaultPage || 1
-  )
   const [selectedPage, setSelectedPage] = useState<number>(
     slide.content?.defaultPage || 1
   )
@@ -74,13 +69,15 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
     mutationFn: async (file: File) => {
       await deletePDFFile(getPDFName(slide.id)).catch(() => {})
 
-      return uploadPDFFile(getPDFName(slide.id), file)
+      return uploadPDFFile(getPDFName(slide.id), file, setUploadProgress)
     },
     onSuccess: () => toast.success('PDF uploaded successfully.'),
-    onError: () =>
+    onError: (err) => {
+      console.log('🚀 ~ PDFUploader ~ err:', err)
       toast.error(
         'Failed to upload PDF, please try re-uploading again by deleting the slide.'
-      ),
+      )
+    },
     onSettled: () => toast.remove(slide.id),
     onMutate: () => {
       toast.loading('Uploading PDF...', {
@@ -91,15 +88,15 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
 
   const uploadAndSetFile = async (file: File) => {
     uploadPDFMutation.mutate(file, {
-      onSuccess: (res) => {
+      onSuccess: () => {
         // Start the PDF download as soon as the URL is received.
-        setFileURL(res.data?.path)
+        setFileURL(getPDFName(slide.id))
         // Update the slide in background.
         updateSlide({
           slidePayload: {
             content: {
               ...slide.content,
-              pdfPath: res.data?.path,
+              pdfPath: getPDFName(slide.id),
             },
           },
           slideId: slide.id,
@@ -108,40 +105,39 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
     })
   }
 
+  useEffect(() => {
+    if (slide.content?.defaultPage) {
+      setSelectedPage(slide.content?.defaultPage)
+    }
+  }, [slide.content?.defaultPage])
+
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = ({
     numPages: nextNumPages,
   }) => {
     setTotalPages(nextNumPages)
   }
 
-  const saveDefaultPageNumber = () => {
-    if (!fileUrl) return
-    updateSlide({
-      slidePayload: {
-        content: {
-          ...slide.content,
-          defaultPage,
-          pdfPath: fileUrl,
-        },
-      },
-      slideId: slide.id,
-    })
-    setSelectedPage(defaultPage || 1)
-  }
-
   const getInnerContent = () => {
     switch (true) {
-      case uploadPDFMutation.isPending || downloadPDFQuery.isLoading:
+      case downloadPDFQuery.isLoading:
         return (
-          <ContentLoading message="Please wait while we are uploading the PDF. This may take a few minutes!" />
+          <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
+            <Loading />
+          </div>
         )
 
+      case uploadPDFMutation.isPending:
       case !fileUrl:
         return (
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center w-[50vw]">
             <FilePicker
-              label="Select PDF file"
-              supportedFormats={['application/pdf']}
+              fullWidth
+              supportedFormats={{ 'application/pdf': ['.pdf'] }}
+              uploadProgress={
+                uploadPDFMutation.isPending || downloadPDFQuery.isPending
+                  ? uploadProgress
+                  : 0
+              }
               onUpload={(files) => {
                 const fileList = []
                 if (files) {
@@ -174,35 +170,15 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
                 className="w-full"
               />
             </Document>
-            <div className="m-4 flex justify-between items-center">
-              <div className="flex items-center">
-                <Input
-                  placeholder="Initial page number"
-                  className="mr-2"
-                  type="number"
-                  value={`${defaultPage}`}
-                  onChange={(e) => {
-                    if (
-                      +e.target.value > 0 &&
-                      +e.target.value <= (totalPages || 0)
-                    ) {
-                      setDefaultPage(+e.target.value)
-                    }
-                  }}
-                />
-                <Button size="sm" onClick={saveDefaultPageNumber}>
-                  Save
-                </Button>
-              </div>
-              <NextPrevButtons
-                onPrevious={() =>
-                  setSelectedPage((pos) => (pos > 1 ? pos - 1 : pos))
-                }
-                onNext={() => setSelectedPage((pos) => pos + 1)}
-                prevDisabled={selectedPage === 1}
-                nextDisabled={selectedPage === totalPages}
-              />
-            </div>
+            <PageControls
+              currentPage={selectedPage}
+              totalPages={totalPages}
+              handleCurrentPageChange={(page) => {
+                setSelectedPage(
+                  page <= (totalPages || 1) ? page : totalPages || 1
+                )
+              }}
+            />
           </div>
         )
 
@@ -214,10 +190,7 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
   return (
     <div
       className={cn(
-        'w-full h-full flex flex-col justify-center items-center px-8 bg-white',
-        {
-          'pt-[5rem]': !!downloadPDFQuery.data,
-        }
+        'w-full h-full flex flex-col justify-center items-center bg-white'
       )}>
       {getInnerContent()}
     </div>
