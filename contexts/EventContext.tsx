@@ -376,7 +376,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       slideUpdateSubscription.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.id, sections, isOwner])
+  }, [meeting?.id, sections, isOwner, currentSlide?.id])
 
   useEffect(() => {
     if (!meeting) return

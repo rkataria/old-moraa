@@ -30,7 +30,8 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-let providerInstance: SupabaseProvider
+let providerInstance: SupabaseProvider | null = null
+let yDocInstance: Y.Doc | null = null
 
 export function useYjsStoreSupabase({
   slideId,
@@ -54,29 +55,35 @@ export function useYjsStoreSupabase({
     status: 'loading',
   })
 
-  const { yDoc, yStore, meta, provider } = useMemo(() => {
-    const yDoc = new Y.Doc({ gc: true })
+  const { yDoc, yStore, meta } = useMemo(() => {
+    let yDoc = yDocInstance
+    if (!yDoc) {
+      yDoc = new Y.Doc({ gc: true })
+      yDocInstance = yDoc
+    }
     const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${slideId}`)
     const yStore = new YKeyValue(yArr)
     const meta = yDoc.getMap<SerializedSchema>('meta')
-    providerInstance = new SupabaseProvider(yDoc, supabase, {
-      channel: roomId,
-      id: slideId as string,
-      tableName: 'slide',
-      columnName: 'content',
-      resyncInterval: 1000 * 30,
-    })
 
     return {
       yDoc,
       yStore,
       meta,
-      provider: providerInstance,
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, slideId])
 
   useEffect(() => {
+    if (!providerInstance) {
+      providerInstance = new SupabaseProvider(yDoc, supabase, {
+        channel: roomId,
+        id: slideId as string,
+        tableName: 'slide',
+        columnName: 'content',
+        resyncInterval: 1000 * 30,
+      })
+    }
+
     setStoreWithStatus({ status: 'loading' })
 
     const unsubs: (() => void)[] = []
@@ -152,8 +159,10 @@ export function useYjsStoreSupabase({
 
       /* -------------------- Awareness ------------------- */
 
-      const yClientId = provider.awareness.clientID.toString()
-      setUserPreferences({ id: yClientId })
+      const yClientId = providerInstance?.awareness.clientID.toString()
+      if (yClientId) {
+        setUserPreferences({ id: yClientId })
+      }
 
       const userPreferences = computed<{
         id: string
@@ -177,7 +186,7 @@ export function useYjsStoreSupabase({
       )(store)
 
       // Set our initial presence from the derivation's current value
-      provider.awareness.setLocalStateField(
+      providerInstance?.awareness.setLocalStateField(
         'presence',
         presenceDerivation.get()
       )
@@ -187,7 +196,7 @@ export function useYjsStoreSupabase({
         react('when presence changes', () => {
           const presence = presenceDerivation.get()
           requestAnimationFrame(() => {
-            provider.awareness.setLocalStateField('presence', presence)
+            providerInstance?.awareness.setLocalStateField('presence', presence)
           })
         })
       )
@@ -198,7 +207,7 @@ export function useYjsStoreSupabase({
         updated: number[]
         removed: number[]
       }) => {
-        const states = provider.awareness.getStates() as Map<
+        const states = providerInstance?.awareness.getStates() as Map<
           number,
           { presence: TLInstancePresence }
         >
@@ -250,8 +259,8 @@ export function useYjsStoreSupabase({
       meta.observe(handleMetaUpdate)
       unsubs.push(() => meta.unobserve(handleMetaUpdate))
 
-      provider.awareness.on('update', handleUpdate)
-      unsubs.push(() => provider.awareness.off('update', handleUpdate))
+      providerInstance?.awareness.on('update', handleUpdate)
+      unsubs.push(() => providerInstance?.awareness.off('update', handleUpdate))
 
       // 2.
       // Initialize the store with the yjs doc records—or, if the yjs doc
@@ -333,24 +342,32 @@ export function useYjsStoreSupabase({
         return
       }
 
-      provider.off('sync', handleSync)
+      providerInstance?.off('sync', handleSync)
 
       if (status === 'connected') {
         if (hasConnectedBefore) return
         hasConnectedBefore = true
-        provider.on('sync', handleSync)
-        unsubs.push(() => provider.off('synced', handleSync))
+        providerInstance?.on('sync', handleSync)
+        unsubs.push(() => providerInstance?.off('synced', handleSync))
       }
     }
 
-    provider.on('status', handleStatusChange)
-    unsubs.push(() => provider.off('status', handleStatusChange))
+    providerInstance?.on('status', handleStatusChange)
+    unsubs.push(() => providerInstance?.off('status', handleStatusChange))
 
     return () => {
       unsubs.forEach((fn) => fn())
       unsubs.length = 0
+      if (providerInstance) {
+        providerInstance.destroy()
+        providerInstance = null
+      }
+      if (yDocInstance) {
+        yDocInstance.destroy()
+        yDocInstance = null
+      }
     }
-  }, [provider, yDoc, store, yStore, meta])
+  }, [yDoc, store, yStore, meta, roomId, slideId])
 
   return storeWithStatus
 }
