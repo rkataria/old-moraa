@@ -46,16 +46,10 @@ export function SlideManager() {
     syncing,
     currentSlide,
     sections,
-    insertAfterSlideId,
-    insertInSectionId,
     addSlideToSection,
   } = useContext(EventContext) as EventContextType
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
-
-  // useEffect(() => {
-  //   setRightSidebarVisible(false)
-  // }, [currentSlide?.id])
 
   const getSettingsEnabled = () => {
     if (!currentSlide) return false
@@ -67,7 +61,10 @@ export function SlideManager() {
   const settingsEnabled = getSettingsEnabled()
 
   const handleAddNewSlide = (contentType: ContentType) => {
-    const insertInSection = sections.find((s) => s.id === insertInSectionId)
+    const currentSection = sections.find(
+      (s) => s.id === currentSlide?.section_id
+    )
+    const insertInSection = currentSection || sections[0]
 
     const newSlide: ISlide = {
       id: uuidv4(),
@@ -90,7 +87,7 @@ export function SlideManager() {
     addSlideToSection({
       slide: newSlide,
       section: insertInSection,
-      afterSlideId: insertAfterSlideId!,
+      afterSlideId: currentSlide?.id,
     })
     setOpenContentTypePicker(false)
   }

@@ -13,7 +13,6 @@ import toast from 'react-hot-toast'
 
 import { Button, Chip } from '@nextui-org/react'
 
-import { AddItemDropdownActions } from './AddItemDropdownActions'
 import { AddItemStickyDropdownActions } from './AddItemStickyDropdownActions'
 import { AgendaPanelSearch } from './AgendaPanelSearch'
 import { AgendaSlideCard } from './AgendaSlideCard'
@@ -82,9 +81,6 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
     meeting,
     isOwner,
     sections,
-    insertAfterSlideId,
-    insertInSectionId,
-    insertAfterSectionId,
     updateSection,
     reorderSlide,
     reorderSection,
@@ -108,19 +104,6 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
       }
     }
   }, [currentSlide, sections])
-
-  useEffect(() => {
-    if (insertInSectionId) {
-      setExpandedSections((prev) => {
-        if (!prev.includes(insertInSectionId)) {
-          return [...prev, insertInSectionId]
-        }
-
-        return prev
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [insertInSectionId])
 
   const handleExpandSection = (sectionId: string) => {
     setExpandedSections((prev) => {
@@ -195,9 +178,9 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
             {(sectionDroppableProvided) => (
               <div
                 className={cn(
-                  'flex flex-col justify-start items-center gap-6 w-full flex-nowrap scrollbar-none overflow-y-auto',
+                  'flex flex-col justify-start items-center gap-2 w-full flex-nowrap scrollbar-none overflow-y-auto',
                   {
-                    'h-[calc(100vh_-_176px)]': !preview,
+                    'h-[calc(100vh_-_158px)]': !preview,
                     'h-[calc(100vh_-_120px)]': preview,
                   }
                 )}
@@ -248,7 +231,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                         variant="light"
                                         radius="full"
                                         tabIndex={-1}
-                                        className={cn({
+                                        className={cn('flex-none', {
                                           'rotate-90':
                                             snapshot.isDraggingOver ||
                                             expandedSections.includes(
@@ -263,6 +246,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                       <EditableLabel
                                         readOnly={actionDisabled}
                                         label={section.name}
+                                        className="text-sm"
                                         onUpdate={(value: string) => {
                                           updateSection({
                                             sectionPayload: { name: value },
@@ -273,7 +257,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                       <span className="flex-none">
                                         <Chip
                                           size="sm"
-                                          className="aspect-square">
+                                          className="aspect-square flex justify-center items-center">
                                           {section.slides.length}
                                         </Chip>
                                       </span>
@@ -286,7 +270,7 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                       {(snapshot.isDraggingOver ||
                                         expandedSections.includes(section.id) ||
                                         sectionCount === 1) && (
-                                        <div className="flex flex-col justify-start items-start gap-5 w-full p-2 rounded-sm transition-all">
+                                        <div className="flex flex-col justify-start items-start gap-1 w-full p-2 rounded-sm transition-all">
                                           {getFilteredSlides({
                                             slides: section.slides,
                                             isOwner,
@@ -322,28 +306,11 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                                         _snapshot.isDragging
                                                       }
                                                     />
-                                                    <AddItemDropdownActions
-                                                      sectionId={section.id}
-                                                      slideId={slide.id}
-                                                      hiddenActionKeys={[
-                                                        'new-section',
-                                                      ]}
-                                                      hidden={
-                                                        actionDisabled ||
-                                                        _snapshot.isDragging ||
-                                                        section.slides.length -
-                                                          1 ===
-                                                          slideIndex
-                                                      }
-                                                      onOpenContentTypePicker={
-                                                        setOpenContentTypePicker
-                                                      }
-                                                    />
                                                   </div>
                                                 )}
                                               </Draggable>
                                               {slide.id ===
-                                                insertAfterSlideId && (
+                                                currentSlide?.id && (
                                                 <SlidePlaceholder
                                                   displayType={displayType}
                                                 />
@@ -356,18 +323,11 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                       {slideProvided.placeholder}
                                     </div>
                                   </div>
-                                  <AddItemDropdownActions
-                                    sectionId={section.id}
-                                    hidden={actionDisabled}
-                                    onOpenContentTypePicker={
-                                      setOpenContentTypePicker
-                                    }
-                                  />
                                 </div>
                               </div>
                             )}
                           </StrictModeDroppable>
-                          {section.id === insertAfterSectionId && (
+                          {section.id === currentSlide?.section_id && (
                             <SectionPlaceholder />
                           )}
                         </React.Fragment>

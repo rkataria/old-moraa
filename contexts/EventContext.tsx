@@ -34,15 +34,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const [isOwner, setIsOwner] = useState<boolean>(false)
   const supabase = createClientComponentClient()
   const [meeting, setMeeting] = useState<any>(null)
-  const [insertAfterSlideId, setInsertAfterSlideId] = useState<string | null>(
-    null
-  )
-  const [insertAfterSectionId, setInsertAfterSectionId] = useState<
-    string | null
-  >(null)
-  const [insertInSectionId, setInsertInSectionId] = useState<string | null>(
-    null
-  )
   const [showSectionPlaceholder, setShowSectionPlaceholder] =
     useState<boolean>(false)
   const [showSlidePlaceholder, setShowSlidePlaceholder] =
@@ -385,7 +376,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       slideUpdateSubscription.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.id, sections, insertAfterSlideId, isOwner])
+  }, [meeting?.id, sections, isOwner])
 
   useEffect(() => {
     if (!meeting) return
@@ -564,13 +555,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
   }
 
-  const addSection = async ({
-    name,
-    afterSectionId,
-  }: {
-    name?: string
-    afterSectionId?: string
-  }) => {
+  const addSection = async ({ name }: { name?: string }) => {
     if (!isOwner) return
 
     const sectionName =
@@ -590,9 +575,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
 
     const sectionIds = meeting.sections || []
+    const currentSectionId = currentSlide?.section_id
 
-    if (afterSectionId) {
-      const index = sectionIds.indexOf(afterSectionId)
+    if (currentSectionId) {
+      const index = sectionIds.indexOf(currentSectionId)
       sectionIds.splice(index + 1, 0, sectionResponse.data.id)
     } else {
       // Add the section at the end
@@ -1045,16 +1031,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         syncing,
         isOwner,
         sections,
-        insertAfterSectionId,
-        insertAfterSlideId,
         showSectionPlaceholder,
         showSlidePlaceholder,
-        insertInSectionId,
         preview,
         setPreview,
         error,
-        setInsertAfterSlideId,
-        setInsertAfterSectionId,
         setCurrentSlide,
         importGoogleSlides,
         updateSlide,
@@ -1067,7 +1048,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         updateSection,
         deleteSection,
         addSlideToSection,
-        setInsertInSectionId,
         moveUpSection,
         moveDownSection,
       }}>

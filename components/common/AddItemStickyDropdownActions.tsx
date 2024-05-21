@@ -51,35 +51,19 @@ export function AddItemStickyDropdownActions({
     preview,
     isOwner,
     eventMode,
-    sections,
-    meeting,
     showSectionPlaceholder,
     showSlidePlaceholder,
-    setInsertInSectionId,
-    setInsertAfterSectionId,
-    setInsertAfterSlideId,
     addSection,
   } = useContext(EventContext) as EventContextType
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddItem = (itemKey: any) => {
     const selectedOptionValue = Array.from(itemKey)[0]
-    const lastSectionId = meeting.sections[meeting.sections.length - 1]
-    const lastSection = sections.find((section) => section.id === lastSectionId)
-    const lastSlideOfLastSection =
-      lastSection?.slides[lastSection.slides.length - 1]
 
     if (selectedOptionValue === 'new-section') {
-      setInsertAfterSectionId(lastSectionId)
-      addSection({
-        afterSectionId: lastSectionId,
-      })
+      addSection({})
     }
     if (selectedOptionValue === 'new-slide') {
-      if (lastSlideOfLastSection) {
-        setInsertAfterSlideId(lastSlideOfLastSection.id)
-      }
-      if (lastSectionId) setInsertInSectionId(lastSectionId)
       onOpenContentTypePicker?.(true)
     }
   }
@@ -89,7 +73,7 @@ export function AddItemStickyDropdownActions({
   return (
     <ButtonGroup
       variant="flat"
-      className="bg-black text-white max-w-[300px] rounded-md overflow-hidden"
+      className="bg-black text-white max-w-[300px] rounded-md overflow-hidden mt-2"
       isDisabled={showSectionPlaceholder || showSlidePlaceholder}>
       <Button
         startContent={<LuPlusCircle />}
@@ -101,7 +85,7 @@ export function AddItemStickyDropdownActions({
       </Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
-          <Button isIconOnly className="bg-gray-800 text-white">
+          <Button isIconOnly className="bg-black text-white">
             <ChevronDownIcon />
           </Button>
         </DropdownTrigger>

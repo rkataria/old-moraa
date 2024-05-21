@@ -13,16 +13,11 @@ export type EventContextType = {
   syncing: boolean
   isOwner: boolean
   sections: ISection[]
-  insertAfterSectionId: string | null
-  insertAfterSlideId: string | null
   showSectionPlaceholder: boolean
   showSlidePlaceholder: boolean
-  insertInSectionId: string | null
   preview: boolean
   setPreview: (preview: boolean) => void
   error: { slideId: string; message: string } | null
-  setInsertAfterSlideId: (slideId: string | null) => void
-  setInsertAfterSectionId: (sectionId: string | null) => void
   setCurrentSlide: (slide: ISlide) => void
   addSlideToSection: ({
     slide,
@@ -53,13 +48,7 @@ export type EventContextType = {
   moveDownSlide: (slide: ISlide) => void
   reorderSlide: OnDragEndResponder
   reorderSection: OnDragEndResponder
-  addSection: ({
-    name,
-    afterSectionId,
-  }: {
-    name?: string
-    afterSectionId?: string
-  }) => void
+  addSection: ({ name }: { name?: string }) => void
   updateSection: ({
     sectionPayload,
     sectionId,
@@ -79,7 +68,6 @@ export type EventContextType = {
     sectionId: string
     meetingId: string
   }) => void
-  setInsertInSectionId: (sectionId: string | null) => void
   moveUpSection: (section: ISection) => void
   moveDownSection: (section: ISection) => void
 }
