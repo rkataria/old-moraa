@@ -21,7 +21,7 @@ export function WhiteBoardToggle() {
         radius: 'md',
         variant: 'solid',
         className: cn(
-          'w-[120px] h-[50px] flex items-center justify-center gap-2 p-1 rounded-sm bg-black text-white0'
+          'w-[47px] h-[42px] flex items-center justify-center rounded-sm text-black bg-gray-100'
         ),
       }}
       tooltipProps={{
