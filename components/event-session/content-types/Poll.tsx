@@ -205,7 +205,12 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
   const getOptionWidth = (option: string) => {
     if (votes.length === 0 || !optionsVoteCount[option]) return 0
 
-    return Math.round((optionsVoteCount[option] * 100) / votes.length)
+    const totalVotesCount = Object.values(optionsVoteCount).reduce(
+      (total, quantity) => total + quantity,
+      0
+    )
+
+    return Math.round((optionsVoteCount[option] * 100) / totalVotesCount)
   }
 
   const selfVote = votes.find(
@@ -215,6 +220,8 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
   const votedOptions = selfVote?.response.selected_options || []
   const showAnonymousToggle =
     eventMode === 'present' && !isOwner && slide.config.allowVoteAnonymously
+
+  const showResponses = isOwner || voted
 
   return (
     <div
@@ -281,20 +288,26 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
                     anonymous: makeMyVoteAnonymous,
                   })
                 }}>
-                <div
-                  className={cn(
-                    'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
-                    {
-                      'bg-purple-500': votedOptions.includes(option) || isOwner,
-                    }
-                  )}
-                  style={{
-                    width: `${getOptionWidth(option)}%`,
-                  }}
-                />
-                <div className="absolute left-0 top-0 h-full w-full flex justify-center items-center text-xl font-bold text-black/10 pointer-events-none">
-                  {getOptionWidth(option)}%
-                </div>
+                {showResponses && (
+                  <>
+                    <div
+                      className={cn(
+                        'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
+                        {
+                          'bg-purple-500':
+                            votedOptions.includes(option) || isOwner,
+                        }
+                      )}
+                      style={{
+                        width: `${getOptionWidth(option)}%`,
+                      }}
+                    />
+                    <div className="absolute left-0 top-0 h-full w-full flex justify-center items-center text-xl font-bold text-black/10 pointer-events-none">
+                      {getOptionWidth(option)}%
+                    </div>
+                  </>
+                )}
+
                 <PollOption
                   slide={slide}
                   pollOption={option}
@@ -303,9 +316,11 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
                   isOptionSelected={isOptionSelected}
                   handleVoteCheckbox={handleVoteCheckbox}
                 />
-                <div className="absolute right-4">
-                  <VoteUsers votes={votes} option={option} />
-                </div>
+                {showResponses && (
+                  <div className="absolute right-4">
+                    <VoteUsers votes={votes} option={option} />
+                  </div>
+                )}
               </div>
             ))}
             {voteButtonVisible && (
@@ -313,12 +328,13 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
                 <Button
                   type="button"
                   color="primary"
-                  onClick={() =>
+                  onClick={() => {
                     onVote(slide, {
                       selectedOptions,
                       anonymous: makeMyVoteAnonymous,
                     })
-                  }>
+                    setVoteButtonVisible(false)
+                  }}>
                   Submit
                 </Button>
               </div>

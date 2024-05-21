@@ -41,6 +41,7 @@ export function GoogleSlideEmbed({
         height="100%"
         slidesLink={url}
         position={currentPage}
+        containerStyle={{ pointerEvents: 'none' }}
         className="rounded-md"
         onLoad={() => {
           setLoading(false)
