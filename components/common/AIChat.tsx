@@ -2,11 +2,12 @@
 
 import { ReactNode, useEffect, useRef } from 'react'
 
-import { IconX } from '@tabler/icons-react'
 import { useChat } from 'ai/react'
 import { LuArrowUp } from 'react-icons/lu'
+import { RiUnpinLine } from 'react-icons/ri'
+import { RxCross1 } from 'react-icons/rx'
 
-import { ScrollShadow } from '@nextui-org/react'
+import { Button, ScrollShadow } from '@nextui-org/react'
 
 import { useProfile } from '@/hooks/useProfile'
 import { cn } from '@/utils/utils'
@@ -21,13 +22,20 @@ function AiChatSidebarWrapper({
   onClose: () => void
 }) {
   return (
-    <div
-      className={cn(
-        'w-full bg-white/95 h-full transition-all border-l bg-white'
-      )}>
-      <div className="flex items-center justify-between font-semibold w-full bg-slate-100 py-2 px-4">
-        <p className="text-sm">AI Copilot</p>
-        <IconX onClick={onClose} className="cursor-pointer" />
+    <div className={cn('w-full h-full transition-all border-l bg-[#f5f5f5]')}>
+      <div className="flex items-center justify-between w-full p-2">
+        <Button variant="light" isIconOnly size="sm" onClick={onClose}>
+          <RxCross1 size={18} />
+        </Button>
+        <h3 className="text-sm font-medium text-center">AI Copilot</h3>
+        <Button
+          variant="light"
+          isIconOnly
+          size="sm"
+          disabled
+          className="opacity-0 pointer-events-none">
+          <RiUnpinLine size={24} />
+        </Button>
       </div>
       <div className={cn(contentClass)}>{children}</div>
     </div>
@@ -66,7 +74,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
 
   return (
     <AiChatSidebarWrapper
-      contentClass="relative flex flex-col w-full h-[calc(100%_-_40px)]"
+      contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)]"
       onClose={onClose}>
       <ScrollShadow
         hideScrollBar
