@@ -47,7 +47,17 @@ export function ImageBehind({
   ) as FileBlock
 
   return (
-    <div className="relative w-full h-full pt-16">
+    <div className="relative w-full h-full flex flex-col">
+      {slide.config.showTitle && (
+        <div onClick={() => setEditingBlock(headerBlock.id)}>
+          <TextBlockEditor
+            stickyToolbar
+            block={headerBlock}
+            editable={editingBlock === headerBlock.id}
+            onChange={onBlockChange}
+          />
+        </div>
+      )}
       <div
         className="w-full h-full flex flex-col justify-center items-center bg-center bg-cover"
         style={{
@@ -56,16 +66,6 @@ export function ImageBehind({
             : undefined,
         }}>
         <div className="flex flex-col h-full w-full">
-          {slide.config.showTitle && (
-            <div onClick={() => setEditingBlock(headerBlock.id)}>
-              <TextBlockEditor
-                stickyToolbar
-                block={headerBlock}
-                editable={editingBlock === headerBlock.id}
-                onChange={onBlockChange}
-              />
-            </div>
-          )}
           {slide.config.showDescription && (
             <div onClick={() => setEditingBlock(textBlock.id)}>
               <TextBlockEditor

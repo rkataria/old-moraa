@@ -59,7 +59,17 @@ export function ImageRight({
   ) as FileBlock
 
   return (
-    <div className="w-full h-full flex justify-center items-center group pt-16 relative">
+    <div className="w-full h-full flex flex-col justify-center items-start group relative">
+      {slide.config.showTitle && (
+        <div onClick={() => setEditingBlock(headerBlock.id)} className="w-full">
+          <TextBlockEditor
+            stickyToolbar
+            block={headerBlock}
+            editable={editingBlock === headerBlock.id}
+            onChange={onBlockChange}
+          />
+        </div>
+      )}
       <PanelGroup
         direction="horizontal"
         className="w-full"
@@ -67,16 +77,6 @@ export function ImageRight({
         onLayout={handlePanelLayoutChange}>
         <Panel minSize={30}>
           <div className="flex flex-col h-full">
-            {slide.config.showTitle && (
-              <div onClick={() => setEditingBlock(headerBlock.id)}>
-                <TextBlockEditor
-                  stickyToolbar
-                  block={headerBlock}
-                  editable={editingBlock === headerBlock.id}
-                  onChange={onBlockChange}
-                />
-              </div>
-            )}
             {slide.config.showDescription && (
               <div onClick={() => setEditingBlock(textBlock.id)}>
                 <TextBlockEditor
