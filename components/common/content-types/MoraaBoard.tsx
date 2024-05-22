@@ -38,22 +38,23 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
       className="relative w-full flex-auto flex flex-col justify-center items-center px-4 z-[0] h-full">
-      {store.status === 'loading' && (
+      {store.status === 'loading' ? (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <ContentLoading />
         </div>
+      ) : (
+        <Tldraw
+          // persistenceKey={roomId}
+          autoFocus
+          store={store}
+          components={{
+            SharePanel: preview ? null : NameEditor,
+          }}
+          onMount={(editor) => {
+            editor.updateInstanceState({ isReadonly: !!readOnly })
+          }}
+        />
       )}
-      <Tldraw
-        // persistenceKey={roomId}
-        autoFocus
-        store={store}
-        components={{
-          SharePanel: preview ? null : NameEditor,
-        }}
-        onMount={(editor) => {
-          editor.updateInstanceState({ isReadonly: !!readOnly })
-        }}
-      />
     </div>
   )
 }
