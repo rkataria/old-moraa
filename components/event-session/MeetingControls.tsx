@@ -4,10 +4,9 @@ import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from 'next/navigation'
 
-import { Tooltip } from '@nextui-org/tooltip'
+import { Tooltip } from '@nextui-org/react'
 
 import { AiToggle } from './AiToggle'
-import { AppsToggle } from './AppsToggle'
 import { ChatsToggle } from './ChatsToggle'
 import { LeaveMeetingToggle } from './LeaveMeetingToggle'
 import { LobbyViewToggle } from './LobbyViewToggle'
@@ -19,7 +18,9 @@ import { PresentationToggle } from './PresentationToggle'
 import { RaiseHandToggle } from './RaiseHandToggle'
 import { ReactWithEmojiToggle } from './ReactWithEmojiToggle'
 import { ScreenShareToggle } from './ScreenShareToggle'
+import { Timer } from './Timer'
 import { VideoToggle } from './VideoToggle'
+import { WhiteBoardToggle } from './WhiteBoardToggle'
 import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -76,7 +77,10 @@ export function MeetingControls({
             })
           }
         />
-        <AppsToggle />
+        <WhiteBoardToggle />
+        <div className="!w-[75px] !h-[50px] flex items-center justify-center">
+          <Timer />
+        </div>
       </div>
 
       <div className="flex justify-end items-center gap-3">

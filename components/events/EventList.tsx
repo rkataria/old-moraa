@@ -163,7 +163,7 @@ export function EventList() {
   }, [events, sortDescriptor, getCellValue])
 
   const getPagination = () => {
-    if (!pages) return null
+    if (!pages || pages < 2) return null
 
     return (
       <div className="flex w-full justify-center">
