@@ -265,7 +265,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide, presentationStatus, eventSessionMode])
+  }, [
+    currentSlide,
+    presentationStatus,
+    eventSessionMode,
+    activeSession?.data?.currentSlideId,
+    activeSession?.data?.presentationStatus,
+  ])
 
   useEffect(() => {
     if (!currentSlide) return
@@ -717,8 +723,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     return () => {
       channels.unsubscribe()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSession?.id])
+  }, [activeSession])
 
   const onToggleHandRaised = async ({
     handRaise,
@@ -756,6 +761,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       handsRaised: updateRaisedHands,
     })
   }
+
   const updateTypingUsers = async ({
     isTyping,
     participantId,

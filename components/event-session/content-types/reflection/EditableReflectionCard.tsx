@@ -91,6 +91,21 @@ export function EditableReflectionCard({
     })
   }
 
+  const handleCancel = () => {
+    removeTyping()
+
+    setReflection((prev) => ({
+      ...prev,
+      value: selfResponse?.response.reflection ?? '',
+    }))
+
+    if (selfResponse?.response?.reflection) {
+      setEditEnabled(false)
+    }
+
+    setAnonymous(selfResponse?.response.anonymous ?? false)
+  }
+
   return (
     <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl min-w-fit">
       <CardHeader>
@@ -155,17 +170,7 @@ export function EditableReflectionCard({
               Submit
             </Button>
             {editEnabled && (
-              <Button
-                size="sm"
-                onClick={() => {
-                  removeTyping()
-                  setReflection((prev) => ({
-                    ...prev,
-                    value: selfResponse?.response.reflection ?? '',
-                  }))
-                  setEditEnabled(false)
-                  setAnonymous(selfResponse?.response.anonymous ?? false)
-                }}>
+              <Button size="sm" onClick={handleCancel}>
                 Cancel
               </Button>
             )}

@@ -62,9 +62,14 @@ function StrictModeDroppable({ children, ...props }: DroppableProps) {
 
 type AgendaPanelProps = {
   setOpenContentTypePicker?: React.Dispatch<React.SetStateAction<boolean>>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  updateActiveSession?: (data: any) => void
 }
 
-export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
+export function AgendaPanel({
+  setOpenContentTypePicker,
+  updateActiveSession,
+}: AgendaPanelProps) {
   const [itemToDelete, setItemToDelete] = useState<ISection | null>(null)
   const [displayType, setDisplayType] =
     useState<AgendaSlideDisplayType>('thumbnail')
@@ -305,6 +310,9 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                                       displayType={displayType}
                                                       isDragging={
                                                         _snapshot.isDragging
+                                                      }
+                                                      updateActiveSession={
+                                                        updateActiveSession
                                                       }
                                                     />
                                                   </div>

@@ -7,6 +7,7 @@ import { IconDots } from '@tabler/icons-react'
 
 import { Tooltip } from '@nextui-org/react'
 
+import { ContentType } from './ContentTypePicker'
 import { DeleteSlideModal } from './DeleteSlideModal'
 import { EditableLabel } from './EditableLabel'
 import { SlideActions } from './SlideActions'
@@ -63,6 +64,8 @@ export type AgendaSlideCardProps = {
   draggableProps: any
   displayType: AgendaSlideDisplayType
   isDragging: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  updateActiveSession?: (data: any) => void
 }
 
 type IsDraggableArgs = {
@@ -300,6 +303,7 @@ export function AgendaSlideCard({
   draggableProps,
   displayType,
   isDragging,
+  updateActiveSession,
 }: AgendaSlideCardProps) {
   const {
     deleteSlide,
@@ -308,6 +312,7 @@ export function AgendaSlideCard({
     setCurrentSlide,
     eventMode,
     isOwner,
+    currentSlide,
   } = useContext(EventContext) as EventContextType
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
@@ -337,6 +342,14 @@ export function AgendaSlideCard({
     }
 
     setCurrentSlide(s)
+
+    if (!currentSlide || !updateActiveSession) return
+
+    if (s.type === ContentType.REFLECTION && currentSlide.id !== s.id) {
+      updateActiveSession({
+        typingUsers: [],
+      })
+    }
   }
 
   if (displayType === 'thumbnail') {

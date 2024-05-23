@@ -46,6 +46,15 @@ const config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      keyframes: {
+        typing: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(2)' },
+        },
+      },
+      animation: {
+        typing: 'typing 1s ease-in-out infinite',
+      },
     },
   },
   plugins: [

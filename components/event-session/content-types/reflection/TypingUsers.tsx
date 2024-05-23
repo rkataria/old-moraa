@@ -31,12 +31,21 @@ export function TypingUsers() {
       // eslint-disable-next-line react/no-array-index-key
       key={`${typingUser.participantName}-${index}`}
       classNames={{
-        base: 'bg-[#DAC8FA] min-w-max bg-primary rounded-xl justify-start p-3 h-fit',
-        name: 'font-semibold text-white',
+        base: 'border border-[#cbbcbc] rounded-full min-w-max justify-start p-2 pr-3 bg-white h-fit',
+        name: 'font-semibold text-black',
       }}
-      name={`${typingUser.participantName} is typing...`}
+      name={
+        <div className="flex gap-[0.3125rem] items-baseline">
+          {typingUser.participantName}
+          {' is typing'}
+          <div className="animate-[typing_1s_infinite] w-[0.1875rem] h-[0.1875rem] rounded-full bg-black ml-[0.125rem] delay-100" />
+          <div className="animate-[typing_1s_ease-in-out_infinite] w-[0.1875rem] h-[0.1875rem] rounded-full bg-black delay-700" />
+          <div className="animate-[typing_1s_ease-in-out_infinite] w-[0.1875rem] h-[0.1875rem] rounded-full bg-black delay-300" />
+        </div>
+      }
       avatarProps={{
         src: getAvatarForName(typingUser.participantName),
+        size: 'md',
       }}
     />
   ))

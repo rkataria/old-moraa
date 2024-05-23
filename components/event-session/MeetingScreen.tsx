@@ -55,6 +55,7 @@ export function MeetingScreen() {
     presentationStatus,
     setEventSessionMode,
     updateActiveSession,
+    updateTypingUsers,
   } = useContext(EventSessionContext) as EventSessionContextType
 
   const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
@@ -113,6 +114,11 @@ export function MeetingScreen() {
     }
 
     const handleHostLeft = (participant: DyteParticipant) => {
+      updateTypingUsers({
+        isTyping: false,
+        participantId: participant.id,
+      })
+
       if (
         participant.presetName?.includes('host') &&
         eventSessionMode === 'Presentation'
@@ -222,7 +228,7 @@ export function MeetingScreen() {
         <MeetingLeftSidebarWrapper
           visible={leftSidebarVisible}
           setLeftSidebarVisible={setLeftSidebarVisible}>
-          <AgendaPanel />
+          <AgendaPanel updateActiveSession={updateActiveSession} />
         </MeetingLeftSidebarWrapper>
         <div
           className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100"

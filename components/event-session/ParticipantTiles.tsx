@@ -99,7 +99,14 @@ export function ParticipantTiles({
                 />
               </DyteNameTag>
               {activeSession?.data?.handsRaised?.includes(participant.id) && (
-                <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-[#FAC036]" />
+                <HiMiniHandRaised
+                  className={cn(
+                    'absolute right-2 top-2 text-2xl flex justify-center items-center text-[#FAC036]',
+                    {
+                      'left-2': participant.id === selfParticipant.id,
+                    }
+                  )}
+                />
               )}
               {participant.id === selfParticipant.id && (
                 <VideoBackgroundSettingsButtonWithModal
