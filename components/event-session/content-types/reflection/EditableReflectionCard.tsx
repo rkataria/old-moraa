@@ -108,7 +108,7 @@ export function EditableReflectionCard({
 
   return (
     <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl min-w-fit">
-      <CardHeader>
+      <CardHeader className="z-[0]">
         <div className="flex justify-start items-center gap-2">
           <Avatar
             isBordered

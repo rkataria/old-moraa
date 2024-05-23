@@ -140,7 +140,7 @@ export function ReflectionCard({
 
   return (
     <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl">
-      <CardHeader>
+      <CardHeader className="z-0">
         <div className="flex justify-start items-center gap-5">
           <Avatar
             isBordered

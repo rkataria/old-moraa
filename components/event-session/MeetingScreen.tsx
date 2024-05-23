@@ -189,7 +189,7 @@ export function MeetingScreen() {
 
   return (
     <MeetingLayoutRoot>
-      <div className="h-16 px-4 z-10 border-b-2 border-gray-200 bg-white">
+      <div className="h-16 px-4 z-[9] border-b-2 border-gray-200 bg-white">
         <MeetingControls
           rightSidebar={rightSidebar}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

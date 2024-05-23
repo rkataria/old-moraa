@@ -1,18 +1,26 @@
+import { useContext } from 'react'
+
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { IoEasel } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { EventSessionContextType } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 const DYTE_WHITEBOARD_PLUGIN_ID = 'ae79b269-24ca-4f8a-8112-f96084c8c19a'
 
 export function WhiteBoardToggle() {
+  const { isHost } = useContext(EventSessionContext) as EventSessionContextType
+
   const whiteboardPlugin = useDyteSelector((m) =>
     m.plugins.all.get(DYTE_WHITEBOARD_PLUGIN_ID)
   )
 
   const isWhiteboardActive = whiteboardPlugin?.active
+
+  if (!isHost) return null
 
   return (
     <ControlButton

@@ -78,9 +78,7 @@ export function MeetingControls({
           }
         />
         <WhiteBoardToggle />
-        <div className="!w-[75px] !h-[50px] flex items-center justify-center">
-          <Timer />
-        </div>
+        <Timer />
       </div>
 
       <div className="flex justify-end items-center gap-3">
