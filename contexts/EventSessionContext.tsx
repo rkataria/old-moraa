@@ -688,12 +688,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
         return
       }
-
+      setActiveSession(createSessionResponse?.data)
       await addParticipant(createSessionResponse.data)
 
       return
     }
 
+    setActiveSession(getActiveSessionResponse.data)
     await addParticipant(getActiveSessionResponse.data)
   }
 

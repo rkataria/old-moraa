@@ -23,7 +23,7 @@ const createSession = async ({ meetingId }: { meetingId: string }) => {
 
   const query = APIService.supabaseClient
     .from('session')
-    .insert([{ meeting_id: meetingId, status: 'ACTIVE' }])
+    .insert([{ meeting_id: meetingId, status: 'ACTIVE', data: {} }])
     .select()
     .single()
 
