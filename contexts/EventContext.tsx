@@ -62,7 +62,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     // Don't subscribe to the changes if the user is not the owner and the event mode is not present
     // if (eventMode !== 'present' || !isOwner) return
-    if (eventMode === 'edit' && !isOwner) return
+    // if (eventMode === 'edit' && !isOwner) return
 
     // subscribe to the meeting updates
     const meetingUpdateSubscription = supabase

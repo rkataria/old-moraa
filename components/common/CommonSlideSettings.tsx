@@ -1,13 +1,15 @@
 import { ChangeEvent, useContext } from 'react'
 
 import { TwitterPicker } from 'react-color'
+import { TbCheck } from 'react-icons/tb'
 
-import { Checkbox } from '@nextui-org/react'
+import { Checkbox, Switch } from '@nextui-org/react'
 
 import { ContentType } from './ContentTypePicker'
 
 import { SLIDE_BG_COLOR_PALETTE } from '@/constants/common'
 import { EventContext } from '@/contexts/EventContext'
+import { SlideStatus } from '@/services/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 
 export function CommonSlideSettings() {
@@ -71,6 +73,27 @@ export function CommonSlideSettings() {
           color={currentSlide.config.backgroundColor}
           onChange={(color) => updateSlideColors(color.hex, 'backgroundColor')}
         />
+
+        <Switch
+          color="success"
+          isSelected={currentSlide.status === SlideStatus.PUBLISHED}
+          // eslint-disable-next-line react/no-unstable-nested-components
+          thumbIcon={({ isSelected }) => (isSelected ? <TbCheck /> : null)}
+          onValueChange={(isSelected) =>
+            updateSlide({
+              slidePayload: {
+                status: isSelected ? SlideStatus.PUBLISHED : SlideStatus.DRAFT,
+              },
+              slideId: currentSlide.id,
+            })
+          }
+          classNames={{
+            base: 'inline-flex flex-row-reverse w-full max-w-md items-center p-0 justify-between mt-4 pr-4',
+          }}>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm">Share with participants</p>
+          </div>
+        </Switch>
 
         <div className="grid gap-2 w-full mt-4">
           {showTitleToggle && (

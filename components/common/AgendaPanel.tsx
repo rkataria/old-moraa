@@ -27,7 +27,6 @@ import { EventContext } from '@/contexts/EventContext'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
 import { type AgendaSlideDisplayType } from '@/types/event.type'
 import { ISection, ISlide } from '@/types/slide.type'
-import { isSlideInteractive } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
 
 const getFilteredSlides = ({
@@ -41,11 +40,7 @@ const getFilteredSlides = ({
 }) => {
   if (isOwner || eventMode === 'present') return slides
 
-  const nonInteractiveSlides = slides.filter(
-    (slide) => !isSlideInteractive(slide)
-  )
-
-  return nonInteractiveSlides
+  return slides.filter((slide) => slide.status === 'PUBLISHED')
 }
 
 function StrictModeDroppable({ children, ...props }: DroppableProps) {
@@ -258,7 +253,13 @@ export function AgendaPanel({ setOpenContentTypePicker }: AgendaPanelProps) {
                                         <Chip
                                           size="sm"
                                           className="aspect-square flex justify-center items-center">
-                                          {section.slides.length}
+                                          {
+                                            getFilteredSlides({
+                                              slides: section.slides,
+                                              isOwner,
+                                              eventMode,
+                                            }).length
+                                          }
                                         </Chip>
                                       </span>
                                       <SectionDropdownActions
