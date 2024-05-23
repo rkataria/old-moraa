@@ -76,8 +76,16 @@ export const isColorLight = (color: string) => !isColorDark(color)
 export const getAvatarForName = (name: string) =>
   `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`
 
-export const getSlidesFromSections = (sections: ISection[]) =>
+export const getSlidesFromSections = (
+  sections: ISection[],
+  published = false
+) =>
   sections.reduce(
-    (acc, section) => [...acc, ...section.slides],
+    (acc, section) => [
+      ...acc,
+      ...section.slides.filter((s) =>
+        published ? s.status === 'PUBLISHED' : true
+      ),
+    ],
     [] as ISection['slides']
   )

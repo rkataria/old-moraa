@@ -11,12 +11,12 @@ export function AgendaPanelSearch({
 }: {
   setExpandedSections: React.Dispatch<React.SetStateAction<string[]>>
 }) {
-  const { sections, setCurrentSlide } = useContext(
+  const { isOwner, sections, setCurrentSlide } = useContext(
     EventContext
   ) as EventContextType
 
   const handleSlideSearch = (value: string) => {
-    const slides = getSlidesFromSections(sections)
+    const slides = getSlidesFromSections(sections, !isOwner)
 
     const slide = slides.find((s) =>
       s.name.toLowerCase().includes(value.toLowerCase())
