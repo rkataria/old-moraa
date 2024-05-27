@@ -81,7 +81,7 @@ export function VideoEmbed({ slide }: VideoEmbedProps) {
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <div className="max-w-[80%] h-full aspect-video w-max overflow-hidden rounded-md">
+      <div className="max-w-[80%] h-full aspect-video w-max overflow-hidden rounded-md grid place-items-center">
         <ResponsiveVideoPlayer
           url={videoUrl}
           showControls={isHost}

@@ -147,6 +147,7 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
   const { options } = slide.content
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
+  const [disableVotes, setDisableVotes] = useState(false)
   const { currentUser } = useAuth()
   const { eventMode } = useContext(EventContext) as EventContextType
   const { onVote, onUpdateVote } = useContext(
@@ -278,7 +279,8 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
                   if (
                     voted ||
                     isOwner ||
-                    slide.config.allowVoteOnMultipleOptions
+                    slide.config.allowVoteOnMultipleOptions ||
+                    disableVotes
                   ) {
                     return
                   }
@@ -287,6 +289,7 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
                     selectedOptions: [option],
                     anonymous: makeMyVoteAnonymous,
                   })
+                  setDisableVotes(true)
                 }}>
                 {showResponses && (
                   <>
