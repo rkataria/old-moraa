@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoHappy } from 'react-icons/io5'
 
 import {
@@ -36,6 +37,27 @@ export function ReactWithEmojiToggle() {
   const { flyEmoji } = useContext(
     EventSessionContext
   ) as EventSessionContextType
+
+  useHotkeys('e', () => setIsOpen(!isOpen), [isOpen])
+  useHotkeys('ESC', () => setIsOpen(false), [])
+
+  const handleEmoji = (emojiIndex: number) => {
+    if (!isOpen) return
+    flyEmoji({
+      emoji: EMOJIS[emojiIndex - 1],
+      name: selfParticipant.name,
+    })
+  }
+
+  useHotkeys('1', () => handleEmoji(1))
+  useHotkeys('2', () => handleEmoji(2))
+  useHotkeys('3', () => handleEmoji(3))
+  useHotkeys('4', () => handleEmoji(4))
+  useHotkeys('5', () => handleEmoji(5))
+  useHotkeys('6', () => handleEmoji(6))
+  useHotkeys('7', () => handleEmoji(7))
+  useHotkeys('8', () => handleEmoji(8))
+  useHotkeys('9', () => handleEmoji(9))
 
   return (
     <Popover

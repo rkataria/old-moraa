@@ -11,6 +11,7 @@ import {
 import { useDebounce } from '@uidotdev/usehooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   Panel,
   PanelGroup,
@@ -63,6 +64,8 @@ export function SlideManager() {
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
 
+  useHotkeys('f', () => setOpenContentTypePicker(true), [])
+
   const leftPanelRef = useRef<ImperativePanelHandle>(null)
   const rightPanelRef = useRef<ImperativePanelHandle>(null)
   const [mainLayoutPanelSizes, setMainLayoutPanelSizes] = useState([2, 98]) // [leftSidebar, mainContent, rightSidebar]
@@ -87,6 +90,32 @@ export function SlideManager() {
   }
 
   const settingsEnabled = getSettingsEnabled()
+
+  const toggleAiSideBar = () => {
+    if (!isOwner) return
+
+    if (aiChatOverlay) {
+      setAiChatOverlay(false)
+      setRightSidebarVisible(false)
+    } else {
+      setAiChatOverlay(true)
+      setRightSidebarVisible(true)
+    }
+  }
+
+  useHotkeys('a', toggleAiSideBar, [aiChatOverlay, isOwner])
+  useHotkeys('ctrl + [', () => setLeftSidebarVisible(!leftSidebarVisible), [
+    leftSidebarVisible,
+  ])
+  useHotkeys('cmd + [', () => setLeftSidebarVisible(!leftSidebarVisible), [
+    leftSidebarVisible,
+  ])
+  useHotkeys('ctrl + ]', () => setRightSidebarVisible(!rightSidebarVisible), [
+    rightSidebarVisible,
+  ])
+  useHotkeys('cmd + ]', () => setRightSidebarVisible(!rightSidebarVisible), [
+    rightSidebarVisible,
+  ])
 
   const handleAddNewSlide = (contentType: ContentType) => {
     const currentSection = sections.find(
@@ -186,18 +215,7 @@ export function SlideManager() {
   return (
     <SlideManagerLayoutRoot>
       <SlideManagerHeader>
-        <Header
-          event={event}
-          onAiChatOverlayToggle={() => {
-            if (aiChatOverlay) {
-              setAiChatOverlay(false)
-              setRightSidebarVisible(false)
-            } else {
-              setAiChatOverlay(true)
-              setRightSidebarVisible(true)
-            }
-          }}
-        />
+        <Header event={event} onAiChatOverlayToggle={toggleAiSideBar} />
       </SlideManagerHeader>
       <div className="flex flex-auto w-full h-full relative bg-gray-100">
         <PanelGroup

@@ -1,11 +1,11 @@
 import { useContext, useMemo } from 'react'
 
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button, Tooltip, cn } from '@nextui-org/react'
 
 import { EventContext } from '@/contexts/EventContext'
-import { useHotkeys } from '@/hooks/useHotkeys'
 import { EventContextType } from '@/types/event-context.type'
 import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
 

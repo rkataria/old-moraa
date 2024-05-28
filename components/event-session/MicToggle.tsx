@@ -1,4 +1,5 @@
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoMicSharp, IoMicOffSharp } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
@@ -8,6 +9,18 @@ import { cn } from '@/utils/utils'
 export function MicToggle({ className = '' }: { className?: string }) {
   const self = useDyteSelector((state) => state.self)
   const isMicEnabled = useDyteSelector((state) => state.self?.audioEnabled)
+
+  const handleMic = () => {
+    if (isMicEnabled) {
+      self.disableAudio()
+
+      return
+    }
+
+    self.enableAudio()
+  }
+
+  useHotkeys('m', handleMic, [self, isMicEnabled])
 
   return (
     <ControlButton
@@ -22,15 +35,7 @@ export function MicToggle({ className = '' }: { className?: string }) {
       tooltipProps={{
         content: isMicEnabled ? 'Mute' : 'Unmute',
       }}
-      onClick={() => {
-        if (isMicEnabled) {
-          self.disableAudio()
-
-          return
-        }
-
-        self.enableAudio()
-      }}>
+      onClick={handleMic}>
       {isMicEnabled ? <IoMicSharp size={20} /> : <IoMicOffSharp size={20} />}
     </ControlButton>
   )

@@ -4,6 +4,7 @@ import { createContext, useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useParams } from 'next/navigation'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
@@ -556,6 +557,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const addSection = async ({ name }: { name?: string }) => {
+    if (showSectionPlaceholder) return
+
     if (!isOwner) return
 
     const sectionName =
@@ -1018,6 +1021,14 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       meetingId: meeting.id,
     })
   }
+
+  useHotkeys(
+    'p',
+    () => isOwner && eventMode === 'edit' && setPreview(!preview),
+    [preview, isOwner, eventMode]
+  )
+  useHotkeys('ESC', () => isOwner && setPreview(false), [isOwner])
+  useHotkeys('alt + n', () => addSection({}))
 
   return (
     <EventContext.Provider

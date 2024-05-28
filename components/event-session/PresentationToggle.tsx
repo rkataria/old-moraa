@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoSquare, IoPlay } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
@@ -17,6 +18,18 @@ export function PresentationToggle() {
 
   const presentationStarted =
     presentationStatus !== PresentationStatuses.STOPPED
+
+  const handlePresentationToggle = () => {
+    if (presentationStatus === PresentationStatuses.STOPPED) {
+      startPresentation()
+
+      return
+    }
+
+    stopPresentation()
+  }
+
+  useHotkeys('s', handlePresentationToggle, [presentationStatus])
 
   return (
     <ControlButton
@@ -36,15 +49,7 @@ export function PresentationToggle() {
       tooltipProps={{
         content: presentationStarted ? 'Stop presenting' : 'Start presenting',
       }}
-      onClick={() => {
-        if (presentationStatus === PresentationStatuses.STOPPED) {
-          startPresentation()
-
-          return
-        }
-
-        stopPresentation()
-      }}>
+      onClick={handlePresentationToggle}>
       {presentationStarted ? 'Stop' : 'Start'}
     </ControlButton>
   )

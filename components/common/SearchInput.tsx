@@ -1,4 +1,7 @@
+import { useRef } from 'react'
+
 import { SearchIcon } from 'lucide-react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Input, InputProps } from '@nextui-org/react'
 
@@ -9,6 +12,7 @@ export function SearchInput({
   onSearch: (value: string) => void
   inputProps?: InputProps
 }) {
+  const searchRef = useRef<HTMLInputElement>(null)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const value = new FormData(e.currentTarget).get(
@@ -18,9 +22,15 @@ export function SearchInput({
     e.currentTarget.reset()
   }
 
+  useHotkeys('/', (e) => {
+    e.preventDefault()
+    searchRef?.current?.focus()
+  })
+
   return (
     <form onSubmit={handleSubmit}>
       <Input
+        ref={searchRef}
         name="search"
         isClearable
         radius="lg"

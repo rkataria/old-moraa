@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoChatbubblesSharp } from 'react-icons/io5'
 
 import { Badge } from '@nextui-org/react'
@@ -28,6 +29,13 @@ export function ChatsToggle({
     })
   }, [meeting, selfParticipant.userId])
 
+  const handleChat = () => {
+    setNewMessageReceived(false)
+    onClick()
+  }
+
+  useHotkeys('c', handleChat)
+
   return (
     <Badge
       content=""
@@ -47,10 +55,7 @@ export function ChatsToggle({
         tooltipProps={{
           content: isChatsSidebarOpen ? 'Hide Chats' : 'Show Chats',
         }}
-        onClick={() => {
-          setNewMessageReceived(false)
-          onClick()
-        }}>
+        onClick={handleChat}>
         <IoChatbubblesSharp size={20} />
       </ControlButton>
     </Badge>

@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import {
   Button,
@@ -36,6 +37,7 @@ export function CreateEventButtonWithModal({
   const [open, setOpen] = useState<boolean>(false)
   const { currentUser } = useAuth()
   const [showPageLoader, setShowPageLoader] = useState(false)
+  useHotkeys('n', () => setOpen(true), [])
 
   const router = useRouter()
 

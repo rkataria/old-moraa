@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoEasel } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
@@ -20,6 +21,20 @@ export function WhiteBoardToggle() {
 
   const isWhiteboardActive = whiteboardPlugin?.active
 
+  const handleWhiteBoard = async () => {
+    if (!whiteboardPlugin) return
+
+    if (whiteboardPlugin.active) {
+      await whiteboardPlugin.deactivate()
+
+      return
+    }
+
+    await whiteboardPlugin.activate()
+  }
+
+  useHotkeys('w', handleWhiteBoard, [whiteboardPlugin])
+
   if (!isHost) return null
 
   return (
@@ -35,17 +50,7 @@ export function WhiteBoardToggle() {
       tooltipProps={{
         content: isWhiteboardActive ? 'Close whiteboard' : 'Open whiteboard',
       }}
-      onClick={async () => {
-        if (!whiteboardPlugin) return
-
-        if (whiteboardPlugin.active) {
-          await whiteboardPlugin.deactivate()
-
-          return
-        }
-
-        await whiteboardPlugin.activate()
-      }}>
+      onClick={handleWhiteBoard}>
       <IoEasel size={20} />
     </ControlButton>
   )

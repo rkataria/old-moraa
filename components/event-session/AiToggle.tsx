@@ -1,3 +1,4 @@
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoSparkles } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
@@ -11,6 +12,8 @@ export function AiToggle({
   isAiSidebarOpen: boolean
   onClick: () => void
 }) {
+  useHotkeys('a', onClick)
+
   return (
     <ControlButton
       buttonProps={{

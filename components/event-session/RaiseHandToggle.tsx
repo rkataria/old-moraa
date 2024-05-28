@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { useDebounce } from '@uidotdev/usehooks'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoHandRight } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
@@ -43,6 +44,16 @@ export function RaiseHandToggle() {
     meeting.participants.on('activeSpeaker', handleActiveSpeaker)
   }, [meeting.participants, isHandRaised, selfParticipant.id])
 
+  const handleRaiseHand = () => {
+    onToggleHandRaised({
+      handRaise: !isHandRaised,
+      participantId: selfParticipant.id,
+      participantName: selfParticipant.name,
+    })
+  }
+
+  useHotkeys('h', handleRaiseHand, [isHandRaised, selfParticipant])
+
   if (!participant) return null
 
   return (
@@ -58,13 +69,7 @@ export function RaiseHandToggle() {
       tooltipProps={{
         content: isHandRaised ? 'Lower hand' : 'Raise hand',
       }}
-      onClick={() => {
-        onToggleHandRaised({
-          handRaise: !isHandRaised,
-          participantId: selfParticipant.id,
-          participantName: selfParticipant.name,
-        })
-      }}>
+      onClick={handleRaiseHand}>
       <IoHandRight size={20} />
     </ControlButton>
   )

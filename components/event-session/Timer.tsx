@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState, useCallback } from 'react'
 
 import Draggable, { DraggableEvent, DraggableData } from 'react-draggable'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   MdOutlineWatchLater,
   MdAdd,
@@ -212,6 +213,8 @@ export function Timer() {
   const handleDrag = (e: DraggableEvent, data: DraggableData) => {
     setPosition({ x: data.x, y: data.y })
   }
+
+  useHotkeys('t', handleTimerButtonClick, [isHost, isOpen])
 
   return (
     <>

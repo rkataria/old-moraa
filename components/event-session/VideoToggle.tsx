@@ -1,4 +1,5 @@
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoVideocam, IoVideocamOff } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
@@ -8,6 +9,18 @@ import { cn } from '@/utils/utils'
 export function VideoToggle({ className = '' }: { className?: string }) {
   const self = useDyteSelector((state) => state.self)
   const isVideoEnabled = useDyteSelector((state) => state.self?.videoEnabled)
+
+  const handleVideo = () => {
+    if (isVideoEnabled) {
+      self.disableVideo()
+
+      return
+    }
+
+    self.enableVideo()
+  }
+
+  useHotkeys('v', handleVideo, [self, isVideoEnabled])
 
   return (
     <ControlButton
@@ -22,15 +35,7 @@ export function VideoToggle({ className = '' }: { className?: string }) {
       tooltipProps={{
         content: isVideoEnabled ? 'Hide video' : 'Show video',
       }}
-      onClick={() => {
-        if (isVideoEnabled) {
-          self.disableVideo()
-
-          return
-        }
-
-        self.enableVideo()
-      }}>
+      onClick={handleVideo}>
       {isVideoEnabled ? <IoVideocam size={20} /> : <IoVideocamOff size={20} />}
     </ControlButton>
   )

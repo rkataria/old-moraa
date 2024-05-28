@@ -10,6 +10,7 @@ import {
   Draggable,
 } from 'react-beautiful-dnd'
 import toast from 'react-hot-toast'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button, Chip } from '@nextui-org/react'
 
@@ -151,10 +152,23 @@ export function AgendaPanel({
 
     return null
   }
+  const expandAndCollapseSections = () => {
+    if (expandedSections.length === 0) {
+      setExpandedSections(sections.map((s) => s.id))
+
+      return
+    }
+
+    setExpandedSections([])
+  }
 
   const sectionCount = sections.length
   const firstSectionSlidesCount = sections?.[0]?.slides?.length || 0
   const actionDisabled = eventMode !== 'edit' || !isOwner || preview
+
+  useHotkeys('l', () => setDisplayType('list'), [])
+  useHotkeys('g', () => setDisplayType('thumbnail'), [])
+  useHotkeys('Minus', expandAndCollapseSections, [sections, expandedSections])
 
   return (
     <div className={cn('w-full bg-white h-full transition-all')}>

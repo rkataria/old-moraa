@@ -1,3 +1,4 @@
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoPeopleSharp } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
@@ -11,6 +12,8 @@ export function ParticipantsToggle({
   isParticipantsSidebarOpen: boolean
   onClick: () => void
 }) {
+  useHotkeys('p', onClick)
+
   return (
     <ControlButton
       buttonProps={{

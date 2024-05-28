@@ -7,6 +7,7 @@ import { useState } from 'react'
 
 import clsx from 'clsx'
 import { Edit } from 'lucide-react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button } from '@nextui-org/react'
 
@@ -22,6 +23,8 @@ const styles = {
 
 export function EditEventButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
+
+  useHotkeys('e', () => setOpen(true), [])
 
   return (
     <>

@@ -15,6 +15,7 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
 import { useDebounce } from '@uidotdev/usehooks'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   ImperativePanelHandle,
   Panel,
@@ -79,6 +80,14 @@ export function MeetingScreen() {
   const rightPanelRef = useRef<ImperativePanelHandle>(null)
   const [mainLayoutPanelSizes, setMainLayoutPanelSizes] = useState([2, 98]) // [leftSidebar, mainContent, rightSidebar]
   const debouncedMainLayoutPanelSizes = useDebounce(mainLayoutPanelSizes, 500)
+
+  useHotkeys('ctrl + [', () => setLeftSidebarVisible(!leftSidebarVisible), [
+    leftSidebarVisible,
+  ])
+
+  useHotkeys('cmd + [', () => setLeftSidebarVisible(!leftSidebarVisible), [
+    leftSidebarVisible,
+  ])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
