@@ -45,7 +45,7 @@ export function AgendaPanelSearch({
         variant: 'flat',
         radius: 'md',
         placeholder: 'Search...',
-        classNames: { input: 'p-0', inputWrapper: 'h-6' },
+        classNames: { input: 'p-0', inputWrapper: 'h-6 relative' },
       }}
     />
   )

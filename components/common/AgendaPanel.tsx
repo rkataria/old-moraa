@@ -159,8 +159,10 @@ export function AgendaPanel({
   return (
     <div className={cn('w-full bg-white h-full transition-all')}>
       <div className="flex flex-col justify-start items-center w-full p-2">
-        <div className="flex justify-between items-center gap-2 px-2 pb-2">
-          <AgendaPanelSearch setExpandedSections={setExpandedSections} />
+        <div className="flex justify-between items-center gap-2 px-2 pb-2 w-full">
+          <div className="flex-grow">
+            <AgendaPanelSearch setExpandedSections={setExpandedSections} />
+          </div>
           <DisplayTypeSwitcher
             displayType={displayType}
             onDisplayTypeChange={setDisplayType}

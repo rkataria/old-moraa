@@ -31,26 +31,22 @@ export function MeetingBody({ children }: { children: React.ReactNode }) {
 export function MeetingLeftSidebarWrapper({
   children,
   visible,
-  setLeftSidebarVisible,
+  toggleLeftSidebar,
 }: {
   children: React.ReactNode
   visible: boolean
-  setLeftSidebarVisible: (visible: boolean) => void
+  toggleLeftSidebar: () => void
 }) {
   return (
     <div
       className={cn(
-        'relative flex-none transition-all duration-300 ease-in-out max-h-[calc(100vh_-_64px)] border-r-2 border-gray-200 bg-white',
-        {
-          'w-5': !visible,
-          'w-72': visible,
-        }
+        'w-full h-full relative flex-none transition-all duration-300 ease-in-out max-h-[calc(100vh_-_64px)] border-r-2 border-gray-200 bg-white'
       )}>
       {visible ? children : null}
 
       <button
-        className="absolute -right-4 top-1/2 -translate-y-1/2 z-[1] p-1 aspect-square rounded-full border-2 border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 ease-in-out"
-        onClick={() => setLeftSidebarVisible(!visible)}>
+        className="absolute -right-4 top-20 -translate-y-1/2 z-[1] p-1 aspect-square rounded-full border-2 border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+        onClick={toggleLeftSidebar}>
         {visible ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
       </button>
     </div>
@@ -67,11 +63,8 @@ export function MeetingRightSidebarWrapper({
   return (
     <div
       className={cn(
-        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white border-l-2 border-gray-200',
-        {
-          'w-72': visible,
-          'w-0': !visible,
-        }
+        'h-full flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white border-l-2 border-gray-200',
+        { 'w-full': visible, 'w-0': !visible }
       )}>
       {children}
     </div>

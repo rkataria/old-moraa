@@ -1,8 +1,21 @@
 /* eslint-disable react/button-has-type */
-import { Fragment, useContext, useMemo, useState } from 'react'
+import {
+  Fragment,
+  useContext,
+  useMemo,
+  useState,
+  useRef,
+  useEffect,
+} from 'react'
 
+import { useDebounce } from '@uidotdev/usehooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
+import {
+  Panel,
+  PanelGroup,
+  ImperativePanelHandle,
+} from 'react-resizable-panels'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Header } from './Header'
@@ -11,6 +24,7 @@ import { Slide } from './Slide'
 import { AgendaPanel } from '../common/AgendaPanel'
 import { AIChat } from '../common/AIChat'
 import { Loading } from '../common/Loading'
+import { PanelResizer } from '../common/PanelResizer'
 import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
 
@@ -29,9 +43,7 @@ import { cn, getSlideCount } from '@/utils/utils'
 
 export function SlideManager() {
   const { eventId } = useParams()
-  const { event, isLoading: eventLoading } = useEvent({
-    id: eventId as string,
-  })
+  const { event, isLoading: eventLoading } = useEvent({ id: eventId as string })
   const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(true)
   const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(false)
@@ -51,9 +63,25 @@ export function SlideManager() {
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
 
+  const leftPanelRef = useRef<ImperativePanelHandle>(null)
+  const rightPanelRef = useRef<ImperativePanelHandle>(null)
+  const [mainLayoutPanelSizes, setMainLayoutPanelSizes] = useState([2, 98]) // [leftSidebar, mainContent, rightSidebar]
+  const debouncedMainLayoutPanelSizes = useDebounce(mainLayoutPanelSizes, 500)
+
+  useEffect(() => {
+    const leftPanelSize = debouncedMainLayoutPanelSizes[0]
+
+    if (leftPanelSize > 5) {
+      setLeftSidebarVisible(true)
+      leftPanelRef.current?.resize(leftPanelSize)
+    } else {
+      setLeftSidebarVisible(false)
+      leftPanelRef.current?.resize(2)
+    }
+  }, [debouncedMainLayoutPanelSizes])
+
   const getSettingsEnabled = () => {
-    if (!currentSlide) return false
-    if (!isOwner) return false
+    if (!currentSlide || !isOwner) return false
 
     return true
   }
@@ -100,15 +128,8 @@ export function SlideManager() {
     )
   }
 
-  // const getIsSlidePublished = () => {
-  //   const allSlides = sections.flatMap((s) => s.slides)
-
-  //   return allSlides.some((slide) => slide.status === SlideStatus.PUBLISHED)
-  // }
-
   const renderRightSidebar = () => {
-    if (preview) return null
-    if (!isOwner) return null
+    if (preview || !isOwner) return null
     if (aiChatOverlay) {
       return <AIChat onClose={() => setRightSidebarVisible(false)} />
     }
@@ -126,7 +147,6 @@ export function SlideManager() {
 
   const renderSlide = () => {
     const slideCount = getSlideCount(sections)
-
     if (slideCount === 0) {
       return (
         <div className="flex items-center justify-center w-full h-full">
@@ -134,10 +154,7 @@ export function SlideManager() {
         </div>
       )
     }
-
-    if (!currentSlide) {
-      return null
-    }
+    if (!currentSlide) return null
 
     return (
       <Fragment key={currentSlide.id}>
@@ -153,6 +170,17 @@ export function SlideManager() {
         <SlideControls />
       </Fragment>
     )
+  }
+
+  const toggleLeftSidebar = () => {
+    setLeftSidebarVisible((prev) => {
+      const newState = !prev
+      if (leftPanelRef.current) {
+        leftPanelRef.current.resize(newState ? 20 : 2)
+      }
+
+      return newState
+    })
   }
 
   return (
@@ -171,19 +199,77 @@ export function SlideManager() {
           }}
         />
       </SlideManagerHeader>
-      <div className="flex flex-auto w-full">
-        <SlideManagerLeftSidebarWrapper
-          visible={leftSidebarVisible}
-          setLeftSidebarVisible={setLeftSidebarVisible}>
-          <AgendaPanel setOpenContentTypePicker={setOpenContentTypePicker} />
-        </SlideManagerLeftSidebarWrapper>
-        <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
-          {renderSlide()}
-        </div>
-        <SlideManagerRightSidebarWrapper
-          visible={rightSidebarVisible && isOwner && !preview}>
-          {renderRightSidebar()}
-        </SlideManagerRightSidebarWrapper>
+      <div className="flex flex-auto w-full h-full relative bg-gray-100">
+        <PanelGroup
+          direction="horizontal"
+          autoSaveId="slideManagerLayout"
+          onLayout={(layout) => {
+            setMainLayoutPanelSizes(layout)
+          }}>
+          {/* Left Sidebar */}
+          <Panel
+            minSize={2}
+            maxSize={25}
+            defaultSize={leftSidebarVisible ? 20 : 0}
+            ref={leftPanelRef}
+            className={cn('pr-5', {
+              'bg-transparent': leftSidebarVisible,
+            })}>
+            <SlideManagerLeftSidebarWrapper
+              visible={leftSidebarVisible}
+              toggleLeftSidebar={toggleLeftSidebar}>
+              {leftSidebarVisible && (
+                <AgendaPanel
+                  setOpenContentTypePicker={setOpenContentTypePicker}
+                />
+              )}
+            </SlideManagerLeftSidebarWrapper>
+          </Panel>
+
+          <PanelResizer className="right-6" />
+          <Panel
+            minSize={20}
+            defaultSize={
+              leftSidebarVisible && rightSidebarVisible
+                ? 60
+                : rightSidebarVisible
+                  ? 80
+                  : 100
+            }
+            maxSize={rightSidebarVisible ? 70 : 100}>
+            <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
+              {renderSlide()}
+            </div>
+          </Panel>
+
+          {rightSidebarVisible && !preview && isOwner && (
+            <>
+              <PanelResizer className="-right-[4px]" />
+              <Panel
+                minSize={
+                  leftSidebarVisible && rightSidebarVisible
+                    ? 23
+                    : rightSidebarVisible
+                      ? 18
+                      : 0
+                }
+                maxSize={25}
+                defaultSize={
+                  leftSidebarVisible && rightSidebarVisible
+                    ? 23
+                    : rightSidebarVisible
+                      ? 18
+                      : 0
+                }
+                ref={rightPanelRef}
+                className="bg-white">
+                <SlideManagerRightSidebarWrapper visible>
+                  {renderRightSidebar()}
+                </SlideManagerRightSidebarWrapper>
+              </Panel>
+            </>
+          )}
+        </PanelGroup>
       </div>
       <ContentTypePicker
         open={openContentTypePicker}
@@ -205,9 +291,7 @@ export function SlideManagerLayoutRoot({
       className={cn(
         'flex flex-col w-full h-screen max-h-screen bg-gray-900 overflow-hidden'
       )}
-      style={{
-        backgroundColor: 'var(--slide-bg-color)',
-      }}>
+      style={{ backgroundColor: 'var(--slide-bg-color)' }}>
       {children}
     </div>
   )
@@ -236,26 +320,22 @@ export function SlideManagerBody({ children }: { children: React.ReactNode }) {
 export function SlideManagerLeftSidebarWrapper({
   children,
   visible,
-  setLeftSidebarVisible,
+  toggleLeftSidebar,
 }: {
   children: React.ReactNode
   visible: boolean
-  setLeftSidebarVisible: (visible: boolean) => void
+  toggleLeftSidebar: () => void
 }) {
   return (
     <div
       className={cn(
-        'relative flex-none transition-all duration-300 ease-in-out max-h-[calc(100vh_-_64px)] border-r-2 border-gray-200 bg-white',
-        {
-          'w-5': !visible,
-          'w-72': visible,
-        }
+        'w-full h-full relative flex-none transition-all duration-300 ease-in-out max-h-[calc(100vh_-_64px)] border-r-2 border-gray-200 bg-white'
       )}>
       {visible ? children : null}
 
       <button
-        className="absolute -right-4 top-1/2 -translate-y-1/2 z-[1] p-1 aspect-square rounded-full border-2 border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 ease-in-out"
-        onClick={() => setLeftSidebarVisible(!visible)}>
+        className="absolute -right-4 top-20 -translate-y-1/2 z-[1] p-1 aspect-square rounded-full border-2 border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+        onClick={toggleLeftSidebar}>
         {visible ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
       </button>
     </div>
@@ -272,11 +352,8 @@ export function SlideManagerRightSidebarWrapper({
   return (
     <div
       className={cn(
-        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white',
-        {
-          'w-72': visible,
-          'w-0': !visible,
-        }
+        'h-full flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white',
+        { 'w-full': visible, 'w-0': !visible }
       )}>
       {children}
     </div>
@@ -294,10 +371,7 @@ export function SlideManagerAIChatOverlay({
     <div
       className={cn(
         'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)]',
-        {
-          'w-72': visible,
-          'w-0': !visible,
-        }
+        { 'w-72': visible, 'w-0': !visible }
       )}>
       {children}
     </div>

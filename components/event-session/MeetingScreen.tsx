@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
@@ -13,7 +14,12 @@ import {
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import { useDebounce } from '@uidotdev/usehooks'
+import {
+  ImperativePanelHandle,
+  Panel,
+  PanelGroup,
+} from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
 import { MeetingControls } from './MeetingControls'
@@ -25,6 +31,7 @@ import {
 import { ParticipantTiles } from './ParticipantTiles'
 import { AgendaPanel } from '../common/AgendaPanel'
 import { AIChat } from '../common/AIChat'
+import { PanelResizer } from '../common/PanelResizer'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -33,6 +40,7 @@ import {
   EventSessionContextType,
   PresentationStatuses,
 } from '@/types/event-session.type'
+import { cn } from '@/utils/utils'
 
 export type DyteStates = {
   [key: string]: string | boolean
@@ -67,6 +75,10 @@ export function MeetingScreen() {
   const isScreensharing = !!screensharingParticipant || selfScreenShared
   const [panelSize, setPanelSize] = useState(18) // Initial default size
   const panelRef = useRef(null)
+  const leftPanelRef = useRef<ImperativePanelHandle>(null)
+  const rightPanelRef = useRef<ImperativePanelHandle>(null)
+  const [mainLayoutPanelSizes, setMainLayoutPanelSizes] = useState([2, 98]) // [leftSidebar, mainContent, rightSidebar]
+  const debouncedMainLayoutPanelSizes = useDebounce(mainLayoutPanelSizes, 500)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -146,6 +158,29 @@ export function MeetingScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting, eventSessionMode])
 
+  useEffect(() => {
+    const leftPanelSize = debouncedMainLayoutPanelSizes[0]
+
+    if (leftPanelSize > 5) {
+      setLeftSidebarVisible(true)
+      leftPanelRef.current?.resize(leftPanelSize)
+    } else {
+      setLeftSidebarVisible(false)
+      leftPanelRef.current?.resize(2)
+    }
+  }, [debouncedMainLayoutPanelSizes])
+
+  const toggleLeftSidebar = () => {
+    setLeftSidebarVisible((prev) => {
+      const newState = !prev
+      if (leftPanelRef.current) {
+        leftPanelRef.current.resize(newState ? 20 : 2)
+      }
+
+      return newState
+    })
+  }
+
   const renderRightSidebar = () => {
     if (!rightSidebar) return null
 
@@ -157,7 +192,7 @@ export function MeetingScreen() {
       <DyteSidebar
         meeting={meeting}
         states={dyteStates}
-        className="bg-white"
+        className="bg-white w-full h-full max-w-full"
         // Bug: Applying this show only the sidebar and not the main content
         // config={{
         //   styles: {
@@ -224,55 +259,115 @@ export function MeetingScreen() {
           }}
         />
       </div>
-      <div className="flex flex-auto w-full">
-        <MeetingLeftSidebarWrapper
-          visible={leftSidebarVisible}
-          setLeftSidebarVisible={setLeftSidebarVisible}>
-          <AgendaPanel updateActiveSession={updateActiveSession} />
-        </MeetingLeftSidebarWrapper>
-        <div
-          className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100"
-          ref={mainContentRef}>
-          {/* Sportlight View */}
-          {spotlightMode ? (
-            <ParticipantTiles spotlightMode />
-          ) : (
-            <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
-              <Panel
-                minSize={30}
-                maxSize={100}
-                defaultSize={80}
-                collapsedSize={50}>
-                {['Preview', 'Presentation'].includes(eventSessionMode) && (
-                  <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
-                    <ContentContainer />
-                  </div>
-                )}
-              </Panel>
+      <div className="flex flex-auto w-full bg-gray-100">
+        <PanelGroup
+          direction="horizontal"
+          autoSaveId="meetingScreenLayout"
+          className="bg-transparent"
+          onLayout={(layout) => {
+            setMainLayoutPanelSizes(layout)
+          }}>
+          {/* Left Sidebar */}
+          <Panel
+            minSize={2}
+            maxSize={25}
+            defaultSize={leftSidebarVisible ? 20 : 0}
+            ref={leftPanelRef}
+            className={cn('pr-5', {
+              'bg-transparent': leftSidebarVisible,
+            })}>
+            <MeetingLeftSidebarWrapper
+              visible={leftSidebarVisible}
+              toggleLeftSidebar={toggleLeftSidebar}>
+              {leftSidebarVisible && (
+                <AgendaPanel updateActiveSession={updateActiveSession} />
+              )}
+            </MeetingLeftSidebarWrapper>
+          </Panel>
 
-              <PanelResizeHandle className="w-1.5 h-full bg-transparent relative cursor-col-resize hover:bg-opacity-10 hover:bg-black">
-                <div
-                  className="absolute left-1/2 transform -translate-x-1/2 w-0.5 bg-gray-600"
-                  style={{ top: '45%', height: '10%', width: '75%' }}
-                />
-              </PanelResizeHandle>
+          <PanelResizer className="right-6" />
 
-              <Panel
-                minSize={20}
-                collapsedSize={20}
-                defaultSize={20}
-                maxSize={50}
-                ref={panelRef}>
+          {/* Main Content */}
+          <Panel
+            minSize={20}
+            defaultSize={
+              leftSidebarVisible && !!rightSidebar
+                ? 60
+                : rightSidebar
+                  ? 80
+                  : 100
+            }
+            maxSize={rightSidebar ? 70 : 100}>
+            <div
+              className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100"
+              ref={mainContentRef}>
+              {/* Sportlight View */}
+              {spotlightMode ? (
                 <div className="flex flex-col overflow-auto h-full flex-1">
                   <ParticipantTiles spotlightMode={spotlightMode} />
                 </div>
+              ) : (
+                <PanelGroup
+                  direction="horizontal"
+                  autoSaveId="meetingScreenLayout">
+                  <Panel
+                    minSize={30}
+                    maxSize={100}
+                    defaultSize={80}
+                    collapsedSize={50}>
+                    {['Preview', 'Presentation'].includes(eventSessionMode) && (
+                      <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
+                        <ContentContainer />
+                      </div>
+                    )}
+                  </Panel>
+
+                  <PanelResizer />
+
+                  <Panel
+                    minSize={20}
+                    collapsedSize={20}
+                    defaultSize={20}
+                    maxSize={50}
+                    ref={panelRef}>
+                    <div className="flex flex-col overflow-auto h-full flex-1">
+                      <ParticipantTiles spotlightMode={spotlightMode} />
+                    </div>
+                  </Panel>
+                </PanelGroup>
+              )}
+            </div>
+          </Panel>
+
+          {/* Right Sidebar */}
+          {!!rightSidebar && (
+            <>
+              <PanelResizer className="-right-[4px] z-[111]" />
+              <Panel
+                minSize={
+                  leftSidebarVisible && !!rightSidebar
+                    ? 20
+                    : rightSidebar
+                      ? 15
+                      : 0
+                }
+                maxSize={25}
+                defaultSize={
+                  leftSidebarVisible && !!rightSidebar
+                    ? 20
+                    : rightSidebar
+                      ? 15
+                      : 0
+                }
+                ref={rightPanelRef}
+                className="bg-white">
+                <MeetingRightSidebarWrapper visible={!!rightSidebar}>
+                  {renderRightSidebar()}
+                </MeetingRightSidebarWrapper>
               </Panel>
-            </PanelGroup>
+            </>
           )}
-        </div>
-        <MeetingRightSidebarWrapper visible={!!rightSidebar}>
-          {renderRightSidebar()}
-        </MeetingRightSidebarWrapper>
+        </PanelGroup>
       </div>
 
       {/* Required Dyte Components */}
