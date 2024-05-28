@@ -255,3 +255,51 @@
     margin-left: -50px;
   }
 }
+
+
+
+/* Participant Tiles  */
+
+/* Center align 2 orphan items */
+.participant-grid {
+  grid-column: span 2;
+}
+
+/* GRID 2*2 */
+.grid-cols-4 .participant-grid:last-child:nth-child(2n + 1) {
+  grid-column-end: -2;
+}
+
+
+/* Grid 3*3 */
+/* Dealing with 2 orphan items */
+.grid-cols-6 .participant-grid:last-child:nth-child(3n - 1) {
+  grid-column-end: -2;
+}
+
+.grid-cols-6 .participant-grid:nth-last-child(2):nth-child(3n + 1) {
+  grid-column-end: 4;
+}
+
+/* Dealing with single orphan */
+.grid-cols-6 .participant-grid:last-child:nth-child(3n - 2) {
+  grid-column-end: 5;
+}
+
+
+/* Grid 4*4 */
+/* Dealing with 2 orphan items */
+.grid-cols-8 .participant-grid:last-child:nth-child(4n - 1) {
+  grid-column-end: -2;
+}
+
+.grid-cols-8 .participant-grid:nth-last-child(2):nth-child(4n + 1) {
+  grid-column-end: 4;
+}
+
+/* Dealing with single orphan */
+.grid-cols-8 .participant-grid:last-child:nth-child(4n - 3) {
+  grid-column-end: 5;
+}
+
+

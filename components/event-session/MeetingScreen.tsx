@@ -235,9 +235,7 @@ export function MeetingScreen() {
           ref={mainContentRef}>
           {/* Sportlight View */}
           {spotlightMode ? (
-            <div className="flex flex-col overflow-auto h-full flex-1">
-              <ParticipantTiles spotlightMode panelSize={100} />
-            </div>
+            <ParticipantTiles spotlightMode />
           ) : (
             <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
               <Panel
@@ -266,10 +264,7 @@ export function MeetingScreen() {
                 maxSize={50}
                 ref={panelRef}>
                 <div className="flex flex-col overflow-auto h-full flex-1">
-                  <ParticipantTiles
-                    spotlightMode={spotlightMode}
-                    panelSize={panelSize}
-                  />
+                  <ParticipantTiles spotlightMode={spotlightMode} />
                 </div>
               </Panel>
             </PanelGroup>

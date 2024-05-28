@@ -130,6 +130,7 @@
     "tldraw": "^2.1.2",
     "tus-js-client": "^4.1.0",
     "typescript": "5.2.2",
+    "uniqolor": "^1.1.1",
     "uppy": "^3.23.0",
     "uuid": "^9.0.1",
     "uuidv4": "^6.2.13",
