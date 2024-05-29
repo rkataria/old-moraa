@@ -29,6 +29,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <UserContextProvider>
             {children}
             <Toaster position="bottom-right" reverseOrder={false} />
+
             <ModalProvider />
           </UserContextProvider>
         </QueryClientProvider>

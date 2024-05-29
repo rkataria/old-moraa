@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google'
 
+import { AI } from './action'
 import { Providers } from './providers'
 
 import '@/app/globals.css'
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body className="h-full w-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full bg-background text-foreground">
-        <Providers>{children}</Providers>
+        <AI>
+          <Providers>{children}</Providers>
+        </AI>
       </body>
     </html>
   )

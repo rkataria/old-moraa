@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@advisr/pptx-compose-2": "^1.0.3",
+    "@ai-sdk/openai": "^0.0.13",
     "@dytesdk/react-ui-kit": "^1.66.1",
     "@dytesdk/react-web-core": "^1.36.4",
     "@dytesdk/video-background-transformer": "^1.1.7",
@@ -83,6 +84,7 @@
     "@uppy/xhr-upload": "^3.6.4",
     "ai": "^3.1.0",
     "autoprefixer": "10.4.15",
+    "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.0",
@@ -98,6 +100,7 @@
     "lodash.uniqby": "^4.7.0",
     "lucide-react": "^0.303.0",
     "luxon": "^3.4.4",
+    "nanoid": "^5.0.7",
     "next": "latest",
     "next-themes": "^0.2.1",
     "openai": "^4.40.0",
