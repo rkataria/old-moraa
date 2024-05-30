@@ -36,11 +36,29 @@ const CustomDocument = Document.extend({
   content: 'heading block*',
 })
 
-const DisableEnter = Extension.create({
-  name: 'disableEnter',
+const KeyboardShortcuts = Extension.create({
+  name: 'keyboardShortcuts',
   addKeyboardShortcuts() {
     return {
       Enter: () => true,
+      'Ctrl-[': () => {
+        window.dispatchEvent(
+          new CustomEvent('keyboard_shortcuts', {
+            detail: { key: 'left_sidebar_toggle' },
+          })
+        )
+
+        return false
+      },
+      'Ctrl-]': () => {
+        window.dispatchEvent(
+          new CustomEvent('keyboard_shortcuts', {
+            detail: { key: 'right_sidebar_toggle' },
+          })
+        )
+
+        return false
+      },
     }
   },
 })
@@ -89,6 +107,7 @@ const getExtensions = (type: string) => {
         TableRow.configure({}),
         TableHeader.configure({}),
         TableCell.configure({}),
+        KeyboardShortcuts,
       ]
 
     case 'header':
@@ -111,7 +130,7 @@ const getExtensions = (type: string) => {
           emptyEditorClass:
             'text-gray-500 text-left before:content-[attr(data-placeholder)]',
         }),
-        DisableEnter,
+        KeyboardShortcuts,
       ]
 
     default:
@@ -131,6 +150,7 @@ const getExtensions = (type: string) => {
           emptyEditorClass:
             'text-gray-500 text-left before:content-[attr(data-placeholder)]',
         }),
+        KeyboardShortcuts,
       ]
   }
 }

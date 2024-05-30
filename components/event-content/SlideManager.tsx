@@ -83,6 +83,24 @@ export function SlideManager() {
     }
   }, [debouncedMainLayoutPanelSizes])
 
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const toggleSidebars = (e: any) => {
+      if (e.detail.key === 'left_sidebar_toggle') {
+        toggleLeftSidebar()
+
+        return
+      }
+
+      setRightSidebarVisible(!rightSidebarVisible)
+    }
+
+    window.addEventListener('keyboard_shortcuts', toggleSidebars)
+
+    return () =>
+      window.removeEventListener('keyboard_shortcuts', toggleSidebars)
+  }, [leftSidebarVisible, rightSidebarVisible])
+
   const getSettingsEnabled = () => {
     if (!currentSlide || !isOwner) return false
 
@@ -102,20 +120,35 @@ export function SlideManager() {
       setRightSidebarVisible(true)
     }
   }
+  const toggleLeftSidebar = () => {
+    setLeftSidebarVisible((prev) => {
+      const newState = !prev
+      if (leftPanelRef.current) {
+        leftPanelRef.current.resize(newState ? 20 : 2)
+      }
+
+      return newState
+    })
+  }
 
   useHotkeys('a', toggleAiSideBar, [aiChatOverlay, isOwner])
-  useHotkeys('ctrl + [', () => setLeftSidebarVisible(!leftSidebarVisible), [
-    leftSidebarVisible,
-  ])
-  useHotkeys('cmd + [', () => setLeftSidebarVisible(!leftSidebarVisible), [
-    leftSidebarVisible,
-  ])
-  useHotkeys('ctrl + ]', () => setRightSidebarVisible(!rightSidebarVisible), [
-    rightSidebarVisible,
-  ])
-  useHotkeys('cmd + ]', () => setRightSidebarVisible(!rightSidebarVisible), [
-    rightSidebarVisible,
-  ])
+  useHotkeys(
+    'ctrl+[',
+    toggleLeftSidebar,
+    {
+      enableOnFormTags: ['INPUT', 'TEXTAREA'],
+    },
+    [leftSidebarVisible]
+  )
+
+  useHotkeys(
+    'ctrl + ]',
+    () => setRightSidebarVisible(!rightSidebarVisible),
+    {
+      enableOnFormTags: ['INPUT', 'TEXTAREA'],
+    },
+    [rightSidebarVisible]
+  )
 
   const handleAddNewSlide = (contentType: ContentType) => {
     const currentSection = sections.find(
@@ -199,17 +232,6 @@ export function SlideManager() {
         <SlideControls />
       </Fragment>
     )
-  }
-
-  const toggleLeftSidebar = () => {
-    setLeftSidebarVisible((prev) => {
-      const newState = !prev
-      if (leftPanelRef.current) {
-        leftPanelRef.current.resize(newState ? 20 : 2)
-      }
-
-      return newState
-    })
   }
 
   return (
