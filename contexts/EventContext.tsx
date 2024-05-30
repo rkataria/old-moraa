@@ -39,6 +39,17 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     useState<boolean>(false)
   const [showSlidePlaceholder, setShowSlidePlaceholder] =
     useState<boolean>(false)
+
+  const [insertAfterSlideId, setInsertAfterSlideId] = useState<string | null>(
+    null
+  )
+  const [insertAfterSectionId, setInsertAfterSectionId] = useState<
+    string | null
+  >(null)
+  const [insertInSectionId, setInsertInSectionId] = useState<string | null>(
+    null
+  )
+
   const [preview, setPreview] = useState<boolean>(false)
 
   const [error, setError] = useState<{
@@ -556,7 +567,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
   }
 
-  const addSection = async ({ name }: { name?: string }) => {
+  const addSection = async ({
+    name,
+    afterSectionId,
+  }: {
+    name?: string
+    afterSectionId?: string
+  }) => {
     if (showSectionPlaceholder) return
 
     if (!isOwner) return
@@ -578,10 +595,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
 
     const sectionIds = meeting.sections || []
-    const currentSectionId = currentSlide?.section_id
-
-    if (currentSectionId) {
-      const index = sectionIds.indexOf(currentSectionId)
+    if (afterSectionId) {
+      const index = sectionIds.indexOf(afterSectionId)
       sectionIds.splice(index + 1, 0, sectionResponse.data.id)
     } else {
       // Add the section at the end
@@ -1045,9 +1060,15 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         showSectionPlaceholder,
         showSlidePlaceholder,
         preview,
-        setPreview,
         error,
+        insertAfterSectionId,
+        insertAfterSlideId,
+        insertInSectionId,
         setCurrentSlide,
+        setPreview,
+        setInsertAfterSectionId,
+        setInsertAfterSlideId,
+        setInsertInSectionId,
         importGoogleSlides,
         updateSlide,
         deleteSlide,

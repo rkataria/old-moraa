@@ -59,6 +59,8 @@ export function SlideManager() {
     syncing,
     currentSlide,
     sections,
+    insertAfterSlideId,
+    insertInSectionId,
     addSlideToSection,
   } = useContext(EventContext) as EventContextType
   const [openContentTypePicker, setOpenContentTypePicker] =
@@ -151,9 +153,13 @@ export function SlideManager() {
   )
 
   const handleAddNewSlide = (contentType: ContentType) => {
-    const currentSection = sections.find(
-      (s) => s.id === currentSlide?.section_id
-    )
+    let currentSection
+    if (insertInSectionId) {
+      currentSection = sections.find((s) => s.id === insertInSectionId)
+    } else {
+      currentSection = sections.find((s) => s.id === currentSlide?.section_id)
+    }
+
     const insertInSection = currentSection || sections[0]
 
     const newSlide: ISlide = {
@@ -177,10 +183,11 @@ export function SlideManager() {
     addSlideToSection({
       slide: newSlide,
       section: insertInSection,
-      afterSlideId: currentSlide?.id,
+      afterSlideId: insertAfterSlideId!,
     })
     setOpenContentTypePicker(false)
   }
+  console.log('insertAfterSlideId', insertAfterSlideId)
 
   if (eventLoading || loading) {
     return (
