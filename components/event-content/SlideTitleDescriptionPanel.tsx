@@ -43,7 +43,7 @@ export function SlideTitleDescriptionPanel() {
 
   const getTitle = () => {
     if (currentSlide.type === ContentType.REFLECTION) {
-      return <SlideText type="title" className="pl-4" />
+      return <SlideText disableEnter type="title" className="pl-4" />
     }
 
     return (

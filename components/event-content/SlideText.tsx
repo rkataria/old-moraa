@@ -14,10 +14,12 @@ import { cn } from '@/utils/utils'
 export function SlideText({
   type,
   className,
+  disableEnter,
   onSuccessiveEnters,
 }: {
   type: string
   className?: string
+  disableEnter?: boolean
   onSuccessiveEnters?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }) {
   const { preview, updateSlide, currentSlide } = useContext(
@@ -51,6 +53,12 @@ export function SlideText({
   }
 
   const onTextKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (disableEnter && e.key === 'Enter') {
+      e.preventDefault()
+
+      return
+    }
+
     if (e.key !== 'Enter') {
       setSuccessiveEnterPressCount(0)
 
@@ -99,7 +107,7 @@ export function SlideText({
     <TextareaAutosize
       placeholder={placeholder}
       disabled={preview}
-      autoFocus={updatedText?.length === 0}
+      autoFocus={updatedText?.length === 0 || !updatedText}
       value={updatedText}
       maxLength={TITLE_CHARACTER_LIMIT}
       onChange={updateText}

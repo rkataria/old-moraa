@@ -23,6 +23,7 @@ import { useDimensions } from '@/hooks/useDimensions'
 import { type AgendaSlideDisplayType } from '@/types/event.type'
 import { type ISlide } from '@/types/slide.type'
 import { getContentType, isSlideThumbnailAvailable } from '@/utils/content.util'
+import { getSlideName } from '@/utils/getSlideName'
 import { cn } from '@/utils/utils'
 
 interface SlideListViewProps {
@@ -138,7 +139,7 @@ function SlideListView({
           <div className={cn('shrink w-full')} onClick={onChangeSlide}>
             <EditableLabel
               readOnly={!isOwner || eventMode !== 'edit'}
-              label={slide.name}
+              label={getSlideName({ slide })}
               className="text-sm"
               onUpdate={(value) => {
                 if (slide.name === value) return
@@ -260,7 +261,7 @@ function SlideThumbnailView({
           <div className="shrink w-full">
             <EditableLabel
               readOnly={actionDisabled}
-              label={slide.name}
+              label={getSlideName({ slide })}
               className="text-sm"
               onUpdate={(value) => {
                 if (slide.name === value) return

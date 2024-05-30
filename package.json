@@ -92,6 +92,7 @@
     "emoji-mart": "^5.5.2",
     "emotion-theming": "^11.0.0",
     "framer-motion": "^11.0.6",
+    "html-to-text": "^9.0.5",
     "lodash.chunk": "^4.2.0",
     "lodash.countby": "^4.6.0",
     "lodash.groupby": "^4.6.0",
@@ -146,6 +147,7 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@types/html-to-text": "^9.0.4",
     "@types/lodash.chunk": "^4.2.9",
     "@types/lodash.countby": "^4.6.9",
     "@types/lodash.groupby": "^4.6.9",
