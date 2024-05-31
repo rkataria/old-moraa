@@ -14,6 +14,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button, Chip } from '@nextui-org/react'
 
+import { AddItemDropdownActions } from './AddItemDropdownActions'
 import { AddItemStickyDropdownActions } from './AddItemStickyDropdownActions'
 import { AgendaPanelSearch } from './AgendaPanelSearch'
 import { AgendaSlideCard } from './AgendaSlideCard'
@@ -194,7 +195,7 @@ export function AgendaPanel({
             {(sectionDroppableProvided) => (
               <div
                 className={cn(
-                  'flex flex-col justify-start items-center gap-2 w-full flex-nowrap scrollbar-none overflow-y-auto',
+                  'flex flex-col justify-start items-center gap-3 w-full flex-nowrap scrollbar-none overflow-y-auto',
                   {
                     'h-[calc(100vh_-_158px)]': !preview,
                     'h-[calc(100vh_-_120px)]': preview,
@@ -292,7 +293,15 @@ export function AgendaPanel({
                                       {(snapshot.isDraggingOver ||
                                         expandedSections.includes(section.id) ||
                                         sectionCount === 1) && (
-                                        <div className="flex flex-col justify-start items-start gap-1 w-full p-2 rounded-sm transition-all">
+                                        <div
+                                          className={cn(
+                                            'flex flex-col justify-start items-start gap-[20px] w-full p-2 rounded-sm transition-all',
+                                            {
+                                              'gap-[20px]':
+                                                displayType === 'thumbnail',
+                                              'gap-1': displayType === 'list',
+                                            }
+                                          )}>
                                           {getFilteredSlides({
                                             slides: section.slides,
                                             isOwner,
@@ -331,6 +340,31 @@ export function AgendaPanel({
                                                         updateActiveSession
                                                       }
                                                     />
+                                                    <AddItemDropdownActions
+                                                      className={cn({
+                                                        '-bottom-5':
+                                                          displayType ===
+                                                          'thumbnail',
+                                                        '-bottom-3':
+                                                          displayType ===
+                                                          'list',
+                                                      })}
+                                                      sectionId={section.id}
+                                                      slideId={slide.id}
+                                                      hiddenActionKeys={[
+                                                        'new-section',
+                                                      ]}
+                                                      hidden={
+                                                        actionDisabled ||
+                                                        _snapshot.isDragging ||
+                                                        section.slides.length -
+                                                          1 ===
+                                                          slideIndex
+                                                      }
+                                                      onOpenContentTypePicker={
+                                                        setOpenContentTypePicker
+                                                      }
+                                                    />
                                                   </div>
                                                 )}
                                               </Draggable>
@@ -348,6 +382,14 @@ export function AgendaPanel({
                                       {slideProvided.placeholder}
                                     </div>
                                   </div>
+                                  <AddItemDropdownActions
+                                    className="!bottom-[-1.0625rem]"
+                                    sectionId={section.id}
+                                    hidden={actionDisabled}
+                                    onOpenContentTypePicker={
+                                      setOpenContentTypePicker
+                                    }
+                                  />
                                 </div>
                               </div>
                             )}

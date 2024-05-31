@@ -122,6 +122,7 @@ export function PollForm({ slide: slideFromRemote }: PollFormProps) {
       <SlideText
         type="title"
         className="pl-4"
+        disableEnter
         onSuccessiveEnters={focusOnFirstEmptyOption}
       />
       <SlideTextBlock blockType="paragraph" />

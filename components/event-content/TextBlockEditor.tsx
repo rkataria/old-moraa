@@ -5,6 +5,7 @@ import React, { useEffect } from 'react'
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
 import Document from '@tiptap/extension-document'
+import { Image } from '@tiptap/extension-image'
 import { Link } from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import Table from '@tiptap/extension-table'
@@ -16,10 +17,14 @@ import TaskList from '@tiptap/extension-task-list'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
-import { AnyExtension, EditorContent, useEditor } from '@tiptap/react'
+import {
+  AnyExtension,
+  EditorContent,
+  Extension,
+  useEditor,
+} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import FontSize from 'tiptap-extension-font-size'
-import ImageResize from 'tiptap-extension-resize-image'
 
 import { ScrollShadow } from '@nextui-org/react'
 
@@ -35,6 +40,33 @@ import { cn } from '@/utils/utils'
 
 const CustomDocument = Document.extend({
   content: 'heading block*',
+})
+
+const KeyboardShortcuts = Extension.create({
+  name: 'keyboardShortcuts',
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => true,
+      'Ctrl-[': () => {
+        window.dispatchEvent(
+          new CustomEvent('keyboard_shortcuts', {
+            detail: { key: 'left_sidebar_toggle' },
+          })
+        )
+
+        return false
+      },
+      'Ctrl-]': () => {
+        window.dispatchEvent(
+          new CustomEvent('keyboard_shortcuts', {
+            detail: { key: 'right_sidebar_toggle' },
+          })
+        )
+
+        return false
+      },
+    }
+  },
 })
 
 const getExtensions = (type: string) => {
@@ -53,7 +85,11 @@ const getExtensions = (type: string) => {
           emptyEditorClass:
             'text-gray-500 float-center before:content-[attr(data-placeholder)]',
         }),
-
+        Image.configure({
+          HTMLAttributes: {
+            class: 'tiptap-image',
+          },
+        }),
         Link.configure({
           HTMLAttributes: {
             class: 'tiptap-link',
@@ -77,7 +113,7 @@ const getExtensions = (type: string) => {
         TableRow.configure({}),
         TableHeader.configure({}),
         TableCell.configure({}),
-        ImageResize,
+        KeyboardShortcuts,
         FontSize.configure({
           types: ['textStyle'],
         }),
@@ -103,6 +139,7 @@ const getExtensions = (type: string) => {
           emptyEditorClass:
             'text-gray-500 text-left before:content-[attr(data-placeholder)]',
         }),
+        KeyboardShortcuts,
       ]
 
     default:
@@ -136,6 +173,7 @@ const getExtensions = (type: string) => {
             class: 'flex gap-2 ',
           },
         }),
+        KeyboardShortcuts,
       ]
   }
 }
@@ -169,13 +207,15 @@ export function TextBlockEditor({
     },
   })
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    if (block.type === 'header' && editor && editor.isEmpty) {
+      editor.commands.focus('start')
+    }
+
+    return () => {
       editor?.destroy()
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  )
+    }
+  }, [block.type, editor])
 
   if (!editor) return null
 
