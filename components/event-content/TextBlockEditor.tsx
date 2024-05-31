@@ -16,8 +16,9 @@ import TaskList from '@tiptap/extension-task-list'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
-import { EditorContent, useEditor } from '@tiptap/react'
+import { AnyExtension, EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import FontSize from 'tiptap-extension-font-size'
 import ImageResize from 'tiptap-extension-resize-image'
 
 import { ScrollShadow } from '@nextui-org/react'
@@ -77,6 +78,9 @@ const getExtensions = (type: string) => {
         TableHeader.configure({}),
         TableCell.configure({}),
         ImageResize,
+        FontSize.configure({
+          types: ['textStyle'],
+        }),
       ]
 
     case 'header':
@@ -107,6 +111,9 @@ const getExtensions = (type: string) => {
         TextStyle,
         Color,
         Underline,
+        FontSize.configure({
+          types: ['textStyle'],
+        }),
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
@@ -117,6 +124,17 @@ const getExtensions = (type: string) => {
           placeholder: 'Can you add some further context?',
           emptyEditorClass:
             'text-gray-500 text-left before:content-[attr(data-placeholder)]',
+        }),
+        TaskList.configure({
+          HTMLAttributes: {
+            class: 'list-none',
+          },
+        }),
+        TaskItem.configure({
+          nested: true,
+          HTMLAttributes: {
+            class: 'flex gap-2 ',
+          },
         }),
       ]
   }
@@ -138,7 +156,7 @@ export function TextBlockEditor({
   onChange?: (block: TextBlock) => void
 }) {
   const editor = useEditor({
-    extensions: getExtensions(block.type),
+    extensions: getExtensions(block.type) as AnyExtension[],
     content: block.data?.html,
     onUpdate: ({ editor: _editor }) => {
       onChange?.({

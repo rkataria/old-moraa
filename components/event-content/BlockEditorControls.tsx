@@ -11,6 +11,8 @@ import {
   LuAlignCenter,
   LuAlignLeft,
   LuAlignRight,
+  LuArrowDown,
+  LuArrowUp,
   LuBold,
   LuCheckSquare,
   LuCode,
@@ -127,6 +129,28 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
     return <div className="text-small font-normal">Paragraph</div>
   }
 
+  const increaseFontSize = () => {
+    const currentSize = editor.getAttributes('textStyle').fontSize
+    if (parseInt(currentSize, 10) >= 32) return
+    const newSize = currentSize ? `${parseInt(currentSize, 10) + 2}pt` : '16pt'
+    editor
+      .chain()
+      .focus()
+      .updateAttributes('textStyle', { fontSize: newSize })
+      .run()
+  }
+
+  const decreaseFontSize = () => {
+    const currentSize = editor.getAttributes('textStyle').fontSize
+    if (parseInt(currentSize, 10) <= 10) return
+    const newSize = currentSize ? `${parseInt(currentSize, 10) - 2}pt` : '16pt'
+    editor
+      .chain()
+      .focus()
+      .updateAttributes('textStyle', { fontSize: newSize })
+      .run()
+  }
+
   return (
     <>
       <Popover offset={10} placement="bottom" showArrow>
@@ -227,6 +251,18 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
           )}
         </PopoverContent>
       </Popover>
+      <ControlButton
+        active={false}
+        icon={<LuArrowUp size={18} />}
+        tooltipText="Increase font size"
+        onClick={increaseFontSize}
+      />
+      <ControlButton
+        active={false}
+        icon={<LuArrowDown size={18} />}
+        tooltipText="Decrease font size"
+        onClick={decreaseFontSize}
+      />
       <ControlButton
         active={editor.isActive('bold')}
         icon={<LuBold size={18} />}
