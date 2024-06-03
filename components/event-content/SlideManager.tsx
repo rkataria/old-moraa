@@ -187,7 +187,6 @@ export function SlideManager() {
     })
     setOpenContentTypePicker(false)
   }
-  console.log('insertAfterSlideId', insertAfterSlideId)
 
   if (eventLoading || loading) {
     return (

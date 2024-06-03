@@ -326,12 +326,7 @@ export function useYjsStoreSupabase({
 
     let hasConnectedBefore = false
 
-    function handleStatusChange({
-      status,
-    }: {
-      status: 'disconnected' | 'connected'
-    }) {
-      // If we're disconnected, set the store status to 'synced-remote' and the connection status to 'offline'
+    providerInstance?.on('status', (status) => {
       if (status === 'disconnected') {
         setStoreWithStatus({
           store,
@@ -342,31 +337,27 @@ export function useYjsStoreSupabase({
         return
       }
 
-      providerInstance?.off('sync', handleSync)
-
       if (status === 'connected') {
         if (hasConnectedBefore) return
         hasConnectedBefore = true
         providerInstance?.on('sync', handleSync)
         unsubs.push(() => providerInstance?.off('synced', handleSync))
       }
-    }
+    })
+    // unsubs.push(() => providerInstance?.off('status', handleStatusChange))
 
-    providerInstance?.on('status', handleStatusChange)
-    unsubs.push(() => providerInstance?.off('status', handleStatusChange))
-
-    return () => {
-      unsubs.forEach((fn) => fn())
-      unsubs.length = 0
-      if (providerInstance) {
-        providerInstance.destroy()
-        providerInstance = null
-      }
-      if (yDocInstance) {
-        yDocInstance.destroy()
-        yDocInstance = null
-      }
-    }
+    // return () => {
+    //   unsubs.forEach((fn) => fn())
+    //   unsubs.length = 0
+    //   if (providerInstance) {
+    //     providerInstance.destroy()
+    //     providerInstance = null
+    //   }
+    //   if (yDocInstance) {
+    //     yDocInstance.destroy()
+    //     yDocInstance = null
+    //   }
+    // }
   }, [yDoc, store, yStore, meta, roomId, slideId])
 
   return storeWithStatus

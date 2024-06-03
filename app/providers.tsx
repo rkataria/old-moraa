@@ -12,6 +12,7 @@ import { NextUIProvider } from '@nextui-org/react'
 
 import { UserContextProvider } from '@/hooks/useAuth'
 import { ModalProvider } from '@/providers/modal-provider'
+import { ReduxProvider } from '@/stores/redux-provider'
 
 init({ data })
 
@@ -24,16 +25,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
       defaultTheme="system"
       enableSystem={false}
       storageKey="moraa-theme">
-      <NextUIProvider>
-        <QueryClientProvider client={queryClient}>
-          <UserContextProvider>
-            {children}
-            <Toaster position="bottom-right" reverseOrder={false} />
+      <ReduxProvider>
+        <NextUIProvider>
+          <QueryClientProvider client={queryClient}>
+            <UserContextProvider>
+              {children}
+              <Toaster position="bottom-right" reverseOrder={false} />
 
-            <ModalProvider />
-          </UserContextProvider>
-        </QueryClientProvider>
-      </NextUIProvider>
+              <ModalProvider />
+            </UserContextProvider>
+          </QueryClientProvider>
+        </NextUIProvider>
+      </ReduxProvider>
     </ThemeProvider>
   )
 }
