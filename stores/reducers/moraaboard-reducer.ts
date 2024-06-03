@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable no-restricted-syntax */
@@ -58,19 +59,24 @@ export const moraaboardSlice = createSlice({
       state,
       action: PayloadAction<{ roomId: string; slideId: string }>
     ) => {
-      console.log('🚀 ~ action:', action)
-      state.tlStore = createTLStore({
+      const tlStore = createTLStore({
         shapeUtils: defaultShapeUtils,
       })
+      state.tlStore = tlStore
 
-      state.yDocInstance = new Y.Doc({ gc: true })
+      const yDocInstance = new Y.Doc({ gc: true })
+      state.yDocInstance = yDocInstance
+
       const yArr = state.yDocInstance.getArray<{ key: string; val: TLRecord }>(
         `tl_${action.payload.slideId}`
       )
-      state.yStore = new YKeyValue(yArr)
-      state.meta = state.yDocInstance.getMap<SerializedSchema>('meta')
+      const yStore = new YKeyValue(yArr)
+      state.yStore = yStore
 
-      state.supabaseProviderInstance = new SupabaseProvider(
+      const meta = state.yDocInstance.getMap<SerializedSchema>('meta')
+      state.meta = meta
+
+      const supabaseProviderInstance = new SupabaseProvider(
         state.yDocInstance,
         supabaseClient,
         {
@@ -81,34 +87,33 @@ export const moraaboardSlice = createSlice({
           resyncInterval: 1000 * 30,
         }
       )
-
-      state.isInitialized = true
-    },
-    startMoraaboard: (state) => {
-      state.isReady = false
+      state.supabaseProviderInstance = supabaseProviderInstance
 
       function handleSync() {
-        state.tlStore.listen(
-          ({ changes }) => {
-            console.log('🚀 ~ handleSync > tlStore > changes:', changes)
-            state.yDocInstance.transact(() => {
-              Object.values(changes.added).forEach((record) => {
-                state.yStore.set(record.id, record)
-              })
+        // Register TLStore changes on YDoc.
 
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              Object.values(changes.updated).forEach(([_, record]) => {
-                state.yStore.set(record.id, record)
-              })
-
-              Object.values(changes.removed).forEach((record) => {
-                state.yStore.delete(record.id)
-              })
+        const handleChangesOnTLStore = ({ changes }) => {
+          console.log('🚀 ~ handleSync > tlStore > changes:', changes)
+          yDocInstance.transact(() => {
+            Object.values(changes.added).forEach((record) => {
+              yStore.set(record.id, record)
             })
-          },
-          { source: 'user', scope: 'document' } // only sync user's document changes
-        )
-        const handleChange = (
+
+            Object.values(changes.updated).forEach(([_, record]) => {
+              yStore.set(record.id, record)
+            })
+
+            Object.values(changes.removed).forEach((record) => {
+              yStore.delete(record.id)
+            })
+          })
+        }
+        tlStore.listen(handleChangesOnTLStore, {
+          source: 'user',
+          scope: 'document',
+        })
+
+        const handleChangesOnYDoc = (
           changes: Map<
             string,
             | { action: 'delete'; oldValue: TLRecord }
@@ -130,7 +135,7 @@ export const moraaboardSlice = createSlice({
             switch (change.action) {
               case 'add':
               case 'update': {
-                const record = state.yStore.get(id)!
+                const record = yStore.get(id)!
                 toPut.push(record)
                 break
               }
@@ -142,15 +147,16 @@ export const moraaboardSlice = createSlice({
           })
 
           // put / remove the records in the store
-          state.tlStore.mergeRemoteChanges(() => {
-            if (toRemove.length) state.tlStore.remove(toRemove)
-            if (toPut.length) state.tlStore.put(toPut)
+          tlStore.mergeRemoteChanges(() => {
+            if (toRemove.length) tlStore.remove(toRemove)
+            if (toPut.length) tlStore.put(toPut)
           })
         }
-        state.yStore.on('change', handleChange)
+        yStore.on('change', handleChangesOnYDoc)
 
         const yClientId =
-          state.supabaseProviderInstance?.awareness.clientID.toString()
+          supabaseProviderInstance?.awareness.clientID.toString()
+        console.log('🚀 ~ handleSync ~ yClientId:', yClientId)
         if (yClientId) {
           setUserPreferences({ id: yClientId })
         }
@@ -170,43 +176,36 @@ export const moraaboardSlice = createSlice({
           }
         })
 
-        // Create the instance presence derivation
         const presenceId = InstancePresenceRecordType.createId(yClientId)
         const presenceDerivation = createPresenceStateDerivation(
           userPreferences,
           presenceId
-        )(state.yStore)
+        )(yStore)
 
-        // Set our initial presence from the derivation's current value
-        state.supabaseProviderInstance?.awareness.setLocalStateField(
+        supabaseProviderInstance?.awareness.setLocalStateField(
           'presence',
           presenceDerivation.get()
         )
 
-        // When the derivation change, sync presence to to yjs awareness
         react('when presence changes', () => {
           const presence = presenceDerivation.get()
           requestAnimationFrame(() => {
-            state.supabaseProviderInstance?.awareness.setLocalStateField(
+            supabaseProviderInstance?.awareness.setLocalStateField(
               'presence',
               presence
             )
           })
         })
-        // unsubs.push(
-        // )
 
-        // Sync yjs awareness changes to the store
-        const handleUpdate = (update: {
+        const onSupabaseAwarenessUpdate = (update: {
           added: number[]
           updated: number[]
           removed: number[]
         }) => {
-          const states =
-            state.supabaseProviderInstance?.awareness.getStates() as Map<
-              number,
-              { presence: TLInstancePresence }
-            >
+          const states = supabaseProviderInstance?.awareness.getStates() as Map<
+            number,
+            { presence: TLInstancePresence }
+          >
           console.log('🚀 ~ handleSync > handleUpdate > states:', states)
 
           const toRemove: TLInstancePresence['id'][] = []
@@ -216,14 +215,14 @@ export const moraaboardSlice = createSlice({
           for (const clientId of update.added) {
             const state = states.get(clientId)
             if (state?.presence && state.presence.id !== presenceId) {
-              toPut.push(state.presence)
+              toPut.push(presence)
             }
           }
 
           for (const clientId of update.updated) {
             const state = states.get(clientId)
             if (state?.presence && state.presence.id !== presenceId) {
-              toPut.push(state.presence)
+              toPut.push(presence)
             }
           }
 
@@ -234,47 +233,47 @@ export const moraaboardSlice = createSlice({
           }
 
           // put / remove the records in the store
-          state.tlStore.mergeRemoteChanges(() => {
-            if (toRemove.length) state.tlStore.remove(toRemove)
-            if (toPut.length) state.tlStore.put(toPut)
+          tlStore.mergeRemoteChanges(() => {
+            if (toRemove.length) tlStore.remove(toRemove)
+            if (toPut.length) tlStore.put(toPut)
           })
         }
-        state.supabaseProviderInstance?.awareness.on('update', handleUpdate)
+
+        supabaseProviderInstance.awareness.on(
+          'update',
+          onSupabaseAwarenessUpdate
+        )
 
         const handleMetaUpdate = () => {
-          const theirSchema = state.meta.get('schema')
+          const theirSchema = meta.get('schema')
           console.log('🚀 ~ handleMetaUpdate ~ theirSchema:', theirSchema)
           if (!theirSchema) {
             throw new Error('No schema found in the yjs doc')
           }
           // If the shared schema is newer than our schema, the user must refresh
-          const newMigrations =
-            state.tlStore.schema.getMigrationsSince(theirSchema)
+          const newMigrations = tlStore.schema.getMigrationsSince(theirSchema)
 
           if (!newMigrations.ok || newMigrations.value.length > 0) {
             window.alert(
               'The schema has been updated. Please refresh the page.'
             )
-            state.yDocInstance!.destroy()
+            yDocInstance!.destroy()
           }
         }
-        state.meta.observe(handleMetaUpdate)
+        meta.observe(handleMetaUpdate)
 
-        if (state.yStore.yarray.length) {
-          console.log(
-            '🚀 ~ handleSync ~ state.yStore.yarray:',
-            state.yStore.yarray
-          )
+        if (yStore.yarray.length) {
+          console.log('🚀 ~ handleSync ~ yStore.yarray:', yStore.yarray)
           // Replace the store records with the yjs doc records
-          const ourSchema = state.tlStore.schema.serialize()
-          const theirSchema = state.meta.get('schema')
+          const ourSchema = tlStore.schema.serialize()
+          const theirSchema = meta.get('schema')
           if (!theirSchema) {
             throw new Error('No schema found in the yjs doc')
           }
 
-          const records = state.yStore.yarray.toJSON().map(({ val }) => val)
+          const records = yStore.yarray.toJSON().map(({ val }) => val)
 
-          const migrationResult = state.tlStore.schema.migrateStoreSnapshot({
+          const migrationResult = tlStore.schema.migrateStoreSnapshot({
             schema: theirSchema,
             store: Object.fromEntries(
               records.map((record) => [record.id, record])
@@ -290,59 +289,53 @@ export const moraaboardSlice = createSlice({
             return
           }
 
-          state.yDocInstance!.transact(() => {
+          yDocInstance!.transact(() => {
             // delete any deleted records from the yjs doc
             for (const r of records) {
               if (!migrationResult.value[r.id]) {
-                state.yStore.delete(r.id)
+                yStore.delete(r.id)
               }
             }
             for (const r of Object.values(
               migrationResult.value
             ) as TLRecord[]) {
-              state.yStore.set(r.id, r)
+              yStore.set(r.id, r)
             }
-            state.meta.set('schema', ourSchema)
+            meta.set('schema', ourSchema)
           })
 
-          state.tlStore.loadSnapshot({
+          tlStore.loadSnapshot({
             store: migrationResult.value,
             schema: ourSchema,
           })
         } else {
           // Create the initial store records
           // Sync the store records to the yjs doc
-          state.yDocInstance!.transact(() => {
-            for (const record of state.tlStore.allRecords()) {
-              state.yStore.set(record.id, record)
+          yDocInstance!.transact(() => {
+            for (const record of tlStore.allRecords()) {
+              yStore.set(record.id, record)
             }
-            state.meta.set('schema', state.tlStore.schema.serialize())
+            meta.set('schema', tlStore.schema.serialize())
           })
         }
-
-        state.status = 'synced-remote'
       }
 
       console.log(
-        '🚀 ~ state.supabaseProviderInstance?.on ~ state.supabaseProviderInstance:',
-        state.supabaseProviderInstance
+        '🚀 ~ supabaseProviderInstance?.on ~ supabaseProviderInstance:',
+        supabaseProviderInstance
       )
-      state.supabaseProviderInstance?.on('status', (event) => {
-        console.log('🚀 ~ state.supabaseProviderInstance?.on ~ status:', event)
+      supabaseProviderInstance?.on('status', (event) => {
+        console.log('🚀 ~ supabaseProviderInstance?.on ~ status:', event)
         if (event?.status === 'connected') {
-          console.log(
-            '🚀 ~ state.supabaseProviderInstance?.on ~ status 1:',
-            event
-          )
-          state.supabaseProviderInstance?.on('sync', handleSync)
+          console.log('🚀 ~ supabaseProviderInstance?.on ~ status 1:', event)
+          supabaseProviderInstance?.on('sync', handleSync)
         }
       })
 
-      state.isReady = true
+      state.isInitialized = true
     },
   },
 })
 
-export const { initMoraaboardInstances, startMoraaboard } =
-  moraaboardSlice.actions
+export const { initMoraaboardInstances } = moraaboardSlice.actions
 export const moraaboardReducer = moraaboardSlice.reducer
