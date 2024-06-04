@@ -11,8 +11,6 @@ import {
   LuAlignCenter,
   LuAlignLeft,
   LuAlignRight,
-  LuArrowDown,
-  LuArrowUp,
   LuBold,
   LuCheckSquare,
   LuCode,
@@ -27,6 +25,7 @@ import {
   LuUnderline,
 } from 'react-icons/lu'
 import { MdInvertColors } from 'react-icons/md'
+import { RiFontSize } from 'react-icons/ri'
 
 import {
   Button,
@@ -131,17 +130,19 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
 
   const increaseFontSize = () => {
     console.log('increasing font size')
-    const currentSize = editor.getAttributes('textStyle').fontSize ?? '16pt'
+    const currentSize = editor.getAttributes('textStyle').fontSize
     if (parseInt(currentSize, 10) >= 32) return
     const newSize = currentSize ? `${parseInt(currentSize, 10) + 2}pt` : '16pt'
 
-    console.log(currentSize, newSize)
-    editor.chain().focus().setFontSize(newSize).run()
-    // editor
-    //   .chain()
-    //   .focus()
-    //   .updateAttributes('textStyle', { fontSize: newSize })
-    //   .run()
+    console.log('current size: ', currentSize)
+    console.log('new size: ', newSize)
+    // note: it works but type error
+    // editor.chain().focus().setFontSize(newSize).run()
+    editor
+      .chain()
+      .focus()
+      .updateAttributes('textStyle', { fontSize: newSize })
+      .run()
 
     console.log(editor.getAttributes('textStyle'))
   }
@@ -150,12 +151,12 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
     const currentSize = editor.getAttributes('textStyle').fontSize
     if (parseInt(currentSize, 10) <= 10) return
     const newSize = currentSize ? `${parseInt(currentSize, 10) - 2}pt` : '16pt'
-    editor.chain().focus().setFontSize(newSize).run()
-    // editor
-    //   .chain()
-    //   .focus()
-    //   .updateAttributes('textStyle', { fontSize: newSize })
-    //   .run()
+    // editor.chain().focus().setFontSize(newSize).run()
+    editor
+      .chain()
+      .focus()
+      .updateAttributes('textStyle', { fontSize: newSize })
+      .run()
   }
 
   return (
@@ -260,13 +261,13 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
       </Popover>
       <ControlButton
         active={false}
-        icon={<LuArrowUp size={18} />}
+        icon={<RiFontSize size={18} />}
         tooltipText="Increase font size"
         onClick={increaseFontSize}
       />
       <ControlButton
         active={false}
-        icon={<LuArrowDown size={18} />}
+        icon={<RiFontSize size={16} />}
         tooltipText="Decrease font size"
         onClick={decreaseFontSize}
       />
