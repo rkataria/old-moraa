@@ -130,25 +130,32 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
   }
 
   const increaseFontSize = () => {
-    const currentSize = editor.getAttributes('textStyle').fontSize
+    console.log('increasing font size')
+    const currentSize = editor.getAttributes('textStyle').fontSize ?? '16pt'
     if (parseInt(currentSize, 10) >= 32) return
     const newSize = currentSize ? `${parseInt(currentSize, 10) + 2}pt` : '16pt'
-    editor
-      .chain()
-      .focus()
-      .updateAttributes('textStyle', { fontSize: newSize })
-      .run()
+
+    console.log(currentSize, newSize)
+    editor.chain().focus().setFontSize(newSize).run()
+    // editor
+    //   .chain()
+    //   .focus()
+    //   .updateAttributes('textStyle', { fontSize: newSize })
+    //   .run()
+
+    console.log(editor.getAttributes('textStyle'))
   }
 
   const decreaseFontSize = () => {
     const currentSize = editor.getAttributes('textStyle').fontSize
     if (parseInt(currentSize, 10) <= 10) return
     const newSize = currentSize ? `${parseInt(currentSize, 10) - 2}pt` : '16pt'
-    editor
-      .chain()
-      .focus()
-      .updateAttributes('textStyle', { fontSize: newSize })
-      .run()
+    editor.chain().focus().setFontSize(newSize).run()
+    // editor
+    //   .chain()
+    //   .focus()
+    //   .updateAttributes('textStyle', { fontSize: newSize })
+    //   .run()
   }
 
   return (

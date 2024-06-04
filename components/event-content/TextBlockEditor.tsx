@@ -46,7 +46,6 @@ const KeyboardShortcuts = Extension.create({
   name: 'keyboardShortcuts',
   addKeyboardShortcuts() {
     return {
-      Enter: () => true,
       'Ctrl-[': () => {
         window.dispatchEvent(
           new CustomEvent('keyboard_shortcuts', {
@@ -75,7 +74,12 @@ const getExtensions = (type: string) => {
       return [
         StarterKit,
         TextStyle,
-        Color,
+        FontSize.configure({
+          types: ['textStyle'],
+        }),
+        Color.configure({
+          types: ['textStyle'],
+        }),
         Underline,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
@@ -114,9 +118,6 @@ const getExtensions = (type: string) => {
         TableHeader.configure({}),
         TableCell.configure({}),
         KeyboardShortcuts,
-        FontSize.configure({
-          types: ['textStyle'],
-        }),
       ]
 
     case 'header':
