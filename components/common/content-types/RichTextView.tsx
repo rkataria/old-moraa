@@ -13,8 +13,9 @@ import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
-import { EditorContent, useEditor } from '@tiptap/react'
+import { AnyExtension, EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import FontSize from 'tiptap-extension-font-size'
 import ImageResize from 'tiptap-extension-resize-image'
 
 import { ScrollShadow } from '@nextui-org/react'
@@ -70,6 +71,9 @@ const getExtensions = (type: string) => {
           },
         }),
         ImageResize,
+        FontSize.configure({
+          types: ['textStyle'],
+        }),
       ]
       break
     default:
@@ -84,13 +88,16 @@ const getExtensions = (type: string) => {
           limit: type === 'header' ? TITLE_CHARACTER_LIMIT : null,
         }),
         ImageResize,
+        FontSize.configure({
+          types: ['textStyle'],
+        }),
       ]
   }
 }
 
 export function RichTextView({ block }: { block: TextBlock }) {
   const editor = useEditor({
-    extensions: getExtensions(block.type),
+    extensions: getExtensions(block.type) as AnyExtension[],
     content: block.data.html,
     editable: false,
     onFocus: (props) => {

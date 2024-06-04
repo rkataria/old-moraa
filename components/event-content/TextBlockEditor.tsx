@@ -140,6 +140,9 @@ const getExtensions = (type: string) => {
             'text-gray-500 text-left before:content-[attr(data-placeholder)]',
         }),
         KeyboardShortcuts,
+        FontSize.configure({
+          types: ['textStyle'],
+        }),
       ]
 
     default:
