@@ -215,14 +215,14 @@ export const moraaboardSlice = createSlice({
           for (const clientId of update.added) {
             const state = states.get(clientId)
             if (state?.presence && state.presence.id !== presenceId) {
-              toPut.push(presence)
+              toPut.push(state.presence)
             }
           }
 
           for (const clientId of update.updated) {
             const state = states.get(clientId)
             if (state?.presence && state.presence.id !== presenceId) {
-              toPut.push(presence)
+              toPut.push(state.presence)
             }
           }
 
