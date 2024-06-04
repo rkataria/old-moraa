@@ -19,10 +19,12 @@ export type EventContextType = {
   insertAfterSectionId: string | null
   insertAfterSlideId: string | null
   insertInSectionId: string | null
+  selectedSectionId: string | null
   error: { slideId: string; message: string } | null
   setInsertAfterSlideId: (slideId: string | null) => void
   setInsertAfterSectionId: (sectionId: string | null) => void
   setInsertInSectionId: (sectionId: string | null) => void
+  setSelectedSectionId: (sectionId: string | null) => void
   setPreview: (preview: boolean) => void
   setCurrentSlide: (slide: ISlide) => void
   addSlideToSection: ({

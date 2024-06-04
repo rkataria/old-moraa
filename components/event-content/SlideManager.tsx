@@ -62,6 +62,7 @@ export function SlideManager() {
     insertAfterSlideId,
     insertInSectionId,
     addSlideToSection,
+    setSelectedSectionId,
   } = useContext(EventContext) as EventContextType
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
@@ -122,6 +123,7 @@ export function SlideManager() {
       setRightSidebarVisible(true)
     }
   }
+
   const toggleLeftSidebar = () => {
     setLeftSidebarVisible((prev) => {
       const newState = !prev
@@ -140,7 +142,7 @@ export function SlideManager() {
     {
       enableOnFormTags: ['INPUT', 'TEXTAREA'],
     },
-    [leftSidebarVisible]
+    []
   )
 
   useHotkeys(
@@ -267,6 +269,7 @@ export function SlideManager() {
               {leftSidebarVisible && (
                 <AgendaPanel
                   setOpenContentTypePicker={setOpenContentTypePicker}
+                  setSelectedSectionId={setSelectedSectionId}
                 />
               )}
             </SlideManagerLeftSidebarWrapper>

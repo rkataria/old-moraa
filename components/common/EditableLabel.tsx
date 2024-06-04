@@ -11,11 +11,13 @@ export function EditableLabel({
   readOnly = true,
   label,
   className = '',
+  onClick,
   onUpdate,
 }: {
   readOnly?: boolean
   label: string
   className?: string
+  onClick?: () => void
   onUpdate: (value: string) => void
 }) {
   const contentEditableRef = useRef<HTMLDivElement>(null)
@@ -46,6 +48,10 @@ export function EditableLabel({
           onFocus={() => {
             if (readOnly) return
             setValue(label)
+          }}
+          onClick={() => {
+            if (readOnly) return
+            onClick?.()
           }}
           onDoubleClick={() => {
             if (readOnly) return

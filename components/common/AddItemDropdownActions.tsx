@@ -59,7 +59,7 @@ export function AddItemDropdownActions({
       triggerIcon={
         <div
           className={cn(
-            'flex-none absolute left-0 -bottom-5 py-1 h-4 w-full px-2 group cursor-pointer',
+            'relative flex-none h-4 grid place-items-center w-full group cursor-pointer',
             className
           )}
           onClick={() => {
