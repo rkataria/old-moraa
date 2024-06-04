@@ -311,6 +311,7 @@ export function AgendaSlideCard({
     moveUpSlide,
     moveDownSlide,
     setCurrentSlide,
+    setSelectedSectionId,
     eventMode,
     isOwner,
     currentSlide,
@@ -343,6 +344,7 @@ export function AgendaSlideCard({
     }
 
     setCurrentSlide(s)
+    setSelectedSectionId?.(null)
 
     if (!currentSlide || !updateActiveSession) return
 

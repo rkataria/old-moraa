@@ -50,6 +50,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     null
   )
 
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>('')
+
   const [preview, setPreview] = useState<boolean>(false)
 
   const [error, setError] = useState<{
@@ -602,7 +604,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       // Add the section at the end
       sectionIds.push(sectionResponse.data.id)
     }
-
+    setSelectedSectionId(sectionResponse.data.id)
+    setInsertInSectionId(sectionResponse.data.id)
     // Update the sections on meeting
     await updateMeeting({
       meetingPayload: {
@@ -1064,11 +1067,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         insertAfterSectionId,
         insertAfterSlideId,
         insertInSectionId,
+        selectedSectionId,
         setCurrentSlide,
         setPreview,
         setInsertAfterSectionId,
         setInsertAfterSlideId,
         setInsertInSectionId,
+        setSelectedSectionId,
         importGoogleSlides,
         updateSlide,
         deleteSlide,

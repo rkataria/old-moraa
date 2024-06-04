@@ -81,14 +81,6 @@ export function MeetingScreen() {
   const [mainLayoutPanelSizes, setMainLayoutPanelSizes] = useState([2, 98]) // [leftSidebar, mainContent, rightSidebar]
   const debouncedMainLayoutPanelSizes = useDebounce(mainLayoutPanelSizes, 500)
 
-  useHotkeys('ctrl + [', () => setLeftSidebarVisible(!leftSidebarVisible), [
-    leftSidebarVisible,
-  ])
-
-  useHotkeys('cmd + [', () => setLeftSidebarVisible(!leftSidebarVisible), [
-    leftSidebarVisible,
-  ])
-
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (panelRef.current) {
@@ -189,6 +181,9 @@ export function MeetingScreen() {
       return newState
     })
   }
+
+  useHotkeys('ctrl + [', toggleLeftSidebar, [])
+  useHotkeys('ctrl + ]', () => setRightSidebar(null), [])
 
   const renderRightSidebar = () => {
     if (!rightSidebar) return null

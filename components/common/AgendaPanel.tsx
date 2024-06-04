@@ -66,11 +66,13 @@ type AgendaPanelProps = {
   setOpenContentTypePicker?: React.Dispatch<React.SetStateAction<boolean>>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateActiveSession?: (data: any) => void
+  setSelectedSectionId?: (sectionId: string | null) => void
 }
 
 export function AgendaPanel({
   setOpenContentTypePicker,
   updateActiveSession,
+  setSelectedSectionId,
 }: AgendaPanelProps) {
   const [itemToDelete, setItemToDelete] = useState<ISection | null>(null)
   const [displayType, setDisplayType] =
@@ -87,9 +89,19 @@ export function AgendaPanel({
     reorderSlide,
     reorderSection,
     deleteSection,
+    setInsertInSectionId,
+    setInsertAfterSlideId,
+    setCurrentSlide,
+    selectedSectionId,
   } = useContext(EventContext) as EventContextType
 
   useEffect(() => {
+    if (selectedSectionId) {
+      setExpandedSections([selectedSectionId])
+
+      return
+    }
+
     if (currentSlide) {
       const section = sections.find(
         (s) => s.id === currentSlide.section_id
@@ -105,7 +117,7 @@ export function AgendaPanel({
         })
       }
     }
-  }, [currentSlide, sections])
+  }, [currentSlide, sections, selectedSectionId])
 
   const handleExpandSection = (sectionId: string) => {
     setExpandedSections((prev) => {
@@ -153,6 +165,20 @@ export function AgendaPanel({
 
     return null
   }
+
+  const getFirstSlide = (sectionId: string) =>
+    sections.find((section) => section.id === sectionId)?.slides?.[0]
+
+  const onClickSection = ({ id }: { id: string }) => {
+    setInsertInSectionId(id)
+    setInsertAfterSlideId(null)
+    setSelectedSectionId?.(id)
+    const firstSlide = getFirstSlide(id)
+    if (firstSlide) {
+      setCurrentSlide(firstSlide)
+    }
+  }
+
   const expandAndCollapseSections = () => {
     if (expandedSections.length === 0) {
       setExpandedSections(sections.map((s) => s.id))
@@ -195,7 +221,7 @@ export function AgendaPanel({
             {(sectionDroppableProvided) => (
               <div
                 className={cn(
-                  'flex flex-col justify-start items-center gap-3 w-full flex-nowrap scrollbar-none overflow-y-auto',
+                  'flex flex-col justify-start items-center w-full flex-nowrap scrollbar-none overflow-y-auto',
                   {
                     'h-[calc(100vh_-_158px)]': !preview,
                     'h-[calc(100vh_-_120px)]': preview,
@@ -235,11 +261,13 @@ export function AgendaPanel({
                                   <div className="w-full">
                                     <div
                                       className={cn(
-                                        'flex justify-start items-center gap-0.5 px-1',
+                                        'flex justify-start items-center gap-0.5 p-1 rounded-sm',
                                         {
                                           hidden:
                                             sectionCount === 1 &&
                                             firstSectionSlidesCount > 0,
+                                          'bg-gray-200':
+                                            selectedSectionId === section.id,
                                         }
                                       )}>
                                       <Button
@@ -264,6 +292,9 @@ export function AgendaPanel({
                                         readOnly={actionDisabled}
                                         label={section.name}
                                         className="text-sm"
+                                        onClick={() =>
+                                          onClickSection({ id: section.id })
+                                        }
                                         onUpdate={(value: string) => {
                                           updateSection({
                                             sectionPayload: { name: value },
@@ -295,11 +326,12 @@ export function AgendaPanel({
                                         sectionCount === 1) && (
                                         <div
                                           className={cn(
-                                            'flex flex-col justify-start items-start gap-[20px] w-full p-2 rounded-sm transition-all',
+                                            'flex flex-col justify-start items-start w-full p-2 rounded-sm transition-all',
                                             {
-                                              'gap-[20px]':
+                                              'gap-1':
                                                 displayType === 'thumbnail',
-                                              'gap-1': displayType === 'list',
+                                              'gap-0 pt-[0.0625rem]':
+                                                displayType === 'list',
                                             }
                                           )}>
                                           {getFilteredSlides({
@@ -319,13 +351,17 @@ export function AgendaPanel({
                                                     ref={_provided.innerRef}
                                                     {..._provided.draggableProps}
                                                     {..._provided.dragHandleProps}
-                                                    className={cn('relative', {
-                                                      'w-[86%]':
-                                                        displayType ===
-                                                        'thumbnail',
-                                                      'w-full':
-                                                        displayType === 'list',
-                                                    })}>
+                                                    className={cn(
+                                                      'relative last:pb-2',
+                                                      {
+                                                        'w-[86%]':
+                                                          displayType ===
+                                                          'thumbnail',
+                                                        'w-full':
+                                                          displayType ===
+                                                          'list',
+                                                      }
+                                                    )}>
                                                     <AgendaSlideCard
                                                       slide={slide}
                                                       index={slideIndex}
@@ -342,10 +378,10 @@ export function AgendaPanel({
                                                     />
                                                     <AddItemDropdownActions
                                                       className={cn({
-                                                        '-bottom-5':
+                                                        'mt-[0.1875rem]':
                                                           displayType ===
                                                           'thumbnail',
-                                                        '-bottom-3':
+                                                        '-my-2':
                                                           displayType ===
                                                           'list',
                                                       })}
@@ -383,7 +419,7 @@ export function AgendaPanel({
                                     </div>
                                   </div>
                                   <AddItemDropdownActions
-                                    className="!bottom-[-1.0625rem]"
+                                    className="-my-2"
                                     sectionId={section.id}
                                     hidden={actionDisabled}
                                     onOpenContentTypePicker={

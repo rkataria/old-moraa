@@ -54,14 +54,30 @@ export function AddItemStickyDropdownActions({
     showSectionPlaceholder,
     showSlidePlaceholder,
     currentSlide,
+    selectedSectionId,
     addSection,
     setInsertAfterSlideId,
     setInsertInSectionId,
   } = useContext(EventContext) as EventContextType
 
+  const addItem = (selectedOptionValue: string) => {
+    if (selectedOptionValue === 'new-section') {
+      addSection({ afterSectionId: currentSlide?.section_id })
+    }
+    if (selectedOptionValue === 'new-slide') {
+      onOpenContentTypePicker?.(true)
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddItem = (itemKey: any) => {
     const selectedOptionValue = Array.from(itemKey)[0]
+
+    if (selectedSectionId) {
+      addItem(selectedOptionValue as string)
+
+      return
+    }
 
     if (currentSlide) {
       setInsertAfterSlideId(currentSlide.id)
@@ -69,12 +85,7 @@ export function AddItemStickyDropdownActions({
 
     setInsertInSectionId(null)
 
-    if (selectedOptionValue === 'new-section') {
-      addSection({ afterSectionId: currentSlide?.section_id })
-    }
-    if (selectedOptionValue === 'new-slide') {
-      onOpenContentTypePicker?.(true)
-    }
+    addItem(selectedOptionValue as string)
   }
 
   if (!isOwner || eventMode !== 'edit' || preview) return null
@@ -87,11 +98,7 @@ export function AddItemStickyDropdownActions({
       <Button
         startContent={<LuPlusCircle />}
         className="bg-black text-white"
-        onClick={() => {
-          if (currentSlide) setInsertAfterSlideId(currentSlide.id)
-          setInsertInSectionId(null)
-          handleAddItem(new Set(['new-slide']))
-        }}>
+        onClick={() => handleAddItem(new Set(['new-slide']))}>
         {labelMap['new-slide']}
       </Button>
       <Dropdown placement="bottom-end">
