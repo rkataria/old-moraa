@@ -11,7 +11,6 @@ import { Toaster } from 'react-hot-toast'
 import { NextUIProvider } from '@nextui-org/react'
 
 import { UserContextProvider } from '@/hooks/useAuth'
-import { ModalProvider } from '@/providers/modal-provider'
 
 init({ data })
 
@@ -29,8 +28,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <UserContextProvider>
             {children}
             <Toaster position="bottom-right" reverseOrder={false} />
-
-            <ModalProvider />
           </UserContextProvider>
         </QueryClientProvider>
       </NextUIProvider>
