@@ -16,7 +16,11 @@ import { ContentLoading } from '@/components/common/ContentLoading'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/stores/redux'
-import { initMoraaboardInstances } from '@/stores/reducers/moraaboard-reducer'
+import {
+  initMoraaboardInstances,
+  setIsMounted,
+  startMoraaboardSession,
+} from '@/stores/reducers/moraaboard-reducer'
 
 export type MoraaBoardSlide = ISlide & {
   content: {
@@ -31,9 +35,13 @@ interface MoraaBoardProps {
 export function MoraaBoard({ slide }: MoraaBoardProps) {
   const { preview, isOwner } = useContext(EventContext) as EventContextType
   const roomId = `present-moraa-board-${slide.id}`
+
   const dispatch = useDispatch()
   const tlStore = useSelector<RootState, RootState['moraaboard']['tlStore']>(
     (store) => store.moraaboard.tlStore
+  )
+  const isMounted = useSelector<RootState, RootState['moraaboard']['tlStore']>(
+    (store) => store.moraaboard.isMounted
   )
 
   useLayoutEffect(() => {
@@ -45,6 +53,12 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useLayoutEffect(() => {
+    if (!isMounted) return
+    dispatch(startMoraaboardSession())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMounted])
 
   const readOnly = preview || (!isOwner && slide.config?.allowToDraw)
 
@@ -68,6 +82,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
           }
           onMount={(editor) => {
             editor.updateInstanceState({ isReadonly: !!readOnly })
+            dispatch(setIsMounted({ isMounted: true }))
           }}
         />
       )}
