@@ -3,12 +3,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import { IconChevronRight } from '@tabler/icons-react'
-import {
-  DragDropContext,
-  type DroppableProps,
-  Droppable,
-  Draggable,
-} from 'react-beautiful-dnd'
+import { HomeIcon } from 'lucide-react'
+import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
 
@@ -24,6 +20,7 @@ import { EditableLabel } from './EditableLabel'
 import { SectionDropdownActions } from './SectionDropdownActions'
 import { SectionPlaceholder } from './SectionPlaceholder'
 import { SlidePlaceholder } from './SlidePlaceholder'
+import { StrictModeDroppable } from './StrictModeDroppable'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
@@ -43,23 +40,6 @@ const getFilteredSlides = ({
   if (isOwner || eventMode === 'present') return slides
 
   return slides.filter((slide) => slide.status === 'PUBLISHED')
-}
-
-function StrictModeDroppable({ children, ...props }: DroppableProps) {
-  const [enabled, setEnabled] = useState(false)
-
-  useEffect(() => {
-    const animation = requestAnimationFrame(() => setEnabled(true))
-
-    return () => {
-      cancelAnimationFrame(animation)
-      setEnabled(false)
-    }
-  }, [])
-
-  if (!enabled) return null
-
-  return <Droppable {...props}>{children}</Droppable>
 }
 
 type AgendaPanelProps = {
@@ -86,6 +66,7 @@ export function AgendaPanel({
     isOwner,
     sections,
     updateSection,
+    setOverviewOpen,
     reorderSlide,
     reorderSection,
     deleteSection,
@@ -209,6 +190,16 @@ export function AgendaPanel({
             onDisplayTypeChange={setDisplayType}
           />
         </div>
+        {!actionDisabled && (
+          <div
+            className="flex items-center gap-2 px-2 m-2 w-full cursor-pointer"
+            onClick={() => setOverviewOpen(true)}>
+            <HomeIcon size="18px" className="mr-1" />
+            <p className="w-full outline-none max-w-[9.25rem] overflow-hidden !whitespace-nowrap text-sm">
+              Overview
+            </p>
+          </div>
+        )}
         <DragDropContext
           onDragEnd={(result, provide) => {
             if (!isOwner) return
@@ -223,7 +214,7 @@ export function AgendaPanel({
                 className={cn(
                   'flex flex-col justify-start items-center w-full flex-nowrap scrollbar-none overflow-y-auto',
                   {
-                    'h-[calc(100vh_-_158px)]': !preview,
+                    'h-[calc(100vh_-_198px)]': !preview,
                     'h-[calc(100vh_-_120px)]': preview,
                   }
                 )}

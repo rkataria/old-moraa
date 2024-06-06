@@ -24,7 +24,9 @@ import { SettingsSidebar } from './SettingsSidebar'
 import { Slide } from './Slide'
 import { AgendaPanel } from '../common/AgendaPanel'
 import { AIChat } from '../common/AIChat'
+import { EditEventForm } from '../common/EditEventForm'
 import { Loading } from '../common/Loading'
+import { OverviewSlide } from '../common/OverviewSlide'
 import { PanelResizer } from '../common/PanelResizer'
 import { SlideControls } from '../common/SlideControls'
 import { SyncingStatus } from '../common/SyncingStatus'
@@ -59,13 +61,14 @@ export function SlideManager() {
     syncing,
     currentSlide,
     sections,
+    overviewOpen,
+    openContentTypePicker,
+    setOpenContentTypePicker,
     insertAfterSlideId,
     insertInSectionId,
     addSlideToSection,
     setSelectedSectionId,
   } = useContext(EventContext) as EventContextType
-  const [openContentTypePicker, setOpenContentTypePicker] =
-    useState<boolean>(false)
 
   useHotkeys('f', () => setOpenContentTypePicker(true), [])
 
@@ -179,7 +182,7 @@ export function SlideManager() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       content: getDefaultContent(contentType) as any,
       type: contentType,
-      status: SlideStatus.PUBLISHED,
+      status: SlideStatus.DRAFT,
     }
 
     addSlideToSection({
@@ -287,13 +290,13 @@ export function SlideManager() {
             }
             maxSize={rightSidebarVisible ? 70 : 100}>
             <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
-              {renderSlide()}
+              {overviewOpen ? <OverviewSlide /> : renderSlide()}
             </div>
           </Panel>
 
           {rightSidebarVisible && !preview && isOwner && (
             <>
-              <PanelResizer className="-right-[4px]" />
+              {!overviewOpen && <PanelResizer className="-right-[4px]" />}
               <Panel
                 minSize={
                   leftSidebarVisible && rightSidebarVisible
@@ -311,9 +314,16 @@ export function SlideManager() {
                       : 0
                 }
                 ref={rightPanelRef}
-                className="bg-white">
+                className={overviewOpen ? '' : 'bg-white'}>
                 <SlideManagerRightSidebarWrapper visible>
-                  {renderRightSidebar()}
+                  {overviewOpen ? (
+                    <div className="p-4">
+                      <h3 className="mb-2 font-bold">Event Details</h3>
+                      <EditEventForm eventId={eventId as string} />
+                    </div>
+                  ) : (
+                    renderRightSidebar()
+                  )}
                 </SlideManagerRightSidebarWrapper>
               </Panel>
             </>
@@ -401,7 +411,7 @@ export function SlideManagerRightSidebarWrapper({
   return (
     <div
       className={cn(
-        'h-full flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)] bg-white',
+        'h-full flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)]',
         { 'w-full': visible, 'w-0': !visible }
       )}>
       {children}

@@ -15,7 +15,6 @@ import {
 
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
-import { EditEventButtonWithModal } from '../common/PublishEventButtonWithModal'
 import { ScheduleEventButtonWithModal } from '../common/ScheduleEventButtonWithModal'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -51,7 +50,7 @@ export function Header({
           className="flex justify-center items-center transition-all duration-200 cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3">
           <Sparkles />
         </Button>
-        <EditEventButtonWithModal eventId={event.id} />
+        {/* <EditEventButtonWithModal eventId={event.id} /> */}
         <AddParticipantsButtonWithModal eventId={event.id} />
         {EventStatus.SCHEDULED === event?.status ? (
           <ButtonGroup variant="solid" color="primary" size="sm" radius="md">

@@ -17,7 +17,7 @@ import 'react-multi-email/dist/style.css'
 
 interface NewEventFormProps {
   eventId: string
-  onClose: () => void
+  onClose?: () => void
 }
 
 const editEventValidationSchema = yup.object({
@@ -53,7 +53,7 @@ export function EditEventForm({
         setTimeout(async () => {
           await refetch()
           resolve(response)
-          onClose()
+          onClose?.()
         }, 1000)
       })
     },
@@ -116,9 +116,11 @@ export function EditEventForm({
             )}
           />
           <div className="flex justify-end">
-            <Button variant="bordered" className="mr-4" onClick={onClose}>
-              Cancel
-            </Button>
+            {!!onClose && (
+              <Button variant="bordered" className="mr-4" onClick={onClose}>
+                Cancel
+              </Button>
+            )}
             <Button
               variant="solid"
               color="primary"

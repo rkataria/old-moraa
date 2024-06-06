@@ -7,6 +7,7 @@ import { IconDots } from '@tabler/icons-react'
 
 import { Tooltip } from '@nextui-org/react'
 
+import { ContentTypeIcon } from './ContentTypeIcon'
 import { ContentType } from './ContentTypePicker'
 import { DeleteSlideModal } from './DeleteSlideModal'
 import { EditableLabel } from './EditableLabel'
@@ -96,8 +97,6 @@ function SlideListView({
     EventContext
   ) as EventContextType
 
-  const contentType = getContentType(slide.type)
-
   return (
     <div
       className={cn(
@@ -129,13 +128,7 @@ function SlideListView({
               'drop-shadow-none': currentSlide?.id !== slide.id,
             }
           )}>
-          {contentType && (
-            <Tooltip content={contentType.name}>
-              <div className={cn('text-slate-400 flex-none w-5 h-5')}>
-                {contentType.icon}
-              </div>
-            </Tooltip>
-          )}
+          <ContentTypeIcon slideType={slide.type} />
           <div className={cn('shrink w-full')} onClick={onChangeSlide}>
             <EditableLabel
               readOnly={!isOwner || eventMode !== 'edit'}

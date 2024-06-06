@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from 'react'
+
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
 import { ISection, ISlide } from './slide.type'
@@ -9,6 +11,7 @@ export type EventContextType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meeting: any
   currentSlide: ISlide | null
+  overviewOpen: boolean
   loading: boolean
   syncing: boolean
   isOwner: boolean
@@ -27,6 +30,9 @@ export type EventContextType = {
   setSelectedSectionId: (sectionId: string | null) => void
   setPreview: (preview: boolean) => void
   setCurrentSlide: (slide: ISlide) => void
+  setOverviewOpen: (open: boolean) => void
+  openContentTypePicker: boolean
+  setOpenContentTypePicker: Dispatch<SetStateAction<boolean>>
   addSlideToSection: ({
     slide,
     section,
@@ -45,6 +51,13 @@ export type EventContextType = {
     slideId: string
     allowParticipantToUpdate?: boolean
   }) => void
+  updateSlides: ({
+    slidePayload,
+    slideIds,
+  }: {
+    slidePayload: Partial<ISlide>
+    slideIds: string[]
+  }) => void
   deleteSlide: (slide: ISlide) => void
   importGoogleSlides: (data: {
     slide: ISlide
@@ -58,9 +71,11 @@ export type EventContextType = {
   reorderSection: OnDragEndResponder
   addSection: ({
     name,
+    addToLast,
     afterSectionId,
   }: {
     name?: string
+    addToLast?: boolean
     afterSectionId?: string
   }) => void
   updateSection: ({

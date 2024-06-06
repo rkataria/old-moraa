@@ -256,8 +256,6 @@
   }
 }
 
-
-
 /* Participant Tiles  */
 
 /* Center align 2 orphan items */
@@ -269,7 +267,6 @@
 .grid-cols-4 .participant-grid:last-child:nth-child(2n + 1) {
   grid-column-end: -2;
 }
-
 
 /* Grid 3*3 */
 /* Dealing with 2 orphan items */
@@ -286,7 +283,6 @@
   grid-column-end: 5;
 }
 
-
 /* Grid 4*4 */
 /* Dealing with 2 orphan items */
 .grid-cols-8 .participant-grid:last-child:nth-child(4n - 1) {
@@ -301,5 +297,3 @@
 .grid-cols-8 .participant-grid:last-child:nth-child(4n - 3) {
   grid-column-end: 5;
 }
-
-

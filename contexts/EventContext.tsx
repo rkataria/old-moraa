@@ -30,6 +30,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const { currentUser } = useAuth()
   const [sections, setSections] = useState<any[]>([])
   const [currentSlide, setCurrentSlide] = useState<any>(null)
+  const [overviewOpen, setOverviewOpen] = useState<any>(false)
+  const [openContentTypePicker, setOpenContentTypePicker] =
+    useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
   const [syncing, setSyncing] = useState<boolean>(false)
   const [isOwner, setIsOwner] = useState<boolean>(false)
@@ -69,6 +72,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (!useEventData.event || !currentUser) return
 
     setIsOwner(useEventData.event.owner_id === currentUser?.id)
+    if (useEventData.event.owner_id === currentUser?.id) setOverviewOpen(true)
   }, [useEventData.event, currentUser])
 
   useEffect(() => {
@@ -338,7 +342,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
             setSections(updatedSections)
 
-            if (updatedSlide.id === currentSlide.id) {
+            if (updatedSlide.id === currentSlide?.id) {
               setCurrentSlide(updatedSlide)
             }
           }
@@ -571,11 +575,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
   const addSection = async ({
     name,
+    addToLast,
     afterSectionId,
-  }: {
-    name?: string
-    afterSectionId?: string
-  }) => {
+  }: Parameters<EventContextType['addSection']>[0]) => {
     if (showSectionPlaceholder) return
 
     if (!isOwner) return
@@ -597,7 +599,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
 
     const sectionIds = meeting.sections || []
-    if (afterSectionId) {
+    const currentSectionId = currentSlide?.section_id
+
+    if (currentSectionId && !addToLast && !afterSectionId) {
+      const index = sectionIds.indexOf(currentSectionId)
+      sectionIds.splice(index + 1, 0, sectionResponse.data.id)
+    } else if (afterSectionId) {
       const index = sectionIds.indexOf(afterSectionId)
       sectionIds.splice(index + 1, 0, sectionResponse.data.id)
     } else {
@@ -791,6 +798,34 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     })
 
     if (updateSlideResponse.error) {
+      console.error('error while updating slide: ', updateSlideResponse.error)
+
+      return null
+    }
+
+    setSyncing(false)
+
+    return null
+  }
+
+  const updateSlides = async ({
+    slidePayload,
+    slideIds,
+  }: {
+    slidePayload: Partial<ISlide>
+    slideIds: string[]
+  }) => {
+    if (!isOwner) return null
+    if (!slideIds.length) return null
+    if (Object.keys(slidePayload).length === 0) return null
+
+    setSyncing(true)
+    const updateSlideResponse = await SlideService.updateSlides({
+      slidePayload,
+      slideIds,
+    })
+
+    if (updateSlideResponse?.error) {
       console.error('error while updating slide: ', updateSlideResponse.error)
 
       return null
@@ -1056,6 +1091,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           eventMode !== 'present' ? (isOwner ? 'edit' : 'view') : eventMode,
         meeting,
         currentSlide,
+        overviewOpen,
         loading,
         syncing,
         isOwner,
@@ -1064,18 +1100,28 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         showSlidePlaceholder,
         preview,
         error,
+        openContentTypePicker,
+        setOpenContentTypePicker,
+        setPreview,
+        setCurrentSlide: (slide) => {
+          setCurrentSlide(slide)
+          setOverviewOpen(false)
+        },
+        setOverviewOpen: (open) => {
+          setCurrentSlide(null)
+          setOverviewOpen(open)
+        },
         insertAfterSectionId,
         insertAfterSlideId,
         insertInSectionId,
         selectedSectionId,
-        setCurrentSlide,
-        setPreview,
         setInsertAfterSectionId,
         setInsertAfterSlideId,
         setInsertInSectionId,
         setSelectedSectionId,
         importGoogleSlides,
         updateSlide,
+        updateSlides,
         deleteSlide,
         moveUpSlide,
         moveDownSlide,
