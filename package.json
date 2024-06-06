@@ -161,7 +161,8 @@
     "type-fest": "^4.12.0"
   },
   "resolutions": {
-    "strip-ansi": "6.0.0"
+    "strip-ansi": "6.0.0",
+    "@transloadit/prettier-bytes": "0.3.2"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

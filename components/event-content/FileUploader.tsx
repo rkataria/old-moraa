@@ -115,15 +115,18 @@ export function FileUploader({
         contentType: file.type,
       }
     })
-    _uppy.on('transloadit:upload', async (file, _assembly) => {
-      console.log(_assembly)
+
+    _uppy.on('transloadit:upload', async (file) => {
       onFilesUploaded([
         {
           meta: { name: file.original_name, size: file.size, type: file.type },
           signedUrl: file.ssl_url,
         },
       ])
-      _uppy.setState({ files: [] })
+      _uppy.removeFile(file.id)
+    })
+
+    _uppy.on('transloadit:complete', async () => {
       setOpen(false)
       onFilePickerOpen?.(false)
       toast.success('Upload successful')
@@ -136,6 +139,7 @@ export function FileUploader({
         _uppy.setState({ files: [] })
         setOpen(false)
         onFilePickerOpen?.(false)
+
         toast.success('Upload successful')
       } else {
         console.warn('Upload failed')

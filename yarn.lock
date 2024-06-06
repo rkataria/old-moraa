@@ -3165,10 +3165,15 @@
   dependencies:
     "@tldraw/utils" "2.1.4"
 
-"@transloadit/prettier-bytes@^0.3.0":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@transloadit/prettier-bytes/-/prettier-bytes-0.3.3.tgz#61ebaffc0a92f347ee79f24fddadd5c009b00a8d"
-  integrity sha512-g+ObjXfGBNce+iW/Ev1m9gFWxhZrAek24KfBnT1kVq21pRR7CI7/y+2EiLWlI4ZmO1rqCn3pZ0KmHEwAkKwCIA==
+"@tootallnate/once@2":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
+  integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
+
+"@transloadit/prettier-bytes@0.3.2", "@transloadit/prettier-bytes@^0.3.0":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@transloadit/prettier-bytes/-/prettier-bytes-0.3.2.tgz#ee6d74ccf7d79082a99cef7f98c4d0fdad89f1bb"
+  integrity sha512-YMRk9+RKgbRcAsgrDgJmcJ7H+R3OfecsyMx56YeRdTeJLXkxapeZmK5NG1Ehvu570SGZo0K63ZeBUS2Z5/8ZzA==
 
 "@types/core-js@^2.5.5":
   version "2.5.8"
