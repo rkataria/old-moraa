@@ -36,11 +36,19 @@ const CustomDocument = Document.extend({
   content: 'heading block*',
 })
 
+const DisableEnter = Extension.create({
+  name: 'disableEnter',
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => true, // Prevents the default behavior for the Enter key
+    }
+  },
+})
+
 const KeyboardShortcuts = Extension.create({
   name: 'keyboardShortcuts',
   addKeyboardShortcuts() {
     return {
-      Enter: () => true,
       'Ctrl-[': () => {
         window.dispatchEvent(
           new CustomEvent('keyboard_shortcuts', {
@@ -131,6 +139,7 @@ const getExtensions = (type: string) => {
             'text-gray-500 text-left before:content-[attr(data-placeholder)]',
         }),
         KeyboardShortcuts,
+        DisableEnter,
       ]
 
     default:
