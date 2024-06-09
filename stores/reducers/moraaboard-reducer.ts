@@ -57,59 +57,6 @@ export const moraaboardSlice = createSlice({
   reducers: {
     setIsMounted: (state, action: PayloadAction<{ isMounted: boolean }>) => {
       state.isMounted = action.payload.isMounted
-
-      const { tlStore } = state
-      const { yDocInstance } = state
-      const { yStore } = state
-      const { meta } = state
-
-      console.log('🚀 ~ yStore.yarray.length:', yStore.yarray.length)
-      if (yStore.yarray.length) {
-        const ourSchema = tlStore.schema.serialize()
-        const theirSchema = meta.get('schema')
-        if (!theirSchema) {
-          throw new Error('No schema found in the yjs doc')
-        }
-
-        const records = yStore.yarray.toJSON().map(({ val }) => val)
-
-        const migrationResult = tlStore.schema.migrateStoreSnapshot({
-          schema: theirSchema,
-          store: Object.fromEntries(
-            records.map((record) => [record.id, record])
-          ),
-        })
-        if (migrationResult.type === 'error') {
-          console.error(migrationResult.reason)
-          window.alert('The schema has been updated. Please refresh the page.')
-
-          return
-        }
-        yDocInstance!.transact(() => {
-          for (const r of records) {
-            if (!migrationResult.value[r.id]) {
-              yStore.delete(r.id)
-            }
-          }
-          for (const r of Object.values(migrationResult.value) as TLRecord[]) {
-            yStore.set(r.id, r)
-          }
-          meta.set('schema', ourSchema)
-        })
-        tlStore.loadSnapshot({
-          store: migrationResult.value,
-          schema: ourSchema,
-        })
-      } else {
-        // Create the initial store records
-        // Sync the store records to the yjs doc
-        yDocInstance!.transact(() => {
-          for (const record of tlStore.allRecords()) {
-            yStore.set(record.id, record)
-          }
-          meta.set('schema', tlStore.schema.serialize())
-        })
-      }
     },
     initMoraaboardInstances: (
       state,
@@ -155,8 +102,6 @@ export const moraaboardSlice = createSlice({
       const { supabaseProviderInstance } = state
 
       function handleSync() {
-        // Register TLStore changes on YDoc.
-
         const handleChangesOnTLStore = ({ changes }) => {
           yDocInstance.transact(() => {
             Object.values(changes.added).forEach((record) => {
@@ -318,18 +263,93 @@ export const moraaboardSlice = createSlice({
             yDocInstance!.destroy()
           }
         }
+
         meta.observe(handleMetaUpdate)
+
+        if (yStore.yarray.length) {
+          const ourSchema = tlStore.schema.serialize()
+          const theirSchema = meta.get('schema')
+          if (!theirSchema) {
+            console.log('🚀 ~ handleSync ~ theirSchema:', theirSchema)
+            throw new Error('No schema found in the yjs doc')
+          }
+
+          const records = yStore.yarray.toJSON().map(({ val }) => val)
+
+          const migrationResult = tlStore.schema.migrateStoreSnapshot({
+            schema: theirSchema,
+            store: Object.fromEntries(
+              records.map((record) => [record.id, record])
+            ),
+          })
+          if (migrationResult.type === 'error') {
+            console.error(migrationResult.reason)
+            window.alert(
+              'The schema has been updated. Please refresh the page.'
+            )
+
+            return
+          }
+          yDocInstance!.transact(() => {
+            for (const r of records) {
+              if (!migrationResult.value[r.id]) {
+                yStore.delete(r.id)
+              }
+            }
+            for (const r of Object.values(
+              migrationResult.value
+            ) as TLRecord[]) {
+              yStore.set(r.id, r)
+            }
+            meta.set('schema', ourSchema)
+          })
+          tlStore.loadSnapshot({
+            store: migrationResult.value,
+            schema: ourSchema,
+          })
+        } else {
+          const tlStore = createTLStore({
+            shapeUtils: defaultShapeUtils,
+          })
+          state.tlStore = tlStore
+          yDocInstance!.transact(() => {
+            for (const record of tlStore.allRecords()) {
+              yStore.set(record.id, record)
+            }
+            meta.set('schema', tlStore.schema.serialize())
+          })
+        }
       }
 
       supabaseProviderInstance?.on('status', (event) => {
+        console.log('🚀 ~ supabaseProviderInstance?.on ~ event:', event)
         if (event?.status === 'connected') {
           supabaseProviderInstance?.on('sync', handleSync)
         }
       })
+
+      return state
+    },
+
+    clearAll: (state) => {
+      state.meta = null
+      state.tlStore = null
+      state.yStore = null
+      state.yDocInstance = null
+      state.supabaseProviderInstance = null
+      state.isInitialized = false
+      state.isMounted = false
+      state.status = 'loading'
+
+      return state
     },
   },
 })
 
-export const { initMoraaboardInstances, startMoraaboardSession, setIsMounted } =
-  moraaboardSlice.actions
+export const {
+  initMoraaboardInstances,
+  startMoraaboardSession,
+  clearAll,
+  setIsMounted,
+} = moraaboardSlice.actions
 export const moraaboardReducer = moraaboardSlice.reducer

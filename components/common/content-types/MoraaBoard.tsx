@@ -17,14 +17,16 @@ import { ContentLoading } from '@/components/common/ContentLoading'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/stores/redux'
 import {
+  clearAll,
   initMoraaboardInstances,
   setIsMounted,
   startMoraaboardSession,
 } from '@/stores/reducers/moraaboard-reducer'
+import { useDebounce } from '@uidotdev/usehooks'
 
 export type MoraaBoardSlide = ISlide & {
   content: {
-    document: string
+    document: Uint8Array
   }
 }
 
@@ -43,6 +45,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
   const isMounted = useSelector<RootState, RootState['moraaboard']['tlStore']>(
     (store) => store.moraaboard.isMounted
   )
+  const debouncedStore = useDebounce(tlStore, 3000)
 
   useLayoutEffect(() => {
     dispatch(
@@ -51,6 +54,10 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
         slideId: slide.id,
       })
     )
+
+    return () => {
+      dispatch(clearAll())
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -66,7 +73,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
       className="relative w-full flex-auto flex flex-col justify-center items-center px-4 z-[0] h-full">
-      {!tlStore ? (
+      {!debouncedStore ? (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <ContentLoading />
         </div>
