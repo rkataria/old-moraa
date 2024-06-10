@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Tooltip } from '@nextui-org/react'
+import { Tooltip, TooltipProps } from '@nextui-org/react'
 
 import { ContentType } from './ContentTypePicker'
 
@@ -10,17 +10,23 @@ import { cn } from '@/utils/utils'
 export function ContentTypeIcon({
   slideType,
   classNames,
+  tooltipProps = {},
 }: {
   slideType: ContentType
   classNames?: string
+  tooltipProps?: TooltipProps
 }) {
   const contentType = getContentType(slideType)
 
   if (!contentType) return null
 
   return (
-    <Tooltip content={contentType.name}>
-      <div className={cn('text-slate-400 flex-none w-5 h-5', classNames)}>
+    <Tooltip content={contentType.name} {...tooltipProps}>
+      <div
+        className={cn(
+          'text-gray-300 flex-none w-5 h-5 flex justify-center items-center',
+          classNames
+        )}>
         {contentType.icon}
       </div>
     </Tooltip>

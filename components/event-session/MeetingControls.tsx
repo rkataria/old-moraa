@@ -83,7 +83,7 @@ export function MeetingControls({
 
       <div className="flex justify-end items-center gap-3">
         <AiToggle
-          isAiSidebarOpen={rightSidebar === 'aichat'}
+          isAiSidebarOpen={rightSidebar === 'ai-chat'}
           onClick={onAiChatOverlayToggle}
         />
         <ParticipantsToggle

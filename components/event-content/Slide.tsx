@@ -25,6 +25,7 @@ import { SlidePreview } from '../common/SlidePreview'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
+import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
@@ -37,19 +38,14 @@ const PDFUploader = dynamic(
 )
 
 interface SlideProps {
-  isOwner: boolean
   slide: ISlide
-  settingsEnabled?: boolean
-  setSettingsSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function Slide({
-  isOwner = false,
-  slide,
-  settingsEnabled,
-  setSettingsSidebarVisible,
-}: SlideProps) {
-  const { preview, currentSlide } = useContext(EventContext) as EventContextType
+export function Slide({ slide }: SlideProps) {
+  const { preview, currentSlide, isOwner } = useContext(
+    EventContext
+  ) as EventContextType
+  const { setRightSidebarVisiblity } = useStudioLayout()
 
   if (preview || !isOwner) {
     return <SlidePreview slide={slide} />
@@ -59,27 +55,19 @@ export function Slide({
 
   return (
     <div
-      style={{ backgroundColor: slide.config.backgroundColor }}
-      className={cn('relative group w-full h-full p-4 bg-gray-100', {
+      className={cn('group w-full max-w-5xl m-auto h-full p-4', {
         'pointer-events-none': !isOwner,
       })}>
-      <div
-        className={cn('relative left-0 w-full', {
-          hidden: !isOwner,
-        })}
-      />
-      {settingsEnabled && !preview && (
-        <Button
-          isIconOnly
-          variant="light"
-          className="absolute top-12 right-0 z-10 pointer-events-auto bg-gray-900 text-white hover:bg-black rounded-r-none transition-all duration-200 ease-in-out group/slide-settings"
-          onClick={() => setSettingsSidebarVisible((o) => !o)}>
-          <TbSettings
-            size={22}
-            className="rotate-0 group-hover/slide-settings:rotate-45 transition-all duration-200 ease-in-out"
-          />
-        </Button>
-      )}
+      <Button
+        isIconOnly
+        variant="light"
+        className="absolute top-12 right-0 z-10 pointer-events-auto bg-gray-900 text-white hover:bg-black rounded-r-none transition-all duration-200 ease-in-out group/slide-settings"
+        onClick={() => setRightSidebarVisiblity('slide-settings')}>
+        <TbSettings
+          size={22}
+          className="rotate-0 group-hover/slide-settings:rotate-45 transition-all duration-200 ease-in-out"
+        />
+      </Button>
       <div
         data-slide-id={slide.id}
         className="relative flex flex-col w-full h-full rounded-md overflow-auto transition-all">

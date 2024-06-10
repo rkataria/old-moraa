@@ -1,34 +1,16 @@
 /* eslint-disable react/button-has-type */
-import {
-  Fragment,
-  useContext,
-  useMemo,
-  useState,
-  useRef,
-  useEffect,
-} from 'react'
+import { Fragment, useContext, useState } from 'react'
 
-import { useDebounce } from '@uidotdev/usehooks'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useHotkeys } from 'react-hotkeys-hook'
-import {
-  Panel,
-  PanelGroup,
-  ImperativePanelHandle,
-} from 'react-resizable-panels'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Header } from './Header'
-import { SettingsSidebar } from './SettingsSidebar'
-import { Slide } from './Slide'
+import { RightSidebar } from './RightSidebar'
+import { SlideContainer } from './SlideContainer'
 import { AgendaPanel } from '../common/AgendaPanel'
-import { AIChat } from '../common/AIChat'
-import { EditEventForm } from '../common/EditEventForm'
 import { Loading } from '../common/Loading'
-import { OverviewSlide } from '../common/OverviewSlide'
-import { PanelResizer } from '../common/PanelResizer'
-import { SlideControls } from '../common/SlideControls'
+import { StudioLayout } from '../common/StudioLayout'
 import { SyncingStatus } from '../common/SyncingStatus'
 
 import {
@@ -37,117 +19,30 @@ import {
   CANVAS_TEMPLATE_TYPES,
 } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
-import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { SlideStatus } from '@/services/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { ISlide } from '@/types/slide.type'
 import { getDefaultContent } from '@/utils/content.util'
-import { cn, getSlideCount } from '@/utils/utils'
 
 export function SlideManager() {
   const { eventId } = useParams()
   const { event, isLoading: eventLoading } = useEvent({ id: eventId as string })
-  const [leftSidebarVisible, setLeftSidebarVisible] = useState<boolean>(true)
   const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(true)
-  const [aiChatOverlay, setAiChatOverlay] = useState<boolean>(false)
-
-  const { currentUser } = useAuth()
-  const userId = currentUser?.id
-  const isOwner = useMemo(() => userId === event?.owner_id, [userId, event])
 
   const {
-    preview,
     loading,
     syncing,
     currentSlide,
     sections,
-    overviewOpen,
     openContentTypePicker,
     setOpenContentTypePicker,
     insertAfterSlideId,
     insertInSectionId,
     addSlideToSection,
-    setSelectedSectionId,
   } = useContext(EventContext) as EventContextType
 
   useHotkeys('f', () => setOpenContentTypePicker(true), [])
-
-  const leftPanelRef = useRef<ImperativePanelHandle>(null)
-  const rightPanelRef = useRef<ImperativePanelHandle>(null)
-  const [mainLayoutPanelSizes, setMainLayoutPanelSizes] = useState([2, 98]) // [leftSidebar, mainContent, rightSidebar]
-  const debouncedMainLayoutPanelSizes = useDebounce(mainLayoutPanelSizes, 500)
-
-  useEffect(() => {
-    const leftPanelSize = debouncedMainLayoutPanelSizes[0]
-
-    if (leftPanelSize > 5) {
-      setLeftSidebarVisible(true)
-      leftPanelRef.current?.resize(leftPanelSize)
-    } else {
-      setLeftSidebarVisible(false)
-      leftPanelRef.current?.resize(2)
-    }
-  }, [debouncedMainLayoutPanelSizes])
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const toggleSidebars = (e: any) => {
-      if (e.detail.key === 'left_sidebar_toggle') {
-        toggleLeftSidebar()
-
-        return
-      }
-
-      setRightSidebarVisible(!rightSidebarVisible)
-    }
-
-    window.addEventListener('keyboard_shortcuts', toggleSidebars)
-
-    return () =>
-      window.removeEventListener('keyboard_shortcuts', toggleSidebars)
-  }, [leftSidebarVisible, rightSidebarVisible])
-
-  const getSettingsEnabled = () => {
-    if (!currentSlide || !isOwner) return false
-
-    return true
-  }
-
-  const settingsEnabled = getSettingsEnabled()
-
-  const toggleAiSideBar = () => {
-    if (!isOwner) return
-
-    if (aiChatOverlay) {
-      setAiChatOverlay(false)
-      setRightSidebarVisible(false)
-    } else {
-      setAiChatOverlay(true)
-      setRightSidebarVisible(true)
-    }
-  }
-
-  const toggleLeftSidebar = () => {
-    setLeftSidebarVisible((prev) => {
-      const newState = !prev
-      if (leftPanelRef.current) {
-        leftPanelRef.current.resize(newState ? 20 : 2)
-      }
-
-      return newState
-    })
-  }
-
-  useHotkeys('a', toggleAiSideBar, [aiChatOverlay, isOwner])
-  useHotkeys(
-    'ctrl+[',
-    toggleLeftSidebar,
-    {
-      enableOnFormTags: ['INPUT', 'TEXTAREA'],
-    },
-    []
-  )
 
   useHotkeys(
     'ctrl + ]',
@@ -205,238 +100,24 @@ export function SlideManager() {
     )
   }
 
-  const renderRightSidebar = () => {
-    if (preview || !isOwner) return null
-    if (aiChatOverlay) {
-      return <AIChat onClose={() => setRightSidebarVisible(false)} />
-    }
-    if (currentSlide && settingsEnabled) {
-      return (
-        <SettingsSidebar
-          settingsEnabled={settingsEnabled}
-          setSettingsSidebarVisible={setRightSidebarVisible}
-        />
-      )
-    }
-
-    return null
-  }
-
-  const renderSlide = () => {
-    const slideCount = getSlideCount(sections)
-    if (slideCount === 0) {
-      return (
-        <div className="flex items-center justify-center w-full h-full">
-          <p className="text-2xl font-semibold">Add a slide to get started</p>
-        </div>
-      )
-    }
-    if (!currentSlide) return null
-
-    return (
-      <Fragment key={currentSlide.id}>
-        <Slide
-          isOwner={isOwner}
-          slide={currentSlide}
-          settingsEnabled={settingsEnabled}
-          setSettingsSidebarVisible={() => {
-            setAiChatOverlay(false)
-            setRightSidebarVisible(true)
-          }}
-        />
-        <SlideControls />
-      </Fragment>
-    )
-  }
-
   return (
-    <SlideManagerLayoutRoot>
-      <SlideManagerHeader>
-        <Header event={event} onAiChatOverlayToggle={toggleAiSideBar} />
-      </SlideManagerHeader>
-      <div className="flex flex-auto w-full h-full relative bg-gray-100">
-        <PanelGroup
-          direction="horizontal"
-          autoSaveId="slideManagerLayout"
-          onLayout={(layout) => {
-            setMainLayoutPanelSizes(layout)
-          }}>
-          {/* Left Sidebar */}
-          <Panel
-            minSize={2}
-            maxSize={25}
-            defaultSize={leftSidebarVisible ? 20 : 0}
-            ref={leftPanelRef}
-            className={cn('pr-5', {
-              'bg-transparent': leftSidebarVisible,
-            })}>
-            <SlideManagerLeftSidebarWrapper
-              visible={leftSidebarVisible}
-              toggleLeftSidebar={toggleLeftSidebar}>
-              {leftSidebarVisible && (
-                <AgendaPanel
-                  setOpenContentTypePicker={setOpenContentTypePicker}
-                  setSelectedSectionId={setSelectedSectionId}
-                />
-              )}
-            </SlideManagerLeftSidebarWrapper>
-          </Panel>
-
-          <PanelResizer className="right-6" />
-          <Panel
-            minSize={20}
-            defaultSize={
-              leftSidebarVisible && rightSidebarVisible
-                ? 60
-                : rightSidebarVisible
-                  ? 80
-                  : 100
-            }
-            maxSize={rightSidebarVisible ? 70 : 100}>
-            <div className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100">
-              {overviewOpen ? <OverviewSlide /> : renderSlide()}
-            </div>
-          </Panel>
-
-          {rightSidebarVisible && !preview && isOwner && (
-            <>
-              {!overviewOpen && <PanelResizer className="-right-[4px]" />}
-              <Panel
-                minSize={
-                  leftSidebarVisible && rightSidebarVisible
-                    ? 23
-                    : rightSidebarVisible
-                      ? 18
-                      : 0
-                }
-                maxSize={25}
-                defaultSize={
-                  leftSidebarVisible && rightSidebarVisible
-                    ? 23
-                    : rightSidebarVisible
-                      ? 18
-                      : 0
-                }
-                ref={rightPanelRef}
-                className={overviewOpen ? '' : 'bg-white'}>
-                <SlideManagerRightSidebarWrapper visible>
-                  {overviewOpen ? (
-                    <div className="p-4">
-                      <h3 className="mb-2 font-bold">Event Details</h3>
-                      <EditEventForm eventId={eventId as string} />
-                    </div>
-                  ) : (
-                    renderRightSidebar()
-                  )}
-                </SlideManagerRightSidebarWrapper>
-              </Panel>
-            </>
-          )}
-        </PanelGroup>
-      </div>
+    <>
+      <StudioLayout
+        header={<Header event={event} />}
+        leftSidebar={<AgendaPanel />}
+        rightSidebar={
+          <div className="pl-0 bg-white h-full">
+            <RightSidebar />
+          </div>
+        }>
+        <SlideContainer />
+      </StudioLayout>
       <ContentTypePicker
         open={openContentTypePicker}
         onClose={() => setOpenContentTypePicker(false)}
         onChoose={handleAddNewSlide}
       />
       <SyncingStatus syncing={syncing} />
-    </SlideManagerLayoutRoot>
-  )
-}
-
-export function SlideManagerLayoutRoot({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <div
-      className={cn(
-        'flex flex-col w-full h-screen max-h-screen bg-gray-900 overflow-hidden'
-      )}
-      style={{ backgroundColor: 'var(--slide-bg-color)' }}>
-      {children}
-    </div>
-  )
-}
-
-export function SlideManagerHeader({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <div className="sticky left-0 top-0 h-16 flex-none w-full z-10 border-b-2 border-gray-200">
-      {children}
-    </div>
-  )
-}
-
-export function SlideManagerBody({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex flex-auto w-full h-[calc(100vh_-_64px)]">
-      {children}
-    </div>
-  )
-}
-
-export function SlideManagerLeftSidebarWrapper({
-  children,
-  visible,
-  toggleLeftSidebar,
-}: {
-  children: React.ReactNode
-  visible: boolean
-  toggleLeftSidebar: () => void
-}) {
-  return (
-    <div
-      className={cn(
-        'w-full h-full relative flex-none transition-all duration-300 ease-in-out max-h-[calc(100vh_-_64px)] border-r-2 border-gray-200 bg-white'
-      )}>
-      {visible ? children : null}
-
-      <button
-        className="absolute -right-4 top-20 -translate-y-1/2 z-[1] p-1 aspect-square rounded-full border-2 border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 ease-in-out"
-        onClick={toggleLeftSidebar}>
-        {visible ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-      </button>
-    </div>
-  )
-}
-
-export function SlideManagerRightSidebarWrapper({
-  children,
-  visible,
-}: {
-  children: React.ReactNode
-  visible: boolean
-}) {
-  return (
-    <div
-      className={cn(
-        'h-full flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)]',
-        { 'w-full': visible, 'w-0': !visible }
-      )}>
-      {children}
-    </div>
-  )
-}
-
-export function SlideManagerAIChatOverlay({
-  children,
-  visible,
-}: {
-  children: React.ReactNode
-  visible: boolean
-}) {
-  return (
-    <div
-      className={cn(
-        'flex-none transition-all duration-300 ease-in-out overflow-hidden max-h-[calc(100vh_-_64px)]',
-        { 'w-72': visible, 'w-0': !visible }
-      )}>
-      {children}
-    </div>
+    </>
   )
 }

@@ -28,7 +28,7 @@ export function PollForm({ slide: slideFromRemote }: PollFormProps) {
   const optionsRef = useRef<any>([])
 
   const { updateSlide } = useContext(EventContext) as EventContextType
-  const question = slideFromRemote?.content?.question
+  // const question = slideFromRemote?.content?.question
   // const [question, setQuestion] = useState<string>(
   //   slideFromRemote.content.question
   // )
@@ -142,7 +142,7 @@ export function PollForm({ slide: slideFromRemote }: PollFormProps) {
                   ref={(el: any) => {
                     optionsRef.current[index] = el
                   }}
-                  autoFocus={option.length === 0 && question?.length !== 0}
+                  // autoFocus={option.length === 0 && question?.length !== 0} // FIXME: focus is conflicting with the arrow key navigation for agenda panel
                   className={clsx(
                     'w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none'
                   )}

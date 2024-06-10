@@ -22,9 +22,6 @@ const config = {
       },
     },
     extend: {
-      backgroundColor: {
-        primary: '#7C3AED',
-      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

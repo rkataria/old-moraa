@@ -63,9 +63,12 @@ export function OverviewSlide() {
   }
 
   return (
-    <div className="p-4 flex flex-col flex-1">
+    <div className="p-4 flex flex-col flex-1 max-w-5xl m-auto">
       <h2 className="mb-2 font-bold text-xl">Overview</h2>
-      <h4 className="mb-4 font-md font-semibold">Agenda Outline</h4>
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="font-md font-semibold">Agenda Outline</h4>
+        <h4 className="font-md pl-4">Share</h4>
+      </div>
       <div className="scrollbar-none overflow-y-auto">
         <DragDropContext
           onDragEnd={(result, provide) => {

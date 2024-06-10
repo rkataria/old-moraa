@@ -1,0 +1,80 @@
+import { useEffect, useRef, useState } from 'react'
+
+import { Panel, PanelGroup } from 'react-resizable-panels'
+
+import { ContentContainer } from './ContentContainer'
+import { ParticipantTiles } from './ParticipantTiles'
+import { PanelResizer } from '../common/PanelResizer'
+
+import { useEventSession } from '@/contexts/EventSessionContext'
+import { PresentationStatuses } from '@/types/event-session.type'
+
+export function MainContainer() {
+  const { presentationStatus, currentSlide, eventSessionMode } =
+    useEventSession()
+  const [panelSize, setPanelSize] = useState(18) // Initial default size
+
+  const mainContentRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef(null)
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (panelRef.current) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const newSize = (panelRef.current as any).getSize() // Get current size as percentage
+        if (newSize !== panelSize) {
+          setPanelSize(newSize)
+        }
+      }
+    }, 100) // Polling interval
+
+    return () => clearInterval(intervalId)
+  }, [panelSize])
+
+  const spotlightMode = eventSessionMode === 'Lobby'
+
+  const currentSlideBgColor =
+    presentationStatus === PresentationStatuses.STARTED
+      ? currentSlide?.config?.backgroundColor || '#f3f4f6'
+      : '#f3f4f6'
+
+  if (mainContentRef.current) {
+    mainContentRef.current.style.backgroundColor = currentSlideBgColor
+  }
+
+  return (
+    <div
+      className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100"
+      ref={mainContentRef}>
+      {/* Sportlight View */}
+      {spotlightMode ? (
+        <div className="flex flex-col overflow-auto h-full flex-1">
+          <ParticipantTiles spotlightMode={spotlightMode} />
+        </div>
+      ) : (
+        <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
+          <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
+            {['Preview', 'Presentation'].includes(eventSessionMode) && (
+              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
+                <ContentContainer />
+              </div>
+            )}
+          </Panel>
+
+          <PanelResizer />
+
+          <Panel
+            minSize={20}
+            collapsedSize={20}
+            defaultSize={20}
+            maxSize={50}
+            ref={panelRef}>
+            <div className="flex flex-col overflow-auto h-full flex-1">
+              <ParticipantTiles spotlightMode={spotlightMode} />
+            </div>
+          </Panel>
+        </PanelGroup>
+      )}
+    </div>
+  )
+}

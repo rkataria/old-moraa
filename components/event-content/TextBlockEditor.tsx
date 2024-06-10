@@ -195,7 +195,8 @@ export function TextBlockEditor({
 
   useEffect(() => {
     if (block.type === 'header' && editor && editor.isEmpty) {
-      editor.commands.focus('start')
+      // FIXME: focus is conflicting with the arrow key navigation for agenda panel
+      // editor.commands.focus('start')
     }
 
     return () => {

@@ -53,8 +53,14 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
-  const { isOwner, meeting, sections, currentSlide, setCurrentSlide } =
-    useContext(EventContext) as EventContextType
+  const {
+    isOwner,
+    meeting,
+    sections,
+    currentSlide,
+    eventMode,
+    setCurrentSlide,
+  } = useContext(EventContext) as EventContextType
 
   const [presentationStatus, setPresentationStatus] =
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
@@ -345,7 +351,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const nextSlide = useCallback(() => {
     if (!isOwner) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const nextSlide = getNextSlide({ sections, currentSlide })
+    const nextSlide = getNextSlide({
+      sections,
+      currentSlide,
+      onlyPublished: !isOwner && eventMode !== 'present',
+    })
 
     if (!nextSlide) return null
 
@@ -363,12 +373,16 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOwner, sections, currentSlide, eventSessionMode])
+  }, [isOwner, sections, currentSlide, eventSessionMode, eventMode])
 
   const previousSlide = useCallback(() => {
     if (!isOwner) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const previousSlide = getPreviousSlide({ sections, currentSlide })
+    const previousSlide = getPreviousSlide({
+      sections,
+      currentSlide,
+      onlyPublished: !isOwner && eventMode !== 'present',
+    })
 
     if (!previousSlide) return null
 
@@ -386,7 +400,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide, eventSessionMode, isOwner, sections])
+  }, [currentSlide, eventSessionMode, isOwner, sections, eventMode])
 
   const startPresentation = () => {
     realtimeChannel.send({

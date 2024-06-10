@@ -96,7 +96,7 @@ export function CanvasPreview({ slide }: CanvasProps) {
           <ContentLoading />
         </div>
       )}
-      <div className="w-full aspect-video bg-white">
+      <div className="w-full aspect-video bg-transparent">
         <ResizeObserver
           onResize={({ width, height }) => {
             resizeCanvas?.(width, height)

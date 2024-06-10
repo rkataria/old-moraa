@@ -407,21 +407,21 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting?.sections])
 
-  useEffect(() => {
-    if (!currentSlide) return
+  // useEffect(() => {
+  //   if (!currentSlide) return
 
-    const currentSlideElement = document.querySelector(
-      `div[data-minislide-id="${currentSlide.id}"]`
-    )
+  //   const currentSlideElement = document.querySelector(
+  //     `div[data-minislide-id="${currentSlide.id}"]`
+  //   )
 
-    if (!currentSlideElement) return
+  //   if (!currentSlideElement) return
 
-    currentSlideElement.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center',
-    })
-  }, [currentSlide])
+  //   currentSlideElement.scrollIntoView({
+  //     behavior: 'smooth',
+  //     block: 'center',
+  //     inline: 'center',
+  //   })
+  // }, [currentSlide])
 
   const fetchSectionsWithSlides = async ({ ids }: { ids: string[] }) => {
     const getSectionsData = await SectionService.getSections({

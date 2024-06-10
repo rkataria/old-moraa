@@ -3,9 +3,11 @@ import { ISection, ISlide } from '@/types/slide.type'
 export const getPreviousSlide = ({
   sections,
   currentSlide,
+  onlyPublished = false,
 }: {
   sections: ISection[]
   currentSlide: ISlide | null
+  onlyPublished?: boolean
 }) => {
   if (!currentSlide) return sections[0].slides[0]
 
@@ -13,7 +15,9 @@ export const getPreviousSlide = ({
   if (!section) return sections[0].slides[0]
 
   const currentSlideIndex = section.slides.findIndex(
-    (slide) => slide.id === currentSlide.id
+    (slide) =>
+      slide.id === currentSlide.id &&
+      (!onlyPublished || slide.status === 'PUBLISHED')
   )
 
   if (currentSlideIndex > 0) {
@@ -34,9 +38,11 @@ export const getPreviousSlide = ({
 export const getNextSlide = ({
   sections,
   currentSlide,
+  onlyPublished = false,
 }: {
   sections: ISection[]
   currentSlide: ISlide | null
+  onlyPublished?: boolean
 }) => {
   if (!currentSlide) return sections[0].slides[0]
 
@@ -46,7 +52,9 @@ export const getNextSlide = ({
   const currentSectionSlides = section.slides
 
   const currentSlideIndex = currentSectionSlides.findIndex(
-    (slide) => slide.id === currentSlide.id
+    (slide) =>
+      slide.id === currentSlide.id &&
+      (!onlyPublished || slide.status === 'PUBLISHED')
   )
 
   if (currentSlideIndex < currentSectionSlides.length - 1) {

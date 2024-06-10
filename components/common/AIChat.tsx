@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-'use client'
-
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import { useActions, useUIState } from 'ai/rsc'
@@ -70,7 +68,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
 
   return (
     <AiChatSidebarWrapper
-      contentClass="relative flex flex-col w-full h-[calc(100%_-_40px)]"
+      contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)]"
       onClose={onClose}>
       <ScrollShadow
         hideScrollBar
@@ -147,7 +145,7 @@ function AiChatSidebarWrapper({
   onClose: () => void
 }) {
   return (
-    <div className={cn('w-full h-full transition-all border-l bg-[#f5f5f5]')}>
+    <div className={cn('w-full h-full')}>
       <div className="flex items-center justify-between w-full p-2">
         <Button variant="light" isIconOnly size="sm" onClick={onClose}>
           <RxCross1 size={18} />

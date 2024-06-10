@@ -107,7 +107,7 @@ export function SlideText({
     <TextareaAutosize
       placeholder={placeholder}
       disabled={preview}
-      autoFocus={updatedText?.length === 0 || !updatedText}
+      // autoFocus={updatedText?.length === 0 || !updatedText} // FIXME: This conflicts with the arrow key navigation for agenda panel
       value={updatedText}
       maxLength={TITLE_CHARACTER_LIMIT}
       onChange={updateText}
