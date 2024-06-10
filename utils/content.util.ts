@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
 import {
+  CANVAS_TEMPLATE_TYPES,
   ContentType,
   contentTypes,
 } from '@/components/common/ContentTypePicker'
@@ -23,8 +24,22 @@ export const paragraphBlock = {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getDefaultContent = (contentType: ContentType, data?: any) => {
+export const getDefaultContent = ({
+  contentType,
+  data,
+  templateType,
+}: {
+  contentType: ContentType
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any
+  templateType?: CANVAS_TEMPLATE_TYPES
+}) => {
   switch (contentType) {
+    case ContentType.CANVAS:
+      return {
+        defaultTemplate: templateType,
+        canvas: null,
+      }
     case ContentType.COVER:
       return {
         blocks: [
@@ -162,7 +177,10 @@ export const getDefaultCoverSlide = ({
     showTitle: true,
     showDescription: true,
   },
-  content: getDefaultContent(ContentType.COVER, { title, description }),
+  content: getDefaultContent({
+    contentType: ContentType.COVER,
+    data: { title, description },
+  }),
   type: ContentType.COVER,
   status: SlideStatus.PUBLISHED,
 })

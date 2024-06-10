@@ -1,11 +1,20 @@
 import { Button, ButtonProps } from '@nextui-org/button'
 import { Tooltip, TooltipProps } from '@nextui-org/tooltip'
 
+import { cn } from '@/utils/utils'
+
 export type MeetingControlButtonProps = {
   children: React.ReactNode
   tooltipProps: TooltipProps
   buttonProps: ButtonProps
   onClick: () => void
+}
+
+export function getButtonClassName(isActive: boolean) {
+  return cn('flex-none', {
+    'bg-black text-white': isActive,
+    'bg-white text-black': !isActive,
+  })
 }
 
 export function ControlButton({

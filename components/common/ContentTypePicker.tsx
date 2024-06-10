@@ -28,9 +28,11 @@ interface IContentType {
   description: string
   contentType: ContentType
   disabled?: boolean
+  templateType?: CANVAS_TEMPLATE_TYPES
 }
 
 export enum ContentType {
+  CANVAS = 'Canvas',
   COVER = 'Title',
   POLL = 'Poll',
   VIDEO = 'Video',
@@ -50,7 +52,35 @@ export const INTERACTIVE_SLIDE_TYPES = [
   ContentType.REFLECTION,
 ]
 
+export enum CANVAS_TEMPLATE_TYPES {
+  BLANK = 'Blank',
+  TEMPLATE_ONE = 'Template One',
+  TEMPLATE_TWO = 'Template Two',
+  TEMPLATE_THREE = 'Template Three',
+}
+
 export const contentTypes: IContentType[] = [
+  {
+    name: 'Blank',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a blank canvas to draw, write',
+    contentType: ContentType.CANVAS,
+    templateType: CANVAS_TEMPLATE_TYPES.BLANK,
+  },
+  {
+    name: 'Title Description',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a slide with title and description',
+    contentType: ContentType.CANVAS,
+    templateType: CANVAS_TEMPLATE_TYPES.TEMPLATE_ONE,
+  },
+  {
+    name: 'Title Image',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a slide with title and image',
+    contentType: ContentType.CANVAS,
+    templateType: CANVAS_TEMPLATE_TYPES.TEMPLATE_TWO,
+  },
   {
     name: 'Title',
     icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
@@ -136,7 +166,10 @@ export const contentTypes: IContentType[] = [
 interface ChooseContentTypeProps {
   open: boolean
   onClose: () => void
-  onChoose: (contentType: ContentType) => void
+  onChoose: (
+    contentType: ContentType,
+    templateType: CANVAS_TEMPLATE_TYPES | undefined
+  ) => void
 }
 
 export function ContentTypePicker({
@@ -172,7 +205,10 @@ export function ContentTypePicker({
                       isPressable
                       onPress={() => {
                         if (!contentType.disabled) {
-                          onChoose(contentType.contentType)
+                          onChoose(
+                            contentType.contentType,
+                            contentType.templateType
+                          )
                         }
                       }}
                       className="hover:bg-gray-300 flex-col items-start">

@@ -34,6 +34,7 @@ import { SyncingStatus } from '../common/SyncingStatus'
 import {
   ContentTypePicker,
   ContentType,
+  CANVAS_TEMPLATE_TYPES,
 } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
 import { useAuth } from '@/hooks/useAuth'
@@ -157,7 +158,10 @@ export function SlideManager() {
     [rightSidebarVisible]
   )
 
-  const handleAddNewSlide = (contentType: ContentType) => {
+  const handleAddNewSlide = (
+    contentType: ContentType,
+    templateType: CANVAS_TEMPLATE_TYPES | undefined
+  ) => {
     let currentSection
     if (insertInSectionId) {
       currentSection = sections.find((s) => s.id === insertInSectionId)
@@ -180,7 +184,7 @@ export function SlideManager() {
       },
       // TODO: Fix any
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      content: getDefaultContent(contentType) as any,
+      content: getDefaultContent({ contentType, templateType }) as any,
       type: contentType,
       status: SlideStatus.DRAFT,
     }

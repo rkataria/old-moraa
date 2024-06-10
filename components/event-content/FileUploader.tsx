@@ -33,7 +33,7 @@ type File = UppyFile<Record<string, unknown>, Record<string, unknown>>
 const TRANSLOADIT_AUTH_KEY = process.env.NEXT_PUBLIC_TRANSLOADIT_KEY ?? ''
 const TEMPLATE_ID = process.env.NEXT_PUBLIC_TRANSLOADIT_TEMPLATE_ID ?? ''
 
-type FileWithSignedUrl = {
+export type FileWithSignedUrl = {
   signedUrl: string
   meta: { name: string; size: number; type: string }
 }
@@ -72,7 +72,6 @@ export function FileUploader({
 
     const _uppy = new Uppy({
       debug: false,
-
       restrictions: { maxNumberOfFiles, allowedFileTypes },
     })
       .use(Dashboard, {

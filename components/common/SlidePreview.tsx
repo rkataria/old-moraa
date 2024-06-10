@@ -3,6 +3,7 @@
 
 import { useEffect } from 'react'
 
+import { CanvasPreview } from './content-types/Canvas/Preview'
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardSlide } from './content-types/MoraaBoard'
 import { PDFViewer, PDFViewerSlideType } from './content-types/PDFViewer'
@@ -59,6 +60,9 @@ export function SlidePreview({ slide, readOnly }: SlideProps) {
       <div
         data-slide-id={slide.id}
         className="relative w-full h-full rounded-md overflow-auto transition-all">
+        {slide.type === ContentType.CANVAS && (
+          <CanvasPreview slide={slide as any} />
+        )}
         {slide.type === ContentType.COVER && (
           <Cover slide={slide as CoverSlideType} />
         )}

@@ -19,6 +19,7 @@ import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { SlideTitleDescriptionPanel } from './SlideTitleDescriptionPanel'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
+import { Canvas } from '../common/content-types/Canvas'
 import { SlidePreview } from '../common/SlidePreview'
 
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
@@ -83,6 +84,7 @@ export function Slide({
         data-slide-id={slide.id}
         className="relative flex flex-col w-full h-full rounded-md overflow-auto transition-all">
         <SlideTitleDescriptionPanel key={slide.id} />
+        {slide.type === ContentType.CANVAS && <Canvas slide={slide as any} />}
         {slide.type === ContentType.POLL && (
           <PollEditor slide={slide} openSettings={false} />
         )}
