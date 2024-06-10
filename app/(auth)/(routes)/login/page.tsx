@@ -1,30 +1,48 @@
 'use client'
 
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
-import { useIsClient } from '@uidotdev/usehooks'
-import { useRouter } from 'next/navigation'
+// import { useIsClient } from '@uidotdev/usehooks'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { Card, CardBody, CardHeader } from '@nextui-org/react'
 
+import { Loading } from '@/components/common/Loading'
 import { MoraaLogo } from '@/components/common/MoraaLogo'
 import { useAuth } from '@/hooks/useAuth'
 
-export default function Login() {
+function Login() {
   const supabase = createClientComponentClient()
   const user = useAuth()
   const router = useRouter()
-  const isClient = useIsClient()
+  const searchParams = useSearchParams()
+
+  const redirectTo = searchParams.get('redirectTo')
+  // const isClient = useIsClient()
 
   useEffect(() => {
+    if (user.currentUser && redirectTo) {
+      router.replace(`/events/${redirectTo}`)
+
+      return
+    }
+
     if (user.currentUser) {
       router.replace('/events')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.currentUser])
+  }, [user.currentUser, redirectTo])
+
+  const getRedirectUrl = () => {
+    if (redirectTo) {
+      return `${window.location.origin}/events/${redirectTo}`
+    }
+
+    return `${window.location.origin}/events`
+  }
 
   return (
     <div className="h-[100vh] flex items-center justify-center bg-gradient-to-br from-red-600 to-blue-600">
@@ -33,25 +51,33 @@ export default function Login() {
           <MoraaLogo color="primary" />
         </CardHeader>
         <CardBody>
-          <Auth
-            supabaseClient={supabase}
-            redirectTo={
-              isClient ? `${window.location.origin}/events` : '/events'
-            }
-            providers={['google']}
-            appearance={{
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: '#7C3AED',
+          <Suspense fallback={<Loading />}>
+            <Auth
+              supabaseClient={supabase}
+              redirectTo={getRedirectUrl()}
+              providers={['google']}
+              appearance={{
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: '#7C3AED',
+                    },
                   },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          </Suspense>
         </CardBody>
       </Card>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <Login />
+    </Suspense>
   )
 }

@@ -89,13 +89,13 @@ export class EventService extends APIService {
     participants,
   }: {
     eventId: string
-    participants: { email: string }[]
+    participants: { email: string; role: string }[]
   }) {
     const payload = JSON.stringify({
       eventId,
       participants: participants.map((participant) => ({
         email: participant.email,
-        role: 'Participant',
+        role: participant.role,
       })),
     })
 

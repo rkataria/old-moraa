@@ -7,11 +7,15 @@ import { EventService } from '@/services/event.service'
 export const useEvent = ({
   id,
   fetchActiveSession = false,
+  validateWithUser = true,
 }: {
   id: string
   fetchActiveSession?: boolean
+  validateWithUser?: boolean
 }) => {
   const { currentUser, isLoading: isUserLoading } = useAuth()
+
+  const isEnabled = !validateWithUser ? !!id : !!currentUser?.id && !!id
 
   const eventQuery = useQuery({
     queryKey: ['event', id],
@@ -20,7 +24,7 @@ export const useEvent = ({
         eventId: id,
         fetchActiveSession,
       }),
-    enabled: !!currentUser?.id && !!id,
+    enabled: isEnabled,
     refetchOnWindowFocus: false,
   })
 
@@ -28,6 +32,7 @@ export const useEvent = ({
     event: eventQuery.data?.event,
     meeting: eventQuery.data?.meeting,
     participants: eventQuery.data?.participants,
+    profile: eventQuery.data?.profile,
     activeSession: eventQuery.data?.session,
     isLoading: eventQuery.isLoading || isUserLoading,
     isFetching: eventQuery.isFetching,

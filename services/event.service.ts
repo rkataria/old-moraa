@@ -1,5 +1,7 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
+import { ProfileService } from './profile.service'
+
 import { ICreateEventPayload } from '@/types/event.type'
 
 const supabase = createClientComponentClient()
@@ -95,11 +97,14 @@ const getEvent = async ({
     }
   }
 
+  const profile = await ProfileService.getProfile(meeting.event.owner_id)
+
   return {
     event: meeting.event,
     participants,
     meeting,
     session,
+    profile: profile.data,
   }
 }
 

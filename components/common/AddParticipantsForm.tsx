@@ -1,8 +1,7 @@
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
-import { Trash } from 'lucide-react'
 import {
   Control,
   Controller,
@@ -10,11 +9,26 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form'
+import { BsThreeDotsVertical, BsTrash3 } from 'react-icons/bs'
+import { TbChevronDown } from 'react-icons/tb'
 import * as yup from 'yup'
 
-import { Button, Input } from '@nextui-org/react'
+import { Button, Chip, Input } from '@nextui-org/react'
+
+import { DropdownActions } from './DropdownActions'
+import { EmailInput } from './EmailInput'
 
 import { useUserContext } from '@/hooks/useAuth'
+import { roles } from '@/utils/roles'
+import { cn } from '@/utils/utils'
+
+const participantsActions = [
+  {
+    key: 'delete',
+    label: 'Delete',
+    icon: <BsTrash3 className="h-4 w-4 text-red-500" />,
+  },
+]
 
 function getAllIndexes<T>(arr: Array<T>, val: T) {
   const indexes = []
@@ -32,6 +46,7 @@ export const participantsListValidationSchema = yup
     yup.object({
       participantId: yup.string(),
       isHost: yup.boolean(),
+      role: yup.string().required(),
       email: yup
         .string()
         .email()
@@ -75,6 +90,8 @@ export type AddParticipantsFormProps<
       formControl?: Control<FormData>
       onSubmit?: void
       renderAction?: void
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addParticipantsMutation: any
     }
   | {
       formControl?: never
@@ -84,7 +101,13 @@ export type AddParticipantsFormProps<
        * so a least one of the button rendered using the `renderAction` should have `type="submit"`
        * @returns {ReactElement}
        */
-      renderAction?: () => ReactElement
+      renderAction?: ({
+        showActions = false,
+      }: {
+        showActions: boolean
+      }) => ReactElement
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addParticipantsMutation: any
     }
 )
 
@@ -96,8 +119,10 @@ export function AddParticipantsForm<
   onSubmit,
   renderAction,
   onParticipantRemove,
+  addParticipantsMutation,
 }: AddParticipantsFormProps<FormData>) {
   const userProfile = useUserContext()
+  const [showActions, setShowActions] = useState(false)
   const participantsForm = useForm<ParticipantsFormData>({
     resolver: yupResolver(participantsValidationSchema),
     defaultValues: {
@@ -121,69 +146,135 @@ export function AddParticipantsForm<
     name: 'participants',
   })
 
+  const deleteParticipant = async ({
+    participantId,
+    isHost = false,
+    index,
+  }: {
+    participantId: string
+    isHost: boolean
+    index: number
+  }) => {
+    if (participantId && !isHost) {
+      await fakeDeleteParticipantMutation.mutateAsync(participantId)
+    }
+    participantsFieldArray.remove(index)
+  }
+
   const FormContentJSX = (
     <div>
-      <p className="mb-2">Participant(s)</p>
       {participantsFieldArray.fields.map((arrayField, index) => (
-        <Controller
-          key={arrayField.id}
-          control={control}
-          name={`participants.${index}.email`}
-          render={({ field, fieldState }) => (
-            <div className="mb-4">
-              <div className="flex items-center">
-                <Input
-                  {...field}
-                  className="flex-1"
-                  variant="bordered"
-                  size="sm"
-                  disabled={arrayField.isHost}
-                  errorMessage={fieldState.error?.message}
-                  isInvalid={!!fieldState.error}
-                />
-                {!arrayField.isHost && (
-                  <Button
-                    isIconOnly
-                    className="ml-4"
-                    aria-label="Delete participant"
-                    variant="bordered"
-                    isLoading={
-                      fakeDeleteParticipantMutation.isPending &&
-                      arrayField.participantId ===
-                        fakeDeleteParticipantMutation.variables
-                    }
-                    onClick={async () => {
-                      if (arrayField.participantId && !arrayField.isHost) {
-                        await fakeDeleteParticipantMutation.mutateAsync(
-                          arrayField.participantId
-                        )
-                      }
-                      participantsFieldArray.remove(index)
-                    }}>
-                    <Trash size={16} />
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-        />
-      ))}
-      <div className="flex">
-        <Button
-          className="mt-4"
-          onClick={() => participantsFieldArray.append({ email: '' })}
-          variant="bordered"
-          color="default">
-          + Add New Participant
-        </Button>
-      </div>
+        <div
+          className={cn('flex items-center mb-2 pb-2 justify-between', {
+            'border-b': participantsFieldArray.fields.length - 1 !== index,
+          })}>
+          <Controller
+            key={arrayField.id}
+            control={control}
+            name={`participants.${index}.email`}
+            render={({ field, fieldState }) => (
+              <Input
+                disabled={arrayField.isHost}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e)
+                  setShowActions(true)
+                }}
+                size="sm"
+                variant="flat"
+                classNames={{
+                  base: 'flex-1 max-w-[76%] !opacity-100',
+                  inputWrapper: 'bg-transparent shadow-none',
+                  input: 'font-medium',
+                }}
+                errorMessage={fieldState.error?.message}
+                isInvalid={!!fieldState.error}
+              />
+            )}
+          />
 
-      {renderAction?.()}
+          {arrayField.isHost ? (
+            <Chip variant="flat" size="md" className="rounded-md">
+              owner
+            </Chip>
+          ) : (
+            <Controller
+              name={`participants.${index}.role`}
+              control={control}
+              render={({ field }) => (
+                <div className="mt-[5px]">
+                  <DropdownActions
+                    triggerIcon={
+                      <Chip
+                        variant="flat"
+                        size="md"
+                        endContent={<TbChevronDown />}
+                        className="cursor-pointer rounded-md">
+                        {field.value || arrayField.role}
+                      </Chip>
+                    }
+                    actions={roles}
+                    onAction={(e) => {
+                      field.onChange(e)
+                      setShowActions(true)
+                    }}
+                  />
+                </div>
+              )}
+            />
+          )}
+
+          {!arrayField.isHost ? (
+            <DropdownActions
+              triggerIcon={
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  radius="full"
+                  isLoading={
+                    fakeDeleteParticipantMutation.isPending &&
+                    arrayField.participantId ===
+                      fakeDeleteParticipantMutation.variables
+                  }>
+                  <BsThreeDotsVertical />
+                </Button>
+              }
+              actions={participantsActions}
+              onAction={(actionKey) => {
+                if (actionKey === 'delete') {
+                  deleteParticipant({
+                    participantId: arrayField.participantId!,
+                    isHost: arrayField?.isHost || false,
+                    index,
+                  })
+                }
+              }}
+            />
+          ) : (
+            <div />
+          )}
+        </div>
+      ))}
+
+      {renderAction?.({ showActions })}
     </div>
   )
 
   return (
     <div>
+      <EmailInput
+        isInviteLoading={addParticipantsMutation.isPending && !showActions}
+        onEnter={(email: string, role: string) => {
+          participantsFieldArray.append({ email, role })
+          setShowActions(true)
+        }}
+        onInvite={(email: string, role: string) => {
+          addParticipantsMutation.mutate({
+            participants: [...participantsFieldArray.fields, { email, role }],
+          })
+        }}
+      />
       {onSubmit ? (
         <form
           onSubmit={participantsForm.handleSubmit(
