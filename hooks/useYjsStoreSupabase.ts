@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable default-case */
 /* eslint-disable @typescript-eslint/no-shadow */
@@ -154,8 +155,10 @@ export function useYjsStoreSupabase({
         })
       }
 
-      yStore.on('change', handleChange)
-      unsubs.push(() => yStore.off('change', handleChange))
+      setTimeout(() => {
+        yStore.on('change', handleChange)
+        unsubs.push(() => yStore.off('change', handleChange))
+      }, 2000)
 
       /* -------------------- Awareness ------------------- */
 
@@ -212,6 +215,8 @@ export function useYjsStoreSupabase({
           { presence: TLInstancePresence }
         >
 
+        if (!states) return
+
         const toRemove: TLInstancePresence['id'][] = []
         const toPut: TLInstancePresence[] = []
 
@@ -258,9 +263,12 @@ export function useYjsStoreSupabase({
       }
       meta.observe(handleMetaUpdate)
       unsubs.push(() => meta.unobserve(handleMetaUpdate))
-
-      providerInstance?.awareness.on('update', handleUpdate)
-      unsubs.push(() => providerInstance?.awareness.off('update', handleUpdate))
+      setTimeout(() => {
+        providerInstance?.awareness.on('update', handleUpdate)
+        unsubs.push(() =>
+          providerInstance?.awareness.off('update', handleUpdate)
+        )
+      }, 2000)
 
       // 2.
       // Initialize the store with the yjs doc records—or, if the yjs doc
@@ -367,7 +375,7 @@ export function useYjsStoreSupabase({
         yDocInstance = null
       }
     }
-  }, [yDoc, store, yStore, meta, roomId, slideId])
+  }, [])
 
   return storeWithStatus
 }

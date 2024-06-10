@@ -2,6 +2,7 @@
 
 import React, { useContext } from 'react'
 
+import { useDebounce } from '@uidotdev/usehooks'
 import { Tldraw } from 'tldraw'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
@@ -19,10 +20,11 @@ export function MoraaBoardEditor({ slide }: { slide: MoraaBoardSlide }) {
     roomId,
     slideId: slide.id,
   })
+  const debouncedStatus = useDebounce(store.status, 2000)
 
   return (
     <div className="relative w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden z-[0]">
-      {store.status === 'loading' && (
+      {debouncedStatus !== 'synced-remote' && (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <ContentLoading />
         </div>

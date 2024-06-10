@@ -3,6 +3,7 @@
 import { useContext, useEffect } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useDebounce } from '@uidotdev/usehooks'
 import { Tldraw, track, useEditor } from 'tldraw'
 
 import { ContentLoading } from '../ContentLoading'
@@ -31,6 +32,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
     roomId,
     slideId: slide.id,
   })
+  const debouncedStatus = useDebounce(store.status, 2000)
 
   const readOnly = preview || (!isOwner && slide.config?.allowToDraw)
 
@@ -38,7 +40,7 @@ export function MoraaBoard({ slide }: MoraaBoardProps) {
     <div
       style={{ backgroundColor: slide.config.backgroundColor }}
       className="relative w-full flex-auto flex flex-col justify-center items-center px-4 z-[0] h-full">
-      {store.status === 'loading' ? (
+      {debouncedStatus !== 'synced-remote' ? (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <ContentLoading />
         </div>

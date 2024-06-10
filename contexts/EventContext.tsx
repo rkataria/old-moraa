@@ -142,21 +142,21 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           }
 
           const currentSectionWithSlidesContent = sectionResponse.data
-          const previousSlideIds = sections
-            .find((s) => s.id === updatedSection.id)
-            ?.slides.map((slide: ISlide) => slide.id)
-          const newSlideIds = currentSectionWithSlidesContent.slides || []
-          const diffSlideIds = newSlideIds.filter(
-            (slideId: string) => !previousSlideIds?.includes(slideId)
-          )
+          // const previousSlideIds = sections
+          //   .find((s) => s.id === updatedSection.id)
+          //   ?.slides.map((slide: ISlide) => slide.id)
+          // const newSlideIds = currentSectionWithSlidesContent.slides || []
+          // const diffSlideIds = newSlideIds.filter(
+          //   (slideId: string) => !previousSlideIds?.includes(slideId)
+          // )
 
-          if (diffSlideIds.length > 0) {
-            setCurrentSlide(
-              currentSectionWithSlidesContent.slidesWithContent.find(
-                (s) => s.id === diffSlideIds[0]
-              )
-            )
-          }
+          // if (diffSlideIds.length > 0) {
+          //   setCurrentSlide(
+          //     currentSectionWithSlidesContent.slidesWithContent.find(
+          //       (s) => s.id === diffSlideIds[0]
+          //     )
+          //   )
+          // }
 
           setSections((prevSections) => {
             const updatedSections = prevSections.map((section) => {
@@ -315,8 +315,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           filter: `meeting_id=eq.${meeting.id}`,
         },
         (payload) => {
-          console.log('Slide change received!', payload)
-
           if (payload.eventType === 'UPDATE') {
             let updatedSlide = payload.new
 
