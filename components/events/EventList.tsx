@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
+import { IoCalendarClear } from 'react-icons/io5'
+import { MdOutlineAddBox } from 'react-icons/md'
 
 import {
   Table,
@@ -14,14 +16,18 @@ import {
   Chip,
   SortDescriptor,
   Pagination,
+  User,
 } from '@nextui-org/react'
 
-import { EventActionsWithModal } from './EventActionsWithModal'
+import { EventActions } from './EventActions'
+import { CreateEventButtonWithModal } from '../common/CreateEventButtonWithModal'
+import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
 import { Loading } from '../common/Loading'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useEvents } from '@/hooks/useEvents'
 import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
+import { cn } from '@/utils/utils'
 
 const rowsPerPage = 10
 
@@ -37,30 +43,30 @@ const getStatusColor = (status: string) => {
 const eventColumns = [
   {
     key: 'name',
-    label: 'Name',
+    label: 'NAME',
     sortable: true,
   },
   {
     key: 'full_name',
-    label: 'Created by',
+    label: 'CREATOR',
     sortable: true,
   },
   {
     key: 'start_date',
-    label: 'Event start',
+    label: 'STARTS ON',
     sortable: true,
   },
   {
     key: 'end_date',
-    label: 'Event end',
+    label: 'ENDS AT',
     sortable: true,
   },
   {
     key: 'status',
-    label: 'Status',
+    label: 'STATUS',
     sortable: true,
   },
-  { key: 'actions' },
+  { key: 'actions', label: 'ACTIONS' },
 ]
 
 export function EventList() {
@@ -86,30 +92,78 @@ export function EventList() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (event: any, columnKey: string) => {
       const cellValue = event[columnKey]
-
       switch (columnKey) {
+        case 'name':
+          return (
+            <User
+              name={cellValue}
+              description={event.description}
+              avatarProps={{
+                src: event?.image_url,
+                classNames: {
+                  base: cn('rounded-xl min-w-fit', {
+                    'bg-transparent': event?.image_url,
+                  }),
+                  img: 'w-10 h-10',
+                },
+              }}
+              classNames={{ description: 'text-slate-400 ' }}
+            />
+          )
         case 'full_name':
           return `${event.profile.first_name} ${event.profile.last_name}`
 
         case 'start_date':
           return (
-            getCurrentTimeInLocalZoneFromTimeZone({
-              dateTimeString: event.start_date,
-              utcTimeZone: event.timezone,
-            }) || '-'
+            <User
+              name={
+                getCurrentTimeInLocalZoneFromTimeZone({
+                  dateTimeString: event.start_date,
+                  utcTimeZone: event.timezone,
+                  format: 'dd MMM yyyy',
+                }) || ''
+              }
+              description={
+                getCurrentTimeInLocalZoneFromTimeZone({
+                  dateTimeString: event.start_date,
+                  utcTimeZone: event.timezone,
+                  format: 'hh:mm a',
+                }) || ''
+              }
+              avatarProps={{
+                classNames: { base: 'rounded-xl min-w-fit hidden' },
+              }}
+              classNames={{ description: 'text-slate-400' }}
+            />
           )
 
         case 'end_date':
           return (
-            getCurrentTimeInLocalZoneFromTimeZone({
-              dateTimeString: event.end_date,
-              utcTimeZone: event.timezone,
-            }) || '-'
+            <User
+              name={
+                getCurrentTimeInLocalZoneFromTimeZone({
+                  dateTimeString: event.end_date,
+                  utcTimeZone: event.timezone,
+                  format: 'dd MMM yyyy',
+                }) || ''
+              }
+              description={
+                getCurrentTimeInLocalZoneFromTimeZone({
+                  dateTimeString: event.end_date,
+                  utcTimeZone: event.timezone,
+                  format: 'hh:mm a',
+                }) || ''
+              }
+              avatarProps={{
+                classNames: { base: 'rounded-xl min-w-fit hidden' },
+              }}
+              classNames={{ description: 'text-slate-400 text-[0.6875rem]' }}
+            />
           )
 
         case 'actions':
           return (
-            <EventActionsWithModal
+            <EventActions
               event={event}
               isOwner={event.owner_id === currentUser?.id}
               onDone={refetch}
@@ -121,8 +175,9 @@ export function EventList() {
             <Chip
               variant="flat"
               size="sm"
-              radius="md"
-              color={getStatusColor(event.status)}>
+              radius="full"
+              color={getStatusColor(event.status)}
+              classNames={{ base: 'text-center' }}>
               {event.status}
             </Chip>
           )
@@ -184,46 +239,100 @@ export function EventList() {
     )
   }
 
-  return (
-    <div className="mt-8 flow-root">
-      <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
-        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <Table
-            removeWrapper
-            aria-label="Example table with dynamic content"
-            sortDescriptor={sortDescriptor}
-            onSortChange={setSortDescriptor}
-            selectionMode="single"
-            classNames={{
-              table: isLoading && 'min-h-[25rem]',
+  if (eventRows.length === 0 && !isLoading) {
+    return (
+      <EmptyPlaceholder
+        label="No Upcoming events"
+        description="You have no upcoming events. Why not create one?"
+        icon={<IoCalendarClear className=" text-[200px] text-gray-200" />}
+        endContent={
+          <CreateEventButtonWithModal
+            buttonLabel={
+              <p className="flex items-center gap-2">
+                Create new <MdOutlineAddBox className="text-[18px]" />
+              </p>
+            }
+            buttonProps={{
+              className: 'bg-black text-white mt-12',
             }}
-            onRowAction={(key) => router.push(`/events/${key}`)}
-            bottomContent={getPagination()}>
-            <TableHeader columns={eventColumns}>
-              {(column) => (
-                <TableColumn key={column.key} allowsSorting={column.sortable}>
-                  {column.label}
-                </TableColumn>
-              )}
-            </TableHeader>
-            <TableBody
-              items={eventRows}
-              isLoading={isLoading}
-              loadingContent={<Loading />}
-              emptyContent={!isLoading && 'No events to display.'}>
-              {(item) => (
-                <TableRow key={item.id} className="cursor-pointer">
-                  {(columnKey) => (
-                    <TableCell>
-                      {renderCell(item, columnKey as string)}
-                    </TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          />
+        }
+      />
+    )
+  }
+
+  const renderHeader = () => {
+    if (!eventRows?.length) return null
+
+    return (
+      <div className="flex items-center justify-between mt-10">
+        <div>
+          <p className="font-semibold text-3xl">Calendar of Happenings</p>
+          <p className="text-sm mt-2">
+            Life is about moments: don&apos;t wait for them, create them.
+          </p>
+        </div>
+
+        <CreateEventButtonWithModal
+          buttonLabel={
+            <p className="flex items-center gap-2">
+              Create new <MdOutlineAddBox className="text-[18px]" />
+            </p>
+          }
+          buttonProps={{
+            className: 'bg-black text-white',
+          }}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {renderHeader()}
+
+      <div className="mt-8 flow-root">
+        <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <Table
+              aria-label="Example table with dynamic content"
+              sortDescriptor={sortDescriptor}
+              onSortChange={setSortDescriptor}
+              selectionMode="single"
+              classNames={{
+                table: isLoading && 'min-h-[25rem]',
+              }}
+              onRowAction={(key) => router.push(`/events/${key}`)}
+              bottomContent={getPagination()}>
+              <TableHeader columns={eventColumns}>
+                {(column) => (
+                  <TableColumn key={column.key} allowsSorting={column.sortable}>
+                    {column.label}
+                  </TableColumn>
+                )}
+              </TableHeader>
+              <TableBody
+                items={eventRows}
+                isLoading={isLoading}
+                loadingContent={<Loading />}
+                emptyContent={!isLoading && 'No events to display.'}>
+                {(item) => (
+                  <TableRow key={item.id} className="cursor-pointer">
+                    {(columnKey) => (
+                      <TableCell
+                        className={
+                          (columnKey === 'status' && 'text-center') || ''
+                        }>
+                        {renderCell(item, columnKey as string)}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

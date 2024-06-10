@@ -6,7 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Control, Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
-import { Image, Input, Textarea } from '@nextui-org/react'
+import { Avatar, Image, Input, Textarea } from '@nextui-org/react'
+
+import { FileUploader } from '../event-content/FileUploader'
 
 import { cn } from '@/utils/utils'
 
@@ -43,6 +45,7 @@ const createEventValidationSchema = yup.object({
   name: yup.string().label('Event name').max(50).required(),
   description: yup.string().label('Event description').max(200),
   eventType: yup.string().required(),
+  imageUrl: yup.string(),
 })
 
 export type CreateEventFormData = yup.InferType<
@@ -56,6 +59,8 @@ export type CreateEventFormProps<
       formControl?: Control<FormData>
       onSubmit?: void
       renderAction?: void
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      defaultValue?: any
     }
   | {
       formControl?: never
@@ -66,37 +71,80 @@ export type CreateEventFormProps<
        * @returns {ReactElement}
        */
       renderAction?: () => ReactElement
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      defaultValue?: any
     }
 
 export function NewEventForm<
   FormData extends CreateEventFormData = CreateEventFormData,
->({ onSubmit, renderAction }: CreateEventFormProps<FormData>) {
+>({ onSubmit, renderAction, defaultValue }: CreateEventFormProps<FormData>) {
   const createEventForm = useForm<CreateEventFormData>({
     resolver: yupResolver(createEventValidationSchema),
-    defaultValues: {
+    defaultValues: defaultValue || {
       name: '',
       description: '',
       eventType: 'workshop',
+      imageUrl: '',
     },
   })
 
+  const handleFileUpload = (
+    files: {
+      signedUrl: string
+      meta: { name: string; size: number; type: string }
+    }[]
+  ) => {
+    createEventForm.setValue('imageUrl', files[0].signedUrl)
+  }
   const FormContentJSX = (
     <div>
-      <Controller
-        control={createEventForm.control}
-        name="name"
-        render={({ field, fieldState }) => (
-          <Input
-            {...field}
-            variant="bordered"
-            label="Name"
-            className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
-            placeholder="Your awesome course or workshop name goes here"
-            isInvalid={!!fieldState.error?.message}
-            errorMessage={fieldState.error?.message}
-          />
-        )}
-      />
+      <div className="flex items-center gap-4">
+        <Controller
+          control={createEventForm.control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <Input
+              {...field}
+              variant="bordered"
+              label="Name"
+              className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
+              placeholder="Your awesome course or workshop name goes here"
+              isInvalid={!!fieldState.error?.message}
+              errorMessage={fieldState.error?.message}
+            />
+          )}
+        />
+        <FileUploader
+          maxNumberOfFiles={1}
+          allowedFileTypes={['.jpg', '.jpeg', '.png']}
+          triggerProps={{
+            className:
+              'w-14 h-14 max-w-14 rounded-xl shrink-0 hover:bg-transparent',
+            isIconOnly: true,
+            children: (
+              <Controller
+                control={createEventForm.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <Avatar
+                    name="+"
+                    isBordered
+                    src={field.value}
+                    classNames={{
+                      base: cn('w-full h-full rounded-xl bg-transparent', {
+                        'border-2 border-default-200': !field.value,
+                      }),
+                      name: 'text-2xl text-slate-600',
+                    }}
+                  />
+                )}
+              />
+            ),
+            variant: 'light',
+          }}
+          onFilesUploaded={handleFileUpload}
+        />
+      </div>
 
       <div className="my-4">
         <Controller

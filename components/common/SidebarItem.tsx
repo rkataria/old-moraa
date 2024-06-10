@@ -1,59 +1,63 @@
-/* eslint-disable jsx-a11y/no-redundant-roles */
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { Grip, LucideIcon } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { IconType } from 'react-icons'
+import { HiOutlineTemplate } from 'react-icons/hi'
+import { LuCalendarHeart, LuHome, LuLibrary } from 'react-icons/lu'
+
+import { Button } from '@nextui-org/react'
 
 import { cn } from '@/utils/utils'
 
 type TNavigation = {
   name: string
   href: string
-  icon: LucideIcon
-  current: boolean
+  icon: IconType
 }
 
 export function SidebarItem() {
+  const pathname = usePathname()
   const [navigation] = useState<TNavigation[]>([
     {
-      name: 'Events',
+      name: 'Home',
       href: '/events',
-      icon: Grip,
-      current: true,
+      icon: LuHome,
+    },
+    {
+      name: 'My workshops',
+      href: '/workshops',
+      icon: LuCalendarHeart,
+    },
+    {
+      name: 'My Library',
+      href: '/library',
+      icon: LuLibrary,
+    },
+    {
+      name: 'Community templates',
+      href: '/templates',
+      icon: HiOutlineTemplate,
     },
   ])
 
   return (
-    <nav className="flex flex-1 flex-col">
-      <ul role="list" className="flex flex-1 flex-col gap-y-7">
-        <li>
-          <ul role="list" className="-mx-2 space-y-1">
-            {navigation.map((item) => (
-              <li key={item.name}>
-                <a
-                  href={item.href}
-                  className={cn(
-                    'dark:bg-gray-900 dark:text-white',
-                    item.current
-                      ? 'bg-primary text-white'
-                      : 'text-indigo-200 hover:text-white hover:bg-indigo-700',
-                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                  )}>
-                  <item.icon
-                    className={cn(
-                      item.current
-                        ? 'text-white'
-                        : 'text-indigo-200 group-hover:text-white',
-                      'h-6 w-6 shrink-0'
-                    )}
-                    aria-hidden="true"
-                  />
-                  {item.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </li>
-      </ul>
-    </nav>
+    <div className="grid gap-2">
+      {navigation.map((item) => (
+        <Button
+          as={Link}
+          href={item.href}
+          variant="light"
+          className={cn(
+            'hover:bg-[#EDE0FB] w-full justify-start font-semibold text-slate-600 -tracking-[0.5px] gap-[0.625rem]',
+            {
+              'bg-[#EDE0FB]': item.href === pathname,
+            }
+          )}>
+          <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+          {item.name}
+        </Button>
+      ))}
+    </div>
   )
 }

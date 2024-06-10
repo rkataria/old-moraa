@@ -28,12 +28,16 @@ export function UserMenu() {
               src={getAvatarForName(
                 `${profile.first_name} ${profile.last_name}`
               )}
+              radius="lg"
+              classNames={{ base: 'w-9 h-9 min-w-max' }}
             />
           ) : (
             <Avatar
               isBordered
               className="h-8 w-8 cursor-pointer"
               src="https://github.com/shadcn.png"
+              radius="lg"
+              classNames={{ base: 'w-9 h-9 min-w-max' }}
             />
           )}
         </DropdownTrigger>

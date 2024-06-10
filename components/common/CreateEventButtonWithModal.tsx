@@ -3,7 +3,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
@@ -26,52 +26,98 @@ import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
 
 interface ICreateEventButtonWithModal {
-  buttonLabel: string
-  buttonProps: ButtonProps
+  isEdit?: boolean
+  buttonLabel: string | ReactNode
+  buttonProps?: ButtonProps
+  defaultValues?: {
+    name: string
+    description: string | undefined
+    eventType: string
+    id: string
+    imageUrl: string | null | undefined
+  }
+  onDone?: () => void
 }
 
 export function CreateEventButtonWithModal({
+  isEdit,
   buttonLabel,
   buttonProps,
+  defaultValues,
+  onDone,
 }: ICreateEventButtonWithModal) {
   const [open, setOpen] = useState<boolean>(false)
   const { currentUser } = useAuth()
   const [showPageLoader, setShowPageLoader] = useState(false)
   useHotkeys('n', () => setOpen(true), [])
-
   const router = useRouter()
 
-  const createEventMutation = useMutation({
-    mutationFn: EventService.createEvent,
+  const eventService = isEdit
+    ? EventService.updateEvent
+    : EventService.createEvent
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const eventMutation = useMutation<any>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutationFn: eventService as any,
   })
   const onSubmit = async (values: CreateEventFormData) => {
     if (!currentUser) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let payload: any
 
-    // eslint-disable-next-line consistent-return
-    return createEventMutation.mutateAsync(
-      {
+    if (isEdit) {
+      payload = {
+        eventId: defaultValues?.id || '',
+        data: {
+          name: values.name,
+          description: values.description || '',
+          image_url: values.imageUrl,
+        },
+      }
+    } else {
+      payload = {
         name: values.name,
         description: values.description || '',
         type: values.eventType,
         owner_id: currentUser.id,
         start_date: null,
         end_date: null,
-      },
-      {
-        onSuccess: ({ data }) => {
-          if (data) {
-            setOpen(false)
-            toast.success('Event has been created!')
-            router.push(`/events/${data.id}`)
-            setShowPageLoader(true)
-          }
-        },
+        image_url: values.imageUrl,
       }
-    )
+    }
+
+    // eslint-disable-next-line consistent-return
+    return eventMutation.mutateAsync(payload, {
+      onSuccess: ({ data }) => {
+        if (isEdit) {
+          onDone?.()
+          setOpen(false)
+          toast.success('Event has been updated!')
+
+          return
+        }
+
+        if (data) {
+          setOpen(false)
+          toast.success('Event has been created!')
+          router.push(`/events/${data.id}`)
+          setShowPageLoader(true)
+        }
+      },
+    })
   }
 
   if (showPageLoader) {
     return <ContentLoading fullPage />
+  }
+
+  const getHeaderTitle = () => {
+    if (isEdit) {
+      return `Edit ${defaultValues?.name}`
+    }
+
+    return '  Create new learning event'
   }
 
   return (
@@ -85,9 +131,7 @@ export function CreateEventButtonWithModal({
           {() => (
             <>
               <ModalHeader className="flex flex-col gap-1 bg-primary text-white h-[9.125rem] p-6">
-                <h2 className="font-md font-semibold">
-                  Create new learning event
-                </h2>
+                <h2 className="font-md font-semibold">{getHeaderTitle()}</h2>
                 <p className="text-sm font-normal">
                   Give your learning event a name and an optional description to
                   get going!
@@ -96,21 +140,22 @@ export function CreateEventButtonWithModal({
               <ModalBody className="mt-4">
                 <NewEventForm
                   onSubmit={onSubmit}
+                  defaultValue={defaultValues}
                   renderAction={() => (
                     <div className="flex justify-end mb-4">
                       <Button
                         variant="bordered"
                         className="mr-2"
                         onClick={() => setOpen(false)}
-                        isDisabled={createEventMutation.isPending}>
+                        isDisabled={eventMutation.isPending}>
                         Cancel
                       </Button>
                       <Button
                         type="submit"
                         color="primary"
                         variant="solid"
-                        isLoading={createEventMutation.isPending}>
-                        Create
+                        isLoading={eventMutation.isPending}>
+                        {isEdit ? 'Save' : 'Create'}
                       </Button>
                     </div>
                   )}

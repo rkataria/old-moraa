@@ -67,9 +67,11 @@ export function getBrowserTimeZone(): (typeof TimeZones)[number] {
 export function getCurrentTimeInLocalZoneFromTimeZone({
   dateTimeString,
   utcTimeZone,
+  format,
 }: {
   dateTimeString: string
   utcTimeZone: string
+  format?: string
 }) {
   const timeZone = TimeZones.filter((tz) => tz.text === utcTimeZone)
 
@@ -81,6 +83,10 @@ export function getCurrentTimeInLocalZoneFromTimeZone({
   })
 
   const localDateTime = dateTime.setZone(DateTime.local().zoneName)
+
+  if (format) {
+    return localDateTime.toFormat(format)
+  }
 
   const localDateTimeFormatted = localDateTime.toLocaleString({
     year: 'numeric',

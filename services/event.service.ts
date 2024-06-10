@@ -112,6 +112,24 @@ const createEvent = async (event: ICreateEventPayload) => {
   }
 }
 
+const updateEvent = async (payload: {
+  eventId: string
+  data: {
+    name: string
+    descriprion: string
+  }
+}) => {
+  const { data, error } = await supabase
+    .from('event')
+    .update(payload.data)
+    .eq('id', payload.eventId)
+
+  return {
+    data: data?.[0],
+    error,
+  }
+}
+
 const deleteEventParticipant = async (eventId: string, participantId: string) =>
   supabase
     .from('enrollment')
@@ -133,6 +151,7 @@ export const EventService = {
   getEvents,
   getEvent,
   createEvent,
+  updateEvent,
   deleteEventParticipant,
   scheduleEvent,
 }

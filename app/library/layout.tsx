@@ -2,7 +2,7 @@
 
 import { SidebarComponent } from '@/components/common/Sidebar'
 
-export default function WorkspaceLayout({
+export default function Librarylayout({
   children,
 }: {
   children: React.ReactNode
@@ -10,7 +10,7 @@ export default function WorkspaceLayout({
   return (
     <div className="flex">
       <SidebarComponent />
-      <main className="relative p-4 w-full bg-[#FAFAFA] px-4 sm:px-6 lg:px-8">
+      <main className="relative p-4 w-full bg-[#FAFAFA] px-4 sm:px-6 lg:px-8 pt-12">
         {children}
       </main>
     </div>
