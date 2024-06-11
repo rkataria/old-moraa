@@ -51,7 +51,6 @@ export function ImageBehind({
       {slide.config.showTitle && (
         <div onClick={() => setEditingBlock(headerBlock.id)}>
           <TextBlockEditor
-            stickyToolbar
             block={headerBlock}
             editable={editingBlock === headerBlock.id}
             onChange={onBlockChange}
@@ -69,7 +68,6 @@ export function ImageBehind({
           {slide.config.showDescription && (
             <div onClick={() => setEditingBlock(textBlock.id)}>
               <TextBlockEditor
-                stickyToolbar
                 block={textBlock}
                 editable={editingBlock === textBlock.id}
                 onChange={onBlockChange}

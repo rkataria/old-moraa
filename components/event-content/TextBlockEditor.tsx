@@ -5,6 +5,7 @@ import React, { useEffect } from 'react'
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
 import Document from '@tiptap/extension-document'
+import Highlight from '@tiptap/extension-highlight'
 import { Image } from '@tiptap/extension-image'
 import { Link } from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -20,7 +21,7 @@ import Underline from '@tiptap/extension-underline'
 import { EditorContent, Extension, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
-import { ScrollShadow } from '@nextui-org/react'
+import { Divider, ScrollShadow } from '@nextui-org/react'
 
 import { BlockEditorControls } from './BlockEditorControls'
 import {
@@ -116,6 +117,7 @@ const getExtensions = (type: string) => {
         TableHeader.configure({}),
         TableCell.configure({}),
         KeyboardShortcuts,
+        Highlight,
       ]
 
     case 'header':
@@ -160,6 +162,7 @@ const getExtensions = (type: string) => {
             'text-gray-500 text-left before:content-[attr(data-placeholder)]',
         }),
         KeyboardShortcuts,
+        Highlight,
       ]
   }
 }
@@ -168,14 +171,12 @@ export function TextBlockEditor({
   block,
   showToolbar = true,
   editable = true,
-  stickyToolbar = false,
   fillAvailableHeight = false,
   onChange,
 }: {
   block: TextBlock
   showToolbar?: boolean
   editable?: boolean
-  stickyToolbar?: boolean
   fillAvailableHeight?: boolean
   onChange?: (block: TextBlock) => void
 }) {
@@ -212,16 +213,18 @@ export function TextBlockEditor({
     }
 
     return (
-      <BlockEditorControls
-        editor={editor}
-        blockType={block.type}
-        sticky={stickyToolbar}
-      />
+      <>
+        <BlockEditorControls editor={editor} blockType={block.type} />
+        <Divider className="h-0.5 w-full" />
+      </>
     )
   }
 
   return (
-    <>
+    <div
+      className={cn('sticky top-4 left-4 w-5/6 h-full pt-2', {
+        'border border-gray-200': block.type !== 'header' && !!editable,
+      })}>
       {renderToolbar()}
       <ScrollShadow
         hideScrollBar
@@ -240,6 +243,6 @@ export function TextBlockEditor({
           className="p-2 rounded-sm outline-none w-full h-full min-h-full transition-all duration-500"
         />
       </ScrollShadow>
-    </>
+    </div>
   )
 }

@@ -119,7 +119,6 @@ export function SlideTextBlock({
   return (
     <div onClick={() => onClick?.(block.id)} className={className}>
       <TextBlockEditor
-        stickyToolbar
         showToolbar={blockType !== 'header'}
         fillAvailableHeight={fillAvailableHeight}
         block={block}

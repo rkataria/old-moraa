@@ -63,7 +63,6 @@ export function ImageRight({
       {slide.config.showTitle && (
         <div onClick={() => setEditingBlock(headerBlock.id)} className="w-full">
           <TextBlockEditor
-            stickyToolbar
             block={headerBlock}
             editable={editingBlock === headerBlock.id}
             onChange={onBlockChange}
@@ -80,7 +79,6 @@ export function ImageRight({
             {slide.config.showDescription && (
               <div onClick={() => setEditingBlock(textBlock.id)}>
                 <TextBlockEditor
-                  stickyToolbar
                   block={textBlock}
                   editable={editingBlock === textBlock.id}
                   onChange={onBlockChange}

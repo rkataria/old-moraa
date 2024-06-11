@@ -81,7 +81,6 @@ export function CoverEditor() {
             id={`block-editor-${block.id}`}
             className="w-full">
             <TextBlockEditor
-              stickyToolbar
               key={block.id}
               showToolbar={block.type !== 'header'}
               block={block}
