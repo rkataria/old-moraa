@@ -4,6 +4,7 @@
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import { useActions, useUIState } from 'ai/rsc'
+import { useParams } from 'next/navigation'
 import { LuArrowUp } from 'react-icons/lu'
 import { RiUnpinLine } from 'react-icons/ri'
 import { RxCross1 } from 'react-icons/rx'
@@ -13,11 +14,16 @@ import { Button, ScrollShadow } from '@nextui-org/react'
 
 import { ClientMessage } from '@/app/action'
 import { EventContext } from '@/contexts/EventContext'
+import { useEnrollment } from '@/hooks/useEnrollment'
+import { useEvent } from '@/hooks/useEvent'
 import { useProfile } from '@/hooks/useProfile'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function AIChat({ onClose }: { onClose: () => void }) {
+  const eventId = useParams().eventId as string
+  const { event } = useEvent({ id: eventId })
+  const { enrollment } = useEnrollment({ eventId })
   const [input, setInput] = useState<string>('')
   const [conversation, setConversation] = useUIState()
   const { continueConversation } = useActions()
@@ -32,13 +38,34 @@ export function AIChat({ onClose }: { onClose: () => void }) {
     }
   }, [conversation])
 
-  const handleSubmit = async () => {
+  const generatePoll = async () => {
+    let content = currentSlide?.content?.blocks
+      ?.reduce((acc, block) => {
+        if ('html' in block.data) {
+          return `${acc}${block.data.html}.`
+        }
+
+        return acc
+      }, '')
+      .trim()
+    if (!content || content.length < 10) {
+      content = `${event.name}, ${event.description}`
+    }
+    const topic = `Generate a poll based on this: ${content}`
+    await handleSubmit(topic, 'Generate a quick poll for me')
+  }
+
+  const handleSubmit = async (topic: string = input, _input = input) => {
     setConversation((currentConversation: ClientMessage[]) => [
       ...currentConversation,
-      { id: uuidv4(), role: 'user', display: input },
+      { id: uuidv4(), role: 'user', display: _input },
     ])
 
-    const message = await continueConversation(input, currentSlide?.section_id)
+    const message = await continueConversation(
+      topic,
+      currentSlide?.section_id,
+      enrollment.event_role
+    )
 
     setConversation((currentConversation: ClientMessage[]) => [
       ...currentConversation,
@@ -48,11 +75,11 @@ export function AIChat({ onClose }: { onClose: () => void }) {
     setInput('')
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function autosize(event: any) {
-    const el = event.target
+  function autosize(e: any) {
+    const el = e.target
 
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault()
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
       handleSubmit()
 
       return
@@ -92,7 +119,15 @@ export function AIChat({ onClose }: { onClose: () => void }) {
         ))}
         <div ref={lastMessagePlaceholderRef} />
       </ScrollShadow>
-
+      <div className="flex-none flex justify-start items-end">
+        {/* TODO: use roles from enum */}
+        {enrollment &&
+          ['Host', 'Moderator'].includes(enrollment.event_role) && (
+            <Button variant="bordered" color="primary" onClick={generatePoll}>
+              Generate Poll
+            </Button>
+          )}
+      </div>
       <div className="flex-none flex justify-start items-end p-1 border-2 border-gray-300 bg-white m-1 rounded-md">
         <textarea
           ref={textareaRef}
@@ -101,8 +136,8 @@ export function AIChat({ onClose }: { onClose: () => void }) {
           onKeyDown={autosize}
           placeholder={`Hey ${userProfile?.first_name}! how can I help?`}
           className="overflow-hidden w-[calc(100%_-_4rem)] p-2 block text-sm resize-none bg-transparent border-none focus:outline-none flex-auto"
-          onChange={(event) => {
-            setInput(event.target.value)
+          onChange={(e) => {
+            setInput(e.target.value)
           }}
         />
         <button
@@ -114,7 +149,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
               'bg-black text-white': input,
             }
           )}
-          onClick={handleSubmit}>
+          onClick={() => handleSubmit()}>
           <LuArrowUp />
         </button>
       </div>
