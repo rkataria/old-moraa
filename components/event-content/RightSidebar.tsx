@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { SettingsSidebar } from './SettingsSidebar'
 import { AIChat } from '../common/AIChat'
 import { EditEventForm } from '../common/EditEventForm'
+import { NoteOverlay } from '../common/NotesOverlay'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -20,6 +21,9 @@ export function RightSidebar() {
   if (preview || !isOwner) return null
   if (rightSidebarVisiblity === 'ai-chat') {
     return <AIChat onClose={() => setRightSidebarVisiblity(null)} />
+  }
+  if (rightSidebarVisiblity === 'notes') {
+    return <NoteOverlay onClose={() => setRightSidebarVisiblity(null)} />
   }
   if (currentSlide && rightSidebarVisiblity === 'slide-settings') {
     return (

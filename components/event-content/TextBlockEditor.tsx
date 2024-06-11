@@ -180,19 +180,22 @@ export function TextBlockEditor({
   fillAvailableHeight?: boolean
   onChange?: (block: TextBlock) => void
 }) {
-  const editor = useEditor({
-    extensions: getExtensions(block.type),
-    content: block.data?.html,
-    onUpdate: ({ editor: _editor }) => {
-      onChange?.({
-        ...block,
-        data: {
-          ...block.data,
-          html: _editor.getHTML(),
-        },
-      })
+  const editor = useEditor(
+    {
+      extensions: getExtensions(block.type),
+      content: block.data?.html,
+      onUpdate: ({ editor: _editor }) => {
+        onChange?.({
+          ...block,
+          data: {
+            ...block.data,
+            html: _editor.getHTML(),
+          },
+        })
+      },
     },
-  })
+    [block?.id]
+  )
 
   useEffect(() => {
     if (block.type === 'header' && editor && editor.isEmpty) {

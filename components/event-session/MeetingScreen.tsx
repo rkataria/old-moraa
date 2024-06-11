@@ -32,7 +32,12 @@ export type DyteStates = {
   [key: string]: string | boolean
 }
 
-export type RightSiderbar = 'participants' | 'chat' | 'plugins' | 'ai-chat'
+export type RightSiderbar =
+  | 'participants'
+  | 'chat'
+  | 'plugins'
+  | 'ai-chat'
+  | 'notes'
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()

@@ -61,6 +61,13 @@ export function MeetingHeader({
             setRightSidebarVisiblity('ai-chat')
           }
         }}
+        onNoteOverlayToggle={() => {
+          if (rightSidebarVisiblity === 'notes') {
+            setRightSidebarVisiblity(null)
+          } else {
+            setRightSidebarVisiblity('notes')
+          }
+        }}
       />
     </div>
   )
