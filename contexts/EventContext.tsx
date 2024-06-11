@@ -318,27 +318,27 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           if (payload.eventType === 'UPDATE') {
             let updatedSlide = payload.new
 
-            const updatedSections = sections.map((section) => {
-              if (section.id === updatedSlide.section_id) {
-                updatedSlide = {
-                  ...section.slides.find(
-                    (slide: ISlide) => slide.id === updatedSlide.id
-                  ),
-                  ...updatedSlide,
+            setSections((prevSections) =>
+              prevSections.map((section) => {
+                if (section.id === updatedSlide.section_id) {
+                  updatedSlide = {
+                    ...section.slides.find(
+                      (slide: ISlide) => slide.id === updatedSlide.id
+                    ),
+                    ...updatedSlide,
+                  }
+
+                  return {
+                    ...section,
+                    slides: section.slides.map((slide: ISlide) =>
+                      slide.id === updatedSlide.id ? updatedSlide : slide
+                    ),
+                  }
                 }
 
-                return {
-                  ...section,
-                  slides: section.slides.map((slide: ISlide) =>
-                    slide.id === updatedSlide.id ? updatedSlide : slide
-                  ),
-                }
-              }
-
-              return section
-            })
-
-            setSections(updatedSections)
+                return section
+              })
+            )
 
             if (updatedSlide.id === currentSlide?.id) {
               setCurrentSlide(updatedSlide)
@@ -356,26 +356,26 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
               (slide: ISlide) => slide.id === deletedSlideId
             )
 
-            const updatedSections = sections.map((section) => {
-              if (section.id === deletedSlide?.section_id) {
-                return {
-                  ...section,
-                  slides: section.slides.filter(
-                    (slide: ISlide) => slide.id !== deletedSlide.id
-                  ),
-                }
-              }
-
-              return section
-            })
-
             const deletedSlideIndex = sectionSlideDeletedFrom?.slides.findIndex(
               (s: ISlide) => s.id === deletedSlideId
             )
             const previousSlide =
               sectionSlideDeletedFrom?.slides[deletedSlideIndex - 1]
 
-            setSections(updatedSections)
+            setSections((prevSections) =>
+              prevSections.map((section) => {
+                if (section.id === deletedSlide?.section_id) {
+                  return {
+                    ...section,
+                    slides: section.slides.filter(
+                      (slide: ISlide) => slide.id !== deletedSlide.id
+                    ),
+                  }
+                }
+
+                return section
+              })
+            )
 
             if (previousSlide) {
               setCurrentSlide(previousSlide)

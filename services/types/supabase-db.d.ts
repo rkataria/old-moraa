@@ -45,14 +45,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'enrollment_event_id_fkey'
+            foreignKeyName: 'public_enrollment_event_id_fkey'
             columns: ['event_id']
             isOneToOne: false
             referencedRelation: 'event'
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'enrollment_user_id_fkey'
+            foreignKeyName: 'public_enrollment_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
             referencedRelation: 'profile'
@@ -66,7 +66,7 @@ export type Database = {
           description: string | null
           end_date: string | null
           id: string
-          meeting_id: string | null
+          image_url: string | null
           name: string | null
           owner_id: string | null
           start_date: string | null
@@ -80,7 +80,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
-          meeting_id?: string | null
+          image_url?: string | null
           name?: string | null
           owner_id?: string | null
           start_date?: string | null
@@ -94,7 +94,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
-          meeting_id?: string | null
+          image_url?: string | null
           name?: string | null
           owner_id?: string | null
           start_date?: string | null
@@ -105,10 +105,109 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'event_owner_id_fkey'
+            foreignKeyName: 'public_event_owner_id_fkey'
             columns: ['owner_id']
             isOneToOne: false
             referencedRelation: 'profile'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      frame: {
+        Row: {
+          config: Json | null
+          content: Json | null
+          created_at: string
+          id: string
+          meeting_id: string | null
+          name: string | null
+          section_id: string | null
+          status: string | null
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          config?: Json | null
+          content?: Json | null
+          created_at?: string
+          id?: string
+          meeting_id?: string | null
+          name?: string | null
+          section_id?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json | null
+          content?: Json | null
+          created_at?: string
+          id?: string
+          meeting_id?: string | null
+          name?: string | null
+          section_id?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'frame_meeting_id_fkey'
+            columns: ['meeting_id']
+            isOneToOne: false
+            referencedRelation: 'meeting'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'frame_section_id_fkey'
+            columns: ['section_id']
+            isOneToOne: false
+            referencedRelation: 'section'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      frame_response: {
+        Row: {
+          created_at: string
+          dyte_meeting_id: string | null
+          frame_id: string | null
+          id: string
+          participant_id: string | null
+          response: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          dyte_meeting_id?: string | null
+          frame_id?: string | null
+          id?: string
+          participant_id?: string | null
+          response?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          dyte_meeting_id?: string | null
+          frame_id?: string | null
+          id?: string
+          participant_id?: string | null
+          response?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'frame_response_frame_id_fkey'
+            columns: ['frame_id']
+            isOneToOne: false
+            referencedRelation: 'frame'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'frame_response_participant_id_fkey'
+            columns: ['participant_id']
+            isOneToOne: false
+            referencedRelation: 'participant'
             referencedColumns: ['id']
           },
         ]
@@ -118,6 +217,7 @@ export type Database = {
           created_at: string
           dyte_meeting_id: string | null
           event_id: string | null
+          frames: string[] | null
           id: string
           sections: string[] | null
           slides: string[] | null
@@ -128,6 +228,7 @@ export type Database = {
           created_at?: string
           dyte_meeting_id?: string | null
           event_id?: string | null
+          frames?: string[] | null
           id?: string
           sections?: string[] | null
           slides?: string[] | null
@@ -138,6 +239,7 @@ export type Database = {
           created_at?: string
           dyte_meeting_id?: string | null
           event_id?: string | null
+          frames?: string[] | null
           id?: string
           sections?: string[] | null
           slides?: string[] | null
@@ -146,10 +248,42 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'meeting_event_id_fkey'
+            foreignKeyName: 'public_meeting_event_id_fkey'
             columns: ['event_id']
             isOneToOne: false
             referencedRelation: 'event'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      notes: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          slide_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          slide_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          slide_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'notes_slide_id_fkey'
+            columns: ['slide_id']
+            isOneToOne: false
+            referencedRelation: 'slide'
             referencedColumns: ['id']
           },
         ]
@@ -178,14 +312,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'participant_enrollment_id_fkey'
+            foreignKeyName: 'public_participant_enrollment_id_fkey'
             columns: ['enrollment_id']
             isOneToOne: false
             referencedRelation: 'enrollment'
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'participant_session_id_fkey'
+            foreignKeyName: 'public_participant_session_id_fkey'
             columns: ['session_id']
             isOneToOne: false
             referencedRelation: 'session'
@@ -195,6 +329,7 @@ export type Database = {
       }
       profile: {
         Row: {
+          avatar_url: string | null
           created_at: string
           email: string | null
           first_name: string | null
@@ -203,6 +338,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
@@ -211,6 +347,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
@@ -220,7 +357,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'profile_id_fkey'
+            foreignKeyName: 'public_profile_id_fkey'
             columns: ['id']
             isOneToOne: true
             referencedRelation: 'users'
@@ -231,6 +368,8 @@ export type Database = {
       reaction: {
         Row: {
           created_at: string
+          dyte_meeting_id: string | null
+          frame_response_id: string | null
           id: string
           participant_id: string | null
           reaction: string | null
@@ -239,6 +378,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          dyte_meeting_id?: string | null
+          frame_response_id?: string | null
           id?: string
           participant_id?: string | null
           reaction?: string | null
@@ -247,6 +388,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          dyte_meeting_id?: string | null
+          frame_response_id?: string | null
           id?: string
           participant_id?: string | null
           reaction?: string | null
@@ -268,11 +411,19 @@ export type Database = {
             referencedRelation: 'slide_response'
             referencedColumns: ['id']
           },
+          {
+            foreignKeyName: 'reaction_frame_response_id_fkey'
+            columns: ['frame_response_id']
+            isOneToOne: false
+            referencedRelation: 'frame_response'
+            referencedColumns: ['id']
+          },
         ]
       }
       section: {
         Row: {
           created_at: string
+          frames: string[] | null
           id: string
           meeting_id: string | null
           name: string | null
@@ -281,6 +432,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          frames?: string[] | null
           id?: string
           meeting_id?: string | null
           name?: string | null
@@ -289,6 +441,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          frames?: string[] | null
           id?: string
           meeting_id?: string | null
           name?: string | null
@@ -332,7 +485,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'session_meeting_id_fkey'
+            foreignKeyName: 'public_session_meeting_id_fkey'
             columns: ['meeting_id']
             isOneToOne: false
             referencedRelation: 'meeting'
@@ -424,14 +577,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'slide_response_participant_id_fkey'
+            foreignKeyName: 'public_slide_response_participant_id_fkey'
             columns: ['participant_id']
             isOneToOne: false
             referencedRelation: 'participant'
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'slide_response_slide_id_fkey'
+            foreignKeyName: 'public_slide_response_slide_id_fkey'
             columns: ['slide_id']
             isOneToOne: false
             referencedRelation: 'slide'

@@ -111,14 +111,14 @@ export function OverviewSlide() {
                               <div className="flex items-center justify-center p-2 mr-2">
                                 <Switch
                                   size="sm"
-                                  isSelected={section.slides.every(
+                                  isSelected={section.slides.some(
                                     (slide) =>
                                       slide.status === SlideStatus.PUBLISHED
                                   )}
                                   onChange={() =>
                                     changeSectionStatus(
                                       section,
-                                      section.slides.every(
+                                      section.slides.some(
                                         (slide) =>
                                           slide.status === SlideStatus.PUBLISHED
                                       )
