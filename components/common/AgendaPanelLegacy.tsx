@@ -12,34 +12,34 @@ import { Button, Chip } from '@nextui-org/react'
 
 import { AddItemDropdownActions } from './AddItemDropdownActions'
 import { AddItemStickyDropdownActions } from './AddItemStickyDropdownActions'
+import { AgendaFrameCard } from './AgendaFrameCard'
 import { AgendaPanelSearch } from './AgendaPanelSearch'
-import { AgendaSlideCard } from './AgendaSlideCard'
 import { DeleteConfirmationModal } from './DeleteConfirmationModal'
 import { DisplayTypeSwitcher } from './DisplayTypeSwitcher'
 import { EditableLabel } from './EditableLabel'
+import { FramePlaceholder } from './FramePlaceholder'
 import { SectionDropdownActions } from './SectionDropdownActions'
 import { SectionPlaceholder } from './SectionPlaceholder'
-import { SlidePlaceholder } from './SlidePlaceholder'
 import { StrictModeDroppable } from './StrictModeDroppable'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
-import { type AgendaSlideDisplayType } from '@/types/event.type'
-import { ISection, ISlide } from '@/types/slide.type'
+import { type AgendaFrameDisplayType } from '@/types/event.type'
+import { ISection, IFrame } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
-const getFilteredSlides = ({
-  slides,
+const getFilteredFrames = ({
+  frames,
   isOwner,
   eventMode = 'present',
 }: {
-  slides: ISlide[]
+  frames: IFrame[]
   isOwner: boolean
   eventMode: EventModeType
 }) => {
-  if (isOwner || eventMode === 'present') return slides
+  if (isOwner || eventMode === 'present') return frames
 
-  return slides.filter((slide) => slide.status === 'PUBLISHED')
+  return frames.filter((frame) => frame.status === 'PUBLISHED')
 }
 
 type AgendaPanelProps = {
@@ -54,23 +54,23 @@ export function AgendaPanel({
 }: AgendaPanelProps) {
   const [itemToDelete, setItemToDelete] = useState<ISection | null>(null)
   const [displayType, setDisplayType] =
-    useState<AgendaSlideDisplayType>('thumbnail')
+    useState<AgendaFrameDisplayType>('thumbnail')
   const [expandedSections, setExpandedSections] = useState<string[]>([])
   const {
     preview,
-    currentSlide,
+    currentFrame,
     eventMode,
     meeting,
     isOwner,
     sections,
     updateSection,
     setOverviewOpen,
-    reorderSlide,
+    reorderFrame,
     reorderSection,
     deleteSection,
     setInsertInSectionId,
-    setInsertAfterSlideId,
-    setCurrentSlide,
+    setInsertAfterFrameId,
+    setCurrentFrame,
     selectedSectionId,
     setSelectedSectionId,
   } = useContext(EventContext) as EventContextType
@@ -82,9 +82,9 @@ export function AgendaPanel({
       return
     }
 
-    if (currentSlide) {
+    if (currentFrame) {
       const section = sections.find(
-        (s) => s.id === currentSlide.section_id
+        (s) => s.id === currentFrame.section_id
       ) as ISection
 
       if (section) {
@@ -97,7 +97,7 @@ export function AgendaPanel({
         })
       }
     }
-  }, [currentSlide, sections, selectedSectionId])
+  }, [currentFrame, sections, selectedSectionId])
 
   const handleExpandSection = (sectionId: string) => {
     setExpandedSections((prev) => {
@@ -121,16 +121,16 @@ export function AgendaPanel({
 
   const getDeleteConfirmationModalDescription = () => {
     if (!itemToDelete) return null
-    if (itemToDelete.slides) {
-      const slideCount = itemToDelete.slides.length
+    if (itemToDelete.frames) {
+      const frameCount = itemToDelete.frames.length
 
-      if (slideCount === 0) return null
+      if (frameCount === 0) return null
 
       return (
         <p>
           Are you sure to delete this section{' '}
           <strong>{itemToDelete.name}</strong>? This will also delete{' '}
-          <strong>{slideCount}</strong> {slideCount > 1 ? 'slides' : 'slide'}.
+          <strong>{frameCount}</strong> {frameCount > 1 ? 'frames' : 'frame'}.
         </p>
       )
     }
@@ -138,7 +138,7 @@ export function AgendaPanel({
     if (itemToDelete.id) {
       return (
         <p>
-          Are you sure to delete this slide <strong>{itemToDelete.name}</strong>
+          Are you sure to delete this frame <strong>{itemToDelete.name}</strong>
         </p>
       )
     }
@@ -146,16 +146,16 @@ export function AgendaPanel({
     return null
   }
 
-  const getFirstSlide = (sectionId: string) =>
-    sections.find((section) => section.id === sectionId)?.slides?.[0]
+  const getFirstFrame = (sectionId: string) =>
+    sections.find((section) => section.id === sectionId)?.frames?.[0]
 
   const onClickSection = ({ id }: { id: string }) => {
     setInsertInSectionId(id)
-    setInsertAfterSlideId(null)
+    setInsertAfterFrameId(null)
     setSelectedSectionId?.(id)
-    const firstSlide = getFirstSlide(id)
-    if (firstSlide) {
-      setCurrentSlide(firstSlide)
+    const firstFrame = getFirstFrame(id)
+    if (firstFrame) {
+      setCurrentFrame(firstFrame)
     }
   }
 
@@ -170,7 +170,7 @@ export function AgendaPanel({
   }
 
   const sectionCount = sections.length
-  const firstSectionSlidesCount = sections?.[0]?.slides?.length || 0
+  const firstSectionFramesCount = sections?.[0]?.frames?.length || 0
   const actionDisabled = eventMode !== 'edit' || !isOwner || preview
 
   useHotkeys('l', () => setDisplayType('list'), [])
@@ -205,7 +205,7 @@ export function AgendaPanel({
             if (!result.destination) return
 
             if (result.type === 'section') reorderSection(result, provide)
-            if (result.type === 'slide') reorderSlide(result, provide)
+            if (result.type === 'frame') reorderFrame(result, provide)
           }}>
           <StrictModeDroppable droppableId="section-droppable" type="section">
             {(sectionDroppableProvided) => (
@@ -233,12 +233,12 @@ export function AgendaPanel({
                         {...sectionDraggableProvided.dragHandleProps}>
                         <React.Fragment key={section.id}>
                           <StrictModeDroppable
-                            droppableId={`slide-droppable-sectionId-${section.id}`}
-                            type="slide">
-                            {(slideProvided, snapshot) => (
+                            droppableId={`frame-droppable-sectionId-${section.id}`}
+                            type="frame">
+                            {(frameProvided, snapshot) => (
                               <div
-                                key={`slide-draggable-${section.id}`}
-                                ref={slideProvided.innerRef}
+                                key={`frame-draggable-${section.id}`}
+                                ref={frameProvided.innerRef}
                                 className={cn(
                                   'rounded-sm transition-all w-full',
                                   {
@@ -246,7 +246,7 @@ export function AgendaPanel({
                                     'cursor-grab': !actionDisabled,
                                   }
                                 )}
-                                {...slideProvided.droppableProps}>
+                                {...frameProvided.droppableProps}>
                                 <div className="w-full relative">
                                   <div className="w-full">
                                     <div
@@ -255,7 +255,7 @@ export function AgendaPanel({
                                         {
                                           hidden:
                                             sectionCount === 1 &&
-                                            firstSectionSlidesCount > 0,
+                                            firstSectionFramesCount > 0,
                                           'bg-gray-200':
                                             selectedSectionId === section.id,
                                         }
@@ -297,8 +297,8 @@ export function AgendaPanel({
                                           size="sm"
                                           className="aspect-square flex justify-center items-center">
                                           {
-                                            getFilteredSlides({
-                                              slides: section.slides,
+                                            getFilteredFrames({
+                                              frames: section.frames,
                                               isOwner,
                                               eventMode,
                                             }).length
@@ -324,17 +324,17 @@ export function AgendaPanel({
                                                 displayType === 'list',
                                             }
                                           )}>
-                                          {getFilteredSlides({
-                                            slides: section.slides,
+                                          {getFilteredFrames({
+                                            frames: section.frames,
                                             isOwner,
                                             eventMode,
-                                          }).map((slide, slideIndex) => (
-                                            <React.Fragment key={slide.id}>
+                                          }).map((frame, frameIndex) => (
+                                            <React.Fragment key={frame.id}>
                                               <Draggable
-                                                key={`slide-draggable-${slide.id}`}
-                                                draggableId={`slide-draggable-slideId-${slide.id}`}
+                                                key={`frame-draggable-${frame.id}`}
+                                                draggableId={`frame-draggable-frameId-${frame.id}`}
                                                 isDragDisabled={actionDisabled}
-                                                index={slideIndex}>
+                                                index={frameIndex}>
                                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                 {(_provided, _snapshot) => (
                                                   <div
@@ -352,9 +352,9 @@ export function AgendaPanel({
                                                           'list',
                                                       }
                                                     )}>
-                                                    <AgendaSlideCard
-                                                      slide={slide}
-                                                      index={slideIndex}
+                                                    <AgendaFrameCard
+                                                      frame={frame}
+                                                      index={frameIndex}
                                                       draggableProps={
                                                         _provided.dragHandleProps
                                                       }
@@ -376,16 +376,16 @@ export function AgendaPanel({
                                                           'list',
                                                       })}
                                                       sectionId={section.id}
-                                                      slideId={slide.id}
+                                                      frameId={frame.id}
                                                       hiddenActionKeys={[
                                                         'new-section',
                                                       ]}
                                                       hidden={
                                                         actionDisabled ||
                                                         _snapshot.isDragging ||
-                                                        section.slides.length -
+                                                        section.frames.length -
                                                           1 ===
-                                                          slideIndex
+                                                          frameIndex
                                                       }
                                                       onOpenContentTypePicker={
                                                         setOpenContentTypePicker
@@ -394,9 +394,9 @@ export function AgendaPanel({
                                                   </div>
                                                 )}
                                               </Draggable>
-                                              {slide.id ===
-                                                currentSlide?.id && (
-                                                <SlidePlaceholder
+                                              {frame.id ===
+                                                currentFrame?.id && (
+                                                <FramePlaceholder
                                                   displayType={displayType}
                                                 />
                                               )}
@@ -405,7 +405,7 @@ export function AgendaPanel({
                                         </div>
                                       )}
 
-                                      {slideProvided.placeholder}
+                                      {frameProvided.placeholder}
                                     </div>
                                   </div>
                                   <AddItemDropdownActions
@@ -420,7 +420,7 @@ export function AgendaPanel({
                               </div>
                             )}
                           </StrictModeDroppable>
-                          {section.id === currentSlide?.section_id && (
+                          {section.id === currentFrame?.section_id && (
                             <SectionPlaceholder />
                           )}
                         </React.Fragment>

@@ -5,8 +5,8 @@ import {
   ContentType,
   contentTypes,
 } from '@/components/common/ContentTypePicker'
-import { SlideStatus } from '@/services/types/enums'
-import { ISlide } from '@/types/slide.type'
+import { FrameStatus } from '@/services/types/enums'
+import { IFrame } from '@/types/frame.type'
 
 export const headerBlock = {
   id: uuidv4(),
@@ -141,7 +141,7 @@ export const getDefaultContent = ({
 
     case ContentType.PDF_VIEWER:
       return {
-        googleSlideURL: '',
+        googleSlideURL: '', // FIXME: This should be pdfURL
         startPosition: 1,
         blocks: [headerBlock, paragraphBlock],
       }
@@ -161,8 +161,8 @@ export const getDefaultContent = ({
   }
 }
 
-export const getDefaultCoverSlide = ({
-  name = 'Slide 1',
+export const getDefaultCoverFrame = ({
+  name = 'Frame 1',
   title = 'Title',
   description = 'Description',
 }: {
@@ -182,7 +182,7 @@ export const getDefaultCoverSlide = ({
     data: { title, description },
   }),
   type: ContentType.COVER,
-  status: SlideStatus.PUBLISHED,
+  status: FrameStatus.PUBLISHED,
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -193,7 +193,7 @@ export const checkVoted = (votes: any, user: any) => {
   return votes.some((vote) => vote.participant.enrollment.user_id === user.id)
 }
 
-export const isSlideInteractive = (slide: ISlide) =>
+export const isFrameInteractive = (frame: IFrame) =>
   [
     ContentType.POLL,
     ContentType.GOOGLE_SLIDES_IMPORT,
@@ -201,15 +201,15 @@ export const isSlideInteractive = (slide: ISlide) =>
     ContentType.VIDEO_EMBED,
     ContentType.PDF_VIEWER,
     ContentType.MORAA_BOARD,
-  ].includes(slide.type)
+  ].includes(frame.type)
 
-export const slideHasSlideResponses = (slide: ISlide) =>
-  [ContentType.POLL, ContentType.REFLECTION].includes(slide.type)
+export const frameHasFrameResponses = (frame: IFrame) =>
+  [ContentType.POLL, ContentType.REFLECTION].includes(frame.type)
 
-export const getContentType = (slideType: ContentType) =>
-  contentTypes.find((type) => type.contentType === slideType)
+export const getContentType = (frameType: ContentType) =>
+  contentTypes.find((type) => type.contentType === frameType)
 
-export const isSlideThumbnailAvailable = (slideType: ContentType) =>
+export const isFrameThumbnailAvailable = (frameType: ContentType) =>
   [
     ContentType.COVER,
     ContentType.TEXT_IMAGE,
@@ -220,4 +220,4 @@ export const isSlideThumbnailAvailable = (slideType: ContentType) =>
     ContentType.VIDEO_EMBED,
     ContentType.MIRO_EMBED,
     ContentType.RICH_TEXT,
-  ].includes(slideType)
+  ].includes(frameType)

@@ -18,15 +18,15 @@ const addItemDropdownActions = [
     icon: <BsCollection className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: 'new-slide',
-    label: 'New Slide',
+    key: 'new-frame',
+    label: 'New Frame',
     icon: <BsCardText className="h-4 w-4 text-slate-500" />,
   },
 ]
 
 export function AddItemDropdownActions({
   sectionId,
-  slideId,
+  frameId,
   hiddenActionKeys = [],
   hidden = false,
 
@@ -34,7 +34,7 @@ export function AddItemDropdownActions({
   onOpenContentTypePicker,
 }: {
   sectionId: string
-  slideId?: string
+  frameId?: string
   hiddenActionKeys?: string[]
   hidden?: boolean
 
@@ -43,7 +43,7 @@ export function AddItemDropdownActions({
 }) {
   const {
     setInsertInSectionId,
-    setInsertAfterSlideId,
+    setInsertAfterFrameId,
     setInsertAfterSectionId,
     addSection,
   } = useContext(EventContext) as EventContextType
@@ -64,8 +64,8 @@ export function AddItemDropdownActions({
           )}
           onClick={() => {
             if (sectionId) setInsertInSectionId(sectionId)
-            if (slideId) setInsertAfterSlideId(slideId)
-            if (sectionId && !slideId) setInsertAfterSectionId(sectionId)
+            if (frameId) setInsertAfterFrameId(frameId)
+            if (sectionId && !frameId) setInsertAfterSectionId(sectionId)
           }}>
           <div className="w-full h-0.5 bg-gray-100 group-hover:bg-gray-300 rounded-full flex justify-center items-center transition-all duration-300">
             <LuPlusCircle className="text-gray-100 group-hover:text-gray-300 bg-white rounded-full transition-all duration-300" />
@@ -80,8 +80,8 @@ export function AddItemDropdownActions({
           })
         }
 
-        if (actionKey === 'new-slide') {
-          setInsertAfterSlideId(slideId || null)
+        if (actionKey === 'new-frame') {
+          setInsertAfterFrameId(frameId || null)
           if (sectionId) setInsertInSectionId(sectionId)
           onOpenContentTypePicker?.(true)
         }

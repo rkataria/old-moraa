@@ -10,11 +10,11 @@ import { Toolbars } from './Toolbars'
 import { ContentLoading } from '../../ContentLoading'
 import { CANVAS_TEMPLATE_TYPES } from '../../ContentTypePicker'
 
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 import { loadTemplate } from '@/utils/canvas-templates'
 
 interface CanvasProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       defaultTemplate: CANVAS_TEMPLATE_TYPES
       canvas: string
@@ -102,7 +102,7 @@ interface CanvasProps {
 //   },
 // })
 
-export function CanvasEditor({ slide }: CanvasProps) {
+export function CanvasEditor({ frame }: CanvasProps) {
   const { canvas, setCanvas, sync } = useContext(
     CanvasFrameContext
   ) as CanvasFrameContextType
@@ -132,17 +132,17 @@ export function CanvasEditor({ slide }: CanvasProps) {
   // })
 
   useEffect(() => {
-    if (slide?.config?.backgroundColor) {
-      canvas?.setBackgroundColor(`${slide.config.backgroundColor}E6`, () => {
+    if (frame?.config?.backgroundColor) {
+      canvas?.setBackgroundColor(`${frame.config.backgroundColor}E6`, () => {
         canvas?.renderAll()
       })
     }
-  }, [canvas, slide.config.backgroundColor])
+  }, [canvas, frame.config.backgroundColor])
 
   useLayoutEffect(() => {
     const canvasInstance =
       canvas ||
-      new fabric.Canvas(`canvas-${slide.id}`, {
+      new fabric.Canvas(`canvas-${frame.id}`, {
         selectionBorderColor: '#979797',
         selectionColor: 'transparent',
         selectionDashArray: [4, 4],
@@ -157,12 +157,12 @@ export function CanvasEditor({ slide }: CanvasProps) {
     guideline.init()
 
     if (!canvas) {
-      if (slide.content.canvas) {
-        const json = JSON.parse(slide.content.canvas)
+      if (frame.content.canvas) {
+        const json = JSON.parse(frame.content.canvas)
 
         canvasInstance.loadFromJSON(json, () => {
           canvasInstance.setBackgroundColor(
-            `${slide.config.backgroundColor || '#ffffff'}E6`,
+            `${frame.config.backgroundColor || '#ffffff'}E6`,
             () => {}
           )
           canvasInstance.renderAll()
@@ -171,7 +171,7 @@ export function CanvasEditor({ slide }: CanvasProps) {
       } else {
         loadTemplate(
           canvasInstance,
-          slide.content.defaultTemplate || CANVAS_TEMPLATE_TYPES.BLANK
+          frame.content.defaultTemplate || CANVAS_TEMPLATE_TYPES.BLANK
         )
         setIsLoading(false)
       }
@@ -212,7 +212,7 @@ export function CanvasEditor({ slide }: CanvasProps) {
     // }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slide.content, canvas])
+  }, [frame.content, canvas])
 
   const resizeCanvas = (width: number, height: number) => {
     if (!canvas) return
@@ -247,7 +247,7 @@ export function CanvasEditor({ slide }: CanvasProps) {
           <div
             ref={canvasContainerRef}
             className="flex-auto w-full aspect-video m-auto bg-white rounded-sm overflow-hidden">
-            <canvas id={`canvas-${slide.id}`} />
+            <canvas id={`canvas-${frame.id}`} />
           </div>
         </ResizeObserver>
       </div>

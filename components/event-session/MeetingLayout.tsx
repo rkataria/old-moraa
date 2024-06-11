@@ -12,7 +12,7 @@ export function MeetingLayoutRoot({ children }: { children: React.ReactNode }) {
         'flex flex-col w-full h-screen max-h-screen dark:bg-[#202124] bg-white overflow-hidden'
       )}
       style={{
-        backgroundColor: 'var(--slide-bg-color)',
+        backgroundColor: 'var(--frame-bg-color)',
       }}>
       {children}
       <FlyingEmojisOverlay />

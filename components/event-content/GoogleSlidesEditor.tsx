@@ -10,10 +10,10 @@ import { GoogleSlideEmbed } from '../common/GoogleSlideEmbed'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 interface GoogleSlidesEditorProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       googleSlideURL: string
       startPosition?: number
@@ -21,32 +21,34 @@ interface GoogleSlidesEditorProps {
   }
 }
 
-export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
-  const [slideLink, setSlideLink] = useState(slide.content.googleSlideURL || '')
-  const [position, setPosition] = useState<number>(
-    slide.content.startPosition || 1
+export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
+  const [googleSlideUrl, setGoogleSlideUrl] = useState(
+    frame.content.googleSlideURL || ''
   )
-  const [isEditMode, setIsEditMode] = useState(!slide.content.googleSlideURL)
+  const [position, setPosition] = useState<number>(
+    frame.content.startPosition || 1
+  )
+  const [isEditMode, setIsEditMode] = useState(!frame.content.googleSlideURL)
 
-  const { updateSlide } = useContext(EventContext) as EventContextType
+  const { updateFrame } = useContext(EventContext) as EventContextType
 
   const saveGoogleSlidesLink = () => {
     if (
-      slide.content.googleSlideURL === slideLink &&
-      slide.content.startPosition === position
+      frame.content.googleSlideURL === googleSlideUrl &&
+      frame.content.startPosition === position
     ) {
       return
     }
 
-    updateSlide({
-      slidePayload: {
+    updateFrame({
+      framePayload: {
         content: {
-          ...slide.content,
-          googleSlideURL: slideLink,
+          ...frame.content,
+          googleSlideURL: googleSlideUrl,
           startPosition: position,
         },
       },
-      slideId: slide.id,
+      frameId: frame.id,
     })
     setIsEditMode(false)
   }
@@ -55,13 +57,13 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
     return (
       <div className="flex items-center justify-center flex-col mt-4">
         <div>
-          <label htmlFor="slide-url">Google slide URL</label>
+          <label htmlFor="slide-url">Google Slide URL</label>
           <Input
             id="slide-url"
             className="w-96 outline-none mb-4"
-            placeholder="Enter Google slide URL"
-            onChange={(e) => setSlideLink(e.target.value)}
-            value={slideLink}
+            placeholder="Enter Google Slide URL"
+            onChange={(e) => setGoogleSlideUrl(e.target.value)}
+            value={googleSlideUrl}
           />
         </div>
         <div>
@@ -85,5 +87,7 @@ export function GoogleSlidesEditor({ slide }: GoogleSlidesEditorProps) {
     )
   }
 
-  return <GoogleSlideEmbed url={slideLink} showControls startPage={position} />
+  return (
+    <GoogleSlideEmbed url={googleSlideUrl} showControls startPage={position} />
+  )
 }

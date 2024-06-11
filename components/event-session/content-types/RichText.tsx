@@ -6,14 +6,14 @@
 import React from 'react'
 
 import { RichTextView } from '@/components/common/content-types/RichTextView'
-import { ISlide, TextBlock } from '@/types/slide.type'
+import { IFrame, TextBlock } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
 type RichTextProps = {
-  slide: ISlide
+  frame: IFrame
 }
-export function RichText({ slide }: RichTextProps) {
-  const blocks = slide.content?.blocks || []
+export function RichText({ frame }: RichTextProps) {
+  const blocks = frame.content?.blocks || []
 
   const richTextBlock = blocks.find((b) => b.type === 'richtext') as TextBlock
 

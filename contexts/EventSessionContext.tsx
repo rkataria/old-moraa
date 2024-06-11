@@ -20,11 +20,11 @@ import { EventContext } from './EventContext'
 import type {
   IPollResponse,
   IReflectionResponse,
-  ISlide,
-} from '@/types/slide.type'
+  IFrame,
+} from '@/types/frame.type'
 
 import { useEnrollment } from '@/hooks/useEnrollment'
-import { useSlideReactions } from '@/hooks/useReactions'
+import { useFrameReactions } from '@/hooks/useReactions'
 import { SessionService } from '@/services/session.service'
 import { EventContextType } from '@/types/event-context.type'
 import {
@@ -32,8 +32,8 @@ import {
   type VideoMiddlewareConfig,
   PresentationStatuses,
 } from '@/types/event-session.type'
-import { slideHasSlideResponses } from '@/utils/content.util'
-import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
+import { frameHasFrameResponses } from '@/utils/content.util'
+import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 
 interface EventSessionProviderProps {
   children: React.ReactNode
@@ -57,18 +57,18 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     isOwner,
     meeting,
     sections,
-    currentSlide,
+    currentFrame,
     eventMode,
-    setCurrentSlide,
+    setCurrentFrame,
   } = useContext(EventContext) as EventContextType
 
   const [presentationStatus, setPresentationStatus] =
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
-  const [currentSlideResponses, setCurrentSlideResponses] = useState<
+  const [currentFrameResponses, setCurrentFrameResponses] = useState<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     IReflectionResponse[] | IPollResponse[] | null
   >(null)
-  const [currentSlideLoading, setCurrentSlideLoading] = useState<boolean>(true)
+  const [currentFrameLoading, setCurrentFrameLoading] = useState<boolean>(true)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
 
@@ -77,8 +77,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [videoMiddlewareConfig, setVideoMiddlewareConfig] =
     useState<VideoMiddlewareConfig | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [slideReactions, setSlideReactions] = useState<any>([])
-  const { data: fetchedSlideReactions } = useSlideReactions(currentSlide?.id)
+  const [frameReactions, setFrameReactions] = useState<any>([])
+  const { data: fetchedFrameReactions } = useFrameReactions(currentFrame?.id)
   const [eventSessionMode, setEventSessionMode] =
     useState<EventSessionMode>('Lobby')
 
@@ -87,7 +87,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       setEventSessionMode('Preview')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide])
+  }, [currentFrame])
 
   useEffect(() => {
     if (!meeting?.id) return
@@ -109,15 +109,15 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       const _activeSession = getActiveSessionResponse.data as {
         data: {
           presentationStatus?: PresentationStatuses
-          currentSlideId?: string
+          currentFrameId?: string
         }
       }
 
       if (sections?.length > 0) {
-        const _currentSlide = sections
-          .flatMap((s) => s.slides)
-          .find((s) => s.id === _activeSession.data?.currentSlideId)
-        setCurrentSlide(_currentSlide || (sections[0].slides || [])[0])
+        const _currentFrame = sections
+          .flatMap((s) => s.frames)
+          .find((s) => s.id === _activeSession.data?.currentFrameId)
+        setCurrentFrame(_currentFrame || (sections[0].frames || [])[0])
       }
 
       const newPresentationStatus =
@@ -147,26 +147,26 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       })
       .subscribe()
 
-    // Listen for slide change events
+    // Listen for frame change events
     realtimeChannel.on(
       'broadcast',
-      { event: 'currentslide-change' },
+      { event: 'currentframe-change' },
       ({ payload }) => {
-        const slideId = payload?.slideId
+        const frameId = payload?.frameId
 
-        if (!slideId) return
+        if (!frameId) return
 
         const section = sections.find((s) =>
-          s.slides.some((slide) => slide.id === slideId)
+          s.frames.some((frame) => frame.id === frameId)
         )
         if (!section) return
 
-        const slide = section.slides.find((s) => s.id === slideId)
-        if (!slide) return
+        const frame = section.frames.find((s) => s.id === frameId)
+        if (!frame) return
 
-        if (slide.id === currentSlide?.id) return
+        if (frame.id === currentFrame?.id) return
 
-        setCurrentSlide(slide)
+        setCurrentFrame(frame)
       }
     )
 
@@ -240,102 +240,102 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [eventId, sections, isOwner])
 
   useEffect(() => {
-    if (!fetchedSlideReactions) return
-    if (!fetchedSlideReactions.length) return
+    if (!fetchedFrameReactions) return
+    if (!fetchedFrameReactions.length) return
 
     if (
-      JSON.stringify(fetchedSlideReactions) === JSON.stringify(slideReactions)
+      JSON.stringify(fetchedFrameReactions) === JSON.stringify(frameReactions)
     ) {
       return
     }
 
-    setSlideReactions(fetchedSlideReactions)
+    setFrameReactions(fetchedFrameReactions)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedSlideReactions])
+  }, [fetchedFrameReactions])
 
   useEffect(() => {
     if (!isOwner) return
     if (!activeSession) return
 
     if (
-      activeSession?.data?.currentSlideId === currentSlide?.id &&
+      activeSession?.data?.currentFrameId === currentFrame?.id &&
       activeSession?.data?.presentationStatus === presentationStatus
     ) {
       return
     }
     if (eventSessionMode !== 'Preview') {
       updateActiveSession({
-        currentSlideId: currentSlide?.id,
+        currentFrameId: currentFrame?.id,
         presentationStatus,
       })
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    currentSlide,
+    currentFrame,
     presentationStatus,
     eventSessionMode,
-    activeSession?.data?.currentSlideId,
+    activeSession?.data?.currentFrameId,
     activeSession?.data?.presentationStatus,
   ])
 
   useEffect(() => {
-    if (!currentSlide) return
+    if (!currentFrame) return
 
     if (isOwner && eventSessionMode === 'Presentation') {
       realtimeChannel.send({
         type: 'broadcast',
-        event: 'currentslide-change',
-        payload: { slideId: currentSlide.id },
+        event: 'currentframe-change',
+        payload: { frameId: currentFrame.id },
       })
     }
 
-    if (!slideHasSlideResponses(currentSlide)) {
-      setCurrentSlideLoading(false)
+    if (!frameHasFrameResponses(currentFrame)) {
+      setCurrentFrameLoading(false)
 
       return
     }
 
-    setCurrentSlideLoading(true)
+    setCurrentFrameLoading(true)
 
-    // Fetch current slide responses
-    const fetchCurrentSlideResponses = async () => {
+    // Fetch current frame responses
+    const fetchCurrentFrameResponses = async () => {
       const { data, error: _error } = await supabase
-        .from('slide_response')
+        .from('frame_response')
         .select(
           '* , participant:participant_id(*, enrollment:enrollment_id(*, profile:user_id(*)))'
         )
-        .eq('slide_id', currentSlide.id)
+        .eq('frame_id', currentFrame.id)
       // .eq('dyte_meeting_id', dyteMeeting.meta.meetingId)
 
       if (_error) {
         console.error(_error)
-        setCurrentSlideLoading(false)
+        setCurrentFrameLoading(false)
 
         return
       }
 
-      setCurrentSlideResponses(data)
-      setCurrentSlideLoading(false)
+      setCurrentFrameResponses(data)
+      setCurrentFrameLoading(false)
     }
 
-    fetchCurrentSlideResponses()
+    fetchCurrentFrameResponses()
 
-    if (!slideHasSlideResponses(currentSlide)) return
+    if (!frameHasFrameResponses(currentFrame)) return
 
     const channels = supabase
-      .channel('slide-response-channel')
+      .channel('frame-response-channel')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'slide_response',
+          table: 'frame_response',
           filter: `dyte_meeting_id=eq.${dyteMeeting.meta.meetingId}`,
         },
         (payload) => {
           if (['INSERT', 'UPDATE'].includes(payload.eventType)) {
-            fetchCurrentSlideResponses()
+            fetchCurrentFrameResponses()
           }
         }
       )
@@ -346,61 +346,61 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       channels.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide, eventSessionMode])
+  }, [currentFrame, eventSessionMode])
 
-  const nextSlide = useCallback(() => {
+  const nextFrame = useCallback(() => {
     if (!isOwner) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const nextSlide = getNextSlide({
+    const nextFrame = getNextFrame({
       sections,
-      currentSlide,
+      currentFrame,
       onlyPublished: !isOwner && eventMode !== 'present',
     })
 
-    if (!nextSlide) return null
+    if (!nextFrame) return null
 
     if (eventSessionMode === 'Preview') {
-      setCurrentSlide(nextSlide)
+      setCurrentFrame(nextFrame)
 
       return null
     }
 
     realtimeChannel.send({
       type: 'broadcast',
-      event: 'currentslide-change',
-      payload: { slideId: nextSlide.id },
+      event: 'currentframe-change',
+      payload: { frameId: nextFrame.id },
     })
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOwner, sections, currentSlide, eventSessionMode, eventMode])
+  }, [isOwner, sections, currentFrame, eventSessionMode, eventMode])
 
-  const previousSlide = useCallback(() => {
+  const previousFrame = useCallback(() => {
     if (!isOwner) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const previousSlide = getPreviousSlide({
+    const previousFrame = getPreviousFrame({
       sections,
-      currentSlide,
+      currentFrame,
       onlyPublished: !isOwner && eventMode !== 'present',
     })
 
-    if (!previousSlide) return null
+    if (!previousFrame) return null
 
     if (eventSessionMode === 'Preview') {
-      setCurrentSlide(previousSlide)
+      setCurrentFrame(previousFrame)
 
       return null
     }
 
     realtimeChannel.send({
       type: 'broadcast',
-      event: 'currentslide-change',
-      payload: { slideId: previousSlide.id },
+      event: 'currentframe-change',
+      payload: { frameId: previousFrame.id },
     })
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlide, eventSessionMode, isOwner, sections, eventMode])
+  }, [currentFrame, eventSessionMode, isOwner, sections, eventMode])
 
   const startPresentation = () => {
     realtimeChannel.send({
@@ -427,7 +427,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const onVote = async (
-    slide: ISlide,
+    frame: IFrame,
     {
       selectedOptions,
       anonymous,
@@ -437,20 +437,20 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
   ) => {
     try {
-      const slideResponse = await supabase
-        .from('slide_response')
+      const frameResponse = await supabase
+        .from('frame_response')
         .upsert({
           response: { selected_options: selectedOptions, anonymous },
-          slide_id: slide.id,
+          frame_id: frame.id,
           participant_id: participant.id,
           dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
-        .eq('slide_id', slide.id)
+        .eq('frame_id', frame.id)
         .eq('participant_id', participant.id)
         .select()
 
-      if (slideResponse.error) {
-        console.error(slideResponse.error)
+      if (frameResponse.error) {
+        console.error(frameResponse.error)
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_error: any) {
@@ -468,16 +468,16 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
   ) => {
     try {
-      const slideResponse = await supabase
-        .from('slide_response')
+      const frameResponse = await supabase
+        .from('frame_response')
         .update({
           response: { anonymous, ...rest },
         })
         .eq('id', responseId)
         .select()
 
-      if (slideResponse.error) {
-        console.error(slideResponse.error)
+      if (frameResponse.error) {
+        console.error(frameResponse.error)
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_error: any) {
@@ -486,35 +486,35 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const addReflection = async ({
-    slide,
+    frame,
     reflection,
     username,
     anonymous,
   }: {
-    slide: ISlide
+    frame: IFrame
     reflection: string
     username: string
     anonymous: boolean
   }) => {
     try {
-      const slideResponse = await supabase
-        .from('slide_response')
+      const frameResponse = await supabase
+        .from('frame_response')
         .upsert({
           response: {
             reflection,
             username,
             anonymous,
           },
-          slide_id: slide.id,
+          frame_id: frame.id,
           participant_id: participant.id,
           dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
-        .eq('slide_id', slide.id)
+        .eq('frame_id', frame.id)
         .eq('participant_id', participant.id)
         .select()
 
-      if (slideResponse.error) {
-        console.error(slideResponse.error)
+      if (frameResponse.error) {
+        console.error(frameResponse.error)
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_error: any) {
@@ -533,7 +533,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     anonymous: boolean
   }) => {
     try {
-      const slideResponse = await supabase.from('slide_response').upsert({
+      const frameResponse = await supabase.from('frame_response').upsert({
         id,
         response: {
           reflection,
@@ -542,8 +542,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         },
       })
 
-      if (slideResponse.error) {
-        console.error(slideResponse.error)
+      if (frameResponse.error) {
+        console.error(frameResponse.error)
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (_error: any) {
@@ -552,7 +552,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   useEffect(() => {
-    if (!currentSlideResponses) return
+    if (!currentFrameResponses) return
 
     const channels = supabase
       .channel('reaction-channel')
@@ -563,11 +563,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           schema: 'public',
           table: 'reaction',
 
-          filter: `slide_response_id=in.(${currentSlideResponses.map((s) => s.id).join(',')})`,
+          filter: `frame_response_id=in.(${currentFrameResponses.map((s) => s.id).join(',')})`,
         },
         (payload) => {
           console.log('Change reactions received!', payload)
-          let updatedReactions = [...slideReactions]
+          let updatedReactions = [...frameReactions]
           if (payload.eventType === 'DELETE') {
             updatedReactions = updatedReactions.filter(
               (r) => r.id !== payload.old.id
@@ -586,7 +586,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
               return reaction
             })
           }
-          setSlideReactions(updatedReactions)
+          setFrameReactions(updatedReactions)
         }
       )
       .subscribe()
@@ -596,18 +596,18 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       channels.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSlideResponses, slideReactions])
+  }, [currentFrameResponses, frameReactions])
 
   const emoteOnReflection = async ({
     participantId,
     reaction,
-    slideResponseId,
+    frameResponseId,
     reactionId,
     action,
   }: {
     participantId: string
     reaction: string
-    slideResponseId?: string
+    frameResponseId?: string
     reactionId?: string
     action: string
   }) => {
@@ -617,7 +617,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       if (action === 'INSERT') {
         reactionQueryResponse = await supabase.from('reaction').upsert({
           reaction,
-          slide_response_id: slideResponseId,
+          frame_response_id: frameResponseId,
           participant_id: participantId,
           dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
@@ -629,7 +629,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
             reaction,
           })
           .eq('participant_id', participantId)
-          .eq('slide_response_id', slideResponseId)
+          .eq('frame_response_id', frameResponseId)
       }
       if (action === 'DELETE') {
         reactionQueryResponse = await supabase
@@ -844,23 +844,23 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         isHost: isOwner,
-        currentSlide,
+        currentFrame,
         presentationStatus,
-        currentSlideResponses,
-        currentSlideLoading,
+        currentFrameResponses,
+        currentFrameLoading,
         participant,
         videoMiddlewareConfig,
         activeSession,
-        slideReactions,
+        frameReactions,
         realtimeChannel,
         eventSessionMode,
         setEventSessionMode,
         startPresentation,
         stopPresentation,
         pausePresentation,
-        setCurrentSlide,
-        nextSlide,
-        previousSlide,
+        setCurrentFrame,
+        nextFrame,
+        previousFrame,
         onVote,
         onUpdateVote,
         addReflection,

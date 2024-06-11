@@ -30,7 +30,7 @@ import {
 } from './InlineToolbarControls'
 
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
-import { TextBlock } from '@/types/slide.type'
+import { TextBlock } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
 const CustomDocument = Document.extend({
@@ -172,12 +172,14 @@ export function TextBlockEditor({
   showToolbar = true,
   editable = true,
   fillAvailableHeight = false,
+  className = '',
   onChange,
 }: {
   block: TextBlock
   showToolbar?: boolean
   editable?: boolean
   fillAvailableHeight?: boolean
+  className?: string
   onChange?: (block: TextBlock) => void
 }) {
   const editor = useEditor(
@@ -225,9 +227,13 @@ export function TextBlockEditor({
 
   return (
     <div
-      className={cn('sticky top-4 left-4 w-5/6 h-full pt-2', {
-        'border border-gray-200': block.type !== 'header' && !!editable,
-      })}>
+      className={cn(
+        'sticky top-4 left-4 w-5/6 h-full pt-2',
+        {
+          'border border-gray-200': block.type !== 'header' && !!editable,
+        },
+        className
+      )}>
       {renderToolbar()}
       <ScrollShadow
         hideScrollBar

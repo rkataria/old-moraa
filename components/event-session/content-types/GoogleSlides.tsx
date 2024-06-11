@@ -2,28 +2,29 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 
+// FIXME: The component name should be `GoogleSlidesEmbed`
 import { GoogleSlideEmbed } from '@/components/common/GoogleSlideEmbed'
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 interface GoogleSlidesProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
-      googleSlideURL: string
+      googleSlideURL: string // FIXME: The url should be `googleSlidesUrl`
       startPosition?: number
     }
   }
 }
 
-const positionChangeEvent = 'g-slide-position-changed'
+const positionChangeEvent = 'g-frame-position-changed'
 
-export function GoogleSlides({ slide }: GoogleSlidesProps) {
+export function GoogleSlides({ frame }: GoogleSlidesProps) {
   const {
     content: { googleSlideURL, startPosition },
-  } = slide
+  } = frame
   const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
     useContext(EventSessionContext) as EventSessionContextType

@@ -1,6 +1,6 @@
 import { CreateEventPayload, ScheduleEventPayload } from './event-service-types'
 import { APIService } from '../api-service'
-import { SlideStatus } from '../types/enums'
+import { FrameStatus } from '../types/enums'
 
 export class EventService extends APIService {
   static async createEvent(eventData: CreateEventPayload) {
@@ -53,19 +53,19 @@ export class EventService extends APIService {
   static async publishEvent({ eventId }: { eventId: string }) {
     const data = await APIService.supabaseClient
       .from('meeting')
-      .select('slides')
+      .select('frames')
       .eq('event_id', eventId)
       .single()
       .then((res) => res.data)
 
-    if (!data || !(data.slides instanceof Array)) {
-      throw new Error('Slides not found')
+    if (!data || !(data.frames instanceof Array)) {
+      throw new Error('Frames not found')
     }
 
     const query = APIService.supabaseClient
-      .from('slide')
-      .update({ status: SlideStatus.PUBLISHED })
-      .in('id', data.slides)
+      .from('frame')
+      .update({ status: FrameStatus.PUBLISHED })
+      .in('id', data.frames)
 
     return query.then((res) => {
       if (res.error) throw res.error

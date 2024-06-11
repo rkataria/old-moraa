@@ -6,11 +6,11 @@ import ResizeObserver from 'rc-resize-observer'
 import { ContentLoading } from '../../ContentLoading'
 import { CANVAS_TEMPLATE_TYPES } from '../../ContentTypePicker'
 
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 import { loadTemplate } from '@/utils/canvas-templates'
 
 interface CanvasProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       defaultTemplate: CANVAS_TEMPLATE_TYPES
       canvas: string
@@ -19,30 +19,30 @@ interface CanvasProps {
   }
 }
 
-export function CanvasPreview({ slide }: CanvasProps) {
+export function CanvasPreview({ frame }: CanvasProps) {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    if (slide?.config?.backgroundColor) {
-      canvas?.setBackgroundColor(`${slide.config.backgroundColor}E6`, () => {
+    if (frame?.config?.backgroundColor) {
+      canvas?.setBackgroundColor(`${frame.config.backgroundColor}E6`, () => {
         canvas?.renderAll()
       })
     }
-  }, [canvas, slide.config.backgroundColor])
+  }, [canvas, frame.config.backgroundColor])
 
   useEffect(() => {
-    const canvasInstance = canvas || new fabric.Canvas(`canvas-${slide.id}`)
+    const canvasInstance = canvas || new fabric.Canvas(`canvas-${frame.id}`)
 
-    if (slide.content.canvas) {
-      const json = JSON.parse(slide.content.canvas)
+    if (frame.content.canvas) {
+      const json = JSON.parse(frame.content.canvas)
 
       canvasInstance.loadFromJSON(
         json,
         () => {
           canvasInstance.setBackgroundColor(
-            `${slide.config.backgroundColor || '#ffffff'}E6`,
+            `${frame.config.backgroundColor || '#ffffff'}E6`,
             () => {}
           )
           canvasInstance.renderAll()
@@ -55,7 +55,7 @@ export function CanvasPreview({ slide }: CanvasProps) {
     } else {
       loadTemplate(
         canvasInstance,
-        slide.content.defaultTemplate || CANVAS_TEMPLATE_TYPES.BLANK
+        frame.content.defaultTemplate || CANVAS_TEMPLATE_TYPES.BLANK
       )
     }
     resizeCanvas(
@@ -70,7 +70,7 @@ export function CanvasPreview({ slide }: CanvasProps) {
     return () => {}
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slide.content, canvas])
+  }, [frame.content, canvas])
 
   const resizeCanvas = (width: number, height: number) => {
     if (!canvas) return
@@ -102,7 +102,7 @@ export function CanvasPreview({ slide }: CanvasProps) {
             resizeCanvas?.(width, height)
           }}>
           <div ref={canvasContainerRef} className="w-full aspect-video m-auto">
-            <canvas id={`canvas-${slide.id}`} className="cursor-default" />
+            <canvas id={`canvas-${frame.id}`} className="cursor-default" />
           </div>
         </ResizeObserver>
       </div>

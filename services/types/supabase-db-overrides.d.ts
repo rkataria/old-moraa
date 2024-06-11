@@ -6,7 +6,7 @@ import {
   EventUserRole,
   EventStatus,
   EventType,
-  SlideStatus,
+  FrameStatus,
 } from './enums'
 import { Database as DatabaseGenerated } from './supabase-db'
 
@@ -27,9 +27,9 @@ type DatabaseTypeOverrides = {
           status: EventStatus | null
         }
       }
-      slide: {
+      frame: {
         Row: {
-          status: SlideStatus | null
+          status: FrameStatus | null
         }
       }
     }

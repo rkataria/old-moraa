@@ -7,39 +7,39 @@ import { Button, Input } from '@nextui-org/react'
 import { ResponsiveVideoPlayer } from '@/components/common/ResponsiveVideoPlayer'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
-export type VideoEmbedSlideType = ISlide & {
+export type VideoEmbedFrameType = IFrame & {
   content: {
     videoUrl: string
   }
 }
 interface VideoEmbedEditorProps {
-  slide: VideoEmbedSlideType
+  frame: VideoEmbedFrameType
   readOnly?: boolean
 }
 
 export function VideoEmbedEditor({
-  slide,
+  frame,
   readOnly = false,
 }: VideoEmbedEditorProps) {
-  const [videoUrl, setVideoUrl] = useState(slide.content.videoUrl || '')
-  const [isEditMode, setIsEditMode] = useState(!slide.content.videoUrl)
-  const { preview, isOwner, updateSlide } = useContext(
+  const [videoUrl, setVideoUrl] = useState(frame.content.videoUrl || '')
+  const [isEditMode, setIsEditMode] = useState(!frame.content.videoUrl)
+  const { preview, isOwner, updateFrame } = useContext(
     EventContext
   ) as EventContextType
   const disabled = preview || readOnly
 
   const saveVideoUrl = () => {
     if (disabled) return
-    updateSlide({
-      slidePayload: {
+    updateFrame({
+      framePayload: {
         content: {
-          ...slide.content,
+          ...frame.content,
           videoUrl,
         },
       },
-      slideId: slide.id,
+      frameId: frame.id,
     })
     setIsEditMode(false)
   }

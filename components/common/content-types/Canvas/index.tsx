@@ -2,10 +2,10 @@ import { CanvasEditor } from './CanvasEditor'
 import { CanvasFrameContextProvider } from './CanvasProvider'
 import { CANVAS_TEMPLATE_TYPES } from '../../ContentTypePicker'
 
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 interface CanvasProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       defaultTemplate: CANVAS_TEMPLATE_TYPES
       canvas: string
@@ -14,10 +14,10 @@ interface CanvasProps {
   }
 }
 
-export function Canvas({ slide }: CanvasProps) {
+export function Canvas({ frame }: CanvasProps) {
   return (
     <CanvasFrameContextProvider>
-      <CanvasEditor slide={slide} />
+      <CanvasEditor frame={frame} />
     </CanvasFrameContextProvider>
   )
 }

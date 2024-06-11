@@ -8,10 +8,10 @@ import {
 
 import { Image } from '@nextui-org/react'
 
-import { Block, ISlide, TextBlock } from '@/types/slide.type'
+import { Block, IFrame, TextBlock } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
-export type TextImageSlideType = ISlide & {
+export type TextImageFrameType = IFrame & {
   content: {
     blocks: Block[]
     panelSizes?: number[]
@@ -19,7 +19,7 @@ export type TextImageSlideType = ISlide & {
 }
 
 type TextImageProps = {
-  slide: ISlide
+  frame: IFrame
 }
 
 export type ImageBlock = {
@@ -31,13 +31,13 @@ export type ImageBlock = {
   }
 }
 
-export function TextImage({ slide }: TextImageProps) {
+export function TextImage({ frame }: TextImageProps) {
   const panelGroupRef = useRef<ImperativePanelGroupHandle>(null)
-  const blocks = slide.content?.blocks || []
+  const blocks = frame.content?.blocks || []
 
   useEffect(() => {
-    panelGroupRef.current?.setLayout(slide.content?.panelSizes || [60, 40])
-  }, [slide.content?.panelSizes])
+    panelGroupRef.current?.setLayout(frame.content?.panelSizes || [60, 40])
+  }, [frame.content?.panelSizes])
 
   const textBlocks = blocks.filter((block) =>
     ['header', 'paragraph'].includes(block.type)
@@ -49,7 +49,7 @@ export function TextImage({ slide }: TextImageProps) {
 
   return (
     <div
-      style={{ backgroundColor: slide.config.backgroundColor }}
+      style={{ backgroundColor: frame.config.backgroundColor }}
       className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-start">
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>

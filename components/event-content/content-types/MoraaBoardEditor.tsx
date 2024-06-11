@@ -9,16 +9,16 @@ import { ContentLoading } from '@/components/common/ContentLoading'
 import { EventContext } from '@/contexts/EventContext'
 import { useYjsStoreSupabase } from '@/hooks/useYjsStoreSupabase'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
-type MoraaBoardSlide = ISlide
+type MoraaBoardFrame = IFrame
 
-export function MoraaBoardEditor({ slide }: { slide: MoraaBoardSlide }) {
-  const roomId = `edit-moraa-board-${slide.id}`
+export function MoraaBoardEditor({ frame }: { frame: MoraaBoardFrame }) {
+  const roomId = `edit-moraa-board-${frame.id}`
   const { preview } = useContext(EventContext) as EventContextType
   const store = useYjsStoreSupabase({
     roomId,
-    slideId: slide.id,
+    frameId: frame.id,
   })
   const debouncedStatus = useDebounce(store.status, 2000)
 

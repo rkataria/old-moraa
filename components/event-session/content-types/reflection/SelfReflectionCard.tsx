@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { EditableReflectionCard } from './EditableReflectionCard'
 import { ReflectionCard } from './ReflectionCard'
 
-import { type IReflectionResponse } from '@/types/slide.type'
+import { type IReflectionResponse } from '@/types/frame.type'
 
 type SelfReflectionCardProps = {
   username: string

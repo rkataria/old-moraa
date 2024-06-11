@@ -12,53 +12,53 @@ import isEqual from 'lodash.isequal'
 import { TextBlockEditor } from '@/components/event-content/TextBlockEditor'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide, TextBlock } from '@/types/slide.type'
+import { IFrame, TextBlock } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
-type CoverSlide = ISlide
+type CoverFrame = IFrame
 
 export function CoverEditor() {
-  const [localSlide, setLocalSlide] = useState<CoverSlide | null>(null)
-  const debouncedLocalSlide = useDebounce(localSlide, 500)
+  const [localFrame, setLocalFrame] = useState<CoverFrame | null>(null)
+  const debouncedLocalFrame = useDebounce(localFrame, 500)
   const [editingBlock, setEditingBlock] = useState<string | null>(null)
 
-  const { currentSlide, updateSlide } = useContext(
+  const { currentFrame, updateFrame } = useContext(
     EventContext
   ) as EventContextType
 
   useEffect(() => {
-    setLocalSlide(currentSlide)
-  }, [currentSlide])
+    setLocalFrame(currentFrame)
+  }, [currentFrame])
 
   useEffect(() => {
-    if (!currentSlide?.content) {
+    if (!currentFrame?.content) {
       return
     }
-    if (!debouncedLocalSlide?.content) {
+    if (!debouncedLocalFrame?.content) {
       return
     }
-    if (isEqual(debouncedLocalSlide?.content, currentSlide.content)) {
+    if (isEqual(debouncedLocalFrame?.content, currentFrame.content)) {
       return
     }
 
-    updateSlide({
-      slidePayload: {
+    updateFrame({
+      framePayload: {
         content: {
-          ...currentSlide.content,
-          ...debouncedLocalSlide?.content,
+          ...currentFrame.content,
+          ...debouncedLocalFrame?.content,
         },
       },
-      slideId: currentSlide.id,
+      frameId: currentFrame.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide?.content])
+  }, [debouncedLocalFrame?.content])
 
-  if (!localSlide?.content) {
+  if (!localFrame?.content) {
     return null
   }
 
   const textBlocks: TextBlock[] = (
-    localSlide.content?.blocks as TextBlock[]
+    localFrame.content?.blocks as TextBlock[]
   )?.filter((block) => ['header', 'paragraph'].includes(block.type))
 
   return (
@@ -68,10 +68,10 @@ export function CoverEditor() {
       )}>
       {textBlocks.map((block) => {
         const renderHeader =
-          localSlide.config.showTitle && block.type === 'header'
+          localFrame.config.showTitle && block.type === 'header'
 
         const renderParagraph =
-          localSlide.config.showDescription && block.type === 'paragraph'
+          localFrame.config.showDescription && block.type === 'paragraph'
 
         if (!renderHeader && !renderParagraph) return null
 
@@ -86,11 +86,11 @@ export function CoverEditor() {
               block={block}
               editable={editingBlock === block.id}
               onChange={(updatedBlock) => {
-                setLocalSlide({
-                  ...localSlide,
+                setLocalFrame({
+                  ...localFrame,
                   content: {
-                    ...localSlide.content,
-                    blocks: (localSlide.content?.blocks as TextBlock[])?.map(
+                    ...localFrame.content,
+                    blocks: (localFrame.content?.blocks as TextBlock[])?.map(
                       (b) => {
                         if (b.id === block.id) {
                           return updatedBlock

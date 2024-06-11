@@ -20,26 +20,26 @@ import { EventContextType } from '@/types/event-context.type'
 
 const descriptionMap: {
   'new-section': string
-  'new-slide': string
+  'new-frame': string
 } = {
   'new-section': 'Add a new section after the last section',
-  'new-slide': 'Add a new slide to the last section',
+  'new-frame': 'Add a new frame to the last section',
 }
 
 const iconMap: {
   'new-section': JSX.Element
-  'new-slide': JSX.Element
+  'new-frame': JSX.Element
 } = {
   'new-section': <BsCollection className="h-4 w-4 text-slate-500" />,
-  'new-slide': <BsCardText className="h-4 w-4 text-slate-500" />,
+  'new-frame': <BsCardText className="h-4 w-4 text-slate-500" />,
 }
 
 const labelMap: {
   'new-section': string
-  'new-slide': string
+  'new-frame': string
 } = {
   'new-section': 'New Section',
-  'new-slide': 'New Slide',
+  'new-frame': 'New Frame',
 }
 
 export function AddItemStickyDropdownActions({
@@ -52,19 +52,19 @@ export function AddItemStickyDropdownActions({
     isOwner,
     eventMode,
     showSectionPlaceholder,
-    showSlidePlaceholder,
-    currentSlide,
+    showFramePlaceholder,
+    currentFrame,
     selectedSectionId,
     addSection,
-    setInsertAfterSlideId,
+    setInsertAfterFrameId,
     setInsertInSectionId,
   } = useContext(EventContext) as EventContextType
 
   const addItem = (selectedOptionValue: string) => {
     if (selectedOptionValue === 'new-section') {
-      addSection({ afterSectionId: currentSlide?.section_id })
+      addSection({ afterSectionId: currentFrame?.section_id })
     }
-    if (selectedOptionValue === 'new-slide') {
+    if (selectedOptionValue === 'new-frame') {
       onOpenContentTypePicker?.(true)
     }
   }
@@ -79,8 +79,8 @@ export function AddItemStickyDropdownActions({
       return
     }
 
-    if (currentSlide) {
-      setInsertAfterSlideId(currentSlide.id)
+    if (currentFrame) {
+      setInsertAfterFrameId(currentFrame.id)
     }
 
     setInsertInSectionId(null)
@@ -94,12 +94,12 @@ export function AddItemStickyDropdownActions({
     <ButtonGroup
       variant="flat"
       className="bg-black text-white max-w-[300px] rounded-md overflow-hidden mt-2"
-      isDisabled={showSectionPlaceholder || showSlidePlaceholder}>
+      isDisabled={showSectionPlaceholder || showFramePlaceholder}>
       <Button
         startContent={<LuPlusCircle />}
         className="bg-black text-white"
-        onClick={() => handleAddItem(new Set(['new-slide']))}>
-        {labelMap['new-slide']}
+        onClick={() => handleAddItem(new Set(['new-frame']))}>
+        {labelMap['new-frame']}
       </Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
@@ -114,10 +114,10 @@ export function AddItemStickyDropdownActions({
           onSelectionChange={handleAddItem}
           className="max-w-[300px]">
           <DropdownItem
-            key="new-slide"
-            startContent={iconMap['new-slide']}
-            description={descriptionMap['new-slide']}>
-            {labelMap['new-slide']}
+            key="new-frame"
+            startContent={iconMap['new-frame']}
+            description={descriptionMap['new-frame']}>
+            {labelMap['new-frame']}
           </DropdownItem>
           <DropdownItem
             key="new-section"

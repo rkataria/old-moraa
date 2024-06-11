@@ -1,4 +1,4 @@
-import { ISlide } from './slide.type'
+import { IFrame } from './frame.type'
 
 export interface ICreateEventPayload {
   name: FormDataEntryValue | null
@@ -9,10 +9,10 @@ export interface ICreateEventPayload {
   owner_id: FormDataEntryValue | null
 }
 
-export interface IMeetingSlidesPayload {
+export interface IMeetingFramesPayload {
   name?: string
   description?: string
-  slides?: ISlide[]
+  frames?: IFrame[]
 }
 
-export type AgendaSlideDisplayType = 'thumbnail' | 'list'
+export type AgendaFrameDisplayType = 'thumbnail' | 'list'

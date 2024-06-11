@@ -26,7 +26,7 @@ const getSections = async ({
 const getSection = async (sectionId: string) => {
   const query = APIService.supabaseClient
     .from('section')
-    .select('*, slidesWithContent:slide(*)')
+    .select('*, framesWithContent:frame(*)')
     .eq('id', sectionId)
     .single()
 
@@ -41,7 +41,7 @@ const getSection = async (sectionId: string) => {
 const createSection = async (sectionPayload: {
   name: string
   meeting_id: string
-  slides: string[]
+  frames: string[]
 }) => {
   const query = APIService.supabaseClient
     .from('section')
@@ -64,7 +64,7 @@ const updateSection = async ({
 }: {
   payload: {
     name?: string
-    slides?: string[]
+    frames?: string[]
   }
   meetingId?: string
   sectionId?: string

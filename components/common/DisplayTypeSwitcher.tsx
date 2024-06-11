@@ -4,14 +4,14 @@ import { Tooltip } from '@nextui-org/react'
 
 import { cn } from '@/utils/utils'
 
-export type AgendaSlideDisplayType = 'thumbnail' | 'list'
+export type AgendaFrameDisplayType = 'thumbnail' | 'list'
 
 export function DisplayTypeSwitcher({
   displayType,
   onDisplayTypeChange,
 }: {
-  displayType: AgendaSlideDisplayType
-  onDisplayTypeChange: (view: AgendaSlideDisplayType) => void
+  displayType: AgendaFrameDisplayType
+  onDisplayTypeChange: (view: AgendaFrameDisplayType) => void
 }) {
   return (
     <div className="flex justify-center items-center gap-2">

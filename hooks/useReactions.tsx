@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query'
 
 import { ReactionService } from '@/services/reaction.service'
 
-export const useSlideReactions = (slideId?: string) => {
+export const useFrameReactions = (frameId?: string) => {
   const ReactionQuery = useQuery({
-    queryKey: ['slide-reflection-reaction', slideId],
-    queryFn: () => ReactionService.getReactions(slideId!),
-    enabled: !!slideId,
+    queryKey: ['frame-reflection-reaction', frameId],
+    queryFn: () => ReactionService.getReactions(frameId!),
+    enabled: !!frameId,
     refetchOnWindowFocus: false,
   })
 

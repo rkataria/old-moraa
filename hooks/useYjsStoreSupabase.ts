@@ -35,11 +35,11 @@ let providerInstance: SupabaseProvider | null = null
 let yDocInstance: Y.Doc | null = null
 
 export function useYjsStoreSupabase({
-  slideId,
+  frameId,
   roomId = '',
   shapeUtils = [],
 }: Partial<{
-  slideId: string
+  frameId: string
   roomId: string
   version: number
   shapeUtils: TLAnyShapeUtilConstructor[]
@@ -62,7 +62,7 @@ export function useYjsStoreSupabase({
       yDoc = new Y.Doc({ gc: true })
       yDocInstance = yDoc
     }
-    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${slideId}`)
+    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${frameId}`)
     const yStore = new YKeyValue(yArr)
     const meta = yDoc.getMap<SerializedSchema>('meta')
 
@@ -72,14 +72,14 @@ export function useYjsStoreSupabase({
       meta,
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomId, slideId])
+  }, [roomId, frameId])
 
   useEffect(() => {
     if (!providerInstance) {
       providerInstance = new SupabaseProvider(yDoc, supabase, {
         channel: roomId,
-        id: slideId as string,
-        tableName: 'slide',
+        id: frameId as string,
+        tableName: 'frame',
         columnName: 'content',
         resyncInterval: 1000 * 30,
       })

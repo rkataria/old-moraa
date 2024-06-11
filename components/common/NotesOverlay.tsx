@@ -1,32 +1,40 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-'use client'
-
 import { useContext, useEffect, useMemo, useState } from 'react'
 
-import { IconX } from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useDebounce } from '@uidotdev/usehooks'
+import { RiUnpinLine } from 'react-icons/ri'
+import { RxCross1 } from 'react-icons/rx'
+
+import { Button } from '@nextui-org/react'
 
 import { TextBlockEditor } from '../event-content/TextBlockEditor'
 
 import { EventContext } from '@/contexts/EventContext'
-import { SlideNotesService } from '@/services/slide-note.service'
+import { FrameNotesService } from '@/services/frame-note.service'
 import { EventContextType } from '@/types/event-context.type'
-import { TextBlock } from '@/types/slide.type'
+import { TextBlock } from '@/types/frame.type'
 import { QueryKeys } from '@/utils/query-keys'
 import { cn } from '@/utils/utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function NoteOverlaySidebarWrapper({ contentClass, children, onClose }: any) {
   return (
-    <div
-      className={cn(
-        'w-full bg-white/95 h-full transition-all border-l bg-white'
-      )}>
-      <div className="flex items-center justify-between font-semibold w-full bg-slate-100 py-2 px-4">
-        <p className="text-xs">Notes</p>
-        <IconX onClick={() => onClose()} className="cursor-pointer" />
+    <div className={cn('w-full h-full')}>
+      <div className="flex items-center justify-between w-full p-2">
+        <Button variant="light" isIconOnly size="sm" onClick={onClose}>
+          <RxCross1 size={18} />
+        </Button>
+        <h3 className="text-sm font-medium text-center">Notes</h3>
+        <Button
+          variant="light"
+          isIconOnly
+          size="sm"
+          disabled
+          className="opacity-0 pointer-events-none">
+          <RiUnpinLine size={24} />
+        </Button>
       </div>
       <div className={cn(contentClass)}>{children}</div>
     </div>
@@ -37,16 +45,16 @@ export function NoteOverlay({ onClose }: { onClose: () => void }) {
   const [editingBlock, setEditingBlock] = useState<string>('')
   const [notesHtml, setNotesHtml] = useState<TextBlock | null>(null)
 
-  const { currentSlide, isOwner, eventMode, preview } = useContext(
+  const { currentFrame, isOwner, eventMode, preview } = useContext(
     EventContext
   ) as EventContextType
 
   const isEditable = isOwner && eventMode === 'edit' && !preview
   const selectedNotesQuery = useQuery({
-    queryKey: QueryKeys.GetSlideNotes.listing({ SlideId: currentSlide?.id }),
+    queryKey: QueryKeys.GetFrameNotes.listing({ frameId: currentFrame?.id }),
     queryFn: () =>
-      SlideNotesService.getSlideNotes({ slideId: currentSlide?.id || '' }),
-    enabled: !!currentSlide?.id,
+      FrameNotesService.getFrameNotes({ frameId: currentFrame?.id || '' }),
+    enabled: !!currentFrame?.id,
   })
 
   const selectedNotes = selectedNotesQuery?.data?.data
@@ -54,29 +62,29 @@ export function NoteOverlay({ onClose }: { onClose: () => void }) {
   const textBlock = useMemo(
     () =>
       ({
-        id: currentSlide?.id,
+        id: currentFrame?.id,
         data: {
           html: selectedNotes?.content || '',
         },
         type: 'richtext',
       }) as TextBlock,
-    [selectedNotes, currentSlide?.id]
+    [selectedNotes, currentFrame?.id]
   )
 
-  const slideNoteHtml = useDebounce(notesHtml, 500)
+  const frameNoteHtml = useDebounce(notesHtml, 500)
 
   const approveRegistrationMutation = useMutation({
-    mutationFn: SlideNotesService.upsertSlideNotes,
+    mutationFn: FrameNotesService.upsertFrameNotes,
   })
 
-  const updateSlideNotes = (block: TextBlock) => {
-    if (currentSlide?.id && block?.data?.html) {
+  const updateFrameNotes = (block: TextBlock) => {
+    if (currentFrame?.id && block?.data?.html) {
       approveRegistrationMutation.mutate(
         {
           notesPayload: {
             content: block?.data?.html || '',
           },
-          slideId: currentSlide?.id,
+          frameId: currentFrame?.id,
           noteId: selectedNotes?.id || '',
         },
         {
@@ -93,23 +101,24 @@ export function NoteOverlay({ onClose }: { onClose: () => void }) {
   }
 
   useEffect(() => {
-    if (slideNoteHtml) updateSlideNotes(slideNoteHtml)
+    if (frameNoteHtml) updateFrameNotes(frameNoteHtml)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slideNoteHtml])
+  }, [frameNoteHtml])
 
   return (
     <NoteOverlaySidebarWrapper
-      contentClass="flex flex-col w-full h-full"
+      contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)]"
       onClose={onClose}>
       {selectedNotesQuery.isPending ? (
         <span className="p-4">Loading...</span>
       ) : isEditable ? (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-        <div onClick={() => setEditingBlock(textBlock.id)}>
+        <div onClick={() => setEditingBlock(textBlock.id)} className="h-full">
           <TextBlockEditor
-            stickyToolbar
+            showToolbar={false}
             block={textBlock}
             editable={editingBlock === textBlock.id}
+            className="w-full h-full overflow-y-auto border-0"
             onChange={handleBlockChange}
           />
         </div>

@@ -29,5 +29,5 @@ class QueryKeysGenerator<FilterKeys extends string[] = ['']> {
 
 export const QueryKeys = Object.freeze({
   DownloadPDF: new QueryKeysGenerator('DOWNLOAD_PDF'),
-  GetSlideNotes: new QueryKeysGenerator<['SlideId']>('GET_SLIDE_NOTES'),
+  GetFrameNotes: new QueryKeysGenerator<['frameId']>('GET_FRAME_NOTES'),
 })

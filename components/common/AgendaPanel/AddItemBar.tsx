@@ -16,26 +16,26 @@ const addItemDropdownActions = [
     icon: <BsCollection className="h-4 w-4 text-slate-500" />,
   },
   {
-    key: 'new-slide',
-    label: 'New Slide',
+    key: 'new-frame',
+    label: 'New Frame',
     icon: <BsCardText className="h-4 w-4 text-slate-500" />,
   },
 ]
 
 type AddItemBarProps = {
   sectionId: string
-  slideId: string
+  frameId: string
   hiddenActionKeys?: string[]
 }
 
 export function AddItemBar({
   sectionId,
-  slideId,
+  frameId,
   hiddenActionKeys = [],
 }: AddItemBarProps) {
   const {
     setInsertInSectionId,
-    setInsertAfterSlideId,
+    setInsertAfterFrameId,
     setInsertAfterSectionId,
     addSection,
     setOpenContentTypePicker,
@@ -56,8 +56,8 @@ export function AddItemBar({
         <div
           onClick={() => {
             if (sectionId) setInsertInSectionId(sectionId)
-            if (slideId) setInsertAfterSlideId(slideId)
-            if (sectionId && !slideId) setInsertAfterSectionId(sectionId)
+            if (frameId) setInsertAfterFrameId(frameId)
+            if (sectionId && !frameId) setInsertAfterSectionId(sectionId)
           }}
           className="absolute left-0 -bottom-2 w-full h-2 bg-transparent z-[1] py-[2px] group/add-item-bar cursor-pointer scale-100">
           <div className="relative left-0 top-[1px] w-full h-0.5 flex justify-end items-center bg-transparent group-hover/add-item-bar:bg-gray-300">
@@ -75,8 +75,8 @@ export function AddItemBar({
           })
         }
 
-        if (actionKey === 'new-slide') {
-          setInsertAfterSlideId(slideId || null)
+        if (actionKey === 'new-frame') {
+          setInsertAfterFrameId(frameId || null)
           if (sectionId) setInsertInSectionId(sectionId)
           setOpenContentTypePicker(true)
         }

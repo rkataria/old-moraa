@@ -260,6 +260,7 @@ export type Database = {
         Row: {
           content: string | null
           created_at: string
+          frame_id: string | null
           id: string
           slide_id: string | null
           updated_at: string | null
@@ -267,6 +268,7 @@ export type Database = {
         Insert: {
           content?: string | null
           created_at?: string
+          frame_id?: string | null
           id?: string
           slide_id?: string | null
           updated_at?: string | null
@@ -274,15 +276,23 @@ export type Database = {
         Update: {
           content?: string | null
           created_at?: string
+          frame_id?: string | null
           id?: string
           slide_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
           {
+            foreignKeyName: 'notes_frame_id_fkey'
+            columns: ['frame_id']
+            isOneToOne: false
+            referencedRelation: 'frame'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'notes_slide_id_fkey'
             columns: ['slide_id']
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: 'slide'
             referencedColumns: ['id']
           },

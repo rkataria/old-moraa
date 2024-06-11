@@ -11,11 +11,11 @@ import { SectionList } from './AgendaPanel/SectionList'
 import { EventContext } from '@/contexts/EventContext'
 import { AgendaPanelContextProvider } from '@/hooks/useAgendaPanel'
 import { EventContextType } from '@/types/event-context.type'
-import { ISection } from '@/types/slide.type'
+import { ISection } from '@/types/frame.type'
 
 export function AgendaPanel() {
   const [expandedSections, setExpandedSections] = useState<string[]>([])
-  const { currentSlide, sections, selectedSectionId } = useContext(
+  const { currentFrame, sections, selectedSectionId } = useContext(
     EventContext
   ) as EventContextType
 
@@ -26,9 +26,9 @@ export function AgendaPanel() {
       return
     }
 
-    if (currentSlide) {
+    if (currentFrame) {
       const section = sections.find(
-        (s) => s.id === currentSlide.section_id
+        (s) => s.id === currentFrame.section_id
       ) as ISection
 
       if (section) {
@@ -41,7 +41,7 @@ export function AgendaPanel() {
         })
       }
     }
-  }, [currentSlide, sections, selectedSectionId])
+  }, [currentFrame, sections, selectedSectionId])
 
   const expandAndCollapseSections = () => {
     if (expandedSections.length === 0) {

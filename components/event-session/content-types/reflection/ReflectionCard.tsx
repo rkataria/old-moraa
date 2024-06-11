@@ -18,18 +18,18 @@ import {
 
 import { EmojiPicker } from '@/components/common/EmojiPicker'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { SlideReaction } from '@/types/event-session.type'
-import { IReflectionResponse } from '@/types/slide.type'
+import { FrameReaction } from '@/types/event-session.type'
+import { IReflectionResponse } from '@/types/frame.type'
 import { cn, getAvatarForName } from '@/utils/utils'
 
 type ReactionsProps = {
   responseId: ReflectionCardProps['response']['id']
 }
 function Reactions({ responseId }: ReactionsProps) {
-  const { participant, emoteOnReflection, slideReactions } = useEventSession()
+  const { participant, emoteOnReflection, frameReactions } = useEventSession()
 
-  const reactions = slideReactions.filter(
-    (reaction) => reaction.slide_response_id === responseId
+  const reactions = frameReactions.filter(
+    (reaction) => reaction.frame_response_id === responseId
   )
 
   const countsByReaction = countBy(reactions, 'reaction')
@@ -39,7 +39,7 @@ function Reactions({ responseId }: ReactionsProps) {
     if (!participant) return false
 
     return reactions.some(
-      (reaction: SlideReaction) =>
+      (reaction: FrameReaction) =>
         reaction.reaction === emojiId &&
         reaction.participant_id === participant.id
     )
@@ -47,7 +47,7 @@ function Reactions({ responseId }: ReactionsProps) {
 
   const handleEmojiSelect = (selectedEmojiId: string) => {
     const participantEmote = reactions.find(
-      (reaction: SlideReaction) => reaction.participant_id === participant.id
+      (reaction: FrameReaction) => reaction.participant_id === participant.id
     )
 
     const getEmoteAction = () => {
@@ -62,7 +62,7 @@ function Reactions({ responseId }: ReactionsProps) {
     emoteOnReflection?.({
       participantId: participant.id,
       reaction: selectedEmojiId,
-      slideResponseId: responseId,
+      frameResponseId: responseId,
       reactionId: participantEmote?.id,
       action: emoteAction,
     })

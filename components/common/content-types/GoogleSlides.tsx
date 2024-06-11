@@ -3,9 +3,9 @@
 import React from 'react'
 
 import { GoogleSlideEmbed } from '@/components/common/GoogleSlideEmbed'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
-export type GoogleSlidesType = ISlide & {
+export type GoogleSlidesType = IFrame & {
   content: {
     googleSlideURL: string
     startPosition?: number
@@ -13,13 +13,13 @@ export type GoogleSlidesType = ISlide & {
 }
 
 interface GoogleSlidesProps {
-  slide: GoogleSlidesType
+  frame: GoogleSlidesType
 }
 
-export function GoogleSlides({ slide }: GoogleSlidesProps) {
+export function GoogleSlides({ frame }: GoogleSlidesProps) {
   const {
     content: { googleSlideURL, startPosition },
-  } = slide
+  } = frame
 
   return (
     <GoogleSlideEmbed

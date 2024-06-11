@@ -10,7 +10,7 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { PresentationStatuses } from '@/types/event-session.type'
 
 export function MainContainer() {
-  const { presentationStatus, currentSlide, eventSessionMode } =
+  const { presentationStatus, currentFrame, eventSessionMode } =
     useEventSession()
   const [panelSize, setPanelSize] = useState(18) // Initial default size
 
@@ -33,13 +33,13 @@ export function MainContainer() {
 
   const spotlightMode = eventSessionMode === 'Lobby'
 
-  const currentSlideBgColor =
+  const currentFrameBgColor =
     presentationStatus === PresentationStatuses.STARTED
-      ? currentSlide?.config?.backgroundColor || '#f3f4f6'
+      ? currentFrame?.config?.backgroundColor || '#f3f4f6'
       : '#f3f4f6'
 
   if (mainContentRef.current) {
-    mainContentRef.current.style.backgroundColor = currentSlideBgColor
+    mainContentRef.current.style.backgroundColor = currentFrameBgColor
   }
 
   return (

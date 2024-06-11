@@ -26,7 +26,7 @@ type BackgroundControlsModalProps = {
 export function BackgroundControlsModal({
   onClose,
 }: BackgroundControlsModalProps) {
-  const { currentSlide, updateSlide } = useContext(
+  const { currentFrame, updateFrame } = useContext(
     EventContext
   ) as EventContextType
   const { canvas, sync } = useContext(
@@ -44,16 +44,16 @@ export function BackgroundControlsModal({
     onClose()
   }
 
-  if (!canvas || !currentSlide) return null
+  if (!canvas || !currentFrame) return null
 
   const handleBackgroundChange = (color: string) => {
-    updateSlide({
-      slidePayload: {
+    updateFrame({
+      framePayload: {
         config: {
           backgroundColor: color,
         },
       },
-      slideId: currentSlide.id,
+      frameId: currentFrame.id,
     })
   }
 
@@ -64,7 +64,7 @@ export function BackgroundControlsModal({
     handleClose()
   }
 
-  const backgroundColor = currentSlide.config.backgroundColor || '#ffffff'
+  const backgroundColor = currentFrame.config.backgroundColor || '#ffffff'
 
   return (
     <>

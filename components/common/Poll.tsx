@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { Avatar, AvatarGroup, Button, Checkbox } from '@nextui-org/react'
 
 import { useAuth } from '@/hooks/useAuth'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 import { cn, getAvatarForName } from '@/utils/utils'
 
 export type Vote = {
@@ -76,7 +76,7 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
 }
 
 interface PollOptionProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       question: string
       options: string[]
@@ -90,14 +90,14 @@ interface PollOptionProps {
 }
 
 function PollOption({
-  slide,
+  frame,
   pollOption,
   isOwner,
   voted,
   isOptionSelected,
   handleVoteCheckbox,
 }: PollOptionProps) {
-  if (slide.config.allowVoteOnMultipleOptions && !isOwner && !voted) {
+  if (frame.config.allowVoteOnMultipleOptions && !isOwner && !voted) {
     return (
       <Checkbox
         isSelected={isOptionSelected(pollOption)}
@@ -117,7 +117,7 @@ function PollOption({
 }
 
 interface PollProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       question: string
       options: string[]
@@ -127,11 +127,11 @@ interface PollProps {
   votes?: any
   voted?: boolean
   isOwner?: boolean
-  onVote?: (slide: ISlide, options: string[]) => void
+  onVote?: (frame: IFrame, options: string[]) => void
 }
 
-export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
-  const { options, question } = slide.content
+export function Poll({ frame, votes = [], voted, onVote, isOwner }: PollProps) {
+  const { options, question } = frame.content
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const { currentUser } = useAuth()
@@ -140,14 +140,14 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
     if (
       voted ||
       isOwner ||
-      !slide.config.allowVoteOnMultipleOptions ||
+      !frame.config.allowVoteOnMultipleOptions ||
       selectedOptions.length === 0
     ) {
       setVoteButtonVisible(false)
     } else {
       setVoteButtonVisible(true)
     }
-  }, [voted, isOwner, slide.config.allowVoteOnMultipleOptions, selectedOptions])
+  }, [voted, isOwner, frame.config.allowVoteOnMultipleOptions, selectedOptions])
 
   const isOptionSelected = (option: string) => selectedOptions.includes(option)
 
@@ -192,14 +192,14 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
     <div
       className="w-full min-h-full flex justify-center items-start"
       style={{
-        backgroundColor: slide.config.backgroundColor,
+        backgroundColor: frame.config.backgroundColor,
       }}>
       <div className="w-4/5 mt-10 rounded-md relative">
         <div className="p-4">
           <h2
             className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
             style={{
-              color: slide.config.textColor,
+              color: frame.config.textColor,
             }}>
             {question}
           </h2>
@@ -221,12 +221,12 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
                   if (
                     voted ||
                     isOwner ||
-                    slide.config.allowVoteOnMultipleOptions
+                    frame.config.allowVoteOnMultipleOptions
                   ) {
                     return
                   }
 
-                  onVote?.(slide, [option])
+                  onVote?.(frame, [option])
                 }}>
                 <div
                   className={cn(
@@ -241,7 +241,7 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
                   {getOptionWidth(option)}%
                 </div>
                 <PollOption
-                  slide={slide}
+                  frame={frame}
                   pollOption={option}
                   isOwner={isOwner}
                   voted={voted}
@@ -258,7 +258,7 @@ export function Poll({ slide, votes = [], voted, onVote, isOwner }: PollProps) {
                 <Button
                   type="button"
                   color="primary"
-                  onClick={() => onVote?.(slide, selectedOptions)}>
+                  onClick={() => onVote?.(frame, selectedOptions)}>
                   Submit
                 </Button>
               </div>

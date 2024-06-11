@@ -11,34 +11,34 @@ import { ContentLoading } from '../ContentLoading'
 import { EventContext } from '@/contexts/EventContext'
 import { useYjsStoreSupabase } from '@/hooks/useYjsStoreSupabase'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 import 'tldraw/tldraw.css'
 
-export type MoraaBoardSlide = ISlide & {
+export type MoraaBoardFrame = IFrame & {
   content: {
     document: string
   }
 }
 
 interface MoraaBoardProps {
-  slide: MoraaBoardSlide
+  frame: MoraaBoardFrame
 }
 
-export function MoraaBoard({ slide }: MoraaBoardProps) {
+export function MoraaBoard({ frame }: MoraaBoardProps) {
   const { preview, isOwner } = useContext(EventContext) as EventContextType
-  const roomId = `present-moraa-board-${slide.id}`
+  const roomId = `present-moraa-board-${frame.id}`
   const store = useYjsStoreSupabase({
     roomId,
-    slideId: slide.id,
+    frameId: frame.id,
   })
   const debouncedStatus = useDebounce(store.status, 2000)
 
-  const readOnly = preview || (!isOwner && slide.config?.allowToDraw)
+  const readOnly = preview || (!isOwner && frame.config?.allowToDraw)
 
   return (
     <div
-      style={{ backgroundColor: slide.config.backgroundColor }}
+      style={{ backgroundColor: frame.config.backgroundColor }}
       className="relative w-full flex-auto flex flex-col justify-center items-center px-4 z-[0] h-full">
       {debouncedStatus !== 'synced-remote' ? (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">

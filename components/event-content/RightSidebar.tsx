@@ -13,7 +13,7 @@ import { EventContextType } from '@/types/event-context.type'
 
 export function RightSidebar() {
   const { eventId } = useParams()
-  const { currentSlide, overviewOpen, preview, isOwner } = useContext(
+  const { currentFrame, overviewOpen, preview, isOwner } = useContext(
     EventContext
   ) as EventContextType
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
@@ -25,7 +25,7 @@ export function RightSidebar() {
   if (rightSidebarVisiblity === 'notes') {
     return <NoteOverlay onClose={() => setRightSidebarVisiblity(null)} />
   }
-  if (currentSlide && rightSidebarVisiblity === 'slide-settings') {
+  if (currentFrame && rightSidebarVisiblity === 'frame-settings') {
     return (
       <SettingsSidebar
         settingsEnabled

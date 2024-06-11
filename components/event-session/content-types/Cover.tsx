@@ -3,15 +3,15 @@
 import React from 'react'
 
 import { RichTextView } from '@/components/common/content-types/RichTextView'
-import { ISlide, TextBlock } from '@/types/slide.type'
+import { IFrame, TextBlock } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
 interface CoverProps {
-  slide: ISlide
+  frame: IFrame
 }
 
-export function Cover({ slide }: CoverProps) {
-  const paragraphTextBlock = (slide.content?.blocks as TextBlock[])?.find(
+export function Cover({ frame }: CoverProps) {
+  const paragraphTextBlock = (frame.content?.blocks as TextBlock[])?.find(
     (block) => block.type === 'paragraph'
   )
 

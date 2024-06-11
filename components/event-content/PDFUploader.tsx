@@ -21,12 +21,12 @@ import {
   uploadPDFFile,
 } from '@/services/pdf.service'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 import { QueryKeys } from '@/utils/query-keys'
 import { cn, getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       pdfPath: string
       defaultPage: number
@@ -36,18 +36,18 @@ interface PDFUploaderProps {
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-const getPDFName = (slideId: string) => `${slideId}_pdf.pdf`
+const getPDFName = (frameId: string) => `${frameId}_pdf.pdf`
 
-export function PDFUploader({ slide }: PDFUploaderProps) {
-  const { updateSlide } = useContext(EventContext) as EventContextType
+export function PDFUploader({ frame }: PDFUploaderProps) {
+  const { updateFrame } = useContext(EventContext) as EventContextType
 
   const [fileUrl, setFileURL] = useState<string | undefined>(
-    slide.content?.pdfPath
+    frame.content?.pdfPath
   )
   const [uploadProgress, setUploadProgress] = useState(0)
   const [totalPages, setTotalPages] = useState<null | number>(null)
   const [selectedPage, setSelectedPage] = useState<number>(
-    slide.content?.defaultPage || 1
+    frame.content?.defaultPage || 1
   )
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
@@ -56,7 +56,7 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
         ? undefined
         : downloadPDFFile(fileUrl).then((data) =>
             getFileObjectFromBlob(
-              slide.content?.pdfPath,
+              frame.content?.pdfPath,
               data.data,
               'application/pdf'
             )
@@ -67,21 +67,21 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
 
   const uploadPDFMutation = useMutation({
     mutationFn: async (file: File) => {
-      await deletePDFFile(getPDFName(slide.id)).catch(() => {})
+      await deletePDFFile(getPDFName(frame.id)).catch(() => {})
 
-      return uploadPDFFile(getPDFName(slide.id), file, setUploadProgress)
+      return uploadPDFFile(getPDFName(frame.id), file, setUploadProgress)
     },
     onSuccess: () => toast.success('PDF uploaded successfully.'),
     onError: (err) => {
       console.log('🚀 ~ PDFUploader ~ err:', err)
       toast.error(
-        'Failed to upload PDF, please try re-uploading again by deleting the slide.'
+        'Failed to upload PDF, please try re-uploading again by deleting the frame.'
       )
     },
-    onSettled: () => toast.remove(slide.id),
+    onSettled: () => toast.remove(frame.id),
     onMutate: () => {
       toast.loading('Uploading PDF...', {
-        id: slide.id,
+        id: frame.id,
       })
     },
   })
@@ -90,26 +90,26 @@ export function PDFUploader({ slide }: PDFUploaderProps) {
     uploadPDFMutation.mutate(file, {
       onSuccess: () => {
         // Start the PDF download as soon as the URL is received.
-        setFileURL(getPDFName(slide.id))
-        // Update the slide in background.
-        updateSlide({
-          slidePayload: {
+        setFileURL(getPDFName(frame.id))
+        // Update the frame in background.
+        updateFrame({
+          framePayload: {
             content: {
-              ...slide.content,
-              pdfPath: getPDFName(slide.id),
+              ...frame.content,
+              pdfPath: getPDFName(frame.id),
             },
           },
-          slideId: slide.id,
+          frameId: frame.id,
         })
       },
     })
   }
 
   useEffect(() => {
-    if (slide.content?.defaultPage) {
-      setSelectedPage(slide.content?.defaultPage)
+    if (frame.content?.defaultPage) {
+      setSelectedPage(frame.content?.defaultPage)
     }
-  }, [slide.content?.defaultPage])
+  }, [frame.content?.defaultPage])
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = ({
     numPages: nextNumPages,

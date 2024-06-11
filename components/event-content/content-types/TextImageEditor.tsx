@@ -8,68 +8,68 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDebounce } from '@uidotdev/usehooks'
 import { ImperativePanelGroupHandle } from 'react-resizable-panels'
 
-import { ImageBehind } from '@/components/common/slide-templates/text-image/ImageBehind'
-import { ImageLeft } from '@/components/common/slide-templates/text-image/ImageLeft'
-import { ImageRight } from '@/components/common/slide-templates/text-image/ImageRight'
-import { NoImage } from '@/components/common/slide-templates/text-image/NoImage'
-import { LayoutTypes } from '@/components/common/TextImageSlideSettings'
+import { ImageBehind } from '@/components/common/frame-templates/text-image/ImageBehind'
+import { ImageLeft } from '@/components/common/frame-templates/text-image/ImageLeft'
+import { ImageRight } from '@/components/common/frame-templates/text-image/ImageRight'
+import { NoImage } from '@/components/common/frame-templates/text-image/NoImage'
+import { LayoutTypes } from '@/components/common/TextImageFrameSettings'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { FileBlock, ISlide, TextBlock } from '@/types/slide.type'
+import { FileBlock, IFrame, TextBlock } from '@/types/frame.type'
 
 export function TextImageEditor() {
-  const [localSlide, setLocalSlide] = useState<ISlide | null>(null)
+  const [localFrame, setLocalFrame] = useState<IFrame | null>(null)
   const panelGroupRef = useRef<ImperativePanelGroupHandle>(null)
   const [editingBlock, setEditingBlock] = useState<string | null>(null)
 
   const imageRef = useRef<HTMLImageElement>(null)
   const [fileUploaderOpen, setFileUploaderOpen] = useState<boolean>(false)
-  const debouncedLocalSlide = useDebounce(localSlide, 500)
+  const debouncedLocalFrame = useDebounce(localFrame, 500)
 
-  const { currentSlide, updateSlide } = useContext(
+  const { currentFrame, updateFrame } = useContext(
     EventContext
   ) as EventContextType
 
   useEffect(() => {
-    setLocalSlide(currentSlide)
-  }, [currentSlide])
+    setLocalFrame(currentFrame)
+  }, [currentFrame])
 
   useEffect(() => {
-    if (!currentSlide?.content) {
+    if (!currentFrame?.content) {
       return
     }
 
-    if (!debouncedLocalSlide?.content) {
+    if (!debouncedLocalFrame?.content) {
       return
     }
 
     if (
-      JSON.stringify(debouncedLocalSlide?.content) ===
-      JSON.stringify(currentSlide.content)
+      JSON.stringify(debouncedLocalFrame?.content) ===
+      JSON.stringify(currentFrame.content)
     ) {
       return
     }
 
-    updateSlide({
-      slidePayload: {
+    updateFrame({
+      framePayload: {
         content: {
-          ...currentSlide.content,
-          ...debouncedLocalSlide?.content,
+          ...currentFrame.content,
+          ...debouncedLocalFrame?.content,
         },
       },
-      slideId: currentSlide.id,
+      frameId: currentFrame.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedLocalSlide?.content])
+  }, [debouncedLocalFrame?.content])
 
   useEffect(() => {
-    if (panelGroupRef.current && localSlide?.content?.panelSizes) {
-      panelGroupRef.current.setLayout(localSlide.content.panelSizes)
+    if (panelGroupRef.current && localFrame?.content?.panelSizes) {
+      panelGroupRef.current.setLayout(localFrame.content.panelSizes)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localSlide])
+  }, [localFrame])
 
-  if (!localSlide) {
+  if (!localFrame) {
     return null
   }
 
@@ -79,11 +79,11 @@ export function TextImageEditor() {
       meta: { name: string; size: number; type: string }
     }[]
   ) => {
-    setLocalSlide({
-      ...localSlide,
+    setLocalFrame({
+      ...localFrame,
       content: {
-        ...localSlide.content,
-        blocks: (localSlide.content?.blocks as FileBlock[])?.map((b) => {
+        ...localFrame.content,
+        blocks: (localFrame.content?.blocks as FileBlock[])?.map((b) => {
           if (b.id === imageBlocks?.id) {
             return {
               ...b,
@@ -104,11 +104,11 @@ export function TextImageEditor() {
   }
 
   const handleBlockChange = (block: TextBlock) => {
-    setLocalSlide({
-      ...localSlide,
+    setLocalFrame({
+      ...localFrame,
       content: {
-        ...localSlide.content,
-        blocks: (localSlide.content?.blocks as TextBlock[]).map((b) => {
+        ...localFrame.content,
+        blocks: (localFrame.content?.blocks as TextBlock[]).map((b) => {
           if (b.id === block.id) {
             return block
           }
@@ -120,25 +120,25 @@ export function TextImageEditor() {
   }
 
   const handlePanelLayoutChange = (sizes: number[]) => {
-    setLocalSlide({
-      ...localSlide,
+    setLocalFrame({
+      ...localFrame,
       content: {
-        ...localSlide.content,
+        ...localFrame.content,
         panelSizes: sizes,
       },
     })
   }
 
-  const blocks = localSlide.content?.blocks || []
+  const blocks = localFrame.content?.blocks || []
 
   const imageBlocks = blocks.find(
     (block) => block.type === 'image'
   ) as FileBlock
 
-  if (currentSlide?.config?.layoutType === LayoutTypes.NO_IMAGE) {
+  if (currentFrame?.config?.layoutType === LayoutTypes.NO_IMAGE) {
     return (
       <NoImage
-        slide={localSlide}
+        frame={localFrame}
         editingBlock={editingBlock}
         onBlockChange={handleBlockChange}
         setEditingBlock={setEditingBlock}
@@ -146,10 +146,10 @@ export function TextImageEditor() {
     )
   }
 
-  if (currentSlide?.config?.layoutType === LayoutTypes.IMAGE_BEHIND) {
+  if (currentFrame?.config?.layoutType === LayoutTypes.IMAGE_BEHIND) {
     return (
       <ImageBehind
-        slide={localSlide}
+        frame={localFrame}
         fileUploaderOpen={fileUploaderOpen}
         editingBlock={editingBlock}
         setEditingBlock={setEditingBlock}
@@ -160,11 +160,11 @@ export function TextImageEditor() {
     )
   }
 
-  if (currentSlide?.config?.layoutType === LayoutTypes.IMAGE_LEFT) {
+  if (currentFrame?.config?.layoutType === LayoutTypes.IMAGE_LEFT) {
     return (
       <ImageLeft
         editingBlock={editingBlock}
-        slide={localSlide}
+        frame={localFrame}
         imageRef={imageRef}
         panelGroupRef={panelGroupRef}
         fileUploaderOpen={fileUploaderOpen}
@@ -179,7 +179,7 @@ export function TextImageEditor() {
 
   return (
     <ImageRight
-      slide={localSlide}
+      frame={localFrame}
       editingBlock={editingBlock}
       imageRef={imageRef}
       panelGroupRef={panelGroupRef}

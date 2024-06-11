@@ -2,15 +2,15 @@
 
 import React from 'react'
 
-import { SlideManager } from '@/components/event-content/SlideManager'
+import { FrameManager } from '@/components/event-content/FrameManager'
 import { EventProvider } from '@/contexts/EventContext'
 
-function EventSlidesPage() {
+function EventFramesPage() {
   return (
     <EventProvider eventMode="edit">
-      <SlideManager />
+      <FrameManager />
     </EventProvider>
   )
 }
 
-export default EventSlidesPage
+export default EventFramesPage

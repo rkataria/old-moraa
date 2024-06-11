@@ -30,7 +30,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
   const { data: userProfile } = useProfile()
-  const { currentSlide } = useContext(EventContext) as EventContextType
+  const { currentFrame } = useContext(EventContext) as EventContextType
 
   useEffect(() => {
     if (lastMessagePlaceholderRef.current) {
@@ -39,7 +39,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   }, [conversation])
 
   const generatePoll = async () => {
-    let content = currentSlide?.content?.blocks
+    let content = currentFrame?.content?.blocks
       ?.reduce((acc, block) => {
         if ('html' in block.data) {
           return `${acc}${block.data.html}.`
@@ -63,7 +63,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
 
     const message = await continueConversation(
       topic,
-      currentSlide?.section_id,
+      currentFrame?.section_id,
       enrollment.event_role
     )
 

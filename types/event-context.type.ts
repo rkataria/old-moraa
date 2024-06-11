@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
-import { ISection, ISlide } from './slide.type'
+import { ISection, IFrame } from './frame.type'
 
 export type EventModeType = 'view' | 'edit' | 'present'
 
@@ -10,64 +10,64 @@ export type EventContextType = {
   eventMode: EventModeType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meeting: any
-  currentSlide: ISlide | null
+  currentFrame: IFrame | null
   overviewOpen: boolean
   loading: boolean
   syncing: boolean
   isOwner: boolean
   sections: ISection[]
   showSectionPlaceholder: boolean
-  showSlidePlaceholder: boolean
+  showFramePlaceholder: boolean
   preview: boolean
   insertAfterSectionId: string | null
-  insertAfterSlideId: string | null
+  insertAfterFrameId: string | null
   insertInSectionId: string | null
   selectedSectionId: string | null
-  error: { slideId: string; message: string } | null
-  setInsertAfterSlideId: (slideId: string | null) => void
+  error: { frameId: string; message: string } | null
+  setInsertAfterFrameId: (frameId: string | null) => void
   setInsertAfterSectionId: (sectionId: string | null) => void
   setInsertInSectionId: (sectionId: string | null) => void
   setSelectedSectionId: (sectionId: string | null) => void
   setPreview: (preview: boolean) => void
-  setCurrentSlide: (slide: ISlide) => void
+  setCurrentFrame: (frame: IFrame) => void
   setOverviewOpen: (open: boolean) => void
   openContentTypePicker: boolean
   setOpenContentTypePicker: Dispatch<SetStateAction<boolean>>
-  addSlideToSection: ({
-    slide,
+  addFrameToSection: ({
+    frame,
     section,
-    afterSlideId,
+    afterFrameId,
   }: {
-    slide: Partial<ISlide>
+    frame: Partial<IFrame>
     section?: Partial<ISection>
-    afterSlideId?: string
+    afterFrameId?: string
   }) => void
-  updateSlide: ({
-    slidePayload,
-    slideId,
+  updateFrame: ({
+    framePayload,
+    frameId,
     allowParticipantToUpdate,
   }: {
-    slidePayload: Partial<ISlide>
-    slideId: string
+    framePayload: Partial<IFrame>
+    frameId: string
     allowParticipantToUpdate?: boolean
   }) => void
-  updateSlides: ({
-    slidePayload,
-    slideIds,
+  updateFrames: ({
+    framePayload,
+    frameIds,
   }: {
-    slidePayload: Partial<ISlide>
-    slideIds: string[]
+    framePayload: Partial<IFrame>
+    frameIds: string[]
   }) => void
-  deleteSlide: (slide: ISlide) => void
+  deleteFrame: (frame: IFrame) => void
   importGoogleSlides: (data: {
-    slide: ISlide
+    frame: IFrame
     googleSlideUrl: string
     startPosition: number
     endPosition: number | undefined
   }) => void
-  moveUpSlide: (slide: ISlide) => void
-  moveDownSlide: (slide: ISlide) => void
-  reorderSlide: OnDragEndResponder
+  moveUpFrame: (frame: IFrame) => void
+  moveDownFrame: (frame: IFrame) => void
+  reorderFrame: OnDragEndResponder
   reorderSection: OnDragEndResponder
   addSection: ({
     name,
@@ -85,7 +85,7 @@ export type EventContextType = {
   }: {
     sectionPayload: {
       name?: string
-      slides?: string[]
+      frames?: string[]
     }
     sectionId?: string
     meetingId?: string

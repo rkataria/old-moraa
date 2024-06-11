@@ -17,7 +17,7 @@ const SECTION_LIST_CONTAINER_MAX_HEIGHT = `calc(100vh -  ${MAIN_HEADER_HEIGHT}px
 const SECTION_LIST_CONTAINER_MAX_HEIGHT_WHEN_MANIMIZED = `calc(100vh -  ${MAIN_HEADER_HEIGHT}px - ${HEADER_HEIGHT_WHEN_MINIMIZED}px - ${BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED}px)`
 
 export function SectionList() {
-  const { currentSlide, sections } = useContext(
+  const { currentFrame, sections } = useContext(
     EventContext
   ) as EventContextType
   const { eventMode, isOwner, preview } = useContext(
@@ -29,21 +29,21 @@ export function SectionList() {
   const expanded = leftSidebarVisiblity === 'maximized'
 
   useEffect(() => {
-    if (!currentSlide) return
+    if (!currentFrame) return
 
-    const currentSlideElement = document.querySelector(
-      `div[data-minislide-id="${currentSlide.id}"]`
+    const currentFrameElement = document.querySelector(
+      `div[data-miniframe-id="${currentFrame.id}"]`
     )
 
-    if (!currentSlideElement) return
+    if (!currentFrameElement) return
 
     scrollParentToChild({
       parent: sectionListRef.current!,
-      child: currentSlideElement as HTMLElement,
+      child: currentFrameElement as HTMLElement,
       topOffset: 100,
       bottomOffset: 100,
     })
-  }, [currentSlide])
+  }, [currentFrame])
 
   const actionDisabled = eventMode !== 'edit' || !isOwner || preview
 

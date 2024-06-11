@@ -10,16 +10,16 @@ import { PollForm } from './PollForm'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 export function PollEditor({
-  slide,
+  frame,
   openSettings,
 }: {
-  slide: ISlide
+  frame: IFrame
   openSettings: boolean
 }) {
-  const { updateSlide } = useContext(EventContext) as EventContextType
+  const { updateFrame } = useContext(EventContext) as EventContextType
   const [showSettings, setShowSettings] = useState<boolean>(openSettings)
   const settingsRef = useClickAway(() => {
     setShowSettings(false)
@@ -32,7 +32,7 @@ export function PollEditor({
   return (
     <div className={clsx('relative w-full h-full overflow-hidden')}>
       <div className="relative w-full h-full overflow-x-hidden overflow-y-auto scrollbar-thin">
-        <PollForm slide={slide as any} />
+        <PollForm frame={frame as any} />
       </div>
       <div
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -50,16 +50,16 @@ export function PollEditor({
           <div className="relative">
             <div className="my-4">
               <SketchPicker
-                color={slide.config.backgroundColor}
+                color={frame.config.backgroundColor}
                 onChange={(color) => {
-                  updateSlide({
-                    slidePayload: {
+                  updateFrame({
+                    framePayload: {
                       config: {
-                        ...slide.config,
+                        ...frame.config,
                         backgroundColor: color.hex,
                       },
                     },
-                    slideId: slide.id,
+                    frameId: frame.id,
                   })
                 }}
               />
