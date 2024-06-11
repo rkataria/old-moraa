@@ -115,12 +115,14 @@ function Reactions({ responseId }: ReactionsProps) {
 type ReflectionCardProps = {
   response: IReflectionResponse
   isOwner: boolean
+  avatarUrl?: string
   enableEditReflection?: () => void
 }
 
 export function ReflectionCard({
   response,
   isOwner,
+  avatarUrl,
   enableEditReflection,
 }: ReflectionCardProps) {
   const {
@@ -135,7 +137,7 @@ export function ReflectionCard({
       return 'https://github.com/shadcn.png'
     }
 
-    return getAvatarForName(username)
+    return getAvatarForName(username, avatarUrl)
   }
 
   return (

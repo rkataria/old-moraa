@@ -10,11 +10,13 @@ import { type IReflectionResponse } from '@/types/slide.type'
 type SelfReflectionCardProps = {
   username: string
   selfResponse: IReflectionResponse | undefined
+  avatarUrl?: string
 }
 
 export function SelfReflectionCard({
   username,
   selfResponse,
+  avatarUrl,
 }: SelfReflectionCardProps) {
   const defaultEditEnabled = !selfResponse
 
@@ -28,6 +30,7 @@ export function SelfReflectionCard({
     return (
       <EditableReflectionCard
         username={username}
+        avatarUrl={avatarUrl}
         editEnabled
         setEditEnabled={setEditEnabled}
         selfResponse={selfResponse as IReflectionResponse}
@@ -41,6 +44,7 @@ export function SelfReflectionCard({
     <ReflectionCard
       response={selfResponse}
       isOwner
+      avatarUrl={avatarUrl}
       enableEditReflection={() => {
         setEditEnabled((v) => !v)
       }}

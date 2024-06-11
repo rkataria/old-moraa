@@ -26,7 +26,8 @@ export function UserMenu() {
           {!isRequiredNames ? (
             <Avatar
               src={getAvatarForName(
-                `${profile.first_name} ${profile.last_name}`
+                `${profile.first_name} ${profile.last_name}`,
+                profile.avatar_url
               )}
               radius="lg"
               classNames={{ base: 'w-9 h-9 min-w-max' }}

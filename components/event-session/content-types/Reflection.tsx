@@ -67,7 +67,11 @@ function HostView() {
 
   return (
     <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-      <SelfReflectionCard username={username} selfResponse={selfResponse} />
+      <SelfReflectionCard
+        username={username}
+        avatarUrl={user.avatar_url}
+        selfResponse={selfResponse}
+      />
       {otherResponses.map((res) => (
         <ReflectionCard key={res.id} response={res} isOwner={false} />
       ))}

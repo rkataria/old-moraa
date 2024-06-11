@@ -26,6 +26,7 @@ type EditableReflectionCardProps = {
   // reflection: ReflectionState
   // setReflection: (value: ReflectionState) => void
   editEnabled: boolean
+  avatarUrl?: string
   setEditEnabled: (value: boolean) => void
   selfResponse: IReflectionResponse | undefined
 }
@@ -39,6 +40,7 @@ type ReflectionState = {
 export function EditableReflectionCard({
   username,
   editEnabled,
+  avatarUrl,
   setEditEnabled,
   selfResponse,
 }: EditableReflectionCardProps) {
@@ -115,7 +117,7 @@ export function EditableReflectionCard({
             radius="full"
             size="md"
             className="min-w-fit"
-            src={getAvatarForName(username)}
+            src={getAvatarForName(username, avatarUrl)}
           />
           <span className="semibold">{username}</span>
         </div>

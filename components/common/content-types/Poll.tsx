@@ -32,6 +32,7 @@ export type Vote = {
       profile: {
         first_name: string
         last_name: string
+        avatar_url?: string
       }
     }
   }
@@ -105,7 +106,8 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
 
           if (enrollment.profile.first_name) {
             const url = getAvatarForName(
-              `${enrollment.profile.first_name} ${enrollment.profile.last_name}`
+              `${enrollment.profile.first_name} ${enrollment.profile.last_name}`,
+              enrollment.profile.avatar_url
             )
 
             return <Avatar src={url} size="sm" />

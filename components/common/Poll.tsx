@@ -55,7 +55,8 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
             {voterData.participant.enrollment.profile.first_name ? (
               <Avatar
                 src={getAvatarForName(
-                  `${voterData.participant.enrollment.profile.first_name} ${voterData.participant.enrollment.profile.last_name}`
+                  `${voterData.participant.enrollment.profile.first_name} ${voterData.participant.enrollment.profile.last_name}`,
+                  voterData.participant.enrollment.profile.avatar_url
                 )}
                 size="sm"
               />
