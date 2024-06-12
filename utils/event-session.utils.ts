@@ -1,3 +1,5 @@
+import { getFilteredFramesByStatus } from './event.util'
+
 import { ISection, IFrame } from '@/types/frame.type'
 
 export const getPreviousFrame = ({
@@ -9,10 +11,20 @@ export const getPreviousFrame = ({
   currentFrame: IFrame | null
   onlyPublished?: boolean
 }) => {
-  if (!currentFrame) return sections[0].frames[0]
+  if (!currentFrame) {
+    if (!currentFrame) {
+      const frames = getFilteredFramesByStatus({
+        frames: sections.flatMap((section) => section.frames ?? []),
+        status: onlyPublished ? 'PUBLISHED' : null,
+      })
+
+      return frames.at(-1)
+    }
+  }
 
   const section = sections.find((s) => s.id === currentFrame.section_id)
-  if (!section) return sections[0].frames[0]
+
+  if (!section) return null
 
   const currentFrameIndex = section.frames.findIndex(
     (frame) =>
@@ -36,7 +48,7 @@ export const getPreviousFrame = ({
 }
 
 export const getNextFrame = ({
-  sections,
+  sections = [],
   currentFrame,
   onlyPublished = false,
 }: {
@@ -44,10 +56,18 @@ export const getNextFrame = ({
   currentFrame: IFrame | null
   onlyPublished?: boolean
 }) => {
-  if (!currentFrame) return sections[0].frames[0]
+  if (!currentFrame) {
+    const frames = getFilteredFramesByStatus({
+      frames: sections.flatMap((section) => section.frames ?? []),
+      status: onlyPublished ? 'PUBLISHED' : null,
+    })
+
+    return frames?.[0]
+  }
 
   const section = sections.find((s) => s.id === currentFrame.section_id)
-  if (!section) return sections[0].frames[0]
+
+  if (!section) return null
 
   const currentSectionFrames = section.frames
 
