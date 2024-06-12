@@ -45,9 +45,8 @@ export function NoteOverlay({ onClose }: { onClose: () => void }) {
   const [editingBlock, setEditingBlock] = useState<string>('')
   const [notesHtml, setNotesHtml] = useState<TextBlock | null>(null)
 
-  const { currentFrame, isOwner, eventMode, preview } = useContext(
-    EventContext
-  ) as EventContextType
+  const { currentFrame, isOwner, eventMode, preview, overviewOpen } =
+    useContext(EventContext) as EventContextType
 
   const isEditable = isOwner && eventMode === 'edit' && !preview
   const selectedNotesQuery = useQuery({
@@ -110,7 +109,13 @@ export function NoteOverlay({ onClose }: { onClose: () => void }) {
       contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)]"
       onClose={onClose}>
       {selectedNotesQuery.isPending ? (
-        <span className="p-4">Loading...</span>
+        overviewOpen || !currentFrame?.id ? (
+          <span className="p-4 h-full flex items-center justify-center text-gray-400">
+            Select a frame to add notes.
+          </span>
+        ) : (
+          <span className="p-4">Loading...</span>
+        )
       ) : isEditable ? (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div onClick={() => setEditingBlock(textBlock.id)} className="h-full">
