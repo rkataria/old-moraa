@@ -7,6 +7,7 @@
 import { useContext, useEffect, useState } from 'react'
 
 import {
+  DyteBreakoutRoomsManager,
   DyteDialogManager,
   DyteNotifications,
   DyteParticipantsAudio,
@@ -127,6 +128,7 @@ export function MeetingScreen() {
           }))
         }}
       />
+      <DyteBreakoutRoomsManager meeting={meeting} states={dyteStates} />
     </StudioLayout>
   )
 }

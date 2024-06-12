@@ -9,7 +9,7 @@ export const getPreviousSlide = ({
   currentSlide: ISlide | null
   onlyPublished?: boolean
 }) => {
-  if (!currentSlide) return sections[0].slides[0]
+  if (!currentSlide) return sections[0]?.slides[0]
 
   const section = sections.find((s) => s.id === currentSlide.section_id)
   if (!section) return sections[0].slides[0]
@@ -44,7 +44,7 @@ export const getNextSlide = ({
   currentSlide: ISlide | null
   onlyPublished?: boolean
 }) => {
-  if (!currentSlide) return sections[0].slides[0]
+  if (!currentSlide) return sections[0]?.slides[0]
 
   const section = sections.find((s) => s.id === currentSlide.section_id)
   if (!section) return sections[0].slides[0]

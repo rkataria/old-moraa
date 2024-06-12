@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext } from 'react'
 
-import { DyteClock } from '@dytesdk/react-ui-kit'
+import { DyteBreakoutRoomsToggle, DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from 'next/navigation'
 
@@ -36,6 +37,8 @@ type MeetingControlsProps = {
     sidebar: RightSiderbar
   }) => void
   onAiChatOverlayToggle: () => void
+  dyteStates: any
+  setDyteStates: any
 }
 
 export function MeetingControls({
@@ -43,6 +46,8 @@ export function MeetingControls({
   onDyteStateUpdate,
   onSidebarOpen,
   onAiChatOverlayToggle,
+  dyteStates,
+  setDyteStates,
 }: MeetingControlsProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
@@ -104,6 +109,14 @@ export function MeetingControls({
             })
           }}
         />
+        <DyteBreakoutRoomsToggle
+          meeting={meeting}
+          states={dyteStates}
+          onDyteStateUpdate={(e) =>
+            setDyteStates({ ...e.detail, mode: 'view' })
+          }
+        />
+
         <ControlButton
           buttonProps={{
             variant: 'flat',

@@ -61,6 +61,8 @@ export function MeetingHeader({
             setRightSidebarVisiblity('ai-chat')
           }
         }}
+        dyteStates={dyteStates}
+        setDyteStates={setDyteStates}
       />
     </div>
   )

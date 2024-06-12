@@ -108,8 +108,6 @@ export function AgendaPanelContextProvider({
     })
   }
 
-  console.log('slides --agenda', getSectionSlides(currentSectionId!))
-
   useHotkeys('ArrowUp', () => {
     const previousSection = getPreviousSection()
 
