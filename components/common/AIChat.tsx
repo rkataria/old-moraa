@@ -4,6 +4,7 @@
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import { useActions, useUIState } from 'ai/rsc'
+import axios from 'axios'
 import { useParams } from 'next/navigation'
 import { LuArrowUp } from 'react-icons/lu'
 import { RiUnpinLine } from 'react-icons/ri'
@@ -30,7 +31,9 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
   const { data: userProfile } = useProfile()
-  const { currentFrame } = useContext(EventContext) as EventContextType
+  const { currentFrame, currentSectionId, sections } = useContext(
+    EventContext
+  ) as EventContextType
 
   useEffect(() => {
     if (lastMessagePlaceholderRef.current) {
@@ -38,7 +41,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
     }
   }, [conversation])
 
-  const generatePoll = async () => {
+  const handleGeneratePoll = async () => {
     let content = currentFrame?.content?.blocks
       ?.reduce((acc, block) => {
         if ('html' in block.data) {
@@ -51,8 +54,46 @@ export function AIChat({ onClose }: { onClose: () => void }) {
     if (!content || content.length < 10) {
       content = `${event.name}, ${event.description}`
     }
-    const topic = `Generate a poll based on this: ${content}`
-    await handleSubmit(topic, 'Generate a quick poll for me')
+    const topic = `"${content}"`
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      { id: uuidv4(), role: 'user', display: 'Generate Poll for me' },
+      {
+        id: uuidv4(),
+        role: 'assistant',
+        display: 'Generatign Poll. Please wait!!',
+      },
+    ])
+    const message = await generatePoll(topic)
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      { id: uuidv4(), role: 'assistant', display: message },
+    ])
+  }
+
+  async function generatePoll(topic: string): Promise<any> {
+    try {
+      // We need section id to put the poll in
+      const sectionId =
+        currentSectionId ||
+        currentFrame?.section_id ||
+        (sections?.at(-1)?.id as string)
+
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/generations/generate-poll`
+
+      await axios.post(url, null, {
+        params: {
+          topic,
+          section_id: sectionId,
+        },
+      })
+
+      return 'Created a poll!! Want to create more? Go ahead and tell me'
+    } catch (error) {
+      console.error('Error generating poll:', error)
+
+      return 'Some error occurred while creating the poll. Please try again later.'
+    }
   }
 
   const handleSubmit = async (topic: string = input, _input = input) => {
@@ -61,11 +102,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       { id: uuidv4(), role: 'user', display: _input },
     ])
 
-    const message = await continueConversation(
-      topic,
-      currentFrame?.section_id,
-      enrollment.event_role
-    )
+    const message = await continueConversation(topic)
 
     setConversation((currentConversation: ClientMessage[]) => [
       ...currentConversation,
@@ -123,7 +160,10 @@ export function AIChat({ onClose }: { onClose: () => void }) {
         {/* TODO: use roles from enum */}
         {enrollment &&
           ['Host', 'Moderator'].includes(enrollment.event_role) && (
-            <Button variant="bordered" color="primary" onClick={generatePoll}>
+            <Button
+              variant="bordered"
+              color="primary"
+              onClick={handleGeneratePoll}>
               Generate Poll
             </Button>
           )}
@@ -157,19 +197,6 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   )
 }
 
-// /* eslint-disable jsx-a11y/control-has-associated-label */
-
-// import { ReactNode, useEffect, useRef } from 'react'
-
-// import { IconX } from '@tabler/icons-react'
-// import { useChat } from 'ai/react'
-// import { LuArrowUp } from 'react-icons/lu'
-
-// import { ScrollShadow } from '@nextui-org/react'
-
-// import { useProfile } from '@/hooks/useProfile'
-// import { cn } from '@/utils/utils'
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function AiChatSidebarWrapper({
   contentClass,
   children,
