@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoChatbubblesSharp } from 'react-icons/io5'
+import { IoChatbubblesOutline } from 'react-icons/io5'
 
 import { Badge } from '@nextui-org/react'
 
@@ -47,16 +47,17 @@ export function ChatsToggle({
         buttonProps={{
           isIconOnly: true,
           radius: 'md',
+          size: 'sm',
           variant: 'light',
-          className: cn('transition-all duration-300', {
-            'bg-black text-white': isChatsSidebarOpen,
+          className: cn('transition-all duration-300 text-[#444444]', {
+            'bg-black text-white hover:bg-black': isChatsSidebarOpen,
           }),
         }}
         tooltipProps={{
           content: isChatsSidebarOpen ? 'Hide Chats' : 'Show Chats',
         }}
         onClick={handleChat}>
-        <IoChatbubblesSharp size={20} />
+        <IoChatbubblesOutline size={20} />
       </ControlButton>
     </Badge>
   )

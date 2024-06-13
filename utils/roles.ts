@@ -1,6 +1,5 @@
-import { FaPeopleArrows, FaUser } from 'react-icons/fa'
+import { FaUser } from 'react-icons/fa'
 import { IoShieldSharp } from 'react-icons/io5'
-import { MdPeopleAlt } from 'react-icons/md'
 
 export const roles = [
   // {

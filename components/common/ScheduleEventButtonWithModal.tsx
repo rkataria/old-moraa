@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
 import toast from 'react-hot-toast'
+import { LuCalendarPlus } from 'react-icons/lu'
 
 import { Button } from '@nextui-org/react'
 
@@ -20,7 +21,7 @@ import { EventService } from '@/services/event/event-service'
 
 export function ScheduleEventButtonWithModal({
   eventId,
-  actionButtonLabel = 'Schedule Event',
+  actionButtonLabel = 'Schedule session',
 }: {
   eventId: string
   actionButtonLabel?: string
@@ -93,6 +94,7 @@ export function ScheduleEventButtonWithModal({
         radius="md"
         fullWidth>
         {actionButtonLabel}
+        <LuCalendarPlus className="shrink-0 w-4 h-4" />
       </Button>
       <Modal
         open={open}

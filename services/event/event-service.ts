@@ -119,7 +119,6 @@ export class EventService extends APIService {
       .delete()
       .eq('id', participantId)
       .eq('event_id', eventId)
-      .eq('event_role', 'Participant')
 
     return query.then((res) => {
       if (res.error) throw res.error

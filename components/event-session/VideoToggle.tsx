@@ -1,6 +1,6 @@
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoVideocam, IoVideocamOff } from 'react-icons/io5'
+import { IoVideocamOffOutline, IoVideocamOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -27,16 +27,25 @@ export function VideoToggle({ className = '' }: { className?: string }) {
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
+        size: 'sm',
         variant: 'flat',
-        className: cn('transition-all duration-300', className, {
-          'bg-red-500 text-white': !isVideoEnabled,
-        }),
+        className: cn(
+          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
+          className,
+          {
+            'bg-red-500 text-white': !isVideoEnabled,
+          }
+        ),
       }}
       tooltipProps={{
         content: isVideoEnabled ? 'Hide video' : 'Show video',
       }}
       onClick={handleVideo}>
-      {isVideoEnabled ? <IoVideocam size={20} /> : <IoVideocamOff size={20} />}
+      {isVideoEnabled ? (
+        <IoVideocamOutline size={20} />
+      ) : (
+        <IoVideocamOffOutline size={20} />
+      )}
     </ControlButton>
   )
 }

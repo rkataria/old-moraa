@@ -2,8 +2,8 @@ import { useContext, useEffect, useState, useCallback } from 'react'
 
 import Draggable, { DraggableEvent, DraggableData } from 'react-draggable'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { IoStopwatchOutline } from 'react-icons/io5'
 import {
-  MdOutlineWatchLater,
   MdAdd,
   MdRemove,
   MdOutlinePlayArrow,
@@ -223,16 +223,20 @@ export function Timer() {
           buttonProps={{
             isIconOnly: true,
             radius: 'md',
+            size: 'sm',
             variant: 'flat',
-            className: cn('transition-all duration-300', {
-              'bg-black text-white': isOpen,
-            }),
+            className: cn(
+              'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
+              {
+                'bg-black text-white': isOpen,
+              }
+            ),
           }}
           tooltipProps={{
             content: 'Launch Timer',
           }}
           onClick={handleTimerButtonClick}>
-          <MdOutlineWatchLater className="text-2xl" />
+          <IoStopwatchOutline size={22} />
         </ControlButton>
       )}
       {isOpen && (

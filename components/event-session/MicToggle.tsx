@@ -1,6 +1,6 @@
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoMicSharp, IoMicOffSharp } from 'react-icons/io5'
+import { IoMicOutline, IoMicOffOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -26,17 +26,26 @@ export function MicToggle({ className = '' }: { className?: string }) {
     <ControlButton
       buttonProps={{
         isIconOnly: true,
+        size: 'sm',
         radius: 'md',
         variant: 'flat',
-        className: cn('transition-all duration-300', className, {
-          'bg-red-500 text-white': !isMicEnabled,
-        }),
+        className: cn(
+          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
+          className,
+          {
+            'bg-red-500 text-white': !isMicEnabled,
+          }
+        ),
       }}
       tooltipProps={{
         content: isMicEnabled ? 'Mute' : 'Unmute',
       }}
       onClick={handleMic}>
-      {isMicEnabled ? <IoMicSharp size={20} /> : <IoMicOffSharp size={20} />}
+      {isMicEnabled ? (
+        <IoMicOutline size={20} />
+      ) : (
+        <IoMicOffOutline size={20} />
+      )}
     </ControlButton>
   )
 }

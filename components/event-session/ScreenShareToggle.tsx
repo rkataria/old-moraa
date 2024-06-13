@@ -1,5 +1,5 @@
 import { useDyteSelector } from '@dytesdk/react-web-core'
-import { IoShare } from 'react-icons/io5'
+import { IoShareOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -16,10 +16,14 @@ export function ScreenShareToggle() {
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
+        size: 'sm',
         variant: 'flat',
-        className: cn('transition-all duration-300', {
-          'bg-red-500 text-white': isScreenShared,
-        }),
+        className: cn(
+          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
+          {
+            'bg-red-500 text-white': isScreenShared,
+          }
+        ),
       }}
       tooltipProps={{
         content: isScreenShared ? 'Stop Screen Share' : 'Scree Share',
@@ -33,7 +37,7 @@ export function ScreenShareToggle() {
 
         await self.enableScreenShare()
       }}>
-      <IoShare size={20} />
+      <IoShareOutline size={20} />
     </ControlButton>
   )
 }

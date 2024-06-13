@@ -1,5 +1,5 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoPeopleSharp } from 'react-icons/io5'
+import { IoPeopleOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -19,9 +19,10 @@ export function ParticipantsToggle({
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
+        size: 'sm',
         variant: 'light',
-        className: cn('transition-all duration-300', {
-          'bg-black text-white': isParticipantsSidebarOpen,
+        className: cn('transition-all duration-300 text-[#444444]', {
+          'bg-black text-white hover:bg-black': isParticipantsSidebarOpen,
         }),
       }}
       tooltipProps={{
@@ -30,7 +31,7 @@ export function ParticipantsToggle({
           : 'Show Participants',
       }}
       onClick={onClick}>
-      <IoPeopleSharp size={20} />
+      <IoPeopleOutline size={20} />
     </ControlButton>
   )
 }

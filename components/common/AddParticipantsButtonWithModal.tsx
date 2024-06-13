@@ -6,11 +6,10 @@
 import { useState } from 'react'
 
 import { useMutation } from '@tanstack/react-query'
-import clsx from 'clsx'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
 import { FaLink } from 'react-icons/fa'
-import { GoShareAndroid } from 'react-icons/go'
+import { LuUserPlus } from 'react-icons/lu'
 
 import {
   Button,
@@ -27,13 +26,6 @@ import {
 
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event/event-service'
-
-const styles = {
-  button: {
-    default:
-      'flex justify-center items-center hover:bg-gray-800 hover:text-white transition-all duration-200 rounded-md',
-  },
-}
 
 export function AddParticipantsButtonWithModal({
   eventId,
@@ -78,14 +70,8 @@ export function AddParticipantsButtonWithModal({
 
   return (
     <>
-      <Button
-        isIconOnly
-        onClick={() => setOpen(true)}
-        className={clsx(
-          styles.button.default,
-          'cursor-pointer font-normal text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 !rounded-full p-3'
-        )}>
-        <GoShareAndroid className="text-xl" />
+      <Button isIconOnly variant="light" onClick={() => setOpen(true)}>
+        <LuUserPlus size={20} className="text-[#52525B]" />
       </Button>
 
       <Modal size="2xl" isOpen={open} onClose={() => setOpen(false)}>

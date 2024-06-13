@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { useDebounce } from '@uidotdev/usehooks'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoHandRight } from 'react-icons/io5'
+import { IoHandRightOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -61,16 +61,20 @@ export function RaiseHandToggle() {
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
+        size: 'sm',
         variant: 'flat',
-        className: cn('transition-all duration-300', {
-          'bg-black text-white': isHandRaised,
-        }),
+        className: cn(
+          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
+          {
+            'bg-black text-white': isHandRaised,
+          }
+        ),
       }}
       tooltipProps={{
         content: isHandRaised ? 'Lower hand' : 'Raise hand',
       }}
       onClick={handleRaiseHand}>
-      <IoHandRight size={20} />
+      <IoHandRightOutline size={20} />
     </ControlButton>
   )
 }

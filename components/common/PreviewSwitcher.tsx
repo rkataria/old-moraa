@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import { LuEye } from 'react-icons/lu'
+import { LuTv } from 'react-icons/lu'
 
 import { Button } from '@nextui-org/react'
 
@@ -13,15 +13,15 @@ export function PreviewSwitcher() {
 
   return (
     <Button
-      isIconOnly
-      radius="full"
+      color="danger"
       size="sm"
+      radius="md"
       className={cn({
-        'bg-black text-white': preview,
-        'bg-gray-200 text-black': !preview,
+        'bg-[#7C3AED] text-white': !preview,
       })}
+      endContent={<LuTv size={16} className="rotate-180" />}
       onClick={() => setPreview(!preview)}>
-      <LuEye size={16} />
+      {preview ? 'Exit Preview' : 'Preview'}
     </Button>
   )
 }

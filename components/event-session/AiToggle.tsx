@@ -1,5 +1,5 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoSparkles } from 'react-icons/io5'
+import { IoSparklesOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -19,16 +19,17 @@ export function AiToggle({
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
+        size: 'sm',
         variant: 'light',
-        className: cn('transition-all duration-300', {
-          'bg-black text-white': isAiSidebarOpen,
+        className: cn('transition-all duration-300 text-[#444444]', {
+          'bg-black text-white hover:bg-black': isAiSidebarOpen,
         }),
       }}
       tooltipProps={{
         content: isAiSidebarOpen ? 'Close AI Copilot' : 'AI Copilot',
       }}
       onClick={onClick}>
-      <IoSparkles size={20} />
+      <IoSparklesOutline size={20} />
     </ControlButton>
   )
 }

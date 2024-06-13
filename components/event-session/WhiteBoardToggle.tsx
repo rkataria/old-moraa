@@ -2,7 +2,7 @@ import { useContext } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoEasel } from 'react-icons/io5'
+import { IoEaselOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -42,16 +42,17 @@ export function WhiteBoardToggle() {
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
-        variant: 'solid',
-        className: cn(
-          'w-[47px] h-[42px] flex items-center justify-center rounded-sm text-black bg-gray-100'
-        ),
+        size: 'sm',
+        variant: 'flat',
+        className: cn('bg-[#F3F4F6] text-[#444444]', {
+          'bg-black text-white': isWhiteboardActive,
+        }),
       }}
       tooltipProps={{
         content: isWhiteboardActive ? 'Close whiteboard' : 'Open whiteboard',
       }}
       onClick={handleWhiteBoard}>
-      <IoEasel size={20} />
+      <IoEaselOutline size={20} />
     </ControlButton>
   )
 }
