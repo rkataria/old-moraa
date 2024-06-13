@@ -42,7 +42,7 @@ function HostView() {
   const getResponses = () => {
     const typedResponses = currentSlideResponses as IReflectionResponse[]
     if (isBreakoutActive && isCurrentDyteMeetingInABreakoutRoom) {
-      return typedResponses.filter(
+      return typedResponses?.filter(
         (r) => r.dyte_meeting_id === dyteMeeting.meta.meetingId
       )
     }
@@ -86,7 +86,7 @@ function ParticipantView() {
   const getResponses = () => {
     const typedResponses = currentSlideResponses as IReflectionResponse[]
     if (isBreakoutActive && isCurrentDyteMeetingInABreakoutRoom) {
-      return typedResponses.filter(
+      return typedResponses?.filter(
         (r) => r.dyte_meeting_id === dyteMeeting.meta.meetingId
       )
     }

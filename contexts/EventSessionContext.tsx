@@ -15,6 +15,7 @@ import isEqual from 'lodash.isequal'
 import uniqBy from 'lodash.uniqby'
 import { useParams } from 'next/navigation'
 
+import { useBreakoutRooms } from './BreakoutRoomsManagerContext'
 import { EventContext } from './EventContext'
 
 import type {
@@ -50,6 +51,7 @@ export const EventSessionContext =
 export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventId } = useParams()
   const { meeting: dyteMeeting } = useDyteMeeting()
+  const { isBreakoutActive } = useBreakoutRooms()
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
@@ -282,7 +284,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   useEffect(() => {
     if (!currentSlide) return
 
-    if (isOwner && eventSessionMode === 'Presentation') {
+    if (!isBreakoutActive && isOwner && eventSessionMode === 'Presentation') {
       realtimeChannel.send({
         type: 'broadcast',
         event: 'currentslide-change',
