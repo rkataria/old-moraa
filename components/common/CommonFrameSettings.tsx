@@ -58,7 +58,7 @@ export function CommonFrameSettings() {
         <p className="text-xs text-slate-500 mt-2">Background Color</p>
         <TwitterPicker
           colors={FRAME_BG_COLOR_PALETTE}
-          className="!shadow-none mt-2"
+          className="!shadow-none mt-2 !bg-transparent"
           triangle="hide"
           styles={{
             default: {

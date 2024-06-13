@@ -20,26 +20,27 @@ type AgendaPanelContextType = {
   setCurrentSectionId: (sectionId: string) => void
 }
 
-const AgendaPanelContext = createContext<AgendaPanelContextType>({
-  expandedSectionIds: [],
-  listDisplayMode: 'list',
-  currentSectionId: null,
-  expanded: false,
-  toggleExpanded: () => {},
-  toggleExpandedSection: () => {},
-  toggleListDisplayMode: () => {},
-  setCurrentSectionId: () => {},
-})
+const AgendaPanelContext = createContext<AgendaPanelContextType | undefined>(
+  undefined
+)
 
 export const useAgendaPanelContext = () => useContext(AgendaPanelContext)
 
 export function AgendaPanelContextProvider({
   children,
 }: React.PropsWithChildren<object>) {
-  const { sections, currentFrame, isOwner, eventMode, setCurrentFrame } =
-    useContext(EventContext) as EventContextType
+  const {
+    sections,
+    currentFrame,
+    isOwner,
+    eventMode,
+    overviewOpen,
+    currentSectionId,
+    setCurrentSectionId,
+    setCurrentFrame,
+    setOverviewOpen,
+  } = useContext(EventContext) as EventContextType
   const [expandedSectionIds, setExpandedSectionIds] = useState<string[]>([])
-  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null)
   const [listDisplayMode, setListDisplayMode] =
     useState<ListDisplayMode>('list')
   const [expanded, setExpanded] = useState<boolean>(false)
@@ -108,9 +109,10 @@ export function AgendaPanelContextProvider({
     })
   }
 
-  console.log('frames --agenda', getSectionFrames(currentSectionId!))
-
   useHotkeys('ArrowUp', () => {
+    // Don't allow participants to navigate through the agenda when the event is live
+    if (!isOwner && eventMode === 'present') return
+
     const previousSection = getPreviousSection()
 
     // 1. Current Section is not highlighted
@@ -132,6 +134,7 @@ export function AgendaPanelContextProvider({
       const isCurrentFrameFirst = currentSectionFrames[0].id === currentFrame.id
       if (isCurrentFrameFirst) {
         setCurrentSectionId(currentFrame.section_id as string)
+        setCurrentFrame(null)
 
         return
       }
@@ -167,7 +170,11 @@ export function AgendaPanelContextProvider({
       // 2. Current Section is highlighted
 
       // 2.1 if previous section does not exist, do nothing
-      if (!previousSection) return
+      if (!previousSection) {
+        setOverviewOpen(true)
+
+        return
+      }
 
       // 2.2 if previous section exists, and previous section is not expanded, highlight the previous section
       if (
@@ -204,32 +211,20 @@ export function AgendaPanelContextProvider({
         setCurrentFrame(lastFrame)
       }
     }
-
-    // console.log('previousSection', currentSectionId, previousSection?.id)
-
-    // if (previousFrame) {
-    //   // if previous frame is in the same section, just move to the previous frame
-    //   if (currentFrame?.section_id === previousFrame.section_id) {
-    //     setCurrentFrame(previousFrame)
-
-    //     return
-    //   }
-
-    //   // if previous frame is in a different section, and the section is expanded, move to the last frame in the section
-    //   if (expandedSectionIds.includes(previousFrame.section_id!)) {
-    //     setCurrentSectionId(null)
-    //     setCurrentFrame(previousFrame)
-
-    //     return
-    //   }
-
-    //   // if previous frame is in a different section, and the section is not expanded, highlight the section
-    //   setCurrentSectionId(previousSection?.id as string)
-    // }
   })
 
   useHotkeys('ArrowDown', () => {
+    // Don't allow participants to navigate through the agenda when the event is live
+    if (!isOwner && eventMode === 'present') return
+
     const nextSection = getNextSection()
+
+    if (overviewOpen) {
+      setOverviewOpen(false)
+      setCurrentSectionId(nextSection?.id as string)
+
+      return
+    }
 
     // 1. Current Section is not highlighted
     if (!currentSectionId) {
@@ -251,6 +246,7 @@ export function AgendaPanelContextProvider({
       // 1.3 if current frame is set, and next frame is in a different section, highlight the next section
       if (nextFrame && currentFrame.section_id !== nextFrame.section_id) {
         setCurrentSectionId(nextSection?.id as string)
+        setCurrentFrame(null)
 
         return
       }
@@ -258,9 +254,20 @@ export function AgendaPanelContextProvider({
       // 1.4 if current frame is set, and there is no next frame, highlight the next section
       if (!nextFrame) {
         setCurrentSectionId(nextSection?.id as string)
+        setCurrentFrame(null)
       }
     } else {
       // 2. Current Section is highlighted
+
+      // 2.0 if current section is highlighted, and it is expanded, and current frame is from same section, set current section null
+      if (
+        expandedSectionIds.includes(currentSectionId) &&
+        currentFrame?.section_id === currentSectionId
+      ) {
+        setCurrentSectionId(null)
+
+        return
+      }
 
       // 2.1 if next section does not exist, and current section is not expanded, do nothing
       if (!nextSection && !expandedSectionIds.includes(currentSectionId)) {
@@ -289,6 +296,7 @@ export function AgendaPanelContextProvider({
       // 2.4 if next section exists, and current section is not expanded, highlight the next section
       if (nextSection && !expandedSectionIds.includes(currentSectionId)) {
         setCurrentSectionId(nextSection.id)
+        setCurrentFrame(null)
 
         return
       }
@@ -301,6 +309,7 @@ export function AgendaPanelContextProvider({
       ) {
         toggleExpandedSection(currentSectionId)
         setCurrentSectionId(nextSection.id)
+        setCurrentFrame(null)
 
         return
       }
@@ -328,11 +337,15 @@ export function AgendaPanelContextProvider({
   })
 
   useHotkeys('ArrowLeft', () => {
+    // Don't allow participants to navigate through the agenda when the event is live
+    if (!isOwner && eventMode === 'present') return
+
     // if curren section is not highlighted, do nothing
     if (!currentSectionId) {
       // if there is a current frame, highlight the section of the current frame
       if (currentFrame) {
         setCurrentSectionId(currentFrame.section_id!)
+        setCurrentFrame(null)
       }
 
       return
@@ -346,6 +359,9 @@ export function AgendaPanelContextProvider({
   })
 
   useHotkeys('ArrowRight', () => {
+    // Don't allow participants to navigate through the agenda when the event is live
+    if (!isOwner && eventMode === 'present') return
+
     // if curren section is not highlighted, do nothing
     if (!currentSectionId) return
     // if current section is highlighted, and it is expanded, do nothing
@@ -367,7 +383,16 @@ export function AgendaPanelContextProvider({
       return [...prev, currentFrame.section_id]
     })
     setCurrentSectionId(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame])
+
+  useEffect(() => {
+    if (overviewOpen) {
+      setCurrentFrame(null)
+      setCurrentSectionId(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [overviewOpen])
 
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
@@ -405,4 +430,14 @@ export function AgendaPanelContextProvider({
   )
 }
 
-export const useAgendaPanel = () => useAgendaPanelContext()
+export const useAgendaPanel = () => {
+  const context = useContext(AgendaPanelContext)
+
+  console.log('context', context)
+
+  if (context === undefined) {
+    throw new Error('useAgendaPanel must be used within a AgendaPanelProvider')
+  }
+
+  return context
+}

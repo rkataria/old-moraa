@@ -16,17 +16,21 @@ import { EventContextType } from '@/types/event-context.type'
 import { ISection, IFrame } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
-export function OverviewFrame() {
+export function SectionOverview() {
   const {
     isOwner,
     sections,
+    currentSectionId,
     showSectionPlaceholder,
     updateFrame,
     updateFrames,
     reorderSection,
     reorderFrame,
-    addSection,
+    setOpenContentTypePicker,
+    setInsertInSectionId,
   } = useContext(EventContext) as EventContextType
+
+  const filteredSections = sections.filter((s) => s.id === currentSectionId)
 
   const changeFrameStatus = (frame: IFrame) => {
     const newState =
@@ -64,9 +68,9 @@ export function OverviewFrame() {
 
   return (
     <div className="flex flex-col flex-1 max-w-5xl m-auto p-4 pt-14">
-      <h2 className="mb-2 font-bold text-xl">Overview</h2>
+      <h2 className="mb-2 font-bold text-xl">Section Overview</h2>
       <div className="flex justify-between items-center mb-4">
-        <h4 className="font-md font-semibold">Agenda Outline</h4>
+        <h4 className="font-md font-semibold">Outline</h4>
         <h4 className="font-md pl-4">Share</h4>
       </div>
       <div className="scrollbar-none overflow-y-auto">
@@ -85,7 +89,7 @@ export function OverviewFrame() {
                 )}
                 ref={sectionDroppableProvided.innerRef}
                 {...sectionDroppableProvided.droppableProps}>
-                {sections.map((section, sectionIndex) => (
+                {filteredSections.map((section, sectionIndex) => (
                   <Draggable
                     key={`section-draggable-${section.id}`}
                     draggableId={`section-draggable-sectionId-${section.id}`}
@@ -244,8 +248,11 @@ export function OverviewFrame() {
           color="primary"
           variant="solid"
           isLoading={showSectionPlaceholder}
-          onClick={() => addSection({ addToLast: true })}>
-          Add Section
+          onClick={() => {
+            setInsertInSectionId(currentSectionId)
+            setOpenContentTypePicker?.(true)
+          }}>
+          Add Frame
         </Button>
       </div>
     </div>

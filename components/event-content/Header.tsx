@@ -138,7 +138,7 @@ export function Header({
   if (!event) return null
 
   return (
-    <div className="h-full p-2 bg-white">
+    <div className="h-full p-2">
       <div className="flex justify-between items-center h-12 w-full">
         <div className="flex justify-start items-center gap-3">
           <Link href="/events">
@@ -148,7 +148,7 @@ export function Header({
           </Link>
           <span className="font-medium">{event?.name}</span>
         </div>
-        <div className="flex justify-start items-center gap-4 bg-white px-2 h-full">
+        <div className="flex justify-start items-center gap-2 px-2 h-full">
           {renderActionButtons()}
           {isOwner && <PreviewSwitcher />}
         </div>

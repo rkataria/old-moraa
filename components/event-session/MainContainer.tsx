@@ -35,8 +35,8 @@ export function MainContainer() {
 
   const currentFrameBgColor =
     presentationStatus === PresentationStatuses.STARTED
-      ? currentFrame?.config?.backgroundColor || '#f3f4f6'
-      : '#f3f4f6'
+      ? currentFrame?.config?.backgroundColor || '#ffffff'
+      : '#ffffff'
 
   if (mainContentRef.current) {
     mainContentRef.current.style.backgroundColor = currentFrameBgColor
@@ -44,7 +44,7 @@ export function MainContainer() {
 
   return (
     <div
-      className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100"
+      className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-white"
       ref={mainContentRef}>
       {/* Sportlight View */}
       {spotlightMode ? (

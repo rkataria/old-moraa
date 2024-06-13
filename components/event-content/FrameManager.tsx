@@ -58,6 +58,8 @@ export function FrameManager() {
     templateType: CANVAS_TEMPLATE_TYPES | undefined
   ) => {
     let currentSection
+    const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
+
     if (insertInSectionId) {
       currentSection = sections.find((s) => s.id === insertInSectionId)
     } else {
@@ -87,7 +89,7 @@ export function FrameManager() {
     addFrameToSection({
       frame: newFrame,
       section: insertInSection,
-      afterFrameId: insertAfterFrameId!,
+      afterFrameId: _insertAfterFrameId!,
     })
     setOpenContentTypePicker(false)
   }
@@ -106,7 +108,7 @@ export function FrameManager() {
         header={<Header event={event} />}
         leftSidebar={<AgendaPanel />}
         rightSidebar={
-          <div className="pl-0 bg-white h-full">
+          <div className="pl-0 h-full">
             <RightSidebar />
           </div>
         }>

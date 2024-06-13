@@ -30,6 +30,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const { currentUser } = useAuth()
   const [sections, setSections] = useState<any[]>([])
   const [currentFrame, setCurrentFrame] = useState<any>(null)
+  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null)
   const [overviewOpen, setOverviewOpen] = useState<any>(false)
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
@@ -569,6 +570,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         meetingId: meeting.id,
       })
     }
+
+    // 5. Set the current frame only when overviews are closed
+    if (!overviewOpen && !currentSectionId) {
+      setCurrentFrame(frameResponse.data)
+    }
   }
 
   const addSection = async ({
@@ -597,9 +603,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
 
     const sectionIds = meeting.sections || []
-    const currentSectionId = currentFrame?.section_id
+    const _currentSectionId = currentFrame?.section_id
 
-    if (currentSectionId && !addToLast && !afterSectionId) {
+    if (_currentSectionId && !addToLast && !afterSectionId) {
       const index = sectionIds.indexOf(currentSectionId)
       sectionIds.splice(index + 1, 0, sectionResponse.data.id)
     } else if (afterSectionId) {
@@ -1101,10 +1107,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         openContentTypePicker,
         setOpenContentTypePicker,
         setPreview,
+        currentSectionId,
         setCurrentFrame: (frame) => {
           setCurrentFrame(frame)
-          setOverviewOpen(false)
+
+          if (frame) setOverviewOpen(false)
         },
+        setCurrentSectionId,
         setOverviewOpen: (open) => {
           setCurrentFrame(null)
           setOverviewOpen(open)

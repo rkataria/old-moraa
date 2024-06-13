@@ -3,19 +3,25 @@ import { useContext } from 'react'
 import { Frame } from './Frame'
 import { FrameControls } from '../common/FrameControls'
 import { OverviewFrame } from '../common/OverviewFrame'
+import { SectionOverview } from '../common/SectionOverview'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { getFrameCount } from '@/utils/utils'
 
 export function FrameContainer() {
-  const { currentFrame, overviewOpen, sections } = useContext(
+  const { currentFrame, overviewOpen, sections, currentSectionId } = useContext(
     EventContext
   ) as EventContextType
 
   // If the overview is open, show the overview frame
   if (overviewOpen) {
     return <OverviewFrame />
+  }
+
+  // If the current section is set, return section overview page
+  if (currentSectionId) {
+    return <SectionOverview />
   }
 
   const frameCount = getFrameCount(sections)
@@ -38,7 +44,7 @@ export function FrameContainer() {
       key={currentFrame.id}
       className="relative w-full h-full"
       style={{
-        backgroundColor: currentFrame.config?.backgroundColor || '#eeeeef',
+        backgroundColor: currentFrame.config?.backgroundColor || '#ffffff',
       }}>
       <Frame frame={currentFrame} />
       <FrameControls />

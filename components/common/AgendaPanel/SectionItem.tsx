@@ -8,6 +8,7 @@ import { Chip } from '@nextui-org/react'
 
 import { FrameList } from './FrameList'
 import { EditableLabel } from '../EditableLabel'
+import { StrictModeDroppable } from '../StrictModeDroppable'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
@@ -30,6 +31,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     setCurrentFrame,
     updateSection,
     eventMode,
+    overviewOpen,
   } = useContext(EventContext) as EventContextType
   const {
     expandedSectionIds,
@@ -64,6 +66,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
 
   const sectionExpanded = expandedSectionIds.includes(section.id)
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
+  const sectionActive = !overviewOpen && currentSectionId === section.id
 
   const renderSectionHeader = () => {
     if (sidebarExpanded) {
@@ -76,7 +79,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
             <EditableLabel
               readOnly={actionDisabled}
               label={section.name}
-              className="text-sm font-semibold cursor-pointer"
+              className="text-sm font-bold cursor-pointer"
               onUpdate={(value: string) => {
                 updateSection({
                   sectionPayload: { name: value },
@@ -109,15 +112,35 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     <div>
       <div
         className={cn(
-          'flex justify-between items-center p-1.5 border-1 border-transparent',
+          'flex justify-between items-center p-1.5 border-2 border-transparent rounded-md',
           {
-            'border-black': currentSectionId === section.id,
+            'border-purple-200 bg-purple-200': sectionActive,
             'justify-center': !sidebarExpanded,
           }
         )}>
         {renderSectionHeader()}
       </div>
-      {sectionExpanded && <FrameList frames={frames} />}
+      <StrictModeDroppable
+        droppableId={`frame-droppable-sectionId-${section.id}`}
+        type="frame">
+        {(frameDroppableProvided, snapshot) => (
+          <div
+            key={`frame-draggable-${section.id}`}
+            ref={frameDroppableProvided.innerRef}
+            className={cn('rounded-sm transition-all w-full', {
+              'bg-gray-50': snapshot.isDraggingOver,
+              // 'cursor-grab': !actionDisabled,
+            })}
+            {...frameDroppableProvided.droppableProps}>
+            {sectionExpanded && (
+              <FrameList
+                frames={frames}
+                droppablePlaceholder={frameDroppableProvided.placeholder}
+              />
+            )}
+          </div>
+        )}
+      </StrictModeDroppable>
     </div>
   )
 }

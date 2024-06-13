@@ -26,7 +26,7 @@ export function MeetingHeader({
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), [])
 
   return (
-    <div className="h-16 px-4 z-[9] border-b-2 border-gray-200 bg-white">
+    <div className="h-16 px-4 z-[9]">
       <MeetingControls
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         rightSidebar={rightSidebarVisiblity as any}

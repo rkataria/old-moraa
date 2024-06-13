@@ -12,8 +12,8 @@ import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
-export const HEADER_HEIGHT = 48
-export const HEADER_HEIGHT_WHEN_MINIMIZED = 104
+export const HEADER_HEIGHT = 56
+export const HEADER_HEIGHT_WHEN_MINIMIZED = 56
 
 export function Header() {
   const { overviewOpen, preview, isOwner, eventMode, setOverviewOpen } =
@@ -38,7 +38,12 @@ export function Header() {
       return (
         <>
           <div
-            className="flex justify-start items-center gap-2 cursor-pointer"
+            className={cn(
+              'flex-auto p-2 rounded-md flex justify-start items-center gap-2 cursor-pointer hover:bg-purple-200',
+              {
+                'bg-purple-200': overviewOpen,
+              }
+            )}
             onClick={handleOverviewClick}>
             <BsBookmarkFill size={18} />
             <span className="font-semibold">Overview</span>
@@ -48,7 +53,7 @@ export function Header() {
               <BsSearch size={18} />
             </Button> */}
             <Button
-              size="sm"
+              size="md"
               variant="flat"
               isIconOnly
               onClick={toggleListDisplayMode}>
@@ -68,7 +73,9 @@ export function Header() {
         <Button
           size="md"
           variant={overviewOpen ? 'flat' : 'light'}
-          className="cursor-pointer"
+          className={cn('cursor-pointer hover:bg-purple-200', {
+            'bg-purple-200': overviewOpen,
+          })}
           isIconOnly
           onClick={handleOverviewClick}>
           <BsBookmarkFill size={18} />
@@ -76,7 +83,7 @@ export function Header() {
         {/* <Button size="md" variant="flat" isIconOnly>
           <BsSearch size={18} />
         </Button> */}
-        <Button
+        {/* <Button
           size="md"
           variant="flat"
           isIconOnly
@@ -86,14 +93,14 @@ export function Header() {
           ) : (
             <BsList size={18} />
           )}
-        </Button>
+        </Button> */}
       </div>
     )
   }
 
   return (
     <div
-      className="flex justify-between items-center px-2"
+      className="flex justify-between items-center gap-2 px-2"
       style={{
         height: `${height}px`,
       }}>
