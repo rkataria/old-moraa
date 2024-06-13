@@ -16,7 +16,7 @@ import {
   Textarea,
 } from '@nextui-org/react'
 
-import type { ISlide, IReflectionResponse } from '@/types/slide.type'
+import type { IFrame, IReflectionResponse } from '@/types/frame.type'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { cn, getAvatarForName } from '@/utils/utils'
@@ -26,6 +26,7 @@ type EditableReflectionCardProps = {
   // reflection: ReflectionState
   // setReflection: (value: ReflectionState) => void
   editEnabled: boolean
+  avatarUrl?: string
   setEditEnabled: (value: boolean) => void
   selfResponse: IReflectionResponse | undefined
 }
@@ -39,13 +40,14 @@ type ReflectionState = {
 export function EditableReflectionCard({
   username,
   editEnabled,
+  avatarUrl,
   setEditEnabled,
   selfResponse,
 }: EditableReflectionCardProps) {
   const defaultAnonymous = selfResponse?.response.anonymous ?? false
   const defaultReflectionValue = selfResponse?.response?.reflection ?? ''
 
-  const { updateTypingUsers, addReflection, updateReflection, currentSlide } =
+  const { updateTypingUsers, addReflection, updateReflection, currentFrame } =
     useEventSession()
   const selfParticipant = useDyteSelector((m) => m.self)
   const [anonymous, setAnonymous] = useState(defaultAnonymous)
@@ -74,7 +76,7 @@ export function EditableReflectionCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedReflection])
 
-  const slide = currentSlide as ISlide
+  const frame = currentFrame as IFrame
 
   const onChangeReflection = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!reflection.isTyping) {
@@ -115,7 +117,7 @@ export function EditableReflectionCard({
             radius="full"
             size="md"
             className="min-w-fit"
-            src={getAvatarForName(username)}
+            src={getAvatarForName(username, avatarUrl)}
           />
           <span className="semibold">{username}</span>
         </div>
@@ -131,10 +133,10 @@ export function EditableReflectionCard({
       <CardFooter>
         <div
           className={cn('flex items-center gap-2 w-full', {
-            'justify-between': slide.config?.allowAnonymously,
-            'justify-end': !slide.config?.allowAnonymously,
+            'justify-between': frame.config?.allowAnonymously,
+            'justify-end': !frame.config?.allowAnonymously,
           })}>
-          {slide.config?.allowAnonymously && (
+          {frame.config?.allowAnonymously && (
             <div>
               <Checkbox
                 isSelected={anonymous}
@@ -151,7 +153,7 @@ export function EditableReflectionCard({
                 removeTyping()
                 if (!selfResponse) {
                   addReflection?.({
-                    slide,
+                    frame,
                     reflection: reflection.value,
                     username,
                     anonymous: anonymous!,

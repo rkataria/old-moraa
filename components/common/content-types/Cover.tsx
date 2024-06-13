@@ -2,21 +2,21 @@
 
 import { RichTextView } from './RichTextView'
 
-import { ISlide, TextBlock } from '@/types/slide.type'
+import { IFrame, TextBlock } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
-export type CoverSlideType = ISlide & {
+export type CoverFrameType = IFrame & {
   content: {
     blocks: TextBlock[]
   }
 }
 
 interface CoverProps {
-  slide: CoverSlideType
+  frame: CoverFrameType
 }
 
-export function Cover({ slide }: CoverProps) {
-  const textBlocks = slide.content.blocks.filter((block) =>
+export function Cover({ frame }: CoverProps) {
+  const textBlocks = frame.content.blocks.filter((block) =>
     ['header', 'paragraph'].includes(block.type)
   ) as TextBlock[]
 
@@ -28,10 +28,10 @@ export function Cover({ slide }: CoverProps) {
         'w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden relative'
       )}>
       {textBlocks.map((block) => {
-        const renderHeader = slide.config.showTitle && block.type === 'header'
+        const renderHeader = frame.config.showTitle && block.type === 'header'
 
         const renderParagraph =
-          slide.config.showDescription && block.type === 'paragraph'
+          frame.config.showDescription && block.type === 'paragraph'
 
         if (!renderHeader && !renderParagraph) return null
 

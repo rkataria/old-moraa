@@ -8,15 +8,15 @@ import { getContentType } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
 
 export function ContentTypeIcon({
-  slideType,
+  frameType,
   classNames,
   tooltipProps = {},
 }: {
-  slideType: ContentType
+  frameType: ContentType
   classNames?: string
   tooltipProps?: TooltipProps
 }) {
-  const contentType = getContentType(slideType)
+  const contentType = getContentType(frameType)
 
   if (!contentType) return null
 

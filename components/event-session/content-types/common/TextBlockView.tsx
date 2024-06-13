@@ -1,4 +1,4 @@
-import { TextBlock } from '@/types/slide.type'
+import { TextBlock } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
 export function TextBlockView({ block }: { block: TextBlock }) {

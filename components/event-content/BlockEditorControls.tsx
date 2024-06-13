@@ -15,6 +15,7 @@ import {
   LuCheckSquare,
   LuCode,
   LuFileImage,
+  LuHighlighter,
   LuItalic,
   LuLink,
   LuList,
@@ -29,6 +30,7 @@ import { MdInvertColors } from 'react-icons/md'
 import {
   Button,
   ButtonProps,
+  Divider,
   Input,
   Popover,
   PopoverContent,
@@ -43,20 +45,12 @@ import { cn, isColorDark } from '@/utils/utils'
 export function BlockEditorControls({
   editor,
   blockType,
-  sticky,
 }: {
   editor: Editor
   blockType: string
-  sticky?: boolean
 }) {
   return (
-    <div
-      className={cn(
-        'flex justify-center items-center gap-2 bg-black bg-opacity-75 p-1 rounded-md text-white z-[1]',
-        {
-          'absolute top-0 left-1/2 -translate-x-1/2': sticky,
-        }
-      )}>
+    <div className="flex items-start gap-2 p-1 rounded-md text-black z-[1]">
       {blockType === 'header' && <HeaderBlockControls editor={editor} />}
       {blockType === 'paragraph' && <ParagraphBlockControls editor={editor} />}
       {blockType === 'richtext' && <RichTextBlockControls editor={editor} />}
@@ -91,7 +85,7 @@ function HeaderBlockControls({ editor }: { editor: Editor }) {
       />
       <ColorPicker
         active={editor.isActive('color')}
-        color={editor.getAttributes('textStyle').color}
+        color={editor.getAttributes('textStyle').color ?? '#fff'}
         onChange={handleColorChange}
       />
     </>
@@ -104,7 +98,7 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
   }
 
   const toggleLink = (link: string) => {
-    editor.chain().focus().toggleLink({ href: link, target: '_blank' }).run()
+    editor.chain().focus().toggleLink({ href: link }).run()
   }
   function renderHeading() {
     const headings = {
@@ -133,19 +127,19 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         <PopoverTrigger>
           <Button
             size="md"
-            className="text-white flex-grow-0 w-auto"
+            className="text-black flex-grow-0 w-auto h-8"
             color="default"
             variant="light">
             {renderHeading()}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="py-3 bg-[#2c3227] w-56">
+        <PopoverContent className="py-3 w-56">
           {() => (
             <div className="flex flex-col gap-2 w-full">
               <Button
                 size="sm"
                 isIconOnly
-                className="text-white flex-grow-0 w-auto"
+                className="text-black flex-grow-0 w-auto"
                 color={
                   editor.isActive('heading', { level: 1 })
                     ? 'primary'
@@ -163,7 +157,7 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
               <Button
                 size="sm"
                 isIconOnly
-                className="text-white flex-grow-0 w-auto"
+                className="text-black flex-grow-0 w-auto"
                 color={
                   editor.isActive('heading', { level: 2 })
                     ? 'primary'
@@ -181,7 +175,7 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
               <Button
                 size="sm"
                 isIconOnly
-                className="text-white flex-grow-0 w-auto"
+                className="text-black flex-grow-0 w-auto"
                 color={
                   editor.isActive('heading', { level: 3 })
                     ? 'primary'
@@ -199,7 +193,7 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
               <Button
                 size="sm"
                 isIconOnly
-                className="text-white flex-grow-0 w-auto"
+                className="text-black flex-grow-0 w-auto"
                 color={
                   editor.isActive('heading', { level: 5 })
                     ? 'primary'
@@ -217,7 +211,7 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
               <Button
                 size="sm"
                 isIconOnly
-                className="text-white flex-grow-0 w-auto"
+                className="text-black flex-grow-0 w-auto"
                 color={editor.isActive('paragraph') ? 'primary' : 'default'}
                 variant={editor.isActive('paragraph') ? 'solid' : 'light'}
                 onClick={() => editor.chain().focus().setParagraph().run()}>
@@ -227,6 +221,7 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
           )}
         </PopoverContent>
       </Popover>
+      <Divider orientation="vertical" className="h-7 w-0.5" />
       <ControlButton
         active={editor.isActive('bold')}
         icon={<LuBold size={18} />}
@@ -251,16 +246,13 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         tooltipText="Strikethrough"
         onClick={() => editor.chain().focus().toggleStrike().run()}
       />
-      <LinkPicker
-        active={editor.isActive('link')}
-        link={editor.getAttributes('link').href}
-        onChange={toggleLink}
+      <ControlButton
+        active={editor.isActive('highlight')}
+        icon={<LuHighlighter size={18} />}
+        tooltipText="Highlight"
+        onClick={() => editor.chain().focus().toggleHighlight().run()}
       />
-      <ColorPicker
-        active={editor.isActive('color')}
-        color={editor.getAttributes('textStyle').color}
-        onChange={handleColorChange}
-      />
+      <Divider orientation="vertical" className="h-7 w-0.5" />
       <ControlButton
         active={editor.isActive({ textAlign: 'left' })}
         icon={<LuAlignLeft size={18} />}
@@ -279,6 +271,8 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         tooltipText="Align right"
         onClick={() => editor.chain().focus().setTextAlign('right').run()}
       />
+      <Divider orientation="vertical" className="h-7 w-0.5" />
+
       <ControlButton
         active={editor.isActive('bulletList')}
         icon={<LuList size={18} />}
@@ -297,6 +291,19 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
         tooltipText="Checklist"
         onClick={() => editor.chain().focus().toggleTaskList().run()}
       />
+      <Divider orientation="vertical" className="h-7 w-0.5" />
+
+      <LinkPicker
+        active={editor.isActive('link')}
+        link={editor.getAttributes('link').href}
+        onChange={toggleLink}
+      />
+      <ColorPicker
+        active={editor.isActive('color')}
+        color={editor.getAttributes('textStyle').color ?? '#fff'}
+        onChange={handleColorChange}
+      />
+
       <ControlButton
         active={false}
         icon={<GoHorizontalRule size={18} />}
@@ -328,12 +335,12 @@ function RichTextBlockControls({ editor }: { editor: Editor }) {
   return (
     <>
       <ParagraphBlockControls editor={editor} />
-      <div className="bg-black">
+      <div>
         <FileUploader
           triggerProps={{
             isIconOnly: true,
-            children: <LuFileImage size={18} className="text-white" />,
-            className: 'bg-black',
+            className: 'text-black flex-grow-0 h-8 bg-transparent',
+            children: <LuFileImage size={18} />,
           }}
           allowedFileTypes={['image', 'image/jpeg', 'image/png']}
           maxNumberOfFiles={1}
@@ -372,8 +379,10 @@ export function ControlButton({
       <Button
         size="sm"
         isIconOnly
-        className="text-white flex-grow-0 "
-        color={active ? 'primary' : 'default'}
+        className={cn('text-black flex-grow-0 ', {
+          'bg-gray-400 text-white': active,
+        })}
+        // color={active ? 'primary' : 'default'}
         variant={active ? 'solid' : 'light'}
         {...props}>
         {icon}
@@ -384,7 +393,7 @@ export function ControlButton({
 
 export function ColorPicker({
   active,
-  color,
+  color = '#000',
   onChange,
 }: {
   active: boolean
@@ -433,15 +442,16 @@ export function LinkPicker({
         <Button
           size="sm"
           isIconOnly
-          title="Insert Link"
-          className="text-white"
-          style={{
-            backgroundColor: 'black',
-          }}
+          className="text-black flex-grow-0 "
           color={active ? 'primary' : 'default'}
           variant={active ? 'solid' : 'light'}>
           <LuLink size={18} />
         </Button>
+        {/* <ControlButton
+          active={active}
+          icon={<LuLink size={18} />}
+          tooltipText="Insert link"
+        /> */}
       </PopoverTrigger>
       <PopoverContent className="p-2 bg-transparent">
         {() => (
@@ -462,7 +472,7 @@ export function LinkPicker({
             <Button
               variant="flat"
               color="primary"
-              className="inline-flex items-center rounded-md text-white bg-gray-600 px-3 py-2 text-center text-sm font-medium hover:bg-gray-700 focus:outline-none "
+              className="inline-flex items-center rounded-md text-black bg-gray-200 px-3 py-2 text-center text-sm font-medium hover:bg-gray-700 focus:outline-none "
               type="submit">
               Add Link
             </Button>

@@ -10,11 +10,11 @@ import {
 } from '@/components/common/ResponsiveVideoPlayer'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 interface VideoEmbedProps {
   // TODO: Implement block pattern
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       videoUrl: string
     }
@@ -23,10 +23,10 @@ interface VideoEmbedProps {
 
 const playerStateChangeEvent = 'video-embed-option-changed'
 
-export function VideoEmbed({ slide }: VideoEmbedProps) {
+export function VideoEmbed({ frame }: VideoEmbedProps) {
   const {
     content: { videoUrl },
-  } = slide
+  } = frame
   const { meeting } = useDyteMeeting()
   const [playerState, setPlayerState] = useState<ResponsiveVideoPlayerState>()
   const { isHost } = useContext(EventSessionContext) as EventSessionContextType

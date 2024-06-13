@@ -13,10 +13,10 @@ import { PageControls } from '@/components/common/PageControls'
 import { EventContext } from '@/contexts/EventContext'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
-export type PDFViewerSlideType = ISlide & {
+export type PDFViewerFrameType = IFrame & {
   content: {
     pdfPath: string
     defaultPage: number
@@ -24,25 +24,25 @@ export type PDFViewerSlideType = ISlide & {
 }
 
 interface PDFViewerProps {
-  slide: PDFViewerSlideType
+  frame: PDFViewerFrameType
   blockPageChange?: boolean
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-export function PDFViewer({ slide, blockPageChange = false }: PDFViewerProps) {
+export function PDFViewer({ frame, blockPageChange = false }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
   const { isOwner } = useContext(EventContext) as EventContextType
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
-    slide.content?.defaultPage || 1
+    frame.content?.defaultPage || 1
   )
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
-      downloadPDFFile(slide.content?.pdfPath).then((data) =>
+      downloadPDFFile(frame.content?.pdfPath).then((data) =>
         getFileObjectFromBlob(
-          slide.content?.pdfPath,
+          frame.content?.pdfPath,
           data.data,
           'application/pdf'
         )
@@ -53,7 +53,7 @@ export function PDFViewer({ slide, blockPageChange = false }: PDFViewerProps) {
   useEffect(() => {
     downloadPDFMutation.mutate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slide.content?.pdfPath])
+  }, [frame.content?.pdfPath])
 
   const handlePositionChange = (newPosition: number) => {
     if (newPosition < 1 || newPosition > totalPages) return

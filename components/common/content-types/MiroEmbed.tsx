@@ -1,20 +1,20 @@
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 interface MiroEmbedProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       boardId: string
     }
   }
 }
 
-export function MiroEmbed({ slide }: MiroEmbedProps) {
+export function MiroEmbed({ frame }: MiroEmbedProps) {
   return (
     <iframe
       title="miro-embed"
       width="100%"
       height="100%"
-      src={`https://miro.com/app/live-embed/${slide.content.boardId}`}
+      src={`https://miro.com/app/live-embed/${frame.content.boardId}`}
       allowFullScreen
     />
   )

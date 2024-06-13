@@ -23,7 +23,8 @@ export interface ClientMessage {
 
 export async function continueConversation(
   input: string,
-  sectionId: string
+  sectionId: string,
+  role: string
 ): Promise<ClientMessage> {
   'use server'
 
@@ -50,7 +51,10 @@ export async function continueConversation(
           topic: z.string().describe('The topic for the poll, e.g., Jupiter'),
         }),
         generate: async function* generate({ topic }) {
-          yield <div>Generating poll for {topic}...</div>
+          if (!['Host', 'Moderator'].includes(role)) {
+            return <div>Operation not permitted</div>
+          }
+          yield <div>Generating a poll! please wait...</div>
           // Assume generatePoll is implemented and returns an object with the structure expected by PollCard
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const poll = await generatePoll(topic, sectionId)

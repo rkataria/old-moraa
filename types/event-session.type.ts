@@ -3,7 +3,7 @@
 import { VideoMiddleware } from '@dytesdk/web-core'
 import { RealtimeChannel } from '@supabase/supabase-js'
 
-import type { IPollResponse, IReflectionResponse, ISlide } from './slide.type'
+import type { IPollResponse, IReflectionResponse, IFrame } from './frame.type'
 import type { EventSessionMode } from '@/contexts/EventSessionContext'
 
 export enum PresentationStatuses {
@@ -22,34 +22,34 @@ export type VideoMiddlewareConfig = {
   currentMiddleware?: VideoMiddleware
 }
 
-export type SlideReaction = {
+export type FrameReaction = {
   id: string
   reaction: string
-  slide_response_id: string
+  frame_response_id: string
   participant_id: string
 }
 
 export type EventSessionContextType = {
   isHost: boolean
-  currentSlide: ISlide | null
+  currentFrame: IFrame | null
   presentationStatus: PresentationStatuses
-  currentSlideLoading: boolean
-  currentSlideResponses?: IReflectionResponse[] | IPollResponse[] | null
+  currentFrameLoading: boolean
+  currentFrameResponses?: IReflectionResponse[] | IPollResponse[] | null
   participant: any
   activeSession: any
   videoMiddlewareConfig: VideoMiddlewareConfig | null
-  slideReactions: SlideReaction[]
+  frameReactions: FrameReaction[]
   realtimeChannel: RealtimeChannel
   eventSessionMode: EventSessionMode
   setEventSessionMode: (mode: EventSessionMode) => void
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void
-  setCurrentSlide: (slide: ISlide) => void
-  nextSlide: () => void
-  previousSlide: () => void
+  setCurrentFrame: (frame: IFrame) => void
+  nextFrame: () => void
+  previousFrame: () => void
   onVote: (
-    slide: ISlide,
+    frame: IFrame,
     {
       selectedOptions,
       anonymous,
@@ -68,12 +68,12 @@ export type EventSessionContextType = {
     }
   ) => void
   addReflection?: ({
-    slide,
+    frame,
     reflection,
     username,
     anonymous,
   }: {
-    slide: ISlide
+    frame: IFrame
     reflection: string
     username: string
     anonymous: boolean
@@ -92,13 +92,13 @@ export type EventSessionContextType = {
   emoteOnReflection?: ({
     participantId,
     reaction,
-    slideResponseId,
+    frameResponseId,
     reactionId,
     action,
   }: {
     participantId: string
     reaction: string
-    slideResponseId?: string
+    frameResponseId?: string
     reactionId?: string
     action: string
   }) => void

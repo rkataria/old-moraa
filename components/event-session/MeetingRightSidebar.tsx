@@ -5,6 +5,7 @@ import { useDyteMeeting } from '@dytesdk/react-web-core'
 
 import { DyteStates } from './MeetingHeader'
 import { AIChat } from '../common/AIChat'
+import { NoteOverlay } from '../common/NotesOverlay'
 
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 
@@ -24,6 +25,10 @@ export function MeetingRightSidebar({
 
   if (rightSidebarVisiblity === 'ai-chat') {
     return <AIChat onClose={() => setRightSidebarVisiblity(null)} />
+  }
+
+  if (rightSidebarVisiblity === 'notes') {
+    return <NoteOverlay onClose={() => setRightSidebarVisiblity(null)} />
   }
 
   return (

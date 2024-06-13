@@ -7,7 +7,7 @@ import {
 } from 'react'
 
 type LeftSidebarVisiblity = 'minimized' | 'maximized'
-type RightSidebarVisiblity = 'ai-chat' | 'slide-settings' | null
+type RightSidebarVisiblity = 'ai-chat' | 'frame-settings' | 'notes' | null
 
 type StudioLayoutContextType = {
   leftSidebarVisiblity: LeftSidebarVisiblity

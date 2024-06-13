@@ -6,15 +6,15 @@ import clsx from 'clsx'
 import isEqual from 'lodash.isequal'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 
-import { SlideText } from './SlideText'
-import { SlideTextBlock } from './SlideTextBlock'
+import { FrameText } from './FrameText'
+import { FrameTextBlock } from './FrameTextBlock'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 interface PollFormProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       question: string
       options: string[]
@@ -22,18 +22,18 @@ interface PollFormProps {
   }
 }
 
-export function PollForm({ slide: slideFromRemote }: PollFormProps) {
+export function PollForm({ frame: frameFromRemote }: PollFormProps) {
   // const [successiveEnterPressCount, setSuccessiveEnterPressCount] = useState(0)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const optionsRef = useRef<any>([])
 
-  const { updateSlide } = useContext(EventContext) as EventContextType
-  // const question = slideFromRemote?.content?.question
+  const { updateFrame } = useContext(EventContext) as EventContextType
+  // const question = frameFromRemote?.content?.question
   // const [question, setQuestion] = useState<string>(
-  //   slideFromRemote.content.question
+  //   frameFromRemote.content.question
   // )
   const [options, setOptions] = useState<string[]>(
-    slideFromRemote.content.options
+    frameFromRemote.content.options
   )
   // const throttledQuestion = useThrottle(question, 500)
   const throttledOptions = useThrottle(options, 500)
@@ -100,32 +100,32 @@ export function PollForm({ slide: slideFromRemote }: PollFormProps) {
   // }
 
   useEffect(() => {
-    if (isEqual(throttledOptions, slideFromRemote.content.options)) {
+    if (isEqual(throttledOptions, frameFromRemote.content.options)) {
       return
     }
 
-    updateSlide({
-      slidePayload: {
+    updateFrame({
+      framePayload: {
         content: {
-          ...slideFromRemote.content,
+          ...frameFromRemote.content,
           // question: throttledQuestion,
           options: throttledOptions,
         },
       },
-      slideId: slideFromRemote.id,
+      frameId: frameFromRemote.id,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [throttledOptions])
 
   return (
     <>
-      <SlideText
+      <FrameText
         type="title"
         className="pl-4"
         disableEnter
         onSuccessiveEnters={focusOnFirstEmptyOption}
       />
-      <SlideTextBlock blockType="paragraph" />
+      <FrameTextBlock blockType="paragraph" />
       <div
         className={clsx(
           'absolute w-full h-auto flex justify-start items-start'

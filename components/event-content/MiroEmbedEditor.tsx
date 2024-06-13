@@ -7,32 +7,32 @@ import { Button, Input } from '@nextui-org/react'
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { EventContext } from '@/contexts/EventContext'
 import { type EventContextType } from '@/types/event-context.type'
-import { type ISlide } from '@/types/slide.type'
+import { type IFrame } from '@/types/frame.type'
 
-export type MiroEmbedSlideType = ISlide & {
+export type MiroEmbedFrameType = IFrame & {
   content: {
     boardId: string
   }
 }
 interface MiroEmbedEditorProps {
-  slide: MiroEmbedSlideType
+  frame: MiroEmbedFrameType
   readOnly?: boolean
 }
 
 export function MiroEmbedEditor({
-  slide,
+  frame,
   readOnly = false,
 }: MiroEmbedEditorProps) {
   const [boardIdentifier, setBoardIdentifier] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
-  const { preview, updateSlide } = useContext(EventContext) as EventContextType
+  const { preview, updateFrame } = useContext(EventContext) as EventContextType
 
   const disabled = preview || readOnly
 
   useEffect(() => {
-    setIsEditMode(!slide.content?.boardId)
-    setBoardIdentifier(slide.content?.boardId || '')
-  }, [slide.content.boardId])
+    setIsEditMode(!frame.content?.boardId)
+    setBoardIdentifier(frame.content?.boardId || '')
+  }, [frame.content.boardId])
 
   function isValidURL(url: string) {
     if (
@@ -68,22 +68,22 @@ export function MiroEmbedEditor({
     const boardId = getBoardId()
     if (!boardId) return
 
-    if (slide.content.boardId === boardId) return
+    if (frame.content.boardId === boardId) return
 
-    updateSlide({
-      slidePayload: {
+    updateFrame({
+      framePayload: {
         content: {
-          ...slide.content,
+          ...frame.content,
           boardId,
         },
       },
-      slideId: slide.id,
+      frameId: frame.id,
     })
     setIsEditMode(false)
   }
 
   if (disabled || !isEditMode) {
-    return <MiroEmbed slide={slide} />
+    return <MiroEmbed frame={frame} />
   }
 
   return (

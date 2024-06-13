@@ -1,16 +1,16 @@
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
-export type SlideStatusType = 'PUBLISHED' | 'DRAFT' | null
+export type FrameStatusType = 'PUBLISHED' | 'DRAFT' | null
 
-export const getFilteredSlidesByStatus = ({
-  slides,
+export const getFilteredFramesByStatus = ({
+  frames,
   status,
 }: {
-  slides: ISlide[]
-  status: SlideStatusType
+  frames: IFrame[]
+  status: FrameStatusType
 }) =>
-  slides.filter((slide) => {
+  frames.filter((frame) => {
     if (!status) return true
 
-    return slide.status === status
+    return frame.status === status
   })

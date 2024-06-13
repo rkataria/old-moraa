@@ -9,7 +9,7 @@ import { ReflectionCard } from './reflection/ReflectionCard'
 import { SelfReflectionCard } from './reflection/SelfReflectionCard'
 import { TypingUsers } from './reflection/TypingUsers'
 
-import type { IReflectionSlide, IReflectionResponse } from '@/types/slide.type'
+import type { IReflectionFrame, IReflectionResponse } from '@/types/frame.type'
 
 import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
 
 interface ReflectionProps {
-  slide: IReflectionSlide
+  frame: IReflectionFrame
 }
 
 const useParticipantName = () => {
@@ -32,7 +32,7 @@ const useParticipantName = () => {
 }
 
 function HostView() {
-  const { currentSlideResponses = [] } = useEventSession()
+  const { currentFrameResponses = [] } = useEventSession()
   const { currentUser: user } = useAuth()
   const { username } = useParticipantName()
   const { meeting: dyteMeeting } = useDyteMeeting()
@@ -40,14 +40,14 @@ function HostView() {
     useBreakoutRooms()
 
   const getResponses = () => {
-    const typedResponses = currentSlideResponses as IReflectionResponse[]
+    const typedResponses = currentFrameResponses as IReflectionResponse[]
     if (isBreakoutActive && isCurrentDyteMeetingInABreakoutRoom) {
       return typedResponses?.filter(
         (r) => r.dyte_meeting_id === dyteMeeting.meta.meetingId
       )
     }
 
-    return currentSlideResponses as IReflectionResponse[]
+    return currentFrameResponses as IReflectionResponse[]
   }
 
   const responses = getResponses()
@@ -64,7 +64,11 @@ function HostView() {
 
   return (
     <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-      <SelfReflectionCard username={username} selfResponse={selfResponse} />
+      <SelfReflectionCard
+        username={username}
+        avatarUrl={user.avatar_url}
+        selfResponse={selfResponse}
+      />
       {otherResponses.map((res) => (
         <ReflectionCard key={res.id} response={res} isOwner={false} />
       ))}
@@ -74,7 +78,7 @@ function HostView() {
 }
 
 function ParticipantView() {
-  const { currentSlideResponses = [] } = useEventSession()
+  const { currentFrameResponses = [] } = useEventSession()
   const { currentUser: user } = useAuth()
   const { username } = useParticipantName()
 
@@ -84,14 +88,14 @@ function ParticipantView() {
     useBreakoutRooms()
 
   const getResponses = () => {
-    const typedResponses = currentSlideResponses as IReflectionResponse[]
+    const typedResponses = currentFrameResponses as IReflectionResponse[]
     if (isBreakoutActive && isCurrentDyteMeetingInABreakoutRoom) {
       return typedResponses?.filter(
         (r) => r.dyte_meeting_id === dyteMeeting.meta.meetingId
       )
     }
 
-    return currentSlideResponses as IReflectionResponse[]
+    return currentFrameResponses as IReflectionResponse[]
   }
 
   const responses = getResponses()
@@ -123,14 +127,14 @@ function ParticipantView() {
   )
 }
 
-export function Reflection({ slide }: ReflectionProps) {
+export function Reflection({ frame }: ReflectionProps) {
   const { isHost } = useEventSession()
 
   return (
     <div
       className="w-full flex justify-center items-start"
       style={{
-        backgroundColor: slide.content.backgroundColor,
+        backgroundColor: frame.content.backgroundColor,
       }}>
       <div className="w-4/5 mt-2 rounded-md relative">
         {/* <div className="w-full flex justify-center">
@@ -142,9 +146,9 @@ export function Reflection({ slide }: ReflectionProps) {
         </div> */}
 
         <div className="p-4">
-          {/* <SlideTitle
-            textColor={slide.content.textColor}
-            title={slide.content.title}
+          {/* <FrameTitle
+            textColor={frame.content.textColor}
+            title={frame.content.title}
           /> */}
           {isHost ? <HostView /> : <ParticipantView />}
         </div>

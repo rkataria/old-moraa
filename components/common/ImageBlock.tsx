@@ -6,14 +6,14 @@ import { FileUploader } from '../event-content/FileUploader'
 import { cn } from '@/utils/utils'
 
 export function ImageBlock({
-  slideId,
+  frameId,
   imageRef,
   imageBlocks,
   fileUploaderOpen,
   setFileUploaderOpen,
   onFileUpload,
 }: {
-  slideId: string
+  frameId: string
   imageRef: React.RefObject<HTMLImageElement>
   imageBlocks: { data: { file: { url: string } } } | undefined
   fileUploaderOpen: boolean
@@ -50,7 +50,7 @@ export function ImageBlock({
         <FileUploader
           maxNumberOfFiles={1}
           allowedFileTypes={['.jpg', '.jpeg', '.png']}
-          folderName={slideId}
+          folderName={frameId}
           triggerProps={{
             children: 'Upload Image',
             variant: 'flat',

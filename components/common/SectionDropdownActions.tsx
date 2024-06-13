@@ -9,7 +9,7 @@ import { DropdownActions } from './DropdownActions'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { ISection } from '@/types/slide.type'
+import { ISection } from '@/types/frame.type'
 
 const sectionDropdownActions = [
   {

@@ -6,15 +6,15 @@ import { LuLayers } from 'react-icons/lu'
 
 import { Chip } from '@nextui-org/react'
 
-import { SlideList } from './SlideList'
+import { FrameList } from './FrameList'
 import { EditableLabel } from '../EditableLabel'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
-import { ISection } from '@/types/slide.type'
-import { getFilteredSlidesByStatus } from '@/utils/event.util'
+import { ISection } from '@/types/frame.type'
+import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
 type SectionItemProps = {
@@ -25,9 +25,9 @@ type SectionItemProps = {
 export function SectionItem({ section, actionDisabled }: SectionItemProps) {
   const {
     isOwner,
-    setInsertAfterSlideId,
+    setInsertAfterFrameId,
     setInsertInSectionId,
-    setCurrentSlide,
+    setCurrentFrame,
     updateSection,
     eventMode,
   } = useContext(EventContext) as EventContextType
@@ -39,8 +39,8 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
   } = useAgendaPanel()
   const { leftSidebarVisiblity } = useStudioLayout()
 
-  const slides = getFilteredSlidesByStatus({
-    slides: section.slides,
+  const frames = getFilteredFramesByStatus({
+    frames: section.frames,
     status: isOwner && eventMode !== 'present' ? null : 'PUBLISHED',
   })
 
@@ -48,14 +48,14 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     const isSectionExpanded = expandedSectionIds.includes(section.id)
 
     setInsertInSectionId(section.id)
-    setInsertAfterSlideId(null)
+    setInsertAfterFrameId(null)
 
     toggleExpandedSection(section.id)
 
     if (!isSectionExpanded) {
-      const firstSlide = section.slides[0]
-      if (firstSlide) {
-        setCurrentSlide(firstSlide)
+      const firstFrame = section.frames[0]
+      if (firstFrame) {
+        setCurrentFrame(firstFrame)
       }
     } else {
       setCurrentSectionId(section.id)
@@ -89,7 +89,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
             <Chip
               size="sm"
               className="aspect-square flex justify-center items-center">
-              {slides.length}
+              {frames.length}
             </Chip>
           </span>
         </>
@@ -117,7 +117,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
         )}>
         {renderSectionHeader()}
       </div>
-      {sectionExpanded && <SlideList slides={slides} />}
+      {sectionExpanded && <FrameList frames={frames} />}
     </div>
   )
 }

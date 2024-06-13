@@ -4,8 +4,8 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { getNextSlide, getPreviousSlide } from '@/utils/event-session.utils'
-import { getFilteredSlidesByStatus } from '@/utils/event.util'
+import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
+import { getFilteredFramesByStatus } from '@/utils/event.util'
 
 type ListDisplayMode = 'list' | 'grid'
 
@@ -36,7 +36,7 @@ export const useAgendaPanelContext = () => useContext(AgendaPanelContext)
 export function AgendaPanelContextProvider({
   children,
 }: React.PropsWithChildren<object>) {
-  const { sections, currentSlide, isOwner, eventMode, setCurrentSlide } =
+  const { sections, currentFrame, isOwner, eventMode, setCurrentFrame } =
     useContext(EventContext) as EventContextType
   const [expandedSectionIds, setExpandedSectionIds] = useState<string[]>([])
   const [currentSectionId, setCurrentSectionId] = useState<string | null>(null)
@@ -48,33 +48,33 @@ export function AgendaPanelContextProvider({
   useHotkeys('l', () => setListDisplayMode('list'), [])
   useHotkeys('g', () => setListDisplayMode('grid'), [])
 
-  const previousSlide = useMemo(
+  const previousFrame = useMemo(
     () =>
-      getPreviousSlide({
+      getPreviousFrame({
         sections,
-        currentSlide,
+        currentFrame,
         onlyPublished: !isOwner && eventMode !== 'present',
       }),
-    [sections, currentSlide, isOwner, eventMode]
+    [sections, currentFrame, isOwner, eventMode]
   )
-  const nextSlide = useMemo(
+  const nextFrame = useMemo(
     () =>
-      getNextSlide({
+      getNextFrame({
         sections,
-        currentSlide,
+        currentFrame,
         onlyPublished: !isOwner && eventMode !== 'present',
       }),
-    [sections, currentSlide, isOwner, eventMode]
+    [sections, currentFrame, isOwner, eventMode]
   )
 
   const getNextSection = () => {
     if (!currentSectionId) {
-      if (!currentSlide) {
+      if (!currentFrame) {
         return sections?.[0]
       }
 
       const currentSection = sections.find(
-        (s) => s.id === currentSlide.section_id
+        (s) => s.id === currentFrame.section_id
       )
 
       if (!currentSection) return null
@@ -97,13 +97,13 @@ export function AgendaPanelContextProvider({
     return sections[currentIndex - 1]
   }
 
-  const getSectionSlides = (sectionId: string) => {
+  const getSectionFrames = (sectionId: string) => {
     const section = sections.find((s) => s.id === sectionId)
 
     if (!section) return []
 
-    return getFilteredSlidesByStatus({
-      slides: section.slides,
+    return getFilteredFramesByStatus({
+      frames: section.frames,
       status: isOwner && eventMode !== 'present' ? null : 'PUBLISHED',
     })
   }
@@ -113,53 +113,53 @@ export function AgendaPanelContextProvider({
 
     // 1. Current Section is not highlighted
     if (!currentSectionId) {
-      // 1.1 if current slide is not set, highlight the last section
-      if (!currentSlide) {
+      // 1.1 if current frame is not set, highlight the last section
+      if (!currentFrame) {
         setCurrentSectionId(sections[sections.length - 1].id)
 
         return
       }
 
-      // 1.1a if current slide is set, and it is first slide of the section, highlight the section of the current slide
+      // 1.1a if current frame is set, and it is first frame of the section, highlight the section of the current frame
       const currentSection = sections.find(
-        (s) => s.id === currentSlide.section_id
+        (s) => s.id === currentFrame.section_id
       )
-      const currentSectionSlides = currentSection
-        ? getSectionSlides(currentSection.id)
+      const currentSectionFrames = currentSection
+        ? getSectionFrames(currentSection.id)
         : []
-      const isCurrentSlideFirst = currentSectionSlides[0].id === currentSlide.id
-      if (isCurrentSlideFirst) {
-        setCurrentSectionId(currentSlide.section_id as string)
+      const isCurrentFrameFirst = currentSectionFrames[0].id === currentFrame.id
+      if (isCurrentFrameFirst) {
+        setCurrentSectionId(currentFrame.section_id as string)
 
         return
       }
 
-      // 1.2 if current slide is set, and there is a previous slide from same section, move to the previous slide
+      // 1.2 if current frame is set, and there is a previous frame from same section, move to the previous frame
       if (
-        previousSlide &&
-        currentSlide.section_id === previousSlide.section_id
+        previousFrame &&
+        currentFrame.section_id === previousFrame.section_id
       ) {
-        setCurrentSlide(previousSlide)
+        setCurrentFrame(previousFrame)
 
         return
       }
 
-      // 1.3 if current slide is set, and the previous slide is from different section, and the section is not expanded, highlight the previous section
+      // 1.3 if current frame is set, and the previous frame is from different section, and the section is not expanded, highlight the previous section
       if (
-        previousSlide &&
-        currentSlide.section_id !== previousSlide.section_id &&
-        !expandedSectionIds.includes(previousSlide.section_id!)
+        previousFrame &&
+        currentFrame.section_id !== previousFrame.section_id &&
+        !expandedSectionIds.includes(previousFrame.section_id!)
       ) {
         setCurrentSectionId(previousSection?.id as string)
       }
 
-      // 1.3 if current slide is set, and the previous slide is from different section, and the section is expanded, move to previous slide
+      // 1.3 if current frame is set, and the previous frame is from different section, and the section is expanded, move to previous frame
       if (
-        previousSlide &&
-        currentSlide.section_id !== previousSlide.section_id &&
-        expandedSectionIds.includes(previousSlide.section_id!)
+        previousFrame &&
+        currentFrame.section_id !== previousFrame.section_id &&
+        expandedSectionIds.includes(previousFrame.section_id!)
       ) {
-        setCurrentSlide(previousSlide)
+        setCurrentFrame(previousFrame)
       }
     } else {
       // 2. Current Section is highlighted
@@ -177,51 +177,51 @@ export function AgendaPanelContextProvider({
         return
       }
 
-      // 2.3 if previous section exists, and previous section is expanded and previous section doesn't have slides, collapse the previous section
+      // 2.3 if previous section exists, and previous section is expanded and previous section doesn't have frames, collapse the previous section
       if (
         previousSection &&
         expandedSectionIds.includes(previousSection.id as string) &&
-        getSectionSlides(previousSection.id as string).length === 0
+        getSectionFrames(previousSection.id as string).length === 0
       ) {
         toggleExpandedSection(previousSection.id as string)
 
         return
       }
 
-      // 2.4 if previous section exists, and previous section is expanded and previous section has slides, move to the last slide in the previous section
+      // 2.4 if previous section exists, and previous section is expanded and previous section has frames, move to the last frame in the previous section
       if (
         previousSection &&
         expandedSectionIds.includes(previousSection.id as string) &&
-        getSectionSlides(previousSection.id as string).length > 0
+        getSectionFrames(previousSection.id as string).length > 0
       ) {
-        const lastSlide = getSectionSlides(previousSection.id as string).slice(
+        const lastFrame = getSectionFrames(previousSection.id as string).slice(
           -1
         )[0]
 
         setCurrentSectionId(null)
-        setCurrentSlide(lastSlide)
+        setCurrentFrame(lastFrame)
       }
     }
 
     // console.log('previousSection', currentSectionId, previousSection?.id)
 
-    // if (previousSlide) {
-    //   // if previous slide is in the same section, just move to the previous slide
-    //   if (currentSlide?.section_id === previousSlide.section_id) {
-    //     setCurrentSlide(previousSlide)
+    // if (previousFrame) {
+    //   // if previous frame is in the same section, just move to the previous frame
+    //   if (currentFrame?.section_id === previousFrame.section_id) {
+    //     setCurrentFrame(previousFrame)
 
     //     return
     //   }
 
-    //   // if previous slide is in a different section, and the section is expanded, move to the last slide in the section
-    //   if (expandedSectionIds.includes(previousSlide.section_id!)) {
+    //   // if previous frame is in a different section, and the section is expanded, move to the last frame in the section
+    //   if (expandedSectionIds.includes(previousFrame.section_id!)) {
     //     setCurrentSectionId(null)
-    //     setCurrentSlide(previousSlide)
+    //     setCurrentFrame(previousFrame)
 
     //     return
     //   }
 
-    //   // if previous slide is in a different section, and the section is not expanded, highlight the section
+    //   // if previous frame is in a different section, and the section is not expanded, highlight the section
     //   setCurrentSectionId(previousSection?.id as string)
     // }
   })
@@ -231,30 +231,30 @@ export function AgendaPanelContextProvider({
 
     // 1. Current Section is not highlighted
     if (!currentSectionId) {
-      // 1.1 if current slide is not set, highlight the first section
-      if (!currentSlide) {
+      // 1.1 if current frame is not set, highlight the first section
+      if (!currentFrame) {
         setCurrentSectionId(sections[0].id)
 
         return
       }
 
-      // 1.2 if current slide is set, and there is a next slide from same section, move to the next slide
-      if (nextSlide && currentSlide.section_id === nextSlide.section_id) {
-        setCurrentSlide(nextSlide)
+      // 1.2 if current frame is set, and there is a next frame from same section, move to the next frame
+      if (nextFrame && currentFrame.section_id === nextFrame.section_id) {
+        setCurrentFrame(nextFrame)
         setCurrentSectionId(null)
 
         return
       }
 
-      // 1.3 if current slide is set, and next slide is in a different section, highlight the next section
-      if (nextSlide && currentSlide.section_id !== nextSlide.section_id) {
+      // 1.3 if current frame is set, and next frame is in a different section, highlight the next section
+      if (nextFrame && currentFrame.section_id !== nextFrame.section_id) {
         setCurrentSectionId(nextSection?.id as string)
 
         return
       }
 
-      // 1.4 if current slide is set, and there is no next slide, highlight the next section
-      if (!nextSlide) {
+      // 1.4 if current frame is set, and there is no next frame, highlight the next section
+      if (!nextFrame) {
         setCurrentSectionId(nextSection?.id as string)
       }
     } else {
@@ -265,21 +265,21 @@ export function AgendaPanelContextProvider({
         return
       }
 
-      // 2.2 if next section does not exist, and current section is expanded, and there is no slide, do nothing
+      // 2.2 if next section does not exist, and current section is expanded, and there is no frame, do nothing
       if (
         !nextSection &&
         expandedSectionIds.includes(currentSectionId) &&
-        getSectionSlides(currentSectionId).length === 0
+        getSectionFrames(currentSectionId).length === 0
       ) {
         return
       }
 
-      // 2.3 if next section does not exist, and current section is expanded, and there is a slide, move to the first slide
+      // 2.3 if next section does not exist, and current section is expanded, and there is a frame, move to the first frame
       if (!nextSection && expandedSectionIds.includes(currentSectionId)) {
-        const firstSlide = getSectionSlides(currentSectionId)[0]
+        const firstFrame = getSectionFrames(currentSectionId)[0]
 
         setCurrentSectionId(null)
-        setCurrentSlide(firstSlide)
+        setCurrentFrame(firstFrame)
 
         return
       }
@@ -291,11 +291,11 @@ export function AgendaPanelContextProvider({
         return
       }
 
-      // 2.5 if next section exists, and current section is expanded, and there is no slide, collapse the current section and highlight the next section
+      // 2.5 if next section exists, and current section is expanded, and there is no frame, collapse the current section and highlight the next section
       if (
         nextSection &&
         expandedSectionIds.includes(currentSectionId) &&
-        getSectionSlides(currentSectionId).length === 0
+        getSectionFrames(currentSectionId).length === 0
       ) {
         toggleExpandedSection(currentSectionId)
         setCurrentSectionId(nextSection.id)
@@ -303,24 +303,24 @@ export function AgendaPanelContextProvider({
         return
       }
 
-      // 2.6 if next section exists or not, and current section is expanded, and there are slides in current section, next slide is in current section, move to the next slide in the current section
+      // 2.6 if next section exists or not, and current section is expanded, and there are frames in current section, next frame is in current section, move to the next frame in the current section
       if (
         expandedSectionIds.includes(currentSectionId) &&
-        nextSlide?.section_id === currentSectionId
+        nextFrame?.section_id === currentSectionId
       ) {
         setCurrentSectionId(null)
-        setCurrentSlide(nextSlide)
+        setCurrentFrame(nextFrame)
       }
 
-      // 2.7 if next section exists or not, and current section is expanded, and there are slides in current section, next slide is in different section, highlight the first slide in the current section
+      // 2.7 if next section exists or not, and current section is expanded, and there are frames in current section, next frame is in different section, highlight the first frame in the current section
       if (
         expandedSectionIds.includes(currentSectionId) &&
-        nextSlide?.section_id !== currentSectionId
+        nextFrame?.section_id !== currentSectionId
       ) {
-        const firstSlide = getSectionSlides(currentSectionId)[0]
+        const firstFrame = getSectionFrames(currentSectionId)[0]
 
         setCurrentSectionId(null)
-        setCurrentSlide(firstSlide)
+        setCurrentFrame(firstFrame)
       }
     }
   })
@@ -328,9 +328,9 @@ export function AgendaPanelContextProvider({
   useHotkeys('ArrowLeft', () => {
     // if curren section is not highlighted, do nothing
     if (!currentSectionId) {
-      // if there is a current slide, highlight the section of the current slide
-      if (currentSlide) {
-        setCurrentSectionId(currentSlide.section_id!)
+      // if there is a current frame, highlight the section of the current frame
+      if (currentFrame) {
+        setCurrentSectionId(currentFrame.section_id!)
       }
 
       return
@@ -353,19 +353,19 @@ export function AgendaPanelContextProvider({
   })
 
   useEffect(() => {
-    if (!currentSlide) return
+    if (!currentFrame) return
 
     setExpandedSectionIds((prev) => {
-      if (!currentSlide.section_id) return prev
+      if (!currentFrame.section_id) return prev
 
-      if (prev.includes(currentSlide.section_id)) {
+      if (prev.includes(currentFrame.section_id)) {
         return prev
       }
 
-      return [...prev, currentSlide.section_id]
+      return [...prev, currentFrame.section_id]
     })
     setCurrentSectionId(null)
-  }, [currentSlide])
+  }, [currentFrame])
 
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)

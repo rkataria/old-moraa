@@ -14,6 +14,7 @@ import { LobbyViewToggle } from './LobbyViewToggle'
 import { MediaSettingsToggle } from './MediaSettingsToggle'
 import { type RightSiderbar } from './MeetingScreen'
 import { MicToggle } from './MicToggle'
+import { NotesToggle } from './NotesToggle'
 import { ParticipantsToggle } from './ParticipantsToggle'
 import { PresentationToggle } from './PresentationToggle'
 import { RaiseHandToggle } from './RaiseHandToggle'
@@ -39,6 +40,7 @@ type MeetingControlsProps = {
   onAiChatOverlayToggle: () => void
   dyteStates: any
   setDyteStates: any
+  onNoteOverlayToggle: () => void
 }
 
 export function MeetingControls({
@@ -48,6 +50,7 @@ export function MeetingControls({
   onAiChatOverlayToggle,
   dyteStates,
   setDyteStates,
+  onNoteOverlayToggle,
 }: MeetingControlsProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
@@ -100,6 +103,12 @@ export function MeetingControls({
             })
           }}
         />
+        {isHost && (
+          <NotesToggle
+            isNotesSidebarOpen={rightSidebar === 'notes'}
+            onClick={onNoteOverlayToggle}
+          />
+        )}
         <ChatsToggle
           isChatsSidebarOpen={rightSidebar === 'chat'}
           onClick={() => {

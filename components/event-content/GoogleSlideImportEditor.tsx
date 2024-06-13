@@ -10,18 +10,18 @@ import { ContentLoading } from '../common/ContentLoading'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 
 interface GoogleSlidesImportEditorProps {
-  slide: ISlide
+  frame: IFrame
 }
 
 export function GoogleSlidesImportEditor({
-  slide,
+  frame,
 }: GoogleSlidesImportEditorProps) {
-  const content: Record<string, unknown> = slide.content ?? {}
+  const content: Record<string, unknown> = frame.content ?? {}
 
-  const [slideLink, setSlideLink] = useState(
+  const [googleSlideUrl, setGoogleSlideUrl] = useState(
     (content.googleSlideURL as string | undefined) || ''
   )
   const [startPosition, setStartPosition] = useState<number>(
@@ -35,16 +35,16 @@ export function GoogleSlidesImportEditor({
   ) as EventContextType
 
   useEffect(() => {
-    if (error?.slideId === slide.id) {
+    if (error?.frameId === frame.id) {
       setIsError(true)
       setIsEditMode(true)
     }
-  }, [error, slide])
+  }, [error, frame])
 
   const handleImportGoogleSlides = () => {
     importGoogleSlides({
-      slide,
-      googleSlideUrl: slideLink,
+      frame,
+      googleSlideUrl,
       startPosition,
       endPosition,
     })
@@ -53,7 +53,7 @@ export function GoogleSlidesImportEditor({
 
   if (!isEditMode) {
     return (
-      <ContentLoading message="Please wait while we are importing slides. This may take a few minutes!" />
+      <ContentLoading message="Please wait while we are importing frames. This may take a few minutes!" />
     )
   }
 
@@ -61,12 +61,12 @@ export function GoogleSlidesImportEditor({
     <div className="flex justify-center">
       <div className="flex items-center justify-center flex-col mt-4">
         <div>
-          <p>Google slide URL</p>
+          <p>Google Slides URL</p>
           <Input
             className="w-96 outline-none mb-4"
-            placeholder="Enter Google slide URL"
-            onChange={(e) => setSlideLink(e.target.value)}
-            value={slideLink}
+            placeholder="Enter Google Slide URL"
+            onChange={(e) => setGoogleSlideUrl(e.target.value)}
+            value={googleSlideUrl}
           />
         </div>
         <div>

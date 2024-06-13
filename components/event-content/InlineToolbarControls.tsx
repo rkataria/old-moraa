@@ -46,7 +46,7 @@ export function InlineTableControls({ editor }: { editor: Editor }) {
 
 function TableControls({ editor }: { editor: Editor }) {
   return (
-    <div className="flex justify-center items-center gap-2 bg-black bg-opacity-75 p-2 rounded-md text-white transition-all duration-500 z-[1]">
+    <div className="flex justify-center items-center gap-2 shadow-md bg-gray-100 p-2 rounded-md text-black transition-all duration-500 z-[1]">
       <ControlButton
         icon={<LuListPlus size={18} />}
         tooltipText="Add row after"
@@ -95,7 +95,7 @@ function InlineTextControls({ editor }: { editor: Editor }) {
   }
 
   return (
-    <div className="flex justify-center items-center gap-2 bg-black bg-opacity-75 p-2 rounded-md text-white transition-all duration-500 z-[1]">
+    <div className="flex justify-center items-center gap-2 shadow-md bg-gray-100 p-2 rounded-md text-black transition-all duration-500 z-[1]">
       <ControlButton
         active={editor.isActive('bold')}
         icon={<LuBold size={18} />}
@@ -122,7 +122,7 @@ function InlineTextControls({ editor }: { editor: Editor }) {
       />
       <ColorPicker
         active={editor.isActive('color')}
-        color={editor.getAttributes('textStyle').color}
+        color={editor.getAttributes('textStyle').color ?? '#fff'}
         onChange={handleColorChange}
       />
     </div>
@@ -137,7 +137,7 @@ function HeaderControls({
   handleColorChange: (color: string) => void
 }) {
   return (
-    <div className="flex justify-center items-center gap-2 bg-black bg-opacity-75 p-2 rounded-md text-white transition-all duration-500 z-[1]">
+    <div className="flex justify-center items-center gap-2 shadow-md bg-gray-100 p-2 rounded-md text-black transition-all duration-500 z-[1]">
       <ControlButton
         active={editor.isActive({ textAlign: 'left' })}
         icon={<LuAlignLeft size={18} />}
@@ -158,7 +158,7 @@ function HeaderControls({
       />
       <ColorPicker
         active={editor.isActive('color')}
-        color={editor.getAttributes('textStyle').color}
+        color={editor.getAttributes('textStyle').color ?? '#fff'}
         onChange={handleColorChange}
       />
     </div>

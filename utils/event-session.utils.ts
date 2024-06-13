@@ -1,70 +1,90 @@
-import { ISection, ISlide } from '@/types/slide.type'
+import { getFilteredFramesByStatus } from './event.util'
 
-export const getPreviousSlide = ({
+import { ISection, IFrame } from '@/types/frame.type'
+
+export const getPreviousFrame = ({
   sections,
-  currentSlide,
+  currentFrame,
   onlyPublished = false,
 }: {
   sections: ISection[]
-  currentSlide: ISlide | null
+  currentFrame: IFrame | null
   onlyPublished?: boolean
 }) => {
-  if (!currentSlide) return sections[0]?.slides[0]
+  if (!currentFrame) {
+    if (!currentFrame) {
+      const frames = getFilteredFramesByStatus({
+        frames: sections.flatMap((section) => section.frames ?? []),
+        status: onlyPublished ? 'PUBLISHED' : null,
+      })
 
-  const section = sections.find((s) => s.id === currentSlide.section_id)
-  if (!section) return sections[0].slides[0]
+      return frames.at(-1)
+    }
+  }
 
-  const currentSlideIndex = section.slides.findIndex(
-    (slide) =>
-      slide.id === currentSlide.id &&
-      (!onlyPublished || slide.status === 'PUBLISHED')
+  const section = sections.find((s) => s.id === currentFrame.section_id)
+
+  if (!section) return null
+
+  const currentFrameIndex = section.frames.findIndex(
+    (frame) =>
+      frame.id === currentFrame.id &&
+      (!onlyPublished || frame.status === 'PUBLISHED')
   )
 
-  if (currentSlideIndex > 0) {
-    return section.slides[currentSlideIndex - 1]
+  if (currentFrameIndex > 0) {
+    return section.frames[currentFrameIndex - 1]
   }
 
   const sectionIndex = sections.findIndex((s) => s.id === section.id)
 
   if (sectionIndex > 0) {
-    const previousSectionSlides = sections[sectionIndex - 1].slides
+    const previousSectionFrames = sections[sectionIndex - 1].frames
 
-    return previousSectionSlides[previousSectionSlides.length - 1]
+    return previousSectionFrames[previousSectionFrames.length - 1]
   }
 
   return null
 }
 
-export const getNextSlide = ({
-  sections,
-  currentSlide,
+export const getNextFrame = ({
+  sections = [],
+  currentFrame,
   onlyPublished = false,
 }: {
   sections: ISection[]
-  currentSlide: ISlide | null
+  currentFrame: IFrame | null
   onlyPublished?: boolean
 }) => {
-  if (!currentSlide) return sections[0]?.slides[0]
+  if (!currentFrame) {
+    const frames = getFilteredFramesByStatus({
+      frames: sections.flatMap((section) => section.frames ?? []),
+      status: onlyPublished ? 'PUBLISHED' : null,
+    })
 
-  const section = sections.find((s) => s.id === currentSlide.section_id)
-  if (!section) return sections[0].slides[0]
+    return frames?.[0]
+  }
 
-  const currentSectionSlides = section.slides
+  const section = sections.find((s) => s.id === currentFrame.section_id)
 
-  const currentSlideIndex = currentSectionSlides.findIndex(
-    (slide) =>
-      slide.id === currentSlide.id &&
-      (!onlyPublished || slide.status === 'PUBLISHED')
+  if (!section) return null
+
+  const currentSectionFrames = section.frames
+
+  const currentFrameIndex = currentSectionFrames.findIndex(
+    (frame) =>
+      frame.id === currentFrame.id &&
+      (!onlyPublished || frame.status === 'PUBLISHED')
   )
 
-  if (currentSlideIndex < currentSectionSlides.length - 1) {
-    return currentSectionSlides[currentSlideIndex + 1]
+  if (currentFrameIndex < currentSectionFrames.length - 1) {
+    return currentSectionFrames[currentFrameIndex + 1]
   }
 
   const sectionIndex = sections.findIndex((s) => s.id === section.id)
 
   if (sectionIndex < sections.length - 1) {
-    return (sections[sectionIndex + 1].slides ?? [])[0]
+    return (sections[sectionIndex + 1].frames ?? [])[0]
   }
 
   return null

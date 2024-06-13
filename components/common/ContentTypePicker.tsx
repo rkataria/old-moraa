@@ -47,7 +47,7 @@ export enum ContentType {
   RICH_TEXT = 'Rich Text',
   MORAA_BOARD = 'Moraa Board',
 }
-export const INTERACTIVE_SLIDE_TYPES = [
+export const INTERACTIVE_FRAME_TYPES = [
   ContentType.POLL,
   ContentType.REFLECTION,
 ]
@@ -70,14 +70,14 @@ export const contentTypes: IContentType[] = [
   {
     name: 'Title Description',
     icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
-    description: 'Create a slide with title and description',
+    description: 'Create a frame with title and description',
     contentType: ContentType.CANVAS,
     templateType: CANVAS_TEMPLATE_TYPES.TEMPLATE_ONE,
   },
   {
     name: 'Title Image',
     icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
-    description: 'Create a slide with title and image',
+    description: 'Create a frame with title and image',
     contentType: ContentType.CANVAS,
     templateType: CANVAS_TEMPLATE_TYPES.TEMPLATE_TWO,
   },
@@ -91,7 +91,7 @@ export const contentTypes: IContentType[] = [
   {
     name: 'Text & Image',
     icon: <IconLayout className="w-full h-full max-w-11 max-h-11" />,
-    description: 'Combine text and image to create a visually appealing slide',
+    description: 'Combine text and image to create a visually appealing frame',
     contentType: ContentType.TEXT_IMAGE,
   },
   {
@@ -103,9 +103,9 @@ export const contentTypes: IContentType[] = [
   // {
   //   name: 'Image',
   //   icon: <IconPhoto className="w-full h-full max-w-11 max-h-11" />,
-  //   description: 'Upload and display images on your slides',
+  //   description: 'Upload and display images on your frames',
   //   contentType: ContentType.IMAGE_VIEWER,
-  //   disabled: true, // TODO: Enable this slide when Image Viewer Slide is implemented
+  //   disabled: true, // TODO: Enable this frame when Image Viewer Frame is implemented
   // },
   {
     name: 'Video',
@@ -158,7 +158,7 @@ export const contentTypes: IContentType[] = [
   {
     name: 'Import PDF',
     icon: <IconBrandAdobe className="w-full h-full max-w-11 max-h-11" />,
-    description: 'Upload and integrate your PDF content as a multi-page slide!',
+    description: 'Upload and integrate your PDF content as a multi-page frame!',
     contentType: ContentType.PDF_VIEWER,
   },
 ]
@@ -186,10 +186,10 @@ export function ContentTypePicker({
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-semibold text-xl text-black">
-                    Gallery of static and interactive content slides
+                    Gallery of static and interactive content frames
                   </h3>
                   <p className="text-sm text-black-200 font-normal ">
-                    Choose the type of slide you want to add to your event
+                    Choose the type of frame you want to add to your event
                   </p>
                 </div>
               </div>

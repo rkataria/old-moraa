@@ -5,18 +5,18 @@ import { RxCross1 } from 'react-icons/rx'
 
 import { Button } from '@nextui-org/react'
 
-import { PDFSlideSettings } from './PDFSlideSettings'
-import { CommonSlideSettings } from '../common/CommonSlideSettings'
-import { MoraaBoardSlideSettings } from '../common/MoraaBoardSlideSettings'
-import { PollSlideSettings } from '../common/PollSlideSettings'
-import { ReflectionSlideSettings } from '../common/ReflectionSlideSettings'
-import { TextImageSlideSettings } from '../common/TextImageSlideSettings'
+import { PDFFrameSettings } from './PDFFrameSettings'
+import { CommonFrameSettings } from '../common/CommonFrameSettings'
+import { MoraaBoardFrameSettings } from '../common/MoraaBoardFrameSettings'
+import { PollFrameSettings } from '../common/PollFrameSettings'
+import { ReflectionFrameSettings } from '../common/ReflectionFrameSettings'
+import { TextImageFrameSettings } from '../common/TextImageFrameSettings'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
-interface ISlideSetting {
+interface IFrameSetting {
   settingsEnabled: boolean
   onClose: () => void
 }
@@ -53,7 +53,7 @@ function SettingsWrapper({
   )
 }
 
-export function SettingsSidebar({ settingsEnabled, onClose }: ISlideSetting) {
+export function SettingsSidebar({ settingsEnabled, onClose }: IFrameSetting) {
   const { preview } = useContext(EventContext) as EventContextType
 
   if (!settingsEnabled || preview) {
@@ -62,12 +62,12 @@ export function SettingsSidebar({ settingsEnabled, onClose }: ISlideSetting) {
 
   return (
     <SettingsWrapper onClose={onClose}>
-      <CommonSlideSettings />
-      <PollSlideSettings />
-      <ReflectionSlideSettings />
-      <PDFSlideSettings />
-      <TextImageSlideSettings />
-      <MoraaBoardSlideSettings />
+      <CommonFrameSettings />
+      <PollFrameSettings />
+      <ReflectionFrameSettings />
+      <PDFFrameSettings />
+      <TextImageFrameSettings />
+      <MoraaBoardFrameSettings />
     </SettingsWrapper>
   )
 }

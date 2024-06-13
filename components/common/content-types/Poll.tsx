@@ -9,10 +9,10 @@ import { EventContext } from '@/contexts/EventContext'
 import { useAuth } from '@/hooks/useAuth'
 import { type EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 import { cn, getAvatarForName } from '@/utils/utils'
 
-export type PollSlide = ISlide & {
+export type PollFrame = IFrame & {
   content: {
     question: string
     options: string[]
@@ -32,6 +32,7 @@ export type Vote = {
       profile: {
         first_name: string
         last_name: string
+        avatar_url?: string
       }
     }
   }
@@ -43,7 +44,7 @@ interface VoteUsersProps {
 }
 
 interface PollProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       question: string
       options: string[]
@@ -57,7 +58,7 @@ interface PollProps {
 }
 
 interface PollOptionProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       question: string
       options: string[]
@@ -105,7 +106,8 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
 
           if (enrollment.profile.first_name) {
             const url = getAvatarForName(
-              `${enrollment.profile.first_name} ${enrollment.profile.last_name}`
+              `${enrollment.profile.first_name} ${enrollment.profile.last_name}`,
+              enrollment.profile.avatar_url
             )
 
             return <Avatar src={url} size="sm" />
@@ -121,14 +123,14 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
 }
 
 function PollOption({
-  slide,
+  frame,
   pollOption,
   voted,
   disabled,
   isOptionSelected,
   handleVoteCheckbox,
 }: PollOptionProps) {
-  if (slide.config.allowVoteOnMultipleOptions && !voted) {
+  if (frame.config.allowVoteOnMultipleOptions && !voted) {
     return (
       <Checkbox
         isSelected={isOptionSelected(pollOption)}
@@ -148,14 +150,14 @@ function PollOption({
 }
 
 export function Poll({
-  slide,
+  frame,
   votes = [],
   voted,
   readOnly = false,
   onVote,
   onUpdateVote,
 }: PollProps) {
-  const { options } = slide.content
+  const { options } = frame.content
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const { currentUser } = useAuth()
@@ -175,7 +177,7 @@ export function Poll({
     if (
       voted ||
       isOwner ||
-      !slide.config.allowVoteOnMultipleOptions ||
+      !frame.config.allowVoteOnMultipleOptions ||
       selectedOptions.length === 0
     ) {
       setVoteButtonVisible(false)
@@ -185,7 +187,7 @@ export function Poll({
   }, [
     voted,
     isOwner,
-    slide.config.allowVoteOnMultipleOptions,
+    frame.config.allowVoteOnMultipleOptions,
     selectedOptions,
     disabled,
   ])
@@ -237,21 +239,21 @@ export function Poll({
   const showAnonymousToggle =
     (eventMode === 'present' &&
       !isOwner &&
-      slide.config.allowVoteAnonymously) ||
-    (disabled && slide.config.allowVoteAnonymously)
+      frame.config.allowVoteAnonymously) ||
+    (disabled && frame.config.allowVoteAnonymously)
 
   return (
     <div
       className="w-full min-h-full flex justify-start items-start"
       style={{
-        backgroundColor: slide.config.backgroundColor,
+        backgroundColor: frame.config.backgroundColor,
       }}>
       <div className="w-4/5 mt-10 rounded-md relative">
         <div className="p-4">
           {/* <h2
             className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
             style={{
-              color: slide.config.textColor,
+              color: frame.config.textColor,
             }}>
             {question}
           </h2> */}
@@ -298,12 +300,12 @@ export function Poll({
                   if (
                     voted ||
                     isOwner ||
-                    slide.config.allowVoteOnMultipleOptions
+                    frame.config.allowVoteOnMultipleOptions
                   ) {
                     return
                   }
 
-                  onVote?.(slide, {
+                  onVote?.(frame, {
                     selectedOptions: [option],
                     anonymous: makeMyVoteAnonymous,
                   })
@@ -323,7 +325,7 @@ export function Poll({
                   {getOptionWidth(option)}%
                 </div>
                 <PollOption
-                  slide={slide}
+                  frame={frame}
                   pollOption={option}
                   voted={voted}
                   disabled={disabled || isOwner}
@@ -343,7 +345,7 @@ export function Poll({
                   disabled={disabled}
                   onClick={() => {
                     if (disabled) return
-                    onVote?.(slide, {
+                    onVote?.(frame, {
                       selectedOptions,
                       anonymous: makeMyVoteAnonymous,
                     })

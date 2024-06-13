@@ -18,23 +18,23 @@ export const CanvasFrameContext = createContext<CanvasFrameContextType>({
 export function CanvasFrameContextProvider({
   children,
 }: React.PropsWithChildren<object>) {
-  const { currentSlide, updateSlide } = useContext(
+  const { currentFrame, updateFrame } = useContext(
     EventContext
   ) as EventContextType
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
 
   const sync = () => {
-    if (!canvas || !currentSlide) return
+    if (!canvas || !currentFrame) return
 
     const json = canvas.toJSON()
 
-    updateSlide({
-      slidePayload: {
+    updateFrame({
+      framePayload: {
         content: {
           canvas: JSON.stringify(json),
         },
       },
-      slideId: currentSlide.id,
+      frameId: currentFrame.id,
     })
   }
 

@@ -8,9 +8,9 @@ import {
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
-import { Slide } from './Slide'
-import { SlideControls } from '../common/SlideControls'
-import { SlidePreview } from '../common/SlidePreview'
+import { Frame } from './Frame'
+import { FrameControls } from '../common/FrameControls'
+import { FramePreview } from '../common/FramePreview'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -21,12 +21,12 @@ import {
 } from '@/types/event-session.type'
 
 export function ContentContainer() {
-  const { currentSlide } = useContext(EventContext) as EventContextType
+  const { currentFrame } = useContext(EventContext) as EventContextType
   const {
     eventSessionMode,
     presentationStatus,
-    previousSlide,
-    nextSlide,
+    previousFrame,
+    nextFrame,
     isHost,
   } = useContext(EventSessionContext) as EventSessionContextType
 
@@ -40,11 +40,11 @@ export function ContentContainer() {
 
   const recentActivePlugin = activePlugins?.[activePlugins.length - 1]
 
-  if (eventSessionMode === 'Preview' && currentSlide && isHost) {
+  if (eventSessionMode === 'Preview' && currentFrame && isHost) {
     return (
       <>
-        <SlidePreview slide={currentSlide} />
-        <SlideControls onPrevious={previousSlide} onNext={nextSlide} />
+        <FramePreview frame={currentFrame} />
+        <FrameControls onPrevious={previousFrame} onNext={nextFrame} />
       </>
     )
   }
@@ -86,13 +86,13 @@ export function ContentContainer() {
     return null
   }
 
-  if (!currentSlide) return null
+  if (!currentFrame) return null
 
   return (
     <div className="relative h-full flex flex-col">
-      <Slide key={`slide-${currentSlide.id}`} />
+      <Frame key={`frame-${currentFrame.id}`} />
       {isHost && (
-        <SlideControls onPrevious={previousSlide} onNext={nextSlide} />
+        <FrameControls onPrevious={previousFrame} onNext={nextFrame} />
       )}
     </div>
   )

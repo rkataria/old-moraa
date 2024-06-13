@@ -15,11 +15,11 @@ import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFViewerProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       pdfPath: string
       defaultPage: number
@@ -31,27 +31,27 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
 const positionChangeEvent = 'pdf-position-changed'
 
-export function PDFViewer({ slide }: PDFViewerProps) {
+export function PDFViewer({ frame }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
   const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
     useContext(EventSessionContext) as EventSessionContextType
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
-    slide.content?.defaultPage || 1
+    frame.content?.defaultPage || 1
   )
 
   useEffect(() => {
-    if (!activeSession?.data?.PdfSlideLastPosition) return
+    if (!activeSession?.data?.PdfFrameLastPosition) return
 
-    setPosition(activeSession?.data?.PdfSlideLastPosition)
-  }, [activeSession?.data?.PdfSlideLastPosition])
+    setPosition(activeSession?.data?.PdfFrameLastPosition)
+  }, [activeSession?.data?.PdfFrameLastPosition])
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
-      downloadPDFFile(slide.content?.pdfPath).then((data) =>
+      downloadPDFFile(frame.content?.pdfPath).then((data) =>
         getFileObjectFromBlob(
-          slide.content?.pdfPath,
+          frame.content?.pdfPath,
           data.data,
           'application/pdf'
         )
@@ -62,7 +62,7 @@ export function PDFViewer({ slide }: PDFViewerProps) {
   useEffect(() => {
     downloadPDFMutation.mutate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slide.content?.pdfPath])
+  }, [frame.content?.pdfPath])
 
   useEffect(() => {
     if (!realtimeChannel) return
@@ -72,7 +72,7 @@ export function PDFViewer({ slide }: PDFViewerProps) {
       ({ payload }) => {
         setPosition(payload.position || 1)
         updateActiveSession({
-          PdfSlideLastPosition: payload.position || 1,
+          PdfFrameLastPosition: payload.position || 1,
         })
       }
     )

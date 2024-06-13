@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from 'clsx'
 import toast from 'react-hot-toast'
 import { twMerge } from 'tailwind-merge'
 
-import { ISection } from '@/types/slide.type'
+import { ISection } from '@/types/frame.type'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -28,8 +28,8 @@ const formatToPaddedString = (value: number) =>
 export const getOjectPublicUrl = (objectPath: string) =>
   `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${objectPath}`
 
-export const getSlideCount = (sections: ISection[]) =>
-  sections.reduce((acc, section) => acc + section.slides.length, 0)
+export const getFrameCount = (sections: ISection[]) =>
+  sections.reduce((acc, section) => acc + section.frames.length, 0)
 
 export const zeroPad = (num: number, places: number) =>
   String(num).padStart(places, '0')
@@ -73,21 +73,26 @@ export const isColorDark = (color: string) => {
 
 export const isColorLight = (color: string) => !isColorDark(color)
 
-export const getAvatarForName = (name: string) =>
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`
+export const getAvatarForName = (name: string, avatarUrl?: string) => {
+  if (!avatarUrl) {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`
+  }
 
-export const getSlidesFromSections = (
+  return avatarUrl
+}
+
+export const getFramesFromSections = (
   sections: ISection[],
   published = false
 ) =>
   sections.reduce(
     (acc, section) => [
       ...acc,
-      ...section.slides.filter((s) =>
+      ...section.frames.filter((s) =>
         published ? s.status === 'PUBLISHED' : true
       ),
     ],
-    [] as ISection['slides']
+    [] as ISection['frames']
   )
 
 export function scrollParentToChild({

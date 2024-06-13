@@ -5,25 +5,25 @@
 
 import React, { useState } from 'react'
 
-import { SlideTextBlock } from '../SlideTextBlock'
+import { FrameTextBlock } from '../FrameTextBlock'
 
 export function RichTextEditor() {
   const [editableId, setEditableId] = useState('')
 
   return (
     <>
-      <SlideTextBlock
+      <FrameTextBlock
         blockType="header"
         editableId={editableId}
         onClick={(id) => setEditableId(id)}
       />
-      <SlideTextBlock
+      <FrameTextBlock
         blockType="paragraph"
         editableId={editableId}
         onClick={(id) => setEditableId(id)}
       />
 
-      <SlideTextBlock
+      <FrameTextBlock
         className="w-full h-full flex justify-start items-start rounded-md overflow-hidden relative pt-8"
         fillAvailableHeight
         blockType="richtext"

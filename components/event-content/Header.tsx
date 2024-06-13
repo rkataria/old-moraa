@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import { ChevronDownIcon, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { LuClipboardEdit } from 'react-icons/lu'
 import { MdArrowBack } from 'react-icons/md'
 
 import {
@@ -39,7 +40,12 @@ export function Header({
     )
   }
 
+  const toggleNotesSidebar = () => {
+    setRightSidebarVisiblity(rightSidebarVisiblity === 'notes' ? null : 'notes')
+  }
+
   useHotkeys('a', toggleAISidebar, [rightSidebarVisiblity, isOwner])
+  useHotkeys('n', toggleNotesSidebar, [rightSidebarVisiblity, isOwner])
 
   const renderActionButtons = () => {
     if (preview) return null
@@ -64,6 +70,18 @@ export function Header({
           onClick={toggleAISidebar}>
           <Sparkles size={18} />
         </Button>
+        {isOwner && (
+          <Button
+            isIconOnly
+            onClick={toggleNotesSidebar}
+            radius="full"
+            variant="flat"
+            className={cn('cursor-pointer', {
+              'bg-black text-white': rightSidebarVisiblity === 'notes',
+            })}>
+            <LuClipboardEdit size={20} />
+          </Button>
+        )}
         {/* <EditEventButtonWithModal eventId={event.id} /> */}
         <AddParticipantsButtonWithModal eventId={event.id} />
         {EventStatus.SCHEDULED === event?.status ? (

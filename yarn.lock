@@ -2954,6 +2954,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-heading/-/extension-heading-2.3.1.tgz#ddc5810e41cff528924ac873ff444bb8d715742d"
   integrity sha512-epdIrg1xpuk5ApnNyM/NJO1dhVZgD7kDPem6QH4fug5UJtCueze942yNzUhCuvckmIegfdferAb1p4ug4674ig==
 
+"@tiptap/extension-highlight@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-highlight/-/extension-highlight-2.4.0.tgz#29a200993b0e599223efac373785089109579fd3"
+  integrity sha512-p2I/CaMrs6hzpj/dSw6UNobOWTV38yTjPK+B4ShJQ7IN2u/C82KOTOeFfJoFd9KykmpVOVW3w3nKG3ad0HXPuQ==
+
 "@tiptap/extension-history@^2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-history/-/extension-history-2.3.1.tgz#de6ec11ac686856ea1f0806b69452f2e39696baf"

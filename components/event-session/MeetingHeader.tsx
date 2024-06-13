@@ -63,6 +63,13 @@ export function MeetingHeader({
         }}
         dyteStates={dyteStates}
         setDyteStates={setDyteStates}
+        onNoteOverlayToggle={() => {
+          if (rightSidebarVisiblity === 'notes') {
+            setRightSidebarVisiblity(null)
+          } else {
+            setRightSidebarVisiblity('notes')
+          }
+        }}
       />
     </div>
   )

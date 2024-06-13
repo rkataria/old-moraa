@@ -8,11 +8,11 @@ import {
 
 import { RichTextView } from '@/components/common/content-types/RichTextView'
 import { ImageBlockView } from '@/components/common/ImageBlockView'
-import { LayoutTypes } from '@/components/common/TextImageSlideSettings'
-import { Block, ISlide, TextBlock } from '@/types/slide.type'
+import { LayoutTypes } from '@/components/common/TextImageFrameSettings'
+import { Block, IFrame, TextBlock } from '@/types/frame.type'
 
 type TextImageProps = {
-  slide: ISlide
+  frame: IFrame
 }
 
 export type ImageBlock = {
@@ -24,15 +24,15 @@ export type ImageBlock = {
   }
 }
 
-export function TextImage({ slide }: TextImageProps) {
+export function TextImage({ frame }: TextImageProps) {
   const panelGroupRef = useRef<ImperativePanelGroupHandle>(null)
-  const blocks = slide.content?.blocks || []
+  const blocks = frame.content?.blocks || []
 
   useEffect(() => {
-    panelGroupRef.current?.setLayout(slide.content?.panelSizes || [50, 50])
-  }, [slide.content?.panelSizes])
+    panelGroupRef.current?.setLayout(frame.content?.panelSizes || [50, 50])
+  }, [frame.content?.panelSizes])
 
-  const layoutType = slide.config.layoutType || LayoutTypes.IMAGE_RIGHT
+  const layoutType = frame.config.layoutType || LayoutTypes.IMAGE_RIGHT
 
   const textBlock = blocks.find(
     (block) => block.type === 'paragraph'
@@ -50,10 +50,10 @@ export function TextImage({ slide }: TextImageProps) {
     return (
       <div
         className="tiptap ProseMirror w-full h-full flex justify-center items-center !p-0"
-        style={{ backgroundColor: slide.config.backgroundColor }}>
+        style={{ backgroundColor: frame.config.backgroundColor }}>
         <div className="flex flex-col w-full h-full">
-          {slide.config.showTitle && <RichTextView block={headerBlock} />}
-          {slide.config.showDescription && <RichTextView block={textBlock} />}
+          {frame.config.showTitle && <RichTextView block={headerBlock} />}
+          {frame.config.showDescription && <RichTextView block={textBlock} />}
         </div>
       </div>
     )
@@ -62,11 +62,11 @@ export function TextImage({ slide }: TextImageProps) {
   if (layoutType === LayoutTypes.IMAGE_BEHIND) {
     return (
       <div className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-center !p-0">
-        {slide.config.showTitle && <RichTextView block={headerBlock} />}
+        {frame.config.showTitle && <RichTextView block={headerBlock} />}
         <div
           className="bg-center bg-cover h-full w-full"
           style={{ backgroundImage: `url(${imageBlock.data.file.url})` }}>
-          {slide.config.showDescription && <RichTextView block={textBlock} />}
+          {frame.config.showDescription && <RichTextView block={textBlock} />}
         </div>
       </div>
     )
@@ -75,16 +75,16 @@ export function TextImage({ slide }: TextImageProps) {
   if (layoutType === LayoutTypes.IMAGE_LEFT) {
     return (
       <div
-        style={{ backgroundColor: slide.config.backgroundColor }}
+        style={{ backgroundColor: frame.config.backgroundColor }}
         className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-center relative !p-0">
-        {slide.config.showTitle && <RichTextView block={headerBlock} />}
+        {frame.config.showTitle && <RichTextView block={headerBlock} />}
 
         <PanelGroup ref={panelGroupRef} direction="horizontal">
           <Panel defaultSize={30} minSize={30} maxSize={60}>
             <ImageBlockView imageBlock={imageBlock} />
           </Panel>
           <Panel minSize={30}>
-            {slide.config.showDescription && <RichTextView block={textBlock} />}
+            {frame.config.showDescription && <RichTextView block={textBlock} />}
           </Panel>
         </PanelGroup>
       </div>
@@ -93,13 +93,13 @@ export function TextImage({ slide }: TextImageProps) {
 
   return (
     <div
-      style={{ backgroundColor: slide.config.backgroundColor }}
+      style={{ backgroundColor: frame.config.backgroundColor }}
       className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-center relative !p-0">
-      {slide.config.showTitle && <RichTextView block={headerBlock} />}
+      {frame.config.showTitle && <RichTextView block={headerBlock} />}
 
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>
-          {slide.config.showDescription && <RichTextView block={textBlock} />}
+          {frame.config.showDescription && <RichTextView block={textBlock} />}
         </Panel>
         <Panel defaultSize={30} minSize={30} maxSize={60}>
           <ImageBlockView imageBlock={imageBlock} />

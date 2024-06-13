@@ -1,18 +1,18 @@
 /* eslint-disable max-classes-per-file */
-export enum SlideEventManagerType {
+export enum FrameEventManagerType {
   OnRight = 'OnRight',
   OnLeft = 'OnLeft',
 }
 
-class SlideEventTarget extends EventTarget {}
+class FrameEventTarget extends EventTarget {}
 
-class SlideEventManager extends Event {
-  customTarget: SlideEventTarget
-  customEvent: SlideEventManagerType
+class FrameEventManager extends Event {
+  customTarget: FrameEventTarget
+  customEvent: FrameEventManagerType
 
-  constructor(event: SlideEventManagerType) {
+  constructor(event: FrameEventManagerType) {
     super(event)
-    this.customTarget = new SlideEventTarget()
+    this.customTarget = new FrameEventTarget()
     this.customEvent = event
   }
 
@@ -27,11 +27,11 @@ class SlideEventManager extends Event {
   }
 }
 
-export const SlideEvents = {
-  [SlideEventManagerType.OnRight]: new SlideEventManager(
-    SlideEventManagerType.OnRight
+export const FrameEvents = {
+  [FrameEventManagerType.OnRight]: new FrameEventManager(
+    FrameEventManagerType.OnRight
   ),
-  [SlideEventManagerType.OnLeft]: new SlideEventManager(
-    SlideEventManagerType.OnLeft
+  [FrameEventManagerType.OnLeft]: new FrameEventManager(
+    FrameEventManagerType.OnLeft
   ),
 }

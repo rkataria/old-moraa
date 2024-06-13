@@ -17,7 +17,7 @@ export enum EventStatus {
   COMPLETED = 'COMPLETED',
 }
 
-export enum SlideStatus {
+export enum FrameStatus {
   PUBLISHED = 'PUBLISHED',
   DRAFT = 'DRAFT',
 }

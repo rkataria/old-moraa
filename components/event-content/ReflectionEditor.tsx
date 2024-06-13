@@ -16,8 +16,8 @@ import {
 } from '@nextui-org/react'
 
 import { ReflectionService } from '@/services/reflection.service'
-import { SlideReaction } from '@/types/event-session.type'
-import { ISlide } from '@/types/slide.type'
+import { FrameReaction } from '@/types/event-session.type'
+import { IFrame } from '@/types/frame.type'
 import { cn, getAvatarForName } from '@/utils/utils'
 
 function PreviewCard({
@@ -31,15 +31,15 @@ function PreviewCard({
   isAnonymous?: boolean
   username: string
   reflection: string
-  reactions: SlideReaction[]
+  reactions: FrameReaction[]
 }) {
   const distinctReactions = uniqBy(
     reactions,
-    (reaction: SlideReaction) => reaction.reaction
+    (reaction: FrameReaction) => reaction.reaction
   )
 
   const getReactionCount = (emojiId: string) =>
-    reactions.filter((reaction: SlideReaction) => reaction.reaction === emojiId)
+    reactions.filter((reaction: FrameReaction) => reaction.reaction === emojiId)
       .length
 
   return (
@@ -70,7 +70,7 @@ function PreviewCard({
           {reactions?.length > 0 && <Divider className="my-3" />}
           <div className="flex items-center gap-1 justify-between">
             <div className="flex flex-wrap gap-1">
-              {distinctReactions.map((reaction: SlideReaction) => (
+              {distinctReactions.map((reaction: FrameReaction) => (
                 <Chip
                   className={cn('font-bold')}
                   variant="flat"
@@ -116,17 +116,17 @@ function DummyResponses() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function SlideResponses({ slideResponses }: { slideResponses: any }) {
+function FrameResponses({ frameResponses }: { frameResponses: any }) {
   return (
     <>
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      {slideResponses.map((slideResponse: any) => (
+      {frameResponses.map((frameResponse: any) => (
         <PreviewCard
-          key={slideResponse.id}
-          isAnonymous={slideResponse.response?.anonymous}
-          username={slideResponse.response.username}
-          reflection={slideResponse.response.reflection}
-          reactions={slideResponse.reaction}
+          key={frameResponse.id}
+          isAnonymous={frameResponse.response?.anonymous}
+          username={frameResponse.response.username}
+          reflection={frameResponse.response.reflection}
+          reactions={frameResponse.reaction}
         />
       ))}
     </>
@@ -135,11 +135,11 @@ function SlideResponses({ slideResponses }: { slideResponses: any }) {
 
 function Responses({
   isLoading,
-  slideResponses,
+  frameResponses,
 }: {
   isLoading: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  slideResponses: any
+  frameResponses: any
 }) {
   if (isLoading) {
     return (
@@ -161,22 +161,22 @@ function Responses({
       </Card>
     )
   }
-  if (slideResponses.length === 0) {
+  if (frameResponses.length === 0) {
     return <DummyResponses />
   }
 
-  return <SlideResponses slideResponses={slideResponses} />
+  return <FrameResponses frameResponses={frameResponses} />
 }
 
 interface ReflectionEditorProps {
-  slide: ISlide
+  frame: IFrame
 }
 
-export function ReflectionEditor({ slide }: ReflectionEditorProps) {
+export function ReflectionEditor({ frame }: ReflectionEditorProps) {
   const reflectionResponseQuery = useQuery({
-    queryKey: ['slide-response-reflection', slide.id],
-    queryFn: () => ReflectionService.getResponses(slide.id),
-    enabled: !!slide.id,
+    queryKey: ['frame-response-reflection', frame.id],
+    queryFn: () => ReflectionService.getResponses(frame.id),
+    enabled: !!frame.id,
     refetchOnWindowFocus: false,
   })
   const responses = reflectionResponseQuery?.data?.responses || []
@@ -186,7 +186,7 @@ export function ReflectionEditor({ slide }: ReflectionEditorProps) {
       <div className="w-full mt-10 grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
         <Responses
           isLoading={reflectionResponseQuery.isLoading}
-          slideResponses={responses}
+          frameResponses={responses}
         />
       </div>
     </div>

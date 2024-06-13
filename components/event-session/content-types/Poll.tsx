@@ -12,7 +12,7 @@ import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { type EventContextType } from '@/types/event-context.type'
 import { type EventSessionContextType } from '@/types/event-session.type'
-import { ISlide } from '@/types/slide.type'
+import { IFrame } from '@/types/frame.type'
 import { cn, getAvatarForName } from '@/utils/utils'
 
 export type VoteResponse = {
@@ -28,6 +28,7 @@ export type Vote = {
       profile: {
         first_name: string
         last_name: string
+        avatar_url: string
       }
     }
   }
@@ -76,7 +77,7 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
               enrollment.profile.first_name ?? '',
               enrollment.profile.last_name ?? '',
             ].join(' ')
-            const url = getAvatarForName(name)
+            const url = getAvatarForName(name, enrollment.profile.avatar_url)
 
             return <Avatar src={url} size="sm" />
           }
@@ -91,7 +92,7 @@ function VoteUsers({ votes, option }: VoteUsersProps) {
 }
 
 interface PollOptionProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       question: string
       options: string[]
@@ -105,14 +106,14 @@ interface PollOptionProps {
 }
 
 function PollOption({
-  slide,
+  frame,
   pollOption,
   isOwner,
   voted,
   isOptionSelected,
   handleVoteCheckbox,
 }: PollOptionProps) {
-  if (slide.config.allowVoteOnMultipleOptions && !isOwner && !voted) {
+  if (frame.config.allowVoteOnMultipleOptions && !isOwner && !voted) {
     return (
       <Checkbox
         isSelected={isOptionSelected(pollOption)}
@@ -132,7 +133,7 @@ function PollOption({
 }
 
 interface PollProps {
-  slide: ISlide & {
+  frame: IFrame & {
     content: {
       question: string
       options: string[]
@@ -143,8 +144,8 @@ interface PollProps {
   isOwner?: boolean
 }
 
-export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
-  const { options } = slide.content
+export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
+  const { options } = frame.content
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const [disableVotes, setDisableVotes] = useState(false)
@@ -162,14 +163,14 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
     if (
       voted ||
       isOwner ||
-      !slide.config.allowVoteOnMultipleOptions ||
+      !frame.config.allowVoteOnMultipleOptions ||
       selectedOptions.length === 0
     ) {
       setVoteButtonVisible(false)
     } else {
       setVoteButtonVisible(true)
     }
-  }, [voted, isOwner, slide.config.allowVoteOnMultipleOptions, selectedOptions])
+  }, [voted, isOwner, frame.config.allowVoteOnMultipleOptions, selectedOptions])
 
   const isOptionSelected = (option: string) => selectedOptions.includes(option)
 
@@ -220,7 +221,7 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
 
   const votedOptions = selfVote?.response.selected_options || []
   const showAnonymousToggle =
-    eventMode === 'present' && !isOwner && slide.config.allowVoteAnonymously
+    eventMode === 'present' && !isOwner && frame.config.allowVoteAnonymously
 
   const showResponses = isOwner || voted
 
@@ -228,14 +229,14 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
     <div
       className="w-full flex justify-start items-start"
       style={{
-        backgroundColor: slide.config.backgroundColor,
+        backgroundColor: frame.config.backgroundColor,
       }}>
       <div className="w-4/5 mt-10 rounded-md relative">
         <div className="p-4">
           {/* <h2
             className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
             style={{
-              color: slide.config.textColor,
+              color: frame.config.textColor,
             }}>
             {question}
           </h2> */}
@@ -279,13 +280,13 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
                   if (
                     voted ||
                     isOwner ||
-                    slide.config.allowVoteOnMultipleOptions ||
+                    frame.config.allowVoteOnMultipleOptions ||
                     disableVotes
                   ) {
                     return
                   }
 
-                  onVote(slide, {
+                  onVote(frame, {
                     selectedOptions: [option],
                     anonymous: makeMyVoteAnonymous,
                   })
@@ -312,7 +313,7 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
                 )}
 
                 <PollOption
-                  slide={slide}
+                  frame={frame}
                   pollOption={option}
                   isOwner={isOwner}
                   voted={voted}
@@ -332,7 +333,7 @@ export function Poll({ slide, votes = [], voted, isOwner }: PollProps) {
                   type="button"
                   color="primary"
                   onClick={() => {
-                    onVote(slide, {
+                    onVote(frame, {
                       selectedOptions,
                       anonymous: makeMyVoteAnonymous,
                     })

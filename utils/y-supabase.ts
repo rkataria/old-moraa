@@ -168,13 +168,13 @@ export class SupabaseProvider extends EventEmitter {
     this.dbSyncTimeout = setTimeout(async () => {
       const content = Array.from(Y.encodeStateAsUpdate(this.doc))
 
-      const { data, error: fetchSlideError } = await this.supabase
+      const { data, error: fetchFrameError } = await this.supabase
         .from(this.config.tableName)
         .select('*')
         .eq(this.config.idName || 'id', this.config.id)
         .single()
 
-      if (fetchSlideError) {
+      if (fetchFrameError) {
         return
       }
 

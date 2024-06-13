@@ -1,4 +1,4 @@
-class QureyKeysGenerator<FilterKeys extends string[] = ['']> {
+class QueryKeysGenerator<FilterKeys extends string[] = ['']> {
   identifier: string
 
   constructor(identifier: string) {
@@ -28,5 +28,6 @@ class QureyKeysGenerator<FilterKeys extends string[] = ['']> {
 }
 
 export const QueryKeys = Object.freeze({
-  DownloadPDF: new QureyKeysGenerator('DOWNLOAD_PDF'),
+  DownloadPDF: new QueryKeysGenerator('DOWNLOAD_PDF'),
+  GetFrameNotes: new QueryKeysGenerator<['frameId']>('GET_FRAME_NOTES'),
 })

@@ -20,7 +20,7 @@ import ImageResize from 'tiptap-extension-resize-image'
 import { ScrollShadow } from '@nextui-org/react'
 
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
-import { TextBlock } from '@/types/slide.type'
+import { TextBlock } from '@/types/frame.type'
 
 const getExtensions = (type: string) => {
   switch (type) {
