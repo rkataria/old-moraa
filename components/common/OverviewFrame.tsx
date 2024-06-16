@@ -14,12 +14,15 @@ import { EventContext } from '@/contexts/EventContext'
 import { FrameStatus } from '@/services/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { ISection, IFrame } from '@/types/frame.type'
+import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
 export function OverviewFrame() {
   const {
     isOwner,
     sections,
+    preview,
+    eventMode,
     showSectionPlaceholder,
     updateFrame,
     updateFrames,
@@ -29,6 +32,7 @@ export function OverviewFrame() {
   } = useContext(EventContext) as EventContextType
 
   const changeFrameStatus = (frame: IFrame) => {
+    if (!editable) return
     const newState =
       frame.status === FrameStatus.PUBLISHED
         ? FrameStatus.DRAFT
@@ -45,6 +49,7 @@ export function OverviewFrame() {
     section: ISection,
     newState: FrameStatus.DRAFT | FrameStatus.PUBLISHED
   ) => {
+    if (!editable) return
     updateFrames({
       frameIds: section.frames.map((frame) => frame.id),
       framePayload: {
@@ -54,6 +59,7 @@ export function OverviewFrame() {
   }
 
   const onFrameTitleChange = (frameId: string, title: string) => {
+    if (!editable) return
     updateFrame({
       frameId,
       framePayload: {
@@ -61,18 +67,19 @@ export function OverviewFrame() {
       },
     })
   }
+  const editable = isOwner && !preview && eventMode === 'edit'
 
   return (
     <div className="flex flex-col flex-1 max-w-5xl m-auto p-4 pt-14">
       <h2 className="mb-2 font-bold text-xl">Overview</h2>
       <div className="flex justify-between items-center mb-4">
         <h4 className="font-md font-semibold">Agenda Outline</h4>
-        <h4 className="font-md pl-4">Share</h4>
+        {editable && <h4 className="font-md pl-4">Share</h4>}
       </div>
       <div className="scrollbar-none overflow-y-auto">
         <DragDropContext
           onDragEnd={(result, provide) => {
-            if (!isOwner) return
+            if (!editable) return
             if (!result.destination) return
             if (result.type === 'section') reorderSection(result, provide)
             if (result.type === 'frame') reorderFrame(result, provide)
@@ -89,6 +96,7 @@ export function OverviewFrame() {
                   <Draggable
                     key={`section-draggable-${section.id}`}
                     draggableId={`section-draggable-sectionId-${section.id}`}
+                    isDragDisabled={!editable}
                     index={sectionIndex}>
                     {(sectionDraggableProvided) => (
                       <div
@@ -110,27 +118,30 @@ export function OverviewFrame() {
                                   </p>
                                 </div>
                               </div>
-                              <div className="flex items-center justify-center p-2 mr-2">
-                                <Switch
-                                  size="sm"
-                                  isSelected={section.frames.some(
-                                    (frame) =>
-                                      frame.status === FrameStatus.PUBLISHED
-                                  )}
-                                  onChange={() =>
-                                    changeSectionStatus(
-                                      section,
-                                      section.frames.some(
-                                        (frame) =>
-                                          frame.status === FrameStatus.PUBLISHED
+                              {editable && (
+                                <div className="flex items-center justify-center p-2 mr-2">
+                                  <Switch
+                                    size="sm"
+                                    isSelected={section.frames.some(
+                                      (frame) =>
+                                        frame.status === FrameStatus.PUBLISHED
+                                    )}
+                                    onChange={() =>
+                                      changeSectionStatus(
+                                        section,
+                                        section.frames.some(
+                                          (frame) =>
+                                            frame.status ===
+                                            FrameStatus.PUBLISHED
+                                        )
+                                          ? FrameStatus.DRAFT
+                                          : FrameStatus.PUBLISHED
                                       )
-                                        ? FrameStatus.DRAFT
-                                        : FrameStatus.PUBLISHED
-                                    )
-                                  }
-                                  disabled={!isOwner}
-                                />
-                              </div>
+                                    }
+                                    disabled={!isOwner}
+                                  />
+                                </div>
+                              )}
                             </div>
                             <div className="ml-4">
                               <StrictModeDroppable
@@ -152,51 +163,53 @@ export function OverviewFrame() {
                                       <div className="w-full">
                                         <div>
                                           <div className="flex flex-col justify-start items-start gap-1 w-full px-2 pb-2 rounded-sm transition-all">
-                                            {section.frames.map(
-                                              (frame, frameIndex) => (
-                                                <React.Fragment key={frame.id}>
-                                                  <Draggable
-                                                    key={`frame-draggable-${frame.id}`}
-                                                    draggableId={`frame-draggable-frameId-${frame.id}`}
-                                                    index={frameIndex}>
-                                                    {(_provided) => (
+                                            {getFilteredFramesByStatus({
+                                              frames: section.frames,
+                                              status: editable
+                                                ? null
+                                                : FrameStatus.PUBLISHED,
+                                            }).map((frame, frameIndex) => (
+                                              <React.Fragment key={frame.id}>
+                                                <Draggable
+                                                  key={`frame-draggable-${frame.id}`}
+                                                  draggableId={`frame-draggable-frameId-${frame.id}`}
+                                                  isDragDisabled={!editable}
+                                                  index={frameIndex}>
+                                                  {(_provided) => (
+                                                    <div
+                                                      key={frame.id}
+                                                      ref={_provided.innerRef}
+                                                      {..._provided.draggableProps}
+                                                      className="mt-2 flex w-full">
                                                       <div
-                                                        key={frame.id}
-                                                        ref={_provided.innerRef}
-                                                        {..._provided.draggableProps}
-                                                        className="mt-2 flex w-full">
-                                                        <div
-                                                          className="p-2 flex items-center justify-center"
-                                                          {..._provided.dragHandleProps}>
-                                                          <MdOutlineDragHandle
-                                                            height={40}
-                                                            width={30}
-                                                          />
-                                                        </div>
-                                                        <div
-                                                          className="mr-2 rounded-md overflow-hidden border border-gray-400 flex items-center"
-                                                          style={{ flex: 3 }}>
-                                                          <ContentTypeIcon
-                                                            classNames="m-2"
-                                                            frameType={
-                                                              frame.type
+                                                        className="p-2 flex items-center justify-center"
+                                                        {..._provided.dragHandleProps}>
+                                                        <MdOutlineDragHandle
+                                                          height={40}
+                                                          width={30}
+                                                        />
+                                                      </div>
+                                                      <div
+                                                        className="mr-2 rounded-md overflow-hidden border border-gray-400 flex items-center"
+                                                        style={{ flex: 3 }}>
+                                                        <ContentTypeIcon
+                                                          classNames="m-2"
+                                                          frameType={frame.type}
+                                                        />
+                                                        <div className="bg-white p-2 h-full w-full flex flex-col">
+                                                          <EditableLabel
+                                                            readOnly={!editable}
+                                                            label={frame.name}
+                                                            onUpdate={(value) =>
+                                                              onFrameTitleChange(
+                                                                frame.id,
+                                                                value
+                                                              )
                                                             }
                                                           />
-                                                          <div className="bg-white p-2 h-full w-full flex flex-col">
-                                                            <EditableLabel
-                                                              readOnly={false}
-                                                              label={frame.name}
-                                                              onUpdate={(
-                                                                value
-                                                              ) =>
-                                                                onFrameTitleChange(
-                                                                  frame.id,
-                                                                  value
-                                                                )
-                                                              }
-                                                            />
-                                                          </div>
                                                         </div>
+                                                      </div>
+                                                      {editable && (
                                                         <div className="flex items-center justify-center p-2">
                                                           <Switch
                                                             size="sm"
@@ -212,12 +225,12 @@ export function OverviewFrame() {
                                                             disabled={!isOwner}
                                                           />
                                                         </div>
-                                                      </div>
-                                                    )}
-                                                  </Draggable>
-                                                </React.Fragment>
-                                              )
-                                            )}
+                                                      )}
+                                                    </div>
+                                                  )}
+                                                </Draggable>
+                                              </React.Fragment>
+                                            ))}
                                           </div>
                                           {frameProvided.placeholder}
                                         </div>
@@ -239,15 +252,17 @@ export function OverviewFrame() {
           </StrictModeDroppable>
         </DragDropContext>
       </div>
-      <div className="flex justify-center mt-4">
-        <Button
-          color="primary"
-          variant="solid"
-          isLoading={showSectionPlaceholder}
-          onClick={() => addSection({ addToLast: true })}>
-          Add Section
-        </Button>
-      </div>
+      {editable && (
+        <div className="flex justify-center mt-4">
+          <Button
+            color="primary"
+            variant="solid"
+            isLoading={showSectionPlaceholder}
+            onClick={() => addSection({ addToLast: true })}>
+            Add Section
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

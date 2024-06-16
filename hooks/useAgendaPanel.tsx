@@ -433,8 +433,6 @@ export function AgendaPanelContextProvider({
 export const useAgendaPanel = () => {
   const context = useContext(AgendaPanelContext)
 
-  console.log('context', context)
-
   if (context === undefined) {
     throw new Error('useAgendaPanel must be used within a AgendaPanelProvider')
   }

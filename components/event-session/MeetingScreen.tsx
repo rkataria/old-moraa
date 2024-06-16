@@ -14,6 +14,7 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
 
+import { FlyingEmojisOverlay } from './FlyingEmojisOverlay'
 import { MainContainer } from './MainContainer'
 import { MeetingHeader } from './MeetingHeader'
 import { MeetingRightSidebar } from './MeetingRightSidebar'
@@ -119,6 +120,10 @@ export function MeetingScreen() {
         />
       }>
       <MainContainer />
+
+      {/* Emoji Overlay */}
+      <FlyingEmojisOverlay />
+
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
       <DyteNotifications meeting={meeting} />

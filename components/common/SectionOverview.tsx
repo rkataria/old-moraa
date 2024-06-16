@@ -14,6 +14,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { FrameStatus } from '@/services/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { ISection, IFrame } from '@/types/frame.type'
+import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
 export function SectionOverview() {
@@ -21,6 +22,8 @@ export function SectionOverview() {
     isOwner,
     sections,
     currentSectionId,
+    preview,
+    eventMode,
     showSectionPlaceholder,
     updateFrame,
     updateFrames,
@@ -33,6 +36,8 @@ export function SectionOverview() {
   const filteredSections = sections.filter((s) => s.id === currentSectionId)
 
   const changeFrameStatus = (frame: IFrame) => {
+    if (!isOwner) return
+
     const newState =
       frame.status === FrameStatus.PUBLISHED
         ? FrameStatus.DRAFT
@@ -49,6 +54,7 @@ export function SectionOverview() {
     section: ISection,
     newState: FrameStatus.DRAFT | FrameStatus.PUBLISHED
   ) => {
+    if (!isOwner) return
     updateFrames({
       frameIds: section.frames.map((frame) => frame.id),
       framePayload: {
@@ -58,6 +64,7 @@ export function SectionOverview() {
   }
 
   const onFrameTitleChange = (frameId: string, title: string) => {
+    if (!isOwner) return
     updateFrame({
       frameId,
       framePayload: {
@@ -66,17 +73,24 @@ export function SectionOverview() {
     })
   }
 
+  const editable = isOwner && !preview && eventMode === 'edit'
+
+  const filteredFrames = getFilteredFramesByStatus({
+    frames: filteredSections[0].frames,
+    status: editable ? null : FrameStatus.PUBLISHED,
+  })
+
   return (
     <div className="flex flex-col flex-1 max-w-5xl m-auto p-4 pt-14">
       <h2 className="mb-2 font-bold text-xl">Section Overview</h2>
       <div className="flex justify-between items-center mb-4">
         <h4 className="font-md font-semibold">Outline</h4>
-        <h4 className="font-md pl-4">Share</h4>
+        {editable && <h4 className="font-md pl-4">Share</h4>}
       </div>
       <div className="scrollbar-none overflow-y-auto">
         <DragDropContext
           onDragEnd={(result, provide) => {
-            if (!isOwner) return
+            if (!editable) return
             if (!result.destination) return
             if (result.type === 'section') reorderSection(result, provide)
             if (result.type === 'frame') reorderFrame(result, provide)
@@ -93,6 +107,7 @@ export function SectionOverview() {
                   <Draggable
                     key={`section-draggable-${section.id}`}
                     draggableId={`section-draggable-sectionId-${section.id}`}
+                    isDragDisabled={!editable}
                     index={sectionIndex}>
                     {(sectionDraggableProvided) => (
                       <div
@@ -114,27 +129,30 @@ export function SectionOverview() {
                                   </p>
                                 </div>
                               </div>
-                              <div className="flex items-center justify-center p-2 mr-2">
-                                <Switch
-                                  size="sm"
-                                  isSelected={section.frames.some(
-                                    (frame) =>
-                                      frame.status === FrameStatus.PUBLISHED
-                                  )}
-                                  onChange={() =>
-                                    changeSectionStatus(
-                                      section,
-                                      section.frames.some(
-                                        (frame) =>
-                                          frame.status === FrameStatus.PUBLISHED
+                              {editable && (
+                                <div className="flex items-center justify-center p-2 mr-2">
+                                  <Switch
+                                    size="sm"
+                                    isSelected={section.frames.some(
+                                      (frame) =>
+                                        frame.status === FrameStatus.PUBLISHED
+                                    )}
+                                    onChange={() =>
+                                      changeSectionStatus(
+                                        section,
+                                        section.frames.some(
+                                          (frame) =>
+                                            frame.status ===
+                                            FrameStatus.PUBLISHED
+                                        )
+                                          ? FrameStatus.DRAFT
+                                          : FrameStatus.PUBLISHED
                                       )
-                                        ? FrameStatus.DRAFT
-                                        : FrameStatus.PUBLISHED
-                                    )
-                                  }
-                                  disabled={!isOwner}
-                                />
-                              </div>
+                                    }
+                                    disabled={!editable}
+                                  />
+                                </div>
+                              )}
                             </div>
                             <div className="ml-4">
                               <StrictModeDroppable
@@ -156,12 +174,13 @@ export function SectionOverview() {
                                       <div className="w-full">
                                         <div>
                                           <div className="flex flex-col justify-start items-start gap-1 w-full px-2 pb-2 rounded-sm transition-all">
-                                            {section.frames.map(
+                                            {filteredFrames.map(
                                               (frame, frameIndex) => (
                                                 <React.Fragment key={frame.id}>
                                                   <Draggable
                                                     key={`frame-draggable-${frame.id}`}
                                                     draggableId={`frame-draggable-frameId-${frame.id}`}
+                                                    isDragDisabled={!editable}
                                                     index={frameIndex}>
                                                     {(_provided) => (
                                                       <div
@@ -188,7 +207,9 @@ export function SectionOverview() {
                                                           />
                                                           <div className="bg-white p-2 h-full w-full flex flex-col">
                                                             <EditableLabel
-                                                              readOnly={false}
+                                                              readOnly={
+                                                                !editable
+                                                              }
                                                               label={frame.name}
                                                               onUpdate={(
                                                                 value
@@ -201,21 +222,25 @@ export function SectionOverview() {
                                                             />
                                                           </div>
                                                         </div>
-                                                        <div className="flex items-center justify-center p-2">
-                                                          <Switch
-                                                            size="sm"
-                                                            isSelected={
-                                                              frame.status ===
-                                                              FrameStatus.PUBLISHED
-                                                            }
-                                                            onChange={() =>
-                                                              changeFrameStatus(
-                                                                frame
-                                                              )
-                                                            }
-                                                            disabled={!isOwner}
-                                                          />
-                                                        </div>
+                                                        {editable && (
+                                                          <div className="flex items-center justify-center p-2">
+                                                            <Switch
+                                                              size="sm"
+                                                              isSelected={
+                                                                frame.status ===
+                                                                FrameStatus.PUBLISHED
+                                                              }
+                                                              onChange={() =>
+                                                                changeFrameStatus(
+                                                                  frame
+                                                                )
+                                                              }
+                                                              disabled={
+                                                                !isOwner
+                                                              }
+                                                            />
+                                                          </div>
+                                                        )}
                                                       </div>
                                                     )}
                                                   </Draggable>
@@ -243,18 +268,20 @@ export function SectionOverview() {
           </StrictModeDroppable>
         </DragDropContext>
       </div>
-      <div className="flex justify-center mt-4">
-        <Button
-          color="primary"
-          variant="solid"
-          isLoading={showSectionPlaceholder}
-          onClick={() => {
-            setInsertInSectionId(currentSectionId)
-            setOpenContentTypePicker?.(true)
-          }}>
-          Add Frame
-        </Button>
-      </div>
+      {editable && (
+        <div className="flex justify-center mt-4">
+          <Button
+            color="primary"
+            variant="solid"
+            isLoading={showSectionPlaceholder}
+            onClick={() => {
+              setInsertInSectionId(currentSectionId)
+              setOpenContentTypePicker?.(true)
+            }}>
+            Add Frame
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
