@@ -6256,6 +6256,13 @@ lib0@^0.2.43, lib0@^0.2.85, lib0@^0.2.86:
   dependencies:
     isomorphic.js "^0.2.4"
 
+lib0@^0.2.92:
+  version "0.2.94"
+  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.94.tgz#fc28b4b65f816599f1e2f59d3401e231709535b3"
+  integrity sha512-hZ3p54jL4Wpu7IOg26uC7dnEWiMyNlUrb9KoG7+xYs45WkQwpVvKFndVq2+pqLYKe1u8Fp3+zAfZHVvTK34PvQ==
+  dependencies:
+    isomorphic.js "^0.2.4"
+
 lilconfig@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-3.0.0.tgz#f8067feb033b5b74dab4602a5f5029420be749bc"
@@ -8942,6 +8949,17 @@ xmlhttprequest-ssl@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/xmlhttprequest-ssl/-/xmlhttprequest-ssl-2.0.0.tgz#91360c86b914e67f44dce769180027c0da618c67"
   integrity sha512-QKxVRxiRACQcVuQEYFsI1hhkrMlrXHPegbbd1yn9UHOmRxY+si12nQYzri3vbzt8VdTTRviqcKxcyllFas5z2A==
+
+y-partykit@^0.0.28:
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/y-partykit/-/y-partykit-0.0.28.tgz#86957e7c113c851e98d7261e33e2d3ee6ca82ca8"
+  integrity sha512-CuYUE6HyQ1T4f/GTv+HDwbl9wX5LIiyJIn8ozxK/OiAQcVLPSdjcCpNE1AOFRd2YoIp1Z18bvk8KuF6mrB067w==
+  dependencies:
+    lib0 "^0.2.92"
+    lodash.debounce "^4.0.8"
+    react "^18.2.0"
+    y-protocols "^1.0.6"
+    yjs "^13.6.14"
 
 y-protocols@^1.0.6:
   version "1.0.6"
