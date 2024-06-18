@@ -41,10 +41,7 @@ export function EditableLabel({
         }>
         <div
           ref={contentEditableRef}
-          className={cn(
-            'w-full outline-none max-w-[9.25rem] overflow-hidden !whitespace-nowrap',
-            className
-          )}
+          className={cn('w-full outline-none line-clamp-1', className)}
           onFocus={() => {
             if (readOnly) return
             setValue(label)

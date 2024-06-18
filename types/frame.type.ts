@@ -66,6 +66,8 @@ export interface IFrame {
   meeting_id?: string
   section_id?: string
   status?: string
+  // eslint-disable-next-line prettier/prettier
+  notes?: any
 }
 
 export interface IMiniFrameManagerType {

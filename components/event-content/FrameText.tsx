@@ -9,6 +9,7 @@ import { ContentType } from '../common/ContentTypePicker'
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
+import { getFrameName } from '@/utils/getFrameName'
 import { cn } from '@/utils/utils'
 
 export function FrameText({
@@ -89,6 +90,15 @@ export function FrameText({
           ...currentFrame.content,
           [changedKey]: debouncedText,
         },
+        name: getFrameName({
+          frame: {
+            ...currentFrame,
+            content: {
+              ...currentFrame.content,
+              [changedKey]: debouncedText,
+            },
+          },
+        }),
       },
       frameId: currentFrame.id,
     })

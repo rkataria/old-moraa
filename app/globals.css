@@ -341,3 +341,12 @@
 .grid-cols-8 .participant-grid:last-child:nth-child(4n - 3) {
   grid-column-end: 5;
 }
+
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}

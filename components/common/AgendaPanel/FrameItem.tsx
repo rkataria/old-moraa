@@ -18,7 +18,6 @@ import { useDimensions } from '@/hooks/useDimensions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
-import { getFrameName } from '@/utils/getFrameName'
 import { cn } from '@/utils/utils'
 
 type FrameItemProps = {
@@ -128,7 +127,7 @@ export function FrameItem({ frame }: FrameItemProps) {
                 />
                 <EditableLabel
                   readOnly={!editable}
-                  label={getFrameName({ frame })}
+                  label={frame.name}
                   className="text-sm"
                   onUpdate={(value) => {
                     if (!editable) return

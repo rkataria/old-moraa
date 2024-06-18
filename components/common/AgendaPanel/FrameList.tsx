@@ -25,7 +25,7 @@ export function FrameList({
 
   return (
     <div
-      className={cn('flex flex-col gap-2', {
+      className={cn('flex flex-col gap-1', {
         'p-2 pl-4 pr-0': sidebarExpanded,
         'py-2': !sidebarExpanded,
       })}>

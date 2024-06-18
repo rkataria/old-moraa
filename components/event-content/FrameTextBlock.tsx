@@ -119,7 +119,7 @@ export function FrameTextBlock({
   return (
     <div onClick={() => onClick?.(block.id)} className={className}>
       <TextBlockEditor
-        showToolbar={blockType !== 'header'}
+        showToolbar={blockType === 'richtext'}
         fillAvailableHeight={fillAvailableHeight}
         block={block}
         editable={editableId === block.id}

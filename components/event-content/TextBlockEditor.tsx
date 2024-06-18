@@ -230,7 +230,7 @@ export function TextBlockEditor({
       className={cn(
         'sticky top-4 left-4 w-5/6 h-full pt-2',
         {
-          'border border-gray-200': block.type !== 'header' && !!editable,
+          'border border-gray-200': block.type === 'richtext' && !!editable,
         },
         className
       )}>
