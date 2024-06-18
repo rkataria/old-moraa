@@ -149,12 +149,12 @@ export const contentTypes: IContentType[] = [
     description: 'Empower presentations with seamless Google Slides embed',
     contentType: ContentType.GOOGLE_SLIDES,
   },
-  {
-    name: 'Import Google Slides',
-    icon: <IconBrandGoogleDrive className="w-full h-full max-w-11 max-h-11" />,
-    description: 'Empower presentations with seamless Google Slides import',
-    contentType: ContentType.GOOGLE_SLIDES_IMPORT,
-  },
+  // {
+  //   name: 'Import Google Slides',
+  //   icon: <IconBrandGoogleDrive className="w-full h-full max-w-11 max-h-11" />,
+  //   description: 'Empower presentations with seamless Google Slides import',
+  //   contentType: ContentType.GOOGLE_SLIDES_IMPORT,
+  // },
   {
     name: 'Import PDF',
     icon: <IconBrandAdobe className="w-full h-full max-w-11 max-h-11" />,

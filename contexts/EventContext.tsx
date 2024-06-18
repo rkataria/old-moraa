@@ -748,41 +748,41 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         message: importGoogleSlidesResponse.data?.message,
       })
 
-      return null
+      return importGoogleSlidesResponse.data
     }
 
-    const { insertedFrames: insertedFrameIds } = importGoogleSlidesResponse.data
+    // const { insertedFrames: insertedFrameIds } = importGoogleSlidesResponse.data
 
-    const section = sections.find((s) => s.id === frame.section_id)
-    const existingFrameIds = section?.frames.map((s: IFrame) => s.id) || []
-    const existingFrameIdsWithoutGoogleSlideId = existingFrameIds.filter(
-      (sid: string) => sid !== frame.id
-    )
-    const updatedFrameIds = [
-      ...existingFrameIdsWithoutGoogleSlideId,
-      ...insertedFrameIds,
-    ]
+    // const section = sections.find((s) => s.id === frame.section_id)
+    // const existingFrameIds = section?.frames.map((s: IFrame) => s.id) || []
+    // const existingFrameIdsWithoutGoogleSlideId = existingFrameIds.filter(
+    //   (sid: string) => sid !== frame.id
+    // )
+    // const updatedFrameIds = [
+    //   ...existingFrameIdsWithoutGoogleSlideId,
+    //   ...insertedFrameIds,
+    // ]
 
-    // Update section
-    const sectionData = await updateSection({
-      sectionPayload: {
-        frames: updatedFrameIds,
-      },
-      sectionId: frame.section_id,
-    })
+    // // Update section
+    // const sectionData = await updateSection({
+    //   sectionPayload: {
+    //     frames: updatedFrameIds,
+    //   },
+    //   sectionId: frame.section_id,
+    // })
 
-    if (!sectionData) return null
+    // if (!sectionData) return null
 
-    // Delete the google import frame
-    const deleteFrameResponse = await FrameService.deleteFrame(frame.id)
+    // // Delete the google import frame
+    // const deleteFrameResponse = await FrameService.deleteFrame(frame.id)
 
-    if (deleteFrameResponse.error) {
-      console.error('error while deleting frame: ', deleteFrameResponse.error)
+    // if (deleteFrameResponse.error) {
+    //   console.error('error while deleting frame: ', deleteFrameResponse.error)
 
-      return null
-    }
+    //   return null
+    // }
 
-    return null
+    return importGoogleSlidesResponse.data
   }
 
   const updateFrame = async ({
