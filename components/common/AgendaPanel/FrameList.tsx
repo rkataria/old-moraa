@@ -10,10 +10,15 @@ import { cn } from '@/utils/utils'
 
 type FrameListProps = {
   frames: IFrame[]
+  showList: boolean
   droppablePlaceholder: ReactNode
 }
 
-export function FrameList({ frames, droppablePlaceholder }: FrameListProps) {
+export function FrameList({
+  frames,
+  showList,
+  droppablePlaceholder,
+}: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
@@ -24,23 +29,24 @@ export function FrameList({ frames, droppablePlaceholder }: FrameListProps) {
         'p-2 pl-4 pr-0': sidebarExpanded,
         'py-2': !sidebarExpanded,
       })}>
-      {frames.map((frame, frameIndex) => (
-        <Draggable
-          key={`frame-draggable-${frame.id}`}
-          draggableId={`frame-draggable-frameId-${frame.id}`}
-          index={frameIndex}>
-          {(_provided) => (
-            <div
-              key={frame.id}
-              ref={_provided.innerRef}
-              {..._provided.draggableProps}
-              {..._provided.dragHandleProps}
-              className="mt-2 flex w-full">
-              <FrameItem frame={frame} />
-            </div>
-          )}
-        </Draggable>
-      ))}
+      {showList &&
+        frames.map((frame, frameIndex) => (
+          <Draggable
+            key={`frame-draggable-${frame.id}`}
+            draggableId={`frame-draggable-frameId-${frame.id}`}
+            index={frameIndex}>
+            {(_provided) => (
+              <div
+                key={frame.id}
+                ref={_provided.innerRef}
+                {..._provided.draggableProps}
+                {..._provided.dragHandleProps}
+                className="flex w-full">
+                <FrameItem frame={frame} />
+              </div>
+            )}
+          </Draggable>
+        ))}
       {droppablePlaceholder}
     </div>
   )

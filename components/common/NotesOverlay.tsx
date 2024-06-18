@@ -12,6 +12,7 @@ import { Button } from '@nextui-org/react'
 import { TextBlockEditor } from '../event-content/TextBlockEditor'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { FrameNotesService } from '@/services/frame-note.service'
 import { EventContextType } from '@/types/event-context.type'
 import { TextBlock } from '@/types/frame.type'
@@ -44,9 +45,17 @@ function NoteOverlaySidebarWrapper({ contentClass, children, onClose }: any) {
 export function NoteOverlay({ onClose }: { onClose: () => void }) {
   const [editingBlock, setEditingBlock] = useState<string>('')
   const [notesHtml, setNotesHtml] = useState<TextBlock | null>(null)
+  const { setRightSidebarVisiblity } = useStudioLayout()
 
   const { currentFrame, isOwner, eventMode, preview, overviewOpen } =
     useContext(EventContext) as EventContextType
+
+  useEffect(() => {
+    if (!currentFrame?.id) {
+      setRightSidebarVisiblity(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFrame?.id])
 
   const isEditable = isOwner && eventMode === 'edit' && !preview
   const selectedNotesQuery = useQuery({

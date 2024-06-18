@@ -41,10 +41,13 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
   } = useAgendaPanel()
   const { leftSidebarVisiblity } = useStudioLayout()
 
-  const frames = getFilteredFramesByStatus({
-    frames: section.frames,
-    status: isOwner && eventMode !== 'present' ? null : 'PUBLISHED',
-  })
+  const frames =
+    isOwner && eventMode === 'edit'
+      ? section.frames
+      : getFilteredFramesByStatus({
+          frames: section.frames,
+          status: 'PUBLISHED',
+        })
 
   const handleSectionClick = () => {
     const isSectionExpanded = expandedSectionIds.includes(section.id)
@@ -73,9 +76,9 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
       return (
         <>
           <div
-            className="flex justify-start items-center gap-2"
+            className="flex justify-start items-center flex-auto gap-2 p-1.5"
             onClick={handleSectionClick}>
-            <LuLayers size={22} />
+            <LuLayers size={22} className="flex-none" />
             <EditableLabel
               readOnly={actionDisabled}
               label={section.name}
@@ -88,7 +91,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
               }}
             />
           </div>
-          <span className="flex-none">
+          <span className="flex-none p-1.5">
             <Chip
               size="sm"
               className="aspect-square flex justify-center items-center">
@@ -112,7 +115,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     <div>
       <div
         className={cn(
-          'flex justify-between items-center p-1.5 border-2 border-transparent rounded-md',
+          'flex justify-between items-center border-2 border-transparent rounded-md',
           {
             'border-purple-200 bg-purple-200': sectionActive,
             'justify-center': !sidebarExpanded,
@@ -132,12 +135,11 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
               // 'cursor-grab': !actionDisabled,
             })}
             {...frameDroppableProvided.droppableProps}>
-            {sectionExpanded && (
-              <FrameList
-                frames={frames}
-                droppablePlaceholder={frameDroppableProvided.placeholder}
-              />
-            )}
+            <FrameList
+              frames={frames}
+              showList={sectionExpanded}
+              droppablePlaceholder={frameDroppableProvided.placeholder}
+            />
           </div>
         )}
       </StrictModeDroppable>

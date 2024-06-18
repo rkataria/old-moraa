@@ -10,6 +10,7 @@ import { ContentTypeIcon } from '../ContentTypeIcon'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
+import { FramePlaceholder } from '../FramePlaceholder'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
@@ -33,6 +34,7 @@ export function FrameItem({ frame }: FrameItemProps) {
     preview,
     overviewOpen,
     eventMode,
+    insertAfterFrameId,
     updateFrame,
     moveUpFrame,
     moveDownFrame,
@@ -191,6 +193,7 @@ export function FrameItem({ frame }: FrameItemProps) {
       {sidebarExpanded && (
         <AddItemBar sectionId={frame.section_id!} frameId={frame.id} />
       )}
+      {insertAfterFrameId === frame.id && <FramePlaceholder />}
     </div>
   )
 }
