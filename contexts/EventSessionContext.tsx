@@ -32,6 +32,7 @@ import {
   type EventSessionContextType,
   type VideoMiddlewareConfig,
   PresentationStatuses,
+  DyteStates,
 } from '@/types/event-session.type'
 import { frameHasFrameResponses } from '@/utils/content.util'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
@@ -51,6 +52,7 @@ export const EventSessionContext =
 export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventId } = useParams()
   const { meeting: dyteMeeting } = useDyteMeeting()
+  const [dyteStates, setDyteStates] = useState<DyteStates>({})
   const { isBreakoutActive } = useBreakoutRooms()
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
@@ -73,6 +75,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [currentFrameLoading, setCurrentFrameLoading] = useState<boolean>(true)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
+  const [isBreakoutSlide, setIsBreakoutSlide] = useState<boolean>(false)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activeSession, setActiveSession] = useState<any>(null)
@@ -90,6 +93,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame])
+
+  useEffect(() => {
+    if (isOwner && isBreakoutActive && !isBreakoutSlide) {
+      setIsBreakoutSlide(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBreakoutActive])
 
   useEffect(() => {
     if (!meeting?.id) return
@@ -856,6 +866,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         frameReactions,
         realtimeChannel,
         eventSessionMode,
+        isBreakoutSlide,
+        dyteStates,
+        setDyteStates,
+        setIsBreakoutSlide,
         setEventSessionMode,
         startPresentation,
         stopPresentation,

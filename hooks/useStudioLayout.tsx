@@ -7,7 +7,12 @@ import {
 } from 'react'
 
 type LeftSidebarVisiblity = 'minimized' | 'maximized'
-type RightSidebarVisiblity = 'ai-chat' | 'frame-settings' | 'notes' | null
+type RightSidebarVisiblity =
+  | 'ai-chat'
+  | 'frame-settings'
+  | 'notes'
+  | 'breakout'
+  | null
 
 type StudioLayoutContextType = {
   leftSidebarVisiblity: LeftSidebarVisiblity

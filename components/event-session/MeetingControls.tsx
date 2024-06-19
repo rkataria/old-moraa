@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation'
 import { Tooltip } from '@nextui-org/react'
 
 import { AiToggle } from './AiToggle'
+import { BreakoutSlideToggle } from './BreakoutToggle'
 import { ChatsToggle } from './ChatsToggle'
 import { LeaveMeetingToggle } from './LeaveMeetingToggle'
 import { LobbyViewToggle } from './LobbyViewToggle'
@@ -25,6 +26,7 @@ import { VideoToggle } from './VideoToggle'
 import { WhiteBoardToggle } from './WhiteBoardToggle'
 import { ControlButton } from '../common/ControlButton'
 
+import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -38,8 +40,6 @@ type MeetingControlsProps = {
     sidebar: RightSiderbar
   }) => void
   onAiChatOverlayToggle: () => void
-  dyteStates: any
-  setDyteStates: any
   onNoteOverlayToggle: () => void
 }
 
@@ -48,16 +48,20 @@ export function MeetingControls({
   onDyteStateUpdate,
   onSidebarOpen,
   onAiChatOverlayToggle,
-  dyteStates,
-  setDyteStates,
   onNoteOverlayToggle,
 }: MeetingControlsProps) {
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const { isHost, eventSessionMode } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { isBreakoutActive } = useBreakoutRooms()
+  const {
+    isHost,
+    eventSessionMode,
+    isBreakoutSlide,
+    dyteStates,
+    setDyteStates,
+    setIsBreakoutSlide,
+  } = useContext(EventSessionContext) as EventSessionContextType
 
   if (!event) return null
 
@@ -118,13 +122,21 @@ export function MeetingControls({
             })
           }}
         />
-        <DyteBreakoutRoomsToggle
-          meeting={meeting}
-          states={dyteStates}
-          onDyteStateUpdate={(e) =>
-            setDyteStates({ ...e.detail, mode: 'view' })
-          }
-        />
+        {isBreakoutActive ? (
+          isHost ? (
+            <BreakoutSlideToggle
+              isActive={isBreakoutSlide}
+              onClick={() => setIsBreakoutSlide(!isBreakoutSlide)}
+            />
+          ) : null
+        ) : (
+          <DyteBreakoutRoomsToggle
+            meeting={meeting}
+            states={dyteStates}
+            onDyteStateUpdate={(e) => setDyteStates({ ...e.detail })}
+            size="sm"
+          />
+        )}
 
         <ControlButton
           buttonProps={{

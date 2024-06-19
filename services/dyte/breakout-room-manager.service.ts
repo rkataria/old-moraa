@@ -63,9 +63,36 @@ export const stopBreakoutRooms = async ({
   meeting,
   stateManager,
 }: StopBreakoutRoomsArgs) => {
+  const participants: Array<string> = []
+  meeting.connectedMeetings.meetings.forEach((m) =>
+    m.participants.forEach((participant) =>
+      participant.customParticipantId
+        ? participants.push(participant.customParticipantId)
+        : null
+    )
+  )
+
+  stateManager.assignParticipantsToMeeting(
+    participants,
+    meeting.connectedMeetings.parentMeeting.id || ''
+  )
+
   stateManager.allConnectedMeetings.forEach((m) =>
     stateManager.deleteMeeting(m.id)
   )
 
-  await stateManager.applyChanges(meeting)
+  return stateManager.applyChanges(meeting)
+}
+
+export const moveHostToRoom = async ({
+  meeting,
+  stateManager,
+  destinationMeetingId,
+}: StopBreakoutRoomsArgs & { destinationMeetingId: string }) => {
+  stateManager.assignParticipantsToMeeting(
+    [meeting.self.customParticipantId],
+    destinationMeetingId
+  )
+
+  return stateManager.applyChanges(meeting)
 }

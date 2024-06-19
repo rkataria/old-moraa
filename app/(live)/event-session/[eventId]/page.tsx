@@ -25,13 +25,11 @@ import { useEnrollment } from '@/hooks/useEnrollment'
 type EventSessionPageInnerProps = {
   roomJoined: boolean
   isBreakoutLoading: boolean
-  // setIsBreakoutLoading: (loading: boolean) => void
 }
 
 function EventSessionPageInner({
   roomJoined,
   isBreakoutLoading,
-  // setIsBreakoutLoading,
 }: EventSessionPageInnerProps) {
   useBreakoutRoom()
 
@@ -42,7 +40,6 @@ function EventSessionPageInner({
       </div>
     )
   }
-  // console.log('EventSessionPageInner isBreakoutLoading', isBreakoutLoading)
 
   if (roomJoined) {
     return (
@@ -209,30 +206,20 @@ const useBreakoutRoom = () => {
 
 const useDyteListeners = (
   dyteMeeting: DyteClient | undefined,
-  setRoomJoined: (roomJoined: boolean) => void
+  setRoomJoined: (roomJoined: boolean) => void,
+  setIsBreakoutLoading: (isLoading: boolean) => void
 ) => {
   const router = useRouter()
+
   useEffect(() => {
     if (!dyteMeeting) return
 
     const roomJoinedListener = () => {
-      console.log(
-        'roomJoinedListener: roomJoined, meetingId',
-        dyteMeeting.meta.meetingId
-      )
       setRoomJoined(true)
     }
     const roomLeftListener = () => {
-      console.log(
-        'roomLeftListener: meeting.connectedMeetings.isActive',
-        dyteMeeting.connectedMeetings.isActive
-      )
       if (dyteMeeting.connectedMeetings.isActive) {
-        // setIsBreakoutLoading(true)
-        console.log(
-          'roomLeftListener: dyteMeeting.connectedMeetings.meetings',
-          dyteMeeting.connectedMeetings.meetings
-        )
+        setIsBreakoutLoading(true)
         router.refresh()
 
         return
@@ -246,12 +233,12 @@ const useDyteListeners = (
     dyteMeeting.self.on('roomLeft', roomLeftListener)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const meetingChangedListener = (...args: any[]) => {
-      console.log('meetingChanged', args)
+    const meetingChangedListener = () => {
+      setIsBreakoutLoading(false)
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const changingMeetingListener = (...args: any[]) => {
-      console.log('changingMeeting', args)
+    const changingMeetingListener = () => {
+      // console.log('changingMeeting', args)
     }
     dyteMeeting.connectedMeetings.on('meetingChanged', meetingChangedListener)
     dyteMeeting.connectedMeetings.on('changingMeeting', changingMeetingListener)
@@ -281,11 +268,9 @@ function EventSessionPage() {
   const meetingEl = useRef<HTMLDivElement>(null)
   const [dyteMeeting, initDyteMeeting] = useDyteClient()
   const [roomJoined, setRoomJoined] = useState<boolean>(false)
-  // const [dyteMeetingRetriggeredAt, setDyteMeetingRetriggeredAt] =
-  //   useState<number>(0)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isBreakoutLoading, setIsBreakoutLoading] = useState<boolean>(false)
-  useDyteListeners(dyteMeeting, setRoomJoined)
+  useDyteListeners(dyteMeeting, setRoomJoined, setIsBreakoutLoading)
 
   useEffect(() => {
     if (!enrollment?.meeting_token) return
@@ -331,9 +316,6 @@ function EventSessionPage() {
     })
   }
 
-  // console.log('roomJoined', roomJoined)
-  // console.log('isBreakoutLoading', isBreakoutLoading)
-
   return (
     <DyteProvider
       value={dyteMeeting}
@@ -347,9 +329,7 @@ function EventSessionPage() {
           <div ref={meetingEl}>
             <EventSessionPageInner
               roomJoined={roomJoined}
-              // setRoomJoined={setRoomJoined}
               isBreakoutLoading={isBreakoutLoading}
-              // setIsBreakoutLoading={setIsBreakoutLoading}
             />
           </div>
         </EventSessionProvider>

@@ -4,14 +4,19 @@ import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
 import { ParticipantTiles } from './ParticipantTiles'
+import { BreakoutRoomsFrame } from '../common/BreakoutRoomsFrame'
 import { PanelResizer } from '../common/PanelResizer'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { PresentationStatuses } from '@/types/event-session.type'
 
 export function MainContainer() {
-  const { presentationStatus, currentFrame, eventSessionMode } =
-    useEventSession()
+  const {
+    presentationStatus,
+    currentFrame,
+    eventSessionMode,
+    isBreakoutSlide,
+  } = useEventSession()
   const [panelSize, setPanelSize] = useState(18) // Initial default size
 
   const mainContentRef = useRef<HTMLDivElement>(null)
@@ -47,17 +52,21 @@ export function MainContainer() {
       className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-gray-100"
       ref={mainContentRef}>
       {/* Sportlight View */}
-      {spotlightMode ? (
+      {spotlightMode && !isBreakoutSlide ? (
         <div className="flex flex-col overflow-auto h-full flex-1">
           <ParticipantTiles spotlightMode={spotlightMode} />
         </div>
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
           <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
-            {['Preview', 'Presentation'].includes(eventSessionMode) && (
-              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
-                <ContentContainer />
-              </div>
+            {isBreakoutSlide ? (
+              <BreakoutRoomsFrame />
+            ) : (
+              ['Preview', 'Presentation'].includes(eventSessionMode) && (
+                <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
+                  <ContentContainer />
+                </div>
+              )
             )}
           </Panel>
 

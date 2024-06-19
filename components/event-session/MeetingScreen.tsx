@@ -4,10 +4,9 @@
 
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 
 import {
-  DyteBreakoutRoomsManager,
   DyteDialogManager,
   DyteNotifications,
   DyteParticipantsAudio,
@@ -29,25 +28,23 @@ import {
   PresentationStatuses,
 } from '@/types/event-session.type'
 
-export type DyteStates = {
-  [key: string]: string | boolean
-}
-
 export type RightSiderbar =
   | 'participants'
   | 'chat'
   | 'plugins'
   | 'ai-chat'
   | 'notes'
+  | 'breakout'
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
-  const [dyteStates, setDyteStates] = useState<DyteStates>({})
   const { preview } = useContext(EventContext) as EventContextType
   const {
     isHost,
     eventSessionMode,
     presentationStatus,
+    dyteStates,
+    setDyteStates,
     setEventSessionMode,
     updateActiveSession,
     updateTypingUsers,
@@ -133,7 +130,6 @@ export function MeetingScreen() {
           }))
         }}
       />
-      <DyteBreakoutRoomsManager meeting={meeting} states={dyteStates} />
     </StudioLayout>
   )
 }

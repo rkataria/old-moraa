@@ -61,8 +61,6 @@ export function MeetingHeader({
             setRightSidebarVisiblity('ai-chat')
           }
         }}
-        dyteStates={dyteStates}
-        setDyteStates={setDyteStates}
         onNoteOverlayToggle={() => {
           if (rightSidebarVisiblity === 'notes') {
             setRightSidebarVisiblity(null)
