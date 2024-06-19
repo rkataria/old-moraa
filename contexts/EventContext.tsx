@@ -30,6 +30,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const { currentUser } = useAuth()
   const [sections, setSections] = useState<any[]>([])
   const [currentFrame, setCurrentFrame] = useState<any>(null)
+  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null)
   const [overviewOpen, setOverviewOpen] = useState<any>(false)
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
@@ -108,7 +109,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
           table: 'section',
           filter: `meeting_id=eq.${meeting.id}`,
@@ -116,189 +117,189 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         async (payload) => {
           console.log('Section change received!', payload)
 
-          /**
-           * Two approaches are considered for handling section updates:
-           *
-           * 1. Fetch the updated section, including all frame contents, and update the section's state.
-           * 2. Update the section's state based on the payload data.
-           *
-           * Currently, the first approach is implemented to maintain frame order consistency and mitigate potential issues with content updates. However, this approach is not optimal, and further optimization or a refinement of the second approach may be necessary.
-           */
+          if (payload.eventType === 'UPDATE') {
+            /**
+             * Two approaches are considered for handling section updates:
+             *
+             * 1. Fetch the updated section, including all frame contents, and update the section's state.
+             * 2. Update the section's state based on the payload data.
+             *
+             * Currently, the first approach is implemented to maintain frame order consistency and mitigate potential issues with content updates. However, this approach is not optimal, and further optimization or a refinement of the second approach may be necessary.
+             */
 
-          // Approach - 1
-          const updatedSection = payload.new
+            // Approach - 1
+            const updatedSection = payload.new
 
-          const sectionResponse = await SectionService.getSection(
-            updatedSection.id
-          )
-
-          if (sectionResponse.error) {
-            console.error(
-              'error while fetching section: ',
-              sectionResponse.error
+            const sectionResponse = await SectionService.getSection(
+              updatedSection.id
             )
 
-            return null
-          }
+            if (sectionResponse.error) {
+              console.error(
+                'error while fetching section: ',
+                sectionResponse.error
+              )
 
-          const currentSectionWithFramesContent = sectionResponse.data
-          // const previousFrameIds = sections
-          //   .find((s) => s.id === updatedSection.id)
-          //   ?.frames.map((frame: IFrame) => frame.id)
-          // const newFrameIds = currentSectionWithFramesContent.frames || []
-          // const diffFrameIds = newFrameIds.filter(
-          //   (frameId: string) => !previousFrameIds?.includes(frameId)
-          // )
+              return
+            }
 
-          // if (diffFrameIds.length > 0) {
-          //   setCurrentFrame(
-          //     currentSectionWithFramesContent.framesWithContent.find(
-          //       (s) => s.id === diffFrameIds[0]
-          //     )
-          //   )
-          // }
+            const currentSectionWithFramesContent = sectionResponse.data
+            // const previousFrameIds = sections
+            //   .find((s) => s.id === updatedSection.id)
+            //   ?.frames.map((frame: IFrame) => frame.id)
+            // const newFrameIds = currentSectionWithFramesContent.frames || []
+            // const diffFrameIds = newFrameIds.filter(
+            //   (frameId: string) => !previousFrameIds?.includes(frameId)
+            // )
 
-          setSections((prevSections) => {
-            const updatedSections = prevSections.map((section) => {
-              if (section.id === updatedSection.id) {
-                const updateFramesOrder =
-                  currentSectionWithFramesContent.frames?.map(
-                    (frameId: string) =>
-                      currentSectionWithFramesContent.framesWithContent.find(
-                        (s) => s.id === frameId
-                      )
-                  )
+            // if (diffFrameIds.length > 0) {
+            //   setCurrentFrame(
+            //     currentSectionWithFramesContent.framesWithContent.find(
+            //       (s) => s.id === diffFrameIds[0]
+            //     )
+            //   )
+            // }
 
-                return {
-                  ...sectionResponse.data,
-                  frames: updateFramesOrder || [],
-                  framesWithContent: undefined,
+            setSections((prevSections) => {
+              const updatedSections = prevSections.map((section) => {
+                if (section.id === updatedSection.id) {
+                  const updateFramesOrder =
+                    currentSectionWithFramesContent.frames?.map(
+                      (frameId: string) =>
+                        currentSectionWithFramesContent.framesWithContent.find(
+                          (s) => s.id === frameId
+                        )
+                    )
+
+                  return {
+                    ...sectionResponse.data,
+                    frames: updateFramesOrder || [],
+                    framesWithContent: undefined,
+                  }
                 }
-              }
 
-              return section
+                return section
+              })
+
+              return updatedSections
             })
 
-            return updatedSections
-          })
+            // Approach - 2
+            // if (payload.eventType === 'UPDATE') {
+            //   const updatedSection = payload.new
+            //   const _currentSection = sections.find(
+            //     (s) => s.id === updatedSection.id
+            //   )
 
-          // Approach - 2
-          // if (payload.eventType === 'UPDATE') {
-          //   const updatedSection = payload.new
-          //   const _currentSection = sections.find(
-          //     (s) => s.id === updatedSection.id
-          //   )
+            //   if (!_currentSection) return null
 
-          //   if (!_currentSection) return null
+            //   const newFrameIds = updatedSection.frames // [1, 2, 4]
+            //   const previousFrameIds = _currentSection.frames.map(
+            //     (frame: IFrame) => frame.id
+            //   ) // [1, 2, 3]
+            //   const diffFrameIds = newFrameIds.filter(
+            //     (frameId: string) => !previousFrameIds.includes(frameId)
+            //   )
 
-          //   const newFrameIds = updatedSection.frames // [1, 2, 4]
-          //   const previousFrameIds = _currentSection.frames.map(
-          //     (frame: IFrame) => frame.id
-          //   ) // [1, 2, 3]
-          //   const diffFrameIds = newFrameIds.filter(
-          //     (frameId: string) => !previousFrameIds.includes(frameId)
-          //   )
+            //   console.log('diffFrameIds', diffFrameIds)
+            //   console.log('previousFrameIds', previousFrameIds)
+            //   console.log('newFrameIds', newFrameIds)
 
-          //   console.log('diffFrameIds', diffFrameIds)
-          //   console.log('previousFrameIds', previousFrameIds)
-          //   console.log('newFrameIds', newFrameIds)
+            //   // Check if the frame is added
+            //   if (diffFrameIds.length > 0) {
+            //     const sectionResponse = await SectionService.getSection(
+            //       updatedSection.id
+            //     )
 
-          //   // Check if the frame is added
-          //   if (diffFrameIds.length > 0) {
-          //     const sectionResponse = await SectionService.getSection(
-          //       updatedSection.id
-          //     )
+            //     if (sectionResponse.error) {
+            //       console.error(
+            //         'error while fetching section: ',
+            //         sectionResponse.error
+            //       )
 
-          //     if (sectionResponse.error) {
-          //       console.error(
-          //         'error while fetching section: ',
-          //         sectionResponse.error
-          //       )
+            //       return null
+            //     }
 
-          //       return null
-          //     }
+            //     const currentSectionWithFramesContent = sectionResponse.data
+            //     const firstNewFrame =
+            //       currentSectionWithFramesContent.framesWithContent.find(
+            //         (s) => s.id === diffFrameIds[0]
+            //       )
 
-          //     const currentSectionWithFramesContent = sectionResponse.data
-          //     const firstNewFrame =
-          //       currentSectionWithFramesContent.framesWithContent.find(
-          //         (s) => s.id === diffFrameIds[0]
-          //       )
+            //     const updatedSections = sections.map((section) => {
+            //       if (section.id === updatedSection.id) {
+            //         const updateFramesOrder =
+            //           currentSectionWithFramesContent.frames?.map(
+            //             (frameId: string) =>
+            //               currentSectionWithFramesContent.framesWithContent.find(
+            //                 (s) => s.id === frameId
+            //               )
+            //           )
 
-          //     const updatedSections = sections.map((section) => {
-          //       if (section.id === updatedSection.id) {
-          //         const updateFramesOrder =
-          //           currentSectionWithFramesContent.frames?.map(
-          //             (frameId: string) =>
-          //               currentSectionWithFramesContent.framesWithContent.find(
-          //                 (s) => s.id === frameId
-          //               )
-          //           )
+            //         return {
+            //           ...sectionResponse.data,
+            //           frames: updateFramesOrder || [],
+            //           framesWithContent: undefined,
+            //         }
+            //       }
 
-          //         return {
-          //           ...sectionResponse.data,
-          //           frames: updateFramesOrder || [],
-          //           framesWithContent: undefined,
-          //         }
-          //       }
+            //       return section
+            //     })
+            //     console.log('diffframeIds updatedSections', updatedSections)
+            //     setCurrentFrame(firstNewFrame)
+            //     setSections(updatedSections)
+            //     setInsertAfterFrameId(null)
+            //     setShowFramePlaceholder(false)
 
-          //       return section
-          //     })
-          //     console.log('diffframeIds updatedSections', updatedSections)
-          //     setCurrentFrame(firstNewFrame)
-          //     setSections(updatedSections)
-          //     setInsertAfterFrameId(null)
-          //     setShowFramePlaceholder(false)
+            //     return null
+            //   }
 
-          //     return null
-          //   }
+            //   const isFramesOrderedChanged =
+            //     newFrameIds.join(',') !== previousFrameIds.join(',')
 
-          //   const isFramesOrderedChanged =
-          //     newFrameIds.join(',') !== previousFrameIds.join(',')
+            //   // Check if the frames order is changed
+            //   if (isFramesOrderedChanged) {
+            //     // Updated frames order
+            //     const orderedFrames = newFrameIds.map((frameId: string) =>
+            //       _currentSection.frames.find(
+            //         (frame: IFrame) => frame.id === frameId
+            //       )
+            //     )
+            //     const updatedSections = sections.map((section) => {
+            //       if (section.id === updatedSection.id) {
+            //         return { ...updatedSection, frames: orderedFrames }
+            //       }
 
-          //   // Check if the frames order is changed
-          //   if (isFramesOrderedChanged) {
-          //     // Updated frames order
-          //     const orderedFrames = newFrameIds.map((frameId: string) =>
-          //       _currentSection.frames.find(
-          //         (frame: IFrame) => frame.id === frameId
-          //       )
-          //     )
-          //     const updatedSections = sections.map((section) => {
-          //       if (section.id === updatedSection.id) {
-          //         return { ...updatedSection, frames: orderedFrames }
-          //       }
+            //       return section
+            //     })
 
-          //       return section
-          //     })
+            //     console.log('diffOrder updatedSections', updatedSections)
+            //     setSections(updatedSections)
+            //     setCurrentFrame(
+            //       getNextFrame({ sections: updatedSections, currentFrame })
+            //     )
+            //     setInsertAfterFrameId(null)
+            //     setShowFramePlaceholder(false)
 
-          //     console.log('diffOrder updatedSections', updatedSections)
-          //     setSections(updatedSections)
-          //     setCurrentFrame(
-          //       getNextFrame({ sections: updatedSections, currentFrame })
-          //     )
-          //     setInsertAfterFrameId(null)
-          //     setShowFramePlaceholder(false)
+            //     return null
+            //   }
 
-          //     return null
-          //   }
+            //   const updatedSections = sections.map((section) => {
+            //     if (section.id === updatedSection.id) {
+            //       return { ...updatedSection, frames: section.frames }
+            //     }
 
-          //   const updatedSections = sections.map((section) => {
-          //     if (section.id === updatedSection.id) {
-          //       return { ...updatedSection, frames: section.frames }
-          //     }
+            //     return section
+            //   })
 
-          //     return section
-          //   })
+            //   console.log('updatedSections', updatedSections)
+            //   setSections(updatedSections)
+            //   setInsertAfterFrameId(null)
+            //   setShowFramePlaceholder(false)
 
-          //   console.log('updatedSections', updatedSections)
-          //   setSections(updatedSections)
-          //   setInsertAfterFrameId(null)
-          //   setShowFramePlaceholder(false)
-
-          //   return null
-          // }
-
-          return null
+            //   return null
+            // }
+          }
         }
       )
       .subscribe()
@@ -526,15 +527,16 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     // 2. Create a new frame
     setShowFramePlaceholder(true)
+
     const frameResponse = await FrameService.createFrame({
       ...frame,
       section_id: _section.id!,
       meeting_id: meeting?.id,
     })
-    setShowFramePlaceholder(false)
 
     if (frameResponse.error) {
       console.error('error while creating frame: ', frameResponse.error)
+      setShowFramePlaceholder(false)
 
       return
     }
@@ -557,6 +559,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     })
 
     if (!updateSectionData) {
+      setShowFramePlaceholder(false)
+
       return
     }
 
@@ -569,6 +573,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         meetingId: meeting.id,
       })
     }
+
+    setShowFramePlaceholder(false)
+    setCurrentFrame(frameResponse.data)
+    setOverviewOpen(false)
+    setCurrentSectionId(null)
   }
 
   const addSection = async ({
@@ -597,9 +606,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
 
     const sectionIds = meeting.sections || []
-    const currentSectionId = currentFrame?.section_id
+    const _currentSectionId = currentFrame?.section_id
 
-    if (currentSectionId && !addToLast && !afterSectionId) {
+    if (_currentSectionId && !addToLast && !afterSectionId) {
       const index = sectionIds.indexOf(currentSectionId)
       sectionIds.splice(index + 1, 0, sectionResponse.data.id)
     } else if (afterSectionId) {
@@ -739,41 +748,41 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         message: importGoogleSlidesResponse.data?.message,
       })
 
-      return null
+      return importGoogleSlidesResponse.data
     }
 
-    const { insertedFrames: insertedFrameIds } = importGoogleSlidesResponse.data
+    // const { insertedFrames: insertedFrameIds } = importGoogleSlidesResponse.data
 
-    const section = sections.find((s) => s.id === frame.section_id)
-    const existingFrameIds = section?.frames.map((s: IFrame) => s.id) || []
-    const existingFrameIdsWithoutGoogleSlideId = existingFrameIds.filter(
-      (sid: string) => sid !== frame.id
-    )
-    const updatedFrameIds = [
-      ...existingFrameIdsWithoutGoogleSlideId,
-      ...insertedFrameIds,
-    ]
+    // const section = sections.find((s) => s.id === frame.section_id)
+    // const existingFrameIds = section?.frames.map((s: IFrame) => s.id) || []
+    // const existingFrameIdsWithoutGoogleSlideId = existingFrameIds.filter(
+    //   (sid: string) => sid !== frame.id
+    // )
+    // const updatedFrameIds = [
+    //   ...existingFrameIdsWithoutGoogleSlideId,
+    //   ...insertedFrameIds,
+    // ]
 
-    // Update section
-    const sectionData = await updateSection({
-      sectionPayload: {
-        frames: updatedFrameIds,
-      },
-      sectionId: frame.section_id,
-    })
+    // // Update section
+    // const sectionData = await updateSection({
+    //   sectionPayload: {
+    //     frames: updatedFrameIds,
+    //   },
+    //   sectionId: frame.section_id,
+    // })
 
-    if (!sectionData) return null
+    // if (!sectionData) return null
 
-    // Delete the google import frame
-    const deleteFrameResponse = await FrameService.deleteFrame(frame.id)
+    // // Delete the google import frame
+    // const deleteFrameResponse = await FrameService.deleteFrame(frame.id)
 
-    if (deleteFrameResponse.error) {
-      console.error('error while deleting frame: ', deleteFrameResponse.error)
+    // if (deleteFrameResponse.error) {
+    //   console.error('error while deleting frame: ', deleteFrameResponse.error)
 
-      return null
-    }
+    //   return null
+    // }
 
-    return null
+    return importGoogleSlidesResponse.data
   }
 
   const updateFrame = async ({
@@ -1101,10 +1110,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         openContentTypePicker,
         setOpenContentTypePicker,
         setPreview,
+        currentSectionId,
         setCurrentFrame: (frame) => {
           setCurrentFrame(frame)
-          setOverviewOpen(false)
+
+          if (frame) setOverviewOpen(false)
         },
+        setCurrentSectionId,
         setOverviewOpen: (open) => {
           setCurrentFrame(null)
           setOverviewOpen(open)

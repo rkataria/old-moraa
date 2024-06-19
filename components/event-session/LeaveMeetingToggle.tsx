@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { DyteDialogManager } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { MdLogout } from 'react-icons/md'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -19,8 +20,10 @@ export function LeaveMeetingToggle() {
       <ControlButton
         buttonProps={{
           radius: 'md',
+          size: 'sm',
           variant: 'flat',
           className: cn('transition-all duration-300 bg-red-500 text-white'),
+          endContent: <MdLogout size={16} className="text-white" />,
         }}
         tooltipProps={{
           content: 'Leave meeting',

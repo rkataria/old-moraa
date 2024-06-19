@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext } from 'react'
+import { ReactNode, useContext } from 'react'
 
 import { BsCardText, BsCollection, BsPlus } from 'react-icons/bs'
 
@@ -26,12 +26,14 @@ type AddItemBarProps = {
   sectionId: string
   frameId: string
   hiddenActionKeys?: string[]
+  trigger?: ReactNode
 }
 
 export function AddItemBar({
   sectionId,
   frameId,
   hiddenActionKeys = [],
+  trigger,
 }: AddItemBarProps) {
   const {
     setInsertInSectionId,
@@ -50,23 +52,33 @@ export function AddItemBar({
 
   if (preview || !isOwner || eventMode !== 'edit') return null
 
-  return (
-    <DropdownActions
-      triggerIcon={
-        <div
-          onClick={() => {
-            if (sectionId) setInsertInSectionId(sectionId)
-            if (frameId) setInsertAfterFrameId(frameId)
-            if (sectionId && !frameId) setInsertAfterSectionId(sectionId)
-          }}
-          className="absolute left-0 -bottom-2 w-full h-2 bg-transparent z-[1] py-[2px] group/add-item-bar cursor-pointer scale-100">
-          <div className="relative left-0 top-[1px] w-full h-0.5 flex justify-end items-center bg-transparent group-hover/add-item-bar:bg-gray-300">
-            <div className="w-5 h-5 rounded-full bg-transparent text-transparent flex justify-center items-center group-hover/add-item-bar:bg-gray-300 group-hover/add-item-bar:text-white">
-              <BsPlus size={18} />
-            </div>
+  const handleOnClick = () => {
+    if (sectionId) setInsertInSectionId(sectionId)
+    if (frameId) setInsertAfterFrameId(frameId)
+    if (sectionId && !frameId) setInsertAfterSectionId(sectionId)
+  }
+
+  const renderTrigger = () => {
+    if (trigger) {
+      return <div onClick={handleOnClick}>{trigger}</div>
+    }
+
+    return (
+      <div
+        onClick={handleOnClick}
+        className="absolute left-0 -bottom-2 w-full h-2 bg-transparent z-[1] py-[2px] group/add-item-bar cursor-pointer scale-100">
+        <div className="relative left-0 top-[1px] w-full h-0.5 flex justify-end items-center bg-transparent group-hover/add-item-bar:bg-gray-300">
+          <div className="w-5 h-5 rounded-full bg-transparent text-transparent flex justify-center items-center group-hover/add-item-bar:bg-gray-300 group-hover/add-item-bar:text-white">
+            <BsPlus size={18} />
           </div>
         </div>
-      }
+      </div>
+    )
+  }
+
+  return (
+    <DropdownActions
+      triggerIcon={renderTrigger()}
       actions={filteredActions}
       onAction={(actionKey) => {
         if (actionKey === 'new-section') {

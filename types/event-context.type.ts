@@ -24,12 +24,14 @@ export type EventContextType = {
   insertInSectionId: string | null
   selectedSectionId: string | null
   error: { frameId: string; message: string } | null
+  currentSectionId: string | null
+  setCurrentSectionId: (sectionId: string | null) => void
   setInsertAfterFrameId: (frameId: string | null) => void
   setInsertAfterSectionId: (sectionId: string | null) => void
   setInsertInSectionId: (sectionId: string | null) => void
   setSelectedSectionId: (sectionId: string | null) => void
   setPreview: (preview: boolean) => void
-  setCurrentFrame: (frame: IFrame) => void
+  setCurrentFrame: (frame: IFrame | null) => void
   setOverviewOpen: (open: boolean) => void
   openContentTypePicker: boolean
   setOpenContentTypePicker: Dispatch<SetStateAction<boolean>>

@@ -117,7 +117,17 @@ export function MeetingSetupScreen() {
               meeting={meeting}
               participant={selfParticipant}
               className="relative">
-              <DyteAvatar size="md" participant={selfParticipant} />
+              {!profile?.avatar_url ? (
+                <DyteAvatar size="md" participant={selfParticipant} />
+              ) : (
+                <span className="flex h-28 w-28">
+                  <img
+                    className="rounded-full"
+                    src={profile?.avatar_url}
+                    alt=""
+                  />
+                </span>
+              )}
               <div className="absolute top-2 left-2">
                 <DyteNameTag meeting={meeting} participant={selfParticipant}>
                   <DyteAudioVisualizer

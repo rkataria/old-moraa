@@ -16,8 +16,12 @@ export function MediaSettingsToggle({
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
+        size: 'sm',
         variant: 'flat',
-        className: cn('transition-all duration-300', className),
+        className: cn(
+          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
+          className
+        ),
       }}
       tooltipProps={{
         content: 'Media Setting',

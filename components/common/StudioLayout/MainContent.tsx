@@ -13,7 +13,7 @@ export function MainContent({ children }: { children: ReactNode }) {
       style={{
         maxHeight: MAIN_CONTAINER_HEIGHT,
       }}>
-      <div className="h-full overflow-y-auto scrollbar-none bg-gray-100 rounded-md">
+      <div className="h-full overflow-y-auto scrollbar-none bg-white rounded-md">
         {children}
       </div>
     </div>

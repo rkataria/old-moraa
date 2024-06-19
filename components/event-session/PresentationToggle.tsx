@@ -1,5 +1,6 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoSquare, IoPlay } from 'react-icons/io5'
+import { FaRegStopCircle } from 'react-icons/fa'
+import { IoPlay } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -31,12 +32,13 @@ export function PresentationToggle() {
       buttonProps={{
         radius: 'md',
         variant: 'flat',
+        size: 'sm',
         className: cn('transition-all duration-300', {
           'bg-green-500 text-white': !presentationStarted,
           'bg-red-500 text-white': presentationStarted,
         }),
         startContent: presentationStarted ? (
-          <IoSquare size={16} />
+          <FaRegStopCircle size={16} />
         ) : (
           <IoPlay size={16} />
         ),

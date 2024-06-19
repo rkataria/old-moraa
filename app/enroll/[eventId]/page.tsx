@@ -131,7 +131,7 @@ function Visit() {
             return
           }
 
-          router.push(`/login?redirectTo=${eventId}`)
+          router.push(`/login?redirectTo=/events/${eventId}`)
         }
 
         toast.success('Enrolled successfully.')

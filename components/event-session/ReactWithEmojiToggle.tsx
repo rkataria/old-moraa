@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoHappy } from 'react-icons/io5'
+import { IoHappyOutline } from 'react-icons/io5'
 
 import {
   Button,
@@ -71,10 +71,14 @@ export function ReactWithEmojiToggle() {
             buttonProps={{
               isIconOnly: true,
               radius: 'md',
+              size: 'sm',
               variant: 'flat',
-              className: cn('transition-all duration-300', {
-                'bg-black text-white': isOpen,
-              }),
+              className: cn(
+                'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
+                {
+                  'bg-black text-white': isOpen,
+                }
+              ),
             }}
             tooltipProps={{
               content: 'React with emoji',
@@ -82,7 +86,7 @@ export function ReactWithEmojiToggle() {
             onClick={() => {
               setIsOpen((o) => !o)
             }}>
-            <IoHappy size={20} />
+            <IoHappyOutline size={20} />
           </ControlButton>
         </div>
       </PopoverTrigger>

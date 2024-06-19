@@ -6,9 +6,7 @@ import { ReactNode } from 'react'
 
 import { openai } from '@ai-sdk/openai'
 import { createAI, getMutableAIState, streamUI } from 'ai/rsc'
-import axios from 'axios'
 import { nanoid } from 'nanoid'
-import { z } from 'zod'
 
 export interface ServerMessage {
   role: 'user' | 'assistant'
@@ -22,9 +20,7 @@ export interface ClientMessage {
 }
 
 export async function continueConversation(
-  input: string,
-  sectionId: string,
-  role: string
+  input: string
 ): Promise<ClientMessage> {
   'use server'
 
@@ -43,54 +39,13 @@ export async function continueConversation(
 
       return <div>{content}</div>
     },
-    tools: {
-      // Tool for generating a poll
-      generate_poll: {
-        description: 'Generate a poll about a given topic',
-        parameters: z.object({
-          topic: z.string().describe('The topic for the poll, e.g., Jupiter'),
-        }),
-        generate: async function* generate({ topic }) {
-          if (!['Host', 'Moderator'].includes(role)) {
-            return <div>Operation not permitted</div>
-          }
-          yield <div>Generating a poll! please wait...</div>
-          // Assume generatePoll is implemented and returns an object with the structure expected by PollCard
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const poll = await generatePoll(topic, sectionId)
-
-          return <div>{poll}</div>
-        },
-      },
-    },
+    tools: {},
   })
 
   return {
     id: nanoid(),
     role: 'assistant',
     display: result.value,
-  }
-}
-
-async function generatePoll(topic: string, sectionId: string): Promise<any> {
-  console.log(`Generating poll for ${topic}...`)
-
-  try {
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/generations/generate-poll`
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const response = await axios.post(url, null, {
-      params: {
-        topic,
-        section_id: sectionId,
-      },
-    })
-
-    return 'Created a poll!! Want to create more? Go ahead and tell me'
-  } catch (error) {
-    console.error('Error generating poll:', error)
-
-    return 'Some error occurred while creating the poll. Please try again later.'
   }
 }
 

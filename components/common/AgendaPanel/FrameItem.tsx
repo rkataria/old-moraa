@@ -10,6 +10,7 @@ import { ContentTypeIcon } from '../ContentTypeIcon'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
+import { FramePlaceholder } from '../FramePlaceholder'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
@@ -17,7 +18,6 @@ import { useDimensions } from '@/hooks/useDimensions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
-import { getFrameName } from '@/utils/getFrameName'
 import { cn } from '@/utils/utils'
 
 type FrameItemProps = {
@@ -31,13 +31,16 @@ export function FrameItem({ frame }: FrameItemProps) {
     currentFrame,
     isOwner,
     preview,
+    overviewOpen,
+    eventMode,
+    insertAfterFrameId,
     updateFrame,
     moveUpFrame,
     moveDownFrame,
     deleteFrame,
     setCurrentFrame,
   } = useContext(EventContext) as EventContextType
-  const { listDisplayMode } = useAgendaPanel()
+  const { listDisplayMode, currentSectionId } = useAgendaPanel()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
@@ -67,19 +70,27 @@ export function FrameItem({ frame }: FrameItemProps) {
 
   const editable = isOwner && !preview
 
+  const frameActive =
+    !overviewOpen && !currentSectionId && currentFrame?.id === frame.id
+
   const renderFrameContent = () => {
     if (sidebarExpanded) {
       return (
         <div
           data-miniframe-id={frame.id}
-          className={cn('cursor-pointer border-0 hover:bg-purple-200', {
-            'max-w-[calc(100%_-_2rem)]': listDisplayMode === 'grid',
-            'w-full': listDisplayMode === 'list',
-            'bg-purple-200': currentFrame?.id === frame.id,
-            'border-transparent':
-              listDisplayMode === 'list' && currentFrame?.id !== frame.id,
-          })}
+          className={cn(
+            'cursor-pointer rounded-md border-0 hover:bg-purple-200 overflow-hidden',
+            {
+              'max-w-[calc(100%_-_2rem)]': listDisplayMode === 'grid',
+              'w-full': listDisplayMode === 'list',
+              'bg-purple-200': frameActive,
+              'border-transparent':
+                listDisplayMode === 'list' && currentFrame?.id !== frame.id,
+            }
+          )}
           onClick={() => {
+            if (!isOwner && eventMode === 'present') return
+
             setCurrentFrame(frame)
           }}>
           <div
@@ -104,7 +115,7 @@ export function FrameItem({ frame }: FrameItemProps) {
               className={cn(
                 'flex justify-between items-center p-2 border-2 border-transparent',
                 {
-                  'border-purple-200': currentFrame?.id === frame.id,
+                  'border-purple-200': frameActive,
                   'border-gray-100':
                     currentFrame?.id !== frame.id && listDisplayMode === 'grid',
                 }
@@ -116,7 +127,7 @@ export function FrameItem({ frame }: FrameItemProps) {
                 />
                 <EditableLabel
                   readOnly={!editable}
-                  label={getFrameName({ frame })}
+                  label={frame.name}
                   className="text-sm"
                   onUpdate={(value) => {
                     if (!editable) return
@@ -160,7 +171,7 @@ export function FrameItem({ frame }: FrameItemProps) {
         className={cn(
           'flex justify-center items-center cursor-pointer p-1.5 border-1 border-transparent hover:bg-purple-200',
           {
-            'bg-purple-200': currentFrame?.id === frame.id,
+            'bg-purple-200': frameActive,
           }
         )}
         onClick={() => {
@@ -176,11 +187,12 @@ export function FrameItem({ frame }: FrameItemProps) {
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {renderFrameContent()}
       {sidebarExpanded && (
         <AddItemBar sectionId={frame.section_id!} frameId={frame.id} />
       )}
+      {insertAfterFrameId === frame.id && <FramePlaceholder />}
     </div>
   )
 }

@@ -29,7 +29,7 @@ export function MainContentWithRightSidebar({
         <PanelResizeHandle className="relative w-2">
           <div
             className={cn(
-              'absolute top-1/2 -translate-y-1/2 w-full h-16 rounded-full bg-gray-300 cursor-col-resize'
+              'absolute top-1/2 -translate-y-1/2 w-full h-16 rounded-full bg-black/30 cursor-col-resize'
             )}
           />
         </PanelResizeHandle>

@@ -25,7 +25,7 @@ function Login() {
 
   useEffect(() => {
     if (user.currentUser && redirectTo) {
-      router.replace(`/events/${redirectTo}`)
+      router.replace(`${redirectTo}`)
 
       return
     }
@@ -38,7 +38,7 @@ function Login() {
 
   const getRedirectUrl = () => {
     if (redirectTo) {
-      return `${window.location.origin}/events/${redirectTo}`
+      return `${window.location.origin}${redirectTo}`
     }
 
     return `${window.location.origin}/events`
@@ -51,23 +51,21 @@ function Login() {
           <MoraaLogo color="primary" />
         </CardHeader>
         <CardBody>
-          <Suspense fallback={<Loading />}>
-            <Auth
-              supabaseClient={supabase}
-              redirectTo={getRedirectUrl()}
-              providers={['google']}
-              appearance={{
-                theme: ThemeSupa,
-                variables: {
-                  default: {
-                    colors: {
-                      brand: '#7C3AED',
-                    },
+          <Auth
+            supabaseClient={supabase}
+            redirectTo={getRedirectUrl()}
+            providers={['google']}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#7C3AED',
                   },
                 },
-              }}
-            />
-          </Suspense>
+              },
+            }}
+          />
         </CardBody>
       </Card>
     </div>

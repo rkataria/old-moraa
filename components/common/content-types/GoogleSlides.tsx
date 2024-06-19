@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { GoogleSlideEmbed } from '@/components/common/GoogleSlideEmbed'
 import { IFrame } from '@/types/frame.type'
 
@@ -17,15 +15,14 @@ interface GoogleSlidesProps {
 }
 
 export function GoogleSlides({ frame }: GoogleSlidesProps) {
-  const {
-    content: { googleSlideURL, startPosition },
-  } = frame
+  const embededUrl =
+    frame.content.googleSlideURL || (frame.content.googleSlideUrl as string)
 
   return (
     <GoogleSlideEmbed
-      url={googleSlideURL}
-      showControls
-      startPage={startPosition}
+      url={embededUrl}
+      showControls={!frame.content?.individualFrame}
+      startPage={frame.content.startPosition}
     />
   )
 }

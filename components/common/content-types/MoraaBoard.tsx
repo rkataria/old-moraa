@@ -3,13 +3,12 @@
 import { useContext, useEffect } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
-import { useDebounce } from '@uidotdev/usehooks'
 import { Tldraw, track, useEditor } from 'tldraw'
 
 import { ContentLoading } from '../ContentLoading'
 
 import { EventContext } from '@/contexts/EventContext'
-import { useYjsStoreSupabase } from '@/hooks/useYjsStoreSupabase'
+import { useYjsStore } from '@/hooks/useYjsStore'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 
@@ -26,21 +25,24 @@ interface MoraaBoardProps {
 }
 
 export function MoraaBoard({ frame }: MoraaBoardProps) {
-  const { preview, isOwner } = useContext(EventContext) as EventContextType
-  const roomId = `present-moraa-board-${frame.id}`
-  const store = useYjsStoreSupabase({
-    roomId,
-    frameId: frame.id,
+  const { preview, isOwner, eventMode } = useContext(
+    EventContext
+  ) as EventContextType
+  const store = useYjsStore({
+    roomId: frame.id,
+    hostUrl: process.env.NEXT_PUBLIC_PARTYKIT_HOST_URL,
   })
-  const debouncedStatus = useDebounce(store.status, 2000)
 
-  const readOnly = preview || (!isOwner && frame.config?.allowToDraw)
+  const readOnly =
+    preview ||
+    (!isOwner && !!frame.config?.allowToDraw) ||
+    (!isOwner && eventMode !== 'present')
 
   return (
     <div
       style={{ backgroundColor: frame.config.backgroundColor }}
       className="relative w-full flex-auto flex flex-col justify-center items-center px-4 z-[0] h-full">
-      {debouncedStatus !== 'synced-remote' ? (
+      {store.status !== 'synced-remote' ? (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <ContentLoading />
         </div>
@@ -50,7 +52,7 @@ export function MoraaBoard({ frame }: MoraaBoardProps) {
           autoFocus
           store={store}
           components={{
-            SharePanel: preview ? null : NameEditor,
+            SharePanel: readOnly ? null : NameEditor,
           }}
           onMount={(editor) => {
             editor.updateInstanceState({ isReadonly: !!readOnly })

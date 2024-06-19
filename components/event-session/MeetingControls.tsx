@@ -67,12 +67,26 @@ export function MeetingControls({
 
   return (
     <div className="h-16 bg-transparent flex justify-between items-center">
-      <div className="flex justify-end items-center gap-2">
+      <div className="flex justify-end items-center gap-6">
         <Tooltip content={event.name} closeDelay={100}>
-          <span className="pr-2 w-[175px] overflow-hidden !whitespace-nowrap text-ellipsis">
+          <span className="max-w-[10.9375rem] overflow-hidden !whitespace-nowrap text-ellipsis">
             {event.name}
           </span>
         </Tooltip>
+
+        <ControlButton
+          buttonProps={{
+            variant: 'light',
+            size: 'sm',
+            className: 'hover:bg-transparent p-0',
+          }}
+          tooltipProps={{
+            content: 'Meeting time',
+          }}
+          onClick={() => {}}>
+          <DyteClock meeting={meeting} className="m-0" />
+        </ControlButton>
+
         {isHost && <PresentationToggle />}
       </div>
       <div className="flex justify-end items-center gap-3">
@@ -137,19 +151,6 @@ export function MeetingControls({
             size="sm"
           />
         )}
-
-        <ControlButton
-          buttonProps={{
-            variant: 'flat',
-            radius: 'full',
-            className: 'px-1',
-          }}
-          tooltipProps={{
-            content: 'Meeting time',
-          }}
-          onClick={() => {}}>
-          <DyteClock meeting={meeting} />
-        </ControlButton>
         <LeaveMeetingToggle />
       </div>
     </div>

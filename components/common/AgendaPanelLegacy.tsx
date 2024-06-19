@@ -396,9 +396,7 @@ export function AgendaPanel({
                                               </Draggable>
                                               {frame.id ===
                                                 currentFrame?.id && (
-                                                <FramePlaceholder
-                                                  displayType={displayType}
-                                                />
+                                                <FramePlaceholder />
                                               )}
                                             </React.Fragment>
                                           ))}

@@ -12,23 +12,24 @@ export function NotesToggle({
   isNotesSidebarOpen: boolean
   onClick: () => void
 }) {
-  useHotkeys('a', onClick)
+  useHotkeys('n', onClick)
 
   return (
     <ControlButton
       buttonProps={{
         isIconOnly: true,
         radius: 'md',
+        size: 'sm',
         variant: 'light',
-        className: cn('transition-all duration-300', {
-          'bg-black text-white': isNotesSidebarOpen,
+        className: cn('transition-all duration-300 text-[#444444]', {
+          'bg-black text-white hover:bg-black': isNotesSidebarOpen,
         }),
       }}
       tooltipProps={{
         content: isNotesSidebarOpen ? 'Hide Notes' : 'Show Notes',
       }}
       onClick={onClick}>
-      <LuClipboardEdit size={20} />
+      <LuClipboardEdit size={20} strokeWidth={1.7} />
     </ControlButton>
   )
 }

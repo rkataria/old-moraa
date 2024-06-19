@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 
 import { DyteParticipant, DyteSelf } from '@dytesdk/web-core'
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
@@ -7,6 +7,8 @@ import { Button, ButtonGroup } from '@nextui-org/react'
 
 import { ParticipantTile } from './ParticipantTile'
 
+import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { EventSessionContextType } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 export function ParticipantsGridView({
@@ -23,6 +25,11 @@ export function ParticipantsGridView({
   const [currentPage, setCurrentPage] = useState(1)
   const gridRef = useRef<HTMLDivElement>(null)
   const totalPages = Math.ceil(participants.length / gridSize)
+  const { activeSession } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
+
+  const handRaised = activeSession?.data?.handsRaised || []
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
@@ -50,7 +57,11 @@ export function ParticipantsGridView({
         gridStyles
       )}>
       {participantsToShow.map((participant) => (
-        <ParticipantTile key={participant.id} participant={participant} />
+        <ParticipantTile
+          key={participant.id}
+          participant={participant}
+          handRaised={handRaised.includes(participant.id)}
+        />
       ))}
       {totalPages > 1 && (
         <ButtonGroup className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1]">

@@ -8,6 +8,7 @@ import { Chip } from '@nextui-org/react'
 
 import { FrameList } from './FrameList'
 import { EditableLabel } from '../EditableLabel'
+import { StrictModeDroppable } from '../StrictModeDroppable'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
@@ -30,6 +31,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     setCurrentFrame,
     updateSection,
     eventMode,
+    overviewOpen,
   } = useContext(EventContext) as EventContextType
   const {
     expandedSectionIds,
@@ -39,10 +41,13 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
   } = useAgendaPanel()
   const { leftSidebarVisiblity } = useStudioLayout()
 
-  const frames = getFilteredFramesByStatus({
-    frames: section.frames,
-    status: isOwner && eventMode !== 'present' ? null : 'PUBLISHED',
-  })
+  const frames =
+    isOwner && eventMode === 'edit'
+      ? section.frames
+      : getFilteredFramesByStatus({
+          frames: section.frames,
+          status: 'PUBLISHED',
+        })
 
   const handleSectionClick = () => {
     const isSectionExpanded = expandedSectionIds.includes(section.id)
@@ -64,19 +69,20 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
 
   const sectionExpanded = expandedSectionIds.includes(section.id)
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
+  const sectionActive = !overviewOpen && currentSectionId === section.id
 
   const renderSectionHeader = () => {
     if (sidebarExpanded) {
       return (
         <>
           <div
-            className="flex justify-start items-center gap-2"
+            className="flex justify-start items-center flex-auto gap-2 p-1.5"
             onClick={handleSectionClick}>
-            <LuLayers size={22} />
+            <LuLayers size={22} className="flex-none" />
             <EditableLabel
               readOnly={actionDisabled}
               label={section.name}
-              className="text-sm font-semibold cursor-pointer"
+              className="text-sm font-bold cursor-pointer"
               onUpdate={(value: string) => {
                 updateSection({
                   sectionPayload: { name: value },
@@ -85,7 +91,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
               }}
             />
           </div>
-          <span className="flex-none">
+          <span className="flex-none p-1.5">
             <Chip
               size="sm"
               className="aspect-square flex justify-center items-center">
@@ -109,15 +115,34 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     <div>
       <div
         className={cn(
-          'flex justify-between items-center p-1.5 border-1 border-transparent',
+          'flex justify-between items-center border-2 border-transparent rounded-md',
           {
-            'border-black': currentSectionId === section.id,
+            'border-purple-200 bg-purple-200': sectionActive,
             'justify-center': !sidebarExpanded,
           }
         )}>
         {renderSectionHeader()}
       </div>
-      {sectionExpanded && <FrameList frames={frames} />}
+      <StrictModeDroppable
+        droppableId={`frame-droppable-sectionId-${section.id}`}
+        type="frame">
+        {(frameDroppableProvided, snapshot) => (
+          <div
+            key={`frame-draggable-${section.id}`}
+            ref={frameDroppableProvided.innerRef}
+            className={cn('rounded-sm transition-all w-full', {
+              'bg-gray-50': snapshot.isDraggingOver,
+              // 'cursor-grab': !actionDisabled,
+            })}
+            {...frameDroppableProvided.droppableProps}>
+            <FrameList
+              frames={frames}
+              showList={sectionExpanded}
+              droppablePlaceholder={frameDroppableProvided.placeholder}
+            />
+          </div>
+        )}
+      </StrictModeDroppable>
     </div>
   )
 }

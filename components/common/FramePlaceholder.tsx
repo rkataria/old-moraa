@@ -3,30 +3,26 @@ import { useContext } from 'react'
 import { Skeleton } from '@nextui-org/react'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { EventContextType } from '@/types/event-context.type'
-import { type AgendaFrameDisplayType } from '@/types/event.type'
 
-export function FramePlaceholder({
-  displayType,
-}: {
-  displayType: AgendaFrameDisplayType
-}) {
+export function FramePlaceholder() {
   const { showFramePlaceholder } = useContext(EventContext) as EventContextType
+  const { listDisplayMode } = useAgendaPanel()
 
   if (!showFramePlaceholder) return null
 
-  if (displayType === 'list') {
+  const renderSkeleton = () => {
+    if (listDisplayMode === 'list') {
+      return <Skeleton className="rounded-md w-full h-10" />
+    }
+
     return (
-      <div className="flex-none w-full flex justify-start items-center gap-2">
-        <Skeleton className="flex-none flex rounded-full w-8 h-8" />
-        <Skeleton className="flex rounded-sm w-full h-8" />
+      <div className="w-4/5">
+        <Skeleton className="rounded-md w-full h-[166px]" />
       </div>
     )
   }
 
-  return (
-    <div className="flex-none w-full flex justify-start items-center">
-      <Skeleton className="relative rounded-md w-full aspect-video cursor-pointer border-2" />
-    </div>
-  )
+  return <div className="mt-2 flex w-full">{renderSkeleton()}</div>
 }

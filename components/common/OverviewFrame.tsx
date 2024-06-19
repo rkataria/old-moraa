@@ -1,19 +1,21 @@
 /* eslint-disable react/no-danger */
-import React, { useContext } from 'react'
+import { useContext, useState, Fragment } from 'react'
 
+import { Duration } from 'luxon'
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
-import { MdDragIndicator, MdOutlineDragHandle } from 'react-icons/md'
+import { IoChevronForward } from 'react-icons/io5'
+import { MdDragIndicator } from 'react-icons/md'
 
 import { Button, Switch } from '@nextui-org/react'
 
-import { ContentTypeIcon } from './ContentTypeIcon'
-import { EditableLabel } from './EditableLabel'
+import { AddItemBar } from './AgendaPanel/AddItemBar'
 import { StrictModeDroppable } from './StrictModeDroppable'
+import { FramesList } from '../event-content/overview-frame/FramesList'
 
 import { EventContext } from '@/contexts/EventContext'
 import { FrameStatus } from '@/services/types/enums'
 import { EventContextType } from '@/types/event-context.type'
-import { ISection, IFrame } from '@/types/frame.type'
+import { IFrame, ISection } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
 export function OverviewFrame() {
@@ -21,25 +23,15 @@ export function OverviewFrame() {
     isOwner,
     sections,
     showSectionPlaceholder,
-    updateFrame,
+    preview,
+    eventMode,
     updateFrames,
     reorderSection,
     reorderFrame,
     addSection,
   } = useContext(EventContext) as EventContextType
 
-  const changeFrameStatus = (frame: IFrame) => {
-    const newState =
-      frame.status === FrameStatus.PUBLISHED
-        ? FrameStatus.DRAFT
-        : FrameStatus.PUBLISHED
-    updateFrame({
-      frameId: frame.id,
-      framePayload: {
-        status: newState,
-      },
-    })
-  }
+  const [expandedSections, setExpandedSections] = useState<string[]>([])
 
   const changeSectionStatus = (
     section: ISection,
@@ -53,26 +45,50 @@ export function OverviewFrame() {
     })
   }
 
-  const onFrameTitleChange = (frameId: string, title: string) => {
-    updateFrame({
-      frameId,
-      framePayload: {
-        name: title,
-      },
-    })
+  const handleExpandSection = (id: string) => {
+    let updatedExpandedSections = [...expandedSections]
+    if (expandedSections.includes(id)) {
+      updatedExpandedSections = updatedExpandedSections.filter((i) => i !== id)
+    } else {
+      updatedExpandedSections.push(id)
+    }
+
+    setExpandedSections(updatedExpandedSections)
   }
 
+  function calculateTotalTime(frames: IFrame[]) {
+    let totalTime = 0
+
+    frames.forEach((frame) => {
+      if (frame.config && typeof frame.config.time === 'number') {
+        totalTime += frame.config.time
+      }
+    })
+
+    return totalTime
+  }
+
+  const getSectionTime = (frames: IFrame[]) => {
+    const duration = Duration.fromObject({
+      minutes: calculateTotalTime(frames),
+    })
+    const hours = Math.floor(duration.as('hours'))
+    const remainingMinutes = duration.minus({ hours }).as('minutes')
+
+    return `${hours}h ${remainingMinutes}m`
+  }
+
+  const editable = isOwner && !preview && eventMode === 'edit'
+
   return (
-    <div className="p-4 flex flex-col flex-1 max-w-5xl m-auto">
-      <h2 className="mb-2 font-bold text-xl">Overview</h2>
-      <div className="flex justify-between items-center mb-4">
-        <h4 className="font-md font-semibold">Agenda Outline</h4>
-        <h4 className="font-md pl-4">Share</h4>
+    <div className="flex flex-col flex-1 max-w-5xl m-auto p-4 pt-14">
+      <div className="flex items-center justify-between mb-4">
+        <p className="font-bold text-xl tracking-[-0.5px]">Agenda Outline</p>
       </div>
-      <div className="scrollbar-none overflow-y-auto">
+      <div className="scrollbar-none">
         <DragDropContext
           onDragEnd={(result, provide) => {
-            if (!isOwner) return
+            if (!editable) return
             if (!result.destination) return
             if (result.type === 'section') reorderSection(result, provide)
             if (result.type === 'frame') reorderFrame(result, provide)
@@ -81,7 +97,7 @@ export function OverviewFrame() {
             {(sectionDroppableProvided) => (
               <div
                 className={cn(
-                  'flex flex-col justify-start items-center gap-2 w-full flex-nowrap'
+                  'flex flex-col justify-start items-center gap-1 w-full flex-nowrap '
                 )}
                 ref={sectionDroppableProvided.innerRef}
                 {...sectionDroppableProvided.droppableProps}>
@@ -89,144 +105,104 @@ export function OverviewFrame() {
                   <Draggable
                     key={`section-draggable-${section.id}`}
                     draggableId={`section-draggable-sectionId-${section.id}`}
+                    isDragDisabled={!editable}
                     index={sectionIndex}>
                     {(sectionDraggableProvided) => (
                       <div
-                        className="w-full"
+                        className={cn('w-full bg-gray-100 rounded-lg border ', {
+                          'border-l-8 border-r-8 border-b-8 shadow-sm':
+                            expandedSections.includes(section.id),
+                        })}
                         ref={sectionDraggableProvided.innerRef}
                         {...sectionDraggableProvided.draggableProps}>
-                        <React.Fragment key={section.id}>
-                          <div className="mb-4 p-2 rounded-md border border-dotted border-gray-400">
-                            <div className="flex w-full">
+                        <Fragment key={section.id}>
+                          <div>
+                            <div className="flex w-full items-center bg-white gap-2 py-3 px-2 border-b  rounded-lg group/section">
                               <div
-                                className="p-2 flex items-center justify-center"
-                                {...sectionDraggableProvided.dragHandleProps}>
-                                <MdDragIndicator height={60} width={45} />
-                              </div>
-                              <div className="mr-2" style={{ flex: 2 }}>
-                                <div className="p-2 h-full w-full flex flex-col">
-                                  <p className="text-sm">{section.name}</p>
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-center p-2 mr-2">
-                                <Switch
-                                  size="sm"
-                                  isSelected={section.frames.some(
-                                    (frame) =>
-                                      frame.status === FrameStatus.PUBLISHED
-                                  )}
-                                  onChange={() =>
-                                    changeSectionStatus(
-                                      section,
-                                      section.frames.some(
-                                        (frame) =>
-                                          frame.status === FrameStatus.PUBLISHED
-                                      )
-                                        ? FrameStatus.DRAFT
-                                        : FrameStatus.PUBLISHED
-                                    )
+                                className={cn(
+                                  'flex flex-col items-center justify-center -ml-[3.0635rem] mr-0 w-[2.5rem] opacity-0 group-hover/section:opacity-100',
+                                  {
+                                    '-ml-[2.625rem]':
+                                      !expandedSections.includes(section.id),
                                   }
-                                  disabled={!isOwner}
+                                )}>
+                                <div
+                                  {...sectionDraggableProvided.dragHandleProps}>
+                                  <MdDragIndicator
+                                    height={60}
+                                    width={45}
+                                    className="text-gray-400"
+                                  />
+                                </div>
+
+                                <AddItemBar
+                                  sectionId={section.id}
+                                  frameId={section.frames?.[0]?.id}
+                                  trigger={
+                                    <p className="text-gray-400 text-xl cursor-pointer">
+                                      +
+                                    </p>
+                                  }
                                 />
                               </div>
-                            </div>
-                            <div className="ml-4">
-                              <StrictModeDroppable
-                                droppableId={`frame-droppable-sectionId-${section.id}`}
-                                type="frame">
-                                {(frameProvided, snapshot) => (
-                                  <div
-                                    key={`frame-draggable-${section.id}`}
-                                    ref={frameProvided.innerRef}
-                                    className={cn(
-                                      'rounded-sm transition-all w-full',
-                                      {
-                                        'bg-gray-50': snapshot.isDraggingOver,
-                                        // 'cursor-grab': !actionDisabled,
-                                      }
-                                    )}
-                                    {...frameProvided.droppableProps}>
-                                    <div className="w-full relative">
-                                      <div className="w-full">
-                                        <div>
-                                          <div className="flex flex-col justify-start items-start gap-1 w-full px-2 pb-2 rounded-sm transition-all">
-                                            {section.frames.map(
-                                              (frame, frameIndex) => (
-                                                <React.Fragment key={frame.id}>
-                                                  <Draggable
-                                                    key={`frame-draggable-${frame.id}`}
-                                                    draggableId={`frame-draggable-frameId-${frame.id}`}
-                                                    index={frameIndex}>
-                                                    {(_provided) => (
-                                                      <div
-                                                        key={frame.id}
-                                                        ref={_provided.innerRef}
-                                                        {..._provided.draggableProps}
-                                                        className="mt-2 flex w-full">
-                                                        <div
-                                                          className="p-2 flex items-center justify-center"
-                                                          {..._provided.dragHandleProps}>
-                                                          <MdOutlineDragHandle
-                                                            height={40}
-                                                            width={30}
-                                                          />
-                                                        </div>
-                                                        <div
-                                                          className="mr-2 rounded-md overflow-hidden border border-gray-400 flex items-center"
-                                                          style={{ flex: 3 }}>
-                                                          <ContentTypeIcon
-                                                            classNames="m-2"
-                                                            frameType={
-                                                              frame.type
-                                                            }
-                                                          />
-                                                          <div className="bg-white p-2 h-full w-full flex flex-col">
-                                                            <EditableLabel
-                                                              readOnly={false}
-                                                              label={frame.name}
-                                                              onUpdate={(
-                                                                value
-                                                              ) =>
-                                                                onFrameTitleChange(
-                                                                  frame.id,
-                                                                  value
-                                                                )
-                                                              }
-                                                            />
-                                                          </div>
-                                                        </div>
-                                                        <div className="flex items-center justify-center p-2">
-                                                          <Switch
-                                                            size="sm"
-                                                            isSelected={
-                                                              frame.status ===
-                                                              FrameStatus.PUBLISHED
-                                                            }
-                                                            onChange={() =>
-                                                              changeFrameStatus(
-                                                                frame
-                                                              )
-                                                            }
-                                                            disabled={!isOwner}
-                                                          />
-                                                        </div>
-                                                      </div>
-                                                    )}
-                                                  </Draggable>
-                                                </React.Fragment>
-                                              )
-                                            )}
-                                          </div>
-                                          {frameProvided.placeholder}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
+                              <IoChevronForward
+                                className={cn(
+                                  'text-xl duration-300 cursor-pointer text-gray-400',
+                                  {
+                                    'rotate-90': expandedSections.includes(
+                                      section.id
+                                    ),
+                                  }
                                 )}
-                              </StrictModeDroppable>
+                                onClick={() => handleExpandSection(section.id)}
+                              />
+                              <div style={{ flex: 2 }}>
+                                <p className="text font-bold tracking-[-0.5px] text-black/80">
+                                  {section.name}
+                                </p>
+                                <p className="text-gray-400 text-xs font-normal">
+                                  ({getSectionTime(section.frames)})
+                                </p>
+                              </div>
+                              <div
+                                className={cn(
+                                  'flex items-center justify-center',
+                                  {
+                                    'pr-2': !expandedSections.includes(
+                                      section.id
+                                    ),
+                                  }
+                                )}>
+                                {editable && (
+                                  <Switch
+                                    size="sm"
+                                    isSelected={section.frames.some(
+                                      (frame) =>
+                                        frame.status === FrameStatus.PUBLISHED
+                                    )}
+                                    className="p-0"
+                                    onChange={() =>
+                                      changeSectionStatus(
+                                        section,
+                                        section.frames.some(
+                                          (frame) =>
+                                            frame.status ===
+                                            FrameStatus.PUBLISHED
+                                        )
+                                          ? FrameStatus.DRAFT
+                                          : FrameStatus.PUBLISHED
+                                      )
+                                    }
+                                    disabled={!isOwner}
+                                  />
+                                )}
+                              </div>
                             </div>
+                            {expandedSections.includes(section.id) && (
+                              <FramesList section={section} />
+                            )}
                           </div>
-                        </React.Fragment>
+                        </Fragment>
                       </div>
                     )}
                   </Draggable>
