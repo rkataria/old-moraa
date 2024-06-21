@@ -10,19 +10,24 @@ import {
   IconLayout,
   IconFileText,
 } from '@tabler/icons-react'
+import { BsQuestionCircle } from 'react-icons/bs'
 import { MdOutlineDraw } from 'react-icons/md'
 import { SiMiro } from 'react-icons/si'
 
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
-  Card,
-  CardBody,
+  Tooltip,
+  Button,
 } from '@nextui-org/react'
 
-interface IContentType {
+import { ContentTypeCard } from './ContentTypeCard'
+
+import { getContentType } from '@/utils/content.util'
+import { cn } from '@/utils/utils'
+
+export interface IContentType {
   name: string
   icon: React.ReactNode
   description: string
@@ -144,7 +149,7 @@ export const contentTypes: IContentType[] = [
     contentType: ContentType.MIRO_EMBED,
   },
   {
-    name: 'Embed Google Slides',
+    name: 'Google Slides',
     icon: <IconBrandGoogleDrive className="w-full h-full max-w-11 max-h-11" />,
     description: 'Empower presentations with seamless Google Slides embed',
     contentType: ContentType.GOOGLE_SLIDES,
@@ -177,62 +182,93 @@ export function ContentTypePicker({
   onClose,
   onChoose,
 }: ChooseContentTypeProps) {
+  const collaborativeActivities = [
+    getContentType(ContentType.POLL),
+    getContentType(ContentType.REFLECTION),
+    getContentType(ContentType.MORAA_BOARD),
+  ]
+
+  const presentationContent = [
+    getContentType(ContentType.CANVAS, CANVAS_TEMPLATE_TYPES.BLANK),
+    getContentType(ContentType.CANVAS, CANVAS_TEMPLATE_TYPES.TEMPLATE_ONE),
+    getContentType(ContentType.CANVAS, CANVAS_TEMPLATE_TYPES.TEMPLATE_TWO),
+    getContentType(ContentType.COVER),
+    getContentType(ContentType.TEXT_IMAGE),
+    getContentType(ContentType.RICH_TEXT),
+  ]
+
+  const goodies = [
+    getContentType(ContentType.GOOGLE_SLIDES),
+    getContentType(ContentType.PDF_VIEWER),
+    getContentType(ContentType.MIRO_EMBED),
+    getContentType(ContentType.VIDEO_EMBED),
+  ]
+
   return (
-    <Modal size="4xl" isOpen={open} onClose={onClose} className="bg-[#E9D8FD]">
+    <Modal
+      size="lg"
+      isOpen={open}
+      onClose={onClose}
+      className={cn('max-h-[96vh] shadow-2xl slide-in')}
+      classNames={{ wrapper: 'justify-start scrollbar-none duration-300' }}
+      scrollBehavior="inside"
+      backdrop="transparent">
       <ModalContent>
         {() => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold text-xl text-black">
-                    Gallery of static and interactive content frames
-                  </h3>
-                  <p className="text-sm text-black-200 font-normal ">
-                    Choose the type of frame you want to add to your event
-                  </p>
-                </div>
-              </div>
-            </ModalHeader>
-            <ModalBody className="p-6">
-              {/* New section for Cards */}
-              <div className="w-full mt-2">
-                <div className="grid grid-cols-3 gap-4">
-                  {contentTypes.map((contentType) => (
-                    <Card
-                      shadow="sm"
-                      key={contentType.contentType}
-                      isPressable
-                      onPress={() => {
-                        if (!contentType.disabled) {
-                          onChoose(
-                            contentType.contentType,
-                            contentType.templateType
-                          )
-                        }
-                      }}
-                      className="hover:bg-gray-300 flex-col items-start">
-                      <CardBody className="p-2.5 flex flex-col items-start w-full">
-                        <div className="bg-gray-200 p-1 rounded-md w-max">
-                          <div className="flex items-center justify-center w-full h-full">
-                            <div className="w-8 h-8">{contentType.icon}</div>
-                          </div>
-                        </div>
+          <ModalBody className="p-6 scrollbar-none">
+            <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight">
+              Plan collaborative activities
+              <Tooltip content="Generate new ideas or solutions to challenges.">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  className="w-auto h-auto min-w-auto">
+                  <BsQuestionCircle className="text-black/50" />
+                </Button>
+              </Tooltip>
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {collaborativeActivities.map((activity) => (
+                <ContentTypeCard card={activity} onClick={onChoose} />
+              ))}
+            </div>
 
-                        <h3 className="mt-2 font-semibold text-sm w-full text-left">
-                          {contentType.name}
-                        </h3>
+            <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
+              Create presentation content
+              <Tooltip content="Creating compelling presentation content that captivates audiences and delivers impactful messages">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  className="w-auto h-auto min-w-auto">
+                  <BsQuestionCircle className="text-black/50" />
+                </Button>
+              </Tooltip>
+            </p>
 
-                        <p className="text-sm mt-1 w-full text-left">
-                          {contentType.description}
-                        </p>
-                      </CardBody>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </ModalBody>
-          </>
+            <div className="grid grid-cols-2 gap-2">
+              {presentationContent.map((activity) => (
+                <ContentTypeCard card={activity} onClick={onChoose} />
+              ))}
+            </div>
+
+            <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
+              Bring your goodies
+              <Tooltip content="Seamless integration of Google Slides, PDFs and other tools to enhance presentation">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  className="w-auto h-auto min-w-auto">
+                  <BsQuestionCircle className="text-black/50" />
+                </Button>
+              </Tooltip>
+            </p>
+
+            <div className="grid grid-cols-2 gap-2">
+              {goodies.map((activity) => (
+                <ContentTypeCard card={activity} onClick={onChoose} />
+              ))}
+            </div>
+          </ModalBody>
         )}
       </ModalContent>
     </Modal>
