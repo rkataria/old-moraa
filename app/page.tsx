@@ -1,5 +1,3 @@
-'use client'
-
 import { AuthButton } from '@/components/auth/AuthButton'
 import { NamesForm } from '@/components/auth/NamesForm'
 

@@ -8,20 +8,35 @@ import {
 } from 'react'
 
 type LeftSidebarVisiblity = 'minimized' | 'maximized'
-type RightSidebarVisiblity = 'ai-chat' | 'frame-settings' | 'notes' | null
+type RightSidebarType =
+  | 'frame-configuration'
+  | 'frame-appearance'
+  | 'event-settings'
+  | 'frame-notes'
+  | 'chat'
+  | 'participants'
+type ResizableRightSidebarType = 'ai-chat'
+type RightSidebarVisiblity = RightSidebarType | null
+type ResizableRightSidebarVisiblity = ResizableRightSidebarType | null
 
 type StudioLayoutContextType = {
   leftSidebarVisiblity: LeftSidebarVisiblity
   rightSidebarVisiblity: RightSidebarVisiblity
+  resizableRightSidebarVisiblity: ResizableRightSidebarVisiblity
   toggleLeftSidebar: () => void
   setRightSidebarVisiblity: Dispatch<SetStateAction<RightSidebarVisiblity>>
+  setResizableRightSidebarVisiblity: Dispatch<
+    SetStateAction<ResizableRightSidebarVisiblity>
+  >
 }
 
 const StudioLayoutContext = createContext<StudioLayoutContextType>({
   leftSidebarVisiblity: 'maximized',
   rightSidebarVisiblity: null,
+  resizableRightSidebarVisiblity: null,
   toggleLeftSidebar: () => {},
   setRightSidebarVisiblity: () => {},
+  setResizableRightSidebarVisiblity: () => {},
 })
 
 export const useStudioLayoutContext = () => useContext(StudioLayoutContext)
@@ -33,6 +48,8 @@ export function StudioLayoutContextProvider({
     useState<LeftSidebarVisiblity>('maximized')
   const [rightSidebarVisiblity, setRightSidebarVisiblity] =
     useState<RightSidebarVisiblity>(null)
+  const [resizableRightSidebarVisiblity, setResizableRightSidebarVisiblity] =
+    useState<ResizableRightSidebarVisiblity>(null)
 
   const toggleLeftSidebar = () => {
     setLeftSidebarVisiblity((prevState) =>
@@ -64,8 +81,10 @@ export function StudioLayoutContextProvider({
       value={{
         leftSidebarVisiblity,
         rightSidebarVisiblity,
+        resizableRightSidebarVisiblity,
         toggleLeftSidebar,
         setRightSidebarVisiblity,
+        setResizableRightSidebarVisiblity,
       }}>
       {children}
     </StudioLayoutContext.Provider>

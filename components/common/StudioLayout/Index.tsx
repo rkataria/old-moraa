@@ -1,6 +1,6 @@
-import { Header } from './StudioLayout/Header'
-import { LeftSidebar } from './StudioLayout/LeftSidebar'
-import { MainContentWithRightSidebar } from './StudioLayout/MainContentWithRightSidebar'
+import { Header } from './Header'
+import { LeftSidebar } from './LeftSidebar'
+import { MainContentWithRightSidebar } from './MainContentWithRightSidebar'
 
 import { StudioLayoutContextProvider } from '@/hooks/useStudioLayout'
 
@@ -8,14 +8,18 @@ type StudioLayoutProps = {
   children: React.ReactNode
   header: React.ReactNode
   leftSidebar: React.ReactNode
+  resizableRightSidebar: React.ReactNode
   rightSidebar: React.ReactNode
+  rightSidebarControls: React.ReactNode
 }
 
 export function StudioLayout({
   children,
   header,
   leftSidebar,
+  resizableRightSidebar,
   rightSidebar,
+  rightSidebarControls,
 }: StudioLayoutProps) {
   return (
     <StudioLayoutContextProvider>
@@ -24,7 +28,10 @@ export function StudioLayout({
         <div className="flex-auto flex justify-start items-start w-full z-0">
           {/* Left Sidebar */}
           <LeftSidebar>{leftSidebar}</LeftSidebar>
-          <MainContentWithRightSidebar rightSidebar={rightSidebar}>
+          <MainContentWithRightSidebar
+            resizableRightSidebar={resizableRightSidebar}
+            rightSidebar={rightSidebar}
+            rightSidebarControls={rightSidebarControls}>
             {children}
           </MainContentWithRightSidebar>
         </div>

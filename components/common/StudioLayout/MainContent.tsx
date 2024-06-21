@@ -9,7 +9,7 @@ const MAIN_CONTAINER_HEIGHT = `calc(100vh - ${HEADER_HEIGHT}px)`
 export function MainContent({ children }: { children: ReactNode }) {
   return (
     <div
-      className={cn('flex-auto h-full overflow-hidden p-2 pl-0', {})}
+      className={cn('flex-auto h-full overflow-hidden p-0', {})}
       style={{
         maxHeight: MAIN_CONTAINER_HEIGHT,
       }}>

@@ -4,6 +4,7 @@ import { createContext, useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useParams } from 'next/navigation'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
+import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { useAuth } from '@/hooks/useAuth'
@@ -657,30 +658,32 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return sectionResponse.data
   }
 
-  const deleteSection = async ({
-    sectionId,
-    meetingId,
-  }: {
-    sectionId: string
-    meetingId: string
-  }) => {
+  const deleteSection = async ({ sectionId }: { sectionId: string }) => {
     const response = await MeetingService.updateMeeting({
       meetingPayload: {
         sections: meeting.sections.filter((id: string) => id !== sectionId),
       },
-      meetingId,
+      meetingId: meeting.id,
     })
 
     if (response.error) {
-      console.error('error while deleting section: ', response.error)
+      toast.error('Error while deleting section')
 
-      return null
+      return false
     }
 
     // delete section from db- will also cascade delete to frames, frame-response...
-    await SectionService.deleteSection({ sectionId })
+    const deleteResponse = await SectionService.deleteSection({ sectionId })
 
-    return null
+    if (deleteResponse.error) {
+      toast.error('Error while deleting section')
+
+      return false
+    }
+
+    toast.success('Section deleted successfully')
+
+    return true
   }
 
   const updateMeeting = async ({

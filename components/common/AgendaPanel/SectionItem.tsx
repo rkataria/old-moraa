@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 import { IoChevronForward } from 'react-icons/io5'
 import { LuLayers } from 'react-icons/lu'
 
-import { Chip } from '@nextui-org/react'
-
 import { FrameList } from './FrameList'
+import { DeleteConfirmationModal } from '../DeleteConfirmationModal'
 import { EditableLabel } from '../EditableLabel'
+import { SectionDropdownActions } from '../SectionDropdownActions'
 import { StrictModeDroppable } from '../StrictModeDroppable'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -33,6 +33,8 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     updateSection,
     eventMode,
     overviewOpen,
+    deleteSection,
+    setOverviewOpen,
   } = useContext(EventContext) as EventContextType
   const {
     expandedSectionIds,
@@ -41,6 +43,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     setCurrentSectionId,
   } = useAgendaPanel()
   const { leftSidebarVisiblity } = useStudioLayout()
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
   const frames =
     isOwner && eventMode === 'edit'
@@ -50,22 +53,16 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
           status: 'PUBLISHED',
         })
 
+  // When a section is clicked, it should be expanded and the current section should be active in the agenda panel
   const handleSectionClick = () => {
-    const isSectionExpanded = expandedSectionIds.includes(section.id)
+    if (actionDisabled) return
 
     setInsertInSectionId(section.id)
     setInsertAfterFrameId(null)
-
+    setCurrentSectionId(section.id)
+    setCurrentFrame(null)
+    setOverviewOpen(false)
     toggleExpandedSection(section.id)
-
-    if (!isSectionExpanded) {
-      const firstFrame = section.frames[0]
-      if (firstFrame) {
-        setCurrentFrame(firstFrame)
-      }
-    } else {
-      setCurrentSectionId(section.id)
-    }
   }
 
   const sectionExpanded = expandedSectionIds.includes(section.id)
@@ -97,13 +94,12 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
               }}
             />
           </div>
-
-          <Chip
-            size="sm"
-            variant="bordered"
-            className="aspect-square flex justify-center items-center border-1 border-gray-300 mr-1">
-            {frames.length}
-          </Chip>
+          <div className={cn('hidden group-hover/section-item:block')}>
+            <SectionDropdownActions
+              section={section}
+              onDelete={() => setIsDeleteModalOpen(true)}
+            />
+          </div>
         </>
       )
     }
@@ -121,7 +117,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     <div>
       <div
         className={cn(
-          'flex justify-between items-center border-2 border-transparent rounded-md',
+          'flex justify-between items-center border-2 border-transparent rounded-md group/section-item',
           {
             'border-purple-200 bg-purple-200': sectionActive,
             'justify-center': !sidebarExpanded,
@@ -149,6 +145,23 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
           </div>
         )}
       </StrictModeDroppable>
+      <DeleteConfirmationModal
+        open={isDeleteModalOpen}
+        description={
+          <p>
+            Are you sure to delete this section <strong>{section.name}</strong>?
+            This will also delete <strong>{section.frames.length}</strong>{' '}
+            {section.frames.length > 1 ? 'frames' : 'frame'}.
+          </p>
+        }
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => {
+          deleteSection({
+            sectionId: section.id,
+          })
+          setIsDeleteModalOpen(false)
+        }}
+      />
     </div>
   )
 }

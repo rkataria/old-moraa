@@ -4,7 +4,6 @@ import { DyteSidebar } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 
 import { DyteStates } from './MeetingHeader'
-import { AIChat } from '../common/AIChat'
 import { NoteOverlay } from '../common/NotesOverlay'
 
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -19,23 +18,19 @@ export function MeetingRightSidebar({
   setDyteStates,
 }: MeetingRightSidebarProps) {
   const { meeting } = useDyteMeeting()
-  const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
+  const { rightSidebarVisiblity } = useStudioLayout()
 
   if (!rightSidebarVisiblity) return null
 
-  if (rightSidebarVisiblity === 'ai-chat') {
-    return <AIChat onClose={() => setRightSidebarVisiblity(null)} />
-  }
-
-  if (rightSidebarVisiblity === 'notes') {
-    return <NoteOverlay onClose={() => setRightSidebarVisiblity(null)} />
+  if (rightSidebarVisiblity === 'frame-notes') {
+    return <NoteOverlay />
   }
 
   return (
     <DyteSidebar
       meeting={meeting}
       states={dyteStates}
-      className="bg-white w-full h-full max-w-full"
+      className="bg-white w-64 h-full max-w-full"
       // Bug: Applying this show only the sidebar and not the main content
       // config={{
       //   styles: {

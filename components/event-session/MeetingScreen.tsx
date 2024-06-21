@@ -18,8 +18,10 @@ import { FlyingEmojisOverlay } from './FlyingEmojisOverlay'
 import { MainContainer } from './MainContainer'
 import { MeetingHeader } from './MeetingHeader'
 import { MeetingRightSidebar } from './MeetingRightSidebar'
+import { RightSidebarControls } from './RightSidebarControls'
 import { AgendaPanel } from '../common/AgendaPanel'
-import { StudioLayout } from '../common/StudioLayout'
+import { StudioLayout } from '../common/StudioLayout/Index'
+import { ResizableRightSidebar } from '../event-content/ResizableRightSidebar'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -32,13 +34,6 @@ import {
 export type DyteStates = {
   [key: string]: string | boolean
 }
-
-export type RightSiderbar =
-  | 'participants'
-  | 'chat'
-  | 'plugins'
-  | 'ai-chat'
-  | 'notes'
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
@@ -113,12 +108,14 @@ export function MeetingScreen() {
         <MeetingHeader dyteStates={dyteStates} setDyteStates={setDyteStates} />
       }
       leftSidebar={<AgendaPanel />}
+      resizableRightSidebar={<ResizableRightSidebar />}
       rightSidebar={
         <MeetingRightSidebar
           dyteStates={dyteStates}
           setDyteStates={setDyteStates}
         />
-      }>
+      }
+      rightSidebarControls={<RightSidebarControls />}>
       <MainContainer />
 
       {/* Emoji Overlay */}

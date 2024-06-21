@@ -8,7 +8,7 @@ import {
 
 import { RichTextView } from '@/components/common/content-types/RichTextView'
 import { ImageBlockView } from '@/components/common/ImageBlockView'
-import { LayoutTypes } from '@/components/common/TextImageFrameSettings'
+import { LayoutTypes } from '@/components/event-content/FrameAppearance/TextImageAppearance'
 import { Block, IFrame, TextBlock } from '@/types/frame.type'
 
 type TextImageProps = {

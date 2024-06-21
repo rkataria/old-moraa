@@ -8,16 +8,16 @@ import { cn } from '@/utils/utils'
 const CONTAINER_OVERFLOW_CLASSNAMES =
   'overflow-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100'
 
-export function RightSidebar({ children }: { children: ReactNode }) {
-  const { rightSidebarVisiblity } = useStudioLayout()
+export function ResizableRightSidebar({ children }: { children: ReactNode }) {
+  const { resizableRightSidebarVisiblity } = useStudioLayout()
 
   return (
     <div
       className={cn(
-        'flex-none w-64 h-[calc(100%_-_0.5rem)] ml-2 rounded-md bg-transparent text-black dark:text-white',
+        'flex-none w-auto h-full rounded-md bg-white text-black dark:bg-gray-950 dark:text-white',
         CONTAINER_OVERFLOW_CLASSNAMES,
         {
-          hidden: !rightSidebarVisiblity,
+          hidden: !resizableRightSidebarVisiblity,
         }
       )}
       style={{

@@ -7,10 +7,12 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { FrameContainer } from './FrameContainer'
 import { Header } from './Header'
+import { ResizableRightSidebar } from './ResizableRightSidebar'
 import { RightSidebar } from './RightSidebar'
+import { RightSidebarControls } from './RightSidebarControls'
 import { AgendaPanel } from '../common/AgendaPanel'
 import { Loading } from '../common/Loading'
-import { StudioLayout } from '../common/StudioLayout'
+import { StudioLayout } from '../common/StudioLayout/Index'
 import { SyncingStatus } from '../common/SyncingStatus'
 
 import {
@@ -97,11 +99,9 @@ export function FrameManager() {
       <StudioLayout
         header={<Header event={event} />}
         leftSidebar={<AgendaPanel />}
-        rightSidebar={
-          <div className="pl-0 h-full">
-            <RightSidebar />
-          </div>
-        }>
+        resizableRightSidebar={<ResizableRightSidebar />}
+        rightSidebar={<RightSidebar />}
+        rightSidebarControls={<RightSidebarControls />}>
         <FrameContainer />
       </StudioLayout>
       <ContentTypePicker

@@ -71,7 +71,7 @@ export function FrameItem({ frame }: FrameItemProps) {
     sidebarExpanded
   )
 
-  const editable = isOwner && !preview
+  const editable = isOwner && !preview && eventMode === 'edit'
 
   const frameActive =
     !overviewOpen && !currentSectionId && currentFrame?.id === frame.id

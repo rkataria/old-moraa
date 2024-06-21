@@ -42,7 +42,7 @@ function NoteOverlaySidebarWrapper({ contentClass, children, onClose }: any) {
   )
 }
 
-export function NoteOverlay({ onClose }: { onClose: () => void }) {
+export function NoteOverlay() {
   const [editingBlock, setEditingBlock] = useState<string>('')
   const [notesHtml, setNotesHtml] = useState<TextBlock | null>(null)
   const { setRightSidebarVisiblity } = useStudioLayout()
@@ -114,9 +114,7 @@ export function NoteOverlay({ onClose }: { onClose: () => void }) {
   }, [frameNoteHtml])
 
   return (
-    <NoteOverlaySidebarWrapper
-      contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)]"
-      onClose={onClose}>
+    <NoteOverlaySidebarWrapper contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)]">
       {selectedNotesQuery.isPending ? (
         overviewOpen || !currentFrame?.id ? (
           <span className="p-4 h-full flex items-center justify-center text-gray-400">
