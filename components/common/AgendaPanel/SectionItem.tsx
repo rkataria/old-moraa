@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useContext } from 'react'
 
+import { IoChevronForward } from 'react-icons/io5'
 import { LuLayers } from 'react-icons/lu'
 
 import { Chip } from '@nextui-org/react'
@@ -78,11 +79,16 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
           <div
             className="flex justify-start items-center flex-auto gap-2 p-1.5"
             onClick={handleSectionClick}>
+            <IoChevronForward
+              className={cn('duration-300 shrink-0', {
+                'rotate-90': sectionExpanded,
+              })}
+            />
             <LuLayers size={22} className="flex-none" />
             <EditableLabel
               readOnly={actionDisabled}
               label={section.name}
-              className="text-sm font-bold cursor-pointer"
+              className="text-sm font-semibold cursor-pointer tracking-tight"
               onUpdate={(value: string) => {
                 updateSection({
                   sectionPayload: { name: value },
@@ -91,20 +97,20 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
               }}
             />
           </div>
-          <span className="flex-none p-1.5">
-            <Chip
-              size="sm"
-              className="aspect-square flex justify-center items-center">
-              {frames.length}
-            </Chip>
-          </span>
+
+          <Chip
+            size="sm"
+            variant="bordered"
+            className="aspect-square flex justify-center items-center border-1 border-gray-300 mr-1">
+            {frames.length}
+          </Chip>
         </>
       )
     }
 
     return (
       <div
-        className="flex justify-center items-center cursor-pointer"
+        className="flex justify-center items-center cursor-pointer p-1"
         onClick={handleSectionClick}>
         <LuLayers size={22} />
       </div>

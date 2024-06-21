@@ -29,7 +29,7 @@ export function AddContentButton({ className }: { className?: string }) {
         isIconOnly={!expanded}
         radius="md"
         variant="solid"
-        className="bg-primary text-white flex justify-center items-center gap-2 shadow-lg"
+        className="bg-primary text-white flex justify-center items-center gap-2 shadow-lg tracking-tight"
         onClick={() => {
           setOpenContentTypePicker?.(true)
         }}>

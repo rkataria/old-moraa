@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
@@ -213,7 +213,11 @@ export function TextBlockEditor({
   if (!editor) return null
 
   const renderToolbar = () => {
-    if (!showToolbar || !editable || block.type === 'header') {
+    if (
+      !showToolbar ||
+      !editable ||
+      ['header', 'paragraph'].includes(block.type)
+    ) {
       return null
     }
 

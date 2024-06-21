@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 
 import { useParams } from 'next/navigation'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { SettingsSidebar } from './SettingsSidebar'
 import { AIChat } from '../common/AIChat'
@@ -17,6 +18,10 @@ export function RightSidebar() {
     EventContext
   ) as EventContextType
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
+
+  useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), {
+    enableOnFormTags: ['INPUT', 'TEXTAREA'],
+  })
 
   if (preview || !isOwner) return null
   if (rightSidebarVisiblity === 'ai-chat') {

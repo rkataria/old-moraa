@@ -66,7 +66,10 @@ export function FrameItem({ frame }: FrameItemProps) {
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
-  const { width: containerWidth } = useDimensions(thumbnailContainerRef)
+  const { width: containerWidth } = useDimensions(
+    thumbnailContainerRef,
+    sidebarExpanded
+  )
 
   const editable = isOwner && !preview
 
@@ -79,11 +82,14 @@ export function FrameItem({ frame }: FrameItemProps) {
         <div
           data-miniframe-id={frame.id}
           className={cn(
-            'cursor-pointer rounded-md border-0 hover:bg-purple-200 overflow-hidden',
+            'cursor-pointer rounded-md border-0  hover:bg-purple-200 overflow-hidden',
             {
-              'max-w-[calc(100%_-_2rem)]': listDisplayMode === 'grid',
+              'max-w-[calc(100%_-_2rem)] border border-gray-300':
+                listDisplayMode === 'grid',
               'w-full': listDisplayMode === 'list',
               'bg-purple-200': frameActive,
+              'border-2 border-gray-600':
+                frameActive && listDisplayMode === 'grid',
               'border-transparent':
                 listDisplayMode === 'list' && currentFrame?.id !== frame.id,
             }
@@ -128,7 +134,7 @@ export function FrameItem({ frame }: FrameItemProps) {
                 <EditableLabel
                   readOnly={!editable}
                   label={frame.name}
-                  className="text-sm"
+                  className="text-sm tracking-tight"
                   onUpdate={(value) => {
                     if (!editable) return
                     if (frame.name === value) return

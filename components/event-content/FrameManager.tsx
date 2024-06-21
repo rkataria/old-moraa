@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-import { Fragment, useContext, useState } from 'react'
+import { Fragment, useContext } from 'react'
 
 import { useParams } from 'next/navigation'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -28,7 +28,6 @@ import { getDefaultContent } from '@/utils/content.util'
 export function FrameManager() {
   const { eventId } = useParams()
   const { event, isLoading: eventLoading } = useEvent({ id: eventId as string })
-  const [rightSidebarVisible, setRightSidebarVisible] = useState<boolean>(true)
 
   const {
     loading,
@@ -43,15 +42,6 @@ export function FrameManager() {
   } = useContext(EventContext) as EventContextType
 
   useHotkeys('f', () => setOpenContentTypePicker(true), [])
-
-  useHotkeys(
-    'ctrl + ]',
-    () => setRightSidebarVisible(!rightSidebarVisible),
-    {
-      enableOnFormTags: ['INPUT', 'TEXTAREA'],
-    },
-    [rightSidebarVisible]
-  )
 
   const handleAddNewFrame = (
     contentType: ContentType,

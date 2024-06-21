@@ -18,10 +18,10 @@ export function EmptyPlaceholder({
       <div className="flex flex-col items-center">
         <div className="relative">{icon}</div>
 
-        <p className="text-slate-600 font-medium text-3xl -tracking-[0.5px] my-4">
+        <p className="text-slate-600 font-medium text-3xl tracking-tight my-4">
           {label}
         </p>
-        <p className="text-slate-400 -tracking-[0.5px]">{description}</p>
+        <p className="text-slate-400 tracking-tight">{description}</p>
         {endContent}
       </div>
     </div>

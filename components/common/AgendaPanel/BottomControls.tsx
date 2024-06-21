@@ -1,3 +1,4 @@
+import { useHotkeys } from 'react-hotkeys-hook'
 import { LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu'
 
 import { Button } from '@nextui-org/react'
@@ -17,6 +18,15 @@ export function BottomControls() {
     leftSidebarVisiblity === 'minimized'
       ? BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED
       : BOTTOM_CONTROLS_HEIGHT
+
+  useHotkeys(
+    'ctrl + [',
+    toggleLeftSidebar,
+    {
+      enableOnFormTags: ['INPUT', 'TEXTAREA'],
+    },
+    [toggleLeftSidebar]
+  )
 
   return (
     <div

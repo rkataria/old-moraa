@@ -503,7 +503,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (!section?.id) {
       // 1. Create a new section
       const sectionResponse = await SectionService.createSection({
-        name: `Untitled Section ${(sections?.length || 0) + 1}`,
+        name: `Section ${(sections?.length || 0) + 1}`,
         meeting_id: meeting?.id,
         frames: [],
       })
@@ -589,8 +589,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     if (!isOwner) return
 
-    const sectionName =
-      name || `Untitled Section ${(sections?.length || 0) + 1}`
+    const sectionName = name || `Section ${(sections?.length || 0) + 1}`
 
     setShowSectionPlaceholder(true)
     const sectionResponse = await SectionService.createSection({

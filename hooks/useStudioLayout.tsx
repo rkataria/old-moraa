@@ -3,6 +3,7 @@ import {
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from 'react'
 
@@ -38,6 +39,24 @@ export function StudioLayoutContextProvider({
       prevState === 'maximized' ? 'minimized' : 'maximized'
     )
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const toggleSidebars = (e: any) => {
+      if (e.detail.key === 'left_sidebar_toggle') {
+        toggleLeftSidebar()
+
+        return
+      }
+
+      setRightSidebarVisiblity(null)
+    }
+
+    window.addEventListener('keyboard_shortcuts', toggleSidebars)
+
+    return () =>
+      window.removeEventListener('keyboard_shortcuts', toggleSidebars)
+  }, [])
 
   return (
     <StudioLayoutContext.Provider

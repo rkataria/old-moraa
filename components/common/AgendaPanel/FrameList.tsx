@@ -23,10 +23,12 @@ export function FrameList({
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
+  if (!showList) return null
+
   return (
     <div
       className={cn('flex flex-col gap-1', {
-        'p-2 pl-4 pr-0': sidebarExpanded,
+        'p-2 pl-6 pr-0': sidebarExpanded,
         'py-2': !sidebarExpanded,
       })}>
       {showList &&

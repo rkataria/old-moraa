@@ -82,7 +82,6 @@ export function CoverEditor() {
             className="w-full">
             <TextBlockEditor
               key={block.id}
-              showToolbar={block.type !== 'header'}
               block={block}
               editable={editingBlock === block.id}
               onChange={(updatedBlock) => {
