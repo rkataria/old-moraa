@@ -16,6 +16,7 @@ import { MiroEmbedEditor } from './MiroEmbedEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
+import { Breakout } from '../common/content-types/Breakout'
 import { Canvas } from '../common/content-types/Canvas'
 import { FramePreview } from '../common/FramePreview'
 
@@ -90,6 +91,9 @@ export function Frame({ frame }: FrameProps) {
         {frame.type === ContentType.RICH_TEXT && <RichTextEditor />}
         {frame.type === ContentType.MORAA_BOARD && (
           <MoraaBoardEditor frame={frame} />
+        )}
+        {frame.type === ContentType.BREAKOUT && (
+          <Breakout frame={frame as any} />
         )}
       </div>
     </div>

@@ -151,6 +151,17 @@ export const getDefaultContent = ({
       return {
         blocks: [headerBlock, paragraphBlock],
       }
+    case ContentType.BREAKOUT:
+      return {
+        blocks: [headerBlock, paragraphBlock],
+        title: data?.title,
+        description: data?.description,
+        breakoutDetails: [...Array(data?.breakoutCount)]
+          .fill('')
+          .map((_, idx) => ({
+            name: `${data?.selectedBreakout} - ${idx + 1}`,
+          })),
+      }
 
     default:
       return {}
