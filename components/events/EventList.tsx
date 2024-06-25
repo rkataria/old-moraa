@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { IoCalendarClear } from 'react-icons/io5'
 import { MdOutlineAddBox } from 'react-icons/md'
@@ -17,6 +18,7 @@ import {
   SortDescriptor,
   Pagination,
   User,
+  Button,
 } from '@nextui-org/react'
 
 import { EventActions } from './EventActions'
@@ -273,16 +275,11 @@ export function EventList() {
           </p>
         </div>
 
-        <CreateEventButtonWithModal
-          buttonLabel={
-            <p className="flex items-center gap-2">
-              Create new <MdOutlineAddBox className="text-[18px]" />
-            </p>
-          }
-          buttonProps={{
-            className: 'bg-black text-white',
-          }}
-        />
+        <Button className="bg-black text-white" as={Link} href="/events/create">
+          <p className="flex items-center gap-2">
+            Create new <MdOutlineAddBox className="text-[18px]" />
+          </p>
+        </Button>
       </div>
     )
   }

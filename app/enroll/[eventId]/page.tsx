@@ -185,7 +185,7 @@ function Visit() {
   if (!event) return null
 
   return (
-    <div className="bg-gradient-to-b from-[#e9deff] to-[#feffe1] w-screen h-screen">
+    <div className="bg-gradient-to-b from-[#e9deff] to-[#feffe1] w-screen min-h-screen">
       <MoraaLogo color="primary" className="scale-[0.7] origin-left ml-6" />
       <div className="max-w-[960px] mx-auto py-[5rem]">
         <div className="grid grid-cols-[0.5fr_1fr] items-start gap-[3rem]">

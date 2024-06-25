@@ -1,12 +1,18 @@
 'use client'
 
+import { ReactNode } from 'react'
+
+import { usePathname } from 'next/navigation'
+
 import { SidebarComponent } from '@/components/common/Sidebar'
 
-export default function WorkspaceLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function WorkspaceLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
+
+  if (pathname.includes('create')) {
+    return children
+  }
+
   return (
     <div className="flex">
       <SidebarComponent />

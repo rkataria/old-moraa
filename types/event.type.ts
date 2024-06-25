@@ -16,3 +16,11 @@ export interface IMeetingFramesPayload {
 }
 
 export type AgendaFrameDisplayType = 'thumbnail' | 'list'
+
+export interface IEventType {
+  label: string
+  iconUrl: string
+  key: string
+  disabled: boolean
+  description: string
+}
