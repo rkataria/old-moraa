@@ -255,6 +255,7 @@ export enum ContentType {
   TEXT_IMAGE = 'Text & Image',
   RICH_TEXT = 'Rich Text',
   MORAA_BOARD = 'Moraa Board',
+  BREAKOUT = 'Breakout',
 }
 
 export enum CANVAS_TEMPLATE_TYPES {

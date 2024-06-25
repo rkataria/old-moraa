@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import { FramePreview } from '../FramePreview'
 
 import { IFrame } from '@/types/frame.type'
@@ -12,10 +13,10 @@ export function FrameThumbnailCard({
   frame,
   containerWidth,
 }: FrameThumbnailCardProps) {
-  if (!isFrameThumbnailAvailable(frame.type)) {
+  if (!isFrameThumbnailAvailable(frame?.type)) {
     return (
       <div className="w-full h-full flex justify-center items-center font-semibold capitalize">
-        {frame.type}
+        {frame?.type}
       </div>
     )
   }
@@ -32,7 +33,7 @@ export function FrameThumbnailCard({
       <FramePreview
         readOnly
         frame={frame}
-        key={JSON.stringify(frame.content)}
+        key={JSON.stringify(frame?.content)}
       />
     </div>
   )

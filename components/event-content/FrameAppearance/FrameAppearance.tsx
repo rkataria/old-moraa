@@ -30,6 +30,7 @@ export function FrameAppearance() {
     [ContentType.MIRO_EMBED]: null,
     [ContentType.MORAA_BOARD]: null,
     [ContentType.CANVAS]: null,
+    [ContentType.BREAKOUT]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type]

@@ -55,7 +55,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
 
   // When a section is clicked, it should be expanded and the current section should be active in the agenda panel
   const handleSectionClick = () => {
-    if (actionDisabled) return
+    // if (actionDisabled) return
 
     setInsertInSectionId(section.id)
     setInsertAfterFrameId(null)

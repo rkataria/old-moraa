@@ -35,6 +35,7 @@ export function FrameConfiguration() {
       <MoraaBoardConfiguration key={currentFrame.id} />
     ),
     [ContentType.CANVAS]: null,
+    [ContentType.BREAKOUT]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type]

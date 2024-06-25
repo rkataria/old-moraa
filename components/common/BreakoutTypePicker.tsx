@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
@@ -72,7 +73,8 @@ interface ChooseContentTypeProps {
   onClose: () => void
   onChoose: (
     contentType: BREAKOUT_TYPES,
-    breakoutRoomsGroupsCount?: number
+    breakoutRoomsGroupsCount?: number,
+    breakoutRoomsGroupsTime?: number
   ) => void
 }
 
@@ -87,8 +89,15 @@ export function BreakoutTypePicker({
   const [breakoutRoomsGroupsCount, setBreakoutRoomsGroupsCount] =
     useState<number>(0)
 
+  const [breakoutRoomsGroupsTime, setBreakoutRoomsGroupsTime] =
+    useState<number>(0)
+
   const onSubmit = () => {
-    onChoose(selectedBreakoutType, breakoutRoomsGroupsCount)
+    onChoose(
+      selectedBreakoutType,
+      breakoutRoomsGroupsCount,
+      breakoutRoomsGroupsTime
+    )
   }
 
   return (
@@ -160,6 +169,22 @@ export function BreakoutTypePicker({
                             isDisabled={
                               selectedBreakoutType !== breakoutType.breakoutType
                             }
+                          />
+                        </span>
+                        <span
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}>
+                          <FontSizeControl
+                            size={5.0}
+                            onFontSizeChange={(count) =>
+                              setBreakoutRoomsGroupsTime(count)
+                            }
+                            isDisabled={
+                              selectedBreakoutType !== breakoutType.breakoutType
+                            }
+                            isTime
                           />
                         </span>
                       </CardBody>
