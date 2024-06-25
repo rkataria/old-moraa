@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
+import { useState } from 'react'
+
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { useMutation } from '@tanstack/react-query'
 
 import {
   Button,
@@ -9,6 +10,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Input,
 } from '@nextui-org/react'
 
 import {
@@ -16,49 +18,91 @@ import {
   useBreakoutRoomsManagerWithLatestMeetingState,
 } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import {
-  moveHostToRoom,
-  stopBreakoutRooms,
-} from '@/services/dyte/breakout-room-manager.service'
+import { useSharedState } from '@/hooks/useSharedState'
+import { PresentationStatuses } from '@/types/event-session.type'
 
 export function BreakoutRoomsFrame() {
-  const { setIsBreakoutSlide } = useEventSession()
   const { meeting } = useDyteMeeting()
-  const { breakoutRoomsManager } =
-    useBreakoutRoomsManagerWithLatestMeetingState()
-  const { isCurrentDyteMeetingInABreakoutRoom } = useBreakoutRooms()
-  const stopBreakoutMutation = useMutation({
-    mutationFn: () =>
-      stopBreakoutRooms({
-        meeting,
-        stateManager: breakoutRoomsManager,
-      }),
-    onSuccess: () => setIsBreakoutSlide(false),
+  const { currentFrame, presentationStatus, setIsBreakoutSlide } =
+    useEventSession()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setBreakoutSlide] = useSharedState<null | string>({
+    uniqueStateId: 'shared-breakout-slide',
+    initialState: null,
   })
-  const moveHostToRoomMutation = useMutation({
-    mutationFn: (destinationMeetingId: string) =>
-      moveHostToRoom({
-        meeting,
-        stateManager: breakoutRoomsManager,
-        destinationMeetingId,
-      }),
-  })
+  const [participantsPerRoom, setParticipantsPerRoom] = useState(
+    meeting.participants.all.toArray().length / 4 > 1
+      ? meeting.participants.all.toArray().length / 4
+      : 1
+  )
+  const { isBreakoutActive } = useBreakoutRooms()
+  const {
+    endBreakoutRooms: _endBreakoutRooms,
+    startBreakoutRooms: _startBreakoutRooms,
+    joinRoom: _joinRoom,
+  } = useBreakoutRoomsManagerWithLatestMeetingState()
+
+  const startBreakoutRooms = () => {
+    _startBreakoutRooms({ participantsPerRoom })
+    if (presentationStatus === PresentationStatuses.STARTED) {
+      setBreakoutSlide(currentFrame?.id || null)
+    }
+  }
+
+  const endBreakoutRooms = () => {
+    _endBreakoutRooms()
+    setBreakoutSlide(null)
+    setIsBreakoutSlide(false)
+  }
 
   const joinRoom = (meetId: string) => {
-    moveHostToRoomMutation.mutate(meetId)
+    _joinRoom(meetId)
   }
-  const joinMainRoom = () => {
-    if (!meeting.connectedMeetings.parentMeeting?.id) return
-    moveHostToRoomMutation.mutate(meeting.connectedMeetings.parentMeeting.id)
+
+  if (!isBreakoutActive) {
+    return (
+      <Card className="mt-4 mx-20" shadow="none">
+        <CardHeader>
+          <h4 className="font-semibold text-xl">
+            Create breakout rooms{' '}
+            {presentationStatus === PresentationStatuses.STARTED &&
+            currentFrame?.name
+              ? `for ${currentFrame.name}`
+              : ''}
+          </h4>
+        </CardHeader>
+        <CardBody>
+          <Input
+            value={String(participantsPerRoom)}
+            onChange={(e) => setParticipantsPerRoom(Number(e.target.value))}
+            label="Participant per room"
+            type="number"
+          />
+        </CardBody>
+        <CardFooter>
+          <Button color="primary" variant="solid" onClick={startBreakoutRooms}>
+            Start Breakout
+          </Button>
+        </CardFooter>
+      </Card>
+    )
   }
 
   return (
     <div className="m-6 w-full flex-1 pr-12">
-      <h4 className="mb-6 font-semibold text-xl">Breakout in progress</h4>
+      <div className="flex justify-between items-center mb-6">
+        <h4 className="font-semibold text-xl">Breakout in progress</h4>
+      </div>
       <div className="flex">
         {meeting.connectedMeetings.meetings.map((meet) => (
           <div key={meet.id} className="mr-4">
-            <Card className="p-2" style={{ minWidth: 100 }}>
+            <Card
+              className="p-2 overflow-y-auto"
+              style={{
+                minWidth: '15rem',
+                minHeight: '12rem',
+                maxHeight: '30rem',
+              }}>
               <CardHeader>
                 <p className="text-md font-semibold">{meet.title}</p>
               </CardHeader>
@@ -90,8 +134,11 @@ export function BreakoutRoomsFrame() {
               </CardBody>
               <CardFooter>
                 {meet.id !== meeting.connectedMeetings.currentMeetingId ? (
-                  <Button size="sm" onClick={() => joinRoom(meet.id || '')}>
-                    Join room
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => joinRoom(meet.id || '')}>
+                    Join {meet.title}
                   </Button>
                 ) : null}
               </CardFooter>
@@ -99,20 +146,9 @@ export function BreakoutRoomsFrame() {
           </div>
         ))}
       </div>
-      <div className="mt-4 flex justify-between">
-        {isCurrentDyteMeetingInABreakoutRoom ? (
-          <Button size="sm" onClick={() => joinMainRoom()}>
-            Back to Main Room
-          </Button>
-        ) : (
-          <div />
-        )}
-        <Button
-          size="sm"
-          onClick={() => stopBreakoutMutation.mutate()}
-          isLoading={stopBreakoutMutation.isPending}
-          color="danger">
-          Stop Breakout
+      <div className="mt-4 flex">
+        <Button onClick={endBreakoutRooms} color="danger">
+          End Breakout
         </Button>
       </div>
     </div>

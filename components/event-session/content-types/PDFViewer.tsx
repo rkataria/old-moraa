@@ -84,7 +84,7 @@ export function PDFViewer({ frame }: PDFViewerProps) {
 
     if (newPosition < 1 || newPosition > totalPages) return
 
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: positionChangeEvent,
       payload: { position: newPosition },

@@ -63,20 +63,6 @@ export const stopBreakoutRooms = async ({
   meeting,
   stateManager,
 }: StopBreakoutRoomsArgs) => {
-  const participants: Array<string> = []
-  meeting.connectedMeetings.meetings.forEach((m) =>
-    m.participants.forEach((participant) =>
-      participant.customParticipantId
-        ? participants.push(participant.customParticipantId)
-        : null
-    )
-  )
-
-  stateManager.assignParticipantsToMeeting(
-    participants,
-    meeting.connectedMeetings.parentMeeting.id || ''
-  )
-
   stateManager.allConnectedMeetings.forEach((m) =>
     stateManager.deleteMeeting(m.id)
   )

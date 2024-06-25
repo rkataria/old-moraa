@@ -7,6 +7,7 @@ import { ISection, IFrame } from './frame.type'
 export type EventModeType = 'view' | 'edit' | 'present'
 
 export type EventContextType = {
+  eventId: string
   eventMode: EventModeType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meeting: any

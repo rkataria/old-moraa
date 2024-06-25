@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useParams } from 'next/navigation'
@@ -1094,6 +1094,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     <EventContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
+        eventId: eventId as string,
         eventMode:
           eventMode !== 'present' ? (isOwner ? 'edit' : 'view') : eventMode,
         meeting,
@@ -1147,4 +1148,14 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       {children}
     </EventContext.Provider>
   )
+}
+
+export function useEventContext() {
+  const context = useContext(EventContext) as EventContextType
+
+  if (!context) {
+    throw new Error('useEvent must be used within EventProvider')
+  }
+
+  return context
 }

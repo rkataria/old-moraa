@@ -15,6 +15,7 @@ import { FramePlaceholder } from '../FramePlaceholder'
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useDimensions } from '@/hooks/useDimensions'
+import { useSharedState } from '@/hooks/useSharedState'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
@@ -44,6 +45,10 @@ export function FrameItem({ frame }: FrameItemProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
+  const [breakoutSlide] = useSharedState<null | string>({
+    uniqueStateId: 'shared-breakout-slide',
+    initialState: null,
+  })
 
   const handleFrameAction = (action: {
     key: FrameActionKey
@@ -79,13 +84,14 @@ export function FrameItem({ frame }: FrameItemProps) {
         <div
           data-miniframe-id={frame.id}
           className={cn(
-            'cursor-pointer rounded-md border-0 hover:bg-purple-200 overflow-hidden',
+            'cursor-pointer rounded-md hover:bg-purple-200 overflow-hidden',
             {
               'max-w-[calc(100%_-_2rem)]': listDisplayMode === 'grid',
               'w-full': listDisplayMode === 'list',
               'bg-purple-200': frameActive,
               'border-transparent':
                 listDisplayMode === 'list' && currentFrame?.id !== frame.id,
+              'border border-green-700': breakoutSlide === frame.id,
             }
           )}
           onClick={() => {

@@ -13,6 +13,12 @@ import { BreakoutRoomsManager } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { ConnectedMeetingState } from '@dytesdk/ui-kit/dist/types/types/props'
 
+import {
+  createAndAutoAssignBreakoutRooms,
+  moveHostToRoom,
+  stopBreakoutRooms,
+} from '@/services/dyte/breakout-room-manager.service'
+
 type BreakRoomManagerContextType = {
   breakoutRoomsManager: BreakoutRoomsManager
 }
@@ -94,7 +100,35 @@ export const useBreakoutRoomsManagerWithLatestMeetingState = () => {
     }
   }, [dyteMeeting, updateLocalState, close])
 
-  return { breakoutRoomsManager }
+  const startBreakoutRooms = ({ participantsPerRoom = 1 }) => {
+    createAndAutoAssignBreakoutRooms({
+      groupSize: participantsPerRoom,
+      meeting: dyteMeeting,
+      stateManager: breakoutRoomsManager,
+    })
+  }
+
+  const endBreakoutRooms = () => {
+    stopBreakoutRooms({
+      meeting: dyteMeeting,
+      stateManager: breakoutRoomsManager,
+    })
+  }
+
+  const joinRoom = (meetId: string) => {
+    moveHostToRoom({
+      meeting: dyteMeeting,
+      stateManager: breakoutRoomsManager,
+      destinationMeetingId: meetId,
+    })
+  }
+
+  return {
+    breakoutRoomsManager,
+    startBreakoutRooms,
+    endBreakoutRooms,
+    joinRoom,
+  }
 }
 
 export const useBreakoutRooms = () => {
@@ -108,5 +142,8 @@ export const useBreakoutRooms = () => {
 
   const isBreakoutActive = dyteMeetingSelector.connectedMeetings.isActive
 
-  return { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom }
+  return {
+    isBreakoutActive,
+    isCurrentDyteMeetingInABreakoutRoom,
+  }
 }

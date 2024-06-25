@@ -39,7 +39,7 @@ export function MainContainer() {
   const spotlightMode = eventSessionMode === 'Lobby'
 
   const currentFrameBgColor =
-    presentationStatus === PresentationStatuses.STARTED
+    presentationStatus === PresentationStatuses.STARTED && !isBreakoutSlide
       ? currentFrame?.config?.backgroundColor || '#ffffff'
       : '#ffffff'
 
@@ -54,7 +54,7 @@ export function MainContainer() {
       {/* Sportlight View */}
       {spotlightMode && !isBreakoutSlide ? (
         <div className="flex flex-col overflow-auto h-full flex-1">
-          <ParticipantTiles spotlightMode={spotlightMode} />
+          <ParticipantTiles spotlightMode />
         </div>
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
@@ -79,7 +79,7 @@ export function MainContainer() {
             maxSize={50}
             ref={panelRef}>
             <div className="flex flex-col overflow-auto h-full flex-1">
-              <ParticipantTiles spotlightMode={spotlightMode} />
+              <ParticipantTiles spotlightMode={false} />
             </div>
           </Panel>
         </PanelGroup>

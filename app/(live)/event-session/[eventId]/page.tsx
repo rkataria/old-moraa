@@ -32,7 +32,6 @@ function EventSessionPageInner({
   isBreakoutLoading,
 }: EventSessionPageInnerProps) {
   useBreakoutRoom()
-
   if (isBreakoutLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
@@ -270,6 +269,7 @@ function EventSessionPage() {
   const [roomJoined, setRoomJoined] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isBreakoutLoading, setIsBreakoutLoading] = useState<boolean>(false)
+
   useDyteListeners(dyteMeeting, setRoomJoined, setIsBreakoutLoading)
 
   useEffect(() => {

@@ -10,7 +10,6 @@ import {
 import { sendNotification } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { RealtimeChannel } from '@supabase/supabase-js'
 import isEqual from 'lodash.isequal'
 import uniqBy from 'lodash.uniqby'
 import { useParams } from 'next/navigation'
@@ -26,6 +25,8 @@ import type {
 
 import { useEnrollment } from '@/hooks/useEnrollment'
 import { useFrameReactions } from '@/hooks/useReactions'
+import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
+import { useSharedState } from '@/hooks/useSharedState'
 import { SessionService } from '@/services/session.service'
 import { EventContextType } from '@/types/event-context.type'
 import {
@@ -43,7 +44,6 @@ interface EventSessionProviderProps {
 
 export type EventSessionMode = 'Preview' | 'Lobby' | 'Presentation'
 
-let realtimeChannel: RealtimeChannel
 const supabase = createClientComponentClient()
 
 export const EventSessionContext =
@@ -75,7 +75,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [currentFrameLoading, setCurrentFrameLoading] = useState<boolean>(true)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
+  const { realtimeChannel } = useRealtimeChannel()
   const [isBreakoutSlide, setIsBreakoutSlide] = useState<boolean>(false)
+  const [sharedBreakoutFrame, setSharedBreakoutFrame] = useSharedState<
+    IFrame['id'] | null
+  >({ initialState: null, uniqueStateId: 'sharedBreakoutFrame' })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activeSession, setActiveSession] = useState<any>(null)
@@ -149,15 +153,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
   // Create a channel for the event
   useEffect(() => {
-    if (!eventId) return
-
-    realtimeChannel = supabase
-      .channel(`event:${eventId}`, {
-        config: {
-          broadcast: { self: true },
-        },
-      })
-      .subscribe()
+    if (!eventId || !realtimeChannel) return
 
     // Listen for frame change events
     realtimeChannel.on(
@@ -190,11 +186,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         const { newPresentationStatus } = payload ?? {}
         if (!newPresentationStatus) return
 
-        console.log(
-          'realtime handler for presentation-status-change: newPresentationStatus',
-          newPresentationStatus
-        )
-
         const getNewEventSessionMode = () => {
           if (newPresentationStatus !== PresentationStatuses.STOPPED) {
             return 'Presentation'
@@ -205,10 +196,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         }
 
         const newEventSessionMode = getNewEventSessionMode()
-        console.log(
-          'realtime handler for presentation-status-change: newEventSessionMode',
-          newEventSessionMode
-        )
 
         setEventSessionMode(newEventSessionMode)
         setPresentationStatus(newPresentationStatus)
@@ -249,7 +236,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     )
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId, sections, isOwner])
+  }, [realtimeChannel, eventId, sections, isOwner])
 
   useEffect(() => {
     if (!fetchedFrameReactions) return
@@ -292,10 +279,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   ])
 
   useEffect(() => {
-    if (!currentFrame) return
+    if (!currentFrame || !realtimeChannel) return
 
     if (!isBreakoutActive && isOwner && eventSessionMode === 'Presentation') {
-      realtimeChannel.send({
+      realtimeChannel?.send({
         type: 'broadcast',
         event: 'currentframe-change',
         payload: { frameId: currentFrame.id },
@@ -358,10 +345,19 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       channels.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame, eventSessionMode])
+  }, [realtimeChannel, currentFrame, eventSessionMode])
+
+  useEffect(() => {
+    if (!isBreakoutActive && sharedBreakoutFrame) {
+      setSharedBreakoutFrame(null)
+    } else if (isBreakoutActive && !sharedBreakoutFrame) {
+      setSharedBreakoutFrame(currentFrame?.id || null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBreakoutActive, currentFrame])
 
   const nextFrame = useCallback(() => {
-    if (!isOwner) return null
+    if (!isOwner || !realtimeChannel) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const nextFrame = getNextFrame({
       sections,
@@ -377,7 +373,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       return null
     }
 
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: 'currentframe-change',
       payload: { frameId: nextFrame.id },
@@ -385,7 +381,14 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOwner, sections, currentFrame, eventSessionMode, eventMode])
+  }, [
+    realtimeChannel,
+    isOwner,
+    sections,
+    currentFrame,
+    eventSessionMode,
+    eventMode,
+  ])
 
   const previousFrame = useCallback(() => {
     if (!isOwner) return null
@@ -404,7 +407,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       return null
     }
 
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: 'currentframe-change',
       payload: { frameId: previousFrame.id },
@@ -415,7 +418,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [currentFrame, eventSessionMode, isOwner, sections, eventMode])
 
   const startPresentation = () => {
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: 'presentation-status-change',
       payload: { newPresentationStatus: PresentationStatuses.STARTED },
@@ -423,7 +426,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const stopPresentation = () => {
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: 'presentation-status-change',
       payload: { newPresentationStatus: PresentationStatuses.STOPPED },
@@ -431,7 +434,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const pausePresentation = () => {
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: 'presentation-status-change',
       payload: { newPresentationStatus: PresentationStatuses.PAUSED },
@@ -770,7 +773,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         ...new Set([...prevSessionRaisedHands, participantId]),
       ]
 
-      realtimeChannel.send({
+      realtimeChannel?.send({
         type: 'broadcast',
         event: 'hand-raised',
         payload: {
@@ -823,7 +826,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const flyEmoji = ({ emoji, name }: { emoji: string; name: string }) => {
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: 'flying-emoji',
       payload: {

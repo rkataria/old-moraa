@@ -57,7 +57,7 @@ export function GoogleSlides({ frame }: GoogleSlidesProps) {
   const handleCurrentPageChange = (pageNumber: number) => {
     if (preview) return
 
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: positionChangeEvent,
       payload: { position: pageNumber },

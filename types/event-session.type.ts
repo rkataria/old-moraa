@@ -45,7 +45,7 @@ export type EventSessionContextType = {
   activeSession: any
   videoMiddlewareConfig: VideoMiddlewareConfig | null
   frameReactions: FrameReaction[]
-  realtimeChannel: RealtimeChannel
+  realtimeChannel?: RealtimeChannel | null
   eventSessionMode: EventSessionMode
   isBreakoutSlide: boolean
   dyteStates: DyteStates
