@@ -13,9 +13,9 @@ import { FrameActions } from '../FrameActions'
 import { FramePlaceholder } from '../FramePlaceholder'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useDimensions } from '@/hooks/useDimensions'
-import { useSharedState } from '@/hooks/useSharedState'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
@@ -45,10 +45,7 @@ export function FrameItem({ frame }: FrameItemProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
-  const [breakoutSlide] = useSharedState<null | string>({
-    uniqueStateId: 'shared-breakout-slide',
-    initialState: null,
-  })
+  const { breakoutSlideId } = useEventSession()
 
   const handleFrameAction = (action: {
     key: FrameActionKey
@@ -87,7 +84,7 @@ export function FrameItem({ frame }: FrameItemProps) {
         <div
           data-miniframe-id={frame.id}
           className={cn(
-            'cursor-pointer rounded-md border-0  hover:bg-purple-200 overflow-hidden',
+            'relative cursor-pointer rounded-md border-0  hover:bg-purple-200 overflow-hidden',
             {
               'max-w-[calc(100%_-_2rem)] border border-gray-300':
                 listDisplayMode === 'grid',
@@ -97,7 +94,7 @@ export function FrameItem({ frame }: FrameItemProps) {
                 frameActive && listDisplayMode === 'grid',
               'border-transparent':
                 listDisplayMode === 'list' && currentFrame?.id !== frame.id,
-              'border border-green-700': breakoutSlide === frame.id,
+              'border border-green-700': breakoutSlideId === frame.id,
             }
           )}
           onClick={() => {
@@ -105,6 +102,11 @@ export function FrameItem({ frame }: FrameItemProps) {
 
             setCurrentFrame(frame)
           }}>
+          {breakoutSlideId === frame.id ? (
+            <div className="absolute top-0 right-0 bg-secondary p-1 rounded-bl-md rounded-tr-md">
+              <p className="text-xs text-gray-800">In Breakout</p>
+            </div>
+          ) : null}
           <div
             className={cn(
               'relative flex flex-col transition-all duration-400 ease-in-out group/frame-item'

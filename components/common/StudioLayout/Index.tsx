@@ -27,7 +27,7 @@ export function StudioLayout({
         <Header>{header}</Header>
         <div className="flex-auto flex justify-start items-start w-full z-0">
           {/* Left Sidebar */}
-          <LeftSidebar>{leftSidebar}</LeftSidebar>
+          {leftSidebar ? <LeftSidebar>{leftSidebar}</LeftSidebar> : null}
           <MainContentWithRightSidebar
             resizableRightSidebar={resizableRightSidebar}
             rightSidebar={rightSidebar}

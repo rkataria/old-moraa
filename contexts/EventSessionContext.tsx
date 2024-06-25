@@ -77,6 +77,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [participant, setParticipant] = useState<any>(null)
   const { realtimeChannel } = useRealtimeChannel()
   const [isBreakoutSlide, setIsBreakoutSlide] = useState<boolean>(false)
+  const [breakoutSlideId, setBreakoutSlideId] = useState<string | null>(null)
   const [sharedBreakoutFrame, setSharedBreakoutFrame] = useSharedState<
     IFrame['id'] | null
   >({ initialState: null, uniqueStateId: 'sharedBreakoutFrame' })
@@ -97,13 +98,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame])
-
-  useEffect(() => {
-    if (isOwner && isBreakoutActive && !isBreakoutSlide) {
-      setIsBreakoutSlide(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBreakoutActive])
 
   useEffect(() => {
     if (!meeting?.id) return
@@ -869,10 +863,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         frameReactions,
         realtimeChannel,
         eventSessionMode,
-        isBreakoutSlide,
         dyteStates,
         setDyteStates,
+        isBreakoutSlide,
         setIsBreakoutSlide,
+        breakoutSlideId,
+        setBreakoutSlideId,
         setEventSessionMode,
         startPresentation,
         stopPresentation,

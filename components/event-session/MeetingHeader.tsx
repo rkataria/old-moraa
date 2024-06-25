@@ -7,6 +7,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Tooltip } from '@nextui-org/react'
 
+import { BreakoutSlideToggle } from './BreakoutToggle'
 import { ChatsToggle } from './ChatsToggle'
 import { LeaveMeetingToggle } from './LeaveMeetingToggle'
 import { LobbyViewToggle } from './LobbyViewToggle'
@@ -23,6 +24,7 @@ import { WhiteBoardToggle } from './WhiteBoardToggle'
 import { ControlButton } from '../common/ControlButton'
 import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 
+import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -44,11 +46,12 @@ export function MeetingHeader({
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const { isHost, eventSessionMode } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { isHost, eventSessionMode, isBreakoutSlide, setIsBreakoutSlide } =
+    useContext(EventSessionContext) as EventSessionContextType
   const { rightSidebarVisiblity, setRightSidebarVisiblity, toggleLeftSidebar } =
     useStudioLayout()
+
+  const { isCurrentDyteMeetingInABreakoutRoom } = useBreakoutRooms()
 
   useHotkeys('ctrl + [', toggleLeftSidebar, [])
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), [])
@@ -115,6 +118,12 @@ export function MeetingHeader({
         />
         <WhiteBoardToggle />
         <Timer />
+        {!isCurrentDyteMeetingInABreakoutRoom && isHost ? (
+          <BreakoutSlideToggle
+            isActive={isBreakoutSlide}
+            onClick={() => setIsBreakoutSlide(!isBreakoutSlide)}
+          />
+        ) : null}
       </div>
 
       <div className="flex justify-end items-center gap-3">

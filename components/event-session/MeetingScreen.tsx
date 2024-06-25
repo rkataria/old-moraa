@@ -23,13 +23,11 @@ import { AgendaPanel } from '../common/AgendaPanel'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { ResizableRightSidebar } from '../event-content/ResizableRightSidebar'
 
+import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { EventContext } from '@/contexts/EventContext'
-import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { EventContextType } from '@/types/event-context.type'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
+import { PresentationStatuses } from '@/types/event-session.type'
 
 export type RightSiderbar =
   | 'participants'
@@ -55,7 +53,8 @@ export function MeetingScreen() {
     setEventSessionMode,
     updateActiveSession,
     updateTypingUsers,
-  } = useContext(EventSessionContext) as EventSessionContextType
+  } = useEventSession()
+  const { isBreakoutActive } = useBreakoutRooms()
 
   const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
@@ -116,7 +115,7 @@ export function MeetingScreen() {
       header={
         <MeetingHeader dyteStates={dyteStates} setDyteStates={setDyteStates} />
       }
-      leftSidebar={<AgendaPanel />}
+      leftSidebar={!isHost && isBreakoutActive ? null : <AgendaPanel />}
       resizableRightSidebar={<ResizableRightSidebar />}
       rightSidebar={
         <MeetingRightSidebar

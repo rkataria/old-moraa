@@ -18,22 +18,19 @@ import {
   useBreakoutRoomsManagerWithLatestMeetingState,
 } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useSharedState } from '@/hooks/useSharedState'
 import { PresentationStatuses } from '@/types/event-session.type'
 
 export function BreakoutRoomsFrame() {
   const { meeting } = useDyteMeeting()
-  const { currentFrame, presentationStatus, setIsBreakoutSlide } =
-    useEventSession()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setBreakoutSlide] = useSharedState<null | string>({
-    uniqueStateId: 'shared-breakout-slide',
-    initialState: null,
-  })
+  const {
+    currentFrame,
+    presentationStatus,
+    setIsBreakoutSlide,
+    setBreakoutSlideId,
+  } = useEventSession()
+  const totalParticipants = meeting.participants.count
   const [participantsPerRoom, setParticipantsPerRoom] = useState(
-    meeting.participants.all.toArray().length / 4 > 1
-      ? meeting.participants.all.toArray().length / 4
-      : 1
+    totalParticipants / 5 > 1 ? totalParticipants / 5 : 1
   )
   const { isBreakoutActive } = useBreakoutRooms()
   const {
@@ -45,13 +42,13 @@ export function BreakoutRoomsFrame() {
   const startBreakoutRooms = () => {
     _startBreakoutRooms({ participantsPerRoom })
     if (presentationStatus === PresentationStatuses.STARTED) {
-      setBreakoutSlide(currentFrame?.id || null)
+      setBreakoutSlideId(currentFrame?.id || null)
     }
   }
 
   const endBreakoutRooms = () => {
+    setBreakoutSlideId(null)
     _endBreakoutRooms()
-    setBreakoutSlide(null)
     setIsBreakoutSlide(false)
   }
 
@@ -74,7 +71,11 @@ export function BreakoutRoomsFrame() {
         <CardBody>
           <Input
             value={String(participantsPerRoom)}
-            onChange={(e) => setParticipantsPerRoom(Number(e.target.value))}
+            onChange={(e) =>
+              Number(e.target.value) > totalParticipants
+                ? setParticipantsPerRoom(totalParticipants)
+                : setParticipantsPerRoom(Number(e.target.value))
+            }
             label="Participant per room"
             type="number"
           />

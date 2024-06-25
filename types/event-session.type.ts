@@ -50,7 +50,9 @@ export type EventSessionContextType = {
   isBreakoutSlide: boolean
   dyteStates: DyteStates
   setDyteStates: Dispatch<SetStateAction<DyteStates>>
+  breakoutSlideId: string | null
   setIsBreakoutSlide: Dispatch<SetStateAction<boolean>>
+  setBreakoutSlideId: Dispatch<SetStateAction<string | null>>
   setEventSessionMode: (mode: EventSessionMode) => void
   startPresentation: () => void
   stopPresentation: () => void
