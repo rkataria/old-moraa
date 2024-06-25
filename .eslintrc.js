@@ -33,6 +33,7 @@ module.exports = {
     'react',
     'import',
     'rulesdir',
+    'react-refresh',
   ],
   parserOptions: {
     sourceType: 'module',
@@ -140,6 +141,7 @@ module.exports = {
 
     'rulesdir/invalid-query-variable-name': 'error',
     'linebreak-style': 'off',
+    'react-refresh/only-export-components': 'warn',
   },
   ignorePatterns: ['babel.config.js', 'build'],
 }

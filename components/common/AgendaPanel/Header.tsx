@@ -48,30 +48,18 @@ export function Header() {
     }
 
     return (
-      <div className={cn('flex flex-col justify-center items-center gap-2')}>
+      <div
+        className={cn(
+          'flex flex-col justify-center items-center gap-2 w-full'
+        )}>
         <OverviewButton />
-
-        {/* <Button size="md" variant="flat" isIconOnly>
-          <BsSearch size={18} />
-        </Button> */}
-        {/* <Button
-          size="md"
-          variant="flat"
-          isIconOnly
-          onClick={toggleListDisplayMode}>
-          {listDisplayMode === 'list' ? (
-            <BsGrid size={18} />
-          ) : (
-            <BsList size={18} />
-          )}
-        </Button> */}
       </div>
     )
   }
 
   return (
     <div
-      className="flex justify-between items-center gap-2 px-2"
+      className="flex justify-between items-center gap-2 px-1"
       style={{
         height: `${height}px`,
       }}>

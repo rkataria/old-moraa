@@ -1,10 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import {
-  CANVAS_TEMPLATE_TYPES,
-  ContentType,
-  contentTypes,
-} from '@/components/common/ContentTypePicker'
+import { contentTypes } from '@/components/common/ContentTypePicker'
 import { FrameStatus } from '@/services/types/enums'
 import { IFrame } from '@/types/frame.type'
 
@@ -206,8 +202,19 @@ export const isFrameInteractive = (frame: IFrame) =>
 export const frameHasFrameResponses = (frame: IFrame) =>
   [ContentType.POLL, ContentType.REFLECTION].includes(frame.type)
 
-export const getContentType = (frameType: ContentType) =>
-  contentTypes.find((type) => type.contentType === frameType)
+export const getContentType = (
+  frameType: ContentType,
+  templateType?: CANVAS_TEMPLATE_TYPES
+) => {
+  if (templateType) {
+    return contentTypes.find(
+      (type) =>
+        type.contentType === frameType && type.templateType === templateType
+    )
+  }
+
+  return contentTypes.find((type) => type.contentType === frameType)
+}
 
 export const isFrameThumbnailAvailable = (frameType: ContentType) =>
   [
@@ -221,3 +228,36 @@ export const isFrameThumbnailAvailable = (frameType: ContentType) =>
     ContentType.MIRO_EMBED,
     ContentType.RICH_TEXT,
   ].includes(frameType)
+
+export enum ContentType {
+  CANVAS = 'Canvas',
+  COVER = 'Title',
+  POLL = 'Poll',
+  VIDEO = 'Video',
+  GOOGLE_SLIDES = 'Google Slides',
+  GOOGLE_SLIDES_IMPORT = 'Google Slides Import',
+  REFLECTION = 'Reflections',
+  PDF_VIEWER = 'PDF',
+  VIDEO_EMBED = 'Video Embed',
+  MIRO_EMBED = 'Miro Embed',
+  IMAGE_VIEWER = 'Image',
+  TEXT_IMAGE = 'Text & Image',
+  RICH_TEXT = 'Rich Text',
+  MORAA_BOARD = 'Moraa Board',
+}
+
+export enum CANVAS_TEMPLATE_TYPES {
+  BLANK = 'Blank',
+  TEMPLATE_ONE = 'Template One',
+  TEMPLATE_TWO = 'Template Two',
+  TEMPLATE_THREE = 'Template Three',
+}
+
+export interface IContentType {
+  name: string
+  icon: React.ReactNode
+  description: string
+  contentType: ContentType
+  disabled?: boolean
+  templateType?: CANVAS_TEMPLATE_TYPES
+}

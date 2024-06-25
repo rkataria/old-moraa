@@ -28,6 +28,7 @@ export function ColorPicker({
       <input
         type="color"
         className="border-0 opacity-0 block"
+        defaultValue={defaultColor}
         value={color}
         onChange={(e) => {
           setColor(e.target.value)

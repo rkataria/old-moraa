@@ -8,11 +8,12 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDebounce } from '@uidotdev/usehooks'
 import { ImperativePanelGroupHandle } from 'react-resizable-panels'
 
+import { LayoutTypes } from '../FrameAppearance/TextImageAppearance'
+
 import { ImageBehind } from '@/components/common/frame-templates/text-image/ImageBehind'
 import { ImageLeft } from '@/components/common/frame-templates/text-image/ImageLeft'
 import { ImageRight } from '@/components/common/frame-templates/text-image/ImageRight'
 import { NoImage } from '@/components/common/frame-templates/text-image/NoImage'
-import { LayoutTypes } from '@/components/common/TextImageFrameSettings'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { FileBlock, IFrame, TextBlock } from '@/types/frame.type'

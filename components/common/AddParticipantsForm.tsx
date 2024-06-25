@@ -41,7 +41,7 @@ function getAllIndexes<T>(arr: Array<T>, val: T) {
   return indexes
 }
 
-export const participantsListValidationSchema = yup
+const participantsListValidationSchema = yup
   .array(
     yup.object({
       participantId: yup.string(),

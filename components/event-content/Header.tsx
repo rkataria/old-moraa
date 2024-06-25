@@ -3,8 +3,6 @@ import { useContext } from 'react'
 import { ChevronDownIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoSparkles, IoSparklesOutline } from 'react-icons/io5'
-import { LuClipboardEdit } from 'react-icons/lu'
 
 import {
   Button,
@@ -19,12 +17,12 @@ import {
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
 import { ScheduleEventButtonWithModal } from '../common/ScheduleEventButtonWithModal'
+import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventStatus } from '@/services/types/enums'
 import { type EventContextType } from '@/types/event-context.type'
-import { cn } from '@/utils/utils'
 
 export function Header({
   event,
@@ -33,16 +31,23 @@ export function Header({
   event: any
 }) {
   const { isOwner, preview } = useContext(EventContext) as EventContextType
-  const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
+  const {
+    resizableRightSidebarVisiblity,
+    rightSidebarVisiblity,
+    setResizableRightSidebarVisiblity,
+    setRightSidebarVisiblity,
+  } = useStudioLayout()
 
   const toggleAISidebar = () => {
-    setRightSidebarVisiblity(
-      rightSidebarVisiblity === 'ai-chat' ? null : 'ai-chat'
+    setResizableRightSidebarVisiblity(
+      resizableRightSidebarVisiblity === 'ai-chat' ? null : 'ai-chat'
     )
   }
 
   const toggleNotesSidebar = () => {
-    setRightSidebarVisiblity(rightSidebarVisiblity === 'notes' ? null : 'notes')
+    setRightSidebarVisiblity(
+      rightSidebarVisiblity === 'frame-notes' ? null : 'frame-notes'
+    )
   }
 
   useHotkeys('a', toggleAISidebar, [rightSidebarVisiblity, isOwner])
@@ -61,37 +66,10 @@ export function Header({
       )
     }
 
-    const aiSidebarVisible: boolean = rightSidebarVisiblity === 'ai-chat'
-
-    const getAiIcon = () => {
-      if (aiSidebarVisible) return <IoSparkles size={20} />
-
-      return <IoSparklesOutline size={20} />
-    }
-
     return (
       <>
         <div className="flex items-center">
-          <Button
-            isIconOnly
-            variant="light"
-            className={cn('cursor-pointer text-[#52525B]', {
-              'text-[#7C3AED]': aiSidebarVisible,
-            })}
-            onClick={toggleAISidebar}>
-            {getAiIcon()}
-          </Button>
-          {isOwner && (
-            <Button
-              isIconOnly
-              onClick={toggleNotesSidebar}
-              variant="light"
-              className={cn('cursor-pointer text-[#52525B]', {
-                'text-[#7C3AED]': rightSidebarVisiblity === 'notes',
-              })}>
-              <LuClipboardEdit size={20} strokeWidth={1.7} />
-            </Button>
-          )}
+          <AIChatbotToggleButton />
           <AddParticipantsButtonWithModal eventId={event.id} />
         </div>
 
@@ -142,13 +120,11 @@ export function Header({
       <div className="flex justify-between items-center h-12 w-full">
         <div className="flex justify-start items-center gap-3">
           <Link href="/events">
-            <Button isIconOnly variant="light">
-              <Image src="/logo-icon-square.svg" />
-            </Button>
+            <Image src="/logo-icon-square.svg" />
           </Link>
           <span className="font-medium">{event?.name}</span>
         </div>
-        <div className="flex justify-start items-center gap-2 px-2 h-full">
+        <div className="flex justify-start items-center gap-2 h-full">
           {renderActionButtons()}
           {isOwner && <PreviewSwitcher />}
         </div>

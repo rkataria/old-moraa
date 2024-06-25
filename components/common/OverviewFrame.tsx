@@ -83,7 +83,7 @@ export function OverviewFrame() {
   return (
     <div className="flex flex-col flex-1 max-w-5xl m-auto p-4 pt-14">
       <div className="flex items-center justify-between mb-4">
-        <p className="font-bold text-xl tracking-[-0.5px]">Agenda Outline</p>
+        <p className="font-bold text-xl tracking-tight">Agenda Outline</p>
       </div>
       <div className="scrollbar-none">
         <DragDropContext
@@ -157,7 +157,7 @@ export function OverviewFrame() {
                                 onClick={() => handleExpandSection(section.id)}
                               />
                               <div style={{ flex: 2 }}>
-                                <p className="text font-bold tracking-[-0.5px] text-black/80">
+                                <p className="text-sm font-bold tracking-tight text-black/80">
                                   {section.name}
                                 </p>
                                 <p className="text-gray-400 text-xs font-normal">

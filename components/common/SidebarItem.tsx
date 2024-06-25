@@ -49,7 +49,7 @@ export function SidebarItem() {
           href={item.href}
           variant="light"
           className={cn(
-            'hover:bg-[#EDE0FB] w-full justify-start font-semibold text-slate-600 -tracking-[0.5px] gap-[0.625rem]',
+            'hover:bg-[#EDE0FB] w-full justify-start font-semibold text-slate-600 tracking-tight gap-[0.625rem]',
             {
               'bg-[#EDE0FB]': item.href === pathname,
             }

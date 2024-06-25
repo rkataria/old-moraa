@@ -1,9 +1,10 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 import { useParams } from 'next/navigation'
+import { useHotkeys } from 'react-hotkeys-hook'
 
-import { SettingsSidebar } from './SettingsSidebar'
-import { AIChat } from '../common/AIChat'
+import { FrameAppearance } from './FrameAppearance/FrameAppearance'
+import { FrameConfiguration } from './FrameConfiguration/FrameConfiguration'
 import { EditEventForm } from '../common/EditEventForm'
 import { NoteOverlay } from '../common/NotesOverlay'
 
@@ -13,35 +14,55 @@ import { EventContextType } from '@/types/event-context.type'
 
 export function RightSidebar() {
   const { eventId } = useParams()
-  const { currentFrame, overviewOpen, preview, isOwner } = useContext(
+  const { currentFrame, isOwner, eventMode, preview } = useContext(
     EventContext
   ) as EventContextType
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
+  useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), {
+    enableOnFormTags: ['INPUT', 'TEXTAREA'],
+  })
 
-  if (preview || !isOwner) return null
-  if (rightSidebarVisiblity === 'ai-chat') {
-    return <AIChat onClose={() => setRightSidebarVisiblity(null)} />
-  }
-  if (rightSidebarVisiblity === 'notes') {
-    return <NoteOverlay onClose={() => setRightSidebarVisiblity(null)} />
-  }
-  if (currentFrame && rightSidebarVisiblity === 'frame-settings') {
-    return (
-      <SettingsSidebar
-        settingsEnabled
-        onClose={() => setRightSidebarVisiblity(null)}
-      />
-    )
-  }
+  const editable = isOwner && eventMode === 'edit' && !preview
 
-  if (overviewOpen) {
-    return (
-      <div className="p-4">
-        <h3 className="mb-2 font-bold">Event Details</h3>
-        <EditEventForm eventId={eventId as string} />
-      </div>
-    )
+  useEffect(() => {
+    if (!rightSidebarVisiblity) return
+
+    if (!editable) {
+      setRightSidebarVisiblity(null) // Hide the right sidebar if it is not editable
+    }
+
+    if (!currentFrame?.id && rightSidebarVisiblity !== 'event-settings') {
+      setRightSidebarVisiblity(null)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editable, currentFrame?.id, rightSidebarVisiblity])
+
+  if (!editable) {
+    return null
   }
 
-  return null
+  const renderContent = () => {
+    switch (rightSidebarVisiblity) {
+      case 'frame-appearance':
+        return <FrameAppearance />
+      case 'frame-configuration':
+        return <FrameConfiguration />
+      case 'frame-notes':
+        return <NoteOverlay />
+      case 'event-settings':
+        return (
+          <div className="p-4">
+            <h3 className="mb-2 font-bold">Event Details</h3>
+            <EditEventForm eventId={eventId as string} />
+          </div>
+        )
+      default:
+        break
+    }
+
+    return null
+  }
+
+  return <>{renderContent()}</>
 }

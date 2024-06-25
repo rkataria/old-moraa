@@ -28,6 +28,7 @@ export function OverviewButton({ label }: { label?: string }) {
         'hover:bg-purple-200 bg-transparent w-full justify-start font-semibold text-md p-3',
         {
           'bg-purple-200': overviewOpen,
+          'justify-center': !label,
         }
       )}
       onClick={handleOverviewClick}>

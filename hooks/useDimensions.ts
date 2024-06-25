@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useDimensions(ref: any) {
+export function useDimensions(ref: any, dependency?: any) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export function useDimensions(ref: any) {
     return () => {
       resizeObserver.disconnect()
     }
-  }, [ref])
+  }, [ref, dependency])
 
   return dimensions
 }

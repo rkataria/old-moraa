@@ -93,13 +93,7 @@ export type EventContextType = {
     sectionId?: string
     meetingId?: string
   }) => void
-  deleteSection: ({
-    sectionId,
-    meetingId,
-  }: {
-    sectionId: string
-    meetingId: string
-  }) => void
+  deleteSection: ({ sectionId }: { sectionId: string }) => void
   moveUpSection: (section: ISection) => void
   moveDownSection: (section: ISection) => void
 }

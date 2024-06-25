@@ -4,9 +4,6 @@
 import { useContext } from 'react'
 
 import dynamic from 'next/dynamic'
-import { TbSettings } from 'react-icons/tb'
-
-import { Button } from '@nextui-org/react'
 
 import { CoverEditor } from './content-types/CoverEditor'
 import { MoraaBoardEditor } from './content-types/MoraaBoardEditor'
@@ -25,7 +22,6 @@ import { FramePreview } from '../common/FramePreview'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
-import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
@@ -45,7 +41,6 @@ export function Frame({ frame }: FrameProps) {
   const { preview, currentFrame, isOwner } = useContext(
     EventContext
   ) as EventContextType
-  const { setRightSidebarVisiblity } = useStudioLayout()
 
   if (preview || !isOwner) {
     return <FramePreview frame={frame} />
@@ -58,16 +53,6 @@ export function Frame({ frame }: FrameProps) {
       className={cn('group w-full max-w-5xl m-auto h-full p-4', {
         'pointer-events-none': !isOwner,
       })}>
-      <Button
-        isIconOnly
-        variant="light"
-        className="absolute top-12 right-0 z-10 pointer-events-auto bg-gray-900 text-white hover:bg-black rounded-r-none transition-all duration-200 ease-in-out group/frame-settings"
-        onClick={() => setRightSidebarVisiblity('frame-settings')}>
-        <TbSettings
-          size={22}
-          className="rotate-0 group-hover/frame-settings:rotate-45 transition-all duration-200 ease-in-out"
-        />
-      </Button>
       <div
         data-frame-id={frame.id}
         className="relative flex flex-col w-full h-full rounded-md overflow-auto transition-all">

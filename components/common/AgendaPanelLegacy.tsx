@@ -60,7 +60,6 @@ export function AgendaPanel({
     preview,
     currentFrame,
     eventMode,
-    meeting,
     isOwner,
     sections,
     updateSection,
@@ -113,7 +112,6 @@ export function AgendaPanel({
     if (!itemToDelete) return
     await deleteSection({
       sectionId: itemToDelete.id,
-      meetingId: meeting.id,
     })
     toast.success('Section deleted successfully')
     setItemToDelete(null)
