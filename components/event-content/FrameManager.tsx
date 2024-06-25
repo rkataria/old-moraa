@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-import { Fragment, useContext } from 'react'
+import { Fragment, useContext, useState } from 'react'
 
 import { useParams } from 'next/navigation'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -11,6 +11,10 @@ import { ResizableRightSidebar } from './ResizableRightSidebar'
 import { RightSidebar } from './RightSidebar'
 import { RightSidebarControls } from './RightSidebarControls'
 import { AgendaPanel } from '../common/AgendaPanel'
+import {
+  BREAKOUT_TYPES,
+  BreakoutTypePicker,
+} from '../common/BreakoutTypePicker'
 import { Loading } from '../common/Loading'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { SyncingStatus } from '../common/SyncingStatus'
@@ -30,6 +34,15 @@ import { getDefaultContent } from '@/utils/content.util'
 export function FrameManager() {
   const { eventId } = useParams()
   const { event, isLoading: eventLoading } = useEvent({ id: eventId as string })
+  const [selectedContentType, setContentType] = useState<ContentType | null>(
+    null
+  )
+  const [selectedTemplateType, setTemplateType] = useState<
+    CANVAS_TEMPLATE_TYPES | undefined
+  >(undefined)
+
+  const [openBreakoutSelectorModal, setOpenBreakoutSelectorModal] =
+    useState<boolean>(false)
 
   const {
     loading,
@@ -47,7 +60,9 @@ export function FrameManager() {
 
   const handleAddNewFrame = (
     contentType: ContentType,
-    templateType: CANVAS_TEMPLATE_TYPES | undefined
+    templateType: CANVAS_TEMPLATE_TYPES | undefined,
+    breakoutType?: BREAKOUT_TYPES,
+    breakoutRoomsGroupsCount?: number
   ) => {
     let currentSection
     const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
@@ -60,20 +75,42 @@ export function FrameManager() {
 
     const insertInSection = currentSection || sections[0]
 
+    let frameConfig = {
+      textColor: '#000',
+      allowVoteOnMultipleOptions: false,
+      showTitle: true,
+      showDescription: [
+        ContentType.COVER,
+        ContentType.TEXT_IMAGE,
+        ContentType.BREAKOUT,
+      ].includes(contentType),
+    }
+
+    if (contentType === ContentType.BREAKOUT) {
+      const breakoutPayload = {
+        selectedBreakout: breakoutType,
+        countOfRoomsGroups: breakoutRoomsGroupsCount,
+      }
+      frameConfig = {
+        ...frameConfig,
+        ...breakoutPayload,
+      }
+    }
+
     const newFrame: IFrame = {
       id: uuidv4(),
       name: `Frame ${(insertInSection?.frames?.length || 0) + 1}`,
-      config: {
-        textColor: '#000',
-        allowVoteOnMultipleOptions: false,
-        showTitle: true,
-        showDescription: [ContentType.COVER, ContentType.TEXT_IMAGE].includes(
-          contentType
-        ),
-      },
-      // TODO: Fix any
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      content: getDefaultContent({ contentType, templateType }) as any,
+      config: frameConfig,
+      content: getDefaultContent({
+        contentType,
+        templateType,
+        data: {
+          breakoutCount: breakoutRoomsGroupsCount,
+          selectedBreakout: breakoutType,
+        },
+        // TODO: Fix any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) as any,
       type: contentType,
       status: FrameStatus.DRAFT,
     }
@@ -84,6 +121,9 @@ export function FrameManager() {
       afterFrameId: _insertAfterFrameId!,
     })
     setOpenContentTypePicker(false)
+    setContentType(null)
+    setTemplateType(undefined)
+    setOpenBreakoutSelectorModal(false)
   }
 
   if (eventLoading || loading) {
@@ -107,9 +147,31 @@ export function FrameManager() {
       <ContentTypePicker
         open={openContentTypePicker}
         onClose={() => setOpenContentTypePicker(false)}
-        onChoose={handleAddNewFrame}
+        onChoose={(content, templateType) => {
+          if (content === ContentType.BREAKOUT) {
+            setContentType(content)
+            setTemplateType(templateType)
+            setOpenBreakoutSelectorModal(true)
+          } else {
+            handleAddNewFrame(content, templateType)
+          }
+        }}
       />
       <SyncingStatus syncing={syncing} />
+      <BreakoutTypePicker
+        open={openBreakoutSelectorModal}
+        onClose={() => setOpenBreakoutSelectorModal(false)}
+        onChoose={(contentType, breakoutRoomsGroupsCount) => {
+          if (selectedContentType) {
+            handleAddNewFrame(
+              selectedContentType,
+              selectedTemplateType,
+              contentType,
+              breakoutRoomsGroupsCount
+            )
+          }
+        }}
+      />
     </>
   )
 }

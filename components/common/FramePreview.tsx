@@ -3,6 +3,7 @@
 
 import { useEffect } from 'react'
 
+import { Breakout, BreakoutFrame } from './content-types/Breakout'
 import { CanvasPreview } from './content-types/Canvas/Preview'
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
@@ -113,6 +114,9 @@ export function FramePreview({ frame, readOnly }: FrameProps) {
         {frame.type === ContentType.RICH_TEXT && <RichText frame={frame} />}
         {frame.type === ContentType.MORAA_BOARD && (
           <MoraaBoard frame={frame as MoraaBoardFrame} />
+        )}
+        {frame.type === ContentType.BREAKOUT && (
+          <Breakout frame={frame as BreakoutFrame} />
         )}
       </div>
     </div>

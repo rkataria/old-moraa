@@ -17,6 +17,7 @@ export const frameTypesWithTitle = [
   ContentType.GOOGLE_SLIDES_IMPORT,
   ContentType.PDF_VIEWER,
   ContentType.MORAA_BOARD,
+  ContentType.BREAKOUT,
 ]
 
 export const frameTypesWithDescription = [
@@ -28,6 +29,7 @@ export const frameTypesWithDescription = [
   ContentType.GOOGLE_SLIDES_IMPORT,
   ContentType.PDF_VIEWER,
   ContentType.MORAA_BOARD,
+  ContentType.BREAKOUT,
 ]
 
 export function FrameTitleDescriptionPanel() {

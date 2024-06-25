@@ -151,6 +151,17 @@ export const getDefaultContent = ({
       return {
         blocks: [headerBlock, paragraphBlock],
       }
+    case ContentType.BREAKOUT:
+      return {
+        blocks: [headerBlock, paragraphBlock],
+        title: data?.title,
+        description: data?.description,
+        breakoutDetails: [...Array(data?.breakoutCount)]
+          .fill('')
+          .map((_, idx) => ({
+            name: `${data?.selectedBreakout} - ${idx + 1}`,
+          })),
+      }
 
     default:
       return {}
@@ -244,6 +255,7 @@ export enum ContentType {
   TEXT_IMAGE = 'Text & Image',
   RICH_TEXT = 'Rich Text',
   MORAA_BOARD = 'Moraa Board',
+  BREAKOUT = 'Breakout',
 }
 
 export enum CANVAS_TEMPLATE_TYPES {

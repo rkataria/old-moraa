@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import {
@@ -11,6 +12,7 @@ import {
   IconFileText,
 } from '@tabler/icons-react'
 import { BsQuestionCircle } from 'react-icons/bs'
+import { GoPeople } from 'react-icons/go'
 import { MdOutlineDraw } from 'react-icons/md'
 import { SiMiro } from 'react-icons/si'
 
@@ -51,6 +53,7 @@ export enum ContentType {
   TEXT_IMAGE = 'Text & Image',
   RICH_TEXT = 'Rich Text',
   MORAA_BOARD = 'Moraa Board',
+  BREAKOUT = 'Breakout',
 }
 export const INTERACTIVE_FRAME_TYPES = [
   ContentType.POLL,
@@ -113,6 +116,12 @@ export const contentTypes: IContentType[] = [
   //   disabled: true, // TODO: Enable this frame when Image Viewer Frame is implemented
   // },
   {
+    name: 'Breakout',
+    icon: <GoPeople className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Plan breakout rooms and activities',
+    contentType: ContentType.BREAKOUT,
+  },
+  {
     name: 'Video',
     icon: <IconVideo className="w-full h-full max-w-11 max-h-11" />,
     description:
@@ -161,6 +170,12 @@ export const contentTypes: IContentType[] = [
   //   contentType: ContentType.GOOGLE_SLIDES_IMPORT,
   // },
   {
+    name: 'Breakout',
+    icon: <GoPeople className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Plan breakout rooms and activities',
+    contentType: ContentType.BREAKOUT,
+  },
+  {
     name: 'Import PDF',
     icon: <IconBrandAdobe className="w-full h-full max-w-11 max-h-11" />,
     description: 'Upload and integrate your PDF content as a multi-page frame!',
@@ -186,6 +201,7 @@ export function ContentTypePicker({
     getContentType(ContentType.POLL),
     getContentType(ContentType.REFLECTION),
     getContentType(ContentType.MORAA_BOARD),
+    getContentType(ContentType.BREAKOUT),
   ]
 
   const presentationContent = [

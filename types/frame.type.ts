@@ -56,6 +56,7 @@ export interface IFrame {
     description?: string
     blocks?: TextBlock[] | FileBlock[]
     panelSizes?: number[]
+    breakoutDetails?: any[]
     [key: string]: unknown
   }
   created_at?: string
