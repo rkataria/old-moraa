@@ -21,7 +21,7 @@ export function FontSizeControl({
 }: FontSizeControlProps) {
   const [fontSize, setFontSize] = useState<number>(size)
 
-  const updateByNumber = isTime ? 15 : 1
+  const updateByNumber = isTime ? 5 : 1
 
   // hotkeys
   useHotkeys('-', () => {

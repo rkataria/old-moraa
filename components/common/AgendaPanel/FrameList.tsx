@@ -34,21 +34,23 @@ export function FrameList({
       {showList &&
         frames.map((frame, frameIndex) =>
           frame?.content?.breakoutFrameId ? null : (
-            <Draggable
-              key={`frame-draggable-${frame.id}`}
-              draggableId={`frame-draggable-frameId-${frame.id}`}
-              index={frameIndex}>
-              {(_provided) => (
-                <div
-                  key={frame.id}
-                  ref={_provided.innerRef}
-                  {..._provided.draggableProps}
-                  {..._provided.dragHandleProps}
-                  className="flex w-full">
-                  <FrameItem frame={frame} />
-                </div>
-              )}
-            </Draggable>
+            <div className="flex">
+              <Draggable
+                key={`frame-draggable-${frame.id}`}
+                draggableId={`frame-draggable-frameId-${frame.id}`}
+                index={frameIndex}>
+                {(_provided) => (
+                  <div
+                    key={frame.id}
+                    ref={_provided.innerRef}
+                    {..._provided.draggableProps}
+                    {..._provided.dragHandleProps}
+                    className="flex w-full">
+                    <FrameItem frame={frame} />
+                  </div>
+                )}
+              </Draggable>
+            </div>
           )
         )}
       {droppablePlaceholder}
