@@ -1,10 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { BsGrid, BsList } from 'react-icons/bs'
-
-import { Button } from '@nextui-org/react'
-
+import { GridListButton } from './GridListButton'
 import { OverviewButton } from './OverviewButton'
 
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
@@ -31,17 +28,11 @@ export function Header() {
             {/* <Button size="sm" variant="flat" isIconOnly>
               <BsSearch size={18} />
             </Button> */}
-            <Button
-              size="md"
-              variant="flat"
-              isIconOnly
-              onClick={toggleListDisplayMode}>
-              {listDisplayMode === 'list' ? (
-                <BsGrid size={18} />
-              ) : (
-                <BsList size={18} />
-              )}
-            </Button>
+
+            <GridListButton
+              listDisplayMode={listDisplayMode}
+              toggleListDisplayMode={toggleListDisplayMode}
+            />
           </div>
         </>
       )

@@ -18,6 +18,7 @@ import { Date } from '@/components/enroll/Date'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event/event-service'
+import { getProfileName } from '@/utils/profile.util'
 import { getAvatarForName } from '@/utils/utils'
 
 const schema = yup.object().shape({
@@ -142,15 +143,7 @@ function Visit() {
     },
   })
 
-  const getProfileName = () => {
-    if (profile?.first_name && profile?.last_name) {
-      return `${profile.first_name} ${profile.last_name}`
-    }
-
-    return null
-  }
-
-  const hostName = getProfileName()
+  const hostName = getProfileName(profile)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEnrollClick = (data: any) => {
