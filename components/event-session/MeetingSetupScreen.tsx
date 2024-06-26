@@ -17,6 +17,7 @@ import { useParams } from 'next/navigation'
 import { Button } from '@nextui-org/react'
 
 import { MediaSettingsToggle } from './MediaSettingsToggle'
+import { MeetingSetupParticipants } from './MeetingSetupParticipants'
 import { MicToggle } from './MicToggle'
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
 import { VideoToggle } from './VideoToggle'
@@ -101,56 +102,53 @@ export function MeetingSetupScreen() {
   const setState = (s: any) => setStates((_states) => ({ ..._states, ...s }))
 
   return (
-    <div className="w-full h-screen flex flex-col justify-start items-center gap-4 pt-36">
+    <div className="w-full h-screen flex flex-col justify-start items-center gap-4 pt-36 bg-pattern-1">
       <div className="mb-12">
-        <h1 className="mb-2 text-3xl font-semibold text-center">
-          {event.name}
-        </h1>
+        <h1 className="mb-2 text-5xl font-black text-center">{event.name}</h1>
         {event.description && (
           <p className="text-center text-gray-500">{event.description}</p>
         )}
       </div>
       <div className="flex justify-center items-center gap-4">
-        <div className="w-1/2 flex justify-end">
-          <div className="relative">
-            <DyteParticipantTile
-              meeting={meeting}
-              participant={selfParticipant}
-              className="relative">
-              {!profile?.avatar_url ? (
-                <DyteAvatar size="md" participant={selfParticipant} />
-              ) : (
-                <span className="flex h-28 w-28">
-                  <img
-                    className="rounded-full"
-                    src={profile?.avatar_url}
-                    alt=""
-                  />
-                </span>
-              )}
-              <div className="absolute top-2 left-2">
-                <DyteNameTag meeting={meeting} participant={selfParticipant}>
-                  <DyteAudioVisualizer
-                    size="sm"
-                    slot="start"
-                    participant={selfParticipant}
-                  />
-                </DyteNameTag>
-              </div>
-              <div className="absolute bottom-2 w-full flex justify-center items-center gap-2">
-                <MicToggle className="bg-white" />
-                <VideoToggle className="bg-white" />
-                <MediaSettingsToggle
-                  className="bg-white"
-                  onClick={() => setStates({ activeSettings: true })}
+        <div className="relative">
+          <DyteParticipantTile
+            meeting={meeting}
+            participant={selfParticipant}
+            className="relative">
+            {!profile?.avatar_url ? (
+              <DyteAvatar size="md" participant={selfParticipant} />
+            ) : (
+              <span className="flex h-28 w-28">
+                <img
+                  className="rounded-full"
+                  src={profile?.avatar_url}
+                  alt=""
                 />
-              </div>
-              <VideoBackgroundSettingsButtonWithModal
-                buttonProps={{
-                  className: 'absolute top-2 right-2',
-                }}
-              />
-            </DyteParticipantTile>
+              </span>
+            )}
+            <div className="absolute top-2 left-2">
+              <DyteNameTag meeting={meeting} participant={selfParticipant}>
+                <DyteAudioVisualizer
+                  size="sm"
+                  slot="start"
+                  participant={selfParticipant}
+                />
+              </DyteNameTag>
+            </div>
+
+            <VideoBackgroundSettingsButtonWithModal
+              buttonProps={{
+                className: 'absolute top-2 right-2 bg-black/50',
+              }}
+            />
+          </DyteParticipantTile>
+          <div className="w-full flex justify-center items-center gap-2 mt-4">
+            <MicToggle className="bg-black text-white w-10 h-10 rounded-md" />
+            <VideoToggle className="bg-black text-white w-10 h-10 rounded-md" />
+            <MediaSettingsToggle
+              className="bg-black text-white w-10 h-10 rounded-md"
+              onClick={() => setStates({ activeSettings: true })}
+            />
           </div>
         </div>
         <div className="flex flex-col justify-start w-1/2 m-8">
@@ -171,11 +169,14 @@ export function MeetingSetupScreen() {
                 setName(e.target.value)
               }}
             />
+
             <Button
               className="bg-black text-white mt-2"
               onClick={handleJoinMeeting}>
               Join Meeting
             </Button>
+
+            <MeetingSetupParticipants />
           </div>
         </div>
       </div>
