@@ -93,7 +93,7 @@ export function Frame({ frame }: FrameProps) {
           <MoraaBoardEditor frame={frame} />
         )}
         {frame.type === ContentType.BREAKOUT && (
-          <Breakout frame={frame as any} />
+          <Breakout frame={frame as any} isEditable />
         )}
       </div>
     </div>

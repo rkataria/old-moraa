@@ -16,6 +16,7 @@ import {
   BreakoutTypePicker,
 } from '../common/BreakoutTypePicker'
 import { Loading } from '../common/Loading'
+import { RenderIf } from '../common/RenderIf/RenderIf'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { SyncingStatus } from '../common/SyncingStatus'
 
@@ -62,7 +63,8 @@ export function FrameManager() {
     contentType: ContentType,
     templateType: CANVAS_TEMPLATE_TYPES | undefined,
     breakoutType?: BREAKOUT_TYPES,
-    breakoutRoomsGroupsCount?: number
+    breakoutRoomsGroupsCount?: number,
+    breakoutRoomsGroupsTime?: number
   ) => {
     let currentSection
     const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
@@ -89,7 +91,8 @@ export function FrameManager() {
     if (contentType === ContentType.BREAKOUT) {
       const breakoutPayload = {
         selectedBreakout: breakoutType,
-        countOfRoomsGroups: breakoutRoomsGroupsCount,
+        breakoutCount: breakoutRoomsGroupsCount,
+        breakoutTime: breakoutRoomsGroupsTime,
       }
       frameConfig = {
         ...frameConfig,
@@ -158,20 +161,27 @@ export function FrameManager() {
         }}
       />
       <SyncingStatus syncing={syncing} />
-      <BreakoutTypePicker
-        open={openBreakoutSelectorModal}
-        onClose={() => setOpenBreakoutSelectorModal(false)}
-        onChoose={(contentType, breakoutRoomsGroupsCount) => {
-          if (selectedContentType) {
-            handleAddNewFrame(
-              selectedContentType,
-              selectedTemplateType,
-              contentType,
-              breakoutRoomsGroupsCount
-            )
-          }
-        }}
-      />
+      <RenderIf isTrue={openBreakoutSelectorModal}>
+        <BreakoutTypePicker
+          open={openBreakoutSelectorModal}
+          onClose={() => setOpenBreakoutSelectorModal(false)}
+          onChoose={(
+            contentType,
+            breakoutRoomsGroupsCount,
+            breakoutRoomsGroupsTime
+          ) => {
+            if (selectedContentType) {
+              handleAddNewFrame(
+                selectedContentType,
+                selectedTemplateType,
+                contentType,
+                breakoutRoomsGroupsCount,
+                breakoutRoomsGroupsTime
+              )
+            }
+          }}
+        />
+      </RenderIf>
     </>
   )
 }
