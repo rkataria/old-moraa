@@ -247,8 +247,15 @@ export function Breakout({ frame, isEditable = false }: BreakoutProps) {
                       />
                     </div>
                   ) : (
-                    `You can add existing slide from any section or add new slide which
-              will be added under the Breakout section`
+                    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+                    <span
+                      onClick={() => {
+                        setOpenContentTypePicker(true)
+                        setSelectedBreakoutIndex(idx)
+                      }}>
+                      You can add existing slide from any section or add new
+                      slide which will be added under the Breakout section
+                    </span>
                   )}
                 </div>
               </Card>
