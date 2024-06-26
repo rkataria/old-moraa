@@ -21,7 +21,7 @@ const rowsPerPage = 10
 
 export function EventList() {
   const { currentUser } = useAuth()
-  const [listDisplayMode, toggleListDisplayMode] = useState('grid')
+  const [listDisplayMode, toggleListDisplayMode] = useState('list')
   const [currentPage, setCurrentPage] = useState(1)
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>()
   const { events, count, isLoading, refetch } = useEvents({

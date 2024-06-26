@@ -2,6 +2,8 @@
 
 'use client'
 
+import { useState } from 'react'
+
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import Link from 'next/link'
@@ -14,6 +16,7 @@ import * as yup from 'yup'
 
 import { Button, Image, Textarea } from '@nextui-org/react'
 
+import { ContentLoading } from '@/components/common/ContentLoading'
 import { UserMenu } from '@/components/common/UserMenu'
 import { FileUploader } from '@/components/event-content/FileUploader'
 import { useAuth } from '@/hooks/useAuth'
@@ -34,6 +37,8 @@ const createEventValidationSchema = yup.object({
 })
 
 export default function EventsCreatePage() {
+  const [showPageLoader, setShowPageLoader] = useState(false)
+
   const createEventForm = useForm<CreateEventFormData>({
     resolver: yupResolver(createEventValidationSchema),
     defaultValues: {
@@ -69,9 +74,14 @@ export default function EventsCreatePage() {
         if (data) {
           toast.success('Event has been created!')
           router.push(`/events/${data.id}`)
+          setShowPageLoader(true)
         }
       },
     })
+  }
+
+  if (showPageLoader) {
+    return <ContentLoading fullPage />
   }
 
   const handleFileUpload = (

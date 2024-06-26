@@ -86,7 +86,7 @@ export function ListView({
               avatarProps={{
                 classNames: { base: 'rounded-xl min-w-fit hidden' },
               }}
-              classNames={{ description: 'text-slate-400' }}
+              classNames={{ name: 'min-w-max', description: 'text-slate-400' }}
             />
           )
 
@@ -110,7 +110,10 @@ export function ListView({
               avatarProps={{
                 classNames: { base: 'rounded-xl min-w-fit hidden' },
               }}
-              classNames={{ description: 'text-slate-400 text-[0.6875rem]' }}
+              classNames={{
+                name: 'min-w-max',
+                description: 'text-slate-400 text-[0.6875rem]',
+              }}
             />
           )
 
