@@ -43,7 +43,7 @@ export function GridView({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 min-[1920px]:grid-cols-5">
       {eventRows.map((event) => (
-        <div className="border rounded-lg p-[1.25rem] flex flex-col justify-between shadow-sm">
+        <div className="relative border rounded-lg p-[1.25rem] flex flex-col justify-between shadow-sm">
           <div>
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-4">
@@ -109,12 +109,6 @@ export function GridView({
                   </div>
                 </div>
               </div>
-              <EventActions
-                as="dropdown"
-                event={event}
-                isOwner={event.owner_id === currentUserId}
-                onDone={refetch}
-              />
             </div>
 
             <div className="mt-4">
@@ -142,6 +136,14 @@ export function GridView({
                 src: getAvatar(event.profile),
               }}
               classNames={{ name: 'font-medium text-xs text-black/60' }}
+            />
+          </div>
+          <div className="absolute right-3 top-4">
+            <EventActions
+              as="dropdown"
+              event={event}
+              isOwner={event.owner_id === currentUserId}
+              onDone={refetch}
             />
           </div>
         </div>
