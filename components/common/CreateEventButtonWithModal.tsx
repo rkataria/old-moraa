@@ -96,14 +96,14 @@ export function CreateEventButtonWithModal({
       onSuccess: ({ data }) => {
         if (isEdit) {
           onDone?.()
-          setOpen(false)
+          closeModal()
           toast.success('Event has been updated!')
 
           return
         }
 
         if (data) {
-          setOpen(false)
+          closeModal()
           toast.success('Event has been created!')
           router.push(`/events/${data.id}`)
           setShowPageLoader(true)
