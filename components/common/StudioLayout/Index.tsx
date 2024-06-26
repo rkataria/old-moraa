@@ -11,6 +11,7 @@ type StudioLayoutProps = {
   resizableRightSidebar: React.ReactNode
   rightSidebar: React.ReactNode
   rightSidebarControls: React.ReactNode
+  bottomContent?: React.ReactNode
 }
 
 export function StudioLayout({
@@ -20,6 +21,7 @@ export function StudioLayout({
   resizableRightSidebar,
   rightSidebar,
   rightSidebarControls,
+  bottomContent,
 }: StudioLayoutProps) {
   return (
     <StudioLayoutContextProvider>
@@ -31,6 +33,7 @@ export function StudioLayout({
           <MainContentWithRightSidebar
             resizableRightSidebar={resizableRightSidebar}
             rightSidebar={rightSidebar}
+            bottomContent={bottomContent}
             rightSidebarControls={rightSidebarControls}>
             {children}
           </MainContentWithRightSidebar>

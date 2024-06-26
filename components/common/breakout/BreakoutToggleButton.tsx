@@ -1,10 +1,10 @@
 import { IoPeopleOutline } from 'react-icons/io5'
 
-import { ControlButton } from '../common/ControlButton'
+import { ControlButton } from '../ControlButton'
 
 import { cn } from '@/utils/utils'
 
-export function BreakoutSlideToggle({
+export function BreakoutToggleButton({
   onClick,
   isActive,
 }: {

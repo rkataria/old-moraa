@@ -11,6 +11,7 @@ type FontSizeControlProps = {
   onFontSizeChange: (size: number) => void
   isDisabled?: boolean
   isTime?: boolean
+  fullWidth?: boolean
 }
 
 export function FontSizeControl({
@@ -18,6 +19,7 @@ export function FontSizeControl({
   onFontSizeChange,
   isDisabled = false,
   isTime = false,
+  fullWidth = false,
 }: FontSizeControlProps) {
   const [fontSize, setFontSize] = useState<number>(size)
 
@@ -37,7 +39,7 @@ export function FontSizeControl({
   }
 
   return (
-    <ButtonGroup radius="md">
+    <ButtonGroup radius="md" fullWidth={fullWidth}>
       <Button
         size="sm"
         variant="flat"
@@ -51,11 +53,9 @@ export function FontSizeControl({
       </Button>
       <input
         className={cn(
-          'h-8 text-sm text-center border-y-2 border-gray-100 bg-white flex-none',
+          'h-8 w-14 text-sm text-center border-y-2 border-gray-100 bg-white flex-none',
           {
             'bg-gray-200': isDisabled,
-            'w-8': !isTime,
-            'w-14': isTime,
           }
         )}
         value={`${fontSize}${isTime ? ' min' : ''}`}

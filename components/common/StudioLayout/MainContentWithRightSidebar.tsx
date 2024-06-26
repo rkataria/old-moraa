@@ -14,11 +14,13 @@ export function MainContentWithRightSidebar({
   resizableRightSidebar,
   rightSidebar,
   rightSidebarControls,
+  bottomContent,
 }: {
   children: ReactNode
   resizableRightSidebar: ReactNode
   rightSidebar: ReactNode
   rightSidebarControls: ReactNode
+  bottomContent: ReactNode
 }) {
   const { rightSidebarVisiblity, resizableRightSidebarVisiblity } =
     useStudioLayout()
@@ -30,7 +32,12 @@ export function MainContentWithRightSidebar({
           defaultSize={resizableRightSidebarVisiblity ? 60 : 100}
           minSize={resizableRightSidebarVisiblity ? 40 : 100}>
           {/* Main Container */}
-          <MainContent>{children}</MainContent>
+          <MainContent hasBottomSection={!!bottomContent}>
+            {children}
+          </MainContent>
+          <div className="h-full overflow-y-auto scrollbar-none bg-white rounded-md mt-2 p-2">
+            {bottomContent}
+          </div>
         </Panel>
         {resizableRightSidebarVisiblity && (
           <PanelResizeHandle className="relative w-2 px-0.5">

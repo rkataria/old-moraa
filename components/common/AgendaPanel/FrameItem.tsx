@@ -45,7 +45,7 @@ export function FrameItem({ frame }: FrameItemProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
-  const { breakoutSlideId } = useEventSession()
+  const eventSessionData = useEventSession()
 
   const handleFrameAction = (action: {
     key: FrameActionKey
@@ -94,7 +94,8 @@ export function FrameItem({ frame }: FrameItemProps) {
                 frameActive && listDisplayMode === 'grid',
               'border-transparent':
                 listDisplayMode === 'list' && currentFrame?.id !== frame.id,
-              'border border-green-700': breakoutSlideId === frame.id,
+              'border border-green-700':
+                eventSessionData?.breakoutSlideId === frame.id,
             }
           )}
           onClick={() => {
@@ -102,7 +103,7 @@ export function FrameItem({ frame }: FrameItemProps) {
 
             setCurrentFrame(frame)
           }}>
-          {breakoutSlideId === frame.id ? (
+          {eventSessionData?.breakoutSlideId === frame.id ? (
             <div className="absolute top-0 right-0 bg-secondary p-1 rounded-bl-md rounded-tr-md">
               <p className="text-xs text-gray-800">In Breakout</p>
             </div>

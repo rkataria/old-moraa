@@ -77,6 +77,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [participant, setParticipant] = useState<any>(null)
   const { realtimeChannel } = useRealtimeChannel()
   const [isBreakoutSlide, setIsBreakoutSlide] = useState<boolean>(false)
+  const [isCreateBreakoutOpen, setIsCreateBreakoutOpen] =
+    useState<boolean>(false)
   const [breakoutSlideId, setBreakoutSlideId] = useState<string | null>(null)
   const [sharedBreakoutFrame, setSharedBreakoutFrame] = useSharedState<
     IFrame['id'] | null
@@ -865,6 +867,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         eventSessionMode,
         dyteStates,
         setDyteStates,
+        isCreateBreakoutOpen,
+        setIsCreateBreakoutOpen,
         isBreakoutSlide,
         setIsBreakoutSlide,
         breakoutSlideId,
@@ -896,9 +900,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 export function useEventSession() {
   const context = useContext(EventSessionContext) as EventSessionContextType
 
-  if (!context) {
-    throw new Error('useEventSession must be used within EventSessionProvider')
-  }
+  // if (!context) {
+  //   throw new Error('useEventSession must be used within EventSessionProvider')
+  // }
 
   return context
 }

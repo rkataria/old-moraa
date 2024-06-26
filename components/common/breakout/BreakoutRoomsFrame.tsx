@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { useState } from 'react'
+import React from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 
@@ -10,41 +10,16 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Input,
 } from '@nextui-org/react'
 
-import {
-  useBreakoutRooms,
-  useBreakoutRoomsManagerWithLatestMeetingState,
-} from '@/contexts/BreakoutRoomsManagerContext'
+import { useBreakoutRoomsManagerWithLatestMeetingState } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { PresentationStatuses } from '@/types/event-session.type'
 
-export function BreakoutRoomsFrame() {
+export function BreakoutRoomsWithParticipants() {
   const { meeting } = useDyteMeeting()
-  const {
-    currentFrame,
-    presentationStatus,
-    setIsBreakoutSlide,
-    setBreakoutSlideId,
-  } = useEventSession()
-  const totalParticipants = meeting.participants.count
-  const [participantsPerRoom, setParticipantsPerRoom] = useState(
-    totalParticipants / 5 > 1 ? totalParticipants / 5 : 1
-  )
-  const { isBreakoutActive } = useBreakoutRooms()
-  const {
-    endBreakoutRooms: _endBreakoutRooms,
-    startBreakoutRooms: _startBreakoutRooms,
-    joinRoom: _joinRoom,
-  } = useBreakoutRoomsManagerWithLatestMeetingState()
-
-  const startBreakoutRooms = () => {
-    _startBreakoutRooms({ participantsPerRoom })
-    if (presentationStatus === PresentationStatuses.STARTED) {
-      setBreakoutSlideId(currentFrame?.id || null)
-    }
-  }
+  const { setIsBreakoutSlide, setBreakoutSlideId } = useEventSession()
+  const { endBreakoutRooms: _endBreakoutRooms, joinRoom: _joinRoom } =
+    useBreakoutRoomsManagerWithLatestMeetingState()
 
   const endBreakoutRooms = () => {
     setBreakoutSlideId(null)
@@ -56,44 +31,8 @@ export function BreakoutRoomsFrame() {
     _joinRoom(meetId)
   }
 
-  if (!isBreakoutActive) {
-    return (
-      <Card className="mt-4 mx-20" shadow="none">
-        <CardHeader>
-          <h4 className="font-semibold text-xl">
-            Create breakout rooms{' '}
-            {presentationStatus === PresentationStatuses.STARTED &&
-            currentFrame?.name
-              ? `for ${currentFrame.name}`
-              : ''}
-          </h4>
-        </CardHeader>
-        <CardBody>
-          <Input
-            value={String(participantsPerRoom)}
-            onChange={(e) =>
-              Number(e.target.value) > totalParticipants
-                ? setParticipantsPerRoom(totalParticipants)
-                : setParticipantsPerRoom(Number(e.target.value))
-            }
-            label="Participant per room"
-            type="number"
-          />
-        </CardBody>
-        <CardFooter>
-          <Button color="primary" variant="solid" onClick={startBreakoutRooms}>
-            Start Breakout
-          </Button>
-        </CardFooter>
-      </Card>
-    )
-  }
-
   return (
-    <div className="m-6 w-full flex-1 pr-12">
-      <div className="flex justify-between items-center mb-6">
-        <h4 className="font-semibold text-xl">Breakout in progress</h4>
-      </div>
+    <div className="m-1 w-full flex-1 pr-12">
       <div className="flex">
         {meeting.connectedMeetings.meetings.map((meet) => (
           <div key={meet.id} className="mr-4">

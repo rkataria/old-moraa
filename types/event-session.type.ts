@@ -53,6 +53,8 @@ export type EventSessionContextType = {
   breakoutSlideId: string | null
   setIsBreakoutSlide: Dispatch<SetStateAction<boolean>>
   setBreakoutSlideId: Dispatch<SetStateAction<string | null>>
+  isCreateBreakoutOpen: boolean
+  setIsCreateBreakoutOpen: Dispatch<SetStateAction<boolean>>
   setEventSessionMode: (mode: EventSessionMode) => void
   startPresentation: () => void
   stopPresentation: () => void

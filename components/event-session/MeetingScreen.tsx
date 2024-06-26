@@ -20,6 +20,8 @@ import { MeetingHeader } from './MeetingHeader'
 import { MeetingRightSidebar } from './MeetingRightSidebar'
 import { RightSidebarControls } from './RightSidebarControls'
 import { AgendaPanel } from '../common/AgendaPanel'
+import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
+import { CreateBreakoutModal } from '../common/breakout/CreateBreakoutModal'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { ResizableRightSidebar } from '../event-content/ResizableRightSidebar'
 
@@ -53,6 +55,10 @@ export function MeetingScreen() {
     setEventSessionMode,
     updateActiveSession,
     updateTypingUsers,
+    isCreateBreakoutOpen,
+    setIsCreateBreakoutOpen,
+    breakoutSlideId,
+    currentFrame,
   } = useEventSession()
   const { isBreakoutActive } = useBreakoutRooms()
 
@@ -123,7 +129,12 @@ export function MeetingScreen() {
           setDyteStates={setDyteStates}
         />
       }
-      rightSidebarControls={<RightSidebarControls />}>
+      rightSidebarControls={<RightSidebarControls />}
+      bottomContent={
+        isBreakoutActive && breakoutSlideId === currentFrame?.id ? (
+          <BreakoutRoomsWithParticipants />
+        ) : null
+      }>
       <MainContainer />
 
       {/* Emoji Overlay */}
@@ -141,6 +152,10 @@ export function MeetingScreen() {
             ...e.detail,
           }))
         }}
+      />
+      <CreateBreakoutModal
+        open={isCreateBreakoutOpen}
+        setOpen={() => setIsCreateBreakoutOpen(false)}
       />
     </StudioLayout>
   )

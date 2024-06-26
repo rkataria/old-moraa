@@ -4,9 +4,10 @@ import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
 import { ParticipantTiles } from './ParticipantTiles'
-import { BreakoutRoomsFrame } from '../common/BreakoutRoomsFrame'
+import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
 import { PanelResizer } from '../common/PanelResizer'
 
+import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { PresentationStatuses } from '@/types/event-session.type'
 
@@ -16,11 +17,13 @@ export function MainContainer() {
     currentFrame,
     eventSessionMode,
     isBreakoutSlide,
+    isHost,
   } = useEventSession()
   const [panelSize, setPanelSize] = useState(18) // Initial default size
 
   const mainContentRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef(null)
+  const { isBreakoutActive } = useBreakoutRooms()
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -59,15 +62,18 @@ export function MainContainer() {
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
           <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
-            {isBreakoutSlide ? (
-              <BreakoutRoomsFrame />
-            ) : (
-              ['Preview', 'Presentation'].includes(eventSessionMode) && (
-                <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
-                  <ContentContainer />
-                </div>
-              )
-            )}
+            {isHost && isBreakoutActive && isBreakoutSlide ? (
+              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden">
+                <h2 className="text-xl font-semibold my-4 mx-2">
+                  Breakout Time!
+                </h2>
+                <BreakoutRoomsWithParticipants />
+              </div>
+            ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
+              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
+                <ContentContainer />
+              </div>
+            ) : null}
           </Panel>
 
           <PanelResizer />

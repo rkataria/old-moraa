@@ -3,6 +3,7 @@
 
 import { useEffect } from 'react'
 
+// eslint-disable-next-line import/no-cycle
 import { Breakout, BreakoutFrame } from './content-types/Breakout'
 import { CanvasPreview } from './content-types/Canvas/Preview'
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
