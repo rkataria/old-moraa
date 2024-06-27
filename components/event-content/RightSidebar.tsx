@@ -6,7 +6,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { FrameAppearance } from './FrameAppearance/FrameAppearance'
 import { FrameConfiguration } from './FrameConfiguration/FrameConfiguration'
 import { EditEventForm } from '../common/EditEventForm'
-import { NoteOverlay } from '../common/NotesOverlay'
+import { FrameNotes } from '../common/FrameNotes/FrameNotes'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -49,7 +49,7 @@ export function RightSidebar() {
       case 'frame-configuration':
         return <FrameConfiguration />
       case 'frame-notes':
-        return <NoteOverlay />
+        return <FrameNotes />
       case 'event-settings':
         return (
           <div className="p-4">

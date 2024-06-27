@@ -1,48 +1,19 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
-
 import { useContext, useEffect, useMemo, useState } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useDebounce } from '@uidotdev/usehooks'
-import { RiUnpinLine } from 'react-icons/ri'
-import { RxCross1 } from 'react-icons/rx'
+import { LuClipboardEdit } from 'react-icons/lu'
 
-import { Button } from '@nextui-org/react'
-
-import { TextBlockEditor } from '../event-content/TextBlockEditor'
-
+import { ConfigurationHeader } from '@/components/event-content/FrameConfiguration/ConfigurationHeader'
+import { TextBlockEditor } from '@/components/event-content/TextBlockEditor'
 import { EventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { FrameNotesService } from '@/services/frame-note.service'
 import { EventContextType } from '@/types/event-context.type'
 import { TextBlock } from '@/types/frame.type'
 import { QueryKeys } from '@/utils/query-keys'
-import { cn } from '@/utils/utils'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function NoteOverlaySidebarWrapper({ contentClass, children, onClose }: any) {
-  return (
-    <div className={cn('w-full h-full')}>
-      <div className="flex items-center justify-between w-full p-2">
-        <Button variant="light" isIconOnly size="sm" onClick={onClose}>
-          <RxCross1 size={18} />
-        </Button>
-        <h3 className="text-sm font-medium text-center">Notes</h3>
-        <Button
-          variant="light"
-          isIconOnly
-          size="sm"
-          disabled
-          className="opacity-0 pointer-events-none">
-          <RiUnpinLine size={24} />
-        </Button>
-      </div>
-      <div className={cn(contentClass)}>{children}</div>
-    </div>
-  )
-}
-
-export function NoteOverlay() {
+export function FrameNotes() {
   const [editingBlock, setEditingBlock] = useState<string>('')
   const [notesHtml, setNotesHtml] = useState<TextBlock | null>(null)
   const { setRightSidebarVisiblity } = useStudioLayout()
@@ -113,34 +84,42 @@ export function NoteOverlay() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameNoteHtml])
 
+  if (!currentFrame) return null
+
   return (
-    <NoteOverlaySidebarWrapper contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)]">
-      {selectedNotesQuery.isPending ? (
-        overviewOpen || !currentFrame?.id ? (
-          <span className="p-4 h-full flex items-center justify-center text-gray-400">
-            Select a frame to add notes.
-          </span>
+    <div className="p-4 text-sm">
+      <ConfigurationHeader
+        icon={<LuClipboardEdit size={20} strokeWidth={1.7} />}
+        title="Notes"
+      />
+      <div className="pt-8 flex flex-col gap-4">
+        {selectedNotesQuery.isPending ? (
+          overviewOpen || !currentFrame?.id ? (
+            <span className="p-4 h-full flex items-center justify-center text-gray-400">
+              Select a frame to add notes.
+            </span>
+          ) : (
+            <span className="p-4">Loading...</span>
+          )
+        ) : isEditable ? (
+          // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+          <div onClick={() => setEditingBlock(textBlock.id)} className="h-full">
+            <TextBlockEditor
+              showToolbar={false}
+              block={textBlock}
+              editable={editingBlock === textBlock.id}
+              className="w-full h-full overflow-y-auto border-0"
+              onChange={handleBlockChange}
+            />
+          </div>
         ) : (
-          <span className="p-4">Loading...</span>
-        )
-      ) : isEditable ? (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-        <div onClick={() => setEditingBlock(textBlock.id)} className="h-full">
-          <TextBlockEditor
-            showToolbar={false}
-            block={textBlock}
-            editable={editingBlock === textBlock.id}
-            className="w-full h-full overflow-y-auto border-0"
-            onChange={handleBlockChange}
+          <div
+            className="p-4 flex flex-col"
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: textBlock?.data?.html || '' }}
           />
-        </div>
-      ) : (
-        <div
-          className="p-4 flex flex-col"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: textBlock?.data?.html || '' }}
-        />
-      )}
-    </NoteOverlaySidebarWrapper>
+        )}
+      </div>
+    </div>
   )
 }

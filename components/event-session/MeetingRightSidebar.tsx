@@ -4,7 +4,7 @@ import { DyteSidebar } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 
 import { DyteStates } from './MeetingHeader'
-import { NoteOverlay } from '../common/NotesOverlay'
+import { FrameNotes } from '../common/FrameNotes/FrameNotes'
 
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 
@@ -23,7 +23,7 @@ export function MeetingRightSidebar({
   if (!rightSidebarVisiblity) return null
 
   if (rightSidebarVisiblity === 'frame-notes') {
-    return <NoteOverlay />
+    return <FrameNotes />
   }
 
   return (
