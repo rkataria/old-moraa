@@ -61,6 +61,7 @@ const getEvent = async ({
     .from('meeting')
     .select('*, event:event_id(*)')
     .eq('event_id', eventId)
+    .eq('type', 'MAIN')
     .single()
 
   if (error) {
