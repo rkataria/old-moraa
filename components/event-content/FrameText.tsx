@@ -30,7 +30,7 @@ export function FrameText({
   const placeholder =
     currentFrame?.type === ContentType.POLL
       ? "What's the question?"
-      : "What's the title?"
+      : 'Subject that shaped thoughts and opinions to reflect upon...'
 
   const getChangedKey = () => {
     if (currentFrame?.type === ContentType.POLL && type === 'title') {
@@ -123,7 +123,7 @@ export function FrameText({
       onChange={updateText}
       onKeyDown={onTextKeyDown}
       className={cn(
-        'w-full text-start border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 font-bold text-gray-800 placeholder-gray-500 resize-none',
+        'w-full text-start border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 font-bold text-gray-800 placeholder-gray-500 resize-none tracking-tight',
         className,
         {
           'text-4xl': ['question', 'title'].includes(changedKey),
