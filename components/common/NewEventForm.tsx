@@ -8,7 +8,10 @@ import * as yup from 'yup'
 
 import { Avatar, Image, Input, Textarea } from '@nextui-org/react'
 
-import { FileUploader } from '../event-content/FileUploader'
+import {
+  FileUploader,
+  FileWithoutSignedUrl,
+} from '../event-content/FileUploader'
 
 import { cn } from '@/utils/utils'
 
@@ -88,14 +91,12 @@ export function NewEventForm<
     },
   })
 
-  const handleFileUpload = (
-    files: {
-      signedUrl: string
-      meta: { name: string; size: number; type: string }
-    }[]
-  ) => {
-    createEventForm.setValue('imageUrl', files[0].signedUrl)
+  const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
+    const file = files?.[0]
+
+    createEventForm.setValue('imageUrl', file.url)
   }
+
   const FormContentJSX = (
     <div>
       <div className="flex items-center gap-4">
@@ -117,6 +118,7 @@ export function NewEventForm<
         <FileUploader
           maxNumberOfFiles={1}
           allowedFileTypes={['.jpg', '.jpeg', '.png']}
+          bucketName="image-uploads"
           triggerProps={{
             className:
               'w-14 h-14 max-w-14 rounded-xl shrink-0 hover:bg-transparent',
@@ -142,7 +144,7 @@ export function NewEventForm<
             ),
             variant: 'light',
           }}
-          onFilesUploaded={handleFileUpload}
+          onPublicFilesUploaded={handleFileUpload}
         />
       </div>
 

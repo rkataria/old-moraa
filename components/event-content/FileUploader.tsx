@@ -38,6 +38,10 @@ export type FileWithSignedUrl = {
   meta: { name: string; size: number; type: string }
 }
 
+export type FileWithoutSignedUrl = {
+  url: string
+}
+
 type FileUploaderProps = {
   title?: string
   maxNumberOfFiles?: number
@@ -48,7 +52,8 @@ type FileUploaderProps = {
   hint?: string
   triggerProps?: ButtonProps
   onFilePickerOpen?: (open: boolean) => void
-  onFilesUploaded: (files: FileWithSignedUrl[]) => void
+  onFilesUploaded?: (files: FileWithSignedUrl[]) => void
+  onPublicFilesUploaded?: (files: FileWithoutSignedUrl[]) => void
 }
 
 export function FileUploader({
@@ -62,6 +67,7 @@ export function FileUploader({
   triggerProps = {},
   onFilePickerOpen,
   onFilesUploaded,
+  onPublicFilesUploaded,
 }: FileUploaderProps) {
   const supabase = createClientComponentClient()
   const [isOpen, setOpen] = useState<boolean>(false)
@@ -116,7 +122,7 @@ export function FileUploader({
     })
 
     _uppy.on('transloadit:upload', async (file) => {
-      onFilesUploaded([
+      onFilesUploaded?.([
         {
           meta: { name: file.original_name, size: file.size, type: file.type },
           signedUrl: file.ssl_url,
@@ -133,8 +139,15 @@ export function FileUploader({
 
     _uppy.on('complete', async (result) => {
       if (result.failed.length === 0) {
+        if (bucketName === 'image-uploads') {
+          onPublicFilesUploaded?.(
+            getFiles(result.successful) as FileWithoutSignedUrl[]
+          )
+
+          return
+        }
         const files = await getFilesWithSignedUrls(result.successful)
-        onFilesUploaded(files)
+        onFilesUploaded?.(files)
         _uppy.setState({ files: [] })
         setOpen(false)
         onFilePickerOpen?.(false)
@@ -209,6 +222,20 @@ export function FileUploader({
     }
 
     return filesWithSignedUrl
+  }
+
+  const getFiles = (files: File[]) => {
+    const filesWithPublicUrl = []
+    // eslint-disable-next-line no-restricted-syntax
+    for (const file of files) {
+      // eslint-disable-next-line no-await-in-loop
+      filesWithPublicUrl.push({
+        ...file,
+        url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${file?.response?.body?.Key}`,
+      })
+    }
+
+    return filesWithPublicUrl
   }
 
   const getSignedUrl = async (file: File) => {
