@@ -10,7 +10,7 @@ import { SortDescriptor, Pagination, Button } from '@nextui-org/react'
 
 import { GridView } from './GridView'
 import { ListView } from './ListView'
-import { GridListButton } from '../common/AgendaPanel/GridListButton'
+import { ListToggleButton } from '../common/AgendaPanel/ListToggleButton'
 import { CreateEventButtonWithModal } from '../common/CreateEventButtonWithModal'
 import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
 
@@ -131,7 +131,7 @@ export function EventList() {
               Create new <MdOutlineAddBox className="text-[18px]" />
             </p>
           </Button>
-          <GridListButton
+          <ListToggleButton
             listDisplayMode={listDisplayMode}
             toggleListDisplayMode={() =>
               toggleListDisplayMode(

@@ -24,7 +24,7 @@ export function GridView({
   refetch: () => void
 }) {
   if (isLoading) {
-    return <Loading isFullSize />
+    return <Loading />
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

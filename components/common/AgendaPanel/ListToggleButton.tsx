@@ -2,7 +2,7 @@ import { BsGrid, BsList } from 'react-icons/bs'
 
 import { Button, ButtonProps } from '@nextui-org/react'
 
-export function GridListButton({
+export function ListToggleButton({
   buttonProps,
   listDisplayMode,
   toggleListDisplayMode,

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { GridListButton } from './GridListButton'
+import { ListToggleButton } from './ListToggleButton'
 import { OverviewButton } from './OverviewButton'
 
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
@@ -29,7 +29,7 @@ export function Header() {
               <BsSearch size={18} />
             </Button> */}
 
-            <GridListButton
+            <ListToggleButton
               listDisplayMode={listDisplayMode}
               toggleListDisplayMode={toggleListDisplayMode}
             />

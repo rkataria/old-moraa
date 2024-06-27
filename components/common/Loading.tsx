@@ -2,20 +2,11 @@ import { IconLoader } from '@tabler/icons-react'
 
 import { cn } from '@/utils/utils'
 
-export function Loading({
-  message = '',
-  isFullSize,
-}: {
-  message?: React.ReactNode
-  isFullSize?: boolean
-}) {
+export function Loading({ message = '' }: { message?: React.ReactNode }) {
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 justify-center items-center w-full h-full',
-        {
-          'w-full h-full': isFullSize,
-        }
+        'flex flex-col gap-2 justify-center items-center w-full h-full'
       )}>
       <div>
         <IconLoader className="animate-spin" />
