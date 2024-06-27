@@ -27,6 +27,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@headlessui/react": "^1.7.17",
     "@hookform/resolvers": "^3.3.4",
+    "@internationalized/date": "^3.5.4",
     "@nextui-org/react": "^2.2.9",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/auth-ui-react": "^0.4.7",

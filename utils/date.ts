@@ -1,7 +1,5 @@
 import { DateTime } from 'luxon'
 
-import { TimeZones } from '@/constants/timezone'
-
 export const getIsoDateString = (date: string) => new Date(date).toISOString()
 
 export const getFormattedDate = (
@@ -54,15 +52,15 @@ export const createCustomTimeZoneDate = (
  * The list of timezones is defined in constants/timezone file.
  * @returns {TimeZones}
  */
-export function getBrowserTimeZone(): (typeof TimeZones)[number] {
-  const formatter = new Intl.DateTimeFormat('en-US')
-  const resolvedTimezone = formatter.resolvedOptions().timeZone
-  const timeZone = TimeZones.find(({ utc }) =>
-    (utc || []).some((_tz) => _tz === resolvedTimezone)
-  )
+// export function getBrowserTimeZone(): (typeof TimeZones)[number] {
+//   const formatter = new Intl.DateTimeFormat('en-US')
+//   const resolvedTimezone = formatter.resolvedOptions().timeZone
+//   const timeZone = TimeZones.find(({ utc }) =>
+//     (utc || []).some((_tz) => _tz === resolvedTimezone)
+//   )
 
-  return timeZone || TimeZones[0]
-}
+//   return timeZone || TimeZones[0]
+// }
 
 export function getCurrentTimeInLocalZoneFromTimeZone({
   dateTimeString,
@@ -73,10 +71,10 @@ export function getCurrentTimeInLocalZoneFromTimeZone({
   utcTimeZone: string
   format?: string
 }) {
-  const timeZone = TimeZones.filter((tz) => tz.text === utcTimeZone)
+  // const timeZone = TimeZones.filter((tz) => tz.text === utcTimeZone)
 
-  if (timeZone.length === 0) return ''
-  const luxonTimeZone = timeZone[0].utc[0]
+  if (utcTimeZone.length === 0) return ''
+  const luxonTimeZone = utcTimeZone
 
   const dateTime = DateTime.fromISO(dateTimeString, {
     zone: luxonTimeZone,
@@ -98,4 +96,48 @@ export function getCurrentTimeInLocalZoneFromTimeZone({
   })
 
   return localDateTimeFormatted
+}
+
+export const parseInto12Hour = (time24: string) => {
+  const dt = DateTime.fromFormat(time24, 'HH:mm')
+
+  return dt.toFormat('hh:mm a')
+}
+
+export const getOffset = (timezone: string) => {
+  const localTime = DateTime.now().setZone(timezone)
+
+  const offsetMinutes = localTime.offset // offset is in minutes
+
+  const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60)
+  const offsetMins = Math.abs(offsetMinutes) % 60
+
+  const sign = offsetMinutes >= 0 ? '+' : '-'
+
+  const formattedOffset = `${sign}${String(offsetHours).padStart(2, '0')}:${String(offsetMins).padStart(2, '0')}`
+
+  return formattedOffset
+}
+
+export const nextRoundedHour = (addMinutes?: number) => {
+  const now = DateTime.now()
+
+  let timeGap
+
+  if (now.minute >= 30) {
+    timeGap = { minutes: 60 }
+  } else {
+    timeGap = { minutes: 30 }
+  }
+
+  if (addMinutes) {
+    timeGap = { minutes: timeGap.minutes + addMinutes }
+  }
+
+  const nextHour = now
+    .set({ minute: 0, second: 0, millisecond: 0 })
+    .plus(timeGap)
+  const formattedNextHour = nextHour.toFormat('HH:mm')
+
+  return formattedNextHour
 }
