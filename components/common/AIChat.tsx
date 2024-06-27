@@ -84,6 +84,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       await axios.post(url, null, {
         params: {
           topic,
+          current_frame_id: currentFrame?.id ?? '',
           section_id: sectionId,
         },
       })
