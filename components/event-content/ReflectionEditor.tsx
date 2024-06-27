@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { useQuery } from '@tanstack/react-query'
 import uniqBy from 'lodash.uniqby'
 
@@ -26,12 +24,14 @@ function PreviewCard({
   username,
   reflection,
   reactions,
+  className,
 }: {
   disabled?: boolean
   isAnonymous?: boolean
   username: string
   reflection: string
   reactions: FrameReaction[]
+  className?: string
 }) {
   const distinctReactions = uniqBy(
     reactions,
@@ -45,9 +45,10 @@ function PreviewCard({
   return (
     <Card
       shadow="none"
-      className={cn('border border-slate-300 rounded-2xl ', {
-        'opacity-75 bg-[#F4F2F4]': disabled,
-      })}>
+      className={cn(
+        'border border-slate-300 rounded-2xl shadow-lg',
+        className
+      )}>
       <CardHeader>
         <div className="flex justify-start items-center gap-5">
           <Avatar
@@ -98,23 +99,6 @@ function PreviewCard({
   )
 }
 
-function DummyResponses() {
-  return (
-    <>
-      {Array(5)
-        .fill(0)
-        .map((_, index) => (
-          <PreviewCard
-            disabled
-            username={`Learner ${index}`}
-            reflection="Ignite insights through thoughtful reflection. Shareperspectives, spark growth."
-            reactions={[]}
-          />
-        ))}
-    </>
-  )
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function FrameResponses({ frameResponses }: { frameResponses: any }) {
   return (
@@ -161,11 +145,26 @@ function Responses({
       </Card>
     )
   }
+
   if (frameResponses.length === 0) {
-    return <DummyResponses />
+    return (
+      <div className="w-full h-full grid place-items-center">
+        <PreviewCard
+          disabled
+          username="Learner"
+          reflection="User's typed response will be shown here.."
+          reactions={[]}
+          className="w-fit"
+        />
+      </div>
+    )
   }
 
-  return <FrameResponses frameResponses={frameResponses} />
+  return (
+    <div className="w-full mt-10 grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+      <FrameResponses frameResponses={frameResponses} />
+    </div>
+  )
 }
 
 interface ReflectionEditorProps {
@@ -182,13 +181,11 @@ export function ReflectionEditor({ frame }: ReflectionEditorProps) {
   const responses = reflectionResponseQuery?.data?.responses || []
 
   return (
-    <div className="w-full h-full flex flex-col items-center">
-      <div className="w-full mt-10 grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-        <Responses
-          isLoading={reflectionResponseQuery.isLoading}
-          frameResponses={responses}
-        />
-      </div>
+    <div className="w-full h-full items-center">
+      <Responses
+        isLoading={reflectionResponseQuery.isLoading}
+        frameResponses={responses}
+      />
     </div>
   )
 }

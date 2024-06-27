@@ -67,9 +67,11 @@ export function FrameManager() {
         textColor: '#000',
         allowVoteOnMultipleOptions: false,
         showTitle: true,
-        showDescription: [ContentType.COVER, ContentType.TEXT_IMAGE].includes(
-          contentType
-        ),
+        showDescription: [
+          ContentType.COVER,
+          ContentType.TEXT_IMAGE,
+          ContentType.REFLECTION,
+        ].includes(contentType),
       },
       // TODO: Fix any
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
