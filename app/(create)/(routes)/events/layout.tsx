@@ -1,12 +1,10 @@
 'use client'
 
+import { ReactNode } from 'react'
+
 import { SidebarComponent } from '@/components/common/Sidebar'
 
-export default function WorkspaceLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function WorkspaceLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex">
       <SidebarComponent />

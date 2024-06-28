@@ -24,10 +24,11 @@ import {
   FileWithoutSignedUrl,
 } from '../event-content/FileUploader'
 
+import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { TimeZones } from '@/constants/timezone'
 import { getOffset } from '@/utils/date'
 
-export const scheduleEventValidationSchema = yup.object({
+const scheduleEventValidationSchema = yup.object({
   timezone: yup.string().required().label('Timezone'),
   startDate: yup.string().required().label('Start date'),
   endDate: yup
@@ -156,10 +157,7 @@ export function ScheduleEventForm<
             name="imageUrl"
             render={({ field }) => (
               <Image
-                src={
-                  field.value ||
-                  'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
-                }
+                src={field.value || IMAGE_PLACEHOLDER}
                 classNames={{
                   img: 'w-full h-full object-cover',
                   wrapper: '!max-w-none h-full rounded-lg overflow-hidden',

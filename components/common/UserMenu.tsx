@@ -5,42 +5,30 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Avatar,
 } from '@nextui-org/react'
 
+import { UserAvatar } from './UserAvatar'
 import { NamesForm } from '../auth/NamesForm'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
-import { getAvatarForName } from '@/utils/utils'
 
 export function UserMenu() {
   const { currentUser, logout } = useAuth()
-  const { data: profile, isRequiredNames } = useProfile()
+  const { data: profile } = useProfile()
   const [isShowNamesModal, setIsShowNamesModal] = useState(false)
 
   return (
     <>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
-          {!isRequiredNames ? (
-            <Avatar
-              src={getAvatarForName(
-                `${profile.first_name} ${profile.last_name}`,
-                profile.avatar_url
-              )}
-              radius="lg"
-              classNames={{ base: 'w-9 h-9 min-w-max' }}
-            />
-          ) : (
-            <Avatar
-              isBordered
-              className="h-8 w-8 cursor-pointer"
-              src="https://github.com/shadcn.png"
-              radius="lg"
-              classNames={{ base: 'w-9 h-9 min-w-max' }}
-            />
-          )}
+          <UserAvatar
+            profile={profile}
+            avatarProps={{
+              radius: 'lg',
+              classNames: { base: 'w-9 h-9 min-w-max' },
+            }}
+          />
         </DropdownTrigger>
         <DropdownMenu aria-label="Profile Actions" variant="flat">
           <DropdownItem

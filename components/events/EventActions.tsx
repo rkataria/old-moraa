@@ -1,23 +1,25 @@
-import { useState } from 'react'
+import { Key, useState } from 'react'
 
 import { IconTrash } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 import { CiEdit } from 'react-icons/ci'
-import { IoEyeOutline } from 'react-icons/io5'
+import { IoEllipsisVerticalOutline, IoEyeOutline } from 'react-icons/io5'
 
-import { Button } from '@nextui-org/react'
+import { Button, useDisclosure } from '@nextui-org/react'
 
 import { CreateEventButtonWithModal } from '../common/CreateEventButtonWithModal'
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal'
+import { DropdownActions } from '../common/DropdownActions'
 
 import { EventService } from '@/services/event/event-service'
 
 const ownerActions = [
   {
     key: 'view',
-    label: 'Delete',
+    label: 'View',
+    icon: <IoEyeOutline className="w-[1.125rem] h-[1.125rem] text-slate-500" />,
   },
   {
     key: 'edit',
@@ -27,6 +29,7 @@ const ownerActions = [
   {
     key: 'delete-event',
     label: 'Delete',
+    icon: <IconTrash className="w-[1.125rem] h-[1.125rem]  text-red-500" />,
   },
 ]
 
@@ -39,10 +42,12 @@ const participantActions: typeof ownerActions = [
 ]
 
 export function EventActions({
+  as,
   event,
   isOwner,
   onDone,
 }: {
+  as?: 'dropdown'
   event: {
     id: string
     name: string
@@ -50,11 +55,16 @@ export function EventActions({
     image_url: string | null | undefined
   }
   isOwner: boolean
+
   onDone: () => void
 }) {
   const router = useRouter()
+  const editEventModal = useDisclosure()
+
   const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
     useState(false)
+
+  const actions = isOwner ? ownerActions : participantActions
 
   const deleteEventMutation = useMutation({
     mutationFn: () =>
@@ -66,63 +76,60 @@ export function EventActions({
     onError: () => toast.success('Failed to delete event'),
   })
 
-  const actions = isOwner ? ownerActions : participantActions
+  if (actions.length === 0) return null
 
-  const renderAction = (actionKey: string) => {
-    if (actionKey === 'view') {
-      return (
-        <Button
-          isIconOnly
-          variant="light"
-          onClick={() => router.push(`/events/${event.id}`)}
-          className="w-auto h-auto hover:bg-transparent">
-          <IoEyeOutline className="w-[1.125rem] h-[1.125rem] text-slate-500" />
-        </Button>
-      )
+  const actionHandler = (key: Key) => {
+    if (key === 'delete-event') {
+      setDeleteConfirmationVisible(true)
     }
-    if (actionKey === 'delete-event') {
+
+    if (key === 'edit') {
+      editEventModal.onOpen()
+    }
+
+    if (key === 'view') {
+      router.push(`/events/${event.id}`)
+    }
+  }
+
+  const getActionView = () => {
+    if (as === 'dropdown') {
       return (
-        <Button
-          isIconOnly
-          variant="light"
-          onClick={() => setDeleteConfirmationVisible(true)}
-          className="w-auto h-auto hover:bg-transparent">
-          <IconTrash className="w-[1.125rem] h-[1.125rem]  text-red-500" />
-        </Button>
+        <DropdownActions
+          triggerIcon={
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              radius="full"
+              className="shrink-0">
+              <IoEllipsisVerticalOutline className="flex shrink-0 text-xl text-gray-600 cursor-pointer" />
+            </Button>
+          }
+          actions={actions}
+          onAction={actionHandler}
+        />
       )
     }
 
     return (
-      <CreateEventButtonWithModal
-        isEdit
-        defaultValues={{
-          name: event.name,
-          description: event?.description,
-          eventType: 'workshop',
-          id: event.id,
-          imageUrl: event.image_url || '',
-        }}
-        buttonLabel={
-          <CiEdit className="w-[1.125rem] h-[1.125rem] text-slate-500" />
-        }
-        buttonProps={{
-          className: 'w-auto h-auto hover:bg-transparent',
-          variant: 'light',
-          isIconOnly: true,
-        }}
-        onDone={onDone}
-      />
+      <div className="flex items-center gap-2">
+        {actions.map((action) => (
+          <Button
+            isIconOnly
+            variant="light"
+            onClick={() => actionHandler(action.key)}
+            className="w-auto h-auto flex items-center !gap-2 hover:bg-transparent">
+            {action.icon}
+          </Button>
+        ))}
+      </div>
     )
   }
 
-  if (actions.length === 0) return null
-
   return (
     <>
-      <div className="flex items-center gap-2">
-        {actions.map((action) => renderAction(action.key))}
-      </div>
-
+      {getActionView()}
       <DeleteConfirmationModal
         open={deleteConfirmationVisible}
         description={
@@ -133,6 +140,25 @@ export function EventActions({
         }
         onClose={() => setDeleteConfirmationVisible(false)}
         onConfirm={() => deleteEventMutation.mutate()}
+      />
+
+      <CreateEventButtonWithModal
+        isEdit
+        disclosure={editEventModal}
+        defaultValues={{
+          name: event.name,
+          description: event?.description,
+          eventType: 'workshop',
+          id: event.id,
+          imageUrl: event.image_url || '',
+        }}
+        buttonProps={{
+          className:
+            'w-auto h-auto flex items-center !gap-2 hover:bg-transparent',
+          variant: 'light',
+          isIconOnly: true,
+        }}
+        onDone={onDone}
       />
     </>
   )

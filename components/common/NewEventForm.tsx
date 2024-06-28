@@ -13,35 +13,8 @@ import {
   FileWithoutSignedUrl,
 } from '../event-content/FileUploader'
 
+import { eventTypes } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
-
-interface IEventType {
-  label: string
-  iconUrl: string
-  key: string
-  disabled: boolean
-}
-
-const eventTypes: IEventType[] = [
-  {
-    label: 'Workshop',
-    iconUrl: '/images/workshop.png',
-    key: 'workshop',
-    disabled: false,
-  },
-  {
-    label: 'Course',
-    iconUrl: '/images/mentor.png',
-    key: 'course',
-    disabled: true,
-  },
-  {
-    label: 'Blended Program',
-    iconUrl: '/images/certificate.png',
-    key: 'blended-program',
-    disabled: true,
-  },
-]
 
 const createEventValidationSchema = yup.object({
   // eslint-disable-next-line newline-per-chained-call

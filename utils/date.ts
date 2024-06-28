@@ -82,6 +82,10 @@ export function getCurrentTimeInLocalZoneFromTimeZone({
 
   const localDateTime = dateTime.setZone(DateTime.local().zoneName)
 
+  if (!localDateTime.isValid) {
+    return ''
+  }
+
   if (format) {
     return localDateTime.toFormat(format)
   }

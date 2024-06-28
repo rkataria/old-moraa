@@ -22,12 +22,14 @@ import {
 import { ContentLoading } from './ContentLoading'
 import { CreateEventFormData, NewEventForm } from './NewEventForm'
 
+import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
+
 import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
 
 interface ICreateEventButtonWithModal {
   isEdit?: boolean
-  buttonLabel: string | ReactNode
+  buttonLabel?: string | ReactNode
   buttonProps?: ButtonProps
   defaultValues?: {
     name: string
@@ -36,6 +38,7 @@ interface ICreateEventButtonWithModal {
     id: string
     imageUrl: string | null | undefined
   }
+  disclosure?: UseDisclosureReturn
   onDone?: () => void
 }
 
@@ -44,6 +47,7 @@ export function CreateEventButtonWithModal({
   buttonLabel,
   buttonProps,
   defaultValues,
+  disclosure,
   onDone,
 }: ICreateEventButtonWithModal) {
   const [open, setOpen] = useState<boolean>(false)
@@ -92,14 +96,14 @@ export function CreateEventButtonWithModal({
       onSuccess: ({ data }) => {
         if (isEdit) {
           onDone?.()
-          setOpen(false)
+          closeModal()
           toast.success('Event has been updated!')
 
           return
         }
 
         if (data) {
-          setOpen(false)
+          closeModal()
           toast.success('Event has been created!')
           router.push(`/events/${data.id}`)
           setShowPageLoader(true)
@@ -117,16 +121,26 @@ export function CreateEventButtonWithModal({
       return `Edit ${defaultValues?.name}`
     }
 
-    return '  Create new learning event'
+    return 'Create new learning event'
+  }
+
+  const closeModal = () => {
+    setOpen(false)
+    disclosure?.onClose()
   }
 
   return (
     <>
-      <Button {...buttonProps} onClick={() => setOpen(true)}>
-        {buttonLabel}
-      </Button>
+      {buttonLabel && (
+        <Button {...buttonProps} onClick={() => setOpen(true)}>
+          {buttonLabel}
+        </Button>
+      )}
 
-      <Modal size="2xl" isOpen={open} onClose={() => setOpen(false)}>
+      <Modal
+        size="2xl"
+        isOpen={open || disclosure?.isOpen}
+        onClose={closeModal}>
         <ModalContent>
           {() => (
             <>
