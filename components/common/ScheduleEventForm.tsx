@@ -14,6 +14,7 @@ import * as yup from 'yup'
 import {
   Autocomplete,
   AutocompleteItem,
+  Avatar,
   Image,
   Textarea,
 } from '@nextui-org/react'
@@ -24,10 +25,11 @@ import {
   FileWithoutSignedUrl,
 } from '../event-content/FileUploader'
 
+import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { TimeZones } from '@/constants/timezone'
 import { getOffset } from '@/utils/date'
 
-export const scheduleEventValidationSchema = yup.object({
+const scheduleEventValidationSchema = yup.object({
   timezone: yup.string().required().label('Timezone'),
   startDate: yup.string().required().label('Start date'),
   endDate: yup
@@ -155,15 +157,17 @@ export function ScheduleEventForm<
             control={control}
             name="imageUrl"
             render={({ field }) => (
-              <Image
-                src={
-                  field.value ||
-                  'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
+              <Avatar
+                src={field.value}
+                fallback={
+                  <Image src={IMAGE_PLACEHOLDER} className="w-full h-full" />
                 }
                 classNames={{
-                  img: 'w-full h-full object-cover',
-                  wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
+                  base: 'w-full h-full rounded-lg overflow-hidden',
+                  img: 'h-full object-cover',
+                  fallback: 'w-full h-full',
                 }}
+                showFallback
               />
             )}
           />

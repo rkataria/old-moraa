@@ -1,13 +1,13 @@
 import { DateTime } from 'luxon'
 import { GoDot, GoDotFill } from 'react-icons/go'
 
-import { Chip } from '@nextui-org/react'
+import { Avatar, Chip, Image } from '@nextui-org/react'
 
 import { EventActions } from './EventActions'
-import { Image } from '../common/Image'
 import { Loading } from '../common/Loading'
 import { UserAvatar } from '../common/UserAvatar'
 
+import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
 import { getStatusColor } from '@/utils/event.util'
 
@@ -34,14 +34,23 @@ export function GridView({
           <div>
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-4">
-                <Image
-                  url={event.image_url}
-                  imageProps={{
-                    classNames: {
-                      wrapper: 'aspect-square w-20 border',
-                      img: 'h-full object-cover',
-                    },
+                <Avatar
+                  name={event.name}
+                  src={event.image_url}
+                  fallback={
+                    event.image_url && (
+                      <Image
+                        src={IMAGE_PLACEHOLDER}
+                        className="w-full h-full"
+                      />
+                    )
+                  }
+                  classNames={{
+                    base: 'aspect-square w-20 border h-full rounded-lg',
+                    img: 'h-full object-cover',
+                    fallback: 'w-full h-full',
                   }}
+                  showFallback={event.image_url}
                 />
                 <div>
                   <Chip

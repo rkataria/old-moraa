@@ -14,11 +14,15 @@ import { CiEdit } from 'react-icons/ci'
 import { TbNotes } from 'react-icons/tb'
 import * as yup from 'yup'
 
-import { Button, Image, Textarea } from '@nextui-org/react'
+import { Avatar, Button, Image, Textarea } from '@nextui-org/react'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { UserMenu } from '@/components/common/UserMenu'
-import { FileUploader } from '@/components/event-content/FileUploader'
+import {
+  FileUploader,
+  FileWithoutSignedUrl,
+} from '@/components/event-content/FileUploader'
+import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
 import { eventTypes } from '@/utils/event.util'
@@ -84,13 +88,9 @@ export default function EventsCreatePage() {
     return <ContentLoading fullPage />
   }
 
-  const handleFileUpload = (
-    files: {
-      signedUrl: string
-      meta: { name: string; size: number; type: string }
-    }[]
-  ) => {
-    createEventForm.setValue('imageUrl', files[0].signedUrl)
+  const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
+    const file = files?.[0]
+    createEventForm.setValue('imageUrl', file.url)
   }
 
   return (
@@ -124,21 +124,27 @@ export default function EventsCreatePage() {
                 control={createEventForm.control}
                 name="imageUrl"
                 render={({ field }) => (
-                  <Image
-                    src={
-                      field.value ||
-                      'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
+                  <Avatar
+                    src={field.value}
+                    fallback={
+                      <Image
+                        src={IMAGE_PLACEHOLDER}
+                        className="w-full h-full"
+                      />
                     }
                     classNames={{
-                      img: 'w-full h-full object-cover',
-                      wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
+                      base: 'w-full h-full rounded-lg overflow-hidden',
+                      img: 'h-full object-cover',
+                      fallback: 'w-full h-full',
                     }}
+                    showFallback
                   />
                 )}
               />
               <FileUploader
                 maxNumberOfFiles={1}
                 allowedFileTypes={['.jpg', '.jpeg', '.png']}
+                bucketName="image-uploads"
                 triggerProps={{
                   className:
                     'w-8 h-8 bg-black/60 text-white max-w-14 border-2 border-white rounded-xl shrink-0 hover:bg-black/20 absolute right-0 bottom-0 m-3 z-[10] rounded-full',
@@ -146,7 +152,7 @@ export default function EventsCreatePage() {
                   children: <CiEdit className="shrink-0 text-lg" />,
                   variant: 'light',
                 }}
-                onFilesUploaded={handleFileUpload}
+                onPublicFilesUploaded={handleFileUpload}
               />
             </div>
             <div className="h-full flex flex-col justify-between gap-8">

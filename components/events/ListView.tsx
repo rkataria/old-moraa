@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 
 import {
   Chip,
+  Image,
   SortDescriptor,
   Table,
   TableBody,
@@ -17,6 +18,7 @@ import {
 import { EventActions } from './EventActions'
 import { Loading } from '../common/Loading'
 
+import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
 import { eventTableColumns, getStatusColor } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
@@ -52,13 +54,18 @@ export function ListView({
               name={cellValue}
               description={event.description}
               avatarProps={{
-                src: event?.image_url,
+                src: event.image_url,
+                fallback: event.image_url && (
+                  <Image src={IMAGE_PLACEHOLDER} className="w-full h-full" />
+                ),
                 classNames: {
                   base: cn('rounded-xl min-w-fit', {
                     'bg-transparent': event?.image_url,
                   }),
                   img: 'w-10 h-10',
+                  fallback: 'w-full h-full',
                 },
+                showFallback: event.image_url?.length > 0,
               }}
               classNames={{ description: 'text-slate-400 ' }}
             />
