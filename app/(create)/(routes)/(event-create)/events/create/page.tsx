@@ -14,7 +14,7 @@ import { CiEdit } from 'react-icons/ci'
 import { TbNotes } from 'react-icons/tb'
 import * as yup from 'yup'
 
-import { Avatar, Button, Image, Textarea } from '@nextui-org/react'
+import { Button, Image, Textarea } from '@nextui-org/react'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { UserMenu } from '@/components/common/UserMenu'
@@ -124,20 +124,12 @@ export default function EventsCreatePage() {
                 control={createEventForm.control}
                 name="imageUrl"
                 render={({ field }) => (
-                  <Avatar
-                    src={field.value}
-                    fallback={
-                      <Image
-                        src={IMAGE_PLACEHOLDER}
-                        className="w-full h-full"
-                      />
-                    }
+                  <Image
+                    src={field.value || IMAGE_PLACEHOLDER}
                     classNames={{
-                      base: 'w-full h-full rounded-lg overflow-hidden',
-                      img: 'h-full object-cover',
-                      fallback: 'w-full h-full',
+                      img: 'w-full h-full object-cover',
+                      wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
                     }}
-                    showFallback
                   />
                 )}
               />
