@@ -78,9 +78,10 @@ const getEvent = async ({
   let participants
 
   if (eventId) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await supabase
       .from('enrollment')
-      .select('email,event_role,id')
+      .select('email,event_role,id,profile(first_name,last_name,avatar_url)')
       .eq('event_id', eventId)
       .order('created_at', { ascending: true })
     participants = data

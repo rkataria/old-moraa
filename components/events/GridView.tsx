@@ -1,15 +1,15 @@
 import { DateTime } from 'luxon'
 import { GoDot, GoDotFill } from 'react-icons/go'
 
-import { Chip, Image, User } from '@nextui-org/react'
+import { Chip } from '@nextui-org/react'
 
 import { EventActions } from './EventActions'
+import { Image } from '../common/Image'
 import { Loading } from '../common/Loading'
+import { UserAvatar } from '../common/UserAvatar'
 
 import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
 import { getStatusColor } from '@/utils/event.util'
-import { getProfileName } from '@/utils/profile.util'
-import { getAvatarForName } from '@/utils/utils'
 
 export function GridView({
   eventRows,
@@ -27,19 +27,6 @@ export function GridView({
     return <Loading />
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getAvatar = (profile: any) => {
-    if (profile?.avatar_url) {
-      return profile?.avatar_url
-    }
-
-    if (getProfileName(profile)) {
-      return getAvatarForName(getProfileName(profile)!)
-    }
-
-    return 'https://github.com/shadcn.png'
-  }
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 min-[1920px]:grid-cols-5">
       {eventRows.map((event) => (
@@ -48,13 +35,12 @@ export function GridView({
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-4">
                 <Image
-                  src={
-                    event?.image_url ||
-                    'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
-                  }
-                  classNames={{
-                    wrapper: 'aspect-square w-20 border',
-                    img: 'h-full object-cover',
+                  url={event.image_url}
+                  imageProps={{
+                    classNames: {
+                      wrapper: 'aspect-square w-20 border',
+                      img: 'h-full object-cover',
+                    },
                   }}
                 />
                 <div>
@@ -129,13 +115,13 @@ export function GridView({
                 day: '2-digit',
               })}
             </p>
-            <User
-              name={getProfileName(event.profile)}
+            <UserAvatar
+              profile={event.profile}
+              withName
               avatarProps={{
                 classNames: { base: 'w-6 h-6 min-w-6' },
-                src: getAvatar(event.profile),
               }}
-              classNames={{ name: 'font-medium text-xs text-black/60' }}
+              nameClass="font-medium text-xs text-black/60"
             />
           </div>
           <div className="absolute right-3 top-4">

@@ -12,3 +12,4 @@ export const FRAME_BG_COLOR_PALETTE = [
   '#F78DA7',
   '#9900EF',
 ]
+export const IMAGE_PLACEHOLDER = '/images/image-placeholder.png'
