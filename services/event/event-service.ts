@@ -78,8 +78,6 @@ export class EventService extends APIService {
     return APIService.supabaseClient.functions.invoke('schedule-event', {
       body: {
         ...scheduleInfo,
-        startDate: scheduleInfo.start_date,
-        endDate: scheduleInfo.end_date,
       },
     })
   }

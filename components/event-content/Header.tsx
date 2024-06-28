@@ -11,6 +11,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  useDisclosure,
   Image,
 } from '@nextui-org/react'
 
@@ -31,6 +32,7 @@ export function Header({
   event: any
 }) {
   const { isOwner, preview } = useContext(EventContext) as EventContextType
+  const scheduleModal = useDisclosure()
   const {
     resizableRightSidebarVisiblity,
     rightSidebarVisiblity,
@@ -73,7 +75,6 @@ export function Header({
           <AddParticipantsButtonWithModal eventId={event.id} />
         </div>
 
-        {/* <EditEventButtonWithModal eventId={event.id} /> */}
         {EventStatus.SCHEDULED === event?.status ? (
           <ButtonGroup variant="solid" color="primary" size="sm" radius="md">
             <Button title="Start Session">
@@ -96,19 +97,34 @@ export function Header({
                   <ChevronDownIcon />
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu className="p-0" closeOnSelect={false}>
-                <DropdownItem key="merge" className="p-0" closeOnSelect={false}>
-                  <ScheduleEventButtonWithModal
-                    eventId={event.id}
-                    actionButtonLabel="Re-schedule event"
-                  />
+              <DropdownMenu
+                className="p-0"
+                closeOnSelect={false}
+                onAction={(key) => {
+                  if (key === 're-schedule') {
+                    scheduleModal.onOpen()
+                  }
+                }}>
+                <DropdownItem key="re-schedule" className="p-0" closeOnSelect>
+                  <Button
+                    variant="solid"
+                    color="primary"
+                    size="sm"
+                    radius="md"
+                    fullWidth>
+                    Re-schedule event
+                  </Button>
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </ButtonGroup>
-        ) : (
-          <ScheduleEventButtonWithModal eventId={event.id} />
-        )}
+        ) : null}
+
+        <ScheduleEventButtonWithModal
+          eventId={event.id}
+          showLabel={event?.status !== EventStatus.SCHEDULED}
+          disclosure={scheduleModal}
+        />
       </>
     )
   }
