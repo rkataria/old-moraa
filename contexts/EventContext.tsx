@@ -1084,6 +1084,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     })
   }
 
+  const getCurrentFrame = (activityId: string): IFrame => {
+    const _frames = sections.map((sec) => sec.frames).flat(2)
+    const cFrame = _frames.find((f) => f.id === activityId) as IFrame
+
+    return cFrame
+  }
+
   useHotkeys(
     'p',
     () => isOwner && eventMode === 'edit' && setPreview(!preview),
@@ -1146,6 +1153,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         addFrameToSection,
         moveUpSection,
         moveDownSection,
+        getCurrentFrame,
       }}>
       {children}
     </EventContext.Provider>

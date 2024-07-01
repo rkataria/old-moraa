@@ -20,6 +20,7 @@ import {
   ContentType,
   ContentTypePicker,
 } from '../ContentTypePicker'
+import { DeleteFrameModal } from '../DeleteFrameModal'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -56,6 +57,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     setCurrentFrame,
     updateFrame,
     deleteFrame,
+    getCurrentFrame,
   } = useContext(EventContext) as EventContextType
 
   const editable = isOwner && !preview && isEditable
@@ -70,6 +72,8 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
   const [selectedBreakoutIndex, setSelectedBreakoutIndex] = useState<number>(0)
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
+  const [selectedFrame, setSelectedFrame] = useState<number>(-1)
 
   const handleAddNewFrame = (
     contentType: ContentType,
@@ -114,23 +118,40 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       status: FrameStatus.DRAFT,
     }
 
-    const payload = {
-      content: {
-        ...frame.content,
-        breakoutDetails: [
-          ...(frame.content?.breakoutDetails?.slice(0, selectedBreakoutIndex) ||
-            []),
-          {
-            ...frame.content?.breakoutDetails?.[selectedBreakoutIndex],
-            ...{
-              activityId: newFrame.id,
+    let payload = {}
+    if (frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+      payload = {
+        content: {
+          ...frame.content,
+          breakoutDetails: [
+            ...(frame.content?.breakoutDetails?.slice(
+              0,
+              selectedBreakoutIndex
+            ) || []),
+            {
+              ...frame.content?.breakoutDetails?.[selectedBreakoutIndex],
+              ...{
+                activityId: newFrame.id,
+              },
             },
-          },
-          ...(frame.content?.breakoutDetails?.slice(
-            selectedBreakoutIndex + 1
-          ) || []),
-        ],
-      },
+            ...(frame.content?.breakoutDetails?.slice(
+              selectedBreakoutIndex + 1
+            ) || []),
+          ],
+        },
+      }
+    } else {
+      payload = {
+        content: {
+          ...frame.content,
+          breakoutDetails: frame.content?.breakoutDetails?.map(
+            ({ details }) => ({
+              ...details,
+              activityId: newFrame.id,
+            })
+          ),
+        },
+      }
     }
 
     updateFrame({ framePayload: payload, frameId: frame.id })
@@ -156,41 +177,49 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     updateFrame({ framePayload: payload, frameId: frame.id })
   }
 
-  const getCurrentFrame = (activityId: string): IFrame => {
-    const section = sections.find((sec) =>
-      sec.frames.find((f) => f.id === activityId)
-    )
-    const cFrame = section?.frames.find((f) => f.id === activityId) as IFrame
-
-    return cFrame
+  const deleteRoomGroup = (idx: number): void => {
+    setIsDeleteModalOpen(true)
+    setSelectedFrame(idx)
   }
 
-  const deleteRoomGroup = (idx: number): void => {
-    // frame.content.breakoutDetails?.splice(idx, 1)
-    // const payload = {
-    //   content: {
-    //     ...frame.content,
-    //     breakoutDetails: [...(frame.content.breakoutDetails || [])],
-    //   },
-    // }
+  const handleDelete = (_frame: IFrame) => {
+    deleteFrame(_frame)
+    let payload = {}
+    if (frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+      payload = {
+        content: {
+          ...frame.content,
+          breakoutDetails: [
+            ...(frame.content?.breakoutDetails?.slice(0, selectedFrame) || []),
+            {
+              ...(frame.content?.breakoutDetails?.[selectedFrame] || {}),
+              ...{ activityId: null },
+            },
+            ...(frame.content?.breakoutDetails?.slice(selectedFrame + 1) || []),
+          ],
+        },
+      }
+    } else {
+      const breakoutDetails = frame.content?.breakoutDetails?.map(
+        ({ details }) => ({
+          ...details,
+          activityId: null,
+        })
+      )
 
-    deleteFrame(
-      getCurrentFrame(frame.content?.breakoutDetails?.[idx]?.activityId)
-    )
-    const payload = {
-      content: {
-        ...frame.content,
-        breakoutDetails: [
-          ...(frame.content?.breakoutDetails?.slice(0, idx) || []),
-          {
-            ...(frame.content?.breakoutDetails?.[idx] || {}),
-            ...{ activityId: null },
-          },
-          ...(frame.content?.breakoutDetails?.slice(idx + 1) || []),
-        ],
-      },
+      console.log(breakoutDetails)
+
+      payload = {
+        content: {
+          ...frame.content,
+          breakoutDetails,
+          groupActivityId: null,
+        },
+      }
     }
     updateFrame({ framePayload: payload, frameId: frame.id })
+    setSelectedFrame(-1)
+    setIsDeleteModalOpen(false)
   }
 
   return (
@@ -268,6 +297,17 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
           handleAddNewFrame(content, templateType)
         }}
         isBreakoutActivity
+      />
+      <DeleteFrameModal
+        isModalOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setSelectedFrame(-1)
+        }}
+        handleDelete={handleDelete}
+        frame={getCurrentFrame(
+          frame.content?.breakoutDetails?.[selectedFrame]?.activityId
+        )}
       />
     </div>
   )

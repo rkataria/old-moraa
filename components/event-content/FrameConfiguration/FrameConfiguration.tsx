@@ -2,6 +2,7 @@ import { useContext } from 'react'
 
 import { BsSliders } from 'react-icons/bs'
 
+import { BreakoutConfiguration } from './BreakoutConfiguration'
 import { CommonConfiguration } from './CommonConfiguration'
 import { ConfigurationHeader } from './ConfigurationHeader'
 import { MoraaBoardConfiguration } from './MoraaBoardConfiguration'
@@ -35,7 +36,7 @@ export function FrameConfiguration() {
       <MoraaBoardConfiguration key={currentFrame.id} />
     ),
     [ContentType.CANVAS]: null,
-    [ContentType.BREAKOUT]: null,
+    [ContentType.BREAKOUT]: <BreakoutConfiguration key={currentFrame.id} />,
   }
 
   const renderer = renderersByContentType[currentFrame.type]

@@ -169,6 +169,7 @@ export function BreakoutTypePicker({
                             isDisabled={
                               selectedBreakoutType !== breakoutType.breakoutType
                             }
+                            noNegative
                           />
                         </span>
                         <span
@@ -178,9 +179,11 @@ export function BreakoutTypePicker({
                           }}>
                           <TwoWayNumberCounter
                             defaultCount={5.0}
+                            incrementStep={5}
                             onCountChange={(count) =>
                               setBreakoutRoomsGroupsTime(count)
                             }
+                            noNegative
                             isDisabled={
                               selectedBreakoutType !== breakoutType.breakoutType
                             }

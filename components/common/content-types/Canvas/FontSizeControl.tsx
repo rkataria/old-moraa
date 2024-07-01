@@ -4,6 +4,8 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button, ButtonGroup } from '@nextui-org/react'
 
+import { DeleteFrameModal } from '../../DeleteFrameModal'
+
 import { cn } from '@/utils/utils'
 
 type FontSizeControlProps = {
@@ -13,6 +15,8 @@ type FontSizeControlProps = {
   incrementStep?: number
   postfixLabel?: string
   fullWidth?: boolean
+  noNegative?: boolean
+  isDeleteModal?: boolean
 }
 
 // TODO: Fix this component types whenever this is used.
@@ -23,59 +27,84 @@ export function TwoWayNumberCounter({
   incrementStep = 1,
   postfixLabel,
   fullWidth = false,
+  noNegative = false,
+  isDeleteModal = false,
 }: FontSizeControlProps) {
   const [count, setCount] = useState<number>(defaultCount)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
   const updateByNumber = incrementStep
 
   // hotkeys
   useHotkeys('-', () => {
-    handleFontSizeChange(count - updateByNumber)
+    const cal = count - updateByNumber
+    handleFontSizeChange(cal < 1 ? 1 : cal)
   })
   useHotkeys('-', () => {
     handleFontSizeChange(count + updateByNumber)
   })
+
+  const minusButtonDisabled = isDisabled || (noNegative && count < 1)
 
   const handleFontSizeChange = (newSize: number) => {
     setCount(newSize)
     onFontSizeChange(newSize)
   }
 
+  const handleDelete = () => {
+    handleFontSizeChange(count - updateByNumber)
+    setIsDeleteModalOpen(false)
+  }
+
   return (
-    <ButtonGroup radius="md" fullWidth={fullWidth}>
-      <Button
-        size="sm"
-        variant="flat"
-        className={cn('flex-none', {
-          'bg-gray-200': isDisabled,
-          'bg-gray-300': !isDisabled,
-        })}
-        disabled={isDisabled}
-        onClick={() => handleFontSizeChange(count - updateByNumber)}>
-        -
-      </Button>
-      <input
-        className={cn(
-          'h-8 w-14 text-sm text-center border-y-2 border-gray-100 bg-white flex-none',
-          {
+    <>
+      <ButtonGroup radius="md" fullWidth={fullWidth}>
+        <Button
+          size="sm"
+          variant="flat"
+          className={cn('flex-none', {
+            'bg-gray-200': minusButtonDisabled,
+            'bg-gray-300': !minusButtonDisabled,
+          })}
+          disabled={isDisabled}
+          onClick={() =>
+            isDeleteModal
+              ? setIsDeleteModalOpen(true)
+              : handleFontSizeChange(count - updateByNumber)
+          }>
+          -
+        </Button>
+        <input
+          className={cn(
+            'h-8 w-14 text-sm text-center border-y-2 border-gray-100 bg-white flex-none',
+            {
+              'bg-gray-200': isDisabled,
+            }
+          )}
+          value={`${count}${postfixLabel || ''}`}
+          disabled={isDisabled}
+          onChange={(e) => handleFontSizeChange(+e.target.value)}
+        />
+        <Button
+          size="sm"
+          variant="flat"
+          disabled={isDisabled}
+          className={cn('flex-none', {
             'bg-gray-200': isDisabled,
-          }
-        )}
-        value={`${count}${postfixLabel || ''}`}
-        disabled={isDisabled}
-        onChange={(e) => handleFontSizeChange(+e.target.value)}
+            'bg-gray-300': !isDisabled,
+          })}
+          onClick={() => handleFontSizeChange(count + updateByNumber)}>
+          +
+        </Button>
+      </ButtonGroup>
+      <DeleteFrameModal
+        isModalOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+        }}
+        handleDelete={handleDelete}
+        frame={null}
       />
-      <Button
-        size="sm"
-        variant="flat"
-        disabled={isDisabled}
-        className={cn('flex-none', {
-          'bg-gray-200': isDisabled,
-          'bg-gray-300': !isDisabled,
-        })}
-        onClick={() => handleFontSizeChange(count + updateByNumber)}>
-        +
-      </Button>
-    </ButtonGroup>
+    </>
   )
 }
