@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable array-callback-return */
-import { ReactNode, useContext } from 'react'
+import { ReactNode } from 'react'
 
 import { Draggable } from 'react-beautiful-dnd'
 
@@ -8,9 +8,8 @@ import { FrameItem } from './FrameItem'
 import { ContentType } from '../ContentTypePicker'
 import { RenderIf } from '../RenderIf/RenderIf'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
@@ -26,16 +25,9 @@ export function FrameList({
   droppablePlaceholder,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
-  const { sections, currentFrame } = useContext(
-    EventContext
-  ) as EventContextType
+  const { sections } = useEventContext()
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
-
-  let lastSelectedBreakoutId = ''
-  if (currentFrame && currentFrame.type === ContentType.BREAKOUT) {
-    lastSelectedBreakoutId = currentFrame?.id
-  }
 
   if (!showList) return null
 
@@ -46,11 +38,7 @@ export function FrameList({
         (f) => f?.content?.breakoutFrameId === frame.id
       )
 
-      return breakoutFrames?.map((f) => (
-        <div key={f.id} className="flex w-full">
-          <FrameItem frame={f} />
-        </div>
-      ))
+      return breakoutFrames
     }
 
     return null
@@ -83,11 +71,23 @@ export function FrameList({
               </Draggable>
               <RenderIf
                 isTrue={
-                  (frame.type === ContentType.BREAKOUT &&
-                    currentFrame?.id === frame.id) ||
-                  lastSelectedBreakoutId === frame?.content?.breakoutFrameId
+                  frame.type === ContentType.BREAKOUT ||
+                  Boolean(
+                    getBreakoutFrames(frame)
+                      ?.map((_frame) => _frame.id)
+                      .includes(frame.id)
+                  )
                 }>
-                <div className="ml-6">{getBreakoutFrames(frame)}</div>
+                <div
+                  className={cn('ml-6', {
+                    'my-2': getBreakoutFrames(frame)?.length,
+                  })}>
+                  {getBreakoutFrames(frame)?.map((f) => (
+                    <div key={f.id} className="flex w-full">
+                      <FrameItem frame={f} />
+                    </div>
+                  ))}
+                </div>
               </RenderIf>
             </div>
           </RenderIf>

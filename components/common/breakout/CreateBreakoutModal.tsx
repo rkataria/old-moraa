@@ -13,7 +13,7 @@ import {
   ModalHeader,
 } from '@nextui-org/react'
 
-import { FontSizeControl } from '../content-types/Canvas/FontSizeControl'
+import { TwoWayNumberCounter } from '../content-types/Canvas/FontSizeControl'
 
 import { useBreakoutRoomsManagerWithLatestMeetingState } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -22,24 +22,34 @@ import { PresentationStatuses } from '@/types/event-session.type'
 export type CreateBreakoutModalProps = {
   open: boolean
   setOpen: (open: boolean) => void
-  defaultParticipantsPerRoom?: number
+}
+
+function distributeParticipants(participants: number, rooms: number) {
+  if (participants <= rooms) return 1
+
+  return Math.floor(participants / rooms)
 }
 
 export function CreateBreakoutModal({
   open,
   setOpen,
-  defaultParticipantsPerRoom,
 }: CreateBreakoutModalProps) {
   const { meeting } = useDyteMeeting()
-
-  const totalParticipants = meeting.participants.count
-  const [participantsPerRoom, setParticipantsPerRoom] = useState(
-    defaultParticipantsPerRoom ||
-      (totalParticipants / 5 > 1 ? totalParticipants / 5 : 1)
-  )
-
   const { currentFrame, presentationStatus, setBreakoutSlideId } =
     useEventSession()
+
+  const totalParticipants = meeting.participants.count
+
+  const defaultParticipantsPerRoom = distributeParticipants(
+    totalParticipants,
+    (currentFrame?.content?.breakoutDetails?.length as number) ||
+      Math.ceil(totalParticipants / 10)
+  )
+
+  const [participantsPerRoom, setParticipantsPerRoom] = useState(
+    defaultParticipantsPerRoom
+  )
+  const [breakoutDuration, setBreakoutDuration] = useState(5)
 
   const { startBreakoutRooms: _startBreakoutRooms } =
     useBreakoutRoomsManagerWithLatestMeetingState()
@@ -59,45 +69,48 @@ export function CreateBreakoutModal({
         </ModalHeader>
         <ModalBody>
           <div
-            className="flex items-center justify-between mb-4 pr-10"
+            className="flex items-center justify-between mb-4 pr-12"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
             }}>
             <p>Min. participants per group</p>
             <div className="w-10">
-              <FontSizeControl
-                size={5.0}
-                onFontSizeChange={(count) => setParticipantsPerRoom(count)}
+              <TwoWayNumberCounter
+                defaultCount={participantsPerRoom}
+                onCountChange={(count) => setParticipantsPerRoom(count)}
+                incrementStep={1}
                 fullWidth
               />
             </div>
           </div>
           <div
-            className="flex items-center justify-between mb-4 pr-10"
+            className="flex items-center justify-between mb-4 pr-12"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
             }}>
             <p>Duration</p>
             <div className="w-10">
-              <FontSizeControl
-                size={5.0}
-                onFontSizeChange={(count) => setParticipantsPerRoom(count)}
-                isTime
+              <TwoWayNumberCounter
+                defaultCount={breakoutDuration}
+                onCountChange={(count) => setBreakoutDuration(count)}
+                postfixLabel=" Min"
+                incrementStep={5}
                 fullWidth
               />
             </div>
           </div>
         </ModalBody>
         <ModalFooter>
+          <Button variant="bordered" onClick={() => setOpen(false)} size="sm">
+            Cancel
+          </Button>
           <Button
             color="primary"
             variant="solid"
-            onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button color="primary" variant="solid" onClick={startBreakoutRooms}>
+            onClick={startBreakoutRooms}
+            size="sm">
             Start Breakout
           </Button>
         </ModalFooter>

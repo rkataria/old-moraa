@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Card } from '@nextui-org/react'
 
 // eslint-disable-next-line import/no-cycle
+import { BreakoutActivityCard } from './BreakoutActivityCard'
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import {
@@ -19,7 +20,6 @@ import {
   ContentType,
   ContentTypePicker,
 } from '../ContentTypePicker'
-import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -44,7 +44,7 @@ interface BreakoutProps {
   isEditable?: boolean
 }
 
-export function Breakout({ frame, isEditable = false }: BreakoutProps) {
+export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
   const {
     isOwner,
     preview,
@@ -194,71 +194,25 @@ export function Breakout({ frame, isEditable = false }: BreakoutProps) {
   }
 
   return (
-    <div className="bottom-6 absolute">
+    <div>
       <RenderIf isTrue={Boolean(frame.content?.breakoutDetails?.length)}>
         <RenderIf
           isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS}>
-          <div className="grid grid-cols-3 gap-2 grid-flow-col">
+          <div className="grid grid-cols-3 gap-2 grid-flow-col h-60">
             {frame.content?.breakoutDetails?.map((breakout, idx) => (
-              <Card
-                key={`breakout-${frame.config?.selectedBreakout}-${breakout?.name}`}
-                className="border p-4 ">
-                <div className="flex justify-between gap-4">
-                  <EditableLabel
-                    readOnly={!editable}
-                    label={breakout?.name || ''}
-                    className="text-sm"
-                    onUpdate={(value) => {
-                      if (!editable) return
-                      if (frame.content.breakout === value) return
-
-                      updateBreakoutGroupRoomNameName(value, idx)
-                    }}
-                  />
-                  <RenderIf isTrue={editable}>
-                    <span className="flex gap-2">
-                      <IoAddSharp
-                        className="border border-dashed border-gray-400 text-gray-400"
-                        onClick={() => {
-                          setOpenContentTypePicker(true)
-                          setSelectedBreakoutIndex(idx)
-                        }}
-                      />
-                      <IoAddSharp
-                        className="rotate-45"
-                        onClick={() => deleteRoomGroup(idx)}
-                      />
-                    </span>
-                  </RenderIf>
-                </div>
-                <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-full min-w-48">
-                  {breakout?.activityId ? (
-                    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-                    <div
-                      ref={thumbnailContainerRef}
-                      className="relative w-full h-full"
-                      onClick={() => {
-                        if (!editable) return
-                        setCurrentFrame(getCurrentFrame(breakout?.activityId))
-                      }}>
-                      <FrameThumbnailCard
-                        frame={getCurrentFrame(breakout?.activityId)}
-                        containerWidth={containerWidth}
-                      />
-                    </div>
-                  ) : (
-                    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-                    <span
-                      onClick={() => {
-                        setOpenContentTypePicker(true)
-                        setSelectedBreakoutIndex(idx)
-                      }}>
-                      You can add existing slide from any section or add new
-                      slide which will be added under the Breakout section
-                    </span>
-                  )}
-                </div>
-              </Card>
+              <BreakoutActivityCard
+                breakout={breakout}
+                deleteRoomGroup={deleteRoomGroup}
+                idx={idx}
+                editable={editable}
+                onAddNewActivity={() => {
+                  setOpenContentTypePicker(true)
+                  setSelectedBreakoutIndex(idx)
+                }}
+                updateBreakoutGroupRoomNameName={
+                  updateBreakoutGroupRoomNameName
+                }
+              />
             ))}
           </div>
         </RenderIf>
@@ -278,7 +232,7 @@ export function Breakout({ frame, isEditable = false }: BreakoutProps) {
                 </span>
               </RenderIf>
             </div>
-            <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-52 min-w-48">
+            <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-96 min-w-48">
               <RenderIf isTrue={Boolean(frame?.content?.activityId)}>
                 {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
                 <div

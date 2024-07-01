@@ -12,12 +12,16 @@ import {
   CardHeader,
 } from '@nextui-org/react'
 
+import { BreakoutActivityCard } from './BreakoutActivityCard'
+
 import { useBreakoutRoomsManagerWithLatestMeetingState } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 
+// TODO: Remove this component
 export function BreakoutRoomsWithParticipants() {
   const { meeting } = useDyteMeeting()
-  const { setIsBreakoutSlide, setBreakoutSlideId } = useEventSession()
+  const { currentFrame, setIsBreakoutSlide, setBreakoutSlideId } =
+    useEventSession()
   const { endBreakoutRooms: _endBreakoutRooms, joinRoom: _joinRoom } =
     useBreakoutRoomsManagerWithLatestMeetingState()
 
@@ -34,7 +38,7 @@ export function BreakoutRoomsWithParticipants() {
   return (
     <div className="m-1 w-full flex-1 pr-12">
       <div className="flex">
-        {meeting.connectedMeetings.meetings.map((meet) => (
+        {meeting.connectedMeetings.meetings.map((meet, index) => (
           <div key={meet.id} className="mr-4">
             <Card
               className="p-2 overflow-y-auto"
@@ -47,6 +51,14 @@ export function BreakoutRoomsWithParticipants() {
                 <p className="text-md font-semibold">{meet.title}</p>
               </CardHeader>
               <CardBody>
+                <BreakoutActivityCard
+                  breakout={currentFrame?.content?.breakoutDetails?.[index]}
+                  deleteRoomGroup={() => null}
+                  idx={0}
+                  editable={false}
+                  onAddNewActivity={() => null}
+                  updateBreakoutGroupRoomNameName={() => null}
+                />
                 {meet.participants.length === 0 ? (
                   <p className="text-sm text-gray-400">No participants</p>
                 ) : null}

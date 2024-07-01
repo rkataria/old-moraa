@@ -7,34 +7,37 @@ import { Button, ButtonGroup } from '@nextui-org/react'
 import { cn } from '@/utils/utils'
 
 type FontSizeControlProps = {
-  size?: number
-  onFontSizeChange: (size: number) => void
+  defaultCount?: number
+  onCountChange: (size: number) => void
   isDisabled?: boolean
-  isTime?: boolean
+  incrementStep?: number
+  postfixLabel?: string
   fullWidth?: boolean
 }
 
-export function FontSizeControl({
-  size = 16,
-  onFontSizeChange,
+// TODO: Fix this component types whenever this is used.
+export function TwoWayNumberCounter({
+  defaultCount = 16,
+  onCountChange: onFontSizeChange,
   isDisabled = false,
-  isTime = false,
+  incrementStep = 1,
+  postfixLabel,
   fullWidth = false,
 }: FontSizeControlProps) {
-  const [fontSize, setFontSize] = useState<number>(size)
+  const [count, setCount] = useState<number>(defaultCount)
 
-  const updateByNumber = isTime ? 5 : 1
+  const updateByNumber = incrementStep
 
   // hotkeys
   useHotkeys('-', () => {
-    handleFontSizeChange(fontSize - updateByNumber)
+    handleFontSizeChange(count - updateByNumber)
   })
   useHotkeys('-', () => {
-    handleFontSizeChange(fontSize + updateByNumber)
+    handleFontSizeChange(count + updateByNumber)
   })
 
   const handleFontSizeChange = (newSize: number) => {
-    setFontSize(newSize)
+    setCount(newSize)
     onFontSizeChange(newSize)
   }
 
@@ -48,7 +51,7 @@ export function FontSizeControl({
           'bg-gray-300': !isDisabled,
         })}
         disabled={isDisabled}
-        onClick={() => handleFontSizeChange(fontSize - updateByNumber)}>
+        onClick={() => handleFontSizeChange(count - updateByNumber)}>
         -
       </Button>
       <input
@@ -58,7 +61,7 @@ export function FontSizeControl({
             'bg-gray-200': isDisabled,
           }
         )}
-        value={`${fontSize}${isTime ? ' min' : ''}`}
+        value={`${count}${postfixLabel || ''}`}
         disabled={isDisabled}
         onChange={(e) => handleFontSizeChange(+e.target.value)}
       />
@@ -70,7 +73,7 @@ export function FontSizeControl({
           'bg-gray-200': isDisabled,
           'bg-gray-300': !isDisabled,
         })}
-        onClick={() => handleFontSizeChange(fontSize + updateByNumber)}>
+        onClick={() => handleFontSizeChange(count + updateByNumber)}>
         +
       </Button>
     </ButtonGroup>

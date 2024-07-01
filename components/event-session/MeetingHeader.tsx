@@ -20,16 +20,13 @@ import { ScreenShareToggle } from './ScreenShareToggle'
 import { Timer } from './Timer'
 import { VideoToggle } from './VideoToggle'
 import { WhiteBoardToggle } from './WhiteBoardToggle'
-import { BreakoutToggleButton } from '../common/breakout/BreakoutToggleButton'
+import { BreakoutHeaderButton } from '../common/breakout/BreakoutToggleButton'
 import { ControlButton } from '../common/ControlButton'
 import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 
-import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
-import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { IFrame } from '@/types/frame.type'
 
 export type DyteStates = {
   [key: string]: string | boolean
@@ -47,23 +44,9 @@ export function MeetingHeader({
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const {
-    isHost,
-    eventSessionMode,
-    isBreakoutSlide,
-    currentFrame,
-    setIsBreakoutSlide,
-    isCreateBreakoutOpen,
-    setIsCreateBreakoutOpen,
-    setCurrentFrame,
-    breakoutSlideId,
-  } = useEventSession()
-  const { sections } = useEventContext()
+  const { isHost, eventSessionMode } = useEventSession()
   const { rightSidebarVisiblity, setRightSidebarVisiblity, toggleLeftSidebar } =
     useStudioLayout()
-
-  const { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom } =
-    useBreakoutRooms()
 
   useHotkeys('ctrl + [', toggleLeftSidebar, [])
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), [])
@@ -87,44 +70,6 @@ export function MeetingHeader({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setRightSidebarVisiblity(data.sidebar as any)
     }
-  }
-
-  const breakoutFrame = sections
-    ?.map((section) => section.frames)
-    .flat()
-    .find((frame) => frame.id === breakoutSlideId)
-
-  const getBreakoutToggleButton = () => {
-    if (!isHost) return null
-    if (isCurrentDyteMeetingInABreakoutRoom) return null
-    if (!isBreakoutActive) {
-      return (
-        <BreakoutToggleButton
-          isActive={isCreateBreakoutOpen}
-          onClick={() => setIsCreateBreakoutOpen(!isCreateBreakoutOpen)}
-        />
-      )
-    }
-
-    if (!breakoutSlideId) {
-      return (
-        <BreakoutToggleButton
-          isActive={isBreakoutSlide}
-          onClick={() => setIsBreakoutSlide(!isBreakoutSlide)}
-        />
-      )
-    }
-
-    if (breakoutSlideId) {
-      return (
-        <BreakoutToggleButton
-          isActive={currentFrame?.id === breakoutSlideId}
-          onClick={() => setCurrentFrame(breakoutFrame as IFrame)}
-        />
-      )
-    }
-
-    return null
   }
 
   return (
@@ -168,7 +113,7 @@ export function MeetingHeader({
         />
         <WhiteBoardToggle />
         <Timer />
-        {getBreakoutToggleButton()}
+        <BreakoutHeaderButton />
       </div>
 
       <div className="flex justify-end items-center gap-3">

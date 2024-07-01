@@ -100,11 +100,12 @@ export const useBreakoutRoomsManagerWithLatestMeetingState = () => {
     }
   }, [dyteMeeting, updateLocalState, close])
 
-  const startBreakoutRooms = ({ participantsPerRoom = 1 }) => {
+  const startBreakoutRooms = ({ participantsPerRoom = 1, roomsCount = 2 }) => {
     createAndAutoAssignBreakoutRooms({
       groupSize: participantsPerRoom,
       meeting: dyteMeeting,
       stateManager: breakoutRoomsManager,
+      roomsCount,
     })
   }
 

@@ -9,7 +9,8 @@ import { Poll, Vote } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
 import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
-import { Breakout, BreakoutFrame } from '../common/content-types/Breakout'
+import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
+import { BreakoutLive } from '../common/breakout/BreakoutLive'
 import { CanvasPreview } from '../common/content-types/Canvas/Preview'
 import { MoraaBoard } from '../common/content-types/MoraaBoard'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
@@ -101,15 +102,17 @@ export function Frame() {
     [ContentType.CANVAS]: (
       <CanvasPreview key={currentFrame.id} frame={currentFrame as any} />
     ),
-    [ContentType.BREAKOUT]: <Breakout frame={currentFrame as BreakoutFrame} />,
+    [ContentType.BREAKOUT]: (
+      <BreakoutLive frame={currentFrame as BreakoutFrame} />
+    ),
   }
 
   const renderer = renderersByContentType[currentFrame.type]
 
   return (
-    <>
+    <div className="relative h-full w-full">
       <FrameTitleDescriptionPreview frame={currentFrame as any} />
       {renderer}
-    </>
+    </div>
   )
 }

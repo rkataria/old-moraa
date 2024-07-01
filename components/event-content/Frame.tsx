@@ -16,7 +16,7 @@ import { MiroEmbedEditor } from './MiroEmbedEditor'
 import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
-import { Breakout } from '../common/content-types/Breakout'
+import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
 import { Canvas } from '../common/content-types/Canvas'
 import { FramePreview } from '../common/FramePreview'
 
@@ -93,7 +93,7 @@ export function Frame({ frame }: FrameProps) {
           <MoraaBoardEditor frame={frame} />
         )}
         {frame.type === ContentType.BREAKOUT && (
-          <Breakout frame={frame as any} isEditable />
+          <BreakoutFrame frame={frame as any} isEditable />
         )}
       </div>
     </div>

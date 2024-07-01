@@ -30,6 +30,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { EventContextType } from '@/types/event-context.type'
 import { PresentationStatuses } from '@/types/event-session.type'
+import { ContentType } from '@/utils/content.util'
 
 export type RightSiderbar =
   | 'participants'
@@ -131,7 +132,9 @@ export function MeetingScreen() {
       }
       rightSidebarControls={<RightSidebarControls />}
       bottomContent={
-        isBreakoutActive && breakoutSlideId === currentFrame?.id ? (
+        isBreakoutActive &&
+        breakoutSlideId === currentFrame?.id &&
+        currentFrame.type !== ContentType.BREAKOUT ? (
           <BreakoutRoomsWithParticipants />
         ) : null
       }>

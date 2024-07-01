@@ -4,7 +4,7 @@
 import { useEffect } from 'react'
 
 // eslint-disable-next-line import/no-cycle
-import { Breakout, BreakoutFrame } from './content-types/Breakout'
+import { BreakoutFrame } from './breakout/BreakoutFrame'
 import { CanvasPreview } from './content-types/Canvas/Preview'
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
@@ -117,7 +117,7 @@ export function FramePreview({ frame, readOnly }: FrameProps) {
           <MoraaBoard frame={frame as MoraaBoardFrame} />
         )}
         {frame.type === ContentType.BREAKOUT && (
-          <Breakout frame={frame as BreakoutFrame} />
+          <BreakoutFrame frame={frame as BreakoutFrame} />
         )}
       </div>
     </div>

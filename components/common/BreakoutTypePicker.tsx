@@ -18,7 +18,7 @@ import {
   Button,
 } from '@nextui-org/react'
 
-import { FontSizeControl } from './content-types/Canvas/FontSizeControl'
+import { TwoWayNumberCounter } from './content-types/Canvas/FontSizeControl'
 
 import { cn } from '@/utils/utils'
 
@@ -161,9 +161,9 @@ export function BreakoutTypePicker({
                             e.preventDefault()
                             e.stopPropagation()
                           }}>
-                          <FontSizeControl
-                            size={0}
-                            onFontSizeChange={(count) =>
+                          <TwoWayNumberCounter
+                            defaultCount={0}
+                            onCountChange={(count) =>
                               setBreakoutRoomsGroupsCount(count)
                             }
                             isDisabled={
@@ -176,15 +176,14 @@ export function BreakoutTypePicker({
                             e.preventDefault()
                             e.stopPropagation()
                           }}>
-                          <FontSizeControl
-                            size={5.0}
-                            onFontSizeChange={(count) =>
+                          <TwoWayNumberCounter
+                            defaultCount={5.0}
+                            onCountChange={(count) =>
                               setBreakoutRoomsGroupsTime(count)
                             }
                             isDisabled={
                               selectedBreakoutType !== breakoutType.breakoutType
                             }
-                            isTime
                           />
                         </span>
                       </CardBody>

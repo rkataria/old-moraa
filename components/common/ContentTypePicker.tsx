@@ -12,7 +12,7 @@ import {
   IconFileText,
 } from '@tabler/icons-react'
 import { BsQuestionCircle } from 'react-icons/bs'
-import { GoChevronDown } from 'react-icons/go'
+import { IoPeopleOutline } from 'react-icons/io5'
 import { MdOutlineDraw } from 'react-icons/md'
 import { SiMiro } from 'react-icons/si'
 
@@ -119,7 +119,7 @@ export const contentTypes: IContentType[] = [
   // },
   {
     name: 'Breakout',
-    icon: <GoChevronDown className="w-full h-full max-w-11 max-h-11" />,
+    icon: <IoPeopleOutline className="w-full h-full max-w-11 max-h-11" />,
     description: 'Plan breakout rooms and activities',
     contentType: ContentType.BREAKOUT,
   },
@@ -247,7 +247,7 @@ export function ContentTypePicker({
               {collaborativeActivities.map((activity) => (
                 <RenderIf
                   isTrue={Boolean(
-                    isBreakoutActivity && activity?.isAvailableForBreakout
+                    isBreakoutActivity ? activity?.isAvailableForBreakout : true
                   )}>
                   <ContentTypeCard card={activity} onClick={onChoose} />
                 </RenderIf>
@@ -270,7 +270,9 @@ export function ContentTypePicker({
                 {presentationContent.map((activity) => (
                   <RenderIf
                     isTrue={Boolean(
-                      isBreakoutActivity && activity?.isAvailableForBreakout
+                      isBreakoutActivity
+                        ? activity?.isAvailableForBreakout
+                        : true
                     )}>
                     <ContentTypeCard card={activity} onClick={onChoose} />
                   </RenderIf>
@@ -293,7 +295,7 @@ export function ContentTypePicker({
               {goodies.map((activity) => (
                 <RenderIf
                   isTrue={Boolean(
-                    isBreakoutActivity && activity?.isAvailableForBreakout
+                    isBreakoutActivity ? activity?.isAvailableForBreakout : true
                   )}>
                   <ContentTypeCard card={activity} onClick={onChoose} />
                 </RenderIf>

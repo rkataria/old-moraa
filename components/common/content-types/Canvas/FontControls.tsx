@@ -6,7 +6,7 @@ import FontFaceObserver from 'fontfaceobserver'
 import { Select, SelectItem } from '@nextui-org/react'
 
 import { CanvasFrameContext, CanvasFrameContextType } from './CanvasProvider'
-import { FontSizeControl } from './FontSizeControl'
+import { TwoWayNumberCounter } from './FontSizeControl'
 
 type FontFamilyOption = {
   key: string
@@ -63,9 +63,9 @@ export function FontControls() {
           <SelectItem key={_fontFamily.key}>{_fontFamily.label}</SelectItem>
         ))}
       </Select>
-      <FontSizeControl
-        size={activeObject?.fontSize}
-        onFontSizeChange={(size) => {
+      <TwoWayNumberCounter
+        defaultCount={activeObject?.fontSize}
+        onCountChange={(size) => {
           activeObject?.set('fontSize', size)
           canvas?.renderAll()
         }}

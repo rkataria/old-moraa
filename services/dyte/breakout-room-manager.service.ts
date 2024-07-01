@@ -40,10 +40,13 @@ export const createAndAutoAssignBreakoutRooms = async ({
 
   const participantGroups = chunk(participantsWithoutSelf, groupSize)
 
-  const createdMeetings = stateManager.addNewMeetings(participantGroups.length)
+  const createdMeetings = stateManager.addNewMeetings(
+    roomsCount || participantGroups.length
+  )
 
   createdMeetings.forEach((createdMeeting, index) => {
     const breakoutRoomParticipants = participantGroups[index]
+    if (!breakoutRoomParticipants?.length) return
 
     stateManager.assignParticipantsToMeeting(
       breakoutRoomParticipants.map((p) => p.customParticipantId!),
