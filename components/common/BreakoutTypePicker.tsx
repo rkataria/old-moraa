@@ -87,10 +87,10 @@ export function BreakoutTypePicker({
     useState<BREAKOUT_TYPES>(BREAKOUT_TYPES.GROUPS)
 
   const [breakoutRoomsGroupsCount, setBreakoutRoomsGroupsCount] =
-    useState<number>(0)
+    useState<number>(1)
 
   const [breakoutRoomsGroupsTime, setBreakoutRoomsGroupsTime] =
-    useState<number>(0)
+    useState<number>(5)
 
   const onSubmit = () => {
     onChoose(
@@ -156,13 +156,14 @@ export function BreakoutTypePicker({
                         <p className="text-sm mt-1 w-full font-normal">
                           {breakoutType.description}
                         </p>
+                        <span>No of {breakoutType.breakoutType}s</span>
                         <span
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
                           }}>
                           <TwoWayNumberCounter
-                            defaultCount={0}
+                            defaultCount={1}
                             onCountChange={(count) =>
                               setBreakoutRoomsGroupsCount(count)
                             }
@@ -172,14 +173,16 @@ export function BreakoutTypePicker({
                             noNegative
                           />
                         </span>
+                        <span>Duration</span>
                         <span
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
                           }}>
                           <TwoWayNumberCounter
-                            defaultCount={5.0}
+                            defaultCount={5}
                             incrementStep={5}
+                            postfixLabel="min"
                             onCountChange={(count) =>
                               setBreakoutRoomsGroupsTime(count)
                             }

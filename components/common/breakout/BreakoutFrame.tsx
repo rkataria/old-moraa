@@ -228,7 +228,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       <RenderIf isTrue={Boolean(frame.content?.breakoutDetails?.length)}>
         <RenderIf
           isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS}>
-          <div className="grid grid-cols-3 gap-2 grid-flow-col h-60">
+          <div className="grid grid-flow-col grid-cols-5 gap-2 h-auto overflow-y-auto max-h-72">
             {frame.content?.breakoutDetails?.map((breakout, idx) => (
               <BreakoutActivityCard
                 breakout={breakout}

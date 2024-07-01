@@ -33,18 +33,16 @@ export function TwoWayNumberCounter({
   const [count, setCount] = useState<number>(defaultCount)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
-  const updateByNumber = incrementStep
-
   // hotkeys
   useHotkeys('-', () => {
-    const cal = count - updateByNumber
-    handleFontSizeChange(cal < 1 ? 1 : cal)
+    const cal = count - incrementStep
+    handleFontSizeChange(cal < 1 ? defaultCount : cal)
   })
   useHotkeys('-', () => {
-    handleFontSizeChange(count + updateByNumber)
+    handleFontSizeChange(count + incrementStep)
   })
 
-  const minusButtonDisabled = isDisabled || (noNegative && count < 1)
+  const minusButtonDisabled = isDisabled || (noNegative && count < 2)
 
   const handleFontSizeChange = (newSize: number) => {
     setCount(newSize)
@@ -52,7 +50,8 @@ export function TwoWayNumberCounter({
   }
 
   const handleDelete = () => {
-    handleFontSizeChange(count - updateByNumber)
+    const cal = count - incrementStep
+    handleFontSizeChange(cal < 1 ? defaultCount : cal)
     setIsDeleteModalOpen(false)
   }
 
@@ -66,11 +65,11 @@ export function TwoWayNumberCounter({
             'bg-gray-200': minusButtonDisabled,
             'bg-gray-300': !minusButtonDisabled,
           })}
-          disabled={isDisabled}
+          disabled={minusButtonDisabled}
           onClick={() =>
             isDeleteModal
               ? setIsDeleteModalOpen(true)
-              : handleFontSizeChange(count - updateByNumber)
+              : handleFontSizeChange(count - incrementStep)
           }>
           -
         </Button>
@@ -93,7 +92,7 @@ export function TwoWayNumberCounter({
             'bg-gray-200': isDisabled,
             'bg-gray-300': !isDisabled,
           })}
-          onClick={() => handleFontSizeChange(count + updateByNumber)}>
+          onClick={() => handleFontSizeChange(count + incrementStep)}>
           +
         </Button>
       </ButtonGroup>

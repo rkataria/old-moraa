@@ -1,18 +1,15 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 import { TwoWayNumberCounter } from '@/components/common/content-types/Canvas/FontSizeControl'
-import { DeleteFrameModal } from '@/components/common/DeleteFrameModal'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { IFrame } from '@/types/frame.type'
 
 export function BreakoutConfiguration() {
   const { currentFrame, updateFrame, getCurrentFrame, deleteFrame } =
     useContext(EventContext) as EventContextType
   if (!currentFrame) return null
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
-  const [selectedFrame, setSelectedFrame] = useState<string>('')
+
   const updateBreakout = (count: number) => {
     if (count > currentFrame?.config?.breakoutCount) {
       updateFrame({
@@ -26,7 +23,7 @@ export function BreakoutConfiguration() {
             breakoutDetails: [
               ...(currentFrame?.content?.breakoutDetails || []),
               {
-                name: `${currentFrame?.config?.breakoutType} - ${count}`,
+                name: `${currentFrame?.config?.selectedBreakout} - ${count}`,
               },
             ],
           },
@@ -34,13 +31,20 @@ export function BreakoutConfiguration() {
         frameId: currentFrame.id,
       })
     } else {
-      setSelectedFrame(
-        currentFrame?.content?.breakoutDetails?.[count]?.activityId
+      handleDelete(
+        currentFrame?.content?.breakoutDetails?.[count]?.activityId,
+        count
       )
     }
   }
-  const handleDelete = (frame: IFrame) => {
-    deleteFrame(frame)
+  const handleDelete = (activityId: string, count: number) => {
+    if (activityId) {
+      deleteFrame(
+        getCurrentFrame(
+          currentFrame?.content?.breakoutDetails?.[count]?.activityId
+        )
+      )
+    }
     currentFrame?.content?.breakoutDetails?.pop()
     updateFrame({
       framePayload: {
@@ -77,6 +81,7 @@ export function BreakoutConfiguration() {
           }}
           noNegative
           incrementStep={5}
+          postfixLabel="min"
         />
       </span>
       <span className="flex items-center justify-between">
@@ -85,16 +90,9 @@ export function BreakoutConfiguration() {
           defaultCount={currentFrame?.config?.breakoutCount}
           noNegative
           onCountChange={(count) => updateBreakout(count)}
+          isDeleteModal
         />
       </span>
-      <DeleteFrameModal
-        isModalOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false)
-        }}
-        handleDelete={handleDelete}
-        frame={getCurrentFrame(selectedFrame)}
-      />
     </>
   )
 }

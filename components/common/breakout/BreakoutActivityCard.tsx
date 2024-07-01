@@ -54,7 +54,7 @@ export function BreakoutActivityCard({
   }
 
   return (
-    <Card className="border p-4 h-full">
+    <Card className="border p-4 h-full" key={breakout?.name}>
       <div className="flex justify-between gap-4">
         <EditableLabel
           readOnly={!editable}
