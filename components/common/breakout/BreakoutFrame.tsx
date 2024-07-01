@@ -150,6 +150,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
               activityId: newFrame.id,
             })
           ),
+          activityId: newFrame.id,
         },
       }
     }
