@@ -1,13 +1,16 @@
 /* eslint-disable react/no-danger */
-import React, { useContext } from 'react'
+import React, { Fragment, useContext } from 'react'
 
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 import { MdDragIndicator, MdOutlineDragHandle } from 'react-icons/md'
 
 import { Button, Switch } from '@nextui-org/react'
 
+import { BREAKOUT_TYPES } from './BreakoutTypePicker'
 import { ContentTypeIcon } from './ContentTypeIcon'
+import { ContentType } from './ContentTypePicker'
 import { EditableLabel } from './EditableLabel'
+import { RenderIf } from './RenderIf/RenderIf'
 import { StrictModeDroppable } from './StrictModeDroppable'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -48,6 +51,34 @@ export function SectionOverview() {
         status: newState,
       },
     })
+    if (
+      frame.type === ContentType.BREAKOUT &&
+      frame?.content?.breakoutDetails?.length
+    ) {
+      if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+        frame?.content?.breakoutDetails?.map((ele) => {
+          if (ele?.activityId) {
+            updateFrame({
+              frameId: ele?.activityId,
+              framePayload: {
+                status: newState,
+              },
+            })
+          }
+
+          return ele
+        })
+      } else if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.GROUPS) {
+        if (frame?.content?.groupActivityId) {
+          updateFrame({
+            frameId: frame?.content?.groupActivityId,
+            framePayload: {
+              status: newState,
+            },
+          })
+        }
+      }
+    }
   }
 
   const changeSectionStatus = (
@@ -176,75 +207,85 @@ export function SectionOverview() {
                                           <div className="flex flex-col justify-start items-start gap-1 w-full px-2 pb-2 rounded-sm transition-all">
                                             {filteredFrames.map(
                                               (frame, frameIndex) => (
-                                                <React.Fragment key={frame.id}>
-                                                  <Draggable
-                                                    key={`frame-draggable-${frame.id}`}
-                                                    draggableId={`frame-draggable-frameId-${frame.id}`}
-                                                    isDragDisabled={!editable}
-                                                    index={frameIndex}>
-                                                    {(_provided) => (
-                                                      <div
-                                                        key={frame.id}
-                                                        ref={_provided.innerRef}
-                                                        {..._provided.draggableProps}
-                                                        className="mt-2 flex w-full">
+                                                <RenderIf
+                                                  isTrue={
+                                                    !frame?.content
+                                                      ?.breakoutFrameId
+                                                  }>
+                                                  <Fragment key={frame.id}>
+                                                    <Draggable
+                                                      key={`frame-draggable-${frame.id}`}
+                                                      draggableId={`frame-draggable-frameId-${frame.id}`}
+                                                      isDragDisabled={!editable}
+                                                      index={frameIndex}>
+                                                      {(_provided) => (
                                                         <div
-                                                          className="p-2 flex items-center justify-center"
-                                                          {..._provided.dragHandleProps}>
-                                                          <MdOutlineDragHandle
-                                                            height={40}
-                                                            width={30}
-                                                          />
-                                                        </div>
-                                                        <div
-                                                          className="mr-2 rounded-md overflow-hidden border border-gray-400 flex items-center"
-                                                          style={{ flex: 3 }}>
-                                                          <ContentTypeIcon
-                                                            classNames="m-2"
-                                                            frameType={
-                                                              frame.type
-                                                            }
-                                                          />
-                                                          <div className="bg-white p-2 h-full w-full flex flex-col">
-                                                            <EditableLabel
-                                                              readOnly={
-                                                                !editable
+                                                          key={frame.id}
+                                                          ref={
+                                                            _provided.innerRef
+                                                          }
+                                                          {..._provided.draggableProps}
+                                                          className="mt-2 flex w-full">
+                                                          <div
+                                                            className="p-2 flex items-center justify-center"
+                                                            {..._provided.dragHandleProps}>
+                                                            <MdOutlineDragHandle
+                                                              height={40}
+                                                              width={30}
+                                                            />
+                                                          </div>
+                                                          <div
+                                                            className="mr-2 rounded-md overflow-hidden border border-gray-400 flex items-center"
+                                                            style={{ flex: 3 }}>
+                                                            <ContentTypeIcon
+                                                              classNames="m-2"
+                                                              frameType={
+                                                                frame.type
                                                               }
-                                                              label={frame.name}
-                                                              onUpdate={(
-                                                                value
-                                                              ) =>
-                                                                onFrameTitleChange(
-                                                                  frame.id,
+                                                            />
+                                                            <div className="bg-white p-2 h-full w-full flex flex-col">
+                                                              <EditableLabel
+                                                                readOnly={
+                                                                  !editable
+                                                                }
+                                                                label={
+                                                                  frame.name
+                                                                }
+                                                                onUpdate={(
                                                                   value
-                                                                )
-                                                              }
-                                                            />
+                                                                ) =>
+                                                                  onFrameTitleChange(
+                                                                    frame.id,
+                                                                    value
+                                                                  )
+                                                                }
+                                                              />
+                                                            </div>
                                                           </div>
+                                                          {editable && (
+                                                            <div className="flex items-center justify-center p-2">
+                                                              <Switch
+                                                                size="sm"
+                                                                isSelected={
+                                                                  frame.status ===
+                                                                  FrameStatus.PUBLISHED
+                                                                }
+                                                                onChange={() =>
+                                                                  changeFrameStatus(
+                                                                    frame
+                                                                  )
+                                                                }
+                                                                disabled={
+                                                                  !isOwner
+                                                                }
+                                                              />
+                                                            </div>
+                                                          )}
                                                         </div>
-                                                        {editable && (
-                                                          <div className="flex items-center justify-center p-2">
-                                                            <Switch
-                                                              size="sm"
-                                                              isSelected={
-                                                                frame.status ===
-                                                                FrameStatus.PUBLISHED
-                                                              }
-                                                              onChange={() =>
-                                                                changeFrameStatus(
-                                                                  frame
-                                                                )
-                                                              }
-                                                              disabled={
-                                                                !isOwner
-                                                              }
-                                                            />
-                                                          </div>
-                                                        )}
-                                                      </div>
-                                                    )}
-                                                  </Draggable>
-                                                </React.Fragment>
+                                                      )}
+                                                    </Draggable>
+                                                  </Fragment>
+                                                </RenderIf>
                                               )
                                             )}
                                           </div>

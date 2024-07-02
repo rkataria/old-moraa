@@ -48,6 +48,11 @@ export interface ISection {
   status?: string
 }
 
+export interface IBreakoutDetails {
+  name: string
+  activityId?: string
+}
+
 export interface IFrame {
   id: string
   name: string
@@ -56,7 +61,8 @@ export interface IFrame {
     description?: string
     blocks?: TextBlock[] | FileBlock[]
     panelSizes?: number[]
-    breakoutDetails?: any[]
+    breakoutDetails?: IBreakoutDetails[]
+    groupActivityId?: string
     [key: string]: unknown
   }
   created_at?: string

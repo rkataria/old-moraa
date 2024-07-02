@@ -15,7 +15,6 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
-import { IFrame } from '@/types/frame.type'
 
 interface BreakoutCardProps {
   breakout: any
@@ -42,16 +41,7 @@ export function BreakoutActivityCard({
     thumbnailContainerRef,
     'maximized'
   )
-  const { setCurrentFrame, sections } = useEventContext()
-
-  const getCurrentFrame = (activityId: string): IFrame => {
-    const section = sections.find((sec) =>
-      sec.frames.find((f) => f.id === activityId)
-    )
-    const cFrame = section?.frames.find((f) => f.id === activityId) as IFrame
-
-    return cFrame
-  }
+  const { setCurrentFrame, getCurrentFrame } = useEventContext()
 
   return (
     <Card className="border p-4 h-full" key={breakout?.name}>
