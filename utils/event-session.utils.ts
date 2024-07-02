@@ -28,8 +28,8 @@ export const getPreviousFrame = ({
 
   const currentFrameIndex = section.frames.findIndex(
     (frame) =>
-      frame.id === currentFrame.id &&
-      (!onlyPublished || frame.status === 'PUBLISHED')
+      frame?.id === currentFrame?.id &&
+      (!onlyPublished || frame?.status === 'PUBLISHED')
   )
 
   if (currentFrameIndex > 0) {
@@ -73,7 +73,7 @@ export const getNextFrame = ({
 
   const currentFrameIndex = currentSectionFrames.findIndex(
     (frame) =>
-      frame.id === currentFrame.id &&
+      frame?.id === currentFrame?.id &&
       (!onlyPublished || frame.status === 'PUBLISHED')
   )
 

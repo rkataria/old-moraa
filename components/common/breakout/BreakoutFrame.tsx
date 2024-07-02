@@ -144,13 +144,11 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       payload = {
         content: {
           ...frame.content,
-          breakoutDetails: frame.content?.breakoutDetails?.map(
-            ({ details }) => ({
-              ...details,
-              activityId: newFrame.id,
-            })
-          ),
-          activityId: newFrame.id,
+          breakoutDetails: frame.content?.breakoutDetails?.map((details) => ({
+            ...details,
+            activityId: newFrame.id,
+          })),
+          groupActivityId: newFrame.id,
         },
       }
     }
@@ -202,14 +200,11 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       }
     } else {
       const breakoutDetails = frame.content?.breakoutDetails?.map(
-        ({ details }) => ({
+        (details) => ({
           ...details,
           activityId: null,
         })
       )
-
-      console.log(breakoutDetails)
-
       payload = {
         content: {
           ...frame.content,
@@ -228,7 +223,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       <RenderIf isTrue={Boolean(frame.content?.breakoutDetails?.length)}>
         <RenderIf
           isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS}>
-          <div className="grid grid-flow-col grid-cols-5 gap-2 h-auto overflow-y-auto max-h-72">
+          <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto w-[90%]">
             {frame.content?.breakoutDetails?.map((breakout, idx) => (
               <BreakoutActivityCard
                 breakout={breakout}
@@ -271,18 +266,18 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
                   onClick={() => {
                     if (!editable) return
                     setCurrentFrame(
-                      getCurrentFrame(frame?.content?.activityId as string)
+                      getCurrentFrame(frame?.content?.groupActivityId as string)
                     )
                   }}>
                   <FrameThumbnailCard
                     frame={getCurrentFrame(
-                      frame?.content?.activityId as string
+                      frame?.content?.groupActivityId as string
                     )}
                     containerWidth={containerWidth}
                   />
                 </div>
               </RenderIf>
-              <RenderIf isTrue={!frame?.content?.activityId}>
+              <RenderIf isTrue={!frame?.content?.groupActivityId}>
                 You can add existing slide from any section or add new slide
                 which will be added under the Breakout section
               </RenderIf>
@@ -307,7 +302,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         }}
         handleDelete={handleDelete}
         frame={getCurrentFrame(
-          frame.content?.breakoutDetails?.[selectedFrame]?.activityId
+          frame.content?.breakoutDetails?.[selectedFrame]?.activityId as string
         )}
       />
     </div>

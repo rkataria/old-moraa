@@ -10,7 +10,9 @@ import { Switch } from '@nextui-org/react'
 import { Minutes } from './Minutes'
 
 import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
+import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
+import { ContentType } from '@/components/common/ContentTypePicker'
 import { EditableLabel } from '@/components/common/EditableLabel'
 import { EventContext } from '@/contexts/EventContext'
 import { FrameStatus } from '@/services/types/enums'
@@ -54,6 +56,34 @@ export function FrameItem({
         status: newState,
       },
     })
+    if (
+      frame.type === ContentType.BREAKOUT &&
+      frame?.content?.breakoutDetails?.length
+    ) {
+      if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+        frame?.content?.breakoutDetails?.map((ele) => {
+          if (ele?.activityId) {
+            updateFrame({
+              frameId: ele?.activityId,
+              framePayload: {
+                status: newState,
+              },
+            })
+          }
+
+          return 0
+        })
+      } else if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.GROUPS) {
+        if (frame?.content?.groupActivityId) {
+          updateFrame({
+            frameId: frame?.content?.groupActivityId,
+            framePayload: {
+              status: newState,
+            },
+          })
+        }
+      }
+    }
   }
 
   return (

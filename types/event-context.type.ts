@@ -97,4 +97,5 @@ export type EventContextType = {
   moveUpSection: (section: ISection) => void
   moveDownSection: (section: ISection) => void
   getCurrentFrame: (frameId: string) => IFrame
+  deleteBreakoutFrames: (frame: IFrame) => void
 }
