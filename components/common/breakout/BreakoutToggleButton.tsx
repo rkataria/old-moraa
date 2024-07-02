@@ -4,10 +4,8 @@ import { Button } from '@nextui-org/react'
 
 import { ControlButton } from '../ControlButton'
 
-import {
-  useBreakoutRooms,
-  useBreakoutRoomsManagerWithLatestMeetingState,
-} from '@/contexts/BreakoutRoomsManagerContext'
+import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
+import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { IFrame } from '@/types/frame.type'
@@ -59,8 +57,7 @@ export function BreakoutHeaderButton() {
 
   const { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom } =
     useBreakoutRooms()
-  const { endBreakoutRooms, startBreakoutRooms } =
-    useBreakoutRoomsManagerWithLatestMeetingState()
+  const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
   const breakoutFrame = sections
     ?.map((section) => section.frames)
@@ -78,7 +75,7 @@ export function BreakoutHeaderButton() {
         radius="md"
         className="bg-green-500 text-white"
         onClick={() =>
-          startBreakoutRooms({
+          breakoutRoomsInstance?.startBreakoutRooms({
             roomsCount: currentFrame.content?.breakoutDetails?.length || 2,
           })
         }>
@@ -104,7 +101,7 @@ export function BreakoutHeaderButton() {
         size="sm"
         className="!bg-red-500"
         radius="md"
-        onClick={() => endBreakoutRooms()}>
+        onClick={() => breakoutRoomsInstance?.endBreakoutRooms()}>
         End Breakout
       </Button>
     )

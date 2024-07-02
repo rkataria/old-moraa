@@ -253,7 +253,8 @@ export function BreakoutLive({ frame, isEditable = false }: BreakoutProps) {
                     updateBreakoutGroupRoomNameName={() => null}
                     participants={
                       isHost
-                        ? meeting.connectedMeetings.meetings[idx].participants
+                        ? meeting.connectedMeetings.meetings?.[idx]
+                            ?.participants
                         : undefined
                     }
                   />

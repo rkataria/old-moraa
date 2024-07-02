@@ -14,7 +14,7 @@ import {
 
 import { BreakoutActivityCard } from './BreakoutActivityCard'
 
-import { useBreakoutRoomsManagerWithLatestMeetingState } from '@/contexts/BreakoutRoomsManagerContext'
+import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 
 // TODO: Remove this component
@@ -22,17 +22,16 @@ export function BreakoutRoomsWithParticipants() {
   const { meeting } = useDyteMeeting()
   const { currentFrame, setIsBreakoutSlide, setBreakoutSlideId } =
     useEventSession()
-  const { endBreakoutRooms: _endBreakoutRooms, joinRoom: _joinRoom } =
-    useBreakoutRoomsManagerWithLatestMeetingState()
+  const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
   const endBreakoutRooms = () => {
     setBreakoutSlideId(null)
-    _endBreakoutRooms()
+    breakoutRoomsInstance?.endBreakout()
     setIsBreakoutSlide(false)
   }
 
   const joinRoom = (meetId: string) => {
-    _joinRoom(meetId)
+    breakoutRoomsInstance?.joinRoom(meetId)
   }
 
   return (

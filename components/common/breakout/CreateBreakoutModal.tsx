@@ -15,7 +15,7 @@ import {
 
 import { TwoWayNumberCounter } from '../content-types/Canvas/FontSizeControl'
 
-import { useBreakoutRoomsManagerWithLatestMeetingState } from '@/contexts/BreakoutRoomsManagerContext'
+import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { PresentationStatuses } from '@/types/event-session.type'
 
@@ -51,11 +51,10 @@ export function CreateBreakoutModal({
   )
   const [breakoutDuration, setBreakoutDuration] = useState(5)
 
-  const { startBreakoutRooms: _startBreakoutRooms } =
-    useBreakoutRoomsManagerWithLatestMeetingState()
+  const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
   const startBreakoutRooms = () => {
-    _startBreakoutRooms({ participantsPerRoom })
+    breakoutRoomsInstance?.startBreakoutRooms({ participantsPerRoom })
     if (presentationStatus === PresentationStatuses.STARTED) {
       setBreakoutSlideId(currentFrame?.id || null)
     }
