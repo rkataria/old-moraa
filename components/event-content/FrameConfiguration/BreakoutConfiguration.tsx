@@ -32,7 +32,7 @@ export function BreakoutConfiguration() {
       })
     } else {
       handleDelete(
-        currentFrame?.content?.breakoutDetails?.[count]?.activityId,
+        currentFrame?.content?.breakoutDetails?.[count]?.activityId || '',
         count
       )
     }
@@ -41,7 +41,7 @@ export function BreakoutConfiguration() {
     if (activityId) {
       deleteFrame(
         getCurrentFrame(
-          currentFrame?.content?.breakoutDetails?.[count]?.activityId
+          currentFrame?.content?.breakoutDetails?.[count]?.activityId || ''
         )
       )
     }

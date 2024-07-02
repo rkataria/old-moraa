@@ -50,7 +50,7 @@ export interface ISection {
 
 export interface IBreakoutDetails {
   name: string
-  activityId?: string | null
+  activityId?: string
 }
 
 export interface IFrame {

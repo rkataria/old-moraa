@@ -29,7 +29,7 @@ import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { FrameStatus } from '@/services/types/enums'
-import { IFrame } from '@/types/frame.type'
+import { IBreakoutDetails, IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
 // eslint-disable-next-line import/no-cycle
 
@@ -157,7 +157,7 @@ export function BreakoutLive({ frame, isEditable = false }: BreakoutProps) {
           ...(frame.content?.breakoutDetails?.slice(
             selectedBreakoutIndex + 1
           ) || []),
-        ],
+        ] as IBreakoutDetails[],
       },
     }
 
@@ -194,16 +194,8 @@ export function BreakoutLive({ frame, isEditable = false }: BreakoutProps) {
   }
 
   const deleteRoomGroup = (idx: number): void => {
-    // frame.content.breakoutDetails?.splice(idx, 1)
-    // const payload = {
-    //   content: {
-    //     ...frame.content,
-    //     breakoutDetails: [...(frame.content.breakoutDetails || [])],
-    //   },
-    // }
-
     deleteFrame(
-      getCurrentFrame(frame.content?.breakoutDetails?.[idx]?.activityId)
+      getCurrentFrame(frame.content?.breakoutDetails?.[idx]?.activityId || '')
     )
     const payload = {
       content: {
@@ -215,7 +207,7 @@ export function BreakoutLive({ frame, isEditable = false }: BreakoutProps) {
             ...{ activityId: null },
           },
           ...(frame.content?.breakoutDetails?.slice(idx + 1) || []),
-        ],
+        ] as IBreakoutDetails[],
       },
     }
     updateFrame({ framePayload: payload, frameId: frame.id })
