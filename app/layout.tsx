@@ -1,7 +1,10 @@
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+/* eslint-disable import/order */
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
+
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+/* eslint-enable import/order */
 
 import { AI } from './action'
 import { Providers } from './providers'
