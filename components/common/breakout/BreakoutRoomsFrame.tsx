@@ -13,7 +13,6 @@ import {
 } from '@nextui-org/react'
 
 import { BreakoutActivityCard } from './BreakoutActivityCard'
-import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -39,13 +38,15 @@ export function BreakoutRoomsWithParticipants({
     breakoutRoomsInstance?.joinRoom(meetId)
   }
 
+  console.log(meeting.connectedMeetings.meetings)
+
   return (
     <div className="m-1 w-full flex-1 pr-12">
       <div className="flex">
         {meeting.connectedMeetings.meetings.map((meet, index) => (
           <div key={meet.id} className="mr-4">
             <Card
-              className="p-2 overflow-y-auto"
+              className="overflow-y-auto p-2"
               style={{
                 minWidth: '15rem',
                 minHeight: '12rem',
@@ -54,17 +55,20 @@ export function BreakoutRoomsWithParticipants({
               <CardHeader>
                 <p className="text-md font-semibold">{meet.title}</p>
               </CardHeader>
-              <CardBody>
-                <RenderIf isTrue={!hideActivityCards}>
-                  <BreakoutActivityCard
-                    idx={index}
-                    breakout={currentFrame?.content?.breakoutDetails?.[index]}
-                    editable={false}
-                    participants={meet.participants}
-                  />
-                </RenderIf>
+              <CardBody className="p-2 py-0">
+                <BreakoutActivityCard
+                  idx={index}
+                  breakout={currentFrame?.content?.breakoutDetails?.[index]}
+                  editable={false}
+                  hideActivityCard={hideActivityCards}
+                  participants={meet.participants?.map((p) => ({
+                    displayName: p.displayName || '',
+                    id: p.id || '',
+                    displayPictureUrl: p.displayPictureUrl || '',
+                  }))}
+                />
               </CardBody>
-              <CardFooter>
+              <CardFooter className="p-2 py-0">
                 {meet.id !== meeting.connectedMeetings.currentMeetingId ? (
                   <Button
                     size="sm"

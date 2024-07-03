@@ -21,6 +21,8 @@ export function BreakoutToggleButton({
   isActive: boolean
   useTextButton?: boolean
 }) {
+  const { isBreakoutActive } = useBreakoutRooms()
+
   return (
     <ControlButton
       buttonProps={{
@@ -34,7 +36,11 @@ export function BreakoutToggleButton({
         size: 'sm',
       }}
       tooltipProps={{
-        content: isActive ? 'Hide Breakouts' : 'Start Breakouts',
+        content: isActive
+          ? 'Hide Breakouts'
+          : isBreakoutActive
+            ? 'View Active Breakout'
+            : 'Start Breakouts',
       }}
       onClick={() => onClick()}>
       {useTextButton ? 'Start Breakout' : <IoPeopleOutline size={20} />}
