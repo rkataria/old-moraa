@@ -7,12 +7,14 @@ import { RxDotsVertical } from 'react-icons/rx'
 import { AddItemBar } from './AddItemBar'
 import { FrameThumbnailCard } from './FrameThumbnailCard'
 import { ContentTypeIcon } from '../ContentTypeIcon'
+import { ContentType } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
 import { FramePlaceholder } from '../FramePlaceholder'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -39,11 +41,13 @@ export function FrameItem({ frame }: FrameItemProps) {
     moveDownFrame,
     deleteFrame,
     setCurrentFrame,
+    deleteBreakoutFrames,
   } = useContext(EventContext) as EventContextType
   const { listDisplayMode, currentSectionId } = useAgendaPanel()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
+  const eventSessionData = useEventSession()
 
   const handleFrameAction = (action: {
     key: FrameActionKey
@@ -59,8 +63,12 @@ export function FrameItem({ frame }: FrameItemProps) {
     actions[action.key]()
   }
 
-  const handleDelete = (_frame: IFrame) => {
-    deleteFrame(_frame)
+  const handleDelete = async (_frame: IFrame) => {
+    if (_frame.type === ContentType.BREAKOUT) {
+      deleteBreakoutFrames(_frame)
+    } else {
+      deleteFrame(_frame)
+    }
     setIsDeleteModalOpen(false)
   }
 
@@ -74,15 +82,15 @@ export function FrameItem({ frame }: FrameItemProps) {
   const editable = isOwner && !preview && eventMode === 'edit'
 
   const frameActive =
-    !overviewOpen && !currentSectionId && currentFrame?.id === frame.id
+    !overviewOpen && !currentSectionId && currentFrame?.id === frame?.id
 
   const renderFrameContent = () => {
     if (sidebarExpanded) {
       return (
         <div
-          data-miniframe-id={frame.id}
+          data-miniframe-id={frame?.id}
           className={cn(
-            'cursor-pointer rounded-md border-0  hover:bg-purple-200 overflow-hidden',
+            'relative cursor-pointer rounded-md border-0  hover:bg-purple-200 overflow-hidden',
             {
               'max-w-[calc(100%_-_2rem)] border border-gray-300':
                 listDisplayMode === 'grid',
@@ -91,7 +99,9 @@ export function FrameItem({ frame }: FrameItemProps) {
               'border-2 border-gray-600':
                 frameActive && listDisplayMode === 'grid',
               'border-transparent':
-                listDisplayMode === 'list' && currentFrame?.id !== frame.id,
+                listDisplayMode === 'list' && currentFrame?.id !== frame?.id,
+              'border border-green-700':
+                eventSessionData?.breakoutSlideId === frame?.id,
             }
           )}
           onClick={() => {
@@ -99,6 +109,11 @@ export function FrameItem({ frame }: FrameItemProps) {
 
             setCurrentFrame(frame)
           }}>
+          {eventSessionData?.breakoutSlideId === frame?.id ? (
+            <div className="absolute top-0 right-0 bg-secondary p-1 rounded-bl-md rounded-tr-md">
+              <p className="text-xs text-gray-800">In Breakout</p>
+            </div>
+          ) : null}
           <div
             className={cn(
               'relative flex flex-col transition-all duration-400 ease-in-out group/frame-item'
@@ -123,7 +138,8 @@ export function FrameItem({ frame }: FrameItemProps) {
                 {
                   'border-purple-200': frameActive,
                   'border-gray-100':
-                    currentFrame?.id !== frame.id && listDisplayMode === 'grid',
+                    currentFrame?.id !== frame?.id &&
+                    listDisplayMode === 'grid',
                 }
               )}>
               <div className="flex justify-start items-center gap-2 flex-auto">
@@ -141,7 +157,7 @@ export function FrameItem({ frame }: FrameItemProps) {
 
                     updateFrame({
                       framePayload: { name: value },
-                      frameId: frame.id,
+                      frameId: frame?.id,
                     })
                   }}
                 />
@@ -173,7 +189,7 @@ export function FrameItem({ frame }: FrameItemProps) {
 
     return (
       <div
-        data-miniframe-id={frame.id}
+        data-miniframe-id={frame?.id}
         className={cn(
           'flex justify-center items-center cursor-pointer p-1.5 border-1 border-transparent hover:bg-purple-200',
           {
@@ -196,9 +212,9 @@ export function FrameItem({ frame }: FrameItemProps) {
     <div className="relative w-full">
       {renderFrameContent()}
       {sidebarExpanded && (
-        <AddItemBar sectionId={frame.section_id!} frameId={frame.id} />
+        <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
       )}
-      {insertAfterFrameId === frame.id && <FramePlaceholder />}
+      {insertAfterFrameId === frame?.id && <FramePlaceholder />}
     </div>
   )
 }

@@ -17,7 +17,7 @@ type DeleteFrameModalProps = {
   onClose: any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDelete: any
-  frame: IFrame
+  frame: IFrame | null
 }
 
 export function DeleteFrameModal({
@@ -41,7 +41,7 @@ export function DeleteFrameModal({
             <ModalBody>
               <p>
                 Are you sure to delete frame
-                <span className="font-bold ml-1">{frame.name}</span> ?
+                <span className="font-bold ml-1">{frame?.name}</span> ?
               </p>
             </ModalBody>
             <ModalFooter>

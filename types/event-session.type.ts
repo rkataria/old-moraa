@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Dispatch, SetStateAction } from 'react'
+
 import { VideoMiddleware } from '@dytesdk/web-core'
 import { RealtimeChannel } from '@supabase/supabase-js'
 
@@ -29,6 +31,10 @@ export type FrameReaction = {
   participant_id: string
 }
 
+export type DyteStates = {
+  [key: string]: string | boolean
+}
+
 export type EventSessionContextType = {
   isHost: boolean
   currentFrame: IFrame | null
@@ -39,8 +45,16 @@ export type EventSessionContextType = {
   activeSession: any
   videoMiddlewareConfig: VideoMiddlewareConfig | null
   frameReactions: FrameReaction[]
-  realtimeChannel: RealtimeChannel
+  realtimeChannel?: RealtimeChannel | null
   eventSessionMode: EventSessionMode
+  isBreakoutSlide: boolean
+  dyteStates: DyteStates
+  setDyteStates: Dispatch<SetStateAction<DyteStates>>
+  breakoutSlideId: string | null
+  setIsBreakoutSlide: Dispatch<SetStateAction<boolean>>
+  setBreakoutSlideId: Dispatch<SetStateAction<string | null>>
+  isCreateBreakoutOpen: boolean
+  setIsCreateBreakoutOpen: Dispatch<SetStateAction<boolean>>
   setEventSessionMode: (mode: EventSessionMode) => void
   startPresentation: () => void
   stopPresentation: () => void

@@ -7,6 +7,7 @@ import { ISection, IFrame } from './frame.type'
 export type EventModeType = 'view' | 'edit' | 'present'
 
 export type EventContextType = {
+  eventId: string
   eventMode: EventModeType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meeting: any
@@ -95,4 +96,6 @@ export type EventContextType = {
   deleteSection: ({ sectionId }: { sectionId: string }) => void
   moveUpSection: (section: ISection) => void
   moveDownSection: (section: ISection) => void
+  getCurrentFrame: (frameId: string) => IFrame
+  deleteBreakoutFrames: (frame: IFrame) => void
 }

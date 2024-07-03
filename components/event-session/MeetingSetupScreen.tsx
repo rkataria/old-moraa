@@ -97,7 +97,6 @@ export function MeetingSetupScreen() {
       </div>
     )
   }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setState = (s: any) => setStates((_states) => ({ ..._states, ...s }))
 

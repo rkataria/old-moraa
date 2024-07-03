@@ -11,6 +11,7 @@ type StudioLayoutProps = {
   resizableRightSidebar: React.ReactNode
   rightSidebar: React.ReactNode
   rightSidebarControls: React.ReactNode
+  bottomContent?: React.ReactNode
 }
 
 export function StudioLayout({
@@ -20,6 +21,7 @@ export function StudioLayout({
   resizableRightSidebar,
   rightSidebar,
   rightSidebarControls,
+  bottomContent,
 }: StudioLayoutProps) {
   return (
     <StudioLayoutContextProvider>
@@ -27,10 +29,11 @@ export function StudioLayout({
         <Header>{header}</Header>
         <div className="flex-auto flex justify-start items-start w-full z-0">
           {/* Left Sidebar */}
-          <LeftSidebar>{leftSidebar}</LeftSidebar>
+          {leftSidebar ? <LeftSidebar>{leftSidebar}</LeftSidebar> : null}
           <MainContentWithRightSidebar
             resizableRightSidebar={resizableRightSidebar}
             rightSidebar={rightSidebar}
+            bottomContent={bottomContent}
             rightSidebarControls={rightSidebarControls}>
             {children}
           </MainContentWithRightSidebar>

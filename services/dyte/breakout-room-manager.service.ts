@@ -1,8 +1,6 @@
 import { type BreakoutRoomsManager } from '@dytesdk/react-ui-kit'
 import chunk from 'lodash.chunk'
 
-import { participantIdentifier } from './breakout-room.service'
-
 import type DyteClient from '@dytesdk/web-core'
 
 type CreateAndAutoAssignBreakoutRoomsArgs = {
@@ -21,37 +19,55 @@ export const createAndAutoAssignBreakoutRooms = async ({
   if (argGroupSize === undefined && roomsCount === undefined) {
     throw new Error('Either groupSize or roomsCount must be provided')
   }
-  const participants = meeting.participants.joined.toArray()
 
-  // TODO: participants does not include the host, so calculating participantsWithoutSelf is not required
-  const participantsWithoutSelf = participants.filter(
-    (p) => participantIdentifier(p) !== participantIdentifier(meeting.self)
+  stateManager.unassignParticipants(
+    meeting.participants.all
+      .toArray()
+      .filter(
+        (participant) =>
+          participant.customParticipantId !== meeting.self.customParticipantId
+      )
+      .map((p) => p.customParticipantId!)
+  )
+  const participants = stateManager.unassignedParticipants.filter(
+    (participant) =>
+      participant.customParticipantId !== meeting.self.customParticipantId
+  )
+  stateManager.assignParticipantsToMeeting(
+    [meeting.self.customParticipantId],
+    meeting.connectedMeetings.parentMeeting.id || ''
   )
 
-  if (participantsWithoutSelf.length === 0) return
+  if (participants.length === 0) return
 
   const getGroupSize = () => {
     if (argGroupSize) return argGroupSize
 
-    return Math.ceil(participantsWithoutSelf.length / roomsCount!)
+    return Math.ceil(participants.length / roomsCount!)
   }
 
   const groupSize = getGroupSize()
 
-  const participantGroups = chunk(participantsWithoutSelf, groupSize)
+  const participantGroups = chunk(participants, groupSize)
 
-  const createdMeetings = stateManager.addNewMeetings(participantGroups.length)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const createdMeetings = stateManager.addNewMeetings(
+    roomsCount || participantGroups.length
+  )
 
   createdMeetings.forEach((createdMeeting, index) => {
     const breakoutRoomParticipants = participantGroups[index]
 
-    stateManager.assignParticipantsToMeeting(
-      breakoutRoomParticipants.map((p) => p.customParticipantId!),
-      createdMeeting.id
-    )
+    if (breakoutRoomParticipants?.length > 0) {
+      stateManager.assignParticipantsToMeeting(
+        breakoutRoomParticipants.map((p) => p.customParticipantId!),
+        createdMeeting.id
+      )
+    }
   })
 
-  await stateManager.applyChanges(meeting)
+  // eslint-disable-next-line consistent-return
+  return stateManager.applyChanges(meeting)
 }
 
 type StopBreakoutRoomsArgs = {
@@ -63,9 +79,38 @@ export const stopBreakoutRooms = async ({
   meeting,
   stateManager,
 }: StopBreakoutRoomsArgs) => {
+  const participants: Array<string> = []
+  meeting.connectedMeetings.meetings.forEach((m) =>
+    m.participants.forEach((participant) =>
+      participant.customParticipantId
+        ? participants.push(participant.customParticipantId)
+        : null
+    )
+  )
+
+  stateManager.unassignAllParticipants()
+  stateManager.assignParticipantsToMeeting(
+    participants,
+    meeting.connectedMeetings.parentMeeting.id || ''
+  )
+
   stateManager.allConnectedMeetings.forEach((m) =>
     stateManager.deleteMeeting(m.id)
   )
 
-  await stateManager.applyChanges(meeting)
+  return stateManager.applyChanges(meeting)
+}
+
+export const moveHostToRoom = async ({
+  meeting,
+  stateManager,
+  destinationMeetingId,
+}: StopBreakoutRoomsArgs & { destinationMeetingId: string }) => {
+  stateManager.unassignParticipants([meeting.self.customParticipantId])
+  stateManager.assignParticipantsToMeeting(
+    [meeting.self.customParticipantId],
+    destinationMeetingId
+  )
+
+  return stateManager.applyChanges(meeting)
 }

@@ -2,6 +2,7 @@ import { Fragment, useContext } from 'react'
 
 import { FrameItem } from './FrameItem'
 
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
 import { FrameStatus } from '@/services/types/enums'
@@ -20,7 +21,7 @@ export function FramesList({ section }: { section: ISection }) {
   return (
     <div className="m">
       <StrictModeDroppable
-        droppableId={`frame-droppable-sectionId-${section.id}`}
+        droppableId={`frame-droppable-sectionId-${section?.id}`}
         type="frame">
         {(frameProvided, snapshot) => (
           <div
@@ -39,13 +40,15 @@ export function FramesList({ section }: { section: ISection }) {
                       frames: section.frames,
                       status: editable ? null : FrameStatus.PUBLISHED,
                     }).map((frame, frameIndex) => (
-                      <Fragment key={frame.id}>
-                        <FrameItem
-                          section={section}
-                          frame={frame}
-                          frameIndex={frameIndex}
-                        />
-                      </Fragment>
+                      <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
+                        <Fragment key={frame.id}>
+                          <FrameItem
+                            section={section}
+                            frame={frame}
+                            frameIndex={frameIndex}
+                          />
+                        </Fragment>
+                      </RenderIf>
                     ))}
                   </div>
                   {frameProvided.placeholder}

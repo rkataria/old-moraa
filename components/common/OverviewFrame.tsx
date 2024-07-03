@@ -60,7 +60,7 @@ export function OverviewFrame() {
     let totalTime = 0
 
     frames.forEach((frame) => {
-      if (frame.config && typeof frame.config.time === 'number') {
+      if (frame?.config && typeof frame?.config?.time === 'number') {
         totalTime += frame.config.time
       }
     })

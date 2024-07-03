@@ -3,6 +3,8 @@
 
 import { useEffect } from 'react'
 
+// eslint-disable-next-line import/no-cycle
+import { BreakoutFrame } from './breakout/BreakoutFrame'
 import { CanvasPreview } from './content-types/Canvas/Preview'
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
@@ -113,6 +115,9 @@ export function FramePreview({ frame, readOnly }: FrameProps) {
         {frame.type === ContentType.RICH_TEXT && <RichText frame={frame} />}
         {frame.type === ContentType.MORAA_BOARD && (
           <MoraaBoard frame={frame as MoraaBoardFrame} />
+        )}
+        {frame.type === ContentType.BREAKOUT && (
+          <BreakoutFrame frame={frame as BreakoutFrame} />
         )}
       </div>
     </div>

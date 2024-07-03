@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import {
@@ -11,6 +12,7 @@ import {
   IconFileText,
 } from '@tabler/icons-react'
 import { BsQuestionCircle } from 'react-icons/bs'
+import { IoPeopleOutline } from 'react-icons/io5'
 import { MdOutlineDraw } from 'react-icons/md'
 import { SiMiro } from 'react-icons/si'
 
@@ -23,6 +25,7 @@ import {
 } from '@nextui-org/react'
 
 import { ContentTypeCard } from './ContentTypeCard'
+import { RenderIf } from './RenderIf/RenderIf'
 
 import { getContentType } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
@@ -34,6 +37,7 @@ export interface IContentType {
   contentType: ContentType
   disabled?: boolean
   templateType?: CANVAS_TEMPLATE_TYPES
+  isAvailableForBreakout?: boolean
 }
 
 export enum ContentType {
@@ -51,6 +55,7 @@ export enum ContentType {
   TEXT_IMAGE = 'Text & Image',
   RICH_TEXT = 'Rich Text',
   MORAA_BOARD = 'Moraa Board',
+  BREAKOUT = 'Breakout',
 }
 export const INTERACTIVE_FRAME_TYPES = [
   ContentType.POLL,
@@ -113,11 +118,18 @@ export const contentTypes: IContentType[] = [
   //   disabled: true, // TODO: Enable this frame when Image Viewer Frame is implemented
   // },
   {
+    name: 'Breakout',
+    icon: <IoPeopleOutline className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Plan breakout rooms and activities',
+    contentType: ContentType.BREAKOUT,
+  },
+  {
     name: 'Video',
     icon: <IconVideo className="w-full h-full max-w-11 max-h-11" />,
     description:
       'Embed videos from YouTube, Vimeo, or any other video hosting platform',
     contentType: ContentType.VIDEO_EMBED,
+    isAvailableForBreakout: true,
   },
   {
     name: 'Poll',
@@ -139,6 +151,7 @@ export const contentTypes: IContentType[] = [
     description:
       'Create a whiteboard to collaborate and brainstorm with your audience',
     contentType: ContentType.MORAA_BOARD,
+    isAvailableForBreakout: true,
   },
 
   {
@@ -175,17 +188,20 @@ interface ChooseContentTypeProps {
     contentType: ContentType,
     templateType: CANVAS_TEMPLATE_TYPES | undefined
   ) => void
+  isBreakoutActivity?: boolean
 }
 
 export function ContentTypePicker({
   open,
   onClose,
   onChoose,
+  isBreakoutActivity = false,
 }: ChooseContentTypeProps) {
   const collaborativeActivities = [
     getContentType(ContentType.POLL),
     getContentType(ContentType.REFLECTION),
     getContentType(ContentType.MORAA_BOARD),
+    getContentType(ContentType.BREAKOUT),
   ]
 
   const presentationContent = [
@@ -229,28 +245,40 @@ export function ContentTypePicker({
             </p>
             <div className="grid grid-cols-2 gap-2">
               {collaborativeActivities.map((activity) => (
-                <ContentTypeCard card={activity} onClick={onChoose} />
+                <RenderIf
+                  isTrue={Boolean(
+                    isBreakoutActivity ? activity?.isAvailableForBreakout : true
+                  )}>
+                  <ContentTypeCard card={activity} onClick={onChoose} />
+                </RenderIf>
               ))}
             </div>
+            <RenderIf isTrue={!isBreakoutActivity}>
+              <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
+                Create presentation content
+                <Tooltip content="Creating compelling presentation content that captivates audiences and delivers impactful messages">
+                  <Button
+                    isIconOnly
+                    variant="light"
+                    className="w-auto h-auto min-w-auto">
+                    <BsQuestionCircle className="text-black/50" />
+                  </Button>
+                </Tooltip>
+              </p>
 
-            <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
-              Create presentation content
-              <Tooltip content="Creating compelling presentation content that captivates audiences and delivers impactful messages">
-                <Button
-                  isIconOnly
-                  variant="light"
-                  className="w-auto h-auto min-w-auto">
-                  <BsQuestionCircle className="text-black/50" />
-                </Button>
-              </Tooltip>
-            </p>
-
-            <div className="grid grid-cols-2 gap-2">
-              {presentationContent.map((activity) => (
-                <ContentTypeCard card={activity} onClick={onChoose} />
-              ))}
-            </div>
-
+              <div className="grid grid-cols-2 gap-2">
+                {presentationContent.map((activity) => (
+                  <RenderIf
+                    isTrue={Boolean(
+                      isBreakoutActivity
+                        ? activity?.isAvailableForBreakout
+                        : true
+                    )}>
+                    <ContentTypeCard card={activity} onClick={onChoose} />
+                  </RenderIf>
+                ))}
+              </div>
+            </RenderIf>
             <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
               Bring your goodies
               <Tooltip content="Seamless integration of Google Slides, PDFs and other tools to enhance presentation">
@@ -265,7 +293,12 @@ export function ContentTypePicker({
 
             <div className="grid grid-cols-2 gap-2">
               {goodies.map((activity) => (
-                <ContentTypeCard card={activity} onClick={onChoose} />
+                <RenderIf
+                  isTrue={Boolean(
+                    isBreakoutActivity ? activity?.isAvailableForBreakout : true
+                  )}>
+                  <ContentTypeCard card={activity} onClick={onChoose} />
+                </RenderIf>
               ))}
             </div>
           </ModalBody>

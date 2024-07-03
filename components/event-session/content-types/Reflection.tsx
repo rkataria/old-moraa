@@ -5,11 +5,8 @@ import React from 'react'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import groupBy from 'lodash.groupby'
 
-import { BreakoutRoomStatus } from './reflection/BreakoutRoomStatus'
 import { ReflectionCard } from './reflection/ReflectionCard'
 import { SelfReflectionCard } from './reflection/SelfReflectionCard'
-import { StartBreakoutRoomsButtonWithModal } from './reflection/StartBreakoutRoomsButtonWithModal'
-import { StopBreakoutRoomsButtonWithModal } from './reflection/StopBreakoutRoomsButtonWithModal'
 import { TypingUsers } from './reflection/TypingUsers'
 
 import type { IReflectionFrame, IReflectionResponse } from '@/types/frame.type'
@@ -45,7 +42,7 @@ function HostView() {
   const getResponses = () => {
     const typedResponses = currentFrameResponses as IReflectionResponse[]
     if (isBreakoutActive && isCurrentDyteMeetingInABreakoutRoom) {
-      return typedResponses.filter(
+      return typedResponses?.filter(
         (r) => r.dyte_meeting_id === dyteMeeting.meta.meetingId
       )
     }
@@ -93,7 +90,7 @@ function ParticipantView() {
   const getResponses = () => {
     const typedResponses = currentFrameResponses as IReflectionResponse[]
     if (isBreakoutActive && isCurrentDyteMeetingInABreakoutRoom) {
-      return typedResponses.filter(
+      return typedResponses?.filter(
         (r) => r.dyte_meeting_id === dyteMeeting.meta.meetingId
       )
     }
@@ -140,13 +137,13 @@ export function Reflection({ frame }: ReflectionProps) {
         backgroundColor: frame.content.backgroundColor,
       }}>
       <div className="w-4/5 mt-2 rounded-md relative">
-        <div className="w-full flex justify-center">
+        {/* <div className="w-full flex justify-center">
           <div className="flex gap-2 items-center">
             <StartBreakoutRoomsButtonWithModal />
             <StopBreakoutRoomsButtonWithModal />
             <BreakoutRoomStatus />
           </div>
-        </div>
+        </div> */}
 
         <div className="p-4">
           {/* <FrameTitle

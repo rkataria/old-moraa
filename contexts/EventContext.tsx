@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useParams } from 'next/navigation'
@@ -7,6 +7,7 @@ import { OnDragEndResponder } from 'react-beautiful-dnd'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
 
+import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { FrameService } from '@/services/frame.service'
@@ -325,7 +326,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
                 if (section.id === updatedFrame.section_id) {
                   updatedFrame = {
                     ...section.frames.find(
-                      (frame: IFrame) => frame.id === updatedFrame.id
+                      (frame: IFrame) => frame?.id === updatedFrame?.id
                     ),
                     ...updatedFrame,
                   }
@@ -333,7 +334,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
                   return {
                     ...section,
                     frames: section.frames.map((frame: IFrame) =>
-                      frame.id === updatedFrame.id ? updatedFrame : frame
+                      frame?.id === updatedFrame?.id ? updatedFrame : frame
                     ),
                   }
                 }
@@ -351,11 +352,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
             const deletedFrameId = payload.old?.id
             const sectionFrameDeletedFrom = sections.find((section) =>
               section.frames.find(
-                (frame: IFrame) => frame.id === deletedFrameId
+                (frame: IFrame) => frame?.id === deletedFrameId
               )
             )
             const deletedFrame = sectionFrameDeletedFrom?.frames.find(
-              (frame: IFrame) => frame.id === deletedFrameId
+              (frame: IFrame) => frame?.id === deletedFrameId
             )
 
             const deletedFrameIndex = sectionFrameDeletedFrom?.frames.findIndex(
@@ -370,7 +371,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
                   return {
                     ...section,
                     frames: section.frames.filter(
-                      (frame: IFrame) => frame.id !== deletedFrame.id
+                      (frame: IFrame) => frame?.id !== deletedFrame.id
                     ),
                   }
                 }
@@ -453,7 +454,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     const sectionsWithFrames = meetingSections.map((section) => {
       const sectionFrames = section.frames.map(
-        (id: string) => frames.find((s) => s.id === id) as IFrame
+        (id: string) => frames.find((s) => s?.id === id) as IFrame
       )
 
       return {
@@ -520,7 +521,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     } else {
       _section = {
         ...section,
-        frames: section?.frames?.map((s) => s.id) || [],
+        frames: section?.frames?.map((s) => s?.id) || [],
       }
     }
 
@@ -845,24 +846,66 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return null
   }
 
+  const _deleteFrame = async (id: string) => {
+    const Response = await FrameService.deleteFrame(id)
+
+    if (Response.error) {
+      console.error('error while deleting frame: ', Response.error)
+    }
+  }
+
   const deleteFrame = async (frame: IFrame) => {
     if (!isOwner) return null
 
-    const deleteFrameResponse = await FrameService.deleteFrame(frame.id)
+    _deleteFrame(frame.id)
 
-    if (deleteFrameResponse.error) {
-      console.error('error while deleting frame: ', deleteFrameResponse.error)
+    // Update the section with the frame
+    const section = sections.find((s) => s.id === frame.section_id)
 
-      return null
+    const _frames = section.frames
+      .filter((s: IFrame) => s?.id !== frame.id)
+      .filter((s: IFrame) => s?.id)
+
+    await updateSection({
+      sectionPayload: {
+        frames: _frames.map((s: IFrame) => s?.id),
+      },
+      sectionId: section.id,
+    })
+
+    return null
+  }
+
+  const deleteBreakoutFrames = async (frame: IFrame) => {
+    if (!isOwner) return null
+
+    const breakoutIds = [frame.id]
+    _deleteFrame(frame.id)
+
+    if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+      frame?.content?.breakoutDetails?.map(async (ele) => {
+        if (ele?.activityId) {
+          _deleteFrame(ele?.activityId)
+          breakoutIds.push(ele?.activityId)
+        }
+
+        return ele
+      })
+    } else if (frame?.content?.activityId) {
+      _deleteFrame(frame?.content?.activityId)
+      breakoutIds.push(frame?.content?.activityId)
     }
 
     // Update the section with the frame
     const section = sections.find((s) => s.id === frame.section_id)
+
+    const _frames = section.frames
+      .filter((s: IFrame) => !breakoutIds?.includes(s?.id))
+      .filter((s: IFrame) => s?.id)
+
     await updateSection({
       sectionPayload: {
-        frames: section.frames
-          .filter((s: IFrame) => s.id !== frame.id)
-          .map((s: IFrame) => s.id),
+        frames: _frames.map((s: IFrame) => s?.id),
       },
       sectionId: section.id,
     })
@@ -874,7 +917,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (!isOwner) return null
 
     const section = sections.find((s) => s.id === frame.section_id)
-    const index = section.frames.findIndex((s: IFrame) => s.id === frame.id)
+    const index = section.frames.findIndex((s: IFrame) => s?.id === frame.id)
     if (index === 0) return null
 
     const sectionFramesCopy = [...section.frames]
@@ -960,7 +1003,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (!isOwner) return null
 
     const section = sections.find((s) => s.id === frame.section_id)
-    const index = section.frames.findIndex((s: IFrame) => s.id === frame.id)
+    const index = section.frames.findIndex((s: IFrame) => s?.id === frame.id)
     if (index === section.frames.length - 1) return null
 
     const sectionFramesCopy = [...section.frames]
@@ -971,7 +1014,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     await updateSection({
       sectionPayload: {
-        frames: sectionFramesCopy.map((i: IFrame) => i.id),
+        frames: sectionFramesCopy.map((i: IFrame) => i?.id),
       },
       sectionId: section.id,
     })
@@ -1016,7 +1059,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       if (!section) return null
 
       const items = reorder(
-        section.frames.map((s: IFrame) => s.id),
+        section.frames.map((s: IFrame) => s?.id),
         source.index,
         destination.index
       )
@@ -1046,7 +1089,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
       await updateSection({
         sectionPayload: {
-          frames: sourceSection.frames.map((i: IFrame) => i.id),
+          frames: sourceSection.frames.map((i: IFrame) => i?.id),
         },
         sectionId: sourceSectionId,
       })
@@ -1058,7 +1101,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       })
       await updateSection({
         sectionPayload: {
-          frames: destinationSection.frames.map((i: IFrame) => i.id),
+          frames: destinationSection.frames.map((i: IFrame) => i?.id),
         },
         sectionId: destinationSectionId,
       })
@@ -1084,6 +1127,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     })
   }
 
+  const getCurrentFrame = (activityId: string): IFrame => {
+    const _frames = sections.map((sec) => sec.frames).flat(2)
+    const cFrame = _frames.find((f) => f?.id === activityId) as IFrame
+
+    return cFrame
+  }
+
   useHotkeys(
     'p',
     () => isOwner && eventMode === 'edit' && setPreview(!preview),
@@ -1096,6 +1146,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     <EventContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
+        eventId: eventId as string,
         eventMode:
           eventMode !== 'present' ? (isOwner ? 'edit' : 'view') : eventMode,
         meeting,
@@ -1145,8 +1196,20 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         addFrameToSection,
         moveUpSection,
         moveDownSection,
+        getCurrentFrame,
+        deleteBreakoutFrames,
       }}>
       {children}
     </EventContext.Provider>
   )
+}
+
+export function useEventContext() {
+  const context = useContext(EventContext) as EventContextType
+
+  if (!context) {
+    throw new Error('useEvent must be used within EventProvider')
+  }
+
+  return context
 }

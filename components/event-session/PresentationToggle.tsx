@@ -1,21 +1,16 @@
-import { useContext } from 'react'
-
 import { useHotkeys } from 'react-hotkeys-hook'
 import { FaRegStopCircle } from 'react-icons/fa'
 import { IoPlay } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { EventSessionContext } from '@/contexts/EventSessionContext'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
+import { useEventSession } from '@/contexts/EventSessionContext'
+import { PresentationStatuses } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 export function PresentationToggle() {
   const { presentationStatus, startPresentation, stopPresentation } =
-    useContext(EventSessionContext) as EventSessionContextType
+    useEventSession()
 
   const presentationStarted =
     presentationStatus !== PresentationStatuses.STOPPED
