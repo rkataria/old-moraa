@@ -13,12 +13,17 @@ import {
 } from '@nextui-org/react'
 
 import { BreakoutActivityCard } from './BreakoutActivityCard'
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 
 // TODO: Remove this component
-export function BreakoutRoomsWithParticipants() {
+export function BreakoutRoomsWithParticipants({
+  hideActivityCards,
+}: {
+  hideActivityCards?: boolean
+}) {
   const { meeting } = useDyteMeeting()
   const { currentFrame, setIsBreakoutSlide, setBreakoutSlideId } =
     useEventSession()
@@ -50,14 +55,16 @@ export function BreakoutRoomsWithParticipants() {
                 <p className="text-md font-semibold">{meet.title}</p>
               </CardHeader>
               <CardBody>
-                <BreakoutActivityCard
-                  breakout={currentFrame?.content?.breakoutDetails?.[index]}
-                  deleteRoomGroup={() => null}
-                  idx={0}
-                  editable={false}
-                  onAddNewActivity={() => null}
-                  updateBreakoutGroupRoomNameName={() => null}
-                />
+                <RenderIf isTrue={!hideActivityCards}>
+                  <BreakoutActivityCard
+                    breakout={currentFrame?.content?.breakoutDetails?.[index]}
+                    deleteRoomGroup={() => null}
+                    idx={0}
+                    editable={false}
+                    onAddNewActivity={() => null}
+                    updateBreakoutGroupRoomNameName={() => null}
+                  />
+                </RenderIf>
                 {meet.participants.length === 0 ? (
                   <p className="text-sm text-gray-400">No participants</p>
                 ) : null}
@@ -79,7 +86,6 @@ export function BreakoutRoomsWithParticipants() {
                         </div>
                       )}
                     </div>
-                    {participant.displayName}
                   </div>
                 ))}
               </CardBody>

@@ -35,6 +35,7 @@ export class BreakoutRooms {
   }
 
   async startBreakoutWithRandomParticipants() {
+    await this.meeting.connectedMeetings.getConnectedMeetings()
     this.manager.addNewMeetings(3)
 
     // assign participants randomly to the three rooms
@@ -45,38 +46,42 @@ export class BreakoutRooms {
   }
 
   async endBreakout() {
-    this.manager.allConnectedMeetings.forEach((meeting) =>
-      this.manager.deleteMeeting(meeting.id)
-    )
-    await this.manager.applyChanges(this.meeting)
-
+    await this.meeting.connectedMeetings.getConnectedMeetings()
+    await stopBreakoutRooms({
+      meeting: this.meeting,
+      stateManager: this.manager,
+    })
+    await this.meeting.connectedMeetings.getConnectedMeetings()
     this.cleanup()
   }
 
   async startBreakoutRooms({ participantsPerRoom = 1, roomsCount = 2 }) {
+    await this.meeting.connectedMeetings.getConnectedMeetings()
     await createAndAutoAssignBreakoutRooms({
       groupSize: participantsPerRoom,
       meeting: this.meeting,
       stateManager: this.manager,
       roomsCount,
     })
-    this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.meeting.connectedMeetings.getConnectedMeetings()
   }
 
   async endBreakoutRooms() {
+    await this.meeting.connectedMeetings.getConnectedMeetings()
     await stopBreakoutRooms({
       meeting: this.meeting,
       stateManager: this.manager,
     })
-    this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.meeting.connectedMeetings.getConnectedMeetings()
   }
 
   async joinRoom(meetId: string) {
+    await this.meeting.connectedMeetings.getConnectedMeetings()
     await moveHostToRoom({
       meeting: this.meeting,
       stateManager: this.manager,
       destinationMeetingId: meetId,
     })
-    this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.meeting.connectedMeetings.getConnectedMeetings()
   }
 }

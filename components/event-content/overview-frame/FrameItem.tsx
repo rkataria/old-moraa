@@ -74,9 +74,9 @@ export function FrameItem({
           return 0
         })
       } else if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.GROUPS) {
-        if (frame?.content?.groupActivityId) {
+        if (frame?.content?.activityId) {
           updateFrame({
-            frameId: frame?.content?.groupActivityId,
+            frameId: frame?.content?.activityId,
             framePayload: {
               status: newState,
             },

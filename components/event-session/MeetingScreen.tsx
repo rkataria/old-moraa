@@ -135,7 +135,7 @@ export function MeetingScreen() {
         isBreakoutActive &&
         breakoutSlideId === currentFrame?.id &&
         currentFrame.type !== ContentType.BREAKOUT ? (
-          <BreakoutRoomsWithParticipants />
+          <BreakoutRoomsWithParticipants hideActivityCards />
         ) : null
       }>
       <MainContainer />

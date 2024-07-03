@@ -62,7 +62,7 @@ export interface IFrame {
     blocks?: TextBlock[] | FileBlock[]
     panelSizes?: number[]
     breakoutDetails?: IBreakoutDetails[]
-    groupActivityId?: string
+    activityId?: string
     [key: string]: unknown
   }
   created_at?: string

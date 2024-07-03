@@ -891,9 +891,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
         return ele
       })
-    } else if (frame?.content?.groupActivityId) {
-      _deleteFrame(frame?.content?.groupActivityId)
-      breakoutIds.push(frame?.content?.groupActivityId)
+    } else if (frame?.content?.activityId) {
+      _deleteFrame(frame?.content?.activityId)
+      breakoutIds.push(frame?.content?.activityId)
     }
 
     // Update the section with the frame
