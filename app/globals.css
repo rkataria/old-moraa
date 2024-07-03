@@ -89,7 +89,7 @@
 }
 
 .ProseMirror-focused {
-  @apply outline-none pb-4;
+  @apply outline-none;
 }
 
 .tiptap h1 {

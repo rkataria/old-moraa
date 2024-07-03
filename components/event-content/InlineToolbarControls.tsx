@@ -125,6 +125,24 @@ function InlineTextControls({ editor }: { editor: Editor }) {
         color={editor.getAttributes('textStyle').color ?? '#fff'}
         onChange={handleColorChange}
       />
+      <ControlButton
+        active={editor.isActive({ textAlign: 'left' })}
+        icon={<LuAlignLeft size={18} />}
+        tooltipText="Align left"
+        onClick={() => editor.chain().focus().setTextAlign('left').run()}
+      />
+      <ControlButton
+        active={editor.isActive({ textAlign: 'center' })}
+        icon={<LuAlignCenter size={18} />}
+        tooltipText="Align center"
+        onClick={() => editor.chain().focus().setTextAlign('center').run()}
+      />
+      <ControlButton
+        active={editor.isActive({ textAlign: 'right' })}
+        icon={<LuAlignRight size={18} />}
+        tooltipText="Align right"
+        onClick={() => editor.chain().focus().setTextAlign('right').run()}
+      />
     </div>
   )
 }

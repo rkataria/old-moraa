@@ -49,7 +49,9 @@ export function ImageBehind({
   return (
     <div className="relative w-full h-full flex flex-col">
       {frame.config.showTitle && (
-        <div onClick={() => setEditingBlock(headerBlock.id)}>
+        <div
+          onClick={() => setEditingBlock(headerBlock.id)}
+          className="relative z-[1]">
           <TextBlockEditor
             block={headerBlock}
             editable={editingBlock === headerBlock.id}

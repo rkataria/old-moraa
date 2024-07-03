@@ -61,7 +61,9 @@ export function ImageRight({
   return (
     <div className="w-full h-full flex flex-col justify-center items-start group relative">
       {frame.config.showTitle && (
-        <div onClick={() => setEditingBlock(headerBlock.id)} className="w-full">
+        <div
+          onClick={() => setEditingBlock(headerBlock.id)}
+          className="w-full relative z-[1]">
           <TextBlockEditor
             block={headerBlock}
             editable={editingBlock === headerBlock.id}

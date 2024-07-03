@@ -24,6 +24,10 @@ export function UserAvatar({
   descriptionClass,
 }: IUserAvatar) {
   const getProfileName = () => {
+    if (!profile) {
+      return 'Moraa User'
+    }
+
     if (profile.first_name && profile.last_name) {
       return `${profile.first_name} ${profile.last_name}`
     }
@@ -35,6 +39,7 @@ export function UserAvatar({
     if (!profile) {
       return ''
     }
+
     if (profile.avatar_url) {
       return profile.avatar_url
     }
