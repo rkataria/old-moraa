@@ -23,7 +23,7 @@ export function FrameText({
   disableEnter?: boolean
   onSuccessiveEnters?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }) {
-  const { preview, updateFrame, currentFrame } = useContext(
+  const { preview, updateFrame, currentFrame, sections } = useContext(
     EventContext
   ) as EventContextType
 
@@ -98,6 +98,7 @@ export function FrameText({
               [changedKey]: debouncedText,
             },
           },
+          sections,
         }),
       },
       frameId: currentFrame.id,

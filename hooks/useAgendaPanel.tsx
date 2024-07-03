@@ -4,6 +4,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
+import { ContentType } from '@/utils/content.util'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 import { getFilteredFramesByStatus } from '@/utils/event.util'
 
@@ -335,10 +336,17 @@ export function AgendaPanelContextProvider({
       }
     }
   })
-
   useHotkeys('ArrowLeft', () => {
-    // Don't allow participants to navigate through the agenda when the event is live
-    if (!isOwner && eventMode === 'present') return
+    if (
+      currentFrame?.type === ContentType.GOOGLE_SLIDES &&
+      !currentFrame.content?.individualFrame
+    ) {
+      return
+    }
+    if (!isOwner && eventMode === 'present') {
+      // Don't allow participants to navigate through the agenda when the event is live
+      return
+    }
 
     // if curren section is not highlighted, do nothing
     if (!currentSectionId) {

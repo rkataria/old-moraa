@@ -63,7 +63,9 @@ export function ImageLeft({
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-start group relative">
-      <div onClick={() => setEditingBlock(headerBlock.id)} className="w-full">
+      <div
+        onClick={() => setEditingBlock(headerBlock.id)}
+        className="w-full relative z-[1]">
         {frame.config.showTitle && (
           <TextBlockEditor
             block={headerBlock}

@@ -272,6 +272,7 @@ export function AddParticipantsForm<
         onInvite={(email: string, role: string) => {
           addParticipantsMutation.mutate({
             participants: [...participantsFieldArray.fields, { email, role }],
+            closeonSave: false,
           })
         }}
       />
