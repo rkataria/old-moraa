@@ -122,6 +122,66 @@ export function BreakoutRoomsManagerProvider({
   )
 }
 
+export const useBreakoutRoomsManagerWithLatestMeetingState = () => {
+  const { meeting: dyteMeeting } = useDyteMeeting()
+  const { breakoutRoomsManager } = useBreakoutRoomsManager()
+
+  const updateLocalState = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (payload: any) => {
+      breakoutRoomsManager.updateCurrentState(payload as ConnectedMeetingState)
+    },
+    [breakoutRoomsManager]
+  )
+
+  const close = useCallback(() => {
+    breakoutRoomsManager.discardChanges()
+  }, [breakoutRoomsManager])
+
+  useEffect(() => {
+    dyteMeeting.connectedMeetings.on('stateUpdate', updateLocalState)
+    dyteMeeting.connectedMeetings.on('changingMeeting', close)
+
+    dyteMeeting.connectedMeetings.getConnectedMeetings()
+
+    return () => {
+      dyteMeeting.connectedMeetings.off('stateUpdate', updateLocalState)
+      dyteMeeting.connectedMeetings.off('changingMeeting', close)
+    }
+  }, [dyteMeeting, updateLocalState, close])
+
+  const startBreakoutRooms = ({ participantsPerRoom = 1, roomsCount = 2 }) => {
+    createAndAutoAssignBreakoutRooms({
+      groupSize: participantsPerRoom,
+      meeting: dyteMeeting,
+      stateManager: breakoutRoomsManager,
+      roomsCount,
+    })
+  }
+
+  const endBreakoutRooms = () => {
+    stopBreakoutRooms({
+      meeting: dyteMeeting,
+      stateManager: breakoutRoomsManager,
+    })
+  }
+
+  const joinRoom = (meetId: string) => {
+    moveHostToRoom({
+      meeting: dyteMeeting,
+      stateManager: breakoutRoomsManager,
+      destinationMeetingId: meetId,
+    })
+  }
+
+  return {
+    breakoutRoomsManager,
+    startBreakoutRooms,
+    endBreakoutRooms,
+    joinRoom,
+  }
+}
+
 export function useBreakoutRoomsManager() {
   const context = useContext(BreakRoomManagerContext)
   if (context === undefined) {
