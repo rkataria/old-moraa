@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { IconLoader } from '@tabler/icons-react'
 
 export function Loading({ message = '' }: { message?: React.ReactNode }) {

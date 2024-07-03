@@ -23,7 +23,7 @@ import { cn } from '@/utils/utils'
 
 export function AIChat({ onClose }: { onClose: () => void }) {
   const eventId = useParams().eventId as string
-  const { event } = useEvent({ id: eventId })
+  const { event, meeting } = useEvent({ id: eventId })
   const { enrollment } = useEnrollment({ eventId })
   const [input, setInput] = useState<string>('')
   const [conversation, setConversation] = useUIState()
@@ -61,7 +61,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       {
         id: uuidv4(),
         role: 'assistant',
-        display: 'Generatign Poll. Please wait!!',
+        display: 'Generating Poll. Please wait!!',
       },
     ])
     const message = await generatePoll(topic)
@@ -84,6 +84,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       await axios.post(url, null, {
         params: {
           topic,
+          current_frame_id: currentFrame?.id ?? '',
           section_id: sectionId,
         },
       })
@@ -93,6 +94,46 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       console.error('Error generating poll:', error)
 
       return 'Some error occurred while creating the poll. Please try again later.'
+    }
+  }
+
+  const handleSummarizeSection = async () => {
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      { id: uuidv4(), role: 'user', display: 'Summarize current section' },
+      {
+        id: uuidv4(),
+        role: 'assistant',
+        display: 'Creating a summary frame. Please wait!!',
+      },
+    ])
+    const sectionId = currentSectionId ?? sections[0].id
+    const message = await summarizeSection(sectionId, meeting.id)
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      { id: uuidv4(), role: 'assistant', display: message },
+    ])
+  }
+
+  async function summarizeSection(
+    sectionId: string,
+    meetingId: string
+  ): Promise<any> {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/generations/summarize-section`
+
+      await axios.post(url, null, {
+        params: {
+          section_id: sectionId,
+          meeting_id: meetingId,
+        },
+      })
+
+      return 'Created summary frame!! Want to create more? Go ahead and tell me'
+    } catch (error) {
+      console.error('Error creating frame:', error)
+
+      return 'Some error occurred while creating the frame. Please try again later.'
     }
   }
 
@@ -160,12 +201,20 @@ export function AIChat({ onClose }: { onClose: () => void }) {
         {/* TODO: use roles from enum */}
         {enrollment &&
           ['Host', 'Moderator'].includes(enrollment.event_role) && (
-            <Button
-              variant="bordered"
-              color="primary"
-              onClick={handleGeneratePoll}>
-              Generate Poll
-            </Button>
+            <div>
+              <Button
+                variant="bordered"
+                color="primary"
+                onClick={handleGeneratePoll}>
+                Generate Poll
+              </Button>
+              <Button
+                variant="bordered"
+                color="primary"
+                onClick={handleSummarizeSection}>
+                Summarize section
+              </Button>
+            </div>
           )}
       </div>
       <div className="flex-none flex justify-start items-end p-1 border-2 border-gray-300 bg-white m-1 rounded-md">

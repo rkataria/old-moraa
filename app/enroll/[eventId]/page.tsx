@@ -9,16 +9,16 @@ import { FaCheckCircle } from 'react-icons/fa'
 import { MdOutlineEmail } from 'react-icons/md'
 import * as yup from 'yup'
 
-import { Button, Divider, Image, Input, User } from '@nextui-org/react'
+import { Button, Divider, Image, Input } from '@nextui-org/react'
 
 import { ParticipantsFormData } from '@/components/common/AddParticipantsForm'
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { MoraaLogo } from '@/components/common/MoraaLogo'
+import { IUserProfile, UserAvatar } from '@/components/common/UserAvatar'
 import { Date } from '@/components/enroll/Date'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event/event-service'
-import { getAvatarForName } from '@/utils/utils'
 
 const schema = yup.object().shape({
   email: yup
@@ -31,12 +31,16 @@ function Participantslist({
   participants = [],
 }: {
   participants:
-    | { id: string; email: string; event_role: string }[]
+    | {
+        id: string
+        email: string
+        event_role: string
+        profile: IUserProfile | IUserProfile[]
+      }[]
     | null
     | undefined
 }) {
   if (!participants) return null
-
   const participantsWithoutHost = participants.filter(
     (p) => p.event_role !== 'Host'
   )
@@ -53,13 +57,10 @@ function Participantslist({
       <Divider className="mt-2 mb-3" />
       <div className="flex flex-wrap gap-8">
         {participantsWithoutHost.map((participant) => (
-          <User
-            key={participant.id}
-            name={participant.email}
-            avatarProps={{
-              src: getAvatarForName(participant.email),
-            }}
-            classNames={{ name: 'font-medium' }}
+          <UserAvatar
+            profile={participant.profile as IUserProfile}
+            withName
+            nameClass="font-medium"
           />
         ))}
       </div>
@@ -142,16 +143,6 @@ function Visit() {
     },
   })
 
-  const getProfileName = () => {
-    if (profile?.first_name && profile?.last_name) {
-      return `${profile.first_name} ${profile.last_name}`
-    }
-
-    return null
-  }
-
-  const hostName = getProfileName()
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEnrollClick = (data: any) => {
     if (isEnrolled) {
@@ -185,7 +176,7 @@ function Visit() {
   if (!event) return null
 
   return (
-    <div className="bg-gradient-to-b from-[#e9deff] to-[#feffe1] w-screen h-screen">
+    <div className="bg-gradient-to-b from-[#e9deff] to-[#feffe1] w-screen min-h-screen">
       <MoraaLogo color="primary" className="scale-[0.7] origin-left ml-6" />
       <div className="max-w-[960px] mx-auto py-[5rem]">
         <div className="grid grid-cols-[0.5fr_1fr] items-start gap-[3rem]">
@@ -259,15 +250,8 @@ function Visit() {
         </div>
         <p className="mt-8 text-sm font-medium text-slate-500">Hosted by</p>
         <Divider className="mt-2 mb-3" />
-        <User
-          name={hostName}
-          avatarProps={{
-            src: hostName
-              ? getAvatarForName(hostName)
-              : 'https://github.com/shadcn.png',
-          }}
-          classNames={{ name: 'font-medium' }}
-        />
+        <UserAvatar profile={profile} withName nameClass="font-medium" />
+
         <Participantslist participants={useEventData.participants} />
       </div>
     </div>

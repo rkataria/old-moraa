@@ -72,7 +72,7 @@ const KeyboardShortcuts = Extension.create({
   },
 })
 
-const getExtensions = (type: string) => {
+const getExtensions = (type: string, placeholder: string | undefined) => {
   switch (type) {
     case 'richtext':
       return [
@@ -138,7 +138,7 @@ const getExtensions = (type: string) => {
         Placeholder.configure({
           placeholder: "What's the title?",
           emptyEditorClass:
-            'text-gray-500 text-left before:content-[attr(data-placeholder)]',
+            'text-gray-500 text-left before:content-[attr(data-placeholder)] tracking-tight',
         }),
         KeyboardShortcuts,
         DisableEnter,
@@ -157,9 +157,9 @@ const getExtensions = (type: string) => {
           limit: type === 'header' ? TITLE_CHARACTER_LIMIT : null,
         }),
         Placeholder.configure({
-          placeholder: 'Can you add some further context?',
+          placeholder: placeholder || 'Can you add some further context?',
           emptyEditorClass:
-            'text-gray-500 text-left before:content-[attr(data-placeholder)]',
+            'text-gray-500 text-left before:content-[attr(data-placeholder)] tracking-tight',
         }),
         KeyboardShortcuts,
         Highlight,
@@ -173,6 +173,7 @@ export function TextBlockEditor({
   editable = true,
   fillAvailableHeight = false,
   className = '',
+  placeholder = '',
   onChange,
 }: {
   block: TextBlock
@@ -180,11 +181,12 @@ export function TextBlockEditor({
   editable?: boolean
   fillAvailableHeight?: boolean
   className?: string
+  placeholder?: string
   onChange?: (block: TextBlock) => void
 }) {
   const editor = useEditor(
     {
-      extensions: getExtensions(block.type),
+      extensions: getExtensions(block.type, placeholder),
       content: block.data?.html,
       onUpdate: ({ editor: _editor }) => {
         onChange?.({
@@ -253,7 +255,7 @@ export function TextBlockEditor({
 
         <EditorContent
           editor={editor}
-          className="p-2 rounded-sm outline-none w-full h-full min-h-full transition-all duration-500"
+          className="rounded-sm outline-none w-full h-full min-h-full transition-all duration-500"
         />
       </ScrollShadow>
     </div>

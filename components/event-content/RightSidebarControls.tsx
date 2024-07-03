@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 
-import { EventSettingsToggleButton } from '../common/StudioLayout/EventSettingsToggleButton'
 import { FrameAppearanceToggleButton } from '../common/StudioLayout/FrameAppearanceToggleButton'
 import { FrameConfigurationToggleButton } from '../common/StudioLayout/FrameConfigurationToggleButton'
 import { FrameNoteToggleButton } from '../common/StudioLayout/FrameNoteToggleButton'
@@ -16,21 +15,13 @@ export function RightSidebarControls() {
   const editable = isOwner && eventMode === 'edit' && !preview
 
   // Hide the right sidebar controls if it is not editable
-  if (!editable) {
+  if (!editable || !currentFrame) {
     return <div className="w-2" />
-  }
-
-  if (!currentFrame) {
-    return (
-      <RightSidebarControlsWrapper>
-        <EventSettingsToggleButton />
-      </RightSidebarControlsWrapper>
-    )
   }
 
   return (
     <RightSidebarControlsWrapper>
-      <EventSettingsToggleButton />
+      {/* <EventSettingsToggleButton /> */}
       <FrameConfigurationToggleButton />
       <FrameAppearanceToggleButton />
       <FrameNoteToggleButton />
