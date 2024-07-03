@@ -57,37 +57,12 @@ export function BreakoutRoomsWithParticipants({
               <CardBody>
                 <RenderIf isTrue={!hideActivityCards}>
                   <BreakoutActivityCard
+                    idx={index}
                     breakout={currentFrame?.content?.breakoutDetails?.[index]}
-                    deleteRoomGroup={() => null}
-                    idx={0}
                     editable={false}
-                    onAddNewActivity={() => null}
-                    updateBreakoutGroupRoomNameName={() => null}
+                    participants={meet.participants}
                   />
                 </RenderIf>
-                {meet.participants.length === 0 ? (
-                  <p className="text-sm text-gray-400">No participants</p>
-                ) : null}
-                {meet.participants.map((participant) => (
-                  <div className="flex items-center mb-2">
-                    <div>
-                      {participant.displayPictureUrl ? (
-                        <img
-                          className="w-8 h-8 "
-                          src={participant.displayPictureUrl}
-                          alt={participant.id}
-                        />
-                      ) : (
-                        <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 mr-2">
-                          <p className="text-sm">
-                            {participant.displayName?.split(' ')[0]?.[0]}
-                            {participant.displayName?.split(' ')[1]?.[0]}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
               </CardBody>
               <CardFooter>
                 {meet.id !== meeting.connectedMeetings.currentMeetingId ? (
@@ -104,7 +79,7 @@ export function BreakoutRoomsWithParticipants({
         ))}
       </div>
       <div className="mt-4 flex">
-        <Button onClick={endBreakoutRooms} color="danger">
+        <Button onClick={endBreakoutRooms} size="sm" color="danger">
           End Breakout
         </Button>
       </div>

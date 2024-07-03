@@ -16,15 +16,25 @@ import { RenderIf } from '../RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 
-interface BreakoutCardProps {
+type BreakoutCardProps = {
   breakout: any
-  editable: boolean
   idx: number
-  updateBreakoutGroupRoomNameName: (value: string, idx: number) => void
-  deleteRoomGroup: (idx: number) => void
-  onAddNewActivity: (index: number) => void
   participants?: any[]
-}
+  editable: boolean
+} & (
+  | {
+      editable: boolean
+      updateBreakoutGroupRoomNameName: (value: string, idx: number) => void
+      deleteRoomGroup: (idx: number) => void
+      onAddNewActivity: (index: number) => void
+    }
+  | {
+      editable: false
+      updateBreakoutGroupRoomNameName?: never
+      deleteRoomGroup?: never
+      onAddNewActivity?: never
+    }
+)
 
 export function BreakoutActivityCard({
   breakout,
@@ -44,7 +54,7 @@ export function BreakoutActivityCard({
   const { setCurrentFrame, getCurrentFrame } = useEventContext()
 
   return (
-    <Card className="border p-4 h-full" key={breakout?.name}>
+    <Card className="border p-4 min-h-[260px]" key={breakout?.name}>
       <div className="flex justify-between gap-4">
         <EditableLabel
           readOnly={!editable}
@@ -61,11 +71,17 @@ export function BreakoutActivityCard({
           <span className="flex gap-2">
             <IoAddSharp
               className="border border-dashed border-gray-400 text-gray-400"
-              onClick={() => onAddNewActivity(idx)}
+              onClick={() => {
+                if (!editable) return
+                onAddNewActivity(idx)
+              }}
             />
             <IoAddSharp
               className="rotate-45"
-              onClick={() => deleteRoomGroup(idx)}
+              onClick={() => {
+                if (!editable) return
+                deleteRoomGroup(idx)
+              }}
             />
           </span>
         </RenderIf>
@@ -85,37 +101,43 @@ export function BreakoutActivityCard({
             />
           </div>
         ) : (
-          <span onClick={() => onAddNewActivity(idx)}>
+          <span
+            onClick={() => {
+              if (!editable) return
+              onAddNewActivity(idx)
+            }}>
             You can add existing slide from any section or add new slide which
             will be added under the Breakout section
           </span>
         )}
       </div>
-      <div className="mt-2">
-        {participants?.length === 0 ? (
-          <p className="text-sm text-gray-400">No participants</p>
-        ) : null}
-        {participants?.map((participant) => (
-          <div className="flex items-center mb-2">
-            <div>
-              {participant.displayPictureUrl ? (
-                <img
-                  className="w-8 h-8 "
-                  src={participant.displayPictureUrl}
-                  alt={participant.id}
-                />
-              ) : (
-                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 mr-2">
-                  <p className="text-sm">
-                    {participant.displayName?.split(' ')[0]?.[0]}
-                    {participant.displayName?.split(' ')[1]?.[0]}
-                  </p>
-                </div>
-              )}
+      {!!participants && (
+        <div className="mt-2">
+          {participants?.length === 0 ? (
+            <p className="text-sm text-gray-400">No participants</p>
+          ) : null}
+          {participants?.map((participant) => (
+            <div className="flex items-center mb-2">
+              <div>
+                {participant.displayPictureUrl ? (
+                  <img
+                    className="w-8 h-8 rounded-full"
+                    src={participant.displayPictureUrl}
+                    alt={participant.id}
+                  />
+                ) : (
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 mr-2">
+                    <p className="text-sm">
+                      {participant.displayName?.split(' ')[0]?.[0]}
+                      {participant.displayName?.split(' ')[1]?.[0]}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </Card>
   )
 }

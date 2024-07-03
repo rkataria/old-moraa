@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext } from 'react'
 
+import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { TwoWayNumberCounter } from '@/components/common/content-types/Canvas/FontSizeControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
@@ -23,7 +24,7 @@ export function BreakoutConfiguration() {
             breakoutDetails: [
               ...(currentFrame?.content?.breakoutDetails || []),
               {
-                name: `${currentFrame?.config?.selectedBreakout} - ${count}`,
+                name: `${currentFrame?.config?.selectedBreakout === BREAKOUT_TYPES.GROUPS ? 'Group' : 'Room'} - ${count}`,
               },
             ],
           },

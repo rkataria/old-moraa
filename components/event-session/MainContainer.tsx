@@ -67,7 +67,7 @@ export function MainContainer() {
                 <h2 className="text-xl font-semibold my-4 mx-2">
                   Breakout Time!
                 </h2>
-                <BreakoutRoomsWithParticipants />
+                <BreakoutRoomsWithParticipants hideActivityCards />
               </div>
             ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
               <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">

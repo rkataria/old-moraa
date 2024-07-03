@@ -245,7 +245,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
           isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.GROUPS}>
           <Card key="breakout-group-activity" className="border p-4 w-[75%]">
             <div className="flex justify-between gap-4">
-              <span className="text-md font-semibold">Activities</span>
+              <span className="text-md font-semibold">Activity</span>
               <RenderIf isTrue={editable}>
                 <span className="flex gap-2">
                   <IoAddSharp
