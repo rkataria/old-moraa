@@ -53,7 +53,6 @@ export function BreakoutActivityCard({
   participants,
 }: BreakoutCardProps) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
-  console.log('🚀 ~ thumbnailContainerRef:')
 
   const { width: containerWidth } = useDimensions(
     thumbnailContainerRef,
