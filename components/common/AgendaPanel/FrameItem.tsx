@@ -212,7 +212,9 @@ export function FrameItem({ frame }: FrameItemProps) {
     <div className="relative w-full">
       {renderFrameContent()}
       {sidebarExpanded && (
-        <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+        <RenderIf isTrue={sidebarExpanded && !frame?.content?.breakoutFrameId}>
+          <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+        </RenderIf>
       )}
       {insertAfterFrameId === frame?.id && <FramePlaceholder />}
     </div>

@@ -66,33 +66,33 @@ export function FrameList({
                         ref={_provided.innerRef}
                         {..._provided.draggableProps}
                         {..._provided.dragHandleProps}
-                        className="flex w-full">
+                        className="flex w-full flex-col">
                         <FrameItem frame={frame} />
+                        <RenderIf
+                          isTrue={
+                            (currentFrame?.type === ContentType.BREAKOUT &&
+                              currentFrame?.id === frame?.id) ||
+                            (!!currentFrame &&
+                              Boolean(
+                                getBreakoutFrames(frame)
+                                  ?.map((_frame) => _frame?.id)
+                                  .includes(currentFrame?.id)
+                              ))
+                          }>
+                          <div
+                            className={cn('ml-6', {
+                              'my-2': getBreakoutFrames(frame)?.length,
+                            })}>
+                            {getBreakoutFrames(frame)?.map((f) => (
+                              <div key={f?.id} className="flex w-full">
+                                <FrameItem frame={f} />
+                              </div>
+                            ))}
+                          </div>
+                        </RenderIf>
                       </div>
                     )}
                   </Draggable>
-                  <RenderIf
-                    isTrue={
-                      (currentFrame?.type === ContentType.BREAKOUT &&
-                        currentFrame?.id === frame?.id) ||
-                      (!!currentFrame &&
-                        Boolean(
-                          getBreakoutFrames(frame)
-                            ?.map((_frame) => _frame?.id)
-                            .includes(currentFrame?.id)
-                        ))
-                    }>
-                    <div
-                      className={cn('ml-6', {
-                        'my-2': getBreakoutFrames(frame)?.length,
-                      })}>
-                      {getBreakoutFrames(frame)?.map((f) => (
-                        <div key={f?.id} className="flex w-full">
-                          <FrameItem frame={f} />
-                        </div>
-                      ))}
-                    </div>
-                  </RenderIf>
                 </div>
               </RenderIf>
             )
