@@ -21,11 +21,13 @@ type BreakoutCardProps = {
   breakout: any
   idx: number
   hideActivityCard?: boolean
-  participants?: {
-    id: string
-    displayName: string
-    displayPictureUrl?: string
-  }[]
+  participants?:
+    | {
+        id: string
+        displayName: string
+        displayPictureUrl?: string
+      }[]
+    | any
   editable: boolean
 } & (
   | {
@@ -130,7 +132,7 @@ export function BreakoutActivityCard({
           {participants?.length === 0 ? (
             <p className="text-sm text-gray-400">No participants</p>
           ) : null}
-          {participants?.map((participant) => (
+          {participants?.map((participant: any) => (
             <div className="flex items-center mb-2">
               <div>
                 <Tooltip content={participant.displayName}>
