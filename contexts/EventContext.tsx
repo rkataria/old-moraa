@@ -15,7 +15,7 @@ import { MeetingService } from '@/services/meeting.service'
 import { SectionService } from '@/services/section.service'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
 import { ISection, IFrame } from '@/types/frame.type'
-import { getDefaultCoverFrame } from '@/utils/content.util'
+import { ContentType, getDefaultCoverFrame } from '@/utils/content.util'
 
 interface EventProviderProps {
   children: React.ReactNode
@@ -1085,23 +1085,52 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       if (!sourceSection || !destinationSection) return null
 
       const [removed] = sourceSection.frames.splice(source.index, 1)
+
+      const breakoutIds = [removed.id]
+      if (removed?.type === ContentType.BREAKOUT) {
+        if (removed?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+          removed?.content?.breakoutDetails?.map((ele: any) => {
+            if (ele?.activityId) {
+              breakoutIds.push(ele?.activityId)
+            }
+
+            return ele
+          })
+        } else if (removed?.content?.groupActivityId) {
+          breakoutIds.push(removed?.content?.groupActivityId)
+        }
+      }
+
+      const sourceIds = sourceSection.frames
+        .map((i: IFrame) => i?.id)
+        .filter((i: string) => !breakoutIds.includes(i))
+
+      const destinationIds = [
+        ...destinationSection.frames.map((i: IFrame) => i?.id),
+        ...breakoutIds,
+      ]
+
       destinationSection.frames.splice(destination.index, 0, removed)
 
       await updateSection({
         sectionPayload: {
-          frames: sourceSection.frames.map((i: IFrame) => i?.id),
+          frames: sourceIds,
         },
         sectionId: sourceSectionId,
       })
-      await updateFrame({
-        framePayload: {
-          section_id: destinationSectionId,
-        },
-        frameId: removed.id,
+
+      breakoutIds.map(async (id: string) => {
+        await updateFrame({
+          framePayload: {
+            section_id: destinationSectionId,
+          },
+          frameId: id,
+        })
       })
+
       await updateSection({
         sectionPayload: {
-          frames: destinationSection.frames.map((i: IFrame) => i?.id),
+          frames: destinationIds,
         },
         sectionId: destinationSectionId,
       })

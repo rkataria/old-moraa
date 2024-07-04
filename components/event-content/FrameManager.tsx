@@ -171,8 +171,6 @@ export function FrameManager() {
             breakoutRoomsGroupsTime
           ) => {
             if (selectedContentType) {
-              console.log(breakoutRoomsGroupsTime)
-
               handleAddNewFrame(
                 selectedContentType,
                 selectedTemplateType,
