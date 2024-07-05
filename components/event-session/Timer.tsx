@@ -86,7 +86,7 @@ export function Timer() {
     })
 
     if (!isHost) {
-      realtimeChannel.send({
+      realtimeChannel?.send({
         type: 'broadcast',
         event: 'join-event',
       })
@@ -98,7 +98,7 @@ export function Timer() {
 
     realtimeChannel.on('broadcast', { event: 'join-event' }, () => {
       if (isHost) {
-        realtimeChannel.send({
+        realtimeChannel?.send({
           type: 'broadcast',
           event: isTimerRunning ? 'timer-start-event' : 'timer-stop-event',
           payload: { remainingDuration },
@@ -132,14 +132,14 @@ export function Timer() {
 
   const handleTimerToggle = useCallback(() => {
     if (isTimerRunning) {
-      realtimeChannel.send({
+      realtimeChannel?.send({
         type: 'broadcast',
         event: 'timer-stop-event',
         payload: { remainingDuration },
       })
       setIsTimerRunning(false)
     } else {
-      realtimeChannel.send({
+      realtimeChannel?.send({
         type: 'broadcast',
         event: 'timer-start-event',
         payload: { remainingDuration },
@@ -154,7 +154,7 @@ export function Timer() {
     setRemainingDuration(defaultDuration) // Reset to default duration
     setIsTimerRunning(false) // Ensure timer stops when closed
     if (isHost) {
-      realtimeChannel.send({
+      realtimeChannel?.send({
         type: 'broadcast',
         event: 'timer-close-event',
       })
@@ -167,12 +167,12 @@ export function Timer() {
       setIsOpen(newState)
       if (newState) {
         setRemainingDuration(defaultDuration) // Reset to default duration when reopening
-        realtimeChannel.send({
+        realtimeChannel?.send({
           type: 'broadcast',
           event: 'timer-open-event',
         })
       } else {
-        realtimeChannel.send({
+        realtimeChannel?.send({
           type: 'broadcast',
           event: 'timer-close-event',
         })
@@ -192,7 +192,7 @@ export function Timer() {
   // }
 
   const setRemainingDurationAndUpdate = (newDuration: number) => {
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: 'timer-update-event',
       payload: { remainingDuration: newDuration },
@@ -203,7 +203,7 @@ export function Timer() {
   const handleResetTimer = () => {
     setRemainingDuration(defaultDuration)
     setIsTimerRunning(false)
-    realtimeChannel.send({
+    realtimeChannel?.send({
       type: 'broadcast',
       event: 'timer-reset-event',
       payload: { remainingDuration: defaultDuration },

@@ -4,6 +4,7 @@ import { useContext, useState } from 'react'
 
 import { IoChevronForward } from 'react-icons/io5'
 import { LuLayers } from 'react-icons/lu'
+import { v4 as uuidv4 } from 'uuid'
 
 import { FrameList } from './FrameList'
 import { DeleteConfirmationModal } from '../DeleteConfirmationModal'
@@ -15,7 +16,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
-import { ISection } from '@/types/frame.type'
+import { IFrame, ISection } from '@/types/frame.type'
 import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
@@ -35,6 +36,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     overviewOpen,
     deleteSection,
     setOverviewOpen,
+    addFrameToSection,
   } = useContext(EventContext) as EventContextType
   const {
     expandedSectionIds,
@@ -55,7 +57,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
 
   // When a section is clicked, it should be expanded and the current section should be active in the agenda panel
   const handleSectionClick = () => {
-    if (actionDisabled) return
+    // if (actionDisabled) return
 
     setInsertInSectionId(section.id)
     setInsertAfterFrameId(null)
@@ -113,6 +115,25 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     )
   }
 
+  const duplicateFrame = (frame: IFrame) => {
+    const newFrame = {
+      id: uuidv4(),
+      config: frame.config,
+      content: frame.content,
+      status: frame.status,
+      type: frame.type,
+      section_id: frame.section_id,
+      meeting_id: frame.meeting_id,
+      name: `Copy-${frame.name}`,
+    }
+
+    addFrameToSection({
+      frame: newFrame,
+      section,
+      afterFrameId: frame.id!,
+    })
+  }
+
   return (
     <div>
       <div
@@ -141,6 +162,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
               frames={frames}
               showList={sectionExpanded}
               droppablePlaceholder={frameDroppableProvided.placeholder}
+              duplicateFrame={duplicateFrame}
             />
           </div>
         )}

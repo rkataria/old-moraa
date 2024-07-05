@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useContext } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 
 import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
@@ -20,13 +20,13 @@ import { ScreenShareToggle } from './ScreenShareToggle'
 import { Timer } from './Timer'
 import { VideoToggle } from './VideoToggle'
 import { WhiteBoardToggle } from './WhiteBoardToggle'
+import { BreakoutHeaderButton } from '../common/breakout/BreakoutToggleButton'
 import { ControlButton } from '../common/ControlButton'
 import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 
-import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { EventSessionContextType } from '@/types/event-session.type'
 
 export type DyteStates = {
   [key: string]: string | boolean
@@ -44,9 +44,7 @@ export function MeetingHeader({
   const { eventId } = useParams()
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const { isHost, eventSessionMode } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { isHost, eventSessionMode } = useEventSession()
   const { rightSidebarVisiblity, setRightSidebarVisiblity, toggleLeftSidebar } =
     useStudioLayout()
 
@@ -115,6 +113,7 @@ export function MeetingHeader({
         />
         <WhiteBoardToggle />
         <Timer />
+        <BreakoutHeaderButton />
       </div>
 
       <div className="flex justify-end items-center gap-3">

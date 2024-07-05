@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import userflow from 'userflow.js'
 
 type UserContextType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,6 +42,12 @@ export function UserContextProvider({
     await supabase.auth.signOut()
     router.push('/')
   }
+
+  useEffect(() => {
+    if (!userQuery.data?.id) return
+    userflow.init(`${process.env.NEXT_PUBLIC_USERFLOW_ID}`)
+    userflow.identify(userQuery.data.id)
+  }, [userQuery?.data?.id])
 
   return (
     <UserContext.Provider

@@ -4,9 +4,15 @@ import { HEADER_HEIGHT } from './Header'
 
 import { cn } from '@/utils/utils'
 
-const MAIN_CONTAINER_HEIGHT = `calc(100vh - ${HEADER_HEIGHT}px)`
+export function MainContent({
+  children,
+  hasBottomSection,
+}: {
+  children: ReactNode
+  hasBottomSection: boolean
+}) {
+  const MAIN_CONTAINER_HEIGHT = `calc(100vh - ${HEADER_HEIGHT}px ${hasBottomSection ? ' - 30vh' : ''})`
 
-export function MainContent({ children }: { children: ReactNode }) {
   return (
     <div
       className={cn('flex-auto h-full overflow-hidden p-0', {})}

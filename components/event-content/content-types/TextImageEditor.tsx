@@ -17,6 +17,7 @@ import { NoImage } from '@/components/common/frame-templates/text-image/NoImage'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { FileBlock, IFrame, TextBlock } from '@/types/frame.type'
+import { getFrameName } from '@/utils/getFrameName'
 
 export function TextImageEditor() {
   const [localFrame, setLocalFrame] = useState<IFrame | null>(null)
@@ -57,6 +58,7 @@ export function TextImageEditor() {
           ...currentFrame.content,
           ...debouncedLocalFrame?.content,
         },
+        name: getFrameName({ frame: debouncedLocalFrame }),
       },
       frameId: currentFrame.id,
     })

@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 
 import {
   DyteDialogManager,
@@ -20,16 +20,25 @@ import { MeetingHeader } from './MeetingHeader'
 import { MeetingRightSidebar } from './MeetingRightSidebar'
 import { RightSidebarControls } from './RightSidebarControls'
 import { AgendaPanel } from '../common/AgendaPanel'
+import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
+import { CreateBreakoutModal } from '../common/breakout/CreateBreakoutModal'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { ResizableRightSidebar } from '../event-content/ResizableRightSidebar'
 
+import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { EventContext } from '@/contexts/EventContext'
-import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { EventContextType } from '@/types/event-context.type'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
+import { PresentationStatuses } from '@/types/event-session.type'
+import { ContentType } from '@/utils/content.util'
+
+export type RightSiderbar =
+  | 'participants'
+  | 'chat'
+  | 'plugins'
+  | 'ai-chat'
+  | 'notes'
+  | 'breakout'
 
 export type DyteStates = {
   [key: string]: string | boolean
@@ -37,16 +46,22 @@ export type DyteStates = {
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
-  const [dyteStates, setDyteStates] = useState<DyteStates>({})
   const { preview } = useContext(EventContext) as EventContextType
   const {
     isHost,
     eventSessionMode,
     presentationStatus,
+    dyteStates,
+    setDyteStates,
     setEventSessionMode,
     updateActiveSession,
     updateTypingUsers,
-  } = useContext(EventSessionContext) as EventSessionContextType
+    isCreateBreakoutOpen,
+    setIsCreateBreakoutOpen,
+    breakoutSlideId,
+    currentFrame,
+  } = useEventSession()
+  const { isBreakoutActive } = useBreakoutRooms()
 
   const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
@@ -107,7 +122,7 @@ export function MeetingScreen() {
       header={
         <MeetingHeader dyteStates={dyteStates} setDyteStates={setDyteStates} />
       }
-      leftSidebar={<AgendaPanel />}
+      leftSidebar={!isHost && isBreakoutActive ? null : <AgendaPanel />}
       resizableRightSidebar={<ResizableRightSidebar />}
       rightSidebar={
         <MeetingRightSidebar
@@ -115,7 +130,14 @@ export function MeetingScreen() {
           setDyteStates={setDyteStates}
         />
       }
-      rightSidebarControls={<RightSidebarControls />}>
+      rightSidebarControls={<RightSidebarControls />}
+      bottomContent={
+        isBreakoutActive &&
+        breakoutSlideId === currentFrame?.id &&
+        currentFrame.type !== ContentType.BREAKOUT ? (
+          <BreakoutRoomsWithParticipants hideActivityCards />
+        ) : null
+      }>
       <MainContainer />
 
       {/* Emoji Overlay */}
@@ -133,6 +155,10 @@ export function MeetingScreen() {
             ...e.detail,
           }))
         }}
+      />
+      <CreateBreakoutModal
+        open={isCreateBreakoutOpen}
+        setOpen={() => setIsCreateBreakoutOpen(false)}
       />
     </StudioLayout>
   )

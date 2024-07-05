@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
+import { IoDuplicateOutline } from 'react-icons/io5'
 
 import {
   Dropdown,
@@ -24,6 +25,11 @@ const frameActions = [
     key: 'move-down',
     label: 'Move down',
     icon: <IconArrowDown className="h-4 w-4 text-slate-500" />,
+  },
+  {
+    key: 'duplicate-frame',
+    label: 'Duplicate frame',
+    icon: <IoDuplicateOutline className="h-4 w-4 text-slate-500" />,
   },
 ]
 

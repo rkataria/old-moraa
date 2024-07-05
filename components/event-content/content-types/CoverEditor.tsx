@@ -13,6 +13,7 @@ import { TextBlockEditor } from '@/components/event-content/TextBlockEditor'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, TextBlock } from '@/types/frame.type'
+import { getFrameName } from '@/utils/getFrameName'
 import { cn } from '@/utils/utils'
 
 type CoverFrame = IFrame
@@ -47,6 +48,7 @@ export function CoverEditor() {
           ...currentFrame.content,
           ...debouncedLocalFrame?.content,
         },
+        name: getFrameName({ frame: debouncedLocalFrame }),
       },
       frameId: currentFrame.id,
     })

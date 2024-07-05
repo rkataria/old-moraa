@@ -4,18 +4,26 @@ import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
 import { ParticipantTiles } from './ParticipantTiles'
+import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
 import { PanelResizer } from '../common/PanelResizer'
 
+import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { PresentationStatuses } from '@/types/event-session.type'
 
 export function MainContainer() {
-  const { presentationStatus, currentFrame, eventSessionMode } =
-    useEventSession()
+  const {
+    presentationStatus,
+    currentFrame,
+    eventSessionMode,
+    isBreakoutSlide,
+    isHost,
+  } = useEventSession()
   const [panelSize, setPanelSize] = useState(18) // Initial default size
 
   const mainContentRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef(null)
+  const { isBreakoutActive } = useBreakoutRooms()
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -34,7 +42,7 @@ export function MainContainer() {
   const spotlightMode = eventSessionMode === 'Lobby'
 
   const currentFrameBgColor =
-    presentationStatus === PresentationStatuses.STARTED
+    presentationStatus === PresentationStatuses.STARTED && !isBreakoutSlide
       ? currentFrame?.config?.backgroundColor || '#ffffff'
       : '#ffffff'
 
@@ -47,18 +55,25 @@ export function MainContainer() {
       className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-white"
       ref={mainContentRef}>
       {/* Sportlight View */}
-      {spotlightMode ? (
+      {spotlightMode && !isBreakoutSlide ? (
         <div className="flex flex-col overflow-auto h-full flex-1">
-          <ParticipantTiles spotlightMode={spotlightMode} />
+          <ParticipantTiles spotlightMode />
         </div>
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
           <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
-            {['Preview', 'Presentation'].includes(eventSessionMode) && (
+            {isHost && isBreakoutActive && isBreakoutSlide ? (
+              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden">
+                <h2 className="text-xl font-semibold my-4 mx-2">
+                  Breakout Time!
+                </h2>
+                <BreakoutRoomsWithParticipants hideActivityCards />
+              </div>
+            ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
               <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
                 <ContentContainer />
               </div>
-            )}
+            ) : null}
           </Panel>
 
           <PanelResizer />
@@ -70,7 +85,7 @@ export function MainContainer() {
             maxSize={50}
             ref={panelRef}>
             <div className="flex flex-col overflow-auto h-full flex-1">
-              <ParticipantTiles spotlightMode={spotlightMode} />
+              <ParticipantTiles spotlightMode={false} />
             </div>
           </Panel>
         </PanelGroup>

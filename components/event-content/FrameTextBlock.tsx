@@ -12,6 +12,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, TextBlock } from '@/types/frame.type'
 import { ContentType, headerBlock, paragraphBlock } from '@/utils/content.util'
+import { getFrameName } from '@/utils/getFrameName'
 
 const getDefaultBlock = (blockType: string) => {
   switch (blockType) {
@@ -37,7 +38,7 @@ export function FrameTextBlock({
   fillAvailableHeight?: boolean
   onClick?: (id: string) => void
 }) {
-  const { updateFrame, currentFrame } = useContext(
+  const { updateFrame, currentFrame, sections } = useContext(
     EventContext
   ) as EventContextType
 
@@ -94,6 +95,7 @@ export function FrameTextBlock({
           ...currentFrame.content,
           ...debouncedLocalFrame?.content,
         },
+        name: getFrameName({ frame: debouncedLocalFrame, sections }),
       },
       frameId: currentFrame.id,
     })

@@ -27,6 +27,10 @@ import {
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event/event-service'
 
+type addParticipant = ParticipantsFormData & {
+  closeonSave?: boolean
+}
+
 export function AddParticipantsButtonWithModal({
   eventId,
 }: {
@@ -48,7 +52,8 @@ export function AddParticipantsButtonWithModal({
   const addParticipantsMutation = useMutation({
     mutationFn: async ({
       participants: _participants,
-    }: ParticipantsFormData) => {
+      closeonSave = true,
+    }: addParticipant) => {
       try {
         const addResponse = await EventService.addParticipant({
           eventId,
@@ -60,7 +65,9 @@ export function AddParticipantsButtonWithModal({
         }
 
         toast.success('Participants updated successfully.')
-        setOpen(false)
+        if (closeonSave) {
+          setOpen(false)
+        }
       } catch (err) {
         console.error(err)
         toast.error('Failed to update participants')
@@ -87,6 +94,7 @@ export function AddParticipantsButtonWithModal({
               </ModalHeader>
               <ModalBody className="mt-4">
                 <AddParticipantsForm
+                  key={JSON.stringify(participants)}
                   defaultValue={
                     participants?.map((participant) => ({
                       email: participant.email,
