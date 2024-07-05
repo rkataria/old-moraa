@@ -116,7 +116,7 @@ export function BreakoutActivityCard({
           {participants?.length === 0 ? (
             <p className="text-sm text-gray-400">No participants</p>
           ) : null}
-          {participants?.map((participant) => (
+          {participants?.map((participant: any) => (
             <div className="flex items-center mb-2">
               <div>
                 {participant.displayPictureUrl ? (

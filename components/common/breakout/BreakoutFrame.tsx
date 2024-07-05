@@ -152,7 +152,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       }
     } else {
       if (frame.content?.groupActivityId) {
-        deleteFrame(getCurrentFrame(frame.content?.groupActivityId))
+        deleteFrame(getCurrentFrame(frame.content?.groupActivityId as string))
       }
 
       payload = {
