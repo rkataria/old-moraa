@@ -17,12 +17,14 @@ type FrameListProps = {
   frames: IFrame[]
   showList: boolean
   droppablePlaceholder: ReactNode
+  duplicateFrame: (frame: IFrame) => void
 }
 
 export function FrameList({
   frames,
   showList,
   droppablePlaceholder,
+  duplicateFrame,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
   const { sections } = useEventContext()
@@ -67,7 +69,10 @@ export function FrameList({
                         {..._provided.draggableProps}
                         {..._provided.dragHandleProps}
                         className="flex w-full">
-                        <FrameItem frame={frame} />
+                        <FrameItem
+                          frame={frame}
+                          duplicateFrame={duplicateFrame}
+                        />
                       </div>
                     )}
                   </Draggable>
@@ -86,7 +91,10 @@ export function FrameList({
                       })}>
                       {getBreakoutFrames(frame)?.map((f) => (
                         <div key={f?.id} className="flex w-full">
-                          <FrameItem frame={f} />
+                          <FrameItem
+                            frame={f}
+                            duplicateFrame={duplicateFrame}
+                          />
                         </div>
                       ))}
                     </div>

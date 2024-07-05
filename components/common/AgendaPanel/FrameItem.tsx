@@ -24,11 +24,12 @@ import { cn } from '@/utils/utils'
 
 type FrameItemProps = {
   frame: IFrame
+  duplicateFrame: (frame: IFrame) => void
 }
 
-type FrameActionKey = 'delete' | 'move-up' | 'move-down'
+type FrameActionKey = 'delete' | 'move-up' | 'move-down' | 'duplicate-frame'
 
-export function FrameItem({ frame }: FrameItemProps) {
+export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
   const {
     currentFrame,
     isOwner,
@@ -58,6 +59,7 @@ export function FrameItem({ frame }: FrameItemProps) {
       delete: () => setIsDeleteModalOpen(true),
       'move-up': () => moveUpFrame(frame),
       'move-down': () => moveDownFrame(frame),
+      'duplicate-frame': () => duplicateFrame(frame),
     }
 
     actions[action.key]()
