@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import data from '@emoji-mart/data/sets/14/apple.json'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { init } from 'emoji-mart'

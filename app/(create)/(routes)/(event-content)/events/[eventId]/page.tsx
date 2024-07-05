@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { FrameManager } from '@/components/event-content/FrameManager'
 import { EventProvider } from '@/contexts/EventContext'
 
