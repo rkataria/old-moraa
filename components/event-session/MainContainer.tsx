@@ -7,8 +7,8 @@ import { ParticipantTiles } from './ParticipantTiles'
 import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
 import { PanelResizer } from '../common/PanelResizer'
 
-import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { PresentationStatuses } from '@/types/event-session.type'
 
 export function MainContainer() {

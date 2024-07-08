@@ -22,8 +22,8 @@ type BreakoutCardProps = {
   idx: number
   hideActivityCard?: boolean
   participants?: {
-    id: string
-    displayName: string
+    id?: string
+    displayName?: string
     displayPictureUrl?: string
   }[]
   editable: boolean
@@ -125,30 +125,28 @@ export function BreakoutActivityCard({
         </div>
       </RenderIf>
       {!!participants && (
-        <div className="mt-2">
+        <div className="flex items-center">
           {participants?.length === 0 ? (
             <p className="text-sm text-gray-400">No participants</p>
           ) : null}
           {participants?.map((participant) => (
-            <div className="flex items-center mb-2">
-              <div>
-                <Tooltip content={participant.displayName}>
-                  {participant.displayPictureUrl ? (
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src={participant.displayPictureUrl}
-                      alt={participant.id}
-                    />
-                  ) : (
-                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 mr-2">
-                      <p className="text-sm">
-                        {participant.displayName?.split(' ')[0]?.[0]}
-                        {participant.displayName?.split(' ')[1]?.[0]}
-                      </p>
-                    </div>
-                  )}
-                </Tooltip>
-              </div>
+            <div className="mb-2 mr-2">
+              <Tooltip content={participant.displayName}>
+                {participant.displayPictureUrl ? (
+                  <img
+                    className="w-8 h-8 rounded-full"
+                    src={participant.displayPictureUrl}
+                    alt={participant.id}
+                  />
+                ) : (
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300">
+                    <p className="text-sm">
+                      {participant.displayName?.split(' ')[0]?.[0]}
+                      {participant.displayName?.split(' ')[1]?.[0]}
+                    </p>
+                  </div>
+                )}
+              </Tooltip>
             </div>
           ))}
         </div>

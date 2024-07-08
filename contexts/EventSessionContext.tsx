@@ -14,7 +14,6 @@ import isEqual from 'lodash.isequal'
 import uniqBy from 'lodash.uniqby'
 import { useParams } from 'next/navigation'
 
-import { useBreakoutRooms } from './BreakoutRoomsManagerContext'
 import { EventContext } from './EventContext'
 
 import type {
@@ -23,6 +22,7 @@ import type {
   IFrame,
 } from '@/types/frame.type'
 
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useEnrollment } from '@/hooks/useEnrollment'
 import { useFrameReactions } from '@/hooks/useReactions'
 import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'

@@ -29,6 +29,7 @@ export const createAndAutoAssignBreakoutRooms = async ({
       )
       .map((p) => p.customParticipantId!)
   )
+
   const participants = stateManager.unassignedParticipants.filter(
     (participant) =>
       participant.customParticipantId !== meeting.self.customParticipantId
@@ -106,7 +107,6 @@ export const moveHostToRoom = async ({
   stateManager,
   destinationMeetingId,
 }: StopBreakoutRoomsArgs & { destinationMeetingId: string }) => {
-  stateManager.unassignParticipants([meeting.self.customParticipantId])
   stateManager.assignParticipantsToMeeting(
     [meeting.self.customParticipantId],
     destinationMeetingId

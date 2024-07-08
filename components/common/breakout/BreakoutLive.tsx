@@ -17,9 +17,9 @@ import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { RenderIf } from '../RenderIf/RenderIf'
 
-import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useDimensions } from '@/hooks/useDimensions'
 import { IFrame } from '@/types/frame.type'
 // eslint-disable-next-line import/no-cycle

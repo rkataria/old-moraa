@@ -5,6 +5,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { MainContent } from './MainContent'
 import { ResizableRightSidebar } from './ResizableRightSidebar'
 import { RightSidebar } from './RightSidebar'
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
@@ -35,9 +36,11 @@ export function MainContentWithRightSidebar({
           <MainContent hasBottomSection={!!bottomContent}>
             {children}
           </MainContent>
-          <div className="h-full overflow-y-auto scrollbar-none bg-white rounded-md mt-2 p-2">
-            {bottomContent}
-          </div>
+          <RenderIf isTrue={!!bottomContent}>
+            <div className="h-[28vh] overflow-y-auto bg-white rounded-md mt-2 p-2">
+              {bottomContent}
+            </div>
+          </RenderIf>
         </Panel>
         {resizableRightSidebarVisiblity && (
           <PanelResizeHandle className="relative w-2 px-0.5">

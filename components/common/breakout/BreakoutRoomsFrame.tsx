@@ -38,13 +38,11 @@ export function BreakoutRoomsWithParticipants({
     breakoutRoomsInstance?.joinRoom(meetId)
   }
 
-  console.log(meeting.connectedMeetings.meetings)
-
   return (
-    <div className="m-1 w-full flex-1 pr-12">
-      <div className="flex">
+    <div className="w-full flex-1">
+      <div className="flex flex-wrap">
         {meeting.connectedMeetings.meetings.map((meet, index) => (
-          <div key={meet.id} className="mr-4">
+          <div key={meet.id} className="mr-4 mb-4">
             <Card
               className="overflow-y-auto p-2"
               style={{
@@ -82,11 +80,9 @@ export function BreakoutRoomsWithParticipants({
           </div>
         ))}
       </div>
-      <div className="mt-4 flex">
-        <Button onClick={endBreakoutRooms} size="sm" color="danger">
-          End Breakout
-        </Button>
-      </div>
+      <Button onClick={endBreakoutRooms} size="sm" color="danger">
+        End Breakout
+      </Button>
     </div>
   )
 }
