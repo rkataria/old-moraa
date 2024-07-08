@@ -119,7 +119,17 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     }
 
     let payload = {}
-    if (frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+    if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+      if (
+        frame?.content?.breakoutDetails?.[selectedBreakoutIndex]?.activityId
+      ) {
+        deleteFrame(
+          getCurrentFrame(
+            frame.content?.breakoutDetails?.[selectedBreakoutIndex]
+              ?.activityId || ''
+          )
+        )
+      }
       payload = {
         content: {
           ...frame.content,
@@ -141,6 +151,10 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         },
       }
     } else {
+      if (frame.content?.groupActivityId) {
+        deleteFrame(getCurrentFrame(frame.content?.groupActivityId as string))
+      }
+
       payload = {
         content: {
           ...frame.content,

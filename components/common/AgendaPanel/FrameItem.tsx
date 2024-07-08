@@ -12,6 +12,7 @@ import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
 import { FramePlaceholder } from '../FramePlaceholder'
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -162,8 +163,7 @@ export function FrameItem({ frame }: FrameItemProps) {
                   }}
                 />
               </div>
-
-              {editable && (
+              <RenderIf isTrue={editable && !frame?.content?.breakoutFrameId}>
                 <div className={cn('hidden group-hover/frame-item:block')}>
                   <FrameActions
                     triggerIcon={
@@ -174,7 +174,7 @@ export function FrameItem({ frame }: FrameItemProps) {
                     handleActions={handleFrameAction}
                   />
                 </div>
-              )}
+              </RenderIf>
             </div>
           </div>
           <DeleteFrameModal
@@ -212,7 +212,9 @@ export function FrameItem({ frame }: FrameItemProps) {
     <div className="relative w-full">
       {renderFrameContent()}
       {sidebarExpanded && (
-        <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+        <RenderIf isTrue={sidebarExpanded && !frame?.content?.breakoutFrameId}>
+          <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+        </RenderIf>
       )}
       {insertAfterFrameId === frame?.id && <FramePlaceholder />}
     </div>
