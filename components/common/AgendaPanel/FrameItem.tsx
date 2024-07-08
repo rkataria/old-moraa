@@ -12,7 +12,6 @@ import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
 import { FramePlaceholder } from '../FramePlaceholder'
-import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -165,7 +164,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                   }}
                 />
               </div>
-              <RenderIf isTrue={editable && !frame?.content?.breakoutFrameId}>
+
+              {editable && (
                 <div className={cn('hidden group-hover/frame-item:block')}>
                   <FrameActions
                     triggerIcon={
@@ -176,7 +176,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                     handleActions={handleFrameAction}
                   />
                 </div>
-              </RenderIf>
+              )}
             </div>
           </div>
           <DeleteFrameModal

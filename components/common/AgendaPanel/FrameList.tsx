@@ -27,7 +27,7 @@ export function FrameList({
   duplicateFrame,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
-  const { sections, currentFrame } = useEventContext()
+  const { sections } = useEventContext()
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
@@ -78,14 +78,12 @@ export function FrameList({
                   </Draggable>
                   <RenderIf
                     isTrue={
-                      (currentFrame?.type === ContentType.BREAKOUT &&
-                        currentFrame?.id === frame?.id) ||
-                      (!!currentFrame &&
-                        Boolean(
-                          getBreakoutFrames(frame)
-                            ?.map((_frame) => _frame?.id)
-                            .includes(currentFrame?.id)
-                        ))
+                      frame?.type === ContentType.BREAKOUT ||
+                      Boolean(
+                        getBreakoutFrames(frame)
+                          ?.map((_frame) => _frame?.id)
+                          .includes(frame?.id)
+                      )
                     }>
                     <div
                       className={cn('ml-6', {
