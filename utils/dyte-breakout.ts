@@ -51,7 +51,7 @@ export class BreakoutRooms {
   private async getConnectedMeetings() {
     return new Promise((resolve) => {
       this.meeting.connectedMeetings.getConnectedMeetings().then(() => {
-        setTimeout(resolve, 1000)
+        setTimeout(resolve, 400)
       })
     })
   }
@@ -78,10 +78,10 @@ export class BreakoutRooms {
   }: StartBreakoutConfig) {
     await this.getConnectedMeetings()
     await createAndAutoAssignBreakoutRooms({
+      roomsCount,
       groupSize: participantsPerRoom,
       meeting: this.meeting,
       stateManager: this.manager,
-      roomsCount,
     })
     await this.getConnectedMeetings()
   }

@@ -14,6 +14,8 @@ import {
 
 import { Button } from '@nextui-org/react'
 
+import { RenderIf } from '../common/RenderIf/RenderIf'
+
 import { ControlButton } from '@/components/common/ControlButton'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -44,7 +46,6 @@ export function Timer() {
       ({ payload }) => {
         setRemainingDuration(payload.remainingDuration)
         setIsTimerRunning(true)
-        setIsOpen(true)
       }
     )
 
@@ -53,6 +54,7 @@ export function Timer() {
       { event: 'timer-stop-event' },
       ({ payload }) => {
         setRemainingDuration(payload.remainingDuration)
+        if (!payload.keepTimerOpen) setIsOpen(false)
         setIsTimerRunning(false)
       }
     )
@@ -63,7 +65,6 @@ export function Timer() {
       ({ payload }) => {
         setRemainingDuration(payload.remainingDuration)
         setIsTimerRunning(false)
-        setIsOpen(true)
       }
     )
 
@@ -74,16 +75,6 @@ export function Timer() {
         setRemainingDuration(payload.remainingDuration)
       }
     )
-
-    realtimeChannel.on('broadcast', { event: 'timer-open-event' }, () => {
-      setIsOpen(true)
-    })
-
-    realtimeChannel.on('broadcast', { event: 'timer-close-event' }, () => {
-      setIsOpen(false)
-      setRemainingDuration(defaultDuration) // Reset to default duration
-      setIsTimerRunning(false) // Ensure timer stops when closed
-    })
 
     if (!isHost) {
       realtimeChannel?.send({
@@ -135,49 +126,24 @@ export function Timer() {
       realtimeChannel?.send({
         type: 'broadcast',
         event: 'timer-stop-event',
-        payload: { remainingDuration },
+        payload: { remainingDuration, keepTimerOpen: true },
       })
-      setIsTimerRunning(false)
     } else {
       realtimeChannel?.send({
         type: 'broadcast',
         event: 'timer-start-event',
         payload: { remainingDuration },
       })
-      setIsTimerRunning(true)
-      setIsOpen(true)
     }
   }, [isTimerRunning, remainingDuration, realtimeChannel])
 
   const handleClosePopover = () => {
     setIsOpen(false)
-    setRemainingDuration(defaultDuration) // Reset to default duration
-    setIsTimerRunning(false) // Ensure timer stops when closed
-    if (isHost) {
-      realtimeChannel?.send({
-        type: 'broadcast',
-        event: 'timer-close-event',
-      })
-    }
   }
 
   const handleTimerButtonClick = () => {
-    if (isHost) {
-      const newState = !isOpen
-      setIsOpen(newState)
-      if (newState) {
-        setRemainingDuration(defaultDuration) // Reset to default duration when reopening
-        realtimeChannel?.send({
-          type: 'broadcast',
-          event: 'timer-open-event',
-        })
-      } else {
-        realtimeChannel?.send({
-          type: 'broadcast',
-          event: 'timer-close-event',
-        })
-      }
-    }
+    if (!isHost) return
+    setIsOpen(!isOpen)
   }
 
   const handleKeyDown = (event: { key: string }) => {
@@ -185,11 +151,6 @@ export function Timer() {
       handleClosePopover()
     }
   }
-
-  // const handleOpenChange = (open: boolean) => {
-  //   if (!open) return
-  //   setIsOpen(open)
-  // }
 
   const setRemainingDurationAndUpdate = (newDuration: number) => {
     realtimeChannel?.send({
@@ -218,27 +179,31 @@ export function Timer() {
 
   return (
     <>
-      {isHost && (
+      <RenderIf isTrue={!isHost && isTimerRunning}>
+        <TimerViewElement time={remainingDuration} size="sm" />
+      </RenderIf>
+      <RenderIf isTrue={isHost}>
         <ControlButton
           buttonProps={{
-            isIconOnly: true,
+            isIconOnly: !isTimerRunning,
             radius: 'md',
             size: 'sm',
             variant: 'flat',
             className: cn(
-              'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
-              {
-                'bg-black text-white': isOpen,
-              }
+              'transition-all duration-300 bg-[#F3F4F6] text-[#444444]'
             ),
           }}
           tooltipProps={{
-            content: 'Launch Timer',
+            content: isTimerRunning ? 'Time Remaining' : 'Launch Timer',
           }}
           onClick={handleTimerButtonClick}>
-          <IoStopwatchOutline size={22} />
+          {isTimerRunning ? (
+            <TimerViewElement time={remainingDuration} size="sm" />
+          ) : (
+            <IoStopwatchOutline size={22} />
+          )}
         </ControlButton>
-      )}
+      </RenderIf>
       {isOpen && (
         <Draggable
           position={position}
@@ -246,15 +211,14 @@ export function Timer() {
           defaultClassName="cursor-move">
           <div className="fixed z-[10] right-4 top-8 rounded-lg p-4 overflow-hidden w-[300px] bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100">
             <div
-              className={`absolute top-2 right-2 cursor-pointer ${
-                !isHost ? 'opacity-50 cursor-not-allowed' : ''
+              className={`absolute top-2 right-2 ${
+                isHost ? 'cursor-pointer' : 'hidden'
               }`}
               onClick={() => isHost && handleClosePopover()}
               onKeyDown={(event) => isHost && handleKeyDown(event)}
               tabIndex={isHost ? 0 : -1}
               role="button"
-              aria-label="Close"
-              style={{ pointerEvents: isHost ? 'auto' : 'none' }}>
+              aria-label="Close">
               <MdClose size={20} />
             </div>
             <div className="p-4 flex items-center justify-center">
@@ -277,15 +241,7 @@ export function Timer() {
                     <MdRemove />
                   </Button>
                 )}
-                <h2 className="m-2 text-md font-extrabold px-2 text-gray-600">
-                  <span className="text-4xl inline-block text-center w-[48px] text-white-border">
-                    {zeroPad(Math.floor(remainingDuration / 60), 2)}
-                  </span>
-                  :
-                  <span className="w-[16px] inline-block text-center text-white-border">
-                    {zeroPad(remainingDuration % 60, 2)}
-                  </span>
-                </h2>
+                <TimerViewElement time={remainingDuration} />
                 {isHost && (
                   <Button
                     isIconOnly
@@ -329,5 +285,29 @@ export function Timer() {
         </Draggable>
       )}
     </>
+  )
+}
+
+function TimerViewElement({
+  time,
+  size = 'lg',
+}: {
+  time: number
+  size?: 'sm' | 'lg'
+}) {
+  return (
+    <h2 className="m-2 text-md font-extrabold px-2 text-gray-600">
+      <span
+        className={cn('inline-block text-center w-[48px] text-white-border', {
+          'text-4xl': size === 'lg',
+          'text-2xl': size === 'sm',
+        })}>
+        {zeroPad(Math.floor(time / 60), 2)}
+      </span>
+      :
+      <span className="w-[16px] inline-block text-center text-white-border">
+        {zeroPad(time % 60, 2)}
+      </span>
+    </h2>
   )
 }

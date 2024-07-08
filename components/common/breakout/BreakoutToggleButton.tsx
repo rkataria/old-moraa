@@ -58,6 +58,7 @@ export function BreakoutHeaderButton() {
     setIsCreateBreakoutOpen,
     setCurrentFrame,
     breakoutSlideId,
+    realtimeChannel,
   } = useEventSession()
   const { sections } = useEventContext()
 
@@ -70,6 +71,37 @@ export function BreakoutHeaderButton() {
     .flat()
     .find((frame) => frame.id === breakoutSlideId)
 
+  const onBreakoutStartOnBreakoutSlide = async () => {
+    try {
+      await breakoutRoomsInstance?.startBreakoutRooms({
+        roomsCount: currentFrame?.content?.breakoutDetails?.length || 2,
+      })
+      if (currentFrame?.config.breakoutTime) {
+        setTimeout(() => {
+          realtimeChannel?.send({
+            type: 'broadcast',
+            event: 'timer-start-event',
+            payload: {
+              remainingDuration:
+                (currentFrame?.config?.breakoutTime as number) * 60,
+            },
+          })
+        }, 500)
+      }
+    } catch (err) {
+      console.log('🚀 ~ onBreakoutStartOnBreakoutSlide ~ err:', err)
+    }
+  }
+
+  const onBreakoutEnd = () => {
+    breakoutRoomsInstance?.endBreakoutRooms()
+    realtimeChannel?.send({
+      type: 'broadcast',
+      event: 'timer-stop-event',
+      payload: { remainingDuration: 0 },
+    })
+  }
+
   if (!isHost) return null
   if (isCurrentDyteMeetingInABreakoutRoom) return null
 
@@ -80,11 +112,7 @@ export function BreakoutHeaderButton() {
         size="sm"
         radius="md"
         className="bg-green-500 text-white"
-        onClick={() =>
-          breakoutRoomsInstance?.startBreakoutRooms({
-            roomsCount: currentFrame.content?.breakoutDetails?.length || 2,
-          })
-        }>
+        onClick={onBreakoutStartOnBreakoutSlide}>
         Start Breakout
       </Button>
     )
@@ -107,7 +135,7 @@ export function BreakoutHeaderButton() {
         size="sm"
         className="!bg-red-500"
         radius="md"
-        onClick={() => breakoutRoomsInstance?.endBreakoutRooms()}>
+        onClick={onBreakoutEnd}>
         End Breakout
       </Button>
     )

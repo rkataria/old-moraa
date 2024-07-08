@@ -24,14 +24,23 @@ export function BreakoutRoomsWithParticipants({
   hideActivityCards?: boolean
 }) {
   const { meeting } = useDyteMeeting()
-  const { currentFrame, setIsBreakoutSlide, setBreakoutSlideId } =
-    useEventSession()
+  const {
+    currentFrame,
+    setIsBreakoutSlide,
+    setBreakoutSlideId,
+    realtimeChannel,
+  } = useEventSession()
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
   const endBreakoutRooms = () => {
-    setBreakoutSlideId(null)
     breakoutRoomsInstance?.endBreakout()
+    setBreakoutSlideId(null)
     setIsBreakoutSlide(false)
+    realtimeChannel?.send({
+      type: 'broadcast',
+      event: 'timer-stop-event',
+      payload: { remainingDuration: 0 },
+    })
   }
 
   const joinRoom = (meetId: string) => {

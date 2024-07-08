@@ -35,8 +35,12 @@ export function CreateBreakoutModal({
   setOpen,
 }: CreateBreakoutModalProps) {
   const { meeting } = useDyteMeeting()
-  const { currentFrame, presentationStatus, setBreakoutSlideId } =
-    useEventSession()
+  const {
+    currentFrame,
+    presentationStatus,
+    setBreakoutSlideId,
+    realtimeChannel,
+  } = useEventSession()
 
   const totalParticipants = meeting.participants.count
 
@@ -53,10 +57,19 @@ export function CreateBreakoutModal({
 
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
-  const startBreakoutRooms = () => {
-    breakoutRoomsInstance?.startBreakoutRooms({ participantsPerRoom })
-    if (presentationStatus === PresentationStatuses.STARTED) {
-      setBreakoutSlideId(currentFrame?.id || null)
+  const startBreakoutRooms = async () => {
+    try {
+      await breakoutRoomsInstance?.startBreakoutRooms({ participantsPerRoom })
+      if (presentationStatus === PresentationStatuses.STARTED) {
+        setBreakoutSlideId(currentFrame?.id || null)
+      }
+      realtimeChannel?.send({
+        type: 'broadcast',
+        event: 'timer-start-event',
+        payload: { remainingDuration: breakoutDuration * 60 },
+      })
+    } catch (err) {
+      console.log('🚀 ~ startBreakoutRooms ~ err:', err)
     }
   }
 
