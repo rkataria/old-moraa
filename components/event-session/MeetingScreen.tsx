@@ -117,6 +117,14 @@ export function MeetingScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting, eventSessionMode])
 
+  const BottomContentElement =
+    isHost &&
+    isBreakoutActive &&
+    breakoutSlideId === currentFrame?.id &&
+    currentFrame.type !== ContentType.BREAKOUT ? (
+      <BreakoutRoomsWithParticipants hideActivityCards />
+    ) : null
+
   return (
     <StudioLayout
       header={
@@ -131,13 +139,7 @@ export function MeetingScreen() {
         />
       }
       rightSidebarControls={<RightSidebarControls />}
-      bottomContent={
-        isBreakoutActive &&
-        breakoutSlideId === currentFrame?.id &&
-        currentFrame.type !== ContentType.BREAKOUT ? (
-          <BreakoutRoomsWithParticipants hideActivityCards />
-        ) : null
-      }>
+      bottomContent={BottomContentElement}>
       <MainContainer />
 
       {/* Emoji Overlay */}

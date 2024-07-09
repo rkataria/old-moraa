@@ -82,59 +82,54 @@ export function BreakoutLive({ frame, isEditable = false }: BreakoutProps) {
   }
 
   return (
-    <div>
-      <RenderIf isTrue={Boolean(frame.content?.breakoutDetails?.length)}>
-        <RenderIf
-          isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS}>
-          <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
-            {frame.content?.breakoutDetails?.map((breakout, idx) => (
-              <BreakoutActivityCard
-                idx={idx}
-                editable={false}
-                breakout={breakout}
-                participants={
-                  isHost && isBreakoutActive
-                    ? meeting.connectedMeetings.meetings?.[idx]?.participants
-                    : undefined
-                }
-              />
-            ))}
-          </div>
-        </RenderIf>
-        <RenderIf
-          isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.GROUPS}>
-          <Card key="breakout-group-activity" className="border p-4 w-[75%]">
-            <div className="flex justify-between gap-4">
-              <span className="text-md font-semibold">Activity</span>
-            </div>
-            <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-96 flex items-center justify-center">
-              <RenderIf isTrue={Boolean(frame?.content?.activityId)}>
-                {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-                <div
-                  ref={thumbnailContainerRef}
-                  className="relative w-full h-full"
-                  onClick={() => {
-                    if (!editable) return
-                    setCurrentFrame(
-                      getCurrentFrame(frame?.content?.activityId as string)
-                    )
-                  }}>
-                  <FrameThumbnailCard
-                    frame={getCurrentFrame(
-                      frame?.content?.activityId as string
-                    )}
-                    containerWidth={containerWidth}
-                  />
-                </div>
-              </RenderIf>
-              <RenderIf isTrue={!frame?.content?.activityId}>
-                You can add existing slide from any section or add new slide
-                which will be added under the Breakout section
-              </RenderIf>
-            </div>
-          </Card>
-        </RenderIf>
+    <RenderIf isTrue={Boolean(frame.content?.breakoutDetails?.length)}>
+      <RenderIf isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS}>
+        <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
+          {frame.content?.breakoutDetails?.map((breakout, idx) => (
+            <BreakoutActivityCard
+              idx={idx}
+              editable={false}
+              breakout={breakout}
+              participants={
+                isHost && isBreakoutActive
+                  ? meeting.connectedMeetings.meetings?.[idx]?.participants
+                  : undefined
+              }
+            />
+          ))}
+        </div>
       </RenderIf>
-    </div>
+      <RenderIf
+        isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.GROUPS}>
+        <Card key="breakout-group-activity" className="border p-4 w-[65%]">
+          <div className="flex justify-between gap-4">
+            <span className="text-md font-semibold">Activity</span>
+          </div>
+          <div className="border border-dashed border-gray-200 text-gray-400 mt-4 h-96 flex items-center justify-center">
+            <RenderIf isTrue={Boolean(frame?.content?.activityId)}>
+              {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+              <div
+                ref={thumbnailContainerRef}
+                className="relative w-full h-full"
+                onClick={() => {
+                  if (!editable) return
+                  setCurrentFrame(
+                    getCurrentFrame(frame?.content?.activityId as string)
+                  )
+                }}>
+                <FrameThumbnailCard
+                  frame={getCurrentFrame(frame?.content?.activityId as string)}
+                  containerWidth={containerWidth}
+                />
+              </div>
+            </RenderIf>
+            <RenderIf isTrue={!frame?.content?.activityId}>
+              You can add existing slide from any section or add new slide which
+              will be added under the Breakout section
+            </RenderIf>
+          </div>
+        </Card>
+      </RenderIf>
+    </RenderIf>
   )
 }

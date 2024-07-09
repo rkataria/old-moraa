@@ -63,7 +63,7 @@ export function BreakoutActivityCard({
   return (
     <div
       className={cn('border rounded p-2', {
-        'min-h-[220px]': !hideActivityCard,
+        // 'min-h-[120px]': !hideActivityCard,
       })}
       key={breakout?.name}>
       <div className="flex justify-between gap-4">
@@ -98,7 +98,7 @@ export function BreakoutActivityCard({
         </RenderIf>
       </div>
       <RenderIf isTrue={!hideActivityCard}>
-        <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-full min-w-48">
+        <div className="border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48">
           {breakout?.activityId ? (
             <div
               ref={thumbnailContainerRef}
@@ -125,7 +125,7 @@ export function BreakoutActivityCard({
         </div>
       </RenderIf>
       {!!participants && (
-        <div className="flex items-center">
+        <div className="flex items-center mt-2">
           {participants?.length === 0 ? (
             <p className="text-sm text-gray-400">No participants</p>
           ) : null}
