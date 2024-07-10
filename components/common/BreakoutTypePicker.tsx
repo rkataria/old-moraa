@@ -156,7 +156,7 @@ export function BreakoutTypePicker({
                         <p className="text-sm mt-1 w-full font-normal">
                           {breakoutType.description}
                         </p>
-                        <span>No of {breakoutType.breakoutType}s</span>
+                        <span>No of {breakoutType.breakoutType}</span>
                         <span
                           onClick={(e) => {
                             e.preventDefault()

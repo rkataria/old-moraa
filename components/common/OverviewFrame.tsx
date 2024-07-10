@@ -178,7 +178,7 @@ export function OverviewFrame() {
                                     size="sm"
                                     isSelected={section.frames.some(
                                       (frame) =>
-                                        frame.status === FrameStatus.PUBLISHED
+                                        frame?.status === FrameStatus.PUBLISHED
                                     )}
                                     className="p-0"
                                     onChange={() =>

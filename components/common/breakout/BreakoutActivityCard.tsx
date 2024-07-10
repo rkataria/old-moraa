@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useRef } from 'react'
 
+import { DragDropContext } from 'react-beautiful-dnd'
 import { IoAddSharp } from 'react-icons/io5'
 
 import { Tooltip } from '@nextui-org/react'
@@ -12,6 +13,7 @@ import { Tooltip } from '@nextui-org/react'
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
+import { StrictModeDroppable } from '../StrictModeDroppable'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
@@ -27,6 +29,7 @@ type BreakoutCardProps = {
     displayPictureUrl?: string
   }[]
   editable: boolean
+  addFrameToRoom?: (result: any) => void
 } & (
   | {
       editable: boolean
@@ -50,6 +53,7 @@ export function BreakoutActivityCard({
   updateBreakoutGroupRoomNameName,
   deleteRoomGroup,
   onAddNewActivity,
+  addFrameToRoom,
   participants,
 }: BreakoutCardProps) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
@@ -87,18 +91,20 @@ export function BreakoutActivityCard({
                 onAddNewActivity(idx)
               }}
             />
-            <IoAddSharp
-              className="rotate-45"
-              onClick={() => {
-                if (!editable) return
-                deleteRoomGroup(idx)
-              }}
-            />
+            <RenderIf isTrue={breakout?.activityId}>
+              <IoAddSharp
+                className="rotate-45"
+                onClick={() => {
+                  if (!editable) return
+                  deleteRoomGroup(idx)
+                }}
+              />
+            </RenderIf>
           </span>
         </RenderIf>
       </div>
       <RenderIf isTrue={!hideActivityCard}>
-        <div className="border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48">
+        <div className="border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48 p-2">
           {breakout?.activityId ? (
             <div
               ref={thumbnailContainerRef}
@@ -113,14 +119,28 @@ export function BreakoutActivityCard({
               />
             </div>
           ) : (
-            <span
-              onClick={() => {
-                if (!editable) return
-                onAddNewActivity(idx)
+            <DragDropContext
+              onDragEnd={(result) => {
+                addFrameToRoom?.(result)
               }}>
-              You can add existing slide from any section or add new slide which
-              will be added under the Breakout section
-            </span>
+              <StrictModeDroppable
+                droppableId={`breakout-frame-droppable-${breakout?.name}`}
+                type="breakout-frame">
+                {(sectionDroppableProvided) => (
+                  <div
+                    onClick={() => {
+                      if (!editable) return
+                      onAddNewActivity(idx)
+                    }}
+                    className="text-clip h-full"
+                    ref={sectionDroppableProvided.innerRef}
+                    {...sectionDroppableProvided.droppableProps}>
+                    You can add existing slide from any section or add new slide
+                    which will be added under the Breakout section
+                  </div>
+                )}
+              </StrictModeDroppable>
+            </DragDropContext>
           )}
         </div>
       </RenderIf>

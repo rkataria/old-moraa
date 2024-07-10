@@ -6,7 +6,8 @@ import 'tldraw/tldraw.css'
 
 import { useContext, useRef, useState } from 'react'
 
-import { IoAddSharp } from 'react-icons/io5'
+import { DragDropContext } from 'react-beautiful-dnd'
+import { IoAddOutline, IoAddSharp } from 'react-icons/io5'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Card } from '@nextui-org/react'
@@ -22,6 +23,7 @@ import {
 } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { RenderIf } from '../RenderIf/RenderIf'
+import { StrictModeDroppable } from '../StrictModeDroppable'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
@@ -232,6 +234,30 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     setIsDeleteModalOpen(false)
   }
 
+  const addNewRoom = () => {
+    const payload = {
+      config: {
+        ...frame.config,
+        breakoutCount: frame.config.breakoutCount + 1,
+      },
+      content: {
+        ...frame.content,
+        breakoutDetails: [
+          ...(frame.content.breakoutDetails || []),
+          {
+            name: `Room-${frame.content?.breakoutDetails?.length || 0 + 1}`,
+          },
+        ],
+      },
+    }
+    updateFrame({ framePayload: payload, frameId: frame.id })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const addFrameToRoom = (result: any) => {
+    console.log(result)
+  }
+
   return (
     <div className="ml-8">
       <RenderIf isTrue={Boolean(frame.content?.breakoutDetails?.length)}>
@@ -251,8 +277,19 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
                 updateBreakoutGroupRoomNameName={
                   updateBreakoutGroupRoomNameName
                 }
+                addFrameToRoom={addFrameToRoom}
               />
             ))}
+            <Card key="breakout-group-activity" className="border p-4">
+              <div className="gap-4 h-40 p-2">
+                {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+                <div
+                  className="border border-dashed border-gray-200 text-gray-400 mt-4 h-full min-w-48 flex justify-center items-center"
+                  onClick={addNewRoom}>
+                  <IoAddOutline size="150px" />
+                </div>
+              </div>
+            </Card>
           </div>
         </RenderIf>
         <RenderIf
@@ -292,10 +329,24 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
                 </div>
               </RenderIf>
               <RenderIf isTrue={!frame?.content?.activityId}>
-                <div>
-                  You can add existing slide from any section or add new slide
-                  which will be added under the Breakout section
-                </div>
+                <DragDropContext
+                  onDragEnd={(result) => {
+                    addFrameToRoom(result)
+                  }}>
+                  <StrictModeDroppable
+                    droppableId="section-droppable"
+                    type="frame">
+                    {(sectionDroppableProvided) => (
+                      <div
+                        className="truncate hover:text-clip"
+                        ref={sectionDroppableProvided.innerRef}
+                        {...sectionDroppableProvided.droppableProps}>
+                        You can add existing slide from any section or add new
+                        slide which will be added under the Breakout section
+                      </div>
+                    )}
+                  </StrictModeDroppable>
+                </DragDropContext>
               </RenderIf>
             </div>
           </Card>
