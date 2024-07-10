@@ -16,7 +16,8 @@ export function FramesList({ section }: { section: ISection }) {
     EventContext
   ) as EventContextType
 
-  const editable = isOwner && !preview && eventMode === 'edit'
+  const statusFilter =
+    isOwner && !preview && (eventMode === 'edit' || eventMode === 'present')
 
   return (
     <div className="m">
@@ -38,7 +39,7 @@ export function FramesList({ section }: { section: ISection }) {
                   <div className="flex flex-col justify-start items-start gap-[1.5px] w-full rounded-sm transition-all">
                     {getFilteredFramesByStatus({
                       frames: section.frames,
-                      status: editable ? null : FrameStatus.PUBLISHED,
+                      status: statusFilter ? null : FrameStatus.PUBLISHED,
                     }).map((frame, frameIndex) => (
                       <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
                         <Fragment key={frame.id}>
