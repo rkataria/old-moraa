@@ -25,6 +25,7 @@
     "@dytesdk/web-core": "^1.31.0",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
+    "@happykit/flags": "^3.3.0",
     "@headlessui/react": "^1.7.17",
     "@hookform/resolvers": "^3.3.4",
     "@internationalized/date": "^3.5.4",

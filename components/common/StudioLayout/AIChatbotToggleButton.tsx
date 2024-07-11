@@ -6,11 +6,13 @@ import { LuSparkles } from 'react-icons/lu'
 import { Button } from '@nextui-org/react'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useFlags } from '@/flags/client'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function AIChatbotToggleButton() {
+  const { flags } = useFlags()
   const { resizableRightSidebarVisiblity, setResizableRightSidebarVisiblity } =
     useStudioLayout()
   const { isOwner } = useContext(EventContext) as EventContextType
@@ -24,6 +26,8 @@ export function AIChatbotToggleButton() {
   }
 
   useHotkeys('a', toggleSidebar, [resizableRightSidebarVisiblity, isOwner])
+
+  if (!flags?.show_ai_panel) return null
 
   return (
     <Button
