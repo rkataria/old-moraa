@@ -8,16 +8,31 @@ export async function GET(request: NextRequest) {
   const flagsFromHappyKit = await getFlags({})
   console.log('flagsFromHappyKit', flagsFromHappyKit)
 
-  return NextResponse.json<ApiData>({
-    definitions: {
-      newFeature: {
-        description: 'Controls whether the new feature is visible',
-        origin: 'https://example.com/#new-feature',
+  const getDefinitions = () => {
+    let definitions = {}
+    if (!flagsFromHappyKit.flags)
+      return {
+        newFeature: {
+          description: 'Controls whether the new feature is visible',
+          origin: 'https://example.com/#new-feature',
+          options: [
+            { value: false, label: 'Off' },
+            { value: true, label: 'On' },
+          ],
+        },
+      }
+    Object.keys(flagsFromHappyKit.flags!).map((flagKey) => {
+      definitions[flagKey] = {
         options: [
-          { value: false, label: 'Off' },
+          { value: flagsFromHappyKit[flagKey], label: 'Off' },
           { value: true, label: 'On' },
         ],
-      },
-    },
+      }
+    })
+    return definitions
+  }
+
+  return NextResponse.json<ApiData>({
+    definitions: getDefinitions(),
   })
 }
