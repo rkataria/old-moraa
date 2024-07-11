@@ -38,6 +38,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     setOverviewOpen,
     addFrameToSection,
   } = useContext(EventContext) as EventContextType
+
   const {
     expandedSectionIds,
     currentSectionId,
@@ -48,7 +49,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
   const frames =
-    isOwner && eventMode === 'edit'
+    isOwner && (eventMode === 'edit' || eventMode === 'present')
       ? section.frames
       : getFilteredFramesByStatus({
           frames: section.frames,

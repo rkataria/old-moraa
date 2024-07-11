@@ -20,12 +20,15 @@ const SECTION_LIST_CONTAINER_MAX_HEIGHT = `calc(100vh -  ${MAIN_HEADER_HEIGHT}px
 const SECTION_LIST_CONTAINER_MAX_HEIGHT_WHEN_MANIMIZED = `calc(100vh -  ${MAIN_HEADER_HEIGHT}px - ${HEADER_HEIGHT_WHEN_MINIMIZED}px - ${BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED}px)`
 
 export function SectionList() {
-  const { currentFrame, sections, reorderSection, reorderFrame } = useContext(
-    EventContext
-  ) as EventContextType
-  const { eventMode, isOwner, preview } = useContext(
-    EventContext
-  ) as EventContextType
+  const {
+    currentFrame,
+    sections,
+    reorderSection,
+    reorderFrame,
+    eventMode,
+    isOwner,
+    preview,
+  } = useContext(EventContext) as EventContextType
   const sectionListRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
 

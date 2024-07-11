@@ -122,7 +122,7 @@ export function MeetingScreen() {
       header={
         <MeetingHeader dyteStates={dyteStates} setDyteStates={setDyteStates} />
       }
-      leftSidebar={!isHost && isBreakoutActive ? null : <AgendaPanel />}
+      leftSidebar={isHost ? <AgendaPanel /> : null}
       resizableRightSidebar={<ResizableRightSidebar />}
       rightSidebar={
         <MeetingRightSidebar
