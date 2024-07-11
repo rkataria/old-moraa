@@ -15,7 +15,7 @@ import { MeetingService } from '@/services/meeting.service'
 import { SectionService } from '@/services/section.service'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
 import { ISection, IFrame } from '@/types/frame.type'
-import { getDefaultCoverFrame } from '@/utils/content.util'
+import { ContentType, getDefaultCoverFrame } from '@/utils/content.util'
 
 interface EventProviderProps {
   children: React.ReactNode
@@ -37,6 +37,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
+  const [addNewFrameLoader, setAddNewFrameLoader] = useState<boolean>(false)
   const [syncing, setSyncing] = useState<boolean>(false)
   const [isOwner, setIsOwner] = useState<boolean>(false)
   const supabase = createClientComponentClient()
@@ -185,6 +186,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
               return updatedSections
             })
+
+            setAddNewFrameLoader(false)
 
             // Approach - 2
             // if (payload.eventType === 'UPDATE') {
@@ -1085,31 +1088,75 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       if (!sourceSection || !destinationSection) return null
 
       const [removed] = sourceSection.frames.splice(source.index, 1)
-      destinationSection.frames.splice(destination.index, 0, removed)
 
-      await updateSection({
-        sectionPayload: {
-          frames: sourceSection.frames.map((i: IFrame) => i?.id),
-        },
-        sectionId: sourceSectionId,
-      })
+      destinationSection.frames.splice(destination.index, 0, removed)
+      updateSectionsWithReorderedFrames(
+        removed,
+        sourceSection,
+        destinationSection,
+        sourceSectionId,
+        destinationSectionId
+      )
+    }
+
+    return null
+  }
+
+  const updateSectionsWithReorderedFrames = async (
+    removed: IFrame,
+    sourceSection: any,
+    destinationSection: any,
+    sourceSectionId: string,
+    destinationSectionId: string
+  ) => {
+    const removedIds = [removed?.id]
+    if (removed?.type === ContentType.BREAKOUT) {
+      if (removed?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+        removed?.content?.breakoutDetails?.map((ele: any) => {
+          if (ele?.activityId) {
+            removedIds.push(ele?.activityId)
+          }
+
+          return ele
+        })
+      } else if (removed?.content?.groupActivityId) {
+        removedIds.push(removed?.content?.groupActivityId as string)
+      }
+    }
+
+    const sourceIds = sourceSection.frames
+      .map((i: IFrame) => i?.id)
+      .filter((i: string) => !removedIds.includes(i))
+
+    const destinationIds: string[] = [
+      ...destinationSection.frames.map((i: IFrame) => i?.id),
+      ...removedIds,
+    ]
+
+    await updateSection({
+      sectionPayload: {
+        frames: sourceIds,
+      },
+      sectionId: sourceSectionId,
+    })
+
+    removedIds.map(async (id: string) => {
       await updateFrame({
         framePayload: {
           section_id: destinationSectionId,
         },
-        frameId: removed.id,
+        frameId: id,
       })
-      await updateSection({
-        sectionPayload: {
-          frames: destinationSection.frames.map((i: IFrame) => i?.id),
-        },
-        sectionId: destinationSectionId,
-      })
+    })
 
-      return null
-    }
-
-    return null
+    await updateSection({
+      sectionPayload: {
+        frames: destinationIds.filter(
+          (item, pos) => destinationIds?.indexOf(item) === pos
+        ),
+      },
+      sectionId: destinationSectionId,
+    })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1198,6 +1245,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         moveDownSection,
         getCurrentFrame,
         deleteBreakoutFrames,
+        updateSectionsWithReorderedFrames,
+        addNewFrameLoader,
+        setAddNewFrameLoader,
       }}>
       {children}
     </EventContext.Provider>

@@ -55,6 +55,7 @@ export function FrameManager() {
     insertAfterFrameId,
     insertInSectionId,
     addFrameToSection,
+    setAddNewFrameLoader,
   } = useContext(EventContext) as EventContextType
 
   useHotkeys('f', () => setOpenContentTypePicker(true), [])
@@ -87,6 +88,8 @@ export function FrameManager() {
         ContentType.BREAKOUT,
       ].includes(contentType),
     }
+
+    setAddNewFrameLoader(true)
 
     if (contentType === ContentType.BREAKOUT) {
       const breakoutPayload = {
@@ -171,8 +174,6 @@ export function FrameManager() {
             breakoutRoomsGroupsTime
           ) => {
             if (selectedContentType) {
-              console.log(breakoutRoomsGroupsTime)
-
               handleAddNewFrame(
                 selectedContentType,
                 selectedTemplateType,

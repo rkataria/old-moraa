@@ -11,7 +11,7 @@ import { ContentType } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
-import { FramePlaceholder } from '../FramePlaceholder'
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -36,7 +36,6 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     preview,
     overviewOpen,
     eventMode,
-    insertAfterFrameId,
     updateFrame,
     moveUpFrame,
     moveDownFrame,
@@ -90,6 +89,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     if (sidebarExpanded) {
       return (
         <div
+          key={`frame-${frame?.id}`}
           data-miniframe-id={frame?.id}
           className={cn(
             'relative cursor-pointer rounded-md border-0  hover:bg-purple-200 overflow-hidden',
@@ -164,8 +164,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                   }}
                 />
               </div>
-
-              {editable && (
+              <RenderIf isTrue={editable && !frame?.content?.breakoutFrameId}>
                 <div className={cn('hidden group-hover/frame-item:block')}>
                   <FrameActions
                     triggerIcon={
@@ -176,7 +175,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                     handleActions={handleFrameAction}
                   />
                 </div>
-              )}
+              </RenderIf>
             </div>
           </div>
           <DeleteFrameModal
@@ -214,9 +213,10 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     <div className="relative w-full">
       {renderFrameContent()}
       {sidebarExpanded && (
-        <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+        <RenderIf isTrue={sidebarExpanded && !frame?.content?.breakoutFrameId}>
+          <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+        </RenderIf>
       )}
-      {insertAfterFrameId === frame?.id && <FramePlaceholder />}
     </div>
   )
 }
