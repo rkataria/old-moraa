@@ -16,6 +16,7 @@ export function CommonConfiguration() {
     updateFrame({
       framePayload: {
         status: value ? FrameStatus.PUBLISHED : FrameStatus.DRAFT,
+        content: currentFrame.content,
       },
       frameId: currentFrame.id,
     })

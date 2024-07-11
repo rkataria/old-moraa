@@ -26,7 +26,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { type IReflectionFrame } from '@/types/frame.type'
 import { checkVoted } from '@/utils/content.util'
-import { getOjectPublicUrl } from '@/utils/utils'
+import { cn, getOjectPublicUrl } from '@/utils/utils'
 
 const PDFViewer = dynamic(
   () => import('./content-types/PDFViewer').then((mod) => mod.PDFViewer),
@@ -110,7 +110,11 @@ export function Frame() {
   const renderer = renderersByContentType[currentFrame.type]
 
   return (
-    <div className="relative h-full w-full">
+    <div
+      className={cn('relative h-full w-full', {
+        'px-[20%] h-screen overflow-y-scroll scrollbar-none':
+          currentFrame.type === ContentType.RICH_TEXT,
+      })}>
       <FrameTitleDescriptionPreview frame={currentFrame as any} />
       {renderer}
     </div>

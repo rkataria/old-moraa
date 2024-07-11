@@ -1,7 +1,7 @@
 // TODO: Fix any types
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from './breakout/BreakoutFrame'
@@ -27,6 +27,7 @@ import { Cover, CoverFrameType } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { Poll, type PollFrame } from '@/components/common/content-types/Poll'
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { useDimensions } from '@/hooks/useDimensions'
 import { IFrame } from '@/types/frame.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
@@ -36,6 +37,10 @@ interface FrameProps {
 }
 
 export function FramePreview({ frame, readOnly }: FrameProps) {
+  const previewRef = useRef<HTMLDivElement>(null)
+
+  const { totalHeight } = useDimensions(previewRef)
+
   useEffect(() => {
     if (!frame) return
 
@@ -45,20 +50,46 @@ export function FramePreview({ frame, readOnly }: FrameProps) {
     )
   }, [frame])
 
+  console.log('totalHeight', frame.type, totalHeight)
+
+  const thumbnailStyle = () => {
+    if (!readOnly) return {}
+    if (frame.type === ContentType.RICH_TEXT) {
+      const scaleDown = (209 / totalHeight) * 3
+
+      return {
+        scale: scaleDown > 1 ? 1 : scaleDown,
+        transformOrigin: 'top',
+        height: totalHeight,
+      }
+    }
+
+    return null
+  }
+
   return (
     <div
-      style={{ backgroundColor: frame.config.backgroundColor }}
+      ref={previewRef}
+      style={{
+        backgroundColor: frame.config.backgroundColor,
+        ...thumbnailStyle(),
+      }}
       className={cn(
         'relative group w-full h-full bg-gray-100 flex flex-col p-4',
         {
           '!p-0': frame.type === ContentType.TEXT_IMAGE && readOnly,
+          'px-[20%]': frame.type === ContentType.RICH_TEXT && !readOnly,
+          'overflow-y-scroll scrollbar-none':
+            frame.type === ContentType.RICH_TEXT,
         }
       )}>
       <FrameTitleDescriptionPreview frame={frame as any} />
 
       <div
         data-frame-id={frame.id}
-        className="relative w-full h-full rounded-md overflow-auto transition-all">
+        className={cn('relative w-full h-full rounded-md  transition-all', {
+          'overflow-auto': frame.type !== ContentType.RICH_TEXT,
+        })}>
         {frame.type === ContentType.CANVAS && (
           <CanvasPreview frame={frame as any} />
         )}

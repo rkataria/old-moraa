@@ -122,19 +122,19 @@ export function FileUploader({
     })
 
     _uppy.on('transloadit:upload', async (file) => {
-      onFilesUploaded?.([
-        {
-          meta: { name: file.original_name, size: file.size, type: file.type },
-          signedUrl: file.ssl_url,
-        },
-      ])
+      // onFilesUploaded?.([
+      //   {
+      //     meta: { name: file.original_name, size: file.size, type: file.type },
+      //     signedUrl: file.ssl_url,
+      //   },
+      // ])
       _uppy.removeFile(file.id)
     })
 
     _uppy.on('transloadit:complete', async () => {
       setOpen(false)
       onFilePickerOpen?.(false)
-      toast.success('Upload successful')
+      // toast.success('Upload successful')
     })
 
     _uppy.on('complete', async (result) => {

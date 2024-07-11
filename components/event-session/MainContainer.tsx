@@ -70,7 +70,7 @@ export function MainContainer() {
                 <BreakoutRoomsWithParticipants hideActivityCards />
               </div>
             ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
-              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto">
+              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto scrollbar-none">
                 <ContentContainer />
               </div>
             ) : null}
