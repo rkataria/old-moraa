@@ -13,6 +13,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { Loading } from '@/components/common/Loading'
 import { MeetingScreen } from '@/components/event-session/MeetingScreen'
 import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScreen'
+import ProtectedLayout from '@/components/hoc/ProtectedLayout'
 import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContext'
 import { BreakoutRoomsManagerProvider } from '@/contexts/BreakoutRoomsManagerContext'
 import { EventProvider } from '@/contexts/EventContext'
@@ -185,4 +186,10 @@ function EventSessionPage() {
   )
 }
 
-export default EventSessionPage
+export default function ProtectedEventSessionPage() {
+  return (
+    <ProtectedLayout>
+      <EventSessionPage />
+    </ProtectedLayout>
+  )
+}
