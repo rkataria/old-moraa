@@ -37,6 +37,7 @@ function Login() {
   }, [user.currentUser, redirectTo])
 
   const getRedirectUrl = () => {
+    if (typeof window === 'undefined') return '/'
     if (redirectTo) {
       return `${window.location.origin}${redirectTo}`
     }

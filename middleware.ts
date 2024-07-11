@@ -1,7 +1,12 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const protectedRoutes = ['/workspaces', '/content-libraries']
+const protectedRoutes = [
+  '/workspaces',
+  '/content-libraries',
+  '/events',
+  '/event-session',
+]
 
 const checkIfProtectedRoute = (pathname: string) =>
   protectedRoutes.find((route) => pathname?.startsWith(route))
