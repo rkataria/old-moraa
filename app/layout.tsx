@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { Inter } from 'next/font/google'
+import { Outfit } from 'next/font/google'
 import Head from 'next/head'
 
 import { Analytics } from '@vercel/analytics/react'
@@ -16,7 +16,7 @@ export const metadata = {
   description: 'Moraa is a platform for learning and teaching online.',
 }
 
-const inter = Inter({ subsets: ['latin'] })
+const outfit = Outfit({ subsets: ['latin'] })
 
 export default function RootLayout({
   children,
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={outfit.className}>
       <Head>
         {/* Import Google Fonts */}
         <link

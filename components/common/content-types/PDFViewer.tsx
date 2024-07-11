@@ -72,7 +72,7 @@ export function PDFViewer({ frame, blockPageChange = false }: PDFViewerProps) {
   }
 
   return (
-    <div className="relative w-full h-full flex justify-center items-center">
+    <div className="relative w-full h-full flex justify-start items-start">
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}

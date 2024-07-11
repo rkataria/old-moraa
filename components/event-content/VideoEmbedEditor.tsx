@@ -46,8 +46,8 @@ export function VideoEmbedEditor({
 
   if (disabled || !isEditMode) {
     return (
-      <div className="w-full h-full flex justify-center items-center">
-        <div className="max-w-[80%] w-auto h-full aspect-video grid place-items-center overflow-hidden rounded-md">
+      <div className="w-full h-full flex justify-start items-start">
+        <div className="max-w-[90%] w-auto h-full aspect-video overflow-hidden rounded-md">
           <ResponsiveVideoPlayer
             url={videoUrl}
             showControls={isOwner && !readOnly}

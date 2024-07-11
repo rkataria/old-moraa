@@ -231,10 +231,10 @@ export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
       style={{
         backgroundColor: frame.config.backgroundColor,
       }}>
-      <div className="w-4/5 mt-10 rounded-md relative">
+      <div className="w-4/5 rounded-md relative">
         <div className="p-4">
           {/* <h2
-            className="w-full p-2 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-3xl font-bold"
+            className="w-full p-0 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold"
             style={{
               color: frame.config.textColor,
             }}>

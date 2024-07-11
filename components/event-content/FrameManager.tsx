@@ -81,12 +81,6 @@ export function FrameManager() {
     let frameConfig = {
       textColor: '#000',
       allowVoteOnMultipleOptions: false,
-      showTitle: true,
-      showDescription: [
-        ContentType.COVER,
-        ContentType.TEXT_IMAGE,
-        ContentType.BREAKOUT,
-      ].includes(contentType),
     }
 
     setAddNewFrameLoader(true)

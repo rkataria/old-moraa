@@ -93,10 +93,6 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     const frameConfig = {
       textColor: '#000',
       allowVoteOnMultipleOptions: false,
-      showTitle: true,
-      showDescription: [ContentType.COVER, ContentType.TEXT_IMAGE].includes(
-        contentType
-      ),
     }
 
     const newFrame: IFrame = {

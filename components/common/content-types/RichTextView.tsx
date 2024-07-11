@@ -105,12 +105,12 @@ export function RichTextView({ block }: { block: TextBlock }) {
     []
   )
 
-  if (!editor) return null
+  if (!editor || editor.isEmpty) return null
 
   return (
     <EditorContent
       editor={editor}
-      className={cn('p-2 outline-none w-full h-full min-h-full', {
+      className={cn('outline-none w-full h-full min-h-full', {
         richText: block.type === 'richtext',
       })}
     />

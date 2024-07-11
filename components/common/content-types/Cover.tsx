@@ -28,10 +28,9 @@ export function Cover({ frame }: CoverProps) {
         'w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden relative'
       )}>
       {textBlocks.map((block) => {
-        const renderHeader = frame.config.showTitle && block.type === 'header'
+        const renderHeader = block.type === 'header'
 
-        const renderParagraph =
-          frame.config.showDescription && block.type === 'paragraph'
+        const renderParagraph = block.type === 'paragraph'
 
         if (!renderHeader && !renderParagraph) return null
 

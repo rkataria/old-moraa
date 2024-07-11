@@ -85,7 +85,7 @@
 /* Tiptap Editor */
 
 .tiptap {
-  @apply p-2 min-h-full;
+  @apply min-h-full;
 }
 
 .ProseMirror-focused {
@@ -222,7 +222,7 @@
 /* Block Content Styles */
 .block-content-header,
 .block-content-paragraph {
-  @apply p-4 w-full;
+  /* @apply p-4 w-full; */
 }
 .block-content-header h1 {
   @apply text-4xl font-bold;

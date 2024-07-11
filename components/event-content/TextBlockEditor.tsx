@@ -233,38 +233,42 @@ export function TextBlockEditor({
     )
   }
 
+  const renderEditor = () => (
+    <ScrollShadow
+      hideScrollBar
+      isEnabled={block.type === 'richtext'}
+      orientation="vertical"
+      className={cn('w-full max-h-full', {
+        'h-full': fillAvailableHeight,
+      })}>
+      {/* floating controls */}
+      <InlineTableControls editor={editor} />
+      {/* // bubble menu controls  */}
+      <InlineToolbarControls editor={editor} />
+
+      <EditorContent
+        editor={editor}
+        className={cn(
+          'rounded-sm outline-none w-full h-full min-h-full transition-all duration-500',
+          {
+            richText: block.type === 'richtext',
+          }
+        )}
+      />
+    </ScrollShadow>
+  )
+
   return (
     <div
       className={cn(
-        'sticky top-4 left-4 w-5/6 h-full pt-2',
+        'sticky top-0 left-0 w-5/6 h-full',
         {
           'border border-gray-200': block.type === 'richtext' && !!editable,
         },
         className
       )}>
       {renderToolbar()}
-      <ScrollShadow
-        hideScrollBar
-        isEnabled
-        orientation="vertical"
-        className={cn('w-full max-h-full', {
-          'h-full': fillAvailableHeight,
-        })}>
-        {/* floating controls */}
-        <InlineTableControls editor={editor} />
-        {/* // bubble menu controls  */}
-        <InlineToolbarControls editor={editor} />
-
-        <EditorContent
-          editor={editor}
-          className={cn(
-            'rounded-sm outline-none w-full h-full min-h-full transition-all duration-500',
-            {
-              richText: block.type === 'richtext',
-            }
-          )}
-        />
-      </ScrollShadow>
+      {renderEditor()}
     </div>
   )
 }

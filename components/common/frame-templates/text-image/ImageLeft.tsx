@@ -66,13 +66,11 @@ export function ImageLeft({
       <div
         onClick={() => setEditingBlock(headerBlock.id)}
         className="w-full relative z-[1]">
-        {frame.config.showTitle && (
-          <TextBlockEditor
-            block={headerBlock}
-            editable={editingBlock === headerBlock.id}
-            onChange={onBlockChange}
-          />
-        )}
+        <TextBlockEditor
+          block={headerBlock}
+          editable={editingBlock === headerBlock.id}
+          onChange={onBlockChange}
+        />
       </div>
       <PanelGroup
         direction="horizontal"
@@ -95,15 +93,13 @@ export function ImageLeft({
 
         <Panel minSize={30}>
           <div className="flex flex-col h-full">
-            {frame.config.showDescription && (
-              <div onClick={() => setEditingBlock(textBlock.id)}>
-                <TextBlockEditor
-                  block={textBlock}
-                  editable={editingBlock === textBlock.id}
-                  onChange={onBlockChange}
-                />
-              </div>
-            )}
+            <div onClick={() => setEditingBlock(textBlock.id)}>
+              <TextBlockEditor
+                block={textBlock}
+                editable={editingBlock === textBlock.id}
+                onChange={onBlockChange}
+              />
+            </div>
           </div>
         </Panel>
       </PanelGroup>

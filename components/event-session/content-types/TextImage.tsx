@@ -52,8 +52,8 @@ export function TextImage({ frame }: TextImageProps) {
         className="tiptap ProseMirror w-full h-full flex justify-center items-center !p-0"
         style={{ backgroundColor: frame.config.backgroundColor }}>
         <div className="flex flex-col w-full h-full">
-          {frame.config.showTitle && <RichTextView block={headerBlock} />}
-          {frame.config.showDescription && <RichTextView block={textBlock} />}
+          <RichTextView block={headerBlock} />
+          <RichTextView block={textBlock} />
         </div>
       </div>
     )
@@ -62,11 +62,11 @@ export function TextImage({ frame }: TextImageProps) {
   if (layoutType === LayoutTypes.IMAGE_BEHIND) {
     return (
       <div className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-center !p-0">
-        {frame.config.showTitle && <RichTextView block={headerBlock} />}
+        <RichTextView block={headerBlock} />
         <div
           className="bg-center bg-cover h-full w-full"
           style={{ backgroundImage: `url(${imageBlock.data.file.url})` }}>
-          {frame.config.showDescription && <RichTextView block={textBlock} />}
+          <RichTextView block={textBlock} />
         </div>
       </div>
     )
@@ -77,14 +77,14 @@ export function TextImage({ frame }: TextImageProps) {
       <div
         style={{ backgroundColor: frame.config.backgroundColor }}
         className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-center relative !p-0">
-        {frame.config.showTitle && <RichTextView block={headerBlock} />}
+        <RichTextView block={headerBlock} />
 
         <PanelGroup ref={panelGroupRef} direction="horizontal">
           <Panel defaultSize={30} minSize={30} maxSize={60}>
             <ImageBlockView imageBlock={imageBlock} />
           </Panel>
           <Panel minSize={30}>
-            {frame.config.showDescription && <RichTextView block={textBlock} />}
+            <RichTextView block={textBlock} />
           </Panel>
         </PanelGroup>
       </div>
@@ -95,11 +95,11 @@ export function TextImage({ frame }: TextImageProps) {
     <div
       style={{ backgroundColor: frame.config.backgroundColor }}
       className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-center relative !p-0">
-      {frame.config.showTitle && <RichTextView block={headerBlock} />}
+      <RichTextView block={headerBlock} />
 
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>
-          {frame.config.showDescription && <RichTextView block={textBlock} />}
+          <RichTextView block={textBlock} />
         </Panel>
         <Panel defaultSize={30} minSize={30} maxSize={60}>
           <ImageBlockView imageBlock={imageBlock} />

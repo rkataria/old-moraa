@@ -106,14 +106,6 @@ export function FrameTextBlock({
     (b) => b.type === blockType
   ) as TextBlock
 
-  if (!localFrame?.config.showTitle && blockType === 'header') {
-    return null
-  }
-
-  if (!localFrame?.config.showDescription && blockType === 'paragraph') {
-    return null
-  }
-
   if (!localFrame?.content || !localFrame?.content?.blocks) {
     return null
   }

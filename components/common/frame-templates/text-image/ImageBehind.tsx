@@ -48,17 +48,15 @@ export function ImageBehind({
 
   return (
     <div className="relative w-full h-full flex flex-col">
-      {frame.config.showTitle && (
-        <div
-          onClick={() => setEditingBlock(headerBlock.id)}
-          className="relative z-[1]">
-          <TextBlockEditor
-            block={headerBlock}
-            editable={editingBlock === headerBlock.id}
-            onChange={onBlockChange}
-          />
-        </div>
-      )}
+      <div
+        onClick={() => setEditingBlock(headerBlock.id)}
+        className="relative z-[1]">
+        <TextBlockEditor
+          block={headerBlock}
+          editable={editingBlock === headerBlock.id}
+          onChange={onBlockChange}
+        />
+      </div>
       <div
         className="w-full h-full flex flex-col justify-center items-center bg-center bg-cover"
         style={{
@@ -67,15 +65,13 @@ export function ImageBehind({
             : undefined,
         }}>
         <div className="flex flex-col h-full w-full">
-          {frame.config.showDescription && (
-            <div onClick={() => setEditingBlock(textBlock.id)}>
-              <TextBlockEditor
-                block={textBlock}
-                editable={editingBlock === textBlock.id}
-                onChange={onBlockChange}
-              />
-            </div>
-          )}
+          <div onClick={() => setEditingBlock(textBlock.id)}>
+            <TextBlockEditor
+              block={textBlock}
+              editable={editingBlock === textBlock.id}
+              onChange={onBlockChange}
+            />
+          </div>
         </div>
 
         {showImage ? (

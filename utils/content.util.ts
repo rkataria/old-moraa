@@ -182,8 +182,6 @@ export const getDefaultCoverFrame = ({
   name,
   config: {
     textColor: '#000',
-    showTitle: true,
-    showDescription: true,
   },
   content: getDefaultContent({
     contentType: ContentType.COVER,

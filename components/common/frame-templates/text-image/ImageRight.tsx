@@ -60,17 +60,15 @@ export function ImageRight({
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-start group relative">
-      {frame.config.showTitle && (
-        <div
-          onClick={() => setEditingBlock(headerBlock.id)}
-          className="w-full relative z-[1]">
-          <TextBlockEditor
-            block={headerBlock}
-            editable={editingBlock === headerBlock.id}
-            onChange={onBlockChange}
-          />
-        </div>
-      )}
+      <div
+        onClick={() => setEditingBlock(headerBlock.id)}
+        className="w-full relative z-[1]">
+        <TextBlockEditor
+          block={headerBlock}
+          editable={editingBlock === headerBlock.id}
+          onChange={onBlockChange}
+        />
+      </div>
       <PanelGroup
         direction="horizontal"
         className="w-full"
@@ -78,15 +76,13 @@ export function ImageRight({
         onLayout={handlePanelLayoutChange}>
         <Panel minSize={30}>
           <div className="flex flex-col h-full">
-            {frame.config.showDescription && (
-              <div onClick={() => setEditingBlock(textBlock.id)}>
-                <TextBlockEditor
-                  block={textBlock}
-                  editable={editingBlock === textBlock.id}
-                  onChange={onBlockChange}
-                />
-              </div>
-            )}
+            <div onClick={() => setEditingBlock(textBlock.id)}>
+              <TextBlockEditor
+                block={textBlock}
+                editable={editingBlock === textBlock.id}
+                onChange={onBlockChange}
+              />
+            </div>
           </div>
         </Panel>
         <PanelResizeHandle className="opacity-50 bg-gray-800 w-2 h-12 rounded-full relative z-10 -right-1 top-1/2 -translate-y-1/2 cursor-col-resize group-hover:opacity-100 transition-opacity duration-500" />

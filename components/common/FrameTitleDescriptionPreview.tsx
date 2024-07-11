@@ -16,7 +16,6 @@ export function FrameTitleDescriptionPreview({ frame }: { frame: IFrame }) {
     if ([ContentType.POLL, ContentType.REFLECTION].includes(frame.type)) {
       return <FrameTitle title={(frameTitle as string) || ''} />
     }
-    if (!frame.config.showTitle) return null
 
     return (
       <TextBlockView
@@ -29,22 +28,15 @@ export function FrameTitleDescriptionPreview({ frame }: { frame: IFrame }) {
     )
   }
 
-  const renderDescription = () => {
-    // if ([ContentType.POLL ContentType.REFLECTION].includes(frame.type)) {
-    //   return <FrameDescription description={frame.content?.description || ''} />
-    // }
-    if (!frame.config.showDescription) return null
-
-    return (
-      <TextBlockView
-        block={
-          frame.content?.blocks?.find(
-            (block) => block.type === 'paragraph'
-          ) as TextBlock
-        }
-      />
-    )
-  }
+  const renderDescription = () => (
+    <TextBlockView
+      block={
+        frame.content?.blocks?.find(
+          (block) => block.type === 'paragraph'
+        ) as TextBlock
+      }
+    />
+  )
 
   return (
     <>
