@@ -32,6 +32,8 @@ export async function GET(request: NextRequest) {
     return definitions
   }
 
+  console.log('getDefinitions', getDefinitions())
+
   return NextResponse.json<ApiData>({
     definitions: getDefinitions(),
   })
