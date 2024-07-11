@@ -12,7 +12,9 @@ import {
   DyteParticipantsAudio,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { IoMdArrowBack } from 'react-icons/io'
 
 import { Button } from '@nextui-org/react'
 
@@ -102,6 +104,12 @@ export function MeetingSetupScreen() {
 
   return (
     <div className="w-full h-screen flex flex-col justify-start items-center gap-4 pt-36 bg-pattern-1">
+      <Link href={`/events/${event.id}`}>
+        <Button className="fixed top-6 gap-4 left-6 !bg-transparent">
+          <IoMdArrowBack />
+          Back
+        </Button>
+      </Link>
       <div className="mb-12">
         <h1 className="mb-2 text-5xl font-black text-center">{event.name}</h1>
         {event.description && (

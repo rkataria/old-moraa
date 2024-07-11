@@ -62,7 +62,7 @@ export function BreakoutHeaderButton() {
   const breakoutFrame = sections
     ?.map((section) => section.frames)
     .flat()
-    .find((frame) => frame.id === breakoutSlideId)
+    .find((frame) => frame?.id === breakoutSlideId)
 
   if (!isHost) return null
   if (isCurrentDyteMeetingInABreakoutRoom) return null

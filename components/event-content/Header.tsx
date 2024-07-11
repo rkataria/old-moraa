@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import { ChevronDownIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { IoMdArrowBack } from 'react-icons/io'
 
 import {
   Button,
@@ -135,6 +136,12 @@ export function Header({
     <div className="h-full p-2">
       <div className="flex justify-between items-center h-12 w-full">
         <div className="flex justify-start items-center gap-3">
+          <Link href="/events">
+            <Button className="!bg-transparent px-0">
+              <IoMdArrowBack />
+              Back
+            </Button>
+          </Link>
           <Link href="/events">
             <Image src="/logo-icon-square.svg" />
           </Link>

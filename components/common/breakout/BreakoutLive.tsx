@@ -74,9 +74,9 @@ export function BreakoutLive({ frame, isEditable = false }: BreakoutProps) {
 
   const getCurrentFrame = (activityId: string): IFrame => {
     const section = sections.find((sec) =>
-      sec.frames.find((f) => f.id === activityId)
+      sec.frames.find((f) => f?.id === activityId)
     )
-    const cFrame = section?.frames.find((f) => f.id === activityId) as IFrame
+    const cFrame = section?.frames.find((f) => f?.id === activityId) as IFrame
 
     return cFrame
   }
