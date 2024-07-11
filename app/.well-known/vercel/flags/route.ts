@@ -5,7 +5,7 @@ import { getFlags } from '../../../../flags/server'
 export async function GET(request: NextRequest) {
   const access = await verifyAccess(request.headers.get('Authorization'))
   if (!access) return NextResponse.json(null, { status: 401 })
-  const flagsFromHappyKit = getFlags({})
+  const flagsFromHappyKit = await getFlags({})
   console.log('flagsFromHappyKit', flagsFromHappyKit)
 
   return NextResponse.json<ApiData>({
