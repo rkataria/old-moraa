@@ -202,6 +202,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       }
     )
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [realtimeChannel, eventId, sections, isOwner])
+
+  useEffect(() => {
+    if (!eventId || !realtimeChannel) return
     // Listen for hand raised events
     realtimeChannel.on('broadcast', { event: 'hand-raised' }, ({ payload }) => {
       const { participantId, participantName } = payload
@@ -230,9 +235,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         )
       }
     )
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel, eventId, sections, isOwner])
+  }, [realtimeChannel, eventId])
 
   useEffect(() => {
     if (!fetchedFrameReactions) return
