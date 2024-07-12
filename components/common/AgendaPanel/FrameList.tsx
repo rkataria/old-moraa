@@ -28,8 +28,13 @@ export function FrameList({
   duplicateFrame,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
-  const { sections, currentFrame, insertAfterFrameId, addNewFrameLoader } =
-    useEventContext()
+  const {
+    sections,
+    currentFrame,
+    insertAfterFrameId,
+    addNewFrameLoader,
+    currentSectionId,
+  } = useEventContext()
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
@@ -108,6 +113,8 @@ export function FrameList({
                   <RenderIf
                     isTrue={
                       addNewFrameLoader &&
+                      (currentFrame?.section_id === frame.section_id ||
+                        currentSectionId === frame.section_id) &&
                       ((_insertAfterFrameId &&
                         _insertAfterFrameId === frame?.id) ||
                         (!_insertAfterFrameId &&

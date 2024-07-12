@@ -115,7 +115,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           event: '*',
           schema: 'public',
           table: 'section',
-          filter: `meeting_id=eq.${meeting.id}&status=ACTIVE`,
+          filter: `meeting_id=eq.${meeting.id}`,
         },
         async (payload) => {
           console.log('Section change received!', payload)

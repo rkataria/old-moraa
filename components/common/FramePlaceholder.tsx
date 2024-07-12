@@ -14,7 +14,7 @@ export function FramePlaceholder() {
 
   const renderSkeleton = () => {
     if (listDisplayMode === 'list') {
-      return <Skeleton className="rounded-md w-full h-4" />
+      return <Skeleton className="rounded-md w-full h-10" />
     }
 
     return (

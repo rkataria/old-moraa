@@ -50,8 +50,6 @@ export function FramePreview({ frame, readOnly }: FrameProps) {
     )
   }, [frame])
 
-  console.log('totalHeight', frame.type, totalHeight)
-
   const thumbnailStyle = () => {
     if (!readOnly) return {}
     if (frame.type === ContentType.RICH_TEXT) {
