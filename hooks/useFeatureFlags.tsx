@@ -13,13 +13,5 @@ export const useFeatureFlags = () => {
 
   const vercelFlags = flagsQuery.data || {}
 
-  const getFlagsFrom = () => {
-    if (Object.keys(vercelFlags).length !== 0) {
-      return vercelFlags
-    }
-
-    return happyKitFlags
-  }
-
-  return { flags: getFlagsFrom() }
+  return { flags: { ...happyKitFlags, ...vercelFlags } }
 }

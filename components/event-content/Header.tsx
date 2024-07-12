@@ -135,10 +135,9 @@ export function Header({
     <div className="h-full p-2">
       <div className="flex justify-between items-center h-12 w-full">
         <div className="flex justify-start items-center gap-3">
-          {/* <Link href="/events">
+          <Link href="/events">
             <Image src="/logo-icon-square.svg" />
-          </Link> */}
-          <Image src="/logo-icon-square.svg" />
+          </Link>
           <span className="font-medium">{event?.name}</span>
         </div>
         <div className="flex justify-start items-center gap-2 h-full">
