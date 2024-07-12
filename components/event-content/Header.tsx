@@ -1,6 +1,5 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 
-import axios from 'axios'
 import { ChevronDownIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -129,15 +128,6 @@ export function Header({
       </>
     )
   }
-
-  const getCheck = async () => {
-    const res = await axios.get('/.well-known/vercel/overrides-flags')
-    console.log('res', res)
-  }
-
-  useEffect(() => {
-    getCheck()
-  }, [])
 
   if (!event) return null
 
