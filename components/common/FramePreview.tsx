@@ -50,7 +50,7 @@ export function FramePreview({ frame, isInteractive = true }: FrameProps) {
   }, [frame])
 
   const thumbnailStyle = () => {
-    if (!isInteractive) return {}
+    if (isInteractive) return {}
     if (frame.type === ContentType.RICH_TEXT) {
       const scaleDown = (209 / totalHeight) * 3
 
