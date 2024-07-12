@@ -1,5 +1,6 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
+import axios from 'axios'
 import { ChevronDownIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -129,14 +130,16 @@ export function Header({
     )
   }
 
-  // const getCheck = async () => {
-  //   const res = await axios.get(
-  //     'http://localhost:3000/.well-known/vercel/flags'
-  //   )
-  //   console.log('res', res)
-  // }
+  const getCheck = async () => {
+    const res = await axios.get(
+      'http://localhost:3000/.well-known/vercel/overrides-flags'
+    )
+    console.log('res', res)
+  }
 
-  // getCheck()
+  useEffect(() => {
+    getCheck()
+  }, [])
 
   if (!event) return null
 
@@ -144,9 +147,10 @@ export function Header({
     <div className="h-full p-2">
       <div className="flex justify-between items-center h-12 w-full">
         <div className="flex justify-start items-center gap-3">
-          <Link href="/events">
+          {/* <Link href="/events">
             <Image src="/logo-icon-square.svg" />
-          </Link>
+          </Link> */}
+          <Image src="/logo-icon-square.svg" />
           <span className="font-medium">{event?.name}</span>
         </div>
         <div className="flex justify-start items-center gap-2 h-full">
