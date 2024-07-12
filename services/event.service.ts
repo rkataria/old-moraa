@@ -81,7 +81,7 @@ const getEvent = async ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await supabase
       .from('enrollment')
-      .select('email,event_role,id,profile(first_name,last_name,avatar_url)')
+      .select('email,event_role,id,profile(id,first_name,last_name,avatar_url)')
       .eq('event_id', eventId)
       .order('created_at', { ascending: true })
     participants = data
@@ -107,6 +107,25 @@ const getEvent = async ({
     meeting,
     session,
     profile: profile.data,
+  }
+}
+
+const getEventPermissions = async ({
+  eventId,
+  userId,
+}: {
+  eventId: string
+  userId: string
+}) => {
+  const { data } = await supabase
+    .from('enrollment')
+    .select('role(permissions)')
+    .eq('event_id', eventId)
+    .eq('user_id', userId)
+    .single()
+
+  return {
+    roles: data?.role || {},
   }
 }
 
@@ -157,6 +176,7 @@ const scheduleEvent = async (scheduleInfo: {
 export const EventService = {
   getEvents,
   getEvent,
+  getEventPermissions,
   createEvent,
   updateEvent,
   deleteEventParticipant,

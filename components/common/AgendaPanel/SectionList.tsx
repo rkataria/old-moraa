@@ -14,6 +14,7 @@ import { StrictModeDroppable } from '../StrictModeDroppable'
 import { HEADER_HEIGHT as MAIN_HEADER_HEIGHT } from '../StudioLayout/Header'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { cn, scrollParentToChild } from '@/utils/utils'
@@ -29,10 +30,9 @@ export function SectionList() {
     reorderFrame,
     updateSectionsWithReorderedFrames,
     eventMode,
-    isOwner,
     preview,
   } = useContext(EventContext) as EventContextType
-
+  const { permissions } = useEventPermissions()
   const sectionListRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
 
@@ -55,7 +55,8 @@ export function SectionList() {
     })
   }, [currentFrame])
 
-  const actionDisabled = eventMode !== 'edit' || !isOwner || preview
+  const actionDisabled =
+    eventMode !== 'edit' || !permissions.canUpdateSection || preview
 
   const maxHeight = expanded
     ? SECTION_LIST_CONTAINER_MAX_HEIGHT
@@ -136,7 +137,7 @@ export function SectionList() {
       }}>
       <DragDropContext
         onDragEnd={(result, provided) => {
-          if (!isOwner) return
+          if (!permissions.canUpdateSection) return
           if (!result.destination) return
           if (result.type === 'section') {
             handleOnDragEndSections(result, provided)
@@ -154,8 +155,9 @@ export function SectionList() {
               {sectionList.map((section, sectionIndex) => (
                 <Draggable
                   key={`section-draggable-${section.id}`}
+                  index={sectionIndex}
                   draggableId={`section-draggable-sectionId-${section.id}`}
-                  index={sectionIndex}>
+                  isDragDisabled={!permissions.canUpdateSection}>
                   {(sectionDraggableProvided) => (
                     <div
                       className="w-full"

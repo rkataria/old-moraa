@@ -24,6 +24,7 @@ import type {
 
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useEnrollment } from '@/hooks/useEnrollment'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useFrameReactions } from '@/hooks/useReactions'
 import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
 import { SessionService } from '@/services/session.service'
@@ -56,14 +57,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
-  const {
-    isOwner,
-    meeting,
-    sections,
-    currentFrame,
-    eventMode,
-    setCurrentFrame,
-  } = useContext(EventContext) as EventContextType
+  const { meeting, sections, currentFrame, eventMode, setCurrentFrame } =
+    useContext(EventContext) as EventContextType
+
+  const { permissions } = useEventPermissions()
+
+  const isHost = permissions.canAcessAllSessionControls
 
   const [presentationStatus, setPresentationStatus] =
     useState<PresentationStatuses>(PresentationStatuses.STOPPED)
@@ -91,7 +90,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     useState<EventSessionMode>('Lobby')
 
   useEffect(() => {
-    if (eventSessionMode === 'Lobby' && isOwner) {
+    if (eventSessionMode === 'Lobby' && isHost) {
       setEventSessionMode('Preview')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,7 +181,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           if (newPresentationStatus !== PresentationStatuses.STOPPED) {
             return 'Presentation'
           }
-          if (isOwner) return 'Preview'
+          if (isHost) return 'Preview'
 
           return 'Lobby'
         }
@@ -199,7 +198,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     )
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel, eventId, sections, isOwner])
+  }, [realtimeChannel, eventId, sections])
 
   useEffect(() => {
     if (!eventId || !realtimeChannel) return
@@ -248,7 +247,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [fetchedFrameReactions])
 
   useEffect(() => {
-    if (!isOwner) return
+    if (!isHost) return
     if (!activeSession) return
 
     if (
@@ -278,7 +277,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     if (
       !isBreakoutActive &&
-      isOwner &&
+      isHost &&
       eventSessionMode === 'Presentation' &&
       !currentFrame.content?.breakoutFrameId
     ) {
@@ -357,12 +356,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [isBreakoutActive, currentFrame])
 
   const nextFrame = useCallback(() => {
-    if (!isOwner || !realtimeChannel) return null
+    if (!isHost || !realtimeChannel) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const nextFrame = getNextFrame({
       sections,
       currentFrame,
-      onlyPublished: !isOwner && eventMode !== 'present',
+      onlyPublished: !isHost && eventMode !== 'present',
     })
 
     if (!nextFrame) return null
@@ -383,7 +382,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     realtimeChannel,
-    isOwner,
+    isHost,
     sections,
     currentFrame,
     eventSessionMode,
@@ -391,12 +390,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   ])
 
   const previousFrame = useCallback(() => {
-    if (!isOwner) return null
+    if (!isHost) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const previousFrame = getPreviousFrame({
       sections,
       currentFrame,
-      onlyPublished: !isOwner && eventMode !== 'present',
+      onlyPublished: !isHost && eventMode !== 'present',
     })
 
     if (!previousFrame) return null
@@ -415,7 +414,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame, eventSessionMode, isOwner, sections, eventMode])
+  }, [currentFrame, eventSessionMode, isHost, sections, eventMode])
 
   const startPresentation = () => {
     realtimeChannel?.send({
@@ -858,7 +857,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     <EventSessionContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
-        isHost: isOwner,
+        isHost,
         currentFrame,
         presentationStatus,
         currentFrameResponses,

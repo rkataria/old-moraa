@@ -31,8 +31,8 @@ export function FrameThumbnailCard({
         scale: `${(1 / window.screen.width) * containerWidth}`,
       }}>
       <FramePreview
-        readOnly
         frame={frame}
+        isInteractive={false}
         key={JSON.stringify(frame?.content)}
       />
     </div>

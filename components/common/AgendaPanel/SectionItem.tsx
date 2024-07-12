@@ -14,6 +14,7 @@ import { StrictModeDroppable } from '../StrictModeDroppable'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
@@ -27,7 +28,6 @@ type SectionItemProps = {
 
 export function SectionItem({ section, actionDisabled }: SectionItemProps) {
   const {
-    isOwner,
     setInsertAfterFrameId,
     setInsertInSectionId,
     setCurrentFrame,
@@ -39,6 +39,8 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     addFrameToSection,
   } = useContext(EventContext) as EventContextType
 
+  const { permissions } = useEventPermissions()
+
   const {
     expandedSectionIds,
     currentSectionId,
@@ -49,7 +51,8 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
 
   const frames =
-    isOwner && (eventMode === 'edit' || eventMode === 'present')
+    permissions.canUpdateFrame &&
+    (eventMode === 'edit' || eventMode === 'present')
       ? section.frames
       : getFilteredFramesByStatus({
           frames: section.frames,

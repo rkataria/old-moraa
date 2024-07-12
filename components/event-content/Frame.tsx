@@ -23,6 +23,7 @@ import { FramePreview } from '../common/FramePreview'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
@@ -39,12 +40,16 @@ interface FrameProps {
 }
 
 export function Frame({ frame }: FrameProps) {
-  const { preview, currentFrame, isOwner } = useContext(
-    EventContext
-  ) as EventContextType
+  const { preview, currentFrame } = useContext(EventContext) as EventContextType
 
-  if (preview || !isOwner) {
-    return <FramePreview frame={frame} />
+  const { permissions } = useEventPermissions()
+
+  const participantView = !permissions.canUpdateFrame
+
+  if (preview || participantView) {
+    return (
+      <FramePreview frame={frame} isInteractive={permissions.canUpdateFrame} />
+    )
   }
 
   if (!currentFrame) return null

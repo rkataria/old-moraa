@@ -16,18 +16,18 @@ export type MiroEmbedFrameType = IFrame & {
 }
 interface MiroEmbedEditorProps {
   frame: MiroEmbedFrameType
-  readOnly?: boolean
+  viewOnly?: boolean
 }
 
 export function MiroEmbedEditor({
   frame,
-  readOnly = false,
+  viewOnly = false,
 }: MiroEmbedEditorProps) {
   const [boardIdentifier, setBoardIdentifier] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
   const { preview, updateFrame } = useContext(EventContext) as EventContextType
 
-  const disabled = preview || readOnly
+  const isEmbedView = !isEditMode || preview || viewOnly
 
   useEffect(() => {
     setIsEditMode(!frame.content?.boardId)
@@ -82,7 +82,7 @@ export function MiroEmbedEditor({
     setIsEditMode(false)
   }
 
-  if (disabled || !isEditMode) {
+  if (isEmbedView) {
     return <MiroEmbed frame={frame} />
   }
 

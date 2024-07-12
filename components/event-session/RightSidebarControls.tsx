@@ -3,13 +3,15 @@ import { useContext } from 'react'
 import { FrameNoteToggleButton } from '../common/StudioLayout/FrameNoteToggleButton'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 
 export function RightSidebarControls() {
-  const { currentFrame, isOwner } = useContext(EventContext) as EventContextType
+  const { currentFrame } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
 
   // Hide the right sidebar controls if it is not editable
-  if (!isOwner) {
+  if (!permissions.canAcessAllSessionControls) {
     return <div className="w-2" />
   }
 

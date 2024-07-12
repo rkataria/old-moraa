@@ -11,30 +11,33 @@ import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 export function FrameControls({
   onPrevious,
   onNext,
+  switchPublishedFrames = false,
 }: {
   onPrevious?: () => void
   onNext?: () => void
+  switchPublishedFrames?: boolean
 }) {
-  const { sections, currentFrame, setCurrentFrame, eventMode, isOwner } =
-    useContext(EventContext) as EventContextType
+  const { sections, currentFrame, setCurrentFrame, eventMode } = useContext(
+    EventContext
+  ) as EventContextType
 
   const previousFrame = useMemo(
     () =>
       getPreviousFrame({
         sections,
         currentFrame,
-        onlyPublished: !isOwner && eventMode !== 'present',
+        onlyPublished: switchPublishedFrames && eventMode !== 'present',
       }),
-    [sections, currentFrame, isOwner, eventMode]
+    [sections, currentFrame, switchPublishedFrames, eventMode]
   )
   const nextFrame = useMemo(
     () =>
       getNextFrame({
         sections,
         currentFrame,
-        onlyPublished: !isOwner && eventMode !== 'present',
+        onlyPublished: switchPublishedFrames && eventMode !== 'present',
       }),
-    [sections, currentFrame, isOwner, eventMode]
+    [sections, currentFrame, switchPublishedFrames, eventMode]
   )
 
   const handlePrevious = () => {

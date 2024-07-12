@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useMutation } from '@tanstack/react-query'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.js'
@@ -10,9 +10,7 @@ import { OnDocumentLoadSuccess } from 'react-pdf/dist/cjs/shared/types'
 import { Skeleton } from '@nextui-org/react'
 
 import { PageControls } from '@/components/common/PageControls'
-import { EventContext } from '@/contexts/EventContext'
 import { downloadPDFFile } from '@/services/pdf.service'
-import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
@@ -25,14 +23,13 @@ export type PDFViewerFrameType = IFrame & {
 
 interface PDFViewerProps {
   frame: PDFViewerFrameType
-  blockPageChange?: boolean
+  showControls?: boolean
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-export function PDFViewer({ frame, blockPageChange = false }: PDFViewerProps) {
+export function PDFViewer({ frame, showControls = true }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
-  const { isOwner } = useContext(EventContext) as EventContextType
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
     frame.content?.defaultPage || 1
@@ -86,7 +83,7 @@ export function PDFViewer({ frame, blockPageChange = false }: PDFViewerProps) {
           className="w-full"
         />
       </Document>
-      {isOwner && !blockPageChange && (
+      {showControls && (
         <PageControls
           currentPage={position}
           totalPages={totalPages}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { Button, Input } from '@nextui-org/react'
 
@@ -16,19 +16,17 @@ export type VideoEmbedFrameType = IFrame & {
 }
 interface VideoEmbedEditorProps {
   frame: VideoEmbedFrameType
-  readOnly?: boolean
+  showControls?: boolean
 }
 
 export function VideoEmbedEditor({
   frame,
-  readOnly = false,
+  showControls = true,
 }: VideoEmbedEditorProps) {
   const [videoUrl, setVideoUrl] = useState(frame.content.videoUrl || '')
   const [isEditMode, setIsEditMode] = useState(!frame.content.videoUrl)
-  const { preview, isOwner, updateFrame } = useContext(
-    EventContext
-  ) as EventContextType
-  const disabled = preview || readOnly
+  const { preview, updateFrame } = useContext(EventContext) as EventContextType
+  const disabled = preview || !showControls
 
   const saveVideoUrl = () => {
     if (disabled) return
@@ -48,11 +46,7 @@ export function VideoEmbedEditor({
     return (
       <div className="w-full h-full flex justify-start items-start">
         <div className="max-w-[90%] w-auto h-full aspect-video overflow-hidden rounded-md">
-          <ResponsiveVideoPlayer
-            url={videoUrl}
-            showControls={isOwner && !readOnly}
-            viewOnly={!isOwner}
-          />
+          <ResponsiveVideoPlayer url={videoUrl} showControls={showControls} />
         </div>
       </div>
     )

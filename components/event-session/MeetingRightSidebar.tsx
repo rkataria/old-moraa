@@ -23,7 +23,7 @@ export function MeetingRightSidebar({
   if (!rightSidebarVisiblity) return null
 
   if (rightSidebarVisiblity === 'frame-notes') {
-    return <NoteOverlay />
+    return <NoteOverlay editable={false} />
   }
 
   return (

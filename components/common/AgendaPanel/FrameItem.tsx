@@ -17,6 +17,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useDimensions } from '@/hooks/useDimensions'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
@@ -32,7 +33,6 @@ type FrameActionKey = 'delete' | 'move-up' | 'move-down' | 'duplicate-frame'
 export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
   const {
     currentFrame,
-    isOwner,
     preview,
     overviewOpen,
     eventMode,
@@ -43,6 +43,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     setCurrentFrame,
     deleteBreakoutFrames,
   } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
+
   const { listDisplayMode, currentSectionId } = useAgendaPanel()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
@@ -80,7 +82,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     sidebarExpanded
   )
 
-  const editable = isOwner && !preview && eventMode === 'edit'
+  const editable =
+    permissions.canUpdateFrame && !preview && eventMode === 'edit'
 
   const frameActive =
     !overviewOpen && !currentSectionId && currentFrame?.id === frame?.id
@@ -107,7 +110,9 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             }
           )}
           onClick={() => {
-            if (!isOwner && eventMode === 'present') return
+            if (!permissions.canUpdateFrame && eventMode === 'present') {
+              return
+            }
 
             setCurrentFrame(frame)
           }}>

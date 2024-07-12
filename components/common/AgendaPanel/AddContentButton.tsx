@@ -5,6 +5,7 @@ import { BsPlusSquare } from 'react-icons/bs'
 import { Button } from '@nextui-org/react'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
@@ -14,13 +15,15 @@ export function AddContentButton({ className }: { className?: string }) {
     EventContext
   ) as EventContextType
   const { leftSidebarVisiblity } = useStudioLayout()
-  const { preview, isOwner, eventMode } = useContext(
-    EventContext
-  ) as EventContextType
+  const { permissions } = useEventPermissions()
+
+  const { preview, eventMode } = useContext(EventContext) as EventContextType
 
   const expanded = leftSidebarVisiblity === 'maximized'
 
-  if (preview || !isOwner || eventMode !== 'edit') return <div />
+  if (preview || !permissions.canCreateFrame || eventMode !== 'edit') {
+    return <div />
+  }
 
   return (
     <div className={cn('flex justify-center items-center', className)}>

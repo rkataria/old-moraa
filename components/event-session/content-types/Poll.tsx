@@ -100,7 +100,7 @@ interface PollOptionProps {
   }
   voted?: boolean
   pollOption: string
-  isOwner?: boolean
+  canVote?: boolean
   isOptionSelected: (option: string) => boolean
   handleVoteCheckbox: (option: string) => void
 }
@@ -108,17 +108,16 @@ interface PollOptionProps {
 function PollOption({
   frame,
   pollOption,
-  isOwner,
   voted,
+  canVote = true,
   isOptionSelected,
   handleVoteCheckbox,
 }: PollOptionProps) {
-  if (frame.config.allowVoteOnMultipleOptions && !isOwner && !voted) {
+  if (frame.config.allowVoteOnMultipleOptions && canVote && !voted) {
     return (
       <Checkbox
         isSelected={isOptionSelected(pollOption)}
         onValueChange={() => handleVoteCheckbox(pollOption)}
-        isReadOnly={isOwner}
         radius="sm"
         classNames={{
           label: 'font-bold text-black',
@@ -141,10 +140,10 @@ interface PollProps {
   }
   votes?: Vote[]
   voted?: boolean
-  isOwner?: boolean
+  canVote?: boolean
 }
 
-export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
+export function Poll({ frame, votes = [], voted, canVote = true }: PollProps) {
   const { options } = frame.content
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
@@ -162,7 +161,7 @@ export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
   useEffect(() => {
     if (
       voted ||
-      isOwner ||
+      !canVote ||
       !frame.config.allowVoteOnMultipleOptions ||
       selectedOptions.length === 0
     ) {
@@ -170,7 +169,7 @@ export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
     } else {
       setVoteButtonVisible(true)
     }
-  }, [voted, isOwner, frame.config.allowVoteOnMultipleOptions, selectedOptions])
+  }, [voted, canVote, frame.config.allowVoteOnMultipleOptions, selectedOptions])
 
   const isOptionSelected = (option: string) => selectedOptions.includes(option)
 
@@ -221,9 +220,9 @@ export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
 
   const votedOptions = selfVote?.response.selected_options || []
   const showAnonymousToggle =
-    eventMode === 'present' && !isOwner && frame.config.allowVoteAnonymously
+    eventMode === 'present' && canVote && frame.config.allowVoteAnonymously
 
-  const showResponses = isOwner || voted
+  const showResponses = !canVote || voted
 
   return (
     <div
@@ -233,13 +232,6 @@ export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
       }}>
       <div className="w-4/5 rounded-md relative">
         <div className="p-4">
-          {/* <h2
-            className="w-full p-0 border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold"
-            style={{
-              color: frame.config.textColor,
-            }}>
-            {question}
-          </h2> */}
           {showAnonymousToggle && (
             <div className="my-2 flex justify-end items-center">
               <Checkbox
@@ -270,16 +262,16 @@ export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
                 className={cn(
                   'relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 h-12 rounded-lg overflow-hidden',
                   {
-                    'cursor-default': voted || isOwner,
+                    'cursor-default': voted || !canVote,
                   },
                   {
-                    'cursor-pointer': !voted || !isOwner,
+                    'cursor-pointer': !voted || canVote,
                   }
                 )}
                 onClick={() => {
                   if (
                     voted ||
-                    isOwner ||
+                    !canVote ||
                     frame.config.allowVoteOnMultipleOptions ||
                     disableVotes
                   ) {
@@ -299,7 +291,7 @@ export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
                         'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
                         {
                           'bg-purple-500':
-                            votedOptions.includes(option) || isOwner,
+                            votedOptions.includes(option) || !canVote,
                         }
                       )}
                       style={{
@@ -315,8 +307,8 @@ export function Poll({ frame, votes = [], voted, isOwner }: PollProps) {
                 <PollOption
                   frame={frame}
                   pollOption={option}
-                  isOwner={isOwner}
                   voted={voted}
+                  canVote={canVote}
                   isOptionSelected={isOptionSelected}
                   handleVoteCheckbox={handleVoteCheckbox}
                 />

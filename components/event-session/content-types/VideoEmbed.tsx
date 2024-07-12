@@ -86,7 +86,6 @@ export function VideoEmbed({ frame }: VideoEmbedProps) {
           url={videoUrl}
           showControls={isHost}
           playerState={playerState}
-          viewOnly={!isHost}
           onPlayerStateChange={handlePlayerStateChange}
         />
       </div>

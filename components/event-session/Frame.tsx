@@ -66,7 +66,7 @@ export function Frame() {
         key={currentFrame.id}
         frame={currentFrame as any}
         votes={(currentFrameResponses as Vote[]) || undefined}
-        isOwner={isHost}
+        canVote={!isHost}
         voted={checkVoted(currentFrameResponses, currentUser)}
       />
     ),
@@ -98,7 +98,9 @@ export function Frame() {
       <RichText key={currentFrame.id} frame={currentFrame} />
     ),
     [ContentType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
-    [ContentType.MORAA_BOARD]: <MoraaBoard frame={currentFrame as any} />,
+    [ContentType.MORAA_BOARD]: (
+      <MoraaBoard frame={currentFrame as any} isInteractive={isHost} />
+    ),
     [ContentType.CANVAS]: (
       <CanvasPreview key={currentFrame.id} frame={currentFrame as any} />
     ),

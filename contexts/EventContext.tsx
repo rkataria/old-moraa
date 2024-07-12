@@ -10,6 +10,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { FrameService } from '@/services/frame.service'
 import { MeetingService } from '@/services/meeting.service'
 import { SectionService } from '@/services/section.service'
@@ -29,11 +30,15 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const useEventData = useEvent({
     id: eventId as string,
   })
+
   const { currentUser } = useAuth()
+  const { permissions } = useEventPermissions()
+
   const [sections, setSections] = useState<any[]>([])
   const [currentFrame, setCurrentFrame] = useState<any>(null)
   const [currentSectionId, setCurrentSectionId] = useState<string | null>(null)
   const [overviewOpen, setOverviewOpen] = useState<any>(false)
+
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
@@ -477,8 +482,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const addFirstFrame = async () => {
-    if (!isOwner) return
-
     setLoading(true)
 
     const firstFrame = getDefaultCoverFrame({
@@ -500,8 +503,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     section?: Partial<ISection>
     afterFrameId?: string
   }) => {
-    if (!isOwner) return
-
     let _section
     let newSection = false
 
@@ -592,8 +593,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }: Parameters<EventContextType['addSection']>[0]) => {
     if (showSectionPlaceholder) return
 
-    if (!isOwner) return
-
     const sectionName = name || `Section ${(sections?.length || 0) + 1}`
 
     setShowSectionPlaceholder(true)
@@ -645,8 +644,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     sectionId?: string
     meetingId?: string
   }) => {
-    if (!isOwner) return null
-
     const sectionResponse = await SectionService.updateSection({
       payload: { ...sectionPayload },
       sectionId,
@@ -699,8 +696,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
     meetingId: string
   }) => {
-    if (!isOwner) return null
-
     const meetingResponse = await MeetingService.updateMeeting({
       meetingPayload: {
         sections: meetingPayload.sections,
@@ -728,8 +723,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     startPosition: number
     endPosition: number | undefined
   }) => {
-    if (!isOwner) return null
-
     const importGoogleSlidesResponse = await supabase.functions.invoke(
       'import-google-slides',
       {
@@ -794,13 +787,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const updateFrame = async ({
     framePayload,
     frameId,
-    allowParticipantToUpdate = false,
+    // allowParticipantToUpdate = false,
   }: {
     framePayload: Partial<IFrame>
     frameId: string
-    allowParticipantToUpdate?: boolean
+    // allowParticipantToUpdate?: boolean
   }) => {
-    if (!isOwner && !allowParticipantToUpdate) return null
+    // if (!allowParticipantToUpdate) return null
     if (!frameId) return null
     if (Object.keys(framePayload).length === 0) return null
 
@@ -828,7 +821,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     framePayload: Partial<IFrame>
     frameIds: string[]
   }) => {
-    if (!isOwner) return null
     if (!frameIds.length) return null
     if (Object.keys(framePayload).length === 0) return null
 
@@ -858,8 +850,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const deleteFrame = async (frame: IFrame) => {
-    if (!isOwner) return null
-
     _deleteFrame(frame.id)
 
     // Update the section with the frame
@@ -880,8 +870,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const deleteBreakoutFrames = async (frame: IFrame) => {
-    if (!isOwner) return null
-
     const breakoutIds = [frame.id]
     _deleteFrame(frame.id)
 
@@ -917,8 +905,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const moveUpFrame = async (frame: IFrame) => {
-    if (!isOwner) return null
-
     const section = sections.find((s) => s.id === frame.section_id)
     const index = section.frames.findIndex((s: IFrame) => s?.id === frame.id)
     if (index === 0) return null
@@ -951,8 +937,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const moveUpSection = async (section: ISection) => {
-    if (!isOwner) return null
-
     const index = sections.findIndex((s) => s.id === section.id)
     if (index === 0) return null
 
@@ -977,8 +961,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const moveDownSection = async (section: ISection) => {
-    if (!isOwner) return null
-
     const index = sections.findIndex((s) => s.id === section.id)
     if (index === sections.length - 1) return null
 
@@ -1003,8 +985,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const moveDownFrame = async (frame: IFrame) => {
-    if (!isOwner) return null
-
     const section = sections.find((s) => s.id === frame.section_id)
     const index = section.frames.findIndex((s: IFrame) => s?.id === frame.id)
     if (index === section.frames.length - 1) return null
@@ -1046,8 +1026,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reorderFrame = async (result: OnDragEndResponder | any) => {
-    if (!isOwner) return null
-
     const { source, destination } = result
 
     if (!destination) {
@@ -1183,11 +1161,71 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
   useHotkeys(
     'p',
-    () => isOwner && eventMode === 'edit' && setPreview(!preview),
-    [preview, isOwner, eventMode]
+    () =>
+      permissions.canUpdateFrame &&
+      eventMode === 'edit' &&
+      setPreview(!preview),
+    [preview, permissions.canUpdateFrame, eventMode]
   )
-  useHotkeys('ESC', () => isOwner && setPreview(false), [isOwner])
+  useHotkeys('ESC', () => permissions.canUpdateFrame && setPreview(false), [
+    permissions.canUpdateFrame,
+  ])
+
   useHotkeys('alt + n', () => addSection({}))
+
+  function withPermissionCheck(func: any, permitted: boolean) {
+    if (permitted) {
+      return func
+    }
+
+    return () => 'permission denied'
+  }
+
+  const actions = {
+    updateFrame: withPermissionCheck(updateFrame, permissions.canUpdateFrame),
+    updateFrames: withPermissionCheck(updateFrames, permissions.canUpdateFrame),
+    deleteFrame: withPermissionCheck(deleteFrame, permissions.canDeleteFrame),
+    moveUpFrame: withPermissionCheck(moveUpFrame, permissions.canUpdateFrame),
+    moveDownFrame: withPermissionCheck(
+      moveDownFrame,
+      permissions.canUpdateFrame
+    ),
+    reorderFrame: withPermissionCheck(reorderFrame, permissions.canUpdateFrame),
+    reorderSection: withPermissionCheck(
+      reorderSection,
+      permissions.canUpdateSection
+    ),
+    addSection: withPermissionCheck(addSection, permissions.canCreateSection),
+    updateSection: withPermissionCheck(
+      updateSection,
+      permissions.canUpdateSection
+    ),
+    deleteSection: withPermissionCheck(
+      deleteSection,
+      permissions.canDeleteSection
+    ),
+    addFrameToSection: withPermissionCheck(
+      addFrameToSection,
+      permissions.canCreateFrame
+    ),
+    moveUpSection: withPermissionCheck(
+      moveUpSection,
+      permissions.canUpdateSection
+    ),
+    moveDownSection: withPermissionCheck(
+      moveDownSection,
+      permissions.canUpdateSection
+    ),
+
+    importGoogleSlides: withPermissionCheck(
+      importGoogleSlides,
+      permissions.canUpdateFrame
+    ),
+    deleteBreakoutFrames: withPermissionCheck(
+      deleteBreakoutFrames,
+      permissions.canDeleteFrame
+    ),
+  }
 
   return (
     <EventContext.Provider
@@ -1195,7 +1233,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       value={{
         eventId: eventId as string,
         eventMode:
-          eventMode !== 'present' ? (isOwner ? 'edit' : 'view') : eventMode,
+          eventMode !== 'present'
+            ? permissions.canUpdateFrame
+              ? 'edit'
+              : 'view'
+            : eventMode,
         meeting,
         currentFrame,
         overviewOpen,
@@ -1208,9 +1250,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         preview,
         error,
         openContentTypePicker,
+        currentSectionId,
+        insertAfterSectionId,
+        insertAfterFrameId,
+        insertInSectionId,
+        selectedSectionId,
         setOpenContentTypePicker,
         setPreview,
-        currentSectionId,
         setCurrentFrame: (frame) => {
           setCurrentFrame(frame)
 
@@ -1221,33 +1267,16 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           setCurrentFrame(null)
           setOverviewOpen(open)
         },
-        insertAfterSectionId,
-        insertAfterFrameId,
-        insertInSectionId,
-        selectedSectionId,
+
         setInsertAfterSectionId,
         setInsertAfterFrameId,
         setInsertInSectionId,
         setSelectedSectionId,
-        importGoogleSlides,
-        updateFrame,
-        updateFrames,
-        deleteFrame,
-        moveUpFrame,
-        moveDownFrame,
-        reorderFrame,
-        reorderSection,
-        addSection,
-        updateSection,
-        deleteSection,
-        addFrameToSection,
-        moveUpSection,
-        moveDownSection,
         getFrameById,
-        deleteBreakoutFrames,
         updateSectionsWithReorderedFrames,
         addNewFrameLoader,
         setAddNewFrameLoader,
+        ...actions,
       }}>
       {children}
     </EventContext.Provider>

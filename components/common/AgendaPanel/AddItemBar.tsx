@@ -7,6 +7,7 @@ import { BsCardText, BsCollection, BsPlus } from 'react-icons/bs'
 import { DropdownActions } from '../DropdownActions'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 
 const addItemDropdownActions = [
@@ -42,15 +43,17 @@ export function AddItemBar({
     addSection,
     setOpenContentTypePicker,
     preview,
-    isOwner,
     eventMode,
   } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
 
   const filteredActions = addItemDropdownActions.filter(
     (item) => !hiddenActionKeys.includes(item.key)
   )
 
-  if (preview || !isOwner || eventMode !== 'edit') return null
+  if (preview || !permissions.canCreateFrame || eventMode !== 'edit') {
+    return null
+  }
 
   const handleOnClick = () => {
     if (sectionId) setInsertInSectionId(sectionId)

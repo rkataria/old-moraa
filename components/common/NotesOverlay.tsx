@@ -42,13 +42,14 @@ function NoteOverlaySidebarWrapper({ contentClass, children, onClose }: any) {
   )
 }
 
-export function NoteOverlay() {
+export function NoteOverlay({ editable = true }: { editable?: boolean }) {
   const [editingBlock, setEditingBlock] = useState<string>('')
   const [notesHtml, setNotesHtml] = useState<TextBlock | null>(null)
   const { setRightSidebarVisiblity } = useStudioLayout()
 
-  const { currentFrame, isOwner, eventMode, preview, overviewOpen } =
-    useContext(EventContext) as EventContextType
+  const { currentFrame, eventMode, preview, overviewOpen } = useContext(
+    EventContext
+  ) as EventContextType
 
   useEffect(() => {
     if (!currentFrame?.id) {
@@ -57,7 +58,7 @@ export function NoteOverlay() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame?.id])
 
-  const isEditable = isOwner && eventMode === 'edit' && !preview
+  const isEditable = editable && eventMode === 'edit' && !preview
   const selectedNotesQuery = useQuery({
     queryKey: QueryKeys.GetFrameNotes.listing({ frameId: currentFrame?.id }),
     queryFn: () =>

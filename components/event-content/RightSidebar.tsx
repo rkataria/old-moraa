@@ -9,20 +9,24 @@ import { EditEventForm } from '../common/EditEventForm'
 import { NoteOverlay } from '../common/NotesOverlay'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 
 export function RightSidebar() {
   const { eventId } = useParams()
-  const { currentFrame, isOwner, eventMode, preview } = useContext(
+  const { currentFrame, eventMode, preview } = useContext(
     EventContext
   ) as EventContextType
+  const { permissions } = useEventPermissions()
+
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), {
     enableOnFormTags: ['INPUT', 'TEXTAREA'],
   })
 
-  const editable = isOwner && eventMode === 'edit' && !preview
+  const editable =
+    permissions.canUpdateFrame && eventMode === 'edit' && !preview
 
   useEffect(() => {
     if (!rightSidebarVisiblity) return
@@ -49,7 +53,7 @@ export function RightSidebar() {
       case 'frame-configuration':
         return <FrameConfiguration />
       case 'frame-notes':
-        return <NoteOverlay />
+        return <NoteOverlay editable={permissions.canUpdateNotes} />
       case 'event-settings':
         return (
           <div className="p-4">
