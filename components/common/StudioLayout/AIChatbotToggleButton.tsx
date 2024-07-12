@@ -28,7 +28,7 @@ export function AIChatbotToggleButton() {
 
   useHotkeys('a', toggleSidebar, [resizableRightSidebarVisiblity, isOwner])
 
-  if (!flags?.show_ai_panel) return null
+  if (!flags.show_ai_panel) return null
 
   return (
     <Button

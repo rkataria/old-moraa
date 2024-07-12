@@ -15,7 +15,7 @@ export function ListToggleButton({
 }) {
   const { flags } = useFeatureFlags()
 
-  if (!flags?.show_frame_thumbnails) return null
+  if (!flags.show_frame_thumbnails) return null
 
   return (
     <Button
