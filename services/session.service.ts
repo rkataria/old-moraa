@@ -1,13 +1,19 @@
 import { APIService } from './api-service'
 
-const getActiveSession = async ({ meetingId }: { meetingId: string }) => {
+const getActiveSession = async ({
+  meetingId,
+  status,
+}: {
+  meetingId: string
+  status?: string
+}) => {
   if (!meetingId) return null
 
   const query = APIService.supabaseClient
     .from('session')
     .select('*')
+    .eq('status', status || 'ACTIVE')
     .eq('meeting_id', meetingId)
-    .eq('status', 'ACTIVE')
     .single()
 
   return query.then(
@@ -18,12 +24,27 @@ const getActiveSession = async ({ meetingId }: { meetingId: string }) => {
   )
 }
 
-const createSession = async ({ meetingId }: { meetingId: string }) => {
+const createSession = async ({
+  meetingId,
+  status,
+  defaultData,
+}: {
+  meetingId: string
+  status?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  defaultData?: any
+}) => {
   if (!meetingId) return null
 
   const query = APIService.supabaseClient
     .from('session')
-    .insert([{ meeting_id: meetingId, status: 'ACTIVE', data: {} }])
+    .insert([
+      {
+        meeting_id: meetingId,
+        status: status || 'ACTIVE',
+        data: defaultData || {},
+      },
+    ])
     .select()
     .single()
 

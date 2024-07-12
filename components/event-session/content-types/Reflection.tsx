@@ -11,9 +11,9 @@ import { TypingUsers } from './reflection/TypingUsers'
 
 import type { IReflectionFrame, IReflectionResponse } from '@/types/frame.type'
 
-import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useProfile } from '@/hooks/useProfile'
 
 interface ReflectionProps {
@@ -137,14 +137,6 @@ export function Reflection({ frame }: ReflectionProps) {
         backgroundColor: frame.content.backgroundColor,
       }}>
       <div className="w-4/5 mt-2 rounded-md relative">
-        {/* <div className="w-full flex justify-center">
-          <div className="flex gap-2 items-center">
-            <StartBreakoutRoomsButtonWithModal />
-            <StopBreakoutRoomsButtonWithModal />
-            <BreakoutRoomStatus />
-          </div>
-        </div> */}
-
         <div className="p-4">
           {/* <FrameTitle
             textColor={frame.content.textColor}

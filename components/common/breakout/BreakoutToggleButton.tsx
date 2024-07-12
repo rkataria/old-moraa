@@ -5,9 +5,9 @@ import { Button } from '@nextui-org/react'
 import { ControlButton } from '../ControlButton'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
-import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { IFrame } from '@/types/frame.type'
 import { ContentType } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
@@ -21,6 +21,8 @@ export function BreakoutToggleButton({
   isActive: boolean
   useTextButton?: boolean
 }) {
+  const { isBreakoutActive } = useBreakoutRooms()
+
   return (
     <ControlButton
       buttonProps={{
@@ -34,7 +36,11 @@ export function BreakoutToggleButton({
         size: 'sm',
       }}
       tooltipProps={{
-        content: isActive ? 'Hide Breakouts' : 'Start Breakouts',
+        content: isActive
+          ? 'Hide Breakouts'
+          : isBreakoutActive
+            ? 'View Active Breakout'
+            : 'Start Breakouts',
       }}
       onClick={() => onClick()}>
       {useTextButton ? 'Start Breakout' : <IoPeopleOutline size={20} />}
@@ -52,6 +58,7 @@ export function BreakoutHeaderButton() {
     setIsCreateBreakoutOpen,
     setCurrentFrame,
     breakoutSlideId,
+    realtimeChannel,
   } = useEventSession()
   const { sections } = useEventContext()
 
@@ -64,6 +71,42 @@ export function BreakoutHeaderButton() {
     .flat()
     .find((frame) => frame?.id === breakoutSlideId)
 
+  const onBreakoutStartOnBreakoutSlide = async () => {
+    try {
+      await breakoutRoomsInstance?.startBreakoutRooms({
+        /*
+         * Because the breakoutRooms array only exist on breakout room type so it won't get sent for a breakout group type
+         * And the `participantPerGroup` only exist on breakout group type so it won't get sent for a breakout room type
+         */
+        roomsCount: currentFrame?.content?.breakoutRooms?.length,
+        participantsPerRoom: currentFrame?.config.participantPerGroup,
+      })
+      if (currentFrame?.config.breakoutTime) {
+        setTimeout(() => {
+          realtimeChannel?.send({
+            type: 'broadcast',
+            event: 'timer-start-event',
+            payload: {
+              remainingDuration:
+                (currentFrame?.config?.breakoutTime as number) * 60,
+            },
+          })
+        }, 500)
+      }
+    } catch (err) {
+      console.log('🚀 ~ onBreakoutStartOnBreakoutSlide ~ err:', err)
+    }
+  }
+
+  const onBreakoutEnd = () => {
+    breakoutRoomsInstance?.endBreakoutRooms()
+    realtimeChannel?.send({
+      type: 'broadcast',
+      event: 'timer-stop-event',
+      payload: { remainingDuration: 0 },
+    })
+  }
+
   if (!isHost) return null
   if (isCurrentDyteMeetingInABreakoutRoom) return null
 
@@ -74,11 +117,7 @@ export function BreakoutHeaderButton() {
         size="sm"
         radius="md"
         className="bg-green-500 text-white"
-        onClick={() =>
-          breakoutRoomsInstance?.startBreakoutRooms({
-            roomsCount: currentFrame.content?.breakoutDetails?.length || 2,
-          })
-        }>
+        onClick={onBreakoutStartOnBreakoutSlide}>
         Start Breakout
       </Button>
     )
@@ -101,7 +140,7 @@ export function BreakoutHeaderButton() {
         size="sm"
         className="!bg-red-500"
         radius="md"
-        onClick={() => breakoutRoomsInstance?.endBreakoutRooms()}>
+        onClick={onBreakoutEnd}>
         End Breakout
       </Button>
     )

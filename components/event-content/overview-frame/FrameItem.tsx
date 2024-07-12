@@ -58,10 +58,10 @@ export function FrameItem({
     })
     if (
       frame.type === ContentType.BREAKOUT &&
-      frame?.content?.breakoutDetails?.length
+      frame?.content?.breakoutRooms?.length
     ) {
-      if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
-        frame?.content?.breakoutDetails?.map((ele) => {
+      if (frame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
+        frame?.content?.breakoutRooms?.map((ele) => {
           if (ele?.activityId) {
             updateFrame({
               frameId: ele?.activityId,
@@ -73,10 +73,10 @@ export function FrameItem({
 
           return 0
         })
-      } else if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.GROUPS) {
-        if (frame?.content?.activityId) {
+      } else if (frame?.config?.breakoutType === BREAKOUT_TYPES.GROUPS) {
+        if (frame?.content?.groupActivityId) {
           updateFrame({
-            frameId: frame?.content?.activityId,
+            frameId: frame?.content?.groupActivityId,
             framePayload: {
               status: newState,
             },

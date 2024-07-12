@@ -14,7 +14,6 @@ import isEqual from 'lodash.isequal'
 import uniqBy from 'lodash.uniqby'
 import { useParams } from 'next/navigation'
 
-import { useBreakoutRooms } from './BreakoutRoomsManagerContext'
 import { EventContext } from './EventContext'
 
 import type {
@@ -23,10 +22,10 @@ import type {
   IFrame,
 } from '@/types/frame.type'
 
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useEnrollment } from '@/hooks/useEnrollment'
 import { useFrameReactions } from '@/hooks/useReactions'
 import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
-import { useSharedState } from '@/hooks/useSharedState'
 import { SessionService } from '@/services/session.service'
 import { EventContextType } from '@/types/event-context.type'
 import {
@@ -80,9 +79,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [isCreateBreakoutOpen, setIsCreateBreakoutOpen] =
     useState<boolean>(false)
   const [breakoutSlideId, setBreakoutSlideId] = useState<string | null>(null)
-  const [sharedBreakoutFrame, setSharedBreakoutFrame] = useSharedState<
-    IFrame['id'] | null
-  >({ initialState: null, uniqueStateId: 'sharedBreakoutFrame' })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activeSession, setActiveSession] = useState<any>(null)
@@ -280,7 +276,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   useEffect(() => {
     if (!currentFrame || !realtimeChannel) return
 
-    if (!isBreakoutActive && isOwner && eventSessionMode === 'Presentation') {
+    if (
+      !isBreakoutActive &&
+      isOwner &&
+      eventSessionMode === 'Presentation' &&
+      !currentFrame.content?.breakoutFrameId
+    ) {
       realtimeChannel?.send({
         type: 'broadcast',
         event: 'currentframe-change',
@@ -347,10 +348,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [realtimeChannel, currentFrame, eventSessionMode])
 
   useEffect(() => {
-    if (!isBreakoutActive && sharedBreakoutFrame) {
-      setSharedBreakoutFrame(null)
-    } else if (isBreakoutActive && !sharedBreakoutFrame) {
-      setSharedBreakoutFrame(currentFrame?.id || null)
+    if (!isBreakoutActive && breakoutSlideId) {
+      setBreakoutSlideId(null)
+    } else if (isBreakoutActive && !breakoutSlideId) {
+      setBreakoutSlideId(currentFrame?.id || null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isBreakoutActive, currentFrame])
@@ -737,7 +738,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           event: '*',
           schema: 'public',
           table: 'session',
-          filter: `id=eq.${activeSession?.id}`,
+          filter: `id=eq.${activeSession?.id}&status=ACTIVE`,
         },
         (payload) => {
           if (!payload?.new) return

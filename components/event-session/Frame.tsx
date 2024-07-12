@@ -10,7 +10,7 @@ import { Reflection } from './content-types/Reflection'
 import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
-import { BreakoutLive } from '../common/breakout/BreakoutLive'
+import { BreakoutFrameLive } from '../common/breakout/BreakoutLive'
 import { CanvasPreview } from '../common/content-types/Canvas/Preview'
 import { MoraaBoard } from '../common/content-types/MoraaBoard'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
@@ -103,7 +103,7 @@ export function Frame() {
       <CanvasPreview key={currentFrame.id} frame={currentFrame as any} />
     ),
     [ContentType.BREAKOUT]: (
-      <BreakoutLive frame={currentFrame as BreakoutFrame} />
+      <BreakoutFrameLive frame={currentFrame as BreakoutFrame} />
     ),
   }
 

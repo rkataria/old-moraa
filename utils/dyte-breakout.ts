@@ -8,6 +8,16 @@ import {
   stopBreakoutRooms,
 } from '@/services/dyte/breakout-room-manager.service'
 
+type StartBreakoutConfig =
+  | {
+      participantsPerRoom?: number
+      roomsCount?: never
+    }
+  | {
+      participantsPerRoom?: never
+      roomsCount?: number
+    }
+
 export class BreakoutRooms {
   private manager: BreakoutRoomsManager
   private meeting: DyteClient
@@ -34,54 +44,64 @@ export class BreakoutRooms {
     this.manager.updateCurrentState(payload)
   }
 
+  /**
+   * This method can be used to manually trigger the `stateUpdate` event. This help to keep the state of `this.manager` in sync with the dyte's state.
+   * @returns {Promise} This promise is resolved once the connected meetings are fetched wait of 500ms is elapsed as this will trigger the `stateUpdate` event
+   */
+  private async getConnectedMeetings() {
+    return new Promise((resolve) => {
+      this.meeting.connectedMeetings.getConnectedMeetings().then(() => {
+        setTimeout(resolve, 400)
+      })
+    })
+  }
+
   async startBreakoutWithRandomParticipants() {
-    await this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.getConnectedMeetings()
     this.manager.addNewMeetings(3)
-
-    // assign participants randomly to the three rooms
     this.manager.assignParticipantsRandomly()
-
-    // start breakout session
     await this.manager.applyChanges(this.meeting)
   }
 
   async endBreakout() {
-    await this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.getConnectedMeetings()
     await stopBreakoutRooms({
       meeting: this.meeting,
       stateManager: this.manager,
     })
-    await this.meeting.connectedMeetings.getConnectedMeetings()
-    this.cleanup()
+    await this.getConnectedMeetings()
   }
 
-  async startBreakoutRooms({ participantsPerRoom = 1, roomsCount = 2 }) {
-    await this.meeting.connectedMeetings.getConnectedMeetings()
+  async startBreakoutRooms({
+    participantsPerRoom,
+    roomsCount,
+  }: StartBreakoutConfig) {
+    await this.getConnectedMeetings()
     await createAndAutoAssignBreakoutRooms({
+      roomsCount,
       groupSize: participantsPerRoom,
       meeting: this.meeting,
       stateManager: this.manager,
-      roomsCount,
     })
-    await this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.getConnectedMeetings()
   }
 
   async endBreakoutRooms() {
-    await this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.getConnectedMeetings()
     await stopBreakoutRooms({
       meeting: this.meeting,
       stateManager: this.manager,
     })
-    await this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.getConnectedMeetings()
   }
 
   async joinRoom(meetId: string) {
-    await this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.getConnectedMeetings()
     await moveHostToRoom({
       meeting: this.meeting,
       stateManager: this.manager,
       destinationMeetingId: meetId,
     })
-    await this.meeting.connectedMeetings.getConnectedMeetings()
+    await this.getConnectedMeetings()
   }
 }

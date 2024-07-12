@@ -83,12 +83,16 @@ export function FrameManager() {
       allowVoteOnMultipleOptions: false,
     }
 
+    const breakoutConfigKeyName =
+      breakoutType === BREAKOUT_TYPES.ROOMS
+        ? 'breakoutRoomsCount'
+        : 'participantPerGroup'
     setAddNewFrameLoader(true)
 
     if (contentType === ContentType.BREAKOUT) {
       const breakoutPayload = {
-        selectedBreakout: breakoutType,
-        breakoutCount: breakoutRoomsGroupsCount,
+        breakoutType,
+        [breakoutConfigKeyName]: breakoutRoomsGroupsCount,
         breakoutTime: breakoutRoomsGroupsTime,
       }
       frameConfig = {
@@ -105,8 +109,8 @@ export function FrameManager() {
         contentType,
         templateType,
         data: {
-          breakoutCount: breakoutRoomsGroupsCount,
-          selectedBreakout: breakoutType,
+          breakoutRoomsCount: breakoutRoomsGroupsCount,
+          breakoutType,
         },
         // TODO: Fix any
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

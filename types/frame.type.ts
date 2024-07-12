@@ -48,7 +48,7 @@ export interface ISection {
   status?: string
 }
 
-export interface IBreakoutDetails {
+export interface IbreakoutRooms {
   name: string
   activityId?: string
 }
@@ -61,8 +61,9 @@ export interface IFrame {
     description?: string
     blocks?: TextBlock[] | FileBlock[]
     panelSizes?: number[]
-    breakoutDetails?: IBreakoutDetails[]
+    breakoutRooms?: IbreakoutRooms[]
     activityId?: string
+    groupActivityId?: string
     [key: string]: unknown
   }
   created_at?: string

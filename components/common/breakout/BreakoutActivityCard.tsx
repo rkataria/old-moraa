@@ -5,7 +5,7 @@ import React, { useRef } from 'react'
 
 import { IoAddSharp } from 'react-icons/io5'
 
-import { Card } from '@nextui-org/react'
+import { Tooltip } from '@nextui-org/react'
 
 // TODO: Fix this.
 // eslint-disable-next-line import/no-cycle
@@ -15,46 +15,57 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
+import { cn } from '@/utils/utils'
 
-type BreakoutCardProps = {
+type BreakoutRoomActivityCardProps = {
   breakout: any
   idx: number
-  participants?: any[]
+  hideActivityCard?: boolean
+  participants?: {
+    id?: string
+    displayName?: string
+    displayPictureUrl?: string
+  }[]
   editable: boolean
 } & (
   | {
       editable: boolean
-      updateBreakoutGroupRoomNameName: (value: string, idx: number) => void
+      updateBreakoutRoomName: (value: string, idx: number) => void
       deleteRoomGroup: (idx: number) => void
       onAddNewActivity: (index: number) => void
     }
   | {
       editable: false
-      updateBreakoutGroupRoomNameName?: never
+      updateBreakoutRoomName?: never
       deleteRoomGroup?: never
       onAddNewActivity?: never
     }
 )
 
-export function BreakoutActivityCard({
+export function BreakoutRoomActivityCard({
   breakout,
   editable,
   idx,
-  updateBreakoutGroupRoomNameName,
+  hideActivityCard = false,
+  updateBreakoutRoomName,
   deleteRoomGroup,
   onAddNewActivity,
   participants,
-}: BreakoutCardProps) {
+}: BreakoutRoomActivityCardProps) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
 
   const { width: containerWidth } = useDimensions(
     thumbnailContainerRef,
     'maximized'
   )
-  const { setCurrentFrame, getCurrentFrame } = useEventContext()
+  const { setCurrentFrame, getFrameById } = useEventContext()
 
   return (
-    <Card className="border p-4 min-h-[260px]" key={breakout?.name}>
+    <div
+      className={cn('border rounded p-2', {
+        // 'min-h-[120px]': !hideActivityCard,
+      })}
+      key={breakout?.name}>
       <div className="flex justify-between gap-4">
         <EditableLabel
           readOnly={!editable}
@@ -64,7 +75,7 @@ export function BreakoutActivityCard({
             if (!editable) return
             // if (frame.content.breakout === value) return
 
-            updateBreakoutGroupRoomNameName(value, idx)
+            updateBreakoutRoomName(value, idx)
           }}
         />
         <RenderIf isTrue={editable}>
@@ -86,58 +97,60 @@ export function BreakoutActivityCard({
           </span>
         </RenderIf>
       </div>
-      <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-full min-w-48">
-        {breakout?.activityId ? (
-          <div
-            ref={thumbnailContainerRef}
-            className="relative w-full h-full"
-            onClick={() => {
-              if (!editable) return
-              setCurrentFrame(getCurrentFrame(breakout?.activityId))
-            }}>
-            <FrameThumbnailCard
-              frame={getCurrentFrame(breakout?.activityId)}
-              containerWidth={containerWidth}
-            />
-          </div>
-        ) : (
-          <span
-            onClick={() => {
-              if (!editable) return
-              onAddNewActivity(idx)
-            }}>
-            You can add existing slide from any section or add new slide which
-            will be added under the Breakout section
-          </span>
-        )}
-      </div>
+      <RenderIf isTrue={!hideActivityCard}>
+        <div className="border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48">
+          {breakout?.activityId ? (
+            <div
+              ref={thumbnailContainerRef}
+              className="relative w-full h-full"
+              onClick={() => {
+                if (!editable) return
+                setCurrentFrame(getFrameById(breakout?.activityId))
+              }}>
+              <FrameThumbnailCard
+                frame={getFrameById(breakout?.activityId)}
+                containerWidth={containerWidth}
+              />
+            </div>
+          ) : (
+            <div
+              className="flex justify-center items-center p-2 text-center"
+              onClick={() => {
+                if (!editable) return
+                onAddNewActivity(idx)
+              }}>
+              Add new slide which will be added under the Breakout section
+            </div>
+          )}
+        </div>
+      </RenderIf>
       {!!participants && (
-        <div className="mt-2">
+        <div className="flex items-center mt-2">
           {participants?.length === 0 ? (
             <p className="text-sm text-gray-400">No participants</p>
           ) : null}
-          {participants?.map((participant: any) => (
-            <div className="flex items-center mb-2">
-              <div>
-                {participant.displayPictureUrl ? (
+          {participants?.map((participant) => (
+            <div className="mb-2 items-center mr-2">
+              <Tooltip content={participant?.displayName || ''}>
+                {participant?.displayPictureUrl ? (
                   <img
                     className="w-8 h-8 rounded-full"
-                    src={participant.displayPictureUrl}
-                    alt={participant.id}
+                    src={participant?.displayPictureUrl || ''}
+                    alt={participant?.id}
                   />
                 ) : (
-                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 mr-2">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300">
                     <p className="text-sm">
-                      {participant.displayName?.split(' ')[0]?.[0]}
-                      {participant.displayName?.split(' ')[1]?.[0]}
+                      {participant?.displayName?.split(' ')[0]?.[0]}
+                      {participant?.displayName?.split(' ')[1]?.[0]}
                     </p>
                   </div>
                 )}
-              </div>
+              </Tooltip>
             </div>
           ))}
         </div>
       )}
-    </Card>
+    </div>
   )
 }

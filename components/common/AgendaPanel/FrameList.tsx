@@ -77,7 +77,6 @@ export function FrameList({
                           frame={frame}
                           duplicateFrame={duplicateFrame}
                         />
-
                         <RenderIf
                           isTrue={
                             (currentFrame?.type === ContentType.BREAKOUT &&

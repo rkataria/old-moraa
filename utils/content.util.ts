@@ -157,11 +157,12 @@ export const getDefaultContent = ({
         blocks: [headerBlock, paragraphBlock],
         title: data?.title,
         description: data?.description,
-        breakoutDetails: [...Array(data?.breakoutCount)]
-          .fill('')
-          .map((_, idx) => ({
-            name: `${data?.selectedBreakout === BREAKOUT_TYPES.GROUPS ? 'Group' : 'Room'} - ${idx + 1}`,
-          })),
+        breakoutRooms:
+          data?.breakoutType === BREAKOUT_TYPES.GROUPS
+            ? undefined
+            : new Array(data?.breakoutRoomsCount)
+                .fill('')
+                .map((_, idx) => ({ name: `Room - ${idx + 1}` })),
       }
 
     default:

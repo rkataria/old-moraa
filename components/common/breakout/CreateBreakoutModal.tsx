@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 
@@ -35,14 +35,18 @@ export function CreateBreakoutModal({
   setOpen,
 }: CreateBreakoutModalProps) {
   const { meeting } = useDyteMeeting()
-  const { currentFrame, presentationStatus, setBreakoutSlideId } =
-    useEventSession()
+  const {
+    currentFrame,
+    presentationStatus,
+    setBreakoutSlideId,
+    realtimeChannel,
+  } = useEventSession()
 
   const totalParticipants = meeting.participants.count
 
   const defaultParticipantsPerRoom = distributeParticipants(
     totalParticipants,
-    (currentFrame?.content?.breakoutDetails?.length as number) ||
+    (currentFrame?.content?.breakoutRooms?.length as number) ||
       Math.ceil(totalParticipants / 10)
   )
 
@@ -53,10 +57,29 @@ export function CreateBreakoutModal({
 
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
-  const startBreakoutRooms = () => {
-    breakoutRoomsInstance?.startBreakoutRooms({ participantsPerRoom })
-    if (presentationStatus === PresentationStatuses.STARTED) {
-      setBreakoutSlideId(currentFrame?.id || null)
+  useEffect(() => {
+    if (!realtimeChannel || !breakoutRoomsInstance) return
+    realtimeChannel.on('broadcast', { event: 'timer-stop-event' }, () => {
+      breakoutRoomsInstance?.endBreakout()
+    })
+  }, [breakoutRoomsInstance, realtimeChannel])
+
+  const startBreakoutRooms = async () => {
+    try {
+      await breakoutRoomsInstance?.startBreakoutRooms({ participantsPerRoom })
+      if (presentationStatus === PresentationStatuses.STARTED) {
+        setBreakoutSlideId(currentFrame?.id || null)
+      }
+      setTimeout(() => {
+        realtimeChannel?.send({
+          type: 'broadcast',
+          event: 'timer-start-event',
+          payload: { remainingDuration: breakoutDuration * 60 },
+        })
+      }, 2000)
+      setOpen(false)
+    } catch (err) {
+      console.log('🚀 ~ startBreakoutRooms ~ err:', err)
     }
   }
 
@@ -73,7 +96,7 @@ export function CreateBreakoutModal({
               e.preventDefault()
               e.stopPropagation()
             }}>
-            <p>Min. participants per group</p>
+            <p>Participants per group</p>
             <div className="w-10">
               <TwoWayNumberCounter
                 defaultCount={participantsPerRoom}
@@ -95,7 +118,7 @@ export function CreateBreakoutModal({
                 defaultCount={breakoutDuration}
                 onCountChange={(count) => setBreakoutDuration(count)}
                 postfixLabel=" Min"
-                incrementStep={5}
+                incrementStep={1}
                 fullWidth
               />
             </div>

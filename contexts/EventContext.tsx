@@ -115,7 +115,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           event: '*',
           schema: 'public',
           table: 'section',
-          filter: `meeting_id=eq.${meeting.id}`,
+          filter: `meeting_id=eq.${meeting.id}&status=ACTIVE`,
         },
         async (payload) => {
           console.log('Section change received!', payload)
@@ -885,8 +885,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     const breakoutIds = [frame.id]
     _deleteFrame(frame.id)
 
-    if (frame?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
-      frame?.content?.breakoutDetails?.map(async (ele) => {
+    if (frame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
+      frame?.content?.breakoutRooms?.map(async (ele) => {
         if (ele?.activityId) {
           _deleteFrame(ele?.activityId)
           breakoutIds.push(ele?.activityId)
@@ -894,9 +894,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
         return ele
       })
-    } else if (frame?.content?.activityId) {
-      _deleteFrame(frame?.content?.activityId)
-      breakoutIds.push(frame?.content?.activityId)
+    } else if (frame?.content?.groupActivityId) {
+      _deleteFrame(frame?.content?.groupActivityId)
+      breakoutIds.push(frame?.content?.groupActivityId)
     }
 
     // Update the section with the frame
@@ -1111,8 +1111,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   ) => {
     const removedIds = [removed?.id]
     if (removed?.type === ContentType.BREAKOUT) {
-      if (removed?.config?.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
-        removed?.content?.breakoutDetails?.map((ele: any) => {
+      if (removed?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
+        removed?.content?.breakoutRooms?.map((ele: any) => {
           if (ele?.activityId) {
             removedIds.push(ele?.activityId)
           }
@@ -1174,9 +1174,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     })
   }
 
-  const getCurrentFrame = (activityId: string): IFrame => {
+  const getFrameById = (frameId: string): IFrame => {
     const _frames = sections.map((sec) => sec.frames).flat(2)
-    const cFrame = _frames.find((f) => f?.id === activityId) as IFrame
+    const cFrame = _frames.find((f) => f?.id === frameId) as IFrame
 
     return cFrame
   }
@@ -1243,7 +1243,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         addFrameToSection,
         moveUpSection,
         moveDownSection,
-        getCurrentFrame,
+        getFrameById,
         deleteBreakoutFrames,
         updateSectionsWithReorderedFrames,
         addNewFrameLoader,
@@ -1258,7 +1258,9 @@ export function useEventContext() {
   const context = useContext(EventContext) as EventContextType
 
   if (!context) {
-    throw new Error('useEvent must be used within EventProvider')
+    throw new Error(
+      'useEventContext must be used within `EventContextProvider`'
+    )
   }
 
   return context
