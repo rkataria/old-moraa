@@ -131,9 +131,7 @@ export function Header({
   }
 
   const getCheck = async () => {
-    const res = await axios.get(
-      'http://localhost:3000/.well-known/vercel/overrides-flags'
-    )
+    const res = await axios.get('/.well-known/vercel/overrides-flags')
     console.log('res', res)
   }
 

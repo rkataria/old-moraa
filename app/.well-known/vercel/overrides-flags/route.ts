@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { verifyAccess, type ApiData } from '@vercel/flags'
+import { verifyAccess } from '@vercel/flags'
 
 import { FlagOverridesType, decrypt } from '@vercel/flags'
 import { cookies } from 'next/headers'
