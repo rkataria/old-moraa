@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     Object.keys(flagsFromHappyKit.flags!).map((flagKey) => {
       definitions[flagKey] = {
         options: [
-          { value: flagsFromHappyKit[flagKey], label: 'Off' },
+          { value: flagsFromHappyKit?.flags?.flagKey, label: 'Off' },
           { value: true, label: 'On' },
         ],
       }
