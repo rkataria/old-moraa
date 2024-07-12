@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   const getDefinitions = () => {
     let definitions = {}
-    if (!flagsFromHappyKit.flags)
+    if (!flagsFromHappyKit.flags) {
       return {
         newFeature: {
           description: 'Controls whether the new feature is visible',
@@ -21,10 +21,14 @@ export async function GET(request: NextRequest) {
           ],
         },
       }
-    Object.keys(flagsFromHappyKit.flags!).map((flagKey) => {
+    }
+
+    const flags = flagsFromHappyKit.flags
+
+    Object.keys(flags).map((flagKey) => {
       definitions[flagKey] = {
         options: [
-          { value: flagsFromHappyKit?.flags?.flagKey, label: 'Off' },
+          { value: false, label: 'Off' },
           { value: true, label: 'On' },
         ],
       }

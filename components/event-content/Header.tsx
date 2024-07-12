@@ -129,6 +129,15 @@ export function Header({
     )
   }
 
+  // const getCheck = async () => {
+  //   const res = await axios.get(
+  //     'http://localhost:3000/.well-known/vercel/flags'
+  //   )
+  //   console.log('res', res)
+  // }
+
+  // getCheck()
+
   if (!event) return null
 
   return (
