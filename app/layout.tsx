@@ -1,6 +1,5 @@
 /* eslint-disable import/order */
 import { Outfit } from 'next/font/google'
-import Head from 'next/head'
 
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -25,14 +24,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={outfit.className}>
-      <Head>
-        {/* Import Google Fonts */}
-        <link
-          href="http://fonts.googleapis.com/css?family=Oswald:wght@300;400;500;700;900&family=Lobster:wght@300;400;500;700;900&display=swap"
-          rel="stylesheet"
-          type="text/css"
-        />
-      </Head>
       <body className="h-full w-full scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-white scrollbar-track-rounded-full bg-background text-foreground">
         <AI>
           <Providers>{children}</Providers>

@@ -5,6 +5,7 @@ import { FrameBackgroundControl } from './FrameBackgroundControl'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
+import { ContentType } from '@/utils/content.util'
 
 export function CommonAppearance() {
   const { currentFrame } = useContext(EventContext) as EventContextType
@@ -14,7 +15,7 @@ export function CommonAppearance() {
   return (
     <>
       <FrameBackgroundControl />
-      <FontFamilyControl />
+      {currentFrame.type !== ContentType.MORAA_SLIDE && <FontFamilyControl />}
     </>
   )
 }

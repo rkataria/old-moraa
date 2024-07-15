@@ -5,9 +5,9 @@ import { useEffect, useRef } from 'react'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from './breakout/BreakoutFrame'
-import { CanvasPreview } from './content-types/Canvas/Preview'
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
+import { MoraaSlidePreview } from './content-types/MoraaSlide/Preview'
 import { PDFViewer, PDFViewerFrameType } from './content-types/PDFViewer'
 import { PollFrame, PollPreview } from './content-types/PollPreview'
 import { TextImageFrameType } from './content-types/TextImage'
@@ -71,15 +71,12 @@ export function FramePreview({ frame, isInteractive = true }: FrameProps) {
         backgroundColor: frame.config.backgroundColor,
         ...thumbnailStyle(),
       }}
-      className={cn(
-        'relative group w-full h-full bg-gray-100 flex flex-col p-4',
-        {
-          '!p-0': frame.type === ContentType.TEXT_IMAGE && !isInteractive,
-          'px-[20%]': frame.type === ContentType.RICH_TEXT && isInteractive,
-          'overflow-y-scroll scrollbar-none':
-            frame.type === ContentType.RICH_TEXT,
-        }
-      )}>
+      className={cn('relative group w-full h-full bg-white flex flex-col p-4', {
+        '!p-0': frame.type === ContentType.TEXT_IMAGE && !isInteractive,
+        'px-[20%]': frame.type === ContentType.RICH_TEXT && isInteractive,
+        'overflow-y-scroll scrollbar-none':
+          frame.type === ContentType.RICH_TEXT,
+      })}>
       <FrameTitleDescriptionPreview frame={frame as any} />
 
       <div
@@ -87,8 +84,11 @@ export function FramePreview({ frame, isInteractive = true }: FrameProps) {
         className={cn('relative w-full h-full rounded-md  transition-all', {
           'overflow-auto': frame.type !== ContentType.RICH_TEXT,
         })}>
-        {frame.type === ContentType.CANVAS && (
-          <CanvasPreview frame={frame as any} />
+        {frame.type === ContentType.MORAA_SLIDE && (
+          <MoraaSlidePreview
+            key={frame.id}
+            frameCanvasSvg={frame.content?.svg as string}
+          />
         )}
         {frame.type === ContentType.COVER && (
           <Cover frame={frame as CoverFrameType} />

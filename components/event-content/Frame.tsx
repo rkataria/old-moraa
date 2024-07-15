@@ -17,7 +17,7 @@ import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
-import { Canvas } from '../common/content-types/Canvas'
+import { MoraaSlide } from '../common/content-types/MoraaSlide/MoraaSlide'
 import { FramePreview } from '../common/FramePreview'
 
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
@@ -40,7 +40,7 @@ interface FrameProps {
 }
 
 export function Frame({ frame }: FrameProps) {
-  const { preview, currentFrame } = useContext(EventContext) as EventContextType
+  const { preview } = useContext(EventContext) as EventContextType
 
   const { permissions } = useEventPermissions()
 
@@ -52,7 +52,7 @@ export function Frame({ frame }: FrameProps) {
     )
   }
 
-  if (!currentFrame) return null
+  if (!frame) return null
 
   const renderersByContentType: Record<ContentType, React.ReactNode> = {
     [ContentType.VIDEO]: <VideoEmbedEditor frame={frame as any} />,
@@ -72,11 +72,11 @@ export function Frame({ frame }: FrameProps) {
     [ContentType.RICH_TEXT]: <RichTextEditor />,
     [ContentType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
     [ContentType.MORAA_BOARD]: <MoraaBoardEditor frame={frame} />,
-    [ContentType.CANVAS]: <Canvas frame={frame as any} />,
+    [ContentType.MORAA_SLIDE]: <MoraaSlide frame={frame as any} />,
     [ContentType.BREAKOUT]: <BreakoutFrame frame={frame as any} isEditable />,
   }
 
-  const renderer = renderersByContentType[currentFrame.type]
+  const renderer = renderersByContentType[frame.type]
 
   return (
     <div

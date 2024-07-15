@@ -1,17 +1,10 @@
 import { Card, CardBody } from '@nextui-org/react'
 
-import {
-  CANVAS_TEMPLATE_TYPES,
-  ContentType,
-  IContentType,
-} from '@/utils/content.util'
+import { ContentType, IContentType } from '@/utils/content.util'
 
 interface IContentCard {
   card: IContentType | undefined
-  onClick: (
-    contentType: ContentType,
-    templateType: CANVAS_TEMPLATE_TYPES | undefined
-  ) => void
+  onClick: (contentType: ContentType, templateKey?: string) => void
 }
 
 export function ContentTypeCard({ card, onClick }: IContentCard) {
@@ -24,7 +17,7 @@ export function ContentTypeCard({ card, onClick }: IContentCard) {
       isPressable
       onPress={() => {
         if (!card.disabled) {
-          onClick(card.contentType, card.templateType)
+          onClick(card.contentType, card.templateKey)
         }
       }}
       className="hover:bg-gray-300 flex-col items-start bg-[#E9D8FD] shadow-none hover:shadow-sm duration-300">

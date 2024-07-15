@@ -13,7 +13,7 @@ import {
   ModalHeader,
 } from '@nextui-org/react'
 
-import { TwoWayNumberCounter } from '../content-types/Canvas/FontSizeControl'
+import { TwoWayNumberCounter } from '../content-types/MoraaSlide/FontSizeControl'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'

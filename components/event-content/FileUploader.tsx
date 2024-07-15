@@ -51,6 +51,7 @@ type FileUploaderProps = {
   useTUS?: boolean
   hint?: string
   triggerProps?: ButtonProps
+  hideLoader?: boolean
   onFilePickerOpen?: (open: boolean) => void
   onFilesUploaded?: (files: FileWithSignedUrl[]) => void
   onPublicFilesUploaded?: (files: FileWithoutSignedUrl[]) => void
@@ -65,6 +66,7 @@ export function FileUploader({
   useTUS = false,
   hint = 'You can upload files from your local device, Dropbox, Google Drive, One Drive, Unsplash, or a URL',
   triggerProps = {},
+  hideLoader = false,
   onFilePickerOpen,
   onFilesUploaded,
   onPublicFilesUploaded,
@@ -262,7 +264,10 @@ export function FileUploader({
 
   return (
     <>
-      <Button onPress={onOpen} isLoading={isOpen} {...triggerProps}>
+      <Button
+        onPress={onOpen}
+        isLoading={!hideLoader && isOpen}
+        {...triggerProps}>
         {triggerProps.children || title}
       </Button>
       <Modal

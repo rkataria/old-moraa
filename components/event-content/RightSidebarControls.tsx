@@ -24,7 +24,6 @@ export function RightSidebarControls() {
 
   return (
     <RightSidebarControlsWrapper>
-      {/* <EventSettingsToggleButton /> */}
       <FrameConfigurationToggleButton />
       <FrameAppearanceToggleButton />
       <FrameNoteToggleButton />

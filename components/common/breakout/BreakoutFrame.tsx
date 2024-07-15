@@ -15,11 +15,7 @@ import { Card } from '@nextui-org/react'
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
-import {
-  CANVAS_TEMPLATE_TYPES,
-  ContentType,
-  ContentTypePicker,
-} from '../ContentTypePicker'
+import { ContentType, ContentTypePicker } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { RenderIf } from '../RenderIf/RenderIf'
 
@@ -77,7 +73,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
 
   const handleAddNewFrame = (
     contentType: ContentType,
-    templateType: CANVAS_TEMPLATE_TYPES | undefined
+    templateKey?: string
   ): void => {
     let currentSection
     const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
@@ -102,7 +98,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       content: {
         ...(getDefaultContent({
           contentType,
-          templateType,
+          templateKey,
           // TODO: Fix any
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         }) as any),

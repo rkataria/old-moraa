@@ -2,7 +2,7 @@
 import { useContext } from 'react'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
-import { TwoWayNumberCounter } from '@/components/common/content-types/Canvas/FontSizeControl'
+import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 

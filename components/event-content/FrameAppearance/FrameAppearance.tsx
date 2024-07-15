@@ -2,16 +2,21 @@ import { useContext } from 'react'
 
 import { IoColorPaletteOutline } from 'react-icons/io5'
 
+import { CanvasAppearance } from './CanvasAppearance'
 import { CommonAppearance } from './CommonAppearance'
 import { TextImageAppearance } from './TextImageAppearance'
 import { ConfigurationHeader } from '../FrameConfiguration/ConfigurationHeader'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
 
 export function FrameAppearance() {
   const { currentFrame } = useContext(EventContext) as EventContextType
+  const canvas = useMoraaSlideStore(
+    (state) => state.canvasInstances[currentFrame?.id as string]
+  )
 
   if (!currentFrame) return null
 
@@ -29,11 +34,27 @@ export function FrameAppearance() {
     [ContentType.RICH_TEXT]: null,
     [ContentType.MIRO_EMBED]: null,
     [ContentType.MORAA_BOARD]: null,
-    [ContentType.CANVAS]: null,
+    [ContentType.MORAA_SLIDE]: <CanvasAppearance key={currentFrame.id} />,
     [ContentType.BREAKOUT]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type]
+
+  const canvasActiveObject = canvas?.getActiveObject()
+
+  if (canvasActiveObject) {
+    return (
+      <div className="p-4 text-sm">
+        <ConfigurationHeader
+          icon={<IoColorPaletteOutline size={18} />}
+          title={canvasActiveObject.type!}
+        />
+        <div className="pt-8 flex flex-col gap-4">
+          <CanvasAppearance key={currentFrame.id} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="p-4 text-sm">

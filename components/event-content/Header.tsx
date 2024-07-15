@@ -7,6 +7,7 @@ import { IoMdArrowBack } from 'react-icons/io'
 import { Button, Image } from '@nextui-org/react'
 
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
+import { Toolbars } from '../common/content-types/MoraaSlide/Toolbars'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
 import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
@@ -14,6 +15,7 @@ import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 import { EventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { type EventContextType } from '@/types/event-context.type'
+import { ContentType } from '@/utils/content.util'
 
 export function Header({
   event,
@@ -21,7 +23,9 @@ export function Header({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   event: any
 }) {
-  const { preview } = useContext(EventContext) as EventContextType
+  const { isOwner, preview, currentFrame } = useContext(
+    EventContext
+  ) as EventContextType
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
 
   const toggleNotesSidebar = () => {
@@ -49,6 +53,8 @@ export function Header({
 
   if (!event) return null
 
+  const editable = isOwner && !preview
+
   return (
     <div className="h-full p-2">
       <div className="flex justify-between items-center h-12 w-full">
@@ -64,6 +70,9 @@ export function Header({
           </Link>
           <span className="font-medium">{event?.name}</span>
         </div>
+        {editable && currentFrame?.type === ContentType.MORAA_SLIDE && (
+          <Toolbars />
+        )}
         <div className="flex justify-start items-center gap-2 h-full">
           {renderActionButtons()}
           <PreviewSwitcher />

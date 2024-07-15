@@ -11,8 +11,8 @@ import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
 import { BreakoutFrameLive } from '../common/breakout/BreakoutLive'
-import { CanvasPreview } from '../common/content-types/Canvas/Preview'
 import { MoraaBoard } from '../common/content-types/MoraaBoard'
+import { MoraaSlidePreview } from '../common/content-types/MoraaSlide/Preview'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
 
 import { Cover } from '@/components/common/content-types/Cover'
@@ -98,11 +98,12 @@ export function Frame() {
       <RichText key={currentFrame.id} frame={currentFrame} />
     ),
     [ContentType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
-    [ContentType.MORAA_BOARD]: (
-      <MoraaBoard frame={currentFrame as any} isInteractive={isHost} />
-    ),
-    [ContentType.CANVAS]: (
-      <CanvasPreview key={currentFrame.id} frame={currentFrame as any} />
+    [ContentType.MORAA_BOARD]: <MoraaBoard frame={currentFrame as any} />,
+    [ContentType.MORAA_SLIDE]: (
+      <MoraaSlidePreview
+        key={currentFrame.id}
+        frameCanvasSvg={currentFrame.content?.svg as string}
+      />
     ),
     [ContentType.BREAKOUT]: (
       <BreakoutFrameLive frame={currentFrame as BreakoutFrame} />
