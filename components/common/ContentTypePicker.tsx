@@ -8,7 +8,6 @@ import {
   IconBrandAdobe,
   IconChartBar,
   IconVideo,
-  IconLayout,
   IconFileText,
 } from '@tabler/icons-react'
 import { BsQuestionCircle } from 'react-icons/bs'
@@ -36,12 +35,12 @@ export interface IContentType {
   description: string
   contentType: ContentType
   disabled?: boolean
-  templateType?: CANVAS_TEMPLATE_TYPES
+  templateKey?: string
   isAvailableForBreakout?: boolean
 }
 
 export enum ContentType {
-  CANVAS = 'Canvas',
+  MORAA_SLIDE = 'Moraa Slide',
   COVER = 'Title',
   POLL = 'Poll',
   VIDEO = 'Video',
@@ -62,47 +61,13 @@ export const INTERACTIVE_FRAME_TYPES = [
   ContentType.REFLECTION,
 ]
 
-export enum CANVAS_TEMPLATE_TYPES {
-  BLANK = 'Blank',
-  TEMPLATE_ONE = 'Template One',
-  TEMPLATE_TWO = 'Template Two',
-  TEMPLATE_THREE = 'Template Three',
-}
-
 export const contentTypes: IContentType[] = [
   {
     name: 'Blank',
     icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
     description: 'Create a blank canvas to draw, write',
-    contentType: ContentType.CANVAS,
-    templateType: CANVAS_TEMPLATE_TYPES.BLANK,
-  },
-  {
-    name: 'Title Description',
-    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
-    description: 'Create a frame with title and description',
-    contentType: ContentType.CANVAS,
-    templateType: CANVAS_TEMPLATE_TYPES.TEMPLATE_ONE,
-  },
-  {
-    name: 'Title Image',
-    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
-    description: 'Create a frame with title and image',
-    contentType: ContentType.CANVAS,
-    templateType: CANVAS_TEMPLATE_TYPES.TEMPLATE_TWO,
-  },
-  {
-    name: 'Title',
-    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
-    description:
-      'Simple and effective. Suitable for cover pages and section dividers',
-    contentType: ContentType.COVER,
-  },
-  {
-    name: 'Text & Image',
-    icon: <IconLayout className="w-full h-full max-w-11 max-h-11" />,
-    description: 'Combine text and image to create a visually appealing frame',
-    contentType: ContentType.TEXT_IMAGE,
+    contentType: ContentType.MORAA_SLIDE,
+    templateKey: 'blank',
   },
   {
     name: 'Page',
@@ -184,10 +149,7 @@ export const contentTypes: IContentType[] = [
 interface ChooseContentTypeProps {
   open: boolean
   onClose: () => void
-  onChoose: (
-    contentType: ContentType,
-    templateType: CANVAS_TEMPLATE_TYPES | undefined
-  ) => void
+  onChoose: (contentType: ContentType, templateKey?: string) => void
   isBreakoutActivity?: boolean
 }
 
@@ -205,11 +167,7 @@ export function ContentTypePicker({
   ]
 
   const presentationContent = [
-    getContentType(ContentType.CANVAS, CANVAS_TEMPLATE_TYPES.BLANK),
-    getContentType(ContentType.CANVAS, CANVAS_TEMPLATE_TYPES.TEMPLATE_ONE),
-    getContentType(ContentType.CANVAS, CANVAS_TEMPLATE_TYPES.TEMPLATE_TWO),
-    getContentType(ContentType.COVER),
-    getContentType(ContentType.TEXT_IMAGE),
+    getContentType(ContentType.MORAA_SLIDE, 'blank'),
     getContentType(ContentType.RICH_TEXT),
   ]
 

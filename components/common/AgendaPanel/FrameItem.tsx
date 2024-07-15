@@ -11,12 +11,13 @@ import { ContentType } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
-import { FramePlaceholder } from '../FramePlaceholder'
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useDimensions } from '@/hooks/useDimensions'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
@@ -32,11 +33,9 @@ type FrameActionKey = 'delete' | 'move-up' | 'move-down' | 'duplicate-frame'
 export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
   const {
     currentFrame,
-    isOwner,
     preview,
     overviewOpen,
     eventMode,
-    insertAfterFrameId,
     updateFrame,
     moveUpFrame,
     moveDownFrame,
@@ -44,6 +43,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     setCurrentFrame,
     deleteBreakoutFrames,
   } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
+
   const { listDisplayMode, currentSectionId } = useAgendaPanel()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
@@ -81,7 +82,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     sidebarExpanded
   )
 
-  const editable = isOwner && !preview && eventMode === 'edit'
+  const editable =
+    permissions.canUpdateFrame && !preview && eventMode === 'edit'
 
   const frameActive =
     !overviewOpen && !currentSectionId && currentFrame?.id === frame?.id
@@ -90,6 +92,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     if (sidebarExpanded) {
       return (
         <div
+          key={`frame-${frame?.id}`}
           data-miniframe-id={frame?.id}
           className={cn(
             'relative cursor-pointer rounded-md border-0  hover:bg-purple-200 overflow-hidden',
@@ -107,7 +110,9 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             }
           )}
           onClick={() => {
-            if (!isOwner && eventMode === 'present') return
+            if (!permissions.canUpdateFrame && eventMode === 'present') {
+              return
+            }
 
             setCurrentFrame(frame)
           }}>
@@ -164,8 +169,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                   }}
                 />
               </div>
-
-              {editable && (
+              <RenderIf isTrue={editable && !frame?.content?.breakoutFrameId}>
                 <div className={cn('hidden group-hover/frame-item:block')}>
                   <FrameActions
                     triggerIcon={
@@ -176,7 +180,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                     handleActions={handleFrameAction}
                   />
                 </div>
-              )}
+              </RenderIf>
             </div>
           </div>
           <DeleteFrameModal
@@ -214,9 +218,10 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     <div className="relative w-full">
       {renderFrameContent()}
       {sidebarExpanded && (
-        <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+        <RenderIf isTrue={sidebarExpanded && !frame?.content?.breakoutFrameId}>
+          <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+        </RenderIf>
       )}
-      {insertAfterFrameId === frame?.id && <FramePlaceholder />}
     </div>
   )
 }

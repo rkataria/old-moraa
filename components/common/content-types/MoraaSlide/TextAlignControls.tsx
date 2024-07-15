@@ -9,16 +9,30 @@ import {
 
 import { Button } from '@nextui-org/react'
 
-import { CanvasFrameContext, CanvasFrameContextType } from './CanvasProvider'
 import { ControlButton } from '../../ControlButton'
 
+import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
+import { EventContextType } from '@/types/event-context.type'
+import { cn } from '@/utils/utils'
+
 export function TextAlignControls() {
-  const { canvas } = useContext(CanvasFrameContext) as CanvasFrameContextType
+  const { currentFrame } = useContext(EventContext) as EventContextType
+  const canvas = useMoraaSlideStore(
+    (state) => state.canvasInstances[currentFrame?.id as string]
+  )
+  const { setCanvas } = useMoraaSlideStore((state) => state)
 
-  const activeObject = canvas?.getActiveObject() as fabric.Textbox
+  if (!canvas) return null
 
-  if (!activeObject) {
-    return null
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
+
+  if (!activeObject) return null
+
+  const aligText = (align: string) => {
+    activeObject.set('textAlign', align)
+    canvas.renderAll()
+    setCanvas(currentFrame?.id as string, canvas)
   }
 
   return (
@@ -31,9 +45,11 @@ export function TextAlignControls() {
           variant: activeObject?.textAlign === 'left' ? 'solid' : 'flat',
           size: 'sm',
           radius: 'md',
-          className: 'flex-none',
+          className: cn('flex-none flex-grow', {
+            'bg-gray-200': activeObject?.textAlign === 'left',
+          }),
         }}
-        onClick={() => activeObject.set('textAlign', 'left')}>
+        onClick={() => aligText('left')}>
         <BsTextLeft size={18} />
       </ControlButton>
       <ControlButton
@@ -44,9 +60,11 @@ export function TextAlignControls() {
           variant: activeObject?.textAlign === 'center' ? 'solid' : 'flat',
           size: 'sm',
           radius: 'md',
-          className: 'flex-none',
+          className: cn('flex-none flex-grow', {
+            'bg-gray-200': activeObject?.textAlign === 'left',
+          }),
         }}
-        onClick={() => activeObject.set('textAlign', 'center')}>
+        onClick={() => aligText('center')}>
         <BsTextCenter size={18} />
       </ControlButton>
       <ControlButton
@@ -57,9 +75,11 @@ export function TextAlignControls() {
           variant: activeObject?.textAlign === 'right' ? 'solid' : 'flat',
           size: 'sm',
           radius: 'md',
-          className: 'flex-none',
+          className: cn('flex-none flex-grow', {
+            'bg-gray-200': activeObject?.textAlign === 'left',
+          }),
         }}
-        onClick={() => activeObject.set('textAlign', 'right')}>
+        onClick={() => aligText('right')}>
         <BsTextRight size={18} />
       </ControlButton>
       <ControlButton
@@ -70,9 +90,11 @@ export function TextAlignControls() {
           variant: activeObject?.textAlign === 'justify' ? 'solid' : 'flat',
           size: 'sm',
           radius: 'md',
-          className: 'flex-none',
+          className: cn('flex-none flex-grow', {
+            'bg-gray-200': activeObject?.textAlign === 'left',
+          }),
         }}
-        onClick={() => activeObject.set('textAlign', 'justify')}>
+        onClick={() => aligText('justify')}>
         <BsJustify size={18} />
       </ControlButton>
     </>

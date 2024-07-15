@@ -6,6 +6,7 @@ import { Draggable } from 'react-beautiful-dnd'
 
 import { FrameItem } from './FrameItem'
 import { ContentType } from '../ContentTypePicker'
+import { FramePlaceholder } from '../FramePlaceholder'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useEventContext } from '@/contexts/EventContext'
@@ -27,9 +28,17 @@ export function FrameList({
   duplicateFrame,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
-  const { sections } = useEventContext()
+  const {
+    sections,
+    currentFrame,
+    insertAfterFrameId,
+    addNewFrameLoader,
+    currentSectionId,
+  } = useEventContext()
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
+
+  const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
 
   if (!showList) return null
 
@@ -68,36 +77,50 @@ export function FrameList({
                         ref={_provided.innerRef}
                         {..._provided.draggableProps}
                         {..._provided.dragHandleProps}
-                        className="flex w-full">
+                        className="flex w-full flex-col">
                         <FrameItem
                           frame={frame}
                           duplicateFrame={duplicateFrame}
                         />
+                        <RenderIf
+                          isTrue={
+                            (currentFrame?.type === ContentType.BREAKOUT &&
+                              currentFrame?.id === frame?.id) ||
+                            (!!currentFrame &&
+                              Boolean(
+                                getBreakoutFrames(frame)
+                                  ?.map((_frame) => _frame?.id)
+                                  .includes(currentFrame?.id)
+                              ))
+                          }>
+                          <div
+                            className={cn('ml-6', {
+                              'my-2': getBreakoutFrames(frame)?.length,
+                            })}>
+                            {getBreakoutFrames(frame)?.map((f) => (
+                              <div key={f?.id} className="flex w-full">
+                                <FrameItem
+                                  frame={f}
+                                  duplicateFrame={duplicateFrame}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </RenderIf>
                       </div>
                     )}
                   </Draggable>
                   <RenderIf
                     isTrue={
-                      frame?.type === ContentType.BREAKOUT ||
-                      Boolean(
-                        getBreakoutFrames(frame)
-                          ?.map((_frame) => _frame?.id)
-                          .includes(frame?.id)
-                      )
+                      addNewFrameLoader &&
+                      (currentFrame?.section_id === frame.section_id ||
+                        currentSectionId === frame.section_id) &&
+                      ((_insertAfterFrameId &&
+                        _insertAfterFrameId === frame?.id) ||
+                        (!_insertAfterFrameId &&
+                          frameIndex === (frames?.length || 1) - 1))
                     }>
-                    <div
-                      className={cn('ml-6', {
-                        'my-2': getBreakoutFrames(frame)?.length,
-                      })}>
-                      {getBreakoutFrames(frame)?.map((f) => (
-                        <div key={f?.id} className="flex w-full">
-                          <FrameItem
-                            frame={f}
-                            duplicateFrame={duplicateFrame}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    <FramePlaceholder />
                   </RenderIf>
                 </div>
               </RenderIf>

@@ -7,6 +7,7 @@ export type MeetingControlButtonProps = {
   children: React.ReactNode
   tooltipProps: TooltipProps
   buttonProps: ButtonProps
+  hideTooltip?: boolean
   onClick: () => void
 }
 
@@ -21,8 +22,17 @@ export function ControlButton({
   children,
   tooltipProps,
   buttonProps,
+  hideTooltip,
   onClick,
 }: MeetingControlButtonProps) {
+  if (hideTooltip) {
+    return (
+      <Button onClick={onClick} {...buttonProps}>
+        {children}
+      </Button>
+    )
+  }
+
   return (
     <Tooltip {...tooltipProps}>
       <Button onClick={onClick} {...buttonProps}>

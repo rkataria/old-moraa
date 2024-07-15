@@ -18,7 +18,7 @@ import {
   Button,
 } from '@nextui-org/react'
 
-import { TwoWayNumberCounter } from './content-types/Canvas/FontSizeControl'
+import { TwoWayNumberCounter } from './content-types/MoraaSlide/FontSizeControl'
 
 import { cn } from '@/utils/utils'
 
@@ -156,14 +156,18 @@ export function BreakoutTypePicker({
                         <p className="text-sm mt-1 w-full font-normal">
                           {breakoutType.description}
                         </p>
-                        <span>No of {breakoutType.breakoutType}s</span>
+                        <span>
+                          {breakoutType.breakoutType === BREAKOUT_TYPES.ROOMS
+                            ? 'No of rooms'
+                            : 'No of participants per group'}
+                        </span>
                         <span
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
                           }}>
                           <TwoWayNumberCounter
-                            defaultCount={1}
+                            defaultCount={2}
                             onCountChange={(count) =>
                               setBreakoutRoomsGroupsCount(count)
                             }

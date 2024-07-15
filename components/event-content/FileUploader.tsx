@@ -51,6 +51,7 @@ type FileUploaderProps = {
   useTUS?: boolean
   hint?: string
   triggerProps?: ButtonProps
+  hideLoader?: boolean
   onFilePickerOpen?: (open: boolean) => void
   onFilesUploaded?: (files: FileWithSignedUrl[]) => void
   onPublicFilesUploaded?: (files: FileWithoutSignedUrl[]) => void
@@ -65,6 +66,7 @@ export function FileUploader({
   useTUS = false,
   hint = 'You can upload files from your local device, Dropbox, Google Drive, One Drive, Unsplash, or a URL',
   triggerProps = {},
+  hideLoader = false,
   onFilePickerOpen,
   onFilesUploaded,
   onPublicFilesUploaded,
@@ -122,19 +124,19 @@ export function FileUploader({
     })
 
     _uppy.on('transloadit:upload', async (file) => {
-      onFilesUploaded?.([
-        {
-          meta: { name: file.original_name, size: file.size, type: file.type },
-          signedUrl: file.ssl_url,
-        },
-      ])
+      // onFilesUploaded?.([
+      //   {
+      //     meta: { name: file.original_name, size: file.size, type: file.type },
+      //     signedUrl: file.ssl_url,
+      //   },
+      // ])
       _uppy.removeFile(file.id)
     })
 
     _uppy.on('transloadit:complete', async () => {
       setOpen(false)
       onFilePickerOpen?.(false)
-      toast.success('Upload successful')
+      // toast.success('Upload successful')
     })
 
     _uppy.on('complete', async (result) => {
@@ -262,7 +264,10 @@ export function FileUploader({
 
   return (
     <>
-      <Button onPress={onOpen} isLoading={isOpen} {...triggerProps}>
+      <Button
+        onPress={onOpen}
+        isLoading={!hideLoader && isOpen}
+        {...triggerProps}>
         {triggerProps.children || title}
       </Button>
       <Modal

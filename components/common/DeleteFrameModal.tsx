@@ -27,11 +27,7 @@ export function DeleteFrameModal({
   frame,
 }: DeleteFrameModalProps) {
   return (
-    <Modal
-      size="md"
-      isOpen={isModalOpen}
-      onClose={onClose}
-      onOpenChange={handleDelete}>
+    <Modal size="md" isOpen={isModalOpen} onClose={onClose}>
       <ModalContent>
         {() => (
           <>

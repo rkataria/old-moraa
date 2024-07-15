@@ -1,72 +1,145 @@
-/* TODO: Fix any */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
-import { useClickAway } from '@uidotdev/usehooks'
+import { IconTrash } from '@tabler/icons-react'
+import { useThrottle } from '@uidotdev/usehooks'
 import clsx from 'clsx'
-import { SketchPicker } from 'react-color'
+import isEqual from 'lodash.isequal'
+import ReactTextareaAutosize from 'react-textarea-autosize'
 
-import { PollForm } from './PollForm'
+import { FrameText } from './FrameText'
+import { FrameTextBlock } from './FrameTextBlock'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 
-export function PollEditor({
-  frame,
-  openSettings,
-}: {
-  frame: IFrame
-  openSettings: boolean
-}) {
+interface PollEditorProps {
+  frame: IFrame & {
+    content: {
+      question: string
+      options: string[]
+    }
+  }
+}
+
+export function PollEditor({ frame: frameFromRemote }: PollEditorProps) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const optionsRef = useRef<any>([])
+
   const { updateFrame } = useContext(EventContext) as EventContextType
-  const [showSettings, setShowSettings] = useState<boolean>(openSettings)
-  const settingsRef = useClickAway(() => {
-    setShowSettings(false)
-  })
+  const [options, setOptions] = useState<string[]>(
+    frameFromRemote.content.options
+  )
+  const throttledOptions = useThrottle(options, 500)
+
+  const updateOption = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    index: number
+  ) => {
+    const newOptions = [...options]
+    newOptions[index] = e.target.value
+    setOptions(newOptions)
+  }
+
+  const deleteOption = (index: number) => {
+    const newOptions = [...options]
+    newOptions.splice(index, 1)
+    setOptions(newOptions)
+  }
+
+  const addNewOption = () => {
+    setOptions([...options, ''])
+  }
+
+  const focusOnFirstEmptyOption = (
+    e:
+      | React.KeyboardEvent<HTMLInputElement>
+      | React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (e.key === 'Enter') {
+      const indexOfFirstEmptyOption = options.findIndex(
+        (option) => option?.length === 0
+      )
+      if (indexOfFirstEmptyOption !== -1) {
+        optionsRef.current[indexOfFirstEmptyOption].focus()
+        e.preventDefault()
+
+        return
+      }
+      addNewOption()
+      e.preventDefault()
+    }
+  }
 
   useEffect(() => {
-    setShowSettings(openSettings)
-  }, [openSettings])
+    if (isEqual(throttledOptions, frameFromRemote.content.options)) {
+      return
+    }
+
+    updateFrame({
+      framePayload: {
+        content: {
+          ...frameFromRemote.content,
+          // question: throttledQuestion,
+          options: throttledOptions,
+        },
+      },
+      frameId: frameFromRemote.id,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [throttledOptions])
 
   return (
-    <div className={clsx('relative w-full h-full overflow-hidden')}>
-      <div className="relative w-full h-full overflow-x-hidden overflow-y-auto scrollbar-thin">
-        <PollForm frame={frame as any} />
-      </div>
-      <div
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        ref={settingsRef}
-        className={clsx(
-          'absolute top-0 h-full max-w-[420px] z-20 w-full bg-white transition-all overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20',
-          {
-            'right-0': showSettings,
-            '-right-[420px]': !showSettings,
-          }
-        )}>
-        <div className="px-8 py-4">
-          <h3 className="text-xl font-bold mb-4">Add a background color</h3>
-          <div className="relative">
-            <div className="my-4">
-              <SketchPicker
-                color={frame.config.backgroundColor}
-                onChange={(color) => {
-                  updateFrame({
-                    framePayload: {
-                      config: {
-                        ...frame.config,
-                        backgroundColor: color.hex,
-                      },
-                    },
-                    frameId: frame.id,
-                  })
-                }}
-              />
-            </div>
-          </div>
+    <>
+      <FrameText
+        type="title"
+        disableEnter
+        onSuccessiveEnters={focusOnFirstEmptyOption}
+      />
+      <FrameTextBlock blockType="paragraph" />
+      <div className={clsx('w-full h-auto flex justify-start items-start')}>
+        <div className="w-4/5">
+          <ul>
+            {options.map((option: string, index: number) => (
+              <li
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                className="flex justify-between items-center mb-2 rounded-md font-semibold bg-black/5 text-black">
+                <ReactTextareaAutosize
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  ref={(el: any) => {
+                    optionsRef.current[index] = el
+                  }}
+                  className={clsx(
+                    'w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none'
+                  )}
+                  value={option}
+                  placeholder={`Option ${index + 1}`}
+                  onChange={(e) => updateOption(e, index)}
+                  onKeyDown={focusOnFirstEmptyOption}
+                />
+                <button
+                  type="button"
+                  aria-label="delete"
+                  className="p-4"
+                  onClick={() => deleteOption(index)}>
+                  <IconTrash size={16} />
+                </button>
+              </li>
+            ))}
+            <li>
+              <button
+                type="button"
+                className={clsx(
+                  'w-full text-center p-4 border-2 border-black rounded-md mb-2 font-semibold cursor-pointer text-black outline-none hover:outline-none'
+                )}
+                onClick={addNewOption}>
+                Add option
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
+    </>
   )
 }

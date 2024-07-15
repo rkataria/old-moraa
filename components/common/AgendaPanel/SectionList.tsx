@@ -1,4 +1,6 @@
-import { useContext, useEffect, useRef } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/jsx-no-bind */
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 
@@ -12,6 +14,7 @@ import { StrictModeDroppable } from '../StrictModeDroppable'
 import { HEADER_HEIGHT as MAIN_HEADER_HEIGHT } from '../StudioLayout/Header'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { cn, scrollParentToChild } from '@/utils/utils'
@@ -25,10 +28,11 @@ export function SectionList() {
     sections,
     reorderSection,
     reorderFrame,
+    updateSectionsWithReorderedFrames,
     eventMode,
-    isOwner,
     preview,
   } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
   const sectionListRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
 
@@ -51,11 +55,73 @@ export function SectionList() {
     })
   }, [currentFrame])
 
-  const actionDisabled = eventMode !== 'edit' || !isOwner || preview
+  const actionDisabled =
+    eventMode !== 'edit' || !permissions.canUpdateSection || preview
 
   const maxHeight = expanded
     ? SECTION_LIST_CONTAINER_MAX_HEIGHT
     : SECTION_LIST_CONTAINER_MAX_HEIGHT_WHEN_MANIMIZED
+
+  const [sectionList, updateSectionList] = useState(sections)
+
+  const handleOnDragEndSections = (result: any, provided: any) => {
+    reorderSection(result, provided)
+
+    const items = Array.from(sectionList)
+    const [reorderedItem] = items.splice(result.source.index, 1)
+    items.splice(result.destination.index, 0, reorderedItem)
+
+    updateSectionList(items)
+  }
+
+  const handleOnDragEndFrame = (result: any, provided: any) => {
+    const { source, destination } = result
+
+    if (destination.droppableId === source.droppableId) {
+      const sectionId = source.droppableId.split(
+        'frame-droppable-sectionId-'
+      )[1]
+      const section = sections.find((s) => s.id === sectionId)
+      if (section) {
+        const [removed] = section.frames.splice(source.index, 1)
+        section?.frames.splice(destination.index, 0, removed)
+      }
+      reorderFrame(result, provided)
+    } else {
+      const sourceSectionId = source.droppableId.split(
+        'frame-droppable-sectionId-'
+      )[1]
+      const destinationSectionId = destination.droppableId.split(
+        'frame-droppable-sectionId-'
+      )[1]
+
+      const sourceSection = sections.find((s) => s.id === sourceSectionId)
+      const destinationSection = sections.find(
+        (s) => s.id === destinationSectionId
+      )
+
+      if (!sourceSection || !destinationSection) return null
+
+      const [removed] = sourceSection.frames.splice(source.index, 1)
+
+      destinationSection.frames.splice(destination.index, 0, removed)
+      updateSectionsWithReorderedFrames(
+        removed,
+        sourceSection,
+        destinationSection,
+        sourceSectionId,
+        destinationSectionId
+      )
+    }
+
+    updateSectionList([...sections])
+
+    return null
+  }
+
+  useEffect(() => {
+    updateSectionList([...sections])
+  }, [sections])
 
   return (
     <div
@@ -70,11 +136,13 @@ export function SectionList() {
         maxHeight,
       }}>
       <DragDropContext
-        onDragEnd={(result, provide) => {
-          if (!isOwner) return
+        onDragEnd={(result, provided) => {
+          if (!permissions.canUpdateSection) return
           if (!result.destination) return
-          if (result.type === 'section') reorderSection(result, provide)
-          if (result.type === 'frame') reorderFrame(result, provide)
+          if (result.type === 'section') {
+            handleOnDragEndSections(result, provided)
+          }
+          if (result.type === 'frame') handleOnDragEndFrame(result, provided)
         }}>
         <StrictModeDroppable droppableId="section-droppable" type="section">
           {(sectionDroppableProvided) => (
@@ -84,17 +152,19 @@ export function SectionList() {
               )}
               ref={sectionDroppableProvided.innerRef}
               {...sectionDroppableProvided.droppableProps}>
-              {sections.map((section, sectionIndex) => (
+              {sectionList.map((section, sectionIndex) => (
                 <Draggable
                   key={`section-draggable-${section.id}`}
+                  index={sectionIndex}
                   draggableId={`section-draggable-sectionId-${section.id}`}
-                  index={sectionIndex}>
+                  isDragDisabled={!permissions.canUpdateSection}>
                   {(sectionDraggableProvided) => (
                     <div
                       className="w-full"
                       ref={sectionDraggableProvided.innerRef}
                       {...sectionDraggableProvided.draggableProps}
                       {...sectionDraggableProvided.dragHandleProps}>
+                      {/* <p>{section?.name}</p> */}
                       <SectionItem
                         key={section.id}
                         section={section}

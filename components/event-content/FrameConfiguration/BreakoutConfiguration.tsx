@@ -2,29 +2,43 @@
 import { useContext } from 'react'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
-import { TwoWayNumberCounter } from '@/components/common/content-types/Canvas/FontSizeControl'
+import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
 export function BreakoutConfiguration() {
-  const { currentFrame, updateFrame, getCurrentFrame, deleteFrame } =
-    useContext(EventContext) as EventContextType
+  const { currentFrame, updateFrame, getFrameById, deleteFrame } = useContext(
+    EventContext
+  ) as EventContextType
   if (!currentFrame) return null
 
   const updateBreakout = (count: number) => {
-    if (count > currentFrame?.config?.breakoutCount) {
+    if (currentFrame?.config?.breakoutType === BREAKOUT_TYPES.GROUPS) {
       updateFrame({
         framePayload: {
           config: {
             ...currentFrame?.config,
-            breakoutCount: count,
+            participantPerGroup: count,
+          },
+        },
+        frameId: currentFrame.id,
+      })
+
+      return
+    }
+    if (count > currentFrame?.config?.breakoutRoomsCount) {
+      updateFrame({
+        framePayload: {
+          config: {
+            ...currentFrame?.config,
+            breakoutRoomsCount: count,
           },
           content: {
             ...currentFrame?.content,
-            breakoutDetails: [
-              ...(currentFrame?.content?.breakoutDetails || []),
+            breakoutRooms: [
+              ...(currentFrame?.content?.breakoutRooms || []),
               {
-                name: `${currentFrame?.config?.selectedBreakout === BREAKOUT_TYPES.GROUPS ? 'Group' : 'Room'} - ${count}`,
+                name: `Room - ${count}`,
               },
             ],
           },
@@ -32,31 +46,31 @@ export function BreakoutConfiguration() {
         frameId: currentFrame.id,
       })
     } else {
-      handleDelete(
-        currentFrame?.content?.breakoutDetails?.[count]?.activityId || '',
+      handleRoomsActivityDelete(
+        currentFrame?.content?.breakoutRooms?.[count]?.activityId || '',
         count
       )
     }
   }
-  const handleDelete = (activityId: string, count: number) => {
+  const handleRoomsActivityDelete = (activityId: string, count: number) => {
     if (activityId) {
       deleteFrame(
-        getCurrentFrame(
-          currentFrame?.content?.breakoutDetails?.[count]?.activityId || ''
+        getFrameById(
+          currentFrame?.content?.breakoutRooms?.[count]?.activityId || ''
         )
       )
     }
-    currentFrame?.content?.breakoutDetails?.pop()
+    currentFrame?.content?.breakoutRooms?.pop()
     updateFrame({
       framePayload: {
         config: {
           ...currentFrame?.config,
-          breakoutCount:
-            currentFrame?.content?.breakoutDetails?.length || 1 - 1,
+          breakoutRoomsCount:
+            currentFrame?.content?.breakoutRooms?.length || 1 - 1,
         },
         content: {
           ...currentFrame?.content,
-          breakoutDetails: currentFrame?.content?.breakoutDetails,
+          breakoutRooms: currentFrame?.content?.breakoutRooms,
         },
       },
       frameId: currentFrame.id,
@@ -81,17 +95,28 @@ export function BreakoutConfiguration() {
             })
           }}
           noNegative
-          incrementStep={5}
+          incrementStep={1}
           postfixLabel="min"
         />
       </span>
       <span className="flex items-center justify-between">
-        <span>No of {currentFrame?.config?.selectedBreakout as number}</span>
+        <span>
+          {currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
+            ? 'No of rooms'
+            : 'No of participants per group'}
+        </span>
         <TwoWayNumberCounter
-          defaultCount={currentFrame?.config?.breakoutCount}
+          defaultCount={
+            currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
+              ? currentFrame?.config?.breakoutRoomsCount
+              : currentFrame?.config?.participantPerGroup
+          }
           noNegative
           onCountChange={(count) => updateBreakout(count)}
-          isDeleteModal
+          isDeleteModal={
+            currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
+          }
+          incrementStep={1}
         />
       </span>
     </>

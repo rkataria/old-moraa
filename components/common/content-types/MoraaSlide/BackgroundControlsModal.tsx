@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 
 import { fabric } from 'fabric'
+import { IoColorPalette } from 'react-icons/io5'
 
 import {
   Modal,
@@ -11,12 +12,12 @@ import {
   Button,
 } from '@nextui-org/react'
 
-import { CanvasFrameContext, CanvasFrameContextType } from './CanvasProvider'
 import { ColorPicker } from '../../ColorPicker'
 import { ControlButton } from '../../ControlButton'
 
 import { FileUploader } from '@/components/event-content/FileUploader'
 import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
 
 type BackgroundControlsModalProps = {
@@ -29,11 +30,11 @@ export function BackgroundControlsModal({
   const { currentFrame, updateFrame } = useContext(
     EventContext
   ) as EventContextType
-  const { canvas, sync } = useContext(
-    CanvasFrameContext
-  ) as CanvasFrameContextType
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const canvas = useMoraaSlideStore(
+    (state) => state.canvasInstances[currentFrame?.id as string]
+  )
 
   useEffect(() => {
     setLoading(!open)
@@ -60,7 +61,6 @@ export function BackgroundControlsModal({
   const handleRemoveBackground = () => {
     canvas.backgroundImage = undefined
     canvas.renderAll()
-    sync()
     handleClose()
   }
 
@@ -73,14 +73,14 @@ export function BackgroundControlsModal({
           content: 'Change Background',
         }}
         buttonProps={{
-          variant: 'flat',
-          size: 'sm',
+          variant: 'light',
           radius: 'md',
+          isIconOnly: true,
         }}
         onClick={() => {
           setOpen(true)
         }}>
-        Background
+        <IoColorPalette size={18} />
       </ControlButton>
       <Modal size="md" isOpen={open} onClose={handleClose}>
         <ModalContent>
@@ -114,7 +114,6 @@ export function BackgroundControlsModal({
                             img,
                             () => {
                               canvas.renderAll()
-                              sync()
                               setLoading(false)
                               handleClose()
                             },

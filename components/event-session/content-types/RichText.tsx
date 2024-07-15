@@ -3,8 +3,6 @@
 
 'use client'
 
-import React from 'react'
-
 import { RichTextView } from '@/components/common/content-types/RichTextView'
 import { IFrame, TextBlock } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
@@ -20,7 +18,7 @@ export function RichText({ frame }: RichTextProps) {
   return (
     <div
       className={cn(
-        'w-full h-full flex justify-start items-start rounded-md overflow-hidden relative'
+        'w-full h-full flex justify-start items-start rounded-md relative'
       )}>
       <RichTextView block={richTextBlock} />
     </div>

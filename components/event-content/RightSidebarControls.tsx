@@ -5,14 +5,17 @@ import { FrameConfigurationToggleButton } from '../common/StudioLayout/FrameConf
 import { FrameNoteToggleButton } from '../common/StudioLayout/FrameNoteToggleButton'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 
 export function RightSidebarControls() {
-  const { currentFrame, isOwner, eventMode, preview } = useContext(
+  const { currentFrame, eventMode, preview } = useContext(
     EventContext
   ) as EventContextType
+  const { permissions } = useEventPermissions()
 
-  const editable = isOwner && eventMode === 'edit' && !preview
+  const editable =
+    permissions.canUpdateFrame && eventMode === 'edit' && !preview
 
   // Hide the right sidebar controls if it is not editable
   if (!editable || !currentFrame) {
@@ -21,7 +24,6 @@ export function RightSidebarControls() {
 
   return (
     <RightSidebarControlsWrapper>
-      {/* <EventSettingsToggleButton /> */}
       <FrameConfigurationToggleButton />
       <FrameAppearanceToggleButton />
       <FrameNoteToggleButton />

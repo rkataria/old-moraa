@@ -22,6 +22,7 @@ import {
   FileUploader,
   FileWithoutSignedUrl,
 } from '@/components/event-content/FileUploader'
+import ProtectedLayout from '@/components/hoc/ProtectedLayout'
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
@@ -40,7 +41,7 @@ const createEventValidationSchema = yup.object({
   imageUrl: yup.string(),
 })
 
-export default function EventsCreatePage() {
+function EventsCreatePage() {
   const [showPageLoader, setShowPageLoader] = useState(false)
 
   const createEventForm = useForm<CreateEventFormData>({
@@ -249,5 +250,12 @@ export default function EventsCreatePage() {
         </div>
       </form>
     </div>
+  )
+}
+export default function ProtectedEventCreate() {
+  return (
+    <ProtectedLayout>
+      <EventsCreatePage />
+    </ProtectedLayout>
   )
 }

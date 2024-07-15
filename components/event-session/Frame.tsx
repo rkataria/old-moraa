@@ -10,9 +10,9 @@ import { Reflection } from './content-types/Reflection'
 import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
-import { BreakoutLive } from '../common/breakout/BreakoutLive'
-import { CanvasPreview } from '../common/content-types/Canvas/Preview'
+import { BreakoutFrameLive } from '../common/breakout/BreakoutLive'
 import { MoraaBoard } from '../common/content-types/MoraaBoard'
+import { MoraaSlidePreview } from '../common/content-types/MoraaSlide/Preview'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
 
 import { Cover } from '@/components/common/content-types/Cover'
@@ -26,7 +26,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { type IReflectionFrame } from '@/types/frame.type'
 import { checkVoted } from '@/utils/content.util'
-import { getOjectPublicUrl } from '@/utils/utils'
+import { cn, getOjectPublicUrl } from '@/utils/utils'
 
 const PDFViewer = dynamic(
   () => import('./content-types/PDFViewer').then((mod) => mod.PDFViewer),
@@ -66,7 +66,7 @@ export function Frame() {
         key={currentFrame.id}
         frame={currentFrame as any}
         votes={(currentFrameResponses as Vote[]) || undefined}
-        isOwner={isHost}
+        canVote={!isHost}
         voted={checkVoted(currentFrameResponses, currentUser)}
       />
     ),
@@ -99,18 +99,25 @@ export function Frame() {
     ),
     [ContentType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
     [ContentType.MORAA_BOARD]: <MoraaBoard frame={currentFrame as any} />,
-    [ContentType.CANVAS]: (
-      <CanvasPreview key={currentFrame.id} frame={currentFrame as any} />
+    [ContentType.MORAA_SLIDE]: (
+      <MoraaSlidePreview
+        key={currentFrame.id}
+        frameCanvasSvg={currentFrame.content?.svg as string}
+      />
     ),
     [ContentType.BREAKOUT]: (
-      <BreakoutLive frame={currentFrame as BreakoutFrame} />
+      <BreakoutFrameLive frame={currentFrame as BreakoutFrame} />
     ),
   }
 
   const renderer = renderersByContentType[currentFrame.type]
 
   return (
-    <div className="relative h-full w-full">
+    <div
+      className={cn('relative h-full w-full', {
+        'px-[20%] h-screen overflow-y-scroll scrollbar-none':
+          currentFrame.type === ContentType.RICH_TEXT,
+      })}>
       <FrameTitleDescriptionPreview frame={currentFrame as any} />
       {renderer}
     </div>

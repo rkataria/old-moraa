@@ -45,7 +45,7 @@ export function FrameTitleDescriptionPanel() {
 
   const getTitle = () => {
     if (currentFrame.type === ContentType.REFLECTION) {
-      return <FrameText disableEnter type="title" className="pl-4" />
+      return <FrameText disableEnter type="title" />
     }
 
     return (
@@ -64,6 +64,8 @@ export function FrameTitleDescriptionPanel() {
       onClick={(blockId: string) => setEditableId(blockId)}
     />
   )
+
+  if (!renderTitle && !renderDescription) return null
 
   return (
     <div className="h-fit">

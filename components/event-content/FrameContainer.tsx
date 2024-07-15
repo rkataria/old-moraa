@@ -6,6 +6,7 @@ import { OverviewFrame } from '../common/OverviewFrame'
 import { SectionOverview } from '../common/SectionOverview'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { getFrameCount } from '@/utils/utils'
 
@@ -13,6 +14,7 @@ export function FrameContainer() {
   const { currentFrame, overviewOpen, sections, currentSectionId } = useContext(
     EventContext
   ) as EventContextType
+  const { permissions } = useEventPermissions()
 
   // If the overview is open, show the overview frame
   if (overviewOpen) {
@@ -47,7 +49,7 @@ export function FrameContainer() {
         backgroundColor: currentFrame.config?.backgroundColor || '#ffffff',
       }}>
       <Frame frame={currentFrame} />
-      <FrameControls />
+      <FrameControls switchPublishedFrames={!permissions.canUpdateFrame} />
     </div>
   )
 }

@@ -33,7 +33,6 @@ type ResponsiveVideoPlayerProps = {
   showControls?: boolean
   light?: boolean
   playerState?: ResponsiveVideoPlayerState
-  viewOnly?: boolean
   onPlayerStateChange?: (state: ResponsiveVideoPlayerState) => void
 }
 
@@ -43,7 +42,6 @@ export function ResponsiveVideoPlayer({
   showControls = true,
   light = false,
   playerState,
-  viewOnly = false,
   onPlayerStateChange,
 }: ResponsiveVideoPlayerProps) {
   const playerRef = useRef<ReactPlayer>(null)
@@ -76,27 +74,27 @@ export function ResponsiveVideoPlayer({
   }, [playerState])
 
   const handlePlay = () => {
-    if (viewOnly) return
+    if (!showControls) return
     setCurrentPlayerState((prevState) => ({ ...prevState, playing: true }))
   }
 
   const handlePause = () => {
-    if (viewOnly) return
+    if (!showControls) return
     setCurrentPlayerState((prevState) => ({ ...prevState, playing: false }))
   }
 
   const handleEnded = () => {
-    if (viewOnly) return
+    if (!showControls) return
     setCurrentPlayerState((prevState) => ({ ...prevState, playing: false }))
   }
 
   const handleOnPlaybackRateChange = (playbackRate: number) => {
-    if (viewOnly) return
+    if (!showControls) return
     setCurrentPlayerState((prevState) => ({ ...prevState, playbackRate }))
   }
 
   const handleMuteToggle = () => {
-    if (viewOnly) return
+    if (!showControls) return
     setCurrentPlayerState((prevState) => ({
       ...prevState,
       muted: !prevState.muted,
@@ -105,13 +103,13 @@ export function ResponsiveVideoPlayer({
   }
 
   const handleSeekMouseDown = () => {
-    if (viewOnly) return
+    if (!showControls) return
     setCurrentPlayerState((prevState) => ({ ...prevState, seeking: true }))
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSeekChange = (e: any) => {
-    if (viewOnly) return
+    if (!showControls) return
     setCurrentPlayerState((prevState) => ({
       ...prevState,
       played: parseFloat(e.target.value),
@@ -120,7 +118,7 @@ export function ResponsiveVideoPlayer({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSeekMouseUp = (e: any) => {
-    if (viewOnly) return
+    if (!showControls) return
     setCurrentPlayerState((prevState) => ({ ...prevState, seeking: false }))
     playerRef.current?.seekTo(parseFloat(e.target.value))
   }
@@ -221,7 +219,7 @@ export function ResponsiveVideoPlayer({
         </div>
       )}
 
-      {viewOnly && (
+      {!showControls && (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <span className="absolute right-2 bottom-2 py-2 px-4 bg-black/80 text-white text-xs rounded-full flex justify-center items-center">
             View Mode

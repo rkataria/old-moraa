@@ -6,7 +6,6 @@ import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
 import Document from '@tiptap/extension-document'
 import Highlight from '@tiptap/extension-highlight'
-import { Image } from '@tiptap/extension-image'
 import { Link } from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import Table from '@tiptap/extension-table'
@@ -28,6 +27,7 @@ import {
   InlineTableControls,
   InlineToolbarControls,
 } from './InlineToolbarControls'
+import { CustomImageResize } from '../common/ImageExtension'
 
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { TextBlock } from '@/types/frame.type'
@@ -88,11 +88,12 @@ const getExtensions = (type: string, placeholder: string | undefined) => {
           emptyEditorClass:
             'text-gray-500 float-center before:content-[attr(data-placeholder)]',
         }),
-        Image.configure({
-          HTMLAttributes: {
-            class: 'tiptap-image',
-          },
-        }),
+        // Image.configure({
+        //   inline: true,
+        //   HTMLAttributes: {
+        //     class: 'tiptap-image',
+        //   },
+        // }),
         Link.configure({
           HTMLAttributes: {
             class: 'tiptap-link',
@@ -118,6 +119,7 @@ const getExtensions = (type: string, placeholder: string | undefined) => {
         TableCell.configure({}),
         KeyboardShortcuts,
         Highlight,
+        CustomImageResize,
       ]
 
     case 'header':
@@ -231,33 +233,42 @@ export function TextBlockEditor({
     )
   }
 
+  const renderEditor = () => (
+    <ScrollShadow
+      hideScrollBar
+      isEnabled={block.type === 'richtext'}
+      orientation="vertical"
+      className={cn('w-full max-h-full', {
+        'h-full': fillAvailableHeight,
+      })}>
+      {/* floating controls */}
+      <InlineTableControls editor={editor} />
+      {/* // bubble menu controls  */}
+      <InlineToolbarControls editor={editor} />
+
+      <EditorContent
+        editor={editor}
+        className={cn(
+          'rounded-sm outline-none w-full h-full min-h-full transition-all duration-500',
+          {
+            richText: block.type === 'richtext',
+          }
+        )}
+      />
+    </ScrollShadow>
+  )
+
   return (
     <div
       className={cn(
-        'sticky top-4 left-4 w-5/6 h-full pt-2',
+        'sticky top-0 left-0 w-5/6 h-full',
         {
           'border border-gray-200': block.type === 'richtext' && !!editable,
         },
         className
       )}>
       {renderToolbar()}
-      <ScrollShadow
-        hideScrollBar
-        isEnabled
-        orientation="vertical"
-        className={cn('w-full max-h-full', {
-          'h-full': fillAvailableHeight,
-        })}>
-        {/* floating controls */}
-        <InlineTableControls editor={editor} />
-        {/* // bubble menu controls  */}
-        <InlineToolbarControls editor={editor} />
-
-        <EditorContent
-          editor={editor}
-          className="rounded-sm outline-none w-full h-full min-h-full transition-all duration-500"
-        />
-      </ScrollShadow>
+      {renderEditor()}
     </div>
   )
 }

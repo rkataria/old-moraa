@@ -12,14 +12,10 @@ import { v4 as uuidv4 } from 'uuid'
 import { Card } from '@nextui-org/react'
 
 // eslint-disable-next-line import/no-cycle
-import { BreakoutActivityCard } from './BreakoutActivityCard'
+import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
-import {
-  CANVAS_TEMPLATE_TYPES,
-  ContentType,
-  ContentTypePicker,
-} from '../ContentTypePicker'
+import { ContentType, ContentTypePicker } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { RenderIf } from '../RenderIf/RenderIf'
 
@@ -35,7 +31,7 @@ export type BreakoutFrame = IFrame & {
   content: {
     title: string
     description: string
-    selectedBreakout: string
+    breakoutType: string
     countOfRoomsGroups: number
   }
 }
@@ -57,7 +53,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     setCurrentFrame,
     updateFrame,
     deleteFrame,
-    getCurrentFrame,
+    getFrameById,
   } = useContext(EventContext) as EventContextType
 
   const editable = isOwner && !preview && isEditable
@@ -77,7 +73,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
 
   const handleAddNewFrame = (
     contentType: ContentType,
-    templateType: CANVAS_TEMPLATE_TYPES | undefined
+    templateKey?: string
   ): void => {
     let currentSection
     const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
@@ -93,10 +89,6 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     const frameConfig = {
       textColor: '#000',
       allowVoteOnMultipleOptions: false,
-      showTitle: true,
-      showDescription: [ContentType.COVER, ContentType.TEXT_IMAGE].includes(
-        contentType
-      ),
     }
 
     const newFrame: IFrame = {
@@ -106,7 +98,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       content: {
         ...(getDefaultContent({
           contentType,
-          templateType,
+          templateKey,
           // TODO: Fix any
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         }) as any),
@@ -119,36 +111,42 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     }
 
     let payload = {}
-    if (frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+    if (frame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
+      if (frame?.content?.breakoutRooms?.[selectedBreakoutIndex]?.activityId) {
+        deleteFrame(
+          getFrameById(
+            frame.content?.breakoutRooms?.[selectedBreakoutIndex]?.activityId ||
+              ''
+          )
+        )
+      }
       payload = {
         content: {
           ...frame.content,
-          breakoutDetails: [
-            ...(frame.content?.breakoutDetails?.slice(
-              0,
-              selectedBreakoutIndex
-            ) || []),
+          breakoutRooms: [
+            ...(frame.content?.breakoutRooms?.slice(0, selectedBreakoutIndex) ||
+              []),
             {
-              ...frame.content?.breakoutDetails?.[selectedBreakoutIndex],
+              ...frame.content?.breakoutRooms?.[selectedBreakoutIndex],
               ...{
                 activityId: newFrame.id,
               },
             },
-            ...(frame.content?.breakoutDetails?.slice(
+            ...(frame.content?.breakoutRooms?.slice(
               selectedBreakoutIndex + 1
             ) || []),
           ],
         },
       }
     } else {
+      if (frame.content?.groupActivityId) {
+        deleteFrame(getFrameById(frame.content?.groupActivityId as string))
+      }
+
       payload = {
         content: {
           ...frame.content,
-          breakoutDetails: frame.content?.breakoutDetails?.map((details) => ({
-            ...details,
-            activityId: newFrame.id,
-          })),
-          activityId: newFrame.id,
+          groupActivityId: newFrame.id,
         },
       }
     }
@@ -162,21 +160,21 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     setOpenContentTypePicker(false)
   }
 
-  const updateBreakoutGroupRoomNameName = (name: string, idx: number): void => {
+  const updateBreakoutRoomName = (name: string, idx: number): void => {
     const payload = {
       content: {
         ...frame.content,
-        breakoutDetails: [
-          ...(frame.content?.breakoutDetails?.slice(0, idx) || []),
-          { ...(frame.content?.breakoutDetails?.[idx] || {}), ...{ name } },
-          ...(frame.content?.breakoutDetails?.slice(idx + 1) || []),
+        breakoutRooms: [
+          ...(frame.content?.breakoutRooms?.slice(0, idx) || []),
+          { ...(frame.content?.breakoutRooms?.[idx] || {}), ...{ name } },
+          ...(frame.content?.breakoutRooms?.slice(idx + 1) || []),
         ],
       },
     }
     updateFrame({ framePayload: payload, frameId: frame.id })
   }
 
-  const deleteRoomGroup = (idx: number): void => {
+  const deleteRoomActivity = (idx: number): void => {
     setIsDeleteModalOpen(true)
     setSelectedFrame(idx)
   }
@@ -184,32 +182,25 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
   const handleDelete = (_frame: IFrame) => {
     deleteFrame(_frame)
     let payload = {}
-    if (frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS) {
+    if (frame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
       payload = {
         content: {
           ...frame.content,
-          breakoutDetails: [
-            ...(frame.content?.breakoutDetails?.slice(0, selectedFrame) || []),
+          breakoutRooms: [
+            ...(frame.content?.breakoutRooms?.slice(0, selectedFrame) || []),
             {
-              ...(frame.content?.breakoutDetails?.[selectedFrame] || {}),
+              ...(frame.content?.breakoutRooms?.[selectedFrame] || {}),
               ...{ activityId: null },
             },
-            ...(frame.content?.breakoutDetails?.slice(selectedFrame + 1) || []),
+            ...(frame.content?.breakoutRooms?.slice(selectedFrame + 1) || []),
           ],
         },
       }
     } else {
-      const breakoutDetails = frame.content?.breakoutDetails?.map(
-        (details) => ({
-          ...details,
-          activityId: null,
-        })
-      )
       payload = {
         content: {
           ...frame.content,
-          breakoutDetails,
-          activityId: null,
+          groupActivityId: null,
         },
       }
     }
@@ -220,72 +211,64 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
 
   return (
     <div className="ml-8">
-      <RenderIf isTrue={Boolean(frame.content?.breakoutDetails?.length)}>
-        <RenderIf
-          isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.ROOMS}>
-          <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
-            {frame.content?.breakoutDetails?.map((breakout, idx) => (
-              <BreakoutActivityCard
-                breakout={breakout}
-                deleteRoomGroup={deleteRoomGroup}
-                idx={idx}
-                editable={editable}
-                onAddNewActivity={() => {
-                  setOpenContentTypePicker(true)
-                  setSelectedBreakoutIndex(idx)
-                }}
-                updateBreakoutGroupRoomNameName={
-                  updateBreakoutGroupRoomNameName
-                }
-              />
-            ))}
-          </div>
-        </RenderIf>
-        <RenderIf
-          isTrue={frame.config.selectedBreakout === BREAKOUT_TYPES.GROUPS}>
-          <Card key="breakout-group-activity" className="border p-4 w-[75%]">
-            <div className="flex justify-between gap-4">
-              <span className="text-md font-semibold">Activity</span>
-              <RenderIf isTrue={editable}>
-                <span className="flex gap-2">
-                  <IoAddSharp
-                    className="border border-dashed border-gray-400 text-gray-400"
-                    onClick={() => {
-                      setOpenContentTypePicker(true)
-                    }}
-                  />
-                </span>
-              </RenderIf>
-            </div>
-            <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-96 flex items-center justify-center">
-              <RenderIf isTrue={Boolean(frame?.content?.activityId)}>
-                {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-                <div
-                  ref={thumbnailContainerRef}
-                  className="relative w-full h-full"
+      <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
+        <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
+          {frame.content?.breakoutRooms?.map((breakout, idx) => (
+            <BreakoutRoomActivityCard
+              breakout={breakout}
+              deleteRoomGroup={deleteRoomActivity}
+              idx={idx}
+              editable={editable}
+              onAddNewActivity={() => {
+                setOpenContentTypePicker(true)
+                setSelectedBreakoutIndex(idx)
+              }}
+              updateBreakoutRoomName={updateBreakoutRoomName}
+            />
+          ))}
+        </div>
+      </RenderIf>
+      <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS}>
+        <Card key="breakout-group-activity" className="border p-4 w-[75%]">
+          <div className="flex justify-between gap-4">
+            <span className="text-md font-semibold">Activity</span>
+            <RenderIf isTrue={editable}>
+              <span className="flex gap-2">
+                <IoAddSharp
+                  className="border border-dashed border-gray-400 text-gray-400"
                   onClick={() => {
-                    if (!editable) return
-                    setCurrentFrame(
-                      getCurrentFrame(frame?.content?.activityId as string)
-                    )
-                  }}>
-                  <FrameThumbnailCard
-                    frame={getCurrentFrame(
-                      frame?.content?.activityId as string
-                    )}
-                    containerWidth={containerWidth}
-                  />
-                </div>
-              </RenderIf>
-              <RenderIf isTrue={!frame?.content?.activityId}>
-                <div>
-                  You can add existing slide from any section or add new slide
-                  which will be added under the Breakout section
-                </div>
-              </RenderIf>
-            </div>
-          </Card>
-        </RenderIf>
+                    setOpenContentTypePicker(true)
+                  }}
+                />
+              </span>
+            </RenderIf>
+          </div>
+          <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-96 flex items-center justify-center">
+            <RenderIf isTrue={Boolean(frame?.content?.groupActivityId)}>
+              {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+              <div
+                ref={thumbnailContainerRef}
+                className="relative w-full h-full"
+                onClick={() => {
+                  if (!editable) return
+                  setCurrentFrame(
+                    getFrameById(frame?.content?.groupActivityId || '')
+                  )
+                }}>
+                <FrameThumbnailCard
+                  frame={getFrameById(frame?.content?.groupActivityId || '')}
+                  containerWidth={containerWidth}
+                />
+              </div>
+            </RenderIf>
+            <RenderIf isTrue={!frame?.content?.groupActivityId}>
+              <div className="text-center p-10">
+                You can add existing slide from any section or add new slide
+                which will be added under the Breakout section
+              </div>
+            </RenderIf>
+          </div>
+        </Card>
       </RenderIf>
 
       <ContentTypePicker
@@ -303,8 +286,8 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
           setSelectedFrame(-1)
         }}
         handleDelete={handleDelete}
-        frame={getCurrentFrame(
-          frame.content?.breakoutDetails?.[selectedFrame]?.activityId as string
+        frame={getFrameById(
+          frame.content?.breakoutRooms?.[selectedFrame]?.activityId as string
         )}
       />
     </div>

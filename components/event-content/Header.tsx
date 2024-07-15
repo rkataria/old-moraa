@@ -1,29 +1,21 @@
 import { useContext } from 'react'
 
-import { ChevronDownIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { IoMdArrowBack } from 'react-icons/io'
 
-import {
-  Button,
-  ButtonGroup,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  useDisclosure,
-  Image,
-} from '@nextui-org/react'
+import { Button, Image } from '@nextui-org/react'
 
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
+import { Toolbars } from '../common/content-types/MoraaSlide/Toolbars'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
-import { ScheduleEventButtonWithModal } from '../common/ScheduleEventButtonWithModal'
 import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
+import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { EventStatus } from '@/services/types/enums'
 import { type EventContextType } from '@/types/event-context.type'
+import { ContentType } from '@/utils/content.util'
 
 export function Header({
   event,
@@ -31,20 +23,10 @@ export function Header({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   event: any
 }) {
-  const { isOwner, preview } = useContext(EventContext) as EventContextType
-  const scheduleModal = useDisclosure()
-  const {
-    resizableRightSidebarVisiblity,
-    rightSidebarVisiblity,
-    setResizableRightSidebarVisiblity,
-    setRightSidebarVisiblity,
-  } = useStudioLayout()
-
-  const toggleAISidebar = () => {
-    setResizableRightSidebarVisiblity(
-      resizableRightSidebarVisiblity === 'ai-chat' ? null : 'ai-chat'
-    )
-  }
+  const { isOwner, preview, currentFrame } = useContext(
+    EventContext
+  ) as EventContextType
+  const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
 
   const toggleNotesSidebar = () => {
     setRightSidebarVisiblity(
@@ -52,21 +34,10 @@ export function Header({
     )
   }
 
-  useHotkeys('a', toggleAISidebar, [rightSidebarVisiblity, isOwner])
-  useHotkeys('n', toggleNotesSidebar, [rightSidebarVisiblity, isOwner])
+  useHotkeys('n', toggleNotesSidebar, [rightSidebarVisiblity])
 
   const renderActionButtons = () => {
     if (preview) return null
-
-    if (!isOwner) {
-      return (
-        <Link href={`/event-session/${event.id}`}>
-          <Button title="Start Session" color="primary" size="sm" radius="md">
-            Join live session
-          </Button>
-        </Link>
-      )
-    }
 
     return (
       <>
@@ -75,74 +46,36 @@ export function Header({
           <AddParticipantsButtonWithModal eventId={event.id} />
         </div>
 
-        {EventStatus.SCHEDULED === event?.status ? (
-          <ButtonGroup variant="solid" color="primary" size="sm" radius="md">
-            <Button title="Start Session">
-              <Link href={`/event-session/${event.id}`}>
-                Start live session
-              </Link>
-            </Button>
-            <Dropdown
-              placement="bottom-end"
-              closeOnSelect={false}
-              shouldCloseOnInteractOutside={(Element) => {
-                const wrapperElement = document.getElementById(
-                  'schedule-event-form'
-                )
-
-                return !wrapperElement?.contains(Element)
-              }}>
-              <DropdownTrigger>
-                <Button isIconOnly>
-                  <ChevronDownIcon />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                className="p-0"
-                closeOnSelect={false}
-                onAction={(key) => {
-                  if (key === 're-schedule') {
-                    scheduleModal.onOpen()
-                  }
-                }}>
-                <DropdownItem key="re-schedule" className="p-0" closeOnSelect>
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    size="sm"
-                    radius="md"
-                    fullWidth>
-                    Re-schedule event
-                  </Button>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </ButtonGroup>
-        ) : null}
-
-        <ScheduleEventButtonWithModal
-          eventId={event.id}
-          showLabel={event?.status !== EventStatus.SCHEDULED}
-          disclosure={scheduleModal}
-        />
+        <SessionActionButton eventId={event.id} eventStatus={event.status} />
       </>
     )
   }
 
   if (!event) return null
 
+  const editable = isOwner && !preview
+
   return (
     <div className="h-full p-2">
       <div className="flex justify-between items-center h-12 w-full">
         <div className="flex justify-start items-center gap-3">
           <Link href="/events">
+            <Button className="!bg-transparent px-0">
+              <IoMdArrowBack />
+              Back
+            </Button>
+          </Link>
+          <Link href="/events">
             <Image src="/logo-icon-square.svg" />
           </Link>
           <span className="font-medium">{event?.name}</span>
         </div>
+        {editable && currentFrame?.type === ContentType.MORAA_SLIDE && (
+          <Toolbars />
+        )}
         <div className="flex justify-start items-center gap-2 h-full">
           {renderActionButtons()}
-          {isOwner && <PreviewSwitcher />}
+          <PreviewSwitcher />
         </div>
       </div>
     </div>

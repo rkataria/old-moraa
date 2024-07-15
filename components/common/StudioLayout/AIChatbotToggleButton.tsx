@@ -1,32 +1,25 @@
-import { useContext } from 'react'
-
 import { useHotkeys } from 'react-hotkeys-hook'
 import { LuSparkles } from 'react-icons/lu'
 
 import { Button } from '@nextui-org/react'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useFeatureFlags } from '@/hooks/useFeatureFlags'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
-export function AIChatbotToggleButton() {
+export function ToggleButton() {
   const { flags } = useFeatureFlags()
-
   const { resizableRightSidebarVisiblity, setResizableRightSidebarVisiblity } =
     useStudioLayout()
-  const { isOwner } = useContext(EventContext) as EventContextType
 
   const toggleSidebar = () => {
-    if (!isOwner) return
-
     setResizableRightSidebarVisiblity(
       resizableRightSidebarVisiblity === 'ai-chat' ? null : 'ai-chat'
     )
   }
 
-  useHotkeys('a', toggleSidebar, [resizableRightSidebarVisiblity, isOwner])
+  useHotkeys('a', toggleSidebar, [resizableRightSidebarVisiblity])
 
   if (!flags.show_ai_panel) return null
 
@@ -41,4 +34,14 @@ export function AIChatbotToggleButton() {
       <LuSparkles size={20} strokeWidth={1.7} />
     </Button>
   )
+}
+
+export function AIChatbotToggleButton() {
+  const { permissions } = useEventPermissions()
+
+  if (!permissions.canUpdateFrame) {
+    return null
+  }
+
+  return <ToggleButton />
 }

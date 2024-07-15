@@ -1,13 +1,16 @@
 'use client'
 
 import { FrameManager } from '@/components/event-content/FrameManager'
+import ProtectedLayout from '@/components/hoc/ProtectedLayout'
 import { EventProvider } from '@/contexts/EventContext'
 
 function EventFramesPage() {
   return (
-    <EventProvider eventMode="edit">
-      <FrameManager />
-    </EventProvider>
+    <ProtectedLayout>
+      <EventProvider eventMode="edit">
+        <FrameManager />
+      </EventProvider>
+    </ProtectedLayout>
   )
 }
 

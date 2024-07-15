@@ -5,11 +5,17 @@ import { LuTv } from 'react-icons/lu'
 import { Button } from '@nextui-org/react'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function PreviewSwitcher() {
   const { preview, setPreview } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
+
+  if (!permissions.canUpdateFrame) {
+    return null
+  }
 
   return (
     <Button

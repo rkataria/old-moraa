@@ -80,13 +80,12 @@ export function VideoEmbed({ frame }: VideoEmbedProps) {
   )
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className="max-w-[80%] h-full aspect-video w-max overflow-hidden rounded-md grid place-items-center">
+    <div className="w-full h-full flex justify-start items-start">
+      <div className="max-w-[90%] h-full aspect-video w-max overflow-hidden rounded-md">
         <ResponsiveVideoPlayer
           url={videoUrl}
           showControls={isHost}
           playerState={playerState}
-          viewOnly={!isHost}
           onPlayerStateChange={handlePlayerStateChange}
         />
       </div>

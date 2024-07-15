@@ -23,7 +23,6 @@ import { SyncingStatus } from '../common/SyncingStatus'
 import {
   ContentTypePicker,
   ContentType,
-  CANVAS_TEMPLATE_TYPES,
 } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
@@ -38,9 +37,9 @@ export function FrameManager() {
   const [selectedContentType, setContentType] = useState<ContentType | null>(
     null
   )
-  const [selectedTemplateType, setTemplateType] = useState<
-    CANVAS_TEMPLATE_TYPES | undefined
-  >(undefined)
+  const [selectedTemplateKey, setTemplateKey] = useState<string | undefined>(
+    undefined
+  )
 
   const [openBreakoutSelectorModal, setOpenBreakoutSelectorModal] =
     useState<boolean>(false)
@@ -55,13 +54,14 @@ export function FrameManager() {
     insertAfterFrameId,
     insertInSectionId,
     addFrameToSection,
+    setAddNewFrameLoader,
   } = useContext(EventContext) as EventContextType
 
   useHotkeys('f', () => setOpenContentTypePicker(true), [])
 
   const handleAddNewFrame = (
     contentType: ContentType,
-    templateType: CANVAS_TEMPLATE_TYPES | undefined,
+    templateKey?: string,
     breakoutType?: BREAKOUT_TYPES,
     breakoutRoomsGroupsCount?: number,
     breakoutRoomsGroupsTime?: number
@@ -80,18 +80,18 @@ export function FrameManager() {
     let frameConfig = {
       textColor: '#000',
       allowVoteOnMultipleOptions: false,
-      showTitle: true,
-      showDescription: [
-        ContentType.COVER,
-        ContentType.TEXT_IMAGE,
-        ContentType.BREAKOUT,
-      ].includes(contentType),
     }
+
+    const breakoutConfigKeyName =
+      breakoutType === BREAKOUT_TYPES.ROOMS
+        ? 'breakoutRoomsCount'
+        : 'participantPerGroup'
+    setAddNewFrameLoader(true)
 
     if (contentType === ContentType.BREAKOUT) {
       const breakoutPayload = {
-        selectedBreakout: breakoutType,
-        breakoutCount: breakoutRoomsGroupsCount,
+        breakoutType,
+        [breakoutConfigKeyName]: breakoutRoomsGroupsCount,
         breakoutTime: breakoutRoomsGroupsTime,
       }
       frameConfig = {
@@ -106,10 +106,10 @@ export function FrameManager() {
       config: frameConfig,
       content: getDefaultContent({
         contentType,
-        templateType,
+        templateKey,
         data: {
-          breakoutCount: breakoutRoomsGroupsCount,
-          selectedBreakout: breakoutType,
+          breakoutRoomsCount: breakoutRoomsGroupsCount,
+          breakoutType,
         },
         // TODO: Fix any
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -125,7 +125,7 @@ export function FrameManager() {
     })
     setOpenContentTypePicker(false)
     setContentType(null)
-    setTemplateType(undefined)
+    setTemplateKey(undefined)
     setOpenBreakoutSelectorModal(false)
   }
 
@@ -153,7 +153,7 @@ export function FrameManager() {
         onChoose={(content, templateType) => {
           if (content === ContentType.BREAKOUT) {
             setContentType(content)
-            setTemplateType(templateType)
+            setTemplateKey(templateType)
             setOpenBreakoutSelectorModal(true)
           } else {
             handleAddNewFrame(content, templateType)
@@ -171,11 +171,9 @@ export function FrameManager() {
             breakoutRoomsGroupsTime
           ) => {
             if (selectedContentType) {
-              console.log(breakoutRoomsGroupsTime)
-
               handleAddNewFrame(
                 selectedContentType,
-                selectedTemplateType,
+                selectedTemplateKey,
                 contentType,
                 breakoutRoomsGroupsCount,
                 breakoutRoomsGroupsTime

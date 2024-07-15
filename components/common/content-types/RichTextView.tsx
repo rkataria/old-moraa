@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
@@ -17,10 +17,9 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import ImageResize from 'tiptap-extension-resize-image'
 
-import { ScrollShadow } from '@nextui-org/react'
-
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { TextBlock } from '@/types/frame.type'
+import { cn } from '@/utils/utils'
 
 const getExtensions = (type: string) => {
   switch (type) {
@@ -106,18 +105,14 @@ export function RichTextView({ block }: { block: TextBlock }) {
     []
   )
 
-  if (!editor) return null
+  if (!editor || editor.isEmpty) return null
 
   return (
-    <ScrollShadow
-      hideScrollBar
-      isEnabled
-      orientation="vertical"
-      className="w-full max-h-full">
-      <EditorContent
-        editor={editor}
-        className="p-2 outline-none w-full h-full min-h-full"
-      />
-    </ScrollShadow>
+    <EditorContent
+      editor={editor}
+      className={cn('outline-none w-full h-full min-h-full', {
+        richText: block.type === 'richtext',
+      })}
+    />
   )
 }

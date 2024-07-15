@@ -8,11 +8,17 @@ import {
   BsTypeUnderline,
 } from 'react-icons/bs'
 
-import { CanvasFrameContext, CanvasFrameContextType } from './CanvasProvider'
 import { ControlButton } from '../../ControlButton'
 
+import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
+import { EventContextType } from '@/types/event-context.type'
+
 export function TextStyleControls() {
-  const { canvas } = useContext(CanvasFrameContext) as CanvasFrameContextType
+  const { currentFrame } = useContext(EventContext) as EventContextType
+  const canvas = useMoraaSlideStore(
+    (state) => state.canvasInstances[currentFrame?.id as string]
+  )
 
   useHotkeys('ctrl+b', () => {
     handleBold()
@@ -77,7 +83,7 @@ export function TextStyleControls() {
           variant: activeObject?.fontWeight === 'bold' ? 'solid' : 'flat',
           size: 'sm',
           radius: 'md',
-          className: 'flex-none',
+          className: 'flex-none flex-grow',
         }}
         onClick={handleBold}>
         <BsTypeBold size={18} />
@@ -90,7 +96,7 @@ export function TextStyleControls() {
           variant: activeObject?.underline ? 'solid' : 'flat',
           size: 'sm',
           radius: 'md',
-          className: 'flex-none',
+          className: 'flex-none flex-grow',
         }}
         onClick={handleUnderline}>
         <BsTypeUnderline size={18} />
@@ -103,7 +109,7 @@ export function TextStyleControls() {
           variant: activeObject?.fontStyle === 'italic' ? 'solid' : 'flat',
           size: 'sm',
           radius: 'md',
-          className: 'flex-none',
+          className: 'flex-none flex-grow',
         }}
         onClick={handleItalic}>
         <BsTypeItalic size={18} />
@@ -116,7 +122,7 @@ export function TextStyleControls() {
           variant: activeObject?.linethrough ? 'solid' : 'flat',
           size: 'sm',
           radius: 'md',
-          className: 'flex-none',
+          className: 'flex-none flex-grow',
         }}
         onClick={handleStrikethrough}>
         <BsTypeStrikethrough size={18} />

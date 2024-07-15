@@ -22,15 +22,16 @@ import { RightSidebarControls } from './RightSidebarControls'
 import { AgendaPanel } from '../common/AgendaPanel'
 import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
 import { CreateBreakoutModal } from '../common/breakout/CreateBreakoutModal'
+import { BREAKOUT_TYPES } from '../common/BreakoutTypePicker'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { ResizableRightSidebar } from '../event-content/ResizableRightSidebar'
 
-import { useBreakoutRooms } from '@/contexts/BreakoutRoomsManagerContext'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
+import { useParticipantBreakoutFrameSetter } from '@/hooks/useParticipantBreakoutFrameSetter'
 import { EventContextType } from '@/types/event-context.type'
 import { PresentationStatuses } from '@/types/event-session.type'
-import { ContentType } from '@/utils/content.util'
 
 export type RightSiderbar =
   | 'participants'
@@ -47,6 +48,7 @@ export type DyteStates = {
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
   const { preview } = useContext(EventContext) as EventContextType
+
   const {
     isHost,
     eventSessionMode,
@@ -62,6 +64,7 @@ export function MeetingScreen() {
     currentFrame,
   } = useEventSession()
   const { isBreakoutActive } = useBreakoutRooms()
+  useParticipantBreakoutFrameSetter()
 
   const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
@@ -117,6 +120,14 @@ export function MeetingScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting, eventSessionMode])
 
+  const BottomContentElement =
+    isHost &&
+    isBreakoutActive &&
+    breakoutSlideId === currentFrame?.id &&
+    currentFrame.config?.breakoutType !== BREAKOUT_TYPES.ROOMS ? (
+      <BreakoutRoomsWithParticipants hideActivityCards />
+    ) : null
+
   return (
     <StudioLayout
       header={
@@ -131,13 +142,7 @@ export function MeetingScreen() {
         />
       }
       rightSidebarControls={<RightSidebarControls />}
-      bottomContent={
-        isBreakoutActive &&
-        breakoutSlideId === currentFrame?.id &&
-        currentFrame.type !== ContentType.BREAKOUT ? (
-          <BreakoutRoomsWithParticipants hideActivityCards />
-        ) : null
-      }>
+      bottomContent={BottomContentElement}>
       <MainContainer />
 
       {/* Emoji Overlay */}

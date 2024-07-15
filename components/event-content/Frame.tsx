@@ -17,12 +17,13 @@ import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
-import { Canvas } from '../common/content-types/Canvas'
+import { MoraaSlide } from '../common/content-types/MoraaSlide/MoraaSlide'
 import { FramePreview } from '../common/FramePreview'
 
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
@@ -39,63 +40,54 @@ interface FrameProps {
 }
 
 export function Frame({ frame }: FrameProps) {
-  const { preview, currentFrame, isOwner } = useContext(
-    EventContext
-  ) as EventContextType
+  const { preview } = useContext(EventContext) as EventContextType
 
-  if (preview || !isOwner) {
-    return <FramePreview frame={frame} />
+  const { permissions } = useEventPermissions()
+
+  const participantView = !permissions.canUpdateFrame
+
+  if (preview || participantView) {
+    return (
+      <FramePreview frame={frame} isInteractive={permissions.canUpdateFrame} />
+    )
   }
 
-  if (!currentFrame) return null
+  if (!frame) return null
+
+  const renderersByContentType: Record<ContentType, React.ReactNode> = {
+    [ContentType.VIDEO]: <VideoEmbedEditor frame={frame as any} />,
+    [ContentType.GOOGLE_SLIDES_IMPORT]: (
+      <GoogleSlidesImportEditor frame={frame} />
+    ),
+    [ContentType.COVER]: <CoverEditor />,
+    [ContentType.POLL]: <PollEditor frame={frame as any} />,
+    [ContentType.GOOGLE_SLIDES]: <GoogleSlidesEditor frame={frame as any} />,
+    [ContentType.PDF_VIEWER]: <PDFUploader frame={frame as any} />,
+    [ContentType.REFLECTION]: <ReflectionEditor frame={frame} />,
+    [ContentType.VIDEO_EMBED]: <VideoEmbedEditor frame={frame as any} />,
+    [ContentType.TEXT_IMAGE]: <TextImageEditor />,
+    [ContentType.IMAGE_VIEWER]: (
+      <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
+    ),
+    [ContentType.RICH_TEXT]: <RichTextEditor />,
+    [ContentType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
+    [ContentType.MORAA_BOARD]: <MoraaBoardEditor frame={frame} />,
+    [ContentType.MORAA_SLIDE]: <MoraaSlide frame={frame as any} />,
+    [ContentType.BREAKOUT]: <BreakoutFrame frame={frame as any} isEditable />,
+  }
+
+  const renderer = renderersByContentType[frame.type]
 
   return (
     <div
-      className={cn('group w-full max-w-5xl m-auto h-full p-4', {
-        'pointer-events-none': !isOwner,
-      })}>
-      <div
-        data-frame-id={frame.id}
-        className="relative flex flex-col w-full h-full rounded-md overflow-auto transition-all">
-        <FrameTitleDescriptionPanel key={frame.id} />
-        {frame.type === ContentType.CANVAS && <Canvas frame={frame as any} />}
-        {frame.type === ContentType.POLL && (
-          <PollEditor frame={frame} openSettings={false} />
-        )}
-        {frame.type === ContentType.COVER && <CoverEditor />}
-        {frame.type === ContentType.GOOGLE_SLIDES && (
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          <GoogleSlidesEditor frame={frame as any} />
-        )}
-        {frame.type === ContentType.GOOGLE_SLIDES_IMPORT && (
-          <GoogleSlidesImportEditor frame={frame} />
-        )}
-        {frame.type === ContentType.REFLECTION && (
-          <ReflectionEditor frame={frame} />
-        )}
-        {frame.type === ContentType.PDF_VIEWER && (
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          <PDFUploader frame={frame as any} />
-        )}
-        {frame.type === ContentType.VIDEO_EMBED && (
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          <VideoEmbedEditor frame={frame as any} />
-        )}
-        {frame.type === ContentType.IMAGE_VIEWER && (
-          <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
-        )}
-        {frame.type === ContentType.TEXT_IMAGE && <TextImageEditor />}
-        {frame.type === ContentType.MIRO_EMBED && (
-          <MiroEmbedEditor frame={frame as any} />
-        )}
-        {frame.type === ContentType.RICH_TEXT && <RichTextEditor />}
-        {frame.type === ContentType.MORAA_BOARD && (
-          <MoraaBoardEditor frame={frame} />
-        )}
-        {frame.type === ContentType.BREAKOUT && (
-          <BreakoutFrame frame={frame as any} isEditable />
-        )}
-      </div>
+      key={frame.id}
+      data-frame-id={frame.id}
+      className={cn(
+        'group w-full h-full p-4',
+        'relative flex flex-col gap-2 rounded-md overflow-auto transition-all'
+      )}>
+      <FrameTitleDescriptionPanel key={frame.id} />
+      {renderer}
     </div>
   )
 }

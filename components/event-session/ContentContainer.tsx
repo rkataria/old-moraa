@@ -14,6 +14,7 @@ import { FramePreview } from '../common/FramePreview'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionContextType,
@@ -22,6 +23,8 @@ import {
 
 export function ContentContainer() {
   const { currentFrame } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
+
   const {
     eventSessionMode,
     presentationStatus,
@@ -43,8 +46,15 @@ export function ContentContainer() {
   if (eventSessionMode === 'Preview' && currentFrame && isHost) {
     return (
       <>
-        <FramePreview frame={currentFrame} />
-        <FrameControls onPrevious={previousFrame} onNext={nextFrame} />
+        <FramePreview
+          frame={currentFrame}
+          isInteractive={permissions.canAcessAllSessionControls}
+        />
+        <FrameControls
+          onPrevious={previousFrame}
+          onNext={nextFrame}
+          switchPublishedFrames={!permissions.canAcessAllSessionControls}
+        />
       </>
     )
   }
@@ -92,7 +102,11 @@ export function ContentContainer() {
     <div className="relative h-full flex flex-col">
       <Frame key={`frame-${currentFrame.id}`} />
       {isHost && (
-        <FrameControls onPrevious={previousFrame} onNext={nextFrame} />
+        <FrameControls
+          onPrevious={previousFrame}
+          onNext={nextFrame}
+          switchPublishedFrames={!permissions.canAcessAllSessionControls}
+        />
       )}
     </div>
   )

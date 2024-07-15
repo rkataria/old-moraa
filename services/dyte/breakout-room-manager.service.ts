@@ -1,6 +1,8 @@
 import { type BreakoutRoomsManager } from '@dytesdk/react-ui-kit'
 import chunk from 'lodash.chunk'
 
+import { participantIdentifier } from './breakout-room.service'
+
 import type DyteClient from '@dytesdk/web-core'
 
 type CreateAndAutoAssignBreakoutRoomsArgs = {
@@ -29,6 +31,7 @@ export const createAndAutoAssignBreakoutRooms = async ({
       )
       .map((p) => p.customParticipantId!)
   )
+
   const participants = stateManager.unassignedParticipants.filter(
     (participant) =>
       participant.customParticipantId !== meeting.self.customParticipantId
@@ -106,9 +109,8 @@ export const moveHostToRoom = async ({
   stateManager,
   destinationMeetingId,
 }: StopBreakoutRoomsArgs & { destinationMeetingId: string }) => {
-  stateManager.unassignParticipants([meeting.self.customParticipantId])
   stateManager.assignParticipantsToMeeting(
-    [meeting.self.customParticipantId],
+    [participantIdentifier(meeting.self)],
     destinationMeetingId
   )
 

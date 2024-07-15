@@ -25,17 +25,14 @@ import {
 } from './AddParticipantsForm'
 
 import { useEvent } from '@/hooks/useEvent'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventService } from '@/services/event/event-service'
 
 type addParticipant = ParticipantsFormData & {
   closeonSave?: boolean
 }
 
-export function AddParticipantsButtonWithModal({
-  eventId,
-}: {
-  eventId: string
-}) {
+export function ButtonWithModal({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState<boolean>(false)
   const { participants, refetch } = useEvent({
     id: eventId,
@@ -151,4 +148,18 @@ export function AddParticipantsButtonWithModal({
       </Modal>
     </>
   )
+}
+
+export function AddParticipantsButtonWithModal({
+  eventId,
+}: {
+  eventId: string
+}) {
+  const { permissions } = useEventPermissions()
+
+  if (!permissions.canManageEnrollment) {
+    return null
+  }
+
+  return <ButtonWithModal eventId={eventId} />
 }

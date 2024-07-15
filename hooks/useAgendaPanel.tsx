@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { useHotkeys } from 'react-hotkeys-hook'
 
+import { useEventPermissions } from './useEventPermissions'
+
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { ContentType } from '@/utils/content.util'
@@ -33,7 +35,7 @@ export function AgendaPanelContextProvider({
   const {
     sections,
     currentFrame,
-    isOwner,
+
     eventMode,
     overviewOpen,
     currentSectionId,
@@ -41,10 +43,15 @@ export function AgendaPanelContextProvider({
     setCurrentFrame,
     setOverviewOpen,
   } = useContext(EventContext) as EventContextType
+
+  const { permissions } = useEventPermissions()
+
   const [expandedSectionIds, setExpandedSectionIds] = useState<string[]>([])
   const [listDisplayMode, setListDisplayMode] =
     useState<ListDisplayMode>('list')
   const [expanded, setExpanded] = useState<boolean>(false)
+
+  const showPublishedFrames = !permissions.canUpdateFrame
 
   // hotkeys
   useHotkeys('l', () => setListDisplayMode('list'), [])
@@ -55,18 +62,18 @@ export function AgendaPanelContextProvider({
       getPreviousFrame({
         sections,
         currentFrame,
-        onlyPublished: !isOwner && eventMode !== 'present',
+        onlyPublished: showPublishedFrames && eventMode !== 'present',
       }),
-    [sections, currentFrame, isOwner, eventMode]
+    [sections, currentFrame, showPublishedFrames, eventMode]
   )
   const nextFrame = useMemo(
     () =>
       getNextFrame({
         sections,
         currentFrame,
-        onlyPublished: !isOwner && eventMode !== 'present',
+        onlyPublished: showPublishedFrames && eventMode !== 'present',
       }),
-    [sections, currentFrame, isOwner, eventMode]
+    [sections, currentFrame, showPublishedFrames, eventMode]
   )
 
   const getNextSection = () => {
@@ -106,13 +113,14 @@ export function AgendaPanelContextProvider({
 
     return getFilteredFramesByStatus({
       frames: section.frames,
-      status: isOwner && eventMode !== 'present' ? null : 'PUBLISHED',
+      status:
+        showPublishedFrames && eventMode !== 'present' ? null : 'PUBLISHED',
     })
   }
 
   useHotkeys('ArrowUp', () => {
     // Don't allow participants to navigate through the agenda when the event is live
-    if (!isOwner && eventMode === 'present') return
+    if (!permissions.canUpdateFrame && eventMode === 'present') return
 
     const previousSection = getPreviousSection()
 
@@ -216,7 +224,7 @@ export function AgendaPanelContextProvider({
 
   useHotkeys('ArrowDown', () => {
     // Don't allow participants to navigate through the agenda when the event is live
-    if (!isOwner && eventMode === 'present') return
+    if (!permissions.canUpdateFrame && eventMode === 'present') return
 
     const nextSection = getNextSection()
 
@@ -337,14 +345,13 @@ export function AgendaPanelContextProvider({
     }
   })
   useHotkeys('ArrowLeft', () => {
+    // Don't allow participants to navigate through the agenda when the event is live
+    if (!permissions.canUpdateFrame && eventMode === 'present') return
+
     if (
       currentFrame?.type === ContentType.GOOGLE_SLIDES &&
       !currentFrame.content?.individualFrame
     ) {
-      return
-    }
-    if (!isOwner && eventMode === 'present') {
-      // Don't allow participants to navigate through the agenda when the event is live
       return
     }
 
@@ -368,7 +375,7 @@ export function AgendaPanelContextProvider({
 
   useHotkeys('ArrowRight', () => {
     // Don't allow participants to navigate through the agenda when the event is live
-    if (!isOwner && eventMode === 'present') return
+    if (!permissions.canUpdateFrame && eventMode === 'present') return
 
     // if curren section is not highlighted, do nothing
     if (!currentSectionId) return

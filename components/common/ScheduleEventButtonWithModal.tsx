@@ -34,7 +34,7 @@ export function ScheduleEventButtonWithModal({
   eventId: string
   actionButtonLabel?: string
   showLabel?: boolean
-  disclosure: UseDisclosureReturn
+  disclosure?: UseDisclosureReturn
 }) {
   const event = useEvent({ id: eventId })
   const [open, setOpen] = useState<boolean>(false)
@@ -128,7 +128,10 @@ export function ScheduleEventButtonWithModal({
         </Button>
       )}
 
-      <Modal size="2xl" isOpen={open || disclosure.isOpen} onClose={closeModal}>
+      <Modal
+        size="2xl"
+        isOpen={open || disclosure?.isOpen}
+        onClose={closeModal}>
         <ModalContent>
           {() => (
             <>

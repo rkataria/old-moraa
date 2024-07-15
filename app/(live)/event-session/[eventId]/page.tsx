@@ -3,20 +3,20 @@
 
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { provideDyteDesignSystem } from '@dytesdk/react-ui-kit'
 import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
-import DyteClient from '@dytesdk/web-core'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 
 import { Loading } from '@/components/common/Loading'
 import { MeetingScreen } from '@/components/event-session/MeetingScreen'
 import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScreen'
+import ProtectedLayout from '@/components/hoc/ProtectedLayout'
 import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContext'
-import { BreakoutRoomsManagerProvider } from '@/contexts/BreakoutRoomsManagerContext'
 import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
+import { useDyteListeners } from '@/hooks/useDyteBreakoutListeners'
 import { useEnrollment } from '@/hooks/useEnrollment'
 
 type EventSessionPageInnerProps = {
@@ -38,70 +38,10 @@ function EventSessionPageInner({
   }
 
   if (roomJoined) {
-    return (
-      <BreakoutRoomsManagerProvider>
-        <MeetingScreen />
-      </BreakoutRoomsManagerProvider>
-    )
+    return <MeetingScreen />
   }
 
   return <MeetingSetupScreen />
-}
-
-const useDyteListeners = (
-  dyteMeeting: DyteClient | undefined,
-  setRoomJoined: (roomJoined: boolean) => void,
-  setIsBreakoutLoading: (isLoading: boolean) => void
-) => {
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!dyteMeeting) return
-
-    const roomJoinedListener = () => {
-      setRoomJoined(true)
-    }
-    const roomLeftListener = () => {
-      if (dyteMeeting.connectedMeetings.isActive) {
-        setIsBreakoutLoading(true)
-        router.refresh()
-
-        return
-      }
-      setRoomJoined(false)
-      // eslint-disable-next-line no-console
-      console.log('room left')
-      router.push('/events')
-    }
-    dyteMeeting.self.on('roomJoined', roomJoinedListener)
-    dyteMeeting.self.on('roomLeft', roomLeftListener)
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const meetingChangedListener = () => {
-      setIsBreakoutLoading(false)
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const changingMeetingListener = () => {
-      setIsBreakoutLoading(true)
-    }
-    dyteMeeting.connectedMeetings.on('meetingChanged', meetingChangedListener)
-    dyteMeeting.connectedMeetings.on('changingMeeting', changingMeetingListener)
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      dyteMeeting.self.removeListener('roomJoined', roomJoinedListener)
-      dyteMeeting.self.removeListener('roomLeft', roomLeftListener)
-      dyteMeeting.connectedMeetings.removeListener(
-        'meetingChanged',
-        meetingChangedListener
-      )
-      dyteMeeting.connectedMeetings.removeListener(
-        'changingMeeting',
-        changingMeetingListener
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dyteMeeting])
 }
 
 function EventSessionPage() {
@@ -111,11 +51,9 @@ function EventSessionPage() {
   })
   const meetingEl = useRef<HTMLDivElement>(null)
   const [dyteMeeting, initDyteMeeting] = useDyteClient()
-  const [roomJoined, setRoomJoined] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isBreakoutLoading, setIsBreakoutLoading] = useState<boolean>(false)
 
-  useDyteListeners(dyteMeeting, setRoomJoined, setIsBreakoutLoading)
+  const { isBreakoutLoading, isRoomJoined } = useDyteListeners(dyteMeeting)
 
   useEffect(() => {
     if (!enrollment?.meeting_token) return
@@ -141,7 +79,7 @@ function EventSessionPage() {
 
   if (meetingEl.current) {
     provideDyteDesignSystem(meetingEl.current, {
-      googleFont: 'Inter',
+      googleFont: 'Outfit',
       // sets light background colors
       theme: 'light',
       colors: {
@@ -174,7 +112,7 @@ function EventSessionPage() {
           <EventSessionProvider>
             <div ref={meetingEl}>
               <EventSessionPageInner
-                roomJoined={roomJoined}
+                roomJoined={isRoomJoined}
                 isBreakoutLoading={isBreakoutLoading}
               />
             </div>
@@ -185,4 +123,10 @@ function EventSessionPage() {
   )
 }
 
-export default EventSessionPage
+export default function ProtectedEventSessionPage() {
+  return (
+    <ProtectedLayout>
+      <EventSessionPage />
+    </ProtectedLayout>
+  )
+}

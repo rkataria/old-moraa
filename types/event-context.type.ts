@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, SetStateAction } from 'react'
 
 import { OnDragEndResponder } from 'react-beautiful-dnd'
@@ -21,6 +22,7 @@ export type EventContextType = {
   showFramePlaceholder: boolean
   preview: boolean
   insertAfterSectionId: string | null
+  addNewFrameLoader: boolean
   insertAfterFrameId: string | null
   insertInSectionId: string | null
   selectedSectionId: string | null
@@ -31,6 +33,7 @@ export type EventContextType = {
   setInsertAfterSectionId: (sectionId: string | null) => void
   setInsertInSectionId: (sectionId: string | null) => void
   setSelectedSectionId: (sectionId: string | null) => void
+  setAddNewFrameLoader: (loader: boolean) => void
   setPreview: (preview: boolean) => void
   setCurrentFrame: (frame: IFrame | null) => void
   setOverviewOpen: (open: boolean) => void
@@ -96,6 +99,13 @@ export type EventContextType = {
   deleteSection: ({ sectionId }: { sectionId: string }) => void
   moveUpSection: (section: ISection) => void
   moveDownSection: (section: ISection) => void
-  getCurrentFrame: (frameId: string) => IFrame
+  getFrameById: (frameId: string) => IFrame
   deleteBreakoutFrames: (frame: IFrame) => void
+  updateSectionsWithReorderedFrames: (
+    removed: IFrame,
+    sourceSection: any,
+    destinationSection: any,
+    sourceSectionId: string,
+    destinationSectionId: string
+  ) => void
 }

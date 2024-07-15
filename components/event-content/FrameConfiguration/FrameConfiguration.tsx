@@ -35,7 +35,7 @@ export function FrameConfiguration() {
     [ContentType.MORAA_BOARD]: (
       <MoraaBoardConfiguration key={currentFrame.id} />
     ),
-    [ContentType.CANVAS]: null,
+    [ContentType.MORAA_SLIDE]: null,
     [ContentType.BREAKOUT]: <BreakoutConfiguration key={currentFrame.id} />,
   }
 

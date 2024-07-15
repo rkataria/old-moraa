@@ -22,12 +22,11 @@ export type MoraaBoardFrame = IFrame & {
 
 interface MoraaBoardProps {
   frame: MoraaBoardFrame
+  isInteractive?: boolean
 }
 
-export function MoraaBoard({ frame }: MoraaBoardProps) {
-  const { preview, isOwner, eventMode } = useContext(
-    EventContext
-  ) as EventContextType
+export function MoraaBoard({ frame, isInteractive = true }: MoraaBoardProps) {
+  const { preview, eventMode } = useContext(EventContext) as EventContextType
   const store = useYjsStore({
     roomId: frame.id,
     hostUrl: process.env.NEXT_PUBLIC_PARTYKIT_HOST_URL,
@@ -35,8 +34,8 @@ export function MoraaBoard({ frame }: MoraaBoardProps) {
 
   const readOnly =
     preview ||
-    (!isOwner && !!frame.config?.allowToDraw) ||
-    (!isOwner && eventMode !== 'present')
+    (!isInteractive && !!frame.config?.allowToDraw) ||
+    (!isInteractive && eventMode !== 'present')
 
   return (
     <div

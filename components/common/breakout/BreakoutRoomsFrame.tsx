@@ -12,8 +12,7 @@ import {
   CardHeader,
 } from '@nextui-org/react'
 
-import { BreakoutActivityCard } from './BreakoutActivityCard'
-import { RenderIf } from '../RenderIf/RenderIf'
+import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -25,14 +24,23 @@ export function BreakoutRoomsWithParticipants({
   hideActivityCards?: boolean
 }) {
   const { meeting } = useDyteMeeting()
-  const { currentFrame, setIsBreakoutSlide, setBreakoutSlideId } =
-    useEventSession()
+  const {
+    currentFrame,
+    setIsBreakoutSlide,
+    setBreakoutSlideId,
+    realtimeChannel,
+  } = useEventSession()
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
   const endBreakoutRooms = () => {
-    setBreakoutSlideId(null)
     breakoutRoomsInstance?.endBreakout()
+    setBreakoutSlideId(null)
     setIsBreakoutSlide(false)
+    realtimeChannel?.send({
+      type: 'broadcast',
+      event: 'timer-stop-event',
+      payload: { remainingDuration: 0 },
+    })
   }
 
   const joinRoom = (meetId: string) => {
@@ -40,12 +48,12 @@ export function BreakoutRoomsWithParticipants({
   }
 
   return (
-    <div className="m-1 w-full flex-1 pr-12">
-      <div className="flex">
+    <div className="w-full flex-1">
+      <div className="flex flex-wrap">
         {meeting.connectedMeetings.meetings.map((meet, index) => (
-          <div key={meet.id} className="mr-4">
+          <div key={meet.id} className="mr-4 mb-4">
             <Card
-              className="p-2 overflow-y-auto"
+              className="overflow-y-auto p-2"
               style={{
                 minWidth: '15rem',
                 minHeight: '12rem',
@@ -54,17 +62,20 @@ export function BreakoutRoomsWithParticipants({
               <CardHeader>
                 <p className="text-md font-semibold">{meet.title}</p>
               </CardHeader>
-              <CardBody>
-                <RenderIf isTrue={!hideActivityCards}>
-                  <BreakoutActivityCard
-                    idx={index}
-                    breakout={currentFrame?.content?.breakoutDetails?.[index]}
-                    editable={false}
-                    participants={meet.participants}
-                  />
-                </RenderIf>
+              <CardBody className="p-2 py-0">
+                <BreakoutRoomActivityCard
+                  idx={index}
+                  breakout={currentFrame?.content?.breakoutRooms?.[index]}
+                  editable={false}
+                  hideActivityCard={hideActivityCards}
+                  participants={meet.participants?.map((p) => ({
+                    displayName: p?.displayName || '',
+                    id: p?.id || '',
+                    displayPictureUrl: p?.displayPictureUrl || '',
+                  }))}
+                />
               </CardBody>
-              <CardFooter>
+              <CardFooter className="p-2 py-0">
                 {meet.id !== meeting.connectedMeetings.currentMeetingId ? (
                   <Button
                     size="sm"
@@ -78,11 +89,9 @@ export function BreakoutRoomsWithParticipants({
           </div>
         ))}
       </div>
-      <div className="mt-4 flex">
-        <Button onClick={endBreakoutRooms} size="sm" color="danger">
-          End Breakout
-        </Button>
-      </div>
+      <Button onClick={endBreakoutRooms} size="sm" color="danger">
+        End Breakout
+      </Button>
     </div>
   )
 }

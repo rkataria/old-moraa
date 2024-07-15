@@ -69,11 +69,9 @@ export function CoverEditor() {
         'w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden relative pt-16'
       )}>
       {textBlocks.map((block) => {
-        const renderHeader =
-          localFrame.config.showTitle && block.type === 'header'
+        const renderHeader = block.type === 'header'
 
-        const renderParagraph =
-          localFrame.config.showDescription && block.type === 'paragraph'
+        const renderParagraph = block.type === 'paragraph'
 
         if (!renderHeader && !renderParagraph) return null
 

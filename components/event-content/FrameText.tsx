@@ -106,14 +106,6 @@ export function FrameText({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedText])
 
-  if (!currentFrame?.config.showTitle && type === 'header') {
-    return null
-  }
-
-  if (!currentFrame?.config.showDescription && type === 'description') {
-    return null
-  }
-
   return (
     <TextareaAutosize
       placeholder={placeholder}

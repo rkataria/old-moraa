@@ -197,11 +197,7 @@ function FrameThumbnailView({
             transformOrigin: 'left top',
             scale: `${(1 / window.screen.width) * cardWidth}`,
           }}>
-          <FramePreview
-            readOnly
-            frame={frame}
-            key={JSON.stringify(frame.content)}
-          />
+          <FramePreview frame={frame} key={JSON.stringify(frame.content)} />
         </div>
       )
     }

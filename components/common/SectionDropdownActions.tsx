@@ -8,6 +8,7 @@ import { Button } from '@nextui-org/react'
 import { DropdownActions } from './DropdownActions'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { ISection } from '@/types/frame.type'
 
@@ -36,10 +37,13 @@ export function SectionDropdownActions({
   section: ISection
   onDelete: (section: ISection) => void
 }) {
-  const { eventMode, isOwner, preview, moveUpSection, moveDownSection } =
-    useContext(EventContext) as EventContextType
+  const { eventMode, preview, moveUpSection, moveDownSection } = useContext(
+    EventContext
+  ) as EventContextType
 
-  if (!isOwner || preview || eventMode !== 'edit') {
+  const { permissions } = useEventPermissions()
+
+  if (!permissions.canUpdateSection || preview || eventMode !== 'edit') {
     return null
   }
 

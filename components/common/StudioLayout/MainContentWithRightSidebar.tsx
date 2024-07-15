@@ -2,9 +2,11 @@ import { ReactNode } from 'react'
 
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 
+import { LEFT_SIDEBAR_MIN_WIDTH, LEFT_SIDEBAR_WIDTH } from './LeftSidebar'
 import { MainContent } from './MainContent'
 import { ResizableRightSidebar } from './ResizableRightSidebar'
 import { RightSidebar } from './RightSidebar'
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
@@ -22,11 +24,23 @@ export function MainContentWithRightSidebar({
   rightSidebarControls: ReactNode
   bottomContent: ReactNode
 }) {
-  const { rightSidebarVisiblity, resizableRightSidebarVisiblity } =
-    useStudioLayout()
+  const {
+    leftSidebarVisiblity,
+    rightSidebarVisiblity,
+    resizableRightSidebarVisiblity,
+  } = useStudioLayout()
+
+  const containerWidth =
+    leftSidebarVisiblity === 'maximized'
+      ? `calc(100% - ${LEFT_SIDEBAR_WIDTH}px)`
+      : `calc(100% - ${LEFT_SIDEBAR_MIN_WIDTH}px)`
 
   return (
-    <div className="flex w-full h-full">
+    <div
+      className="flex w-full h-full"
+      style={{
+        width: containerWidth,
+      }}>
       <PanelGroup direction="horizontal" className="pb-2">
         <Panel
           defaultSize={resizableRightSidebarVisiblity ? 60 : 100}
@@ -35,9 +49,11 @@ export function MainContentWithRightSidebar({
           <MainContent hasBottomSection={!!bottomContent}>
             {children}
           </MainContent>
-          <div className="h-full overflow-y-auto scrollbar-none bg-white rounded-md mt-2 p-2">
-            {bottomContent}
-          </div>
+          <RenderIf isTrue={!!bottomContent}>
+            <div className="h-[28vh] overflow-y-auto bg-white rounded-md mt-2 p-2">
+              {bottomContent}
+            </div>
+          </RenderIf>
         </Panel>
         {resizableRightSidebarVisiblity && (
           <PanelResizeHandle className="relative w-2 px-0.5">

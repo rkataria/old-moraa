@@ -85,7 +85,7 @@
 /* Tiptap Editor */
 
 .tiptap {
-  @apply p-2 min-h-full;
+  @apply min-h-full;
 }
 
 .ProseMirror-focused {
@@ -93,27 +93,27 @@
 }
 
 .tiptap h1 {
-  @apply text-4xl font-bold;
-}
-
-.tiptap h2 {
   @apply text-3xl font-bold;
 }
 
-.tiptap h3 {
+.tiptap h2 {
   @apply text-2xl font-bold;
 }
 
-.tiptap h4 {
+.tiptap h3 {
   @apply text-xl font-bold;
 }
 
-.tiptap h5 {
+.tiptap h4 {
   @apply text-lg font-bold;
 }
 
-.tiptap h6 {
+.tiptap h5 {
   @apply text-base font-bold;
+}
+
+.tiptap h6 {
+  @apply text-sm font-bold;
 }
 
 .tiptap p {
@@ -222,7 +222,7 @@
 /* Block Content Styles */
 .block-content-header,
 .block-content-paragraph {
-  @apply p-4 w-full;
+  /* @apply p-4 w-full; */
 }
 .block-content-header h1 {
   @apply text-4xl font-bold;
@@ -234,6 +234,23 @@
 
 .block-content-header h3 {
   @apply text-2xl font-bold;
+}
+
+.richText h1,
+.richText h2,
+.richText h3,
+.richText h4,
+.richText h5 {
+  margin: 1.5rem 0 1rem;
+}
+
+.richText p {
+  line-height: 32px;
+  letter-spacing: -0.5px;
+}
+
+.richText .ProseMirror {
+  padding-bottom: 6rem;
 }
 
 /* PDF */
@@ -370,9 +387,28 @@ input[type='number']::-webkit-outer-spin-button {
   }
 }
 
-
 /* BG Patterns */
 .bg-pattern-1 {
   background-color: #ffffff;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 200 200'%3E%3Cpolygon fill='%23E9D5FF' fill-opacity='0.43' points='100 0 0 100 100 100 100 200 200 100 200 0'/%3E%3C/svg%3E");
+}
+
+/* Selection Color */
+*::selection {
+  background: #7c3aed;
+  color: #ffffff;
+}
+*::-moz-selection {
+  background: #7c3aed;
+  color: #ffffff;
+}
+*::-webkit-selection {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+
+/* Moraa Slide */
+.moraa-slide-preview svg {
+  @apply absolute left-0 top-0 w-full h-full;
 }

@@ -6,6 +6,7 @@ import { LuClipboardEdit } from 'react-icons/lu'
 import { Button, Tooltip } from '@nextui-org/react'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
@@ -15,6 +16,7 @@ export function FrameNoteToggleButton() {
   const { overviewOpen, currentSectionId } = useContext(
     EventContext
   ) as EventContextType
+  const { permissions } = useEventPermissions()
 
   const toggleSidebar = () => {
     if (overviewOpen || currentSectionId) {
@@ -26,6 +28,10 @@ export function FrameNoteToggleButton() {
     setRightSidebarVisiblity(
       rightSidebarVisiblity === 'frame-notes' ? null : 'frame-notes'
     )
+  }
+
+  if (!permissions.canaccessNotes) {
+    return null
   }
 
   return (

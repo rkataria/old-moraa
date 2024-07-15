@@ -5,6 +5,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Button,
 } from '@nextui-org/react'
 
 import { UserAvatar } from './UserAvatar'
@@ -22,13 +23,18 @@ export function UserMenu() {
     <>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
-          <UserAvatar
-            profile={profile}
-            avatarProps={{
-              radius: 'lg',
-              classNames: { base: 'w-9 h-9 min-w-max' },
-            }}
-          />
+          <Button
+            isIconOnly
+            variant="light"
+            className="rounded-lg w-auto h-auto">
+            <UserAvatar
+              profile={profile}
+              avatarProps={{
+                radius: 'lg',
+                classNames: { base: 'w-9 h-9 min-w-max' },
+              }}
+            />
+          </Button>
         </DropdownTrigger>
         <DropdownMenu aria-label="Profile Actions" variant="flat">
           <DropdownItem

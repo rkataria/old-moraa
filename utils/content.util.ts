@@ -24,17 +24,17 @@ export const paragraphBlock = {
 export const getDefaultContent = ({
   contentType,
   data,
-  templateType,
+  templateKey,
 }: {
   contentType: ContentType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any
-  templateType?: CANVAS_TEMPLATE_TYPES
+  templateKey?: string
 }) => {
   switch (contentType) {
-    case ContentType.CANVAS:
+    case ContentType.MORAA_SLIDE:
       return {
-        defaultTemplate: templateType,
+        defaultTemplate: templateKey,
         canvas: null,
       }
     case ContentType.COVER:
@@ -157,11 +157,12 @@ export const getDefaultContent = ({
         blocks: [headerBlock, paragraphBlock],
         title: data?.title,
         description: data?.description,
-        breakoutDetails: [...Array(data?.breakoutCount)]
-          .fill('')
-          .map((_, idx) => ({
-            name: `${data?.selectedBreakout === BREAKOUT_TYPES.GROUPS ? 'Group' : 'Room'} - ${idx + 1}`,
-          })),
+        breakoutRooms:
+          data?.breakoutType === BREAKOUT_TYPES.GROUPS
+            ? undefined
+            : new Array(data?.breakoutRoomsCount)
+                .fill('')
+                .map((_, idx) => ({ name: `Room - ${idx + 1}` })),
       }
 
     default:
@@ -182,8 +183,6 @@ export const getDefaultCoverFrame = ({
   name,
   config: {
     textColor: '#000',
-    showTitle: true,
-    showDescription: true,
   },
   content: getDefaultContent({
     contentType: ContentType.COVER,
@@ -216,12 +215,12 @@ export const frameHasFrameResponses = (frame: IFrame) =>
 
 export const getContentType = (
   frameType: ContentType,
-  templateType?: CANVAS_TEMPLATE_TYPES
+  templateKey?: string
 ) => {
-  if (templateType) {
+  if (templateKey) {
     return contentTypes.find(
       (type) =>
-        type.contentType === frameType && type.templateType === templateType
+        type.contentType === frameType && type.templateKey === templateKey
     )
   }
 
@@ -242,7 +241,7 @@ export const isFrameThumbnailAvailable = (frameType: ContentType) =>
   ].includes(frameType)
 
 export enum ContentType {
-  CANVAS = 'Canvas',
+  MORAA_SLIDE = 'Moraa Slide',
   COVER = 'Title',
   POLL = 'Poll',
   VIDEO = 'Video',
@@ -259,18 +258,11 @@ export enum ContentType {
   BREAKOUT = 'Breakout',
 }
 
-export enum CANVAS_TEMPLATE_TYPES {
-  BLANK = 'Blank',
-  TEMPLATE_ONE = 'Template One',
-  TEMPLATE_TWO = 'Template Two',
-  TEMPLATE_THREE = 'Template Three',
-}
-
 export interface IContentType {
   name: string
   icon: React.ReactNode
   description: string
   contentType: ContentType
   disabled?: boolean
-  templateType?: CANVAS_TEMPLATE_TYPES
+  templateKey?: string
 }

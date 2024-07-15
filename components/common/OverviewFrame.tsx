@@ -13,6 +13,7 @@ import { StrictModeDroppable } from './StrictModeDroppable'
 import { FramesList } from '../event-content/overview-frame/FramesList'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { FrameStatus } from '@/services/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
@@ -20,7 +21,6 @@ import { cn } from '@/utils/utils'
 
 export function OverviewFrame() {
   const {
-    isOwner,
     sections,
     showSectionPlaceholder,
     preview,
@@ -30,6 +30,7 @@ export function OverviewFrame() {
     reorderFrame,
     addSection,
   } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
 
   const [expandedSections, setExpandedSections] = useState<string[]>([])
 
@@ -78,7 +79,8 @@ export function OverviewFrame() {
     return `${hours}h ${remainingMinutes}m`
   }
 
-  const editable = isOwner && !preview && eventMode === 'edit'
+  const editable =
+    permissions.canUpdateSection && !preview && eventMode === 'edit'
 
   return (
     <div className="flex flex-col flex-1 max-w-5xl m-auto p-4 pt-14">
@@ -178,7 +180,7 @@ export function OverviewFrame() {
                                     size="sm"
                                     isSelected={section.frames.some(
                                       (frame) =>
-                                        frame.status === FrameStatus.PUBLISHED
+                                        frame?.status === FrameStatus.PUBLISHED
                                     )}
                                     className="p-0"
                                     onChange={() =>
@@ -186,14 +188,14 @@ export function OverviewFrame() {
                                         section,
                                         section.frames.some(
                                           (frame) =>
-                                            frame.status ===
+                                            frame?.status ===
                                             FrameStatus.PUBLISHED
                                         )
                                           ? FrameStatus.DRAFT
                                           : FrameStatus.PUBLISHED
                                       )
                                     }
-                                    disabled={!isOwner}
+                                    disabled={!permissions.canUpdateSection}
                                   />
                                 )}
                               </div>
