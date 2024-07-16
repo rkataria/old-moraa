@@ -11,7 +11,6 @@ import { SortDescriptor, Pagination, Button } from '@nextui-org/react'
 import { GridView } from './GridView'
 import { ListView } from './ListView'
 import { ListToggleButton } from '../common/AgendaPanel/ListToggleButton'
-import { CreateEventButtonWithModal } from '../common/CreateEventButtonWithModal'
 import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
 
 import { useAuth } from '@/hooks/useAuth'
@@ -96,16 +95,13 @@ export function EventList() {
         description="You have no upcoming events. Why not create one?"
         icon={<IoCalendarClear className=" text-[200px] text-gray-200" />}
         endContent={
-          <CreateEventButtonWithModal
-            buttonLabel={
-              <p className="flex items-center gap-2">
-                Create new <MdOutlineAddBox className="text-[18px]" />
-              </p>
-            }
-            buttonProps={{
-              className: 'bg-black text-white mt-12',
-            }}
-          />
+          <Button
+            as={Link}
+            href="/events/create"
+            className="bg-black text-white mt-12"
+            startContent={<MdOutlineAddBox className="text-lg" />}>
+            Create new
+          </Button>
         }
       />
     )
