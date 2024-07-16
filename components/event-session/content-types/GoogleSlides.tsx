@@ -23,12 +23,15 @@ const positionChangeEvent = 'g-frame-position-changed'
 
 export function GoogleSlides({ frame }: GoogleSlidesProps) {
   const {
-    content: { googleSlideURL, startPosition },
+    content: { startPosition },
   } = frame
   const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
     useContext(EventSessionContext) as EventSessionContextType
   const [position, setPosition] = useState<number>(startPosition || 1)
+
+  const embededUrl =
+    frame.content.googleSlideURL || (frame.content.googleSlideUrl as string)
 
   useEffect(() => {
     if (!activeSession?.data?.GSlideLastPosition) return
@@ -66,7 +69,7 @@ export function GoogleSlides({ frame }: GoogleSlidesProps) {
 
   return (
     <GoogleSlideEmbed
-      url={googleSlideURL}
+      url={embededUrl}
       showControls={isHost}
       startPage={position}
       onPageChange={handleCurrentPageChange}

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { DyteParticipantTile } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
@@ -76,6 +76,14 @@ export function VideoBackgroundSettingsButtonWithModal({
       value,
       currentMiddleware: middleWare,
     })
+
+    localStorage.setItem(
+      'videoMiddleWare',
+      JSON.stringify({
+        type,
+        value,
+      })
+    )
   }
 
   const removeMiddleWare = async () => {
@@ -91,6 +99,8 @@ export function VideoBackgroundSettingsButtonWithModal({
       type: null,
       value: null,
     })
+
+    localStorage.removeItem('videoMiddleWare')
 
     return removedRes
   }
@@ -120,6 +130,13 @@ export function VideoBackgroundSettingsButtonWithModal({
     }
     addMiddleWare({ type, value })
   }
+  useEffect(() => {
+    if (videoMiddlewareConfig) return
+    const lastVideoMiddleware = localStorage.getItem('videoMiddleWare')
+    if (!lastVideoMiddleware) return
+    applyVideoMiddleware(JSON.parse(lastVideoMiddleware))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>
