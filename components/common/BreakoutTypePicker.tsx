@@ -175,6 +175,7 @@ export function BreakoutTypePicker({
                               selectedBreakoutType !== breakoutType.breakoutType
                             }
                             noNegative
+                            minCount={2}
                           />
                         </span>
                         <span>Duration</span>
@@ -194,6 +195,7 @@ export function BreakoutTypePicker({
                             isDisabled={
                               selectedBreakoutType !== breakoutType.breakoutType
                             }
+                            minCount={5}
                           />
                         </span>
                       </CardBody>

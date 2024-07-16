@@ -87,13 +87,15 @@ export function BreakoutRoomActivityCard({
                 onAddNewActivity(idx)
               }}
             />
-            <IoAddSharp
-              className="rotate-45"
-              onClick={() => {
-                if (!editable) return
-                deleteRoomGroup(idx)
-              }}
-            />
+            <RenderIf isTrue={breakout?.activityId}>
+              <IoAddSharp
+                className="rotate-45"
+                onClick={() => {
+                  if (!editable) return
+                  deleteRoomGroup(idx)
+                }}
+              />
+            </RenderIf>
           </span>
         </RenderIf>
       </div>

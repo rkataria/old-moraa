@@ -210,7 +210,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
   }
 
   return (
-    <div className="ml-8">
+    <div className="ml-8 mt-6">
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
         <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
           {frame.content?.breakoutRooms?.map((breakout, idx) => (
