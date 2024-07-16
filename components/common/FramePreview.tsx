@@ -27,7 +27,7 @@ import { TextImage } from '../event-session/content-types/TextImage'
 import { Cover, CoverFrameType } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
-import { useDimensions } from '@/hooks/useDimensions'
+// import { useDimensions } from '@/hooks/useDimensions'
 import { IFrame } from '@/types/frame.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
@@ -39,7 +39,7 @@ interface FrameProps {
 export function FramePreview({ frame, isInteractive = true }: FrameProps) {
   const previewRef = useRef<HTMLDivElement>(null)
 
-  const { totalHeight } = useDimensions(previewRef)
+  // const { totalHeight } = useDimensions(previewRef)
   useEffect(() => {
     if (!frame) return
 
@@ -49,27 +49,27 @@ export function FramePreview({ frame, isInteractive = true }: FrameProps) {
     )
   }, [frame])
 
-  const thumbnailStyle = () => {
-    if (isInteractive) return {}
-    if (frame.type === ContentType.RICH_TEXT) {
-      const scaleDown = (209 / totalHeight) * 3
+  // const thumbnailStyle = () => {
+  //   if (isInteractive) return {}
+  //   if (frame.type === ContentType.RICH_TEXT) {
+  //     const scaleDown = (209 / totalHeight) * 3
 
-      return {
-        scale: scaleDown > 1 ? 1 : scaleDown,
-        transformOrigin: 'top',
-        height: totalHeight,
-      }
-    }
+  //     return {
+  //       scale: scaleDown > 1 ? 1 : scaleDown,
+  //       transformOrigin: 'top',
+  //       height: totalHeight,
+  //     }
+  //   }
 
-    return null
-  }
+  //   return null
+  // }
 
   return (
     <div
       ref={previewRef}
       style={{
         backgroundColor: frame.config.backgroundColor,
-        ...thumbnailStyle(),
+        // ...thumbnailStyle(),
       }}
       className={cn('relative group w-full h-full bg-white flex flex-col p-4', {
         '!p-0': frame.type === ContentType.TEXT_IMAGE && !isInteractive,

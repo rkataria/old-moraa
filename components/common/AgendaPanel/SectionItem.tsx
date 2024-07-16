@@ -61,14 +61,11 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
 
   // When a section is clicked, it should be expanded and the current section should be active in the agenda panel
   const handleSectionClick = () => {
-    if (eventMode === 'present') return
-
     setInsertInSectionId(section.id)
     setInsertAfterFrameId(null)
     setCurrentSectionId(section.id)
     setCurrentFrame(null)
     setOverviewOpen(false)
-    toggleExpandedSection(section.id)
   }
 
   const sectionExpanded = expandedSectionIds.includes(section.id)
@@ -83,9 +80,10 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
             className="flex justify-start items-center flex-auto gap-2 p-1.5"
             onClick={handleSectionClick}>
             <IoChevronForward
-              className={cn('duration-300 shrink-0', {
+              className={cn('duration-300 shrink-0 cursor-pointer', {
                 'rotate-90': sectionExpanded,
               })}
+              onClick={() => toggleExpandedSection(section.id)}
             />
             <LuLayers size={22} className="flex-none" />
             <EditableLabel

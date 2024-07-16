@@ -17,6 +17,7 @@ type FontSizeControlProps = {
   fullWidth?: boolean
   noNegative?: boolean
   isDeleteModal?: boolean
+  minCount?: number
 }
 
 // TODO: Fix this component types whenever this is used.
@@ -29,6 +30,7 @@ export function TwoWayNumberCounter({
   fullWidth = false,
   noNegative = false,
   isDeleteModal = false,
+  minCount = 1,
 }: FontSizeControlProps) {
   const [count, setCount] = useState<number>(defaultCount)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
@@ -36,7 +38,7 @@ export function TwoWayNumberCounter({
   // hotkeys
   useHotkeys('-', () => {
     const cal = count - incrementStep
-    handleFontSizeChange(cal < 1 ? defaultCount : cal)
+    handleFontSizeChange(cal < (minCount || 1) ? minCount || 1 : cal)
   })
   useHotkeys('-', () => {
     handleFontSizeChange(count + incrementStep)
@@ -45,12 +47,14 @@ export function TwoWayNumberCounter({
   const minusButtonDisabled = isDisabled || (noNegative && count < 2)
 
   const handleFontSizeChange = (newSize: number) => {
-    setCount(newSize)
-    onFontSizeChange(newSize)
+    const cal = newSize < (minCount || 1) ? minCount || 1 : newSize
+    setCount(cal)
+    onFontSizeChange(cal)
   }
 
   const handleDelete = () => {
-    const cal = count - incrementStep
+    const value = count - incrementStep
+    const cal = value < minCount ? minCount : value
     handleFontSizeChange(cal < 1 ? defaultCount : cal)
     setIsDeleteModalOpen(false)
   }
@@ -68,7 +72,7 @@ export function TwoWayNumberCounter({
           disabled={minusButtonDisabled}
           onClick={() =>
             isDeleteModal
-              ? setIsDeleteModalOpen(true)
+              ? count > minCount && setIsDeleteModalOpen(true)
               : handleFontSizeChange(count - incrementStep)
           }>
           -

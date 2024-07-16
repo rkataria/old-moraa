@@ -95,8 +95,9 @@ export function BreakoutConfiguration() {
             })
           }}
           noNegative
-          incrementStep={1}
+          incrementStep={5}
           postfixLabel="min"
+          minCount={5}
         />
       </span>
       <span className="flex items-center justify-between">
@@ -112,11 +113,11 @@ export function BreakoutConfiguration() {
               : currentFrame?.config?.participantPerGroup
           }
           noNegative
+          minCount={2}
           onCountChange={(count) => updateBreakout(count)}
           isDeleteModal={
             currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
           }
-          incrementStep={1}
         />
       </span>
     </>
