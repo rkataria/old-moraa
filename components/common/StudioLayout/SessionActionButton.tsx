@@ -108,11 +108,15 @@ function ActionButton({
     return <ScheduleEventButtonWithModal eventId={eventId} />
   }
 
-  return (
-    <Button as={Link} href={`/event-session/${eventId}`} title="Start Session">
-      Join live session
-    </Button>
-  )
+  if (eventStatus === EventStatus.SCHEDULED) {
+    return (
+      <Button as={Link} href={`/event-session/${eventId}`} title="Join Session">
+        Join live session
+      </Button>
+    )
+  }
+
+  return null
 }
 
 export function SessionActionButton({
