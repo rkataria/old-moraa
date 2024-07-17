@@ -92,7 +92,7 @@ export function MeetingScreen() {
   useEffect(() => {
     if (!meeting) return
 
-    const handleHostLeft = (participant: DyteParticipant) => {
+    const handleParticipantLeft = (participant: DyteParticipant) => {
       updateTypingUsers({
         isTyping: false,
         participantId: participant.id,
@@ -109,10 +109,10 @@ export function MeetingScreen() {
       }
     }
 
-    meeting.participants.joined.on('participantLeft', handleHostLeft)
+    meeting.participants.joined.on('participantLeft', handleParticipantLeft)
 
     function onUnmount() {
-      meeting.participants.joined.off('participantLeft', handleHostLeft)
+      meeting.participants.joined.off('participantLeft', handleParticipantLeft)
     }
 
     // eslint-disable-next-line consistent-return

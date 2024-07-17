@@ -34,7 +34,8 @@ export function StudioLayout({
             resizableRightSidebar={resizableRightSidebar}
             rightSidebar={rightSidebar}
             bottomContent={bottomContent}
-            rightSidebarControls={rightSidebarControls}>
+            rightSidebarControls={rightSidebarControls}
+            noLeftSidebar={!leftSidebar}>
             {children}
           </MainContentWithRightSidebar>
         </div>

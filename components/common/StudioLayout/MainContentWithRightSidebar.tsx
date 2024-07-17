@@ -17,12 +17,14 @@ export function MainContentWithRightSidebar({
   rightSidebar,
   rightSidebarControls,
   bottomContent,
+  noLeftSidebar,
 }: {
   children: ReactNode
   resizableRightSidebar: ReactNode
   rightSidebar: ReactNode
   rightSidebarControls: ReactNode
   bottomContent: ReactNode
+  noLeftSidebar?: boolean
 }) {
   const {
     leftSidebarVisiblity,
@@ -39,7 +41,7 @@ export function MainContentWithRightSidebar({
     <div
       className="flex w-full h-full"
       style={{
-        width: containerWidth,
+        width: noLeftSidebar ? '100%' : containerWidth,
       }}>
       <PanelGroup direction="horizontal" className="pb-2">
         <Panel

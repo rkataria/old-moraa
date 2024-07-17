@@ -57,8 +57,14 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
-  const { meeting, sections, currentFrame, eventMode, setCurrentFrame } =
-    useContext(EventContext) as EventContextType
+  const {
+    meeting,
+    sections,
+    currentFrame,
+    eventMode,
+    setCurrentFrame,
+    getFrameById,
+  } = useContext(EventContext) as EventContextType
 
   const { permissions } = useEventPermissions()
 
@@ -90,6 +96,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     useState<EventSessionMode>('Lobby')
 
   useEffect(() => {
+    if (!currentFrame) return
+
     if (eventSessionMode === 'Lobby' && isHost) {
       setEventSessionMode('Preview')
     }
@@ -120,13 +128,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         }
       }
 
-      if (sections?.length > 0) {
-        const _currentFrame = sections
-          .flatMap((s) => s.frames)
-          .find((s) => s.id === _activeSession.data?.currentFrameId)
-        setCurrentFrame(_currentFrame || (sections[0].frames || [])[0])
-      }
-
       const newPresentationStatus =
         _activeSession.data?.presentationStatus || PresentationStatuses.STOPPED
 
@@ -135,6 +136,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
       if (newPresentationStatus === PresentationStatuses.STOPPED) {
         setEventSessionMode('Lobby')
+      } else if (sections?.length > 0) {
+        const _currentFrame = sections
+          .flatMap((s) => s.frames)
+          .find((s) => s.id === _activeSession.data?.currentFrameId)
+        setCurrentFrame(_currentFrame || (sections[0].frames || [])[0])
       }
     }
 
@@ -174,7 +180,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       'broadcast',
       { event: 'presentation-status-change' },
       ({ payload }) => {
-        const { newPresentationStatus } = payload ?? {}
+        const { newPresentationStatus, currentFrameId } = payload ?? {}
         if (!newPresentationStatus) return
 
         const getNewEventSessionMode = () => {
@@ -186,10 +192,22 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           return 'Lobby'
         }
 
+        // Get the presented frame by id
+        const presentationFrame = getFrameById(currentFrameId)
+
+        // Return if presentation is started but frame is not found
+        if (
+          newPresentationStatus === PresentationStatuses.STARTED &&
+          !presentationFrame
+        ) {
+          return
+        }
+
         const newEventSessionMode = getNewEventSessionMode()
 
         setEventSessionMode(newEventSessionMode)
         setPresentationStatus(newPresentationStatus)
+        setCurrentFrame(presentationFrame)
 
         if (newPresentationStatus === PresentationStatuses.STOPPED) {
           setEventSessionMode('Lobby')
@@ -417,10 +435,15 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [currentFrame, eventSessionMode, isHost, sections, eventMode])
 
   const startPresentation = () => {
+    const presentedFrame = currentFrame || sections[0].frames[0]
+
     realtimeChannel?.send({
       type: 'broadcast',
       event: 'presentation-status-change',
-      payload: { newPresentationStatus: PresentationStatuses.STARTED },
+      payload: {
+        newPresentationStatus: PresentationStatuses.STARTED,
+        currentFrameId: presentedFrame.id,
+      },
     })
   }
 
