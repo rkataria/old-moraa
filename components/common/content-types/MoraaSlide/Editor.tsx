@@ -7,7 +7,10 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { HistoryFeature } from '@/libs/fabric-history'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
+import { loadCustomFabricObjects } from '@/utils/custom-fabric-objects'
 import { cn } from '@/utils/utils'
+
+loadCustomFabricObjects()
 
 interface CanvasProps {
   frameId: string
@@ -28,7 +31,6 @@ const initializeCanvas = ({ frameId }: { frameId: string }) => {
     selectionDashArray: [4, 4],
     selectionLineWidth: 1,
     backgroundColor: 'transparent',
-    // centeredScaling: true,
     centeredRotation: true,
   })
 
@@ -112,6 +114,13 @@ export function CanvasEditor({
       frameId,
     })
 
+    _canvas.setDimensions({
+      width: canvasContainerRef.current.clientWidth,
+      height: canvasContainerRef.current.clientHeight,
+    })
+    _canvas.setZoom(1)
+    _canvas.renderAll()
+
     setCanvas(frameId, _canvas)
 
     // Enable history feature
@@ -135,36 +144,38 @@ export function CanvasEditor({
 
     if (frameCanvasData) {
       canvas.clear()
+
       canvas.loadFromJSON(JSON.parse(frameCanvasData || '{}'), () => {
         canvas.renderAll()
       })
     }
 
     // Attach event listeners
+
+    canvas.on('object:added', handleObjectAdded)
+    canvas.on('object:modified', handleObjectModified)
+    canvas.on('object:scaling', handleObjectScaling)
+    canvas.on('object:removed', handleObjectRemoved)
     canvas.on('selection:created', handleSelectionCreated)
     canvas.on('selection:updated', (event) =>
       handleSelectionUpdated(event, canvas)
     )
     canvas.on('selection:cleared', handleSelectionCleared)
-    canvas.on('object:added', handleObjectAdded)
-    canvas.on('object:modified', handleObjectModified)
-    canvas.on('object:scaling', handleObjectScaling)
-    canvas.on('object:removed', handleObjectRemoved)
     canvas.on('mouse:over', handleMouseOver)
     canvas.on('mouse:down', handleMouseDown)
     canvas.on('mouse:out', handleMouseOut)
 
     // eslint-disable-next-line consistent-return
     return () => {
+      canvas.off('object:added', handleObjectAdded)
+      canvas.off('object:modified', handleObjectModified)
+      canvas.off('object:scaling', handleObjectScaling)
+      canvas.off('object:removed', handleObjectRemoved)
       canvas.off('selection:created', handleSelectionCreated)
       canvas.off('selection:updated', (event) =>
         handleSelectionUpdated(event, canvas)
       )
       canvas.off('selection:cleared', handleSelectionCleared)
-      canvas.off('object:added', handleObjectAdded)
-      canvas.off('object:modified', handleObjectModified)
-      canvas.off('object:scaling', handleObjectScaling)
-      canvas.off('object:removed', handleObjectRemoved)
       canvas.off('mouse:over', handleMouseOver)
       canvas.off('mouse:down', handleMouseDown)
       canvas.off('mouse:out', handleMouseOut)
@@ -175,10 +186,10 @@ export function CanvasEditor({
 
   const handleSelectionCreated = (event: fabric.IEvent) => {
     if (event.selected?.length === 1 && canvas) {
-      const activeObject = event.selected[0] as fabric.Object
       canvas.isDrawingMode = false
-      canvas.setActiveObject(activeObject)
+
       setRightSidebarVisiblity('frame-appearance')
+
       setCanvas(frameId, canvas)
     }
   }

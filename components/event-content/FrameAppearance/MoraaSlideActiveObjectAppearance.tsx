@@ -2,6 +2,7 @@ import { useContext } from 'react'
 
 import { MoraaSlideActiveObjectCommonAppearance } from './MoraaSlideActiveObjectCommonAppearance'
 
+import { BulletListSettings } from '@/components/common/content-types/MoraaSlide/BulletListSettings'
 import { ImageSettings } from '@/components/common/content-types/MoraaSlide/ImageSettings'
 import { TextboxSettings } from '@/components/common/content-types/MoraaSlide/TextboxSettings'
 import { EventContext } from '@/contexts/EventContext'
@@ -19,6 +20,8 @@ enum ObjectType {
   POLYLINE = 'polyline',
   POLYGON = 'polygon',
   ELLIPSE = 'ellipse',
+  BULLET_LIST = 'BulletList',
+  NUMBER_LIST = 'NumberList',
 }
 
 export function MoraaSlideActiveObjectAppearance() {
@@ -44,6 +47,13 @@ export function MoraaSlideActiveObjectAppearance() {
     [ObjectType.POLYLINE]: null,
     [ObjectType.POLYGON]: null,
     [ObjectType.ELLIPSE]: null,
+    [ObjectType.BULLET_LIST]: (
+      <>
+        <TextboxSettings />
+        <BulletListSettings />
+      </>
+    ),
+    [ObjectType.NUMBER_LIST]: <TextboxSettings />,
   }
 
   const renderer = activeObject
