@@ -8,18 +8,15 @@ import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
 export function OverviewButton({ label }: { label?: string }) {
-  const { overviewOpen, preview, isOwner, eventMode, setOverviewOpen } =
-    useContext(EventContext) as EventContextType
+  const { overviewOpen, eventMode, setOverviewOpen } = useContext(
+    EventContext
+  ) as EventContextType
 
   const handleOverviewClick = () => {
-    if (!isOwner) return
-    if (preview) return
-    if (eventMode !== 'edit') return
-
     setOverviewOpen(true)
   }
 
-  if (!isOwner || eventMode === 'present') return <div />
+  if (eventMode === 'present') return <div />
 
   return (
     <Button

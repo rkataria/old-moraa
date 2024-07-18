@@ -266,3 +266,40 @@ export interface IContentType {
   disabled?: boolean
   templateKey?: string
 }
+
+export const collaborativeActivities = [
+  getContentType(ContentType.POLL),
+  getContentType(ContentType.REFLECTION),
+  getContentType(ContentType.MORAA_BOARD),
+  getContentType(ContentType.BREAKOUT),
+]
+
+export const presentationContent = [
+  getContentType(ContentType.MORAA_SLIDE, 'blank'),
+  getContentType(ContentType.RICH_TEXT),
+]
+
+export const goodies = [
+  getContentType(ContentType.GOOGLE_SLIDES),
+  getContentType(ContentType.PDF_VIEWER),
+  getContentType(ContentType.MIRO_EMBED),
+  getContentType(ContentType.VIDEO_EMBED),
+]
+export const collaborativeTypes = [
+  ContentType.POLL,
+  ContentType.REFLECTION,
+  ContentType.MORAA_BOARD,
+  ContentType.BREAKOUT,
+]
+export const presentationTypes = [
+  ContentType.MORAA_SLIDE,
+  ContentType.RICH_TEXT,
+  ContentType.COVER,
+]
+
+export const goodiesTypes = [
+  ContentType.GOOGLE_SLIDES,
+  ContentType.PDF_VIEWER,
+  ContentType.MIRO_EMBED,
+  ContentType.VIDEO_EMBED,
+]

@@ -81,7 +81,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (!useEventData.event || !currentUser) return
 
     setIsOwner(useEventData.event.owner_id === currentUser?.id)
-    if (useEventData.event.owner_id === currentUser?.id) setOverviewOpen(true)
+    // if (useEventData.event.owner_id === currentUser?.id) setOverviewOpen(true)
+    setOverviewOpen(true)
   }, [useEventData.event, currentUser])
 
   useEffect(() => {

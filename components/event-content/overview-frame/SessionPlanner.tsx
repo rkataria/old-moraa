@@ -8,10 +8,10 @@ import { MdDragIndicator } from 'react-icons/md'
 
 import { Button, Switch } from '@nextui-org/react'
 
-import { AddItemBar } from './AgendaPanel/AddItemBar'
-import { StrictModeDroppable } from './StrictModeDroppable'
-import { FramesList } from '../event-content/overview-frame/FramesList'
+import { FramesList } from './FramesList'
 
+import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
+import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { FrameStatus } from '@/services/types/enums'
@@ -19,7 +19,7 @@ import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
-export function OverviewFrame() {
+export function SessionPlanner() {
   const {
     sections,
     showSectionPlaceholder,
@@ -31,7 +31,6 @@ export function OverviewFrame() {
     addSection,
   } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
-
   const [expandedSections, setExpandedSections] = useState<string[]>([])
 
   const changeSectionStatus = (
@@ -82,8 +81,10 @@ export function OverviewFrame() {
   const editable =
     permissions.canUpdateSection && !preview && eventMode === 'edit'
 
+  if (!permissions.canUpdateSection) return null
+
   return (
-    <div className="flex flex-col flex-1 max-w-5xl m-auto p-4 pt-14">
+    <div className="flex flex-col flex-1 max-w-5xl bg-white rounded-xl shadow-sm p-4 pl-5 pt-5 border border-slate-300">
       <div className="flex items-center justify-between mb-4">
         <p className="font-bold text-xl tracking-tight">Agenda Outline</p>
       </div>
@@ -119,12 +120,12 @@ export function OverviewFrame() {
                         {...sectionDraggableProvided.draggableProps}>
                         <Fragment key={section.id}>
                           <div>
-                            <div className="flex w-full items-center bg-white gap-2 py-3 px-2 border-b  rounded-lg group/section">
+                            <div className="flex w-full items-center bg-white gap-2 p-2 border-b  rounded-lg group/section">
                               <div
                                 className={cn(
-                                  'flex flex-col items-center justify-center -ml-[3.0635rem] mr-0 w-[2.5rem] opacity-0 group-hover/section:opacity-100',
+                                  'flex flex-col items-center justify-center -ml-[45px] -mr-[2px] w-[2.5rem] opacity-0 group-hover/section:opacity-100',
                                   {
-                                    '-ml-[2.625rem]':
+                                    '-ml-[39px] -mr-2':
                                       !expandedSections.includes(section.id),
                                   }
                                 )}>
