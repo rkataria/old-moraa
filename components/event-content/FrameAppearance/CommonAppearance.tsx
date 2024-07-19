@@ -12,10 +12,14 @@ export function CommonAppearance() {
 
   if (!currentFrame) return null
 
+  if (currentFrame.type === ContentType.MORAA_SLIDE) {
+    return null
+  }
+
   return (
     <>
       <FrameBackgroundControl />
-      {currentFrame.type !== ContentType.MORAA_SLIDE && <FontFamilyControl />}
+      <FontFamilyControl />
     </>
   )
 }

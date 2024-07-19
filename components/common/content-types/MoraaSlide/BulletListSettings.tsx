@@ -46,6 +46,7 @@ export function BulletListSettings() {
     activeObject.set('text', updatedText)
     activeObject.set('bulletType', type)
     canvas.renderAll()
+    canvas.fire('object:modified')
     setCanvas(currentFrame?.id as string, canvas)
   }
 

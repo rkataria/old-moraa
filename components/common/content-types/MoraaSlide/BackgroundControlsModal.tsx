@@ -61,6 +61,7 @@ export function BackgroundControlsModal({
   const handleRemoveBackground = () => {
     canvas.backgroundImage = undefined
     canvas.renderAll()
+    canvas.fire('object:modified')
     handleClose()
   }
 
@@ -76,6 +77,7 @@ export function BackgroundControlsModal({
           variant: 'light',
           radius: 'md',
           isIconOnly: true,
+          size: 'sm',
         }}
         onClick={() => {
           setOpen(true)
@@ -110,20 +112,21 @@ export function BackgroundControlsModal({
                         setLoading(true)
 
                         fabric.Image.fromURL(url, (img) => {
+                          img.set({
+                            left: 0,
+                            top: 0,
+                          })
+
+                          img.scaleToHeight(canvas.getHeight())
+                          img.scaleToWidth(canvas.getWidth())
                           canvas.setBackgroundImage(
                             img,
-                            () => {
-                              canvas.renderAll()
-                              setLoading(false)
-                              handleClose()
-                            },
-                            {
-                              scaleX: canvas.getWidth() / img.width!,
-                              scaleY: canvas.getHeight() / img.height!,
-                              originX: 'left',
-                              originY: 'top',
-                            }
+                            canvas.renderAll.bind(canvas)
                           )
+                          canvas.fire('object:modified', { target: img })
+                          canvas.renderAll()
+                          setLoading(false)
+                          handleClose()
                         })
                       }}
                       triggerProps={{
@@ -138,14 +141,14 @@ export function BackgroundControlsModal({
               <ModalFooter>
                 {canvas.backgroundImage && (
                   <Button color="danger" onPress={handleRemoveBackground}>
-                    Remove background
+                    Remove background Image
                   </Button>
                 )}
                 <Button
                   color="secondary"
                   isLoading={loading}
                   onPress={handleClose}>
-                  {loading ? 'Applying background' : 'Done'}
+                  {loading ? 'Applying background image' : 'Done'}
                 </Button>
               </ModalFooter>
             </>

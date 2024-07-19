@@ -312,7 +312,7 @@ export function CanvasEditor({
         <div
           ref={canvasContainerRef}
           className={cn(
-            'flex-auto w-full aspect-video m-auto bg-transparent rounded-sm overflow-hidden',
+            'flex-auto w-full aspect-video max-w-5xl m-auto ml-0 bg-transparent rounded-sm overflow-hidden',
             'border-2 border-black/10'
           )}>
           <canvas ref={canvasRef} id={`canvas-${frameId}`} />

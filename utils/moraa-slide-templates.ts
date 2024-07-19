@@ -412,53 +412,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         img.scaleToHeight(canvas.getHeight())
         img.scaleToWidth(canvas.getWidth())
         canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas))
+        canvas.fire('object:modified', { target: img })
         canvas.renderAll()
       })
-
-      return canvas
-    },
-  },
-  {
-    key: 'title-list',
-    name: 'Title List',
-    loadTemplate: (canvas: fabric.Canvas) => {
-      canvas.clear()
-
-      const title =
-        'Comprehensive Guide to Essential Backpacking Gear: Everything You Need for the Ultimate Outdoor Adventure'
-      const listItems =
-        'Emergency Shelter (tarp, bivy sack)\n Personal Hygiene Items (toilet paper, hand sanitizer) \nSun Protection (hat, sunglasses, sunscreen) \nRepair Kit (duct tape, sewing kit)'
-
-      const titleText = new fabric.Textbox(title, {
-        name: 'title',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[3].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[3].fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
-        textAlign: 'left',
-        padding: 10,
-        width: canvas.getWidth() - 40,
-        left: 20,
-        top: 20,
-      })
-
-      const list = new fabric.NumberList(listItems, {
-        name: 'list',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
-        textAlign: 'left',
-        padding: 10,
-        width: canvas.getWidth() * 0.8,
-        left: 20,
-        top:
-          titleText.getBoundingRect().top +
-          titleText.getBoundingRect().height +
-          10,
-      })
-
-      canvas.add(titleText)
-      canvas.add(list)
-      canvas.renderAll()
 
       return canvas
     },
