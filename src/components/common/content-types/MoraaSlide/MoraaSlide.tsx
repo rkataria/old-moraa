@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { CanvasEditor } from './Editor'
 
@@ -16,55 +16,72 @@ interface CanvasProps {
   }
 }
 
+const SAVE_TO_STORAGE_DELAY = 1000
+
 export function MoraaSlide({ frame }: CanvasProps) {
+  // const { setRightSidebarVisiblity } = useStudioLayout()
   const { updateFrame } = useContext(EventContext) as EventContextType
   const [canvasData] = useState<string | null>(frame.content?.canvas)
   const [frameBackgroundColor, setFrameBackgroundColor] = useState<
     string | null
   >(frame.config?.backgroundColor)
+  const saveTimeout = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (frame.config?.backgroundColor) {
       setFrameBackgroundColor(frame.config?.backgroundColor)
     }
+
+    // setRightSidebarVisiblity('frame-appearance')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frame.config?.backgroundColor])
 
   const saveToStorage = (canvas: fabric.Canvas) => {
-    const json = canvas.toJSON()
+    if (saveTimeout?.current) {
+      clearTimeout(saveTimeout.current as NodeJS.Timeout)
+    }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    json.objects.forEach((object: any) => {
-      if (object.uuid) return
+    const timeout = setTimeout(() => {
+      const json = canvas.toJSON()
 
-      // eslint-disable-next-line no-param-reassign
-      object.uuid = Math.random().toString(36).substring(7)
-    })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      json.objects.forEach((object: any) => {
+        if (object.uuid) return
 
-    updateFrame({
-      framePayload: {
-        content: {
-          ...frame.content,
-          canvas: JSON.stringify({
-            ...json,
-            width: canvas.getWidth(),
-            height: canvas.getHeight(),
-            zoom: canvas.getZoom(),
-          }),
-          svg: canvas.toSVG({
-            suppressPreamble: true,
-            width: canvas.getWidth(),
-            height: canvas.getHeight(),
-            viewBox: {
-              x: 0,
-              y: 0,
+        // eslint-disable-next-line no-param-reassign
+        object.uuid = Math.random().toString(36).substring(7)
+      })
+
+      updateFrame({
+        framePayload: {
+          content: {
+            ...frame.content,
+            canvas: JSON.stringify({
+              ...json,
               width: canvas.getWidth(),
               height: canvas.getHeight(),
-            },
-          }),
+              zoom: canvas.getZoom(),
+            }),
+            svg: canvas.toSVG({
+              suppressPreamble: true,
+              width: canvas.getWidth(),
+              height: canvas.getHeight(),
+              viewBox: {
+                x: 0,
+                y: 0,
+                width: canvas.getWidth(),
+                height: canvas.getHeight(),
+              },
+            }),
+          },
         },
-      },
-      frameId: frame.id,
-    })
+        frameId: frame.id,
+      })
+
+      saveTimeout.current = null
+    }, SAVE_TO_STORAGE_DELAY)
+
+    saveTimeout.current = timeout
   }
 
   return (

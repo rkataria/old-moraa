@@ -412,6 +412,8 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         img.scaleToHeight(canvas.getHeight())
         img.scaleToWidth(canvas.getWidth())
         canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas))
+        canvas.fire('object:modified', { target: img })
+        canvas.renderAll()
       })
 
       return canvas

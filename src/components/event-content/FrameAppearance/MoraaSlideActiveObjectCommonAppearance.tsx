@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 
+import { FaRegClone } from 'react-icons/fa'
 import { PiFlipHorizontalFill, PiFlipVerticalFill } from 'react-icons/pi'
 import { RiBringForward, RiSendBackward } from 'react-icons/ri'
 
@@ -91,6 +92,30 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             canvas.renderAll()
           }}>
           <PiFlipVerticalFill size={18} />
+        </ControlButton>
+        <ControlButton
+          tooltipProps={{
+            content: 'Clone',
+          }}
+          buttonProps={{
+            variant: 'flat',
+            size: 'sm',
+            radius: 'md',
+            className: 'flex-none flex-grow',
+          }}
+          onClick={() => {
+            activeObject.clone((clonedObject: fabric.Object) => {
+              clonedObject.set({
+                left: clonedObject.left! + 10,
+                top: clonedObject.top! + 10,
+              })
+              canvas.add(clonedObject)
+              canvas.setActiveObject(clonedObject)
+              canvas.renderAll()
+              setCanvas(currentFrame?.id as string, canvas)
+            })
+          }}>
+          <FaRegClone size={18} />
         </ControlButton>
       </div>
     </div>

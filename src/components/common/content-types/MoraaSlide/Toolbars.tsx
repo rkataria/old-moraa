@@ -3,9 +3,8 @@ import { useContext } from 'react'
 import { fabric } from 'fabric'
 import { IoImageOutline } from 'react-icons/io5'
 
-import { Draw } from './Draw'
 import { HistoryControls } from './HistoryControls'
-import { Select } from './Select'
+import { ListBox } from './ListBox'
 import { ShapesControls } from './ShapesControls'
 import { TextBox } from './TextBox'
 
@@ -24,9 +23,8 @@ export function Toolbars() {
 
   const renderControls = () => (
     <>
-      <Select />
-      <Draw />
       <TextBox />
+      <ListBox />
       <FileUploader
         onFilesUploaded={(urls) => {
           const url = urls?.[0]?.signedUrl
