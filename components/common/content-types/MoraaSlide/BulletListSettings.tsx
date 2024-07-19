@@ -1,7 +1,15 @@
 /* eslint-disable react/button-has-type */
 import { useContext } from 'react'
 
-import { getBulletChar } from './ListBox'
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@nextui-org/react'
+
+import { BULLET_CHARS, BULLET_TYPES, getBulletChar } from './ListBox'
+import { LabelWithInlineControl } from '../../LabelWithInlineControl'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
@@ -29,12 +37,9 @@ export function BulletListSettings() {
     const updatedText = text
       ?.split('\n')
       .map((line) =>
-        line.startsWith(getBulletChar(currentBulletType!))
-          ? line.replace(
-              `\n${getBulletChar(currentBulletType!)}`,
-              `\n${getBulletChar(type)}`
-            )
-          : `${getBulletChar(type)} ${line}`
+        BULLET_CHARS.includes(line?.[0])
+          ? `${getBulletChar(type)} ${line.slice(2)}`
+          : line
       )
       .join('\n')
 
@@ -45,27 +50,47 @@ export function BulletListSettings() {
   }
 
   return (
-    <div>
-      <div className="py-2">
-        <h3 className="font-semibold">Bullet Type</h3>
-        <div className="pt-2 flex gap-2">
-          <button
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300"
-            onClick={() => updateBulletType('bullet')}>
-            •
-          </button>
-          <button
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300"
-            onClick={() => updateBulletType('star')}>
-            *
-          </button>
-          <button
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300"
-            onClick={() => updateBulletType('dash')}>
-            -
-          </button>
-        </div>
-      </div>
-    </div>
+    <LabelWithInlineControl
+      label="Bullet Type"
+      className="py-2 font-semibold justify-between items-center"
+      control={
+        <BulletTypeDropdown
+          type={activeObject.bulletType!}
+          onChange={updateBulletType}
+        />
+      }
+    />
+  )
+}
+
+function BulletTypeDropdown({
+  type,
+  onChange,
+}: {
+  type: string
+  onChange: (type: string) => void
+}) {
+  const items = Object.keys(BULLET_TYPES).map((key) => (
+    <Button
+      size="sm"
+      variant="flat"
+      isIconOnly
+      radius="full"
+      onClick={() => onChange(key)}>
+      {BULLET_TYPES[key]}
+    </Button>
+  ))
+
+  return (
+    <Popover placement="bottom">
+      <PopoverTrigger>
+        <Button size="sm" variant="flat" isIconOnly radius="full">
+          {BULLET_TYPES[type]}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="max-w-[200px]">
+        <div className="px-0 py-1 flex flex-wrap gap-1">{items}</div>
+      </PopoverContent>
+    </Popover>
   )
 }

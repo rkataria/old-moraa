@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useContext, useState } from 'react'
 
 import { fabric } from 'fabric'
@@ -17,18 +18,18 @@ import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
-export const getBulletChar = (type: string) => {
-  switch (type) {
-    case 'bullet':
-      return '•'
-    case 'star':
-      return '*'
-    case 'dash':
-      return '-'
-    default:
-      return '•'
-  }
+export const BULLET_TYPES: {
+  [key: string]: string
+} = {
+  bullet: '•',
+  arrow: '➤',
+  blackPoint: '⦿',
+  arrowRight: '➔',
+  smile: '😍',
 }
+export const BULLET_CHARS: string[] = Object.values(BULLET_TYPES)
+
+export const getBulletChar = (type: string) => BULLET_TYPES[type]
 
 export function ListBox() {
   const [open, setOpen] = useState(false)
