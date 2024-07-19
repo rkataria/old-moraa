@@ -11,13 +11,12 @@ import { useRouter } from 'next/navigation'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { CiEdit } from 'react-icons/ci'
-import { TbNotes } from 'react-icons/tb'
+import { IoMdArrowBack } from 'react-icons/io'
 import * as yup from 'yup'
 
 import { Button, Image, Textarea } from '@nextui-org/react'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
-import { UserMenu } from '@/components/common/UserMenu'
 import {
   FileUploader,
   FileWithoutSignedUrl,
@@ -97,22 +96,13 @@ function EventsCreatePage() {
   return (
     <div className="bg-gradient-to-b from-[#e9deff] to-[#feffe1] w-screen min-h-screen">
       <div className="flex items-center justify-between p-4">
-        <div className="flex items-center gap-10">
-          <Image src="/logo-icon-square.svg" />
-          <div>
-            <Button
-              as={Link}
-              href="/events"
-              variant="light"
-              startContent={<TbNotes className="text-lg shrink-0" />}
-              className="text-gray-600 text-sm flex items-center gap-1">
-              Events
+        <div className="flex items-center gap-4">
+          <Link href="/events">
+            <Button className="fixed top-6 left-6 !bg-transparent">
+              <IoMdArrowBack />
+              Back
             </Button>
-          </div>
-        </div>
-
-        <div>
-          <UserMenu />
+          </Link>
         </div>
       </div>
       <form
