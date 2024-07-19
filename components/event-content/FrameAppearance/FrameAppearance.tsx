@@ -44,7 +44,7 @@ export function FrameAppearance() {
 
   if (canvasActiveObject) {
     return (
-      <div className="p-4 text-sm">
+      <div className="p-2 text-sm">
         <ConfigurationHeader
           icon={<IoColorPaletteOutline size={18} />}
           title={canvasActiveObject.type!}
@@ -57,7 +57,7 @@ export function FrameAppearance() {
   }
 
   return (
-    <div className="p-4 text-sm">
+    <div className="p-2 text-sm">
       <ConfigurationHeader
         icon={<IoColorPaletteOutline size={18} />}
         title="Appearance"

@@ -1,5 +1,8 @@
 import { useContext } from 'react'
 
+import { fabric } from 'fabric'
+
+import { FileUploader } from '@/components/event-content/FileUploader'
 import { EventContext } from '@/contexts/EventContext'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
@@ -12,16 +15,29 @@ export function ImageSettings() {
 
   if (!canvas) return null
 
-  const activeObject = canvas.getActiveObject() as fabric.Textbox
+  const activeObject = canvas.getActiveObject() as fabric.Image
 
-  if (!activeObject) return null
+  if (!activeObject || activeObject.type !== 'image') return null
 
   return (
-    <div>
-      <div className="py-2">
-        <h3 className="font-semibold">Image</h3>
-        <div className="pt-2 flex flex-col gap-2" />
-      </div>
+    <div className="pt-4">
+      <FileUploader
+        title="Replace Image"
+        triggerProps={{
+          fullWidth: true,
+        }}
+        onFilesUploaded={(urls) => {
+          const url = urls?.[0]?.signedUrl
+
+          if (!url) return
+
+          activeObject.setSrc(url, () => {
+            canvas.setActiveObject(activeObject)
+            canvas?.renderAll()
+            canvas?.fire('object:modified', { target: activeObject })
+          })
+        }}
+      />
     </div>
   )
 }

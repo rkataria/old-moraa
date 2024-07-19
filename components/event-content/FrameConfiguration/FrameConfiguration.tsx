@@ -42,7 +42,7 @@ export function FrameConfiguration() {
   const renderer = renderersByContentType[currentFrame.type]
 
   return (
-    <div className="p-4 text-sm">
+    <div className="p-2 text-sm">
       <ConfigurationHeader icon={<BsSliders />} title="Configuration" />
       <div className="pt-8 flex flex-col gap-4">
         <CommonConfiguration />
