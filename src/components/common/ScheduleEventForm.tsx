@@ -86,11 +86,13 @@ export type ScheduleEventFormProps<
   defaultValue?: FormData
 } & (
   | {
+      id?: string
       formControl?: Control<FormData>
       onSubmit?: void
       renderAction?: void
     }
   | {
+      id?: string
       formControl?: never
       onSubmit?: (formData: FormData) => void
       /**
@@ -98,13 +100,14 @@ export type ScheduleEventFormProps<
        * so a least one of the button rendered using the `renderAction` should have `type="submit"`
        * @returns {ReactElement}
        */
-      renderAction?: () => ReactElement
+      renderAction?: (renderProps: { hasNewChanges: boolean }) => ReactElement
     }
 )
 
 export function ScheduleEventForm<
   FormData extends ScheduleEventFormData = ScheduleEventFormData,
 >({
+  id,
   formControl,
   defaultValue,
   onSubmit,
@@ -143,7 +146,7 @@ export function ScheduleEventForm<
 
   const focusOnClick = () => {
     setTimeout(() => {
-      document.getElementsByName('timezone')?.[0]?.focus()
+      document.getElementsByName(`timezone-${id}`)?.[0]?.focus()
     }, 16.25)
   }
 
@@ -199,7 +202,7 @@ export function ScheduleEventForm<
             )}
           />
           <div>
-            <div className="relative grid gap-1 before:absolute before:content-[''] before:w-px before:h-[38%] before:-translate-y-2/4 before:z-[-1] before:border-l-[2px] before:border-l-black/50 before:border-dotted before:left-[9px] before:top-2/4">
+            <div className="relative grid gap-1 before:absolute before:content-[''] before:w-px before:h-[38%] before:-translate-y-2/4     before:border-l-[2px] before:border-l-black/50 before:border-dotted before:left-[9px] before:top-2/4">
               <div className="flex items-center gap-6 justify-between">
                 <p className="text-gray-400 flex items-center gap-1 text-sm">
                   <GoDotFill className="text-xl" />
@@ -230,10 +233,10 @@ export function ScheduleEventForm<
                 render={({ field, fieldState }) => (
                   <Autocomplete
                     variant="bordered"
-                    name="timezone"
+                    name={`timezone-${id}`}
                     placeholder="Search timezone"
                     startContent={
-                      <div className="absolute grid gap-1 top-0 z-[-1] mt-[6px]">
+                      <div className="absolute grid gap-1 top-0 mt-[6px]">
                         <RiTimeZoneLine className="text-lg text-gray-400" />
                         <p className="text-sm text-gray-400">
                           GMT{getOffset(field.value)}
@@ -295,7 +298,7 @@ export function ScheduleEventForm<
         )}
       />
 
-      {renderAction?.()}
+      {renderAction?.({ hasNewChanges: participantsForm.formState.isDirty })}
     </div>
   )
 

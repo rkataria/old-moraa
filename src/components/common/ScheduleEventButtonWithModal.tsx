@@ -11,6 +11,7 @@ import {
   ModalHeader,
 } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
 import toast from 'react-hot-toast'
 
@@ -23,17 +24,21 @@ import { EventService } from '@/services/event/event-service'
 import { nextRoundedHour } from '@/utils/date'
 
 export function ScheduleEventButtonWithModal({
-  eventId,
+  id = '',
+  withoutModal = false,
   actionButtonLabel = 'Schedule Event',
   showLabel = true,
   disclosure,
 }: {
-  eventId: string
+  id?: string
+  withoutModal?: boolean
   actionButtonLabel?: string
   showLabel?: boolean
   disclosure?: UseDisclosureReturn
 }) {
+  const { eventId }: { eventId: string } = useParams({ strict: false })
   const event = useEvent({ id: eventId })
+
   const [open, setOpen] = useState<boolean>(false)
 
   const closeModal = () => {
@@ -75,9 +80,6 @@ export function ScheduleEventButtonWithModal({
   })
 
   const onSubmit = (formData: ScheduleEventFormData) => {
-    console.log('formData', formData)
-
-    // return
     const startDate = DateTime.fromISO(
       `${formData.startDate}T${formData.startTime}:00.000`,
       {
@@ -111,6 +113,53 @@ export function ScheduleEventButtonWithModal({
     zone: event.event.timezone,
   }).toISO()
 
+  const form = () => (
+    <ScheduleEventForm
+      id={id}
+      defaultValue={{
+        startDate:
+          startDate?.substring(0, 10) || DateTime.now().toFormat('yyyy-MM-dd'),
+        startTime: startDate?.substring(11, 16) || nextRoundedHour(),
+        endDate:
+          endDate?.substring(0, 10) || DateTime.now().toFormat('yyyy-MM-dd'),
+        endTime: endDate?.substring(11, 16) || nextRoundedHour(60),
+        timezone: event.event.timezone || DateTime.local().zoneName,
+        imageUrl: event.event.image_url,
+        name: event.event.name,
+        description: event.event.description,
+      }}
+      onSubmit={onSubmit}
+      renderAction={(renderProps) => {
+        const render = withoutModal ? renderProps.hasNewChanges : true
+
+        return !render ? (
+          <div />
+        ) : (
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="bordered"
+              className="mr-2"
+              onClick={closeModal}
+              isDisabled={scheduleEventMutation.isPending}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              variant="solid"
+              isLoading={scheduleEventMutation.isPending}>
+              Save
+            </Button>
+          </div>
+        )
+      }}
+    />
+  )
+
+  if (withoutModal) {
+    return form()
+  }
+
   return (
     <div>
       {showLabel && (
@@ -139,46 +188,7 @@ export function ScheduleEventButtonWithModal({
                 </p>
               </ModalHeader>
               <ModalBody className="mt-4">
-                {event.isLoading ? null : (
-                  <ScheduleEventForm
-                    defaultValue={{
-                      startDate:
-                        startDate?.substring(0, 10) ||
-                        DateTime.now().toFormat('yyyy-MM-dd'),
-                      startTime:
-                        startDate?.substring(11, 16) || nextRoundedHour(),
-                      endDate:
-                        endDate?.substring(0, 10) ||
-                        DateTime.now().toFormat('yyyy-MM-dd'),
-                      endTime:
-                        endDate?.substring(11, 16) || nextRoundedHour(60),
-                      timezone:
-                        event.event.timezone || DateTime.local().zoneName,
-                      imageUrl: event.event.image_url,
-                      name: event.event.name,
-                      description: event.event.description,
-                    }}
-                    onSubmit={onSubmit}
-                    renderAction={() => (
-                      <div className="flex justify-end mb-4">
-                        <Button
-                          variant="bordered"
-                          className="mr-2"
-                          onClick={closeModal}
-                          isDisabled={scheduleEventMutation.isPending}>
-                          Cancel
-                        </Button>
-                        <Button
-                          type="submit"
-                          color="primary"
-                          variant="solid"
-                          isLoading={scheduleEventMutation.isPending}>
-                          Save
-                        </Button>
-                      </div>
-                    )}
-                  />
-                )}
+                {event.isLoading ? null : form()}
               </ModalBody>
             </>
           )}

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import {
   Button,
   ButtonGroup,
@@ -14,18 +12,16 @@ import { ChevronDownIcon } from 'lucide-react'
 
 import { ScheduleEventButtonWithModal } from '../ScheduleEventButtonWithModal'
 
+import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
+
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventStatus } from '@/services/types/enums'
 
 function ScheduleSessionButton({
-  eventId,
-  eventStatus,
+  scheduleModal,
 }: {
-  eventId: string
-  eventStatus: string
+  scheduleModal: UseDisclosureReturn
 }) {
-  const scheduleModal = useDisclosure()
-
   const { permissions } = useEventPermissions()
 
   if (!permissions.canUpdateMeeting) {
@@ -33,47 +29,39 @@ function ScheduleSessionButton({
   }
 
   return (
-    <>
-      <Dropdown
-        placement="bottom-end"
+    <Dropdown
+      placement="bottom-end"
+      closeOnSelect={false}
+      shouldCloseOnInteractOutside={(Element) => {
+        const wrapperElement = document.getElementById('schedule-event-form')
+
+        return !wrapperElement?.contains(Element)
+      }}>
+      <DropdownTrigger>
+        <Button isIconOnly>
+          <ChevronDownIcon />
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu
+        className="p-0"
         closeOnSelect={false}
-        shouldCloseOnInteractOutside={(Element) => {
-          const wrapperElement = document.getElementById('schedule-event-form')
-
-          return !wrapperElement?.contains(Element)
+        onAction={(key) => {
+          if (key === 're-schedule') {
+            scheduleModal.onOpen()
+          }
         }}>
-        <DropdownTrigger>
-          <Button isIconOnly>
-            <ChevronDownIcon />
+        <DropdownItem key="re-schedule" className="p-0" closeOnSelect>
+          <Button
+            variant="solid"
+            color="primary"
+            size="sm"
+            radius="md"
+            fullWidth>
+            Re-schedule event
           </Button>
-        </DropdownTrigger>
-        <DropdownMenu
-          className="p-0"
-          closeOnSelect={false}
-          onAction={(key) => {
-            if (key === 're-schedule') {
-              scheduleModal.onOpen()
-            }
-          }}>
-          <DropdownItem key="re-schedule" className="p-0" closeOnSelect>
-            <Button
-              variant="solid"
-              color="primary"
-              size="sm"
-              radius="md"
-              fullWidth>
-              Re-schedule event
-            </Button>
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
-
-      <ScheduleEventButtonWithModal
-        eventId={eventId}
-        showLabel={eventStatus !== EventStatus.SCHEDULED}
-        disclosure={scheduleModal}
-      />
-    </>
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   )
 }
 
@@ -84,6 +72,8 @@ function ActionButton({
   eventId: string
   eventStatus: string
 }) {
+  const scheduleModal = useDisclosure()
+
   const { permissions } = useEventPermissions()
 
   if (
@@ -91,25 +81,33 @@ function ActionButton({
     eventStatus === EventStatus.SCHEDULED
   ) {
     return (
-      <ButtonGroup variant="solid" color="primary" size="sm" radius="md">
-        <Button
-          as={Link}
-          href={`/event-session/${eventId}`}
-          title="Start Session">
-          <Link to={`/event-session/${eventId}`}>Start live session</Link>
-        </Button>
-        <ScheduleSessionButton eventId={eventId} eventStatus={eventStatus} />
-      </ButtonGroup>
+      <>
+        <ButtonGroup variant="solid" color="primary" size="sm" radius="md">
+          <Button
+            as={Link}
+            to={`/event-session/${eventId}`}
+            title="Start Session">
+            <Link to={`/event-session/${eventId}`}>Start live session</Link>
+          </Button>
+          <ScheduleSessionButton scheduleModal={scheduleModal} />
+        </ButtonGroup>
+
+        <ScheduleEventButtonWithModal
+          id="gamma"
+          showLabel={false}
+          disclosure={scheduleModal}
+        />
+      </>
     )
   }
 
   if (permissions.canUpdateMeeting) {
-    return <ScheduleEventButtonWithModal eventId={eventId} />
+    return <ScheduleEventButtonWithModal id="beta" />
   }
 
   if (eventStatus === EventStatus.SCHEDULED) {
     return (
-      <Button as={Link} href={`/event-session/${eventId}`} title="Join Session">
+      <Button as={Link} to={`/event-session/${eventId}`} title="Join Session">
         Join live session
       </Button>
     )

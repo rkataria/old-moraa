@@ -97,7 +97,7 @@ export function FrameItem({
           ref={_provided.innerRef}
           {..._provided.draggableProps}
           className="flex w-full bg-white group/frame gap-[0.625rem]">
-          <div className="flex flex-col items-center justify-center -ml-[49px] -mr-1 opacity-0 w-[50px] group-hover/frame:opacity-100">
+          <div className="flex flex-col items-center justify-center -ml-[43px] -mr-4 opacity-0 w-[50px] group-hover/frame:opacity-100">
             <div {..._provided.dragHandleProps}>
               <MdOutlineDragIndicator
                 height={40}
@@ -118,9 +118,10 @@ export function FrameItem({
             className="rounded-md overflow-hidden flex items-center gap-3"
             style={{ flex: 3 }}>
             <div className="border-r-[0.375rem] flex flex-col items-center gap-2 p-2">
-              <ContentTypeIcon frameType={frame.type} />
               <Minutes frame={frame} />
             </div>
+            <ContentTypeIcon frameType={frame.type} />
+
             <EditableLabel
               className="text-sm"
               readOnly={!editable}

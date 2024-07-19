@@ -11,12 +11,14 @@ export function EditableLabel({
   readOnly = true,
   label,
   className = '',
+  wrapperClass = '',
   onClick,
   onUpdate,
 }: {
   readOnly?: boolean
   label: string
   className?: string
+  wrapperClass?: string
   onClick?: () => void
   onUpdate: (value: string) => void
 }) {
@@ -28,7 +30,11 @@ export function EditableLabel({
   }, [label])
 
   return (
-    <div className="w-full flex justify-between items-center gap-2">
+    <div
+      className={cn(
+        'w-full flex justify-between items-center gap-2',
+        wrapperClass
+      )}>
       <Tooltip
         showArrow
         placement="right"

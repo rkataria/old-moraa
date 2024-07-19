@@ -15,7 +15,6 @@ export function FrameContainer() {
     EventContext
   ) as EventContextType
   const { permissions } = useEventPermissions()
-
   // If the overview is open, show the overview frame
   if (overviewOpen) {
     return <OverviewFrame />
