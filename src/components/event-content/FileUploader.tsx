@@ -29,7 +29,7 @@ import { supabaseClient } from '@/utils/supabase/client'
 
 type File = UppyFile<Record<string, unknown>, Record<string, unknown>>
 
-const TRANSLOADIT_AUTH_KEY = import.meta.env.VITE_TRANSLOADIT ?? ''
+const TRANSLOADIT_AUTH_KEY = import.meta.env.VITE_TRANSLOADIT_KEY ?? ''
 const TEMPLATE_ID = import.meta.env.VITE_TRANSLOADIT_TEMPLATE_ID ?? ''
 
 export type FileWithSignedUrl = {
