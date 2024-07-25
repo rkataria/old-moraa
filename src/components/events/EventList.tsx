@@ -116,10 +116,7 @@ export function EventList() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            className="bg-black text-white"
-            as={Link}
-            href="/events/create">
+          <Button className="bg-black text-white" as={Link} to="/events/create">
             <p className="flex items-center gap-2">
               Create new <MdOutlineAddBox className="text-[18px]" />
             </p>

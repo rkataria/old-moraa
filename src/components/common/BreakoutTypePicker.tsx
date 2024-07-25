@@ -86,7 +86,7 @@ export function BreakoutTypePicker({
     useState<BREAKOUT_TYPES>(BREAKOUT_TYPES.GROUPS)
 
   const [breakoutRoomsGroupsCount, setBreakoutRoomsGroupsCount] =
-    useState<number>(1)
+    useState<number>(3)
 
   const [breakoutRoomsGroupsTime, setBreakoutRoomsGroupsTime] =
     useState<number>(5)
@@ -166,7 +166,7 @@ export function BreakoutTypePicker({
                             e.stopPropagation()
                           }}>
                           <TwoWayNumberCounter
-                            defaultCount={2}
+                            defaultCount={breakoutRoomsGroupsCount}
                             onCountChange={(count) =>
                               setBreakoutRoomsGroupsCount(count)
                             }

@@ -114,7 +114,7 @@ export function AgendaPanelContextProvider({
     return getFilteredFramesByStatus({
       frames: section.frames,
       status:
-        showPublishedFrames && eventMode !== 'present' ? null : 'PUBLISHED',
+        showPublishedFrames && eventMode !== 'present' ? 'PUBLISHED' : null,
     })
   }
 
@@ -260,8 +260,12 @@ export function AgendaPanelContextProvider({
         return
       }
 
+      if (!nextFrame && !nextSection?.id) {
+        return
+      }
+
       // 1.4 if current frame is set, and there is no next frame, highlight the next section
-      if (!nextFrame) {
+      if (!nextFrame && nextSection?.id) {
         setCurrentSectionId(nextSection?.id as string)
         setCurrentFrame(null)
       }

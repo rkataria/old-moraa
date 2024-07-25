@@ -46,7 +46,6 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     preview,
     currentFrame,
     sections,
-    insertAfterFrameId,
     insertInSectionId,
     addFrameToSection,
     setCurrentFrame,
@@ -75,7 +74,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     templateKey?: string
   ): void => {
     let currentSection
-    const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
+    const _insertAfterFrameId = currentFrame?.id
 
     if (insertInSectionId) {
       currentSection = sections.find((s) => s.id === insertInSectionId)

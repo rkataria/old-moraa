@@ -44,7 +44,7 @@ export function SidebarItem() {
       {navigation.map((item) => (
         <Button
           as={Link}
-          href={item.href}
+          to={item.href}
           variant="light"
           className={cn(
             'hover:bg-[#EDE0FB] w-full justify-start font-semibold text-slate-600 tracking-tight gap-[0.625rem]',

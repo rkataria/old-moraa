@@ -100,7 +100,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
               'max-w-[calc(100%_-_2rem)] border border-gray-300':
                 listDisplayMode === 'grid',
               'w-full': listDisplayMode === 'list',
-              'bg-purple-200': frameActive,
+              'bg-purple-300': frameActive,
               'border-2 border-gray-600':
                 frameActive && listDisplayMode === 'grid',
               'border-transparent':
@@ -197,7 +197,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
       <div
         data-miniframe-id={frame?.id}
         className={cn(
-          'flex justify-center items-center cursor-pointer p-1.5 border-1 border-transparent hover:bg-purple-200',
+          'flex justify-center items-center cursor-pointer p-1.5 border-1 border-transparent hover:bg-purple-500',
           {
             'bg-purple-200': frameActive,
           }
