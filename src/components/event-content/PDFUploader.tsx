@@ -30,10 +30,7 @@ interface PDFUploaderProps {
   }
 }
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.js',
-  import.meta.url
-).toString()
+pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 
 const getPDFName = (frameId: string) => `${frameId}_pdf.pdf`
 
