@@ -1,3 +1,5 @@
+@import './styles/editor.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -171,7 +173,7 @@
 .tiptap table {
   border-collapse: collapse;
   margin: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
   table-layout: fixed;
   width: 100%;
 }
@@ -218,7 +220,7 @@
 }
 .tableWrapper {
   padding: 1rem 0;
-  overflow-x: auto;
+  /* overflow-x: auto; */
 }
 .resize-cursor {
   cursor: ew-resize;

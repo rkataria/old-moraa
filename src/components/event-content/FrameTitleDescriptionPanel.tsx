@@ -18,6 +18,7 @@ export const frameTypesWithTitle = [
   ContentType.PDF_VIEWER,
   ContentType.MORAA_BOARD,
   ContentType.BREAKOUT,
+  ContentType.RICH_TEXT,
 ]
 
 export const frameTypesWithDescription = [
@@ -30,6 +31,7 @@ export const frameTypesWithDescription = [
   ContentType.PDF_VIEWER,
   ContentType.MORAA_BOARD,
   ContentType.BREAKOUT,
+  ContentType.RICH_TEXT,
 ]
 
 export function FrameTitleDescriptionPanel() {

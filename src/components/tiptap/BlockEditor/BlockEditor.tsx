@@ -1,0 +1,129 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
+import { useMemo, useRef } from 'react'
+
+import { EditorContent, PureEditorContent } from '@tiptap/react'
+import { createPortal } from 'react-dom'
+
+import { EditorHeader } from './components/EditorHeader'
+import { TiptapProps } from './types'
+import { ContentItemMenu } from '../menus/ContentItemMenu'
+import { TextMenu } from '../menus/TextMenu'
+
+import { EditorContext } from '@/components/tiptap/context/EditorContext'
+import ImageBlockMenu from '@/components/tiptap/extensions/ImageBlock/components/ImageBlockMenu'
+import { ColumnsMenu } from '@/components/tiptap/extensions/MultiColumn/menus'
+import {
+  TableColumnMenu,
+  TableRowMenu,
+} from '@/components/tiptap/extensions/Table/menus'
+import { useAIState } from '@/components/tiptap/hooks/useAIState'
+import { useBlockEditor } from '@/components/tiptap/hooks/useBlockEditor'
+import { LinkMenu } from '@/components/tiptap/menus'
+import { Sidebar } from '@/components/tiptap/Sidebar'
+import { Loader } from '@/components/tiptap/ui/Loader'
+import '@/styles/tiptap/animations.css'
+import '@/styles/tiptap/blocks.css'
+import '@/styles/tiptap/code.css'
+import '@/styles/tiptap/collab.css'
+import '@/styles/tiptap/index.css'
+import '@/styles/tiptap/list.css'
+import '@/styles/tiptap/placeholder.css'
+import '@/styles/tiptap/table.css'
+import '@/styles/tiptap/typography.css'
+
+export function BlockEditor({
+  aiToken,
+  ydoc,
+  provider,
+  editorInfo,
+  editable,
+  setAiToken,
+  setCollabToken,
+}: TiptapProps) {
+  const aiState = useAIState()
+  const menuContainerRef = useRef(null)
+  const editorRef = useRef<PureEditorContent | null>(null)
+
+  const { editor, users, characterCount, collabState, leftSidebar } =
+    useBlockEditor({
+      aiToken,
+      ydoc,
+      provider,
+      editorInfo,
+      editable,
+      setCollabToken,
+      setAiToken,
+    })
+
+  const displayedUsers = users.slice(0, 3)
+
+  const providerValue = useMemo(
+    () => ({
+      isAiLoading: aiState.isAiLoading,
+      aiError: aiState.aiError,
+      setIsAiLoading: aiState.setIsAiLoading,
+      setAiError: aiState.setAiError,
+    }),
+    [aiState]
+  )
+
+  if (providerValue.isAiLoading) {
+    return <Loader />
+  }
+
+  if (!editor) {
+    return null
+  }
+
+  const aiLoaderPortal = createPortal(
+    <Loader label="AI is now doing its job." />,
+    document.body
+  )
+  if (!editable) {
+    return (
+      <EditorContent
+        editor={editor}
+        ref={editorRef}
+        className="flex-1 overflow-y-auto scrollbar-none"
+      />
+    )
+  }
+
+  return (
+    <EditorContext.Provider value={providerValue}>
+      <div className="flex h-[calc(100vh_-_198px)]" ref={menuContainerRef}>
+        <Sidebar
+          isOpen={leftSidebar.isOpen}
+          onClose={leftSidebar.close}
+          editor={editor}
+        />
+        <div className="relative w-full h-full border bg-[#FEFEFE] rounded-3xl px-[0.5625rem] pt-[6px] overflow-hidden">
+          <EditorHeader
+            characters={characterCount.characters()}
+            collabState={collabState}
+            users={displayedUsers}
+            words={characterCount.words()}
+            isSidebarOpen={leftSidebar.isOpen}
+            toggleSidebar={leftSidebar.toggle}
+          />
+          <EditorContent
+            id="ai-page-editor"
+            editor={editor}
+            ref={editorRef}
+            className="overflow-y-scroll w-full h-full pl-[58px] scrollbar-none pt-6"
+          />
+          <ContentItemMenu editor={editor} />
+          <LinkMenu editor={editor} appendTo={menuContainerRef} />
+          <TextMenu editor={editor} />
+          <ColumnsMenu editor={editor} appendTo={menuContainerRef} />
+          <TableRowMenu editor={editor} appendTo={menuContainerRef} />
+          <TableColumnMenu editor={editor} appendTo={menuContainerRef} />
+          <ImageBlockMenu editor={editor} appendTo={menuContainerRef} />
+        </div>
+      </div>
+      {aiState.isAiLoading && aiLoaderPortal}
+    </EditorContext.Provider>
+  )
+}

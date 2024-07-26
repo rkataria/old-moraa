@@ -6,10 +6,10 @@ import { GoogleSlides } from './content-types/GoogleSlides'
 import { PDFViewer } from './content-types/PDFViewer'
 import { Poll, Vote } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
-import { RichText } from './content-types/RichText'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
 import { BreakoutFrameLive } from '../common/breakout/BreakoutLive'
+import { AiPageEditor } from '../common/content-types/AiPage/AiPageEditor'
 import { MoraaBoard } from '../common/content-types/MoraaBoard'
 import { MoraaSlidePreview } from '../common/content-types/MoraaSlide/Preview'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
@@ -87,7 +87,7 @@ export function Frame() {
       />
     ),
     [ContentType.RICH_TEXT]: (
-      <RichText key={currentFrame.id} frame={currentFrame} />
+      <AiPageEditor frame={currentFrame} editable={false} />
     ),
     [ContentType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
     [ContentType.MORAA_BOARD]: <MoraaBoard frame={currentFrame as any} />,

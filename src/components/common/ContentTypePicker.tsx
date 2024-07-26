@@ -15,12 +15,12 @@ import {
   IconBrandAdobe,
   IconChartBar,
   IconVideo,
-  IconFileText,
 } from '@tabler/icons-react'
 import { BsQuestionCircle } from 'react-icons/bs'
 import { IoPeopleOutline } from 'react-icons/io5'
 import { MdOutlineDraw } from 'react-icons/md'
 import { SiMiro } from 'react-icons/si'
+import { TbNews } from 'react-icons/tb'
 
 import { ContentTypeCard } from './ContentTypeCard'
 import { RenderIf } from './RenderIf/RenderIf'
@@ -55,6 +55,7 @@ export enum ContentType {
   MORAA_BOARD = 'Moraa Board',
   BREAKOUT = 'Breakout',
 }
+
 export const INTERACTIVE_FRAME_TYPES = [
   ContentType.POLL,
   ContentType.REFLECTION,
@@ -70,7 +71,7 @@ export const contentTypes: IContentType[] = [
   },
   {
     name: 'Page',
-    icon: <IconFileText className="w-full h-full max-w-11 max-h-11" />,
+    icon: <TbNews className="w-full h-full max-w-11 max-h-11" />,
     description: 'Create a rich text editor',
     contentType: ContentType.RICH_TEXT,
   },

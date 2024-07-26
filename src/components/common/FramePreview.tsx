@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from './breakout/BreakoutFrame'
+import { AiPageEditor } from './content-types/AiPage/AiPageEditor'
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
 import { MoraaSlidePreview } from './content-types/MoraaSlide/Preview'
@@ -21,7 +22,6 @@ import {
   VideoEmbedEditor,
   VideoEmbedFrameType,
 } from '../event-content/VideoEmbedEditor'
-import { RichText } from '../event-session/content-types/RichText'
 import { TextImage } from '../event-session/content-types/TextImage'
 
 import { Cover, CoverFrameType } from '@/components/common/content-types/Cover'
@@ -132,7 +132,9 @@ export function FramePreview({ frame, isInteractive = true }: FrameProps) {
         {frame.type === ContentType.MIRO_EMBED && (
           <MiroEmbedEditor viewOnly frame={frame as MiroEmbedFrameType} />
         )}
-        {frame.type === ContentType.RICH_TEXT && <RichText frame={frame} />}
+        {frame.type === ContentType.RICH_TEXT && (
+          <AiPageEditor frame={frame} editable={false} />
+        )}
         {frame.type === ContentType.MORAA_BOARD && (
           <MoraaBoard frame={frame as MoraaBoardFrame} isInteractive={false} />
         )}

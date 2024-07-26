@@ -5,7 +5,6 @@ import { useContext } from 'react'
 
 import { CoverEditor } from './content-types/CoverEditor'
 import { MoraaBoardEditor } from './content-types/MoraaBoardEditor'
-import { RichTextEditor } from './content-types/RichTextEditor'
 import { TextImageEditor } from './content-types/TextImageEditor'
 import { FrameTitleDescriptionPanel } from './FrameTitleDescriptionPanel'
 import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
@@ -16,6 +15,7 @@ import { PollEditor } from './PollEditor'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
+import { AiPageEditor } from '../common/content-types/AiPage/AiPageEditor'
 import { MoraaSlide } from '../common/content-types/MoraaSlide/MoraaSlide'
 import { FramePreview } from '../common/FramePreview'
 
@@ -61,7 +61,8 @@ export function Frame({ frame }: FrameProps) {
     [ContentType.IMAGE_VIEWER]: (
       <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
     ),
-    [ContentType.RICH_TEXT]: <RichTextEditor />,
+    [ContentType.RICH_TEXT]: <AiPageEditor frame={frame} />,
+
     [ContentType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
     [ContentType.MORAA_BOARD]: <MoraaBoardEditor frame={frame} />,
     [ContentType.MORAA_SLIDE]: <MoraaSlide frame={frame as any} />,

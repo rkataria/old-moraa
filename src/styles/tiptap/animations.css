@@ -1,0 +1,36 @@
+.spinner-animation {
+  animation: spinner 1.6s linear infinite;
+  animation-delay: -1.6s;
+}
+
+.spinner-animation-secondary {
+  animation: spinner 1.6s linear infinite;
+  animation-delay: -1s;
+}
+
+@keyframes spinner {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  12.5% {
+    transform: translate(12px, 0);
+  }
+  25% {
+    transform: translate(12px, 12px);
+  }
+  37.5% {
+    transform: translate(0, 12px);
+  }
+  50% {
+    transform: translate(-12px, 12px);
+  }
+  62.5% {
+    transform: translate(-12px, 0);
+  }
+  75% {
+    transform: translate(-12px, -12px);
+  }
+  87.5% {
+    transform: translate(0, -12px);
+  }
+}

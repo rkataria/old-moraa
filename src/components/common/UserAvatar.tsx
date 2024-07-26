@@ -14,6 +14,28 @@ interface IUserAvatar {
   nameClass?: string
   descriptionClass?: string
 }
+export const getProfileName = (profile: IUserProfile) => {
+  if (!profile) {
+    return 'Moraa User'
+  }
+
+  if (profile.first_name && profile.last_name) {
+    return `${profile.first_name} ${profile.last_name}`
+  }
+
+  return 'Moraa User'
+}
+export const getAvatar = (profile: IUserProfile) => {
+  if (!profile) {
+    return ''
+  }
+
+  if (profile.avatar_url) {
+    return profile.avatar_url
+  }
+
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(getProfileName(profile))}`
+}
 
 export function UserAvatar({
   profile,
@@ -23,43 +45,19 @@ export function UserAvatar({
   nameClass,
   descriptionClass,
 }: IUserAvatar) {
-  const getProfileName = () => {
-    if (!profile) {
-      return 'Moraa User'
-    }
-
-    if (profile.first_name && profile.last_name) {
-      return `${profile.first_name} ${profile.last_name}`
-    }
-
-    return 'Moraa User'
-  }
-
-  const getAvatar = () => {
-    if (!profile) {
-      return ''
-    }
-
-    if (profile.avatar_url) {
-      return profile.avatar_url
-    }
-
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(getProfileName())}`
-  }
-
   if (withName) {
     return (
       <User
-        name={getProfileName()}
+        name={getProfileName(profile)}
         description={description}
         avatarProps={{
           ...avatarProps,
-          src: getAvatar(),
+          src: getAvatar(profile),
         }}
         classNames={{ name: nameClass, description: descriptionClass }}
       />
     )
   }
 
-  return <Avatar src={getAvatar()} {...avatarProps} />
+  return <Avatar src={getAvatar(profile)} {...avatarProps} />
 }
