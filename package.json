@@ -30,6 +30,7 @@
     "@dytesdk/web-core": "^1.31.0",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
+    "@happykit/flags": "^3.3.0",
     "@headlessui/react": "^2.1.2",
     "@hookform/resolvers": "^3.9.0",
     "@internationalized/date": "^3.5.4",
@@ -177,5 +178,9 @@
       "bash -c tsc -p tsconfig.json --pretty --noEmit",
       "git add "
     ]
+  },
+  "resolutions": {
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.1.0"
   }
 }

@@ -1,6 +1,8 @@
 import { Button, ButtonProps } from '@nextui-org/react'
 import { BsGrid, BsList } from 'react-icons/bs'
 
+import { useFlags } from '@/flags/client'
+
 export function ListToggleButton({
   buttonProps,
   listDisplayMode,
@@ -10,6 +12,10 @@ export function ListToggleButton({
   listDisplayMode: string
   toggleListDisplayMode: () => void
 }) {
+  const { flags } = useFlags()
+
+  if (!flags?.show_frame_thumbnails) return null
+
   return (
     <Button
       {...buttonProps}

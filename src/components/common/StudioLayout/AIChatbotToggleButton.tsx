@@ -2,6 +2,7 @@ import { Button } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { LuSparkles } from 'react-icons/lu'
 
+import { useFlags } from '@/flags/client'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
@@ -32,7 +33,11 @@ export function ToggleButton() {
 }
 
 export function AIChatbotToggleButton() {
+  const { flags } = useFlags()
+
   const { permissions } = useEventPermissions()
+
+  if (!flags?.show_ai_panel) return null
 
   if (!permissions.canUpdateFrame) {
     return null
