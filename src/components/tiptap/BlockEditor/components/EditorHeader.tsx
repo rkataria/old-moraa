@@ -24,7 +24,7 @@ export function EditorHeader({
   toggleSidebar,
 }: EditorHeaderProps) {
   return (
-    <div className="flex flex-row items-center justify-between flex-none p-[0.3125rem] sticky top-0">
+    <div className="flex flex-row items-center justify-between flex-none p-[0.3125rem] sticky top-0 z-[100] bg-white pt-[0.375rem]">
       <div className="flex flex-row gap-x-1.5 items-center">
         <div className="flex items-center gap-x-1.5">
           <Toolbar.Button

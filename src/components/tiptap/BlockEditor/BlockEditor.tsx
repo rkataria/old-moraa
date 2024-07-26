@@ -99,7 +99,7 @@ export function BlockEditor({
           onClose={leftSidebar.close}
           editor={editor}
         />
-        <div className="relative w-full h-full border bg-[#FEFEFE] rounded-3xl px-[0.5625rem] pt-[6px] overflow-hidden">
+        <div className="relative w-full h-full border bg-[#FEFEFE] rounded-3xl px-[0.5625rem] overflow-hidden">
           <EditorHeader
             characters={characterCount.characters()}
             collabState={collabState}
