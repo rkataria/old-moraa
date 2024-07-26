@@ -1,8 +1,8 @@
 import { useContext } from 'react'
 
 import { Frame } from './Frame'
+import { OverviewFrame } from './overview-frame/OverviewFrame'
 import { FrameControls } from '../common/FrameControls'
-import { OverviewFrame } from '../common/OverviewFrame'
 import { SectionOverview } from '../common/SectionOverview'
 
 import { EventContext } from '@/contexts/EventContext'

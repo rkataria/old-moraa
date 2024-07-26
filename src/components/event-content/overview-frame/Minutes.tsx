@@ -36,16 +36,17 @@ export function Minutes({ frame }: { frame: IFrame }) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         value={minutes as any}
         classNames={{
-          inputWrapper: 'h-[22px] p-0 overflow-hidden',
+          inputWrapper: 'h-6 min-h-6 p-0 overflow-hidden',
           input: 'w-[47px] text-center',
-          helperWrapper: 'text-center',
+          helperWrapper: 'text-center p-0',
+          mainWrapper: 'gap-0.5',
         }}
         description="minutes"
         startContent={
           <Button
             variant="light"
             onClick={() => setMinutes(minutes - 1)}
-            className="px-1">
+            className="px-1 min-w-2">
             -
           </Button>
         }
@@ -53,7 +54,7 @@ export function Minutes({ frame }: { frame: IFrame }) {
           <Button
             variant="light"
             onClick={() => setMinutes(minutes + 1)}
-            className="px-1">
+            className="px-1 min-w-2">
             +
           </Button>
         }

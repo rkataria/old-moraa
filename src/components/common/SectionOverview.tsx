@@ -60,11 +60,7 @@ export function SectionOverview() {
   const categoriesCount = getTypesCount()
 
   return (
-    <div
-      className="w-full h-full"
-      style={{
-        background: 'linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%)',
-      }}>
+    <div className="bg-pattern-1 w-full h-full">
       <div className="w-full h-full grid gap-4 place-items-center bg-white bg-opacity-30">
         <div className="grid place-items-center">
           <EditableLabel
@@ -97,6 +93,7 @@ export function SectionOverview() {
               className="bg-white shadow-md pl-2  border border-blue-200">
               Presentation
             </Chip>
+
             <Chip
               variant="flat"
               startContent={

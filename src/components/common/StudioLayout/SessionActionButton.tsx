@@ -93,7 +93,7 @@ function ActionButton({
         </ButtonGroup>
 
         <ScheduleEventButtonWithModal
-          id="gamma"
+          id="re-schedule"
           showLabel={false}
           disclosure={scheduleModal}
         />
@@ -102,7 +102,7 @@ function ActionButton({
   }
 
   if (permissions.canUpdateMeeting) {
-    return <ScheduleEventButtonWithModal id="beta" />
+    return <ScheduleEventButtonWithModal id="schedule" />
   }
 
   if (eventStatus === EventStatus.SCHEDULED) {

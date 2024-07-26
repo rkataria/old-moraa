@@ -18,7 +18,7 @@ import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
-export function SessionPlanner() {
+export function SessionPlanner({ className }: { className?: string }) {
   const {
     sections,
     showSectionPlaceholder,
@@ -83,7 +83,11 @@ export function SessionPlanner() {
   if (!permissions.canUpdateSection) return null
 
   return (
-    <div className="flex flex-col flex-1 max-w-5xl bg-white rounded-xl shadow-sm p-4 pl-5 pt-5 border border-slate-300">
+    <div
+      className={cn(
+        'flex flex-col flex-1 bg-white rounded-xl p-8 border',
+        className
+      )}>
       <div className="flex items-center justify-between mb-4">
         <p className="font-bold text-xl tracking-tight">Agenda Outline</p>
       </div>
@@ -99,7 +103,7 @@ export function SessionPlanner() {
             {(sectionDroppableProvided) => (
               <div
                 className={cn(
-                  'flex flex-col justify-start items-center gap-1 w-full flex-nowrap '
+                  'flex flex-col justify-start items-center gap-[6px] w-full flex-nowrap '
                 )}
                 ref={sectionDroppableProvided.innerRef}
                 {...sectionDroppableProvided.droppableProps}>
@@ -119,7 +123,7 @@ export function SessionPlanner() {
                         {...sectionDraggableProvided.draggableProps}>
                         <Fragment key={section.id}>
                           <div>
-                            <div className="flex w-full items-center bg-white gap-2 p-2 border-b  rounded-lg group/section">
+                            <div className="flex w-full items-center bg-white gap-2 p-2 border-b rounded-lg group/section">
                               <div
                                 className={cn(
                                   'flex flex-col items-center justify-center -ml-[45px] -mr-[2px] w-[2.5rem] opacity-0 group-hover/section:opacity-100',

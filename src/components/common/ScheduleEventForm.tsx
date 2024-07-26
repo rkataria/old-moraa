@@ -94,6 +94,7 @@ export type ScheduleEventFormProps<
   | {
       id?: string
       formControl?: never
+
       onSubmit?: (formData: FormData) => void
       /**
        * The action is responsible for triggering the `onSubmit` handler
@@ -132,7 +133,7 @@ export function ScheduleEventForm<
 
   const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
     const file = files?.[0]
-    participantsForm.setValue('imageUrl', file.url)
+    participantsForm.setValue('imageUrl', file.url, { shouldDirty: true })
   }
 
   const getTimeZoneValue = () => {
@@ -173,7 +174,7 @@ export function ScheduleEventForm<
             bucketName="image-uploads"
             triggerProps={{
               className:
-                'w-8 h-8 bg-black/60 text-white max-w-14 rounded-xl shrink-0 hover:bg-black/40 absolute right-0 bottom-0 m-3 z-[10] rounded-full border-2 border-white',
+                'min-w-8 w-8 h-8 bg-black/60 text-white max-w-14 rounded-xl shrink-0 hover:bg-black/40 absolute right-0 bottom-0 m-3 z-[10] rounded-full border-2 border-white',
               isIconOnly: true,
               children: <CiEdit className="shrink-0 text-lg" />,
               variant: 'light',

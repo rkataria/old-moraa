@@ -3,6 +3,7 @@ import { useParams } from '@tanstack/react-router'
 
 import { Date } from '@/components/enroll/Date'
 import { useEvent } from '@/hooks/useEvent'
+import { cn } from '@/utils/utils'
 
 function Dates({
   startDate,
@@ -22,7 +23,7 @@ function Dates({
     </div>
   )
 }
-export function FrameDetailsView() {
+export function FrameDetailsView({ className }: { className?: string }) {
   const { eventId }: { eventId: string } = useParams({ strict: false })
   const useEventData = useEvent({
     id: eventId as string,
@@ -31,7 +32,7 @@ export function FrameDetailsView() {
   const { event } = useEventData
 
   return (
-    <div className="max-w-[960px] mx-auto">
+    <div className={cn('max-w-[60rem] mx-auto', className)}>
       <div className="grid grid-cols-[0.5fr_1fr] items-start gap-[3rem]">
         <Image
           src={

@@ -144,7 +144,7 @@ const updateEvent = async (payload: {
   eventId: string
   data: {
     name: string
-    descriprion: string
+    description: string
   }
 }) => {
   const { data, error } = await supabaseClient

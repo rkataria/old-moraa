@@ -1,7 +1,7 @@
 import { FrameDetailsView } from './FrameDetailsView'
+import { LeftSection } from './LeftSection'
 import { SessionPlanner } from './SessionPlanner'
 
-import { ScheduleEventButtonWithModal } from '@/components/common/ScheduleEventButtonWithModal'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { cn } from '@/utils/utils'
 
@@ -10,20 +10,18 @@ export function OverviewFrame() {
 
   return (
     <div
-      className={cn(
-        'bg-gray-100 h-full  px-8 pt-10 bg-gradient-to-b from-white to-[#e9e9d2]',
-        {
-          'flex items-start gap-6': permissions.canUpdateFrame,
-        }
-      )}>
+      className={cn('h-full px-8 py-4', {
+        'flex items-start gap-6 bg-pattern-1': permissions.canUpdateFrame,
+        'bg-gradient-to-b from-white to-[#e9e9d2]': !permissions.canUpdateFrame,
+      })}>
       {permissions.canUpdateFrame ? (
-        <div className="bg-white rounded-xl shadow-sm p-4 w-[519px] border border-slate-300">
-          <ScheduleEventButtonWithModal id="meta" withoutModal />
+        <div className="bg-white rounded-xl p-4 w-[412px] border h-fit overflow-y-scroll scrollbar-none shadow-md">
+          <LeftSection />
         </div>
       ) : (
-        <FrameDetailsView />
+        <FrameDetailsView className="bg-white rounded-xl p-4 border" />
       )}
-      <SessionPlanner />
+      <SessionPlanner className="h-full overflow-y-scroll scrollbar-none shadow-md" />
     </div>
   )
 }
