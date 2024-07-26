@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 
-import { Button } from '@nextui-org/react'
 import {
   BsJustify,
   BsTextCenter,
@@ -47,6 +46,7 @@ export function TextAlignControls() {
           className: cn('flex-none flex-grow', {
             'bg-gray-200': activeObject?.textAlign === 'left',
           }),
+          isIconOnly: true,
         }}
         onClick={() => aligText('left')}>
         <BsTextLeft size={18} />
@@ -62,6 +62,7 @@ export function TextAlignControls() {
           className: cn('flex-none flex-grow', {
             'bg-gray-200': activeObject?.textAlign === 'left',
           }),
+          isIconOnly: true,
         }}
         onClick={() => aligText('center')}>
         <BsTextCenter size={18} />
@@ -77,6 +78,7 @@ export function TextAlignControls() {
           className: cn('flex-none flex-grow', {
             'bg-gray-200': activeObject?.textAlign === 'left',
           }),
+          isIconOnly: true,
         }}
         onClick={() => aligText('right')}>
         <BsTextRight size={18} />
@@ -92,41 +94,11 @@ export function TextAlignControls() {
           className: cn('flex-none flex-grow', {
             'bg-gray-200': activeObject?.textAlign === 'left',
           }),
+          isIconOnly: true,
         }}
         onClick={() => aligText('justify')}>
         <BsJustify size={18} />
       </ControlButton>
     </>
-  )
-
-  return (
-    <div>
-      <div className="flex justify-between items-center gap-2">
-        <Button
-          fullWidth
-          className="bg-black text-white"
-          onClick={() => activeObject.set('textAlign', 'left')}>
-          <BsTextLeft />
-        </Button>
-        <Button
-          fullWidth
-          className="bg-black text-white"
-          onClick={() => activeObject.set('textAlign', 'center')}>
-          <BsTextCenter />
-        </Button>
-        <Button
-          fullWidth
-          className="bg-black text-white"
-          onClick={() => activeObject.set('textAlign', 'right')}>
-          <BsTextRight />
-        </Button>
-        <Button
-          fullWidth
-          className="bg-black text-white"
-          onClick={() => activeObject.set('textAlign', 'justify')}>
-          <BsJustify />
-        </Button>
-      </div>
-    </div>
   )
 }

@@ -68,6 +68,7 @@ export function TwoWayNumberCounter({
             'bg-gray-200': minusButtonDisabled,
             'bg-gray-300': !minusButtonDisabled,
           })}
+          isIconOnly
           disabled={minusButtonDisabled}
           onClick={() =>
             isDeleteModal
@@ -95,6 +96,7 @@ export function TwoWayNumberCounter({
             'bg-gray-200': isDisabled,
             'bg-gray-300': !isDisabled,
           })}
+          isIconOnly
           onClick={() => handleFontSizeChange(count + incrementStep)}>
           +
         </Button>

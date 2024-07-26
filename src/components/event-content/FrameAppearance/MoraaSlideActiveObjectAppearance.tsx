@@ -1,8 +1,12 @@
 import { useContext } from 'react'
 
+import { Button } from '@nextui-org/button'
+
 import { MoraaSlideActiveObjectCommonAppearance } from './MoraaSlideActiveObjectCommonAppearance'
 
+import { ActiveSelectionSettings } from '@/components/common/content-types/MoraaSlide/ActiveSelectionSettings'
 import { BulletListSettings } from '@/components/common/content-types/MoraaSlide/BulletListSettings'
+import { handleDeleteSelection } from '@/components/common/content-types/MoraaSlide/Editor'
 import { ImageSettings } from '@/components/common/content-types/MoraaSlide/ImageSettings'
 import { TextboxSettings } from '@/components/common/content-types/MoraaSlide/TextboxSettings'
 import { EventContext } from '@/contexts/EventContext'
@@ -22,6 +26,7 @@ enum ObjectType {
   ELLIPSE = 'ellipse',
   BULLET_LIST = 'BulletList',
   NUMBER_LIST = 'NumberList',
+  ACTIVE_SELECTION = 'activeSelection',
 }
 
 export function MoraaSlideActiveObjectAppearance() {
@@ -29,6 +34,9 @@ export function MoraaSlideActiveObjectAppearance() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
+  const { setCanvas } = useMoraaSlideStore((state) => state)
+
+  if (!currentFrame) return null
 
   if (!canvas) {
     return <div>Loading...</div>
@@ -54,6 +62,7 @@ export function MoraaSlideActiveObjectAppearance() {
       </>
     ),
     [ObjectType.NUMBER_LIST]: <TextboxSettings />,
+    [ObjectType.ACTIVE_SELECTION]: <ActiveSelectionSettings />,
   }
 
   const renderer = activeObject
@@ -64,6 +73,18 @@ export function MoraaSlideActiveObjectAppearance() {
     <div className="flex flex-col gap-2">
       <MoraaSlideActiveObjectCommonAppearance />
       {renderer}
+      <div className="pt-2">
+        <Button
+          color="danger"
+          fullWidth
+          size="sm"
+          radius="md"
+          onClick={() => {
+            handleDeleteSelection(canvas, currentFrame.id, setCanvas)
+          }}>
+          Delete Selection
+        </Button>
+      </div>
     </div>
   )
 }

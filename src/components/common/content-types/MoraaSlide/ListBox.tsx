@@ -24,7 +24,7 @@ export const BULLET_TYPES: {
   arrow: '➤',
   blackPoint: '⦿',
   arrowRight: '➔',
-  smile: '😍',
+  check: '✓',
 }
 export const BULLET_CHARS: string[] = Object.values(BULLET_TYPES)
 

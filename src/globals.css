@@ -383,3 +383,25 @@ input[type='number']::-webkit-outer-spin-button {
   background-color: #ffffff;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 200 200'%3E%3Cpolygon fill='%23E9D5FF' fill-opacity='0.43' points='100 0 0 100 100 100 100 200 200 100 200 0'/%3E%3C/svg%3E");
 }
+
+
+/* Selection Color */
+*::selection {
+  background: #7c3aed;
+  color: #ffffff;
+}
+*::-moz-selection {
+  background: #7c3aed;
+  color: #ffffff;
+}
+*::-webkit-selection {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+
+/* Moraa Slide */
+.moraa-slide-preview svg {
+  @apply absolute left-0 top-0 w-full h-full;
+}
+

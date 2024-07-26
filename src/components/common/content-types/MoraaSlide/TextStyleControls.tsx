@@ -84,6 +84,7 @@ export function TextStyleControls() {
           size: 'sm',
           radius: 'md',
           className: 'flex-none flex-grow',
+          isIconOnly: true,
         }}
         onClick={handleBold}>
         <BsTypeBold size={18} />
@@ -97,6 +98,7 @@ export function TextStyleControls() {
           size: 'sm',
           radius: 'md',
           className: 'flex-none flex-grow',
+          isIconOnly: true,
         }}
         onClick={handleUnderline}>
         <BsTypeUnderline size={18} />
@@ -110,6 +112,7 @@ export function TextStyleControls() {
           size: 'sm',
           radius: 'md',
           className: 'flex-none flex-grow',
+          isIconOnly: true,
         }}
         onClick={handleItalic}>
         <BsTypeItalic size={18} />
@@ -123,6 +126,7 @@ export function TextStyleControls() {
           size: 'sm',
           radius: 'md',
           className: 'flex-none flex-grow',
+          isIconOnly: true,
         }}
         onClick={handleStrikethrough}>
         <BsTypeStrikethrough size={18} />

@@ -79,9 +79,11 @@ export function FontFamily() {
       className="w-full flex-none text-xs"
       value={selectedFontKey}
       variant="bordered"
-      classNames={{
-        mainWrapper: 'h-8',
-      }}
+      classNames={
+        {
+          // mainWrapper: 'h-8',
+        }
+      }
       aria-label="Font Family"
       selectedKeys={selectedFontKey ? new Set([selectedFontKey]) : new Set()}
       onChange={(e) => {

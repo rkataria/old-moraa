@@ -32,9 +32,38 @@ const initializeCanvas = ({ frameId }: { frameId: string }) => {
     selectionLineWidth: 1,
     backgroundColor: 'transparent',
     centeredRotation: true,
+    selection: true,
+    // selectionKey: 'ctrlKey',
   })
 
   return canvas
+}
+
+export const handleDeleteSelection = (
+  canvas: fabric.Canvas,
+  frameId: string,
+  setCanvas: (frameId: string, canvas: fabric.Canvas) => void
+) => {
+  let activeObjects: fabric.Object[] = []
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return
+
+  if (activeObject?.type === 'activeSelection') {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    activeObjects = activeObject.getObjects()
+  } else {
+    activeObjects.push(activeObject)
+  }
+
+  canvas.discardActiveObject()
+  activeObjects.forEach((o) => {
+    canvas.remove(o)
+  })
+
+  canvas.renderAll()
+  setCanvas(frameId, canvas)
 }
 
 export function CanvasEditor({
@@ -54,13 +83,7 @@ export function CanvasEditor({
   useHotkeys('Delete', () => {
     if (!canvas) return
 
-    const activeObject = canvas.getActiveObject()
-
-    if (activeObject) {
-      canvas.remove(activeObject)
-      canvas.renderAll()
-      setCanvas(frameId, canvas)
-    }
+    handleDeleteSelection(canvas, frameId, setCanvas)
   })
 
   useHotkeys('ctrl+v', () => {
@@ -157,9 +180,7 @@ export function CanvasEditor({
     canvas.on('object:scaling', handleObjectScaling)
     canvas.on('object:removed', handleObjectRemoved)
     canvas.on('selection:created', handleSelectionCreated)
-    canvas.on('selection:updated', (event) =>
-      handleSelectionUpdated(event, canvas)
-    )
+    canvas.on('selection:updated', handleSelectionUpdated)
     canvas.on('selection:cleared', handleSelectionCleared)
     canvas.on('mouse:over', handleMouseOver)
     canvas.on('mouse:down', handleMouseDown)
@@ -172,9 +193,7 @@ export function CanvasEditor({
       canvas.off('object:scaling', handleObjectScaling)
       canvas.off('object:removed', handleObjectRemoved)
       canvas.off('selection:created', handleSelectionCreated)
-      canvas.off('selection:updated', (event) =>
-        handleSelectionUpdated(event, canvas)
-      )
+      canvas.off('selection:updated', handleSelectionUpdated)
       canvas.off('selection:cleared', handleSelectionCleared)
       canvas.off('mouse:over', handleMouseOver)
       canvas.off('mouse:down', handleMouseDown)
@@ -185,7 +204,8 @@ export function CanvasEditor({
   }, [canvas, frameCanvasData])
 
   const handleSelectionCreated = (event: fabric.IEvent) => {
-    if (event.selected?.length === 1 && canvas) {
+    console.log('selected:created - ', event)
+    if (canvas) {
       canvas.isDrawingMode = false
 
       setRightSidebarVisiblity('frame-appearance')
@@ -194,15 +214,8 @@ export function CanvasEditor({
     }
   }
 
-  const handleSelectionUpdated = (
-    event: fabric.IEvent,
-    _canvas: fabric.Canvas
-  ) => {
-    if (event.selected?.length === 1 && _canvas) {
-      const activeObject = event.selected[0] as fabric.Object
-      _canvas.setActiveObject(activeObject)
-      setCanvas(frameId, _canvas)
-    }
+  const handleSelectionUpdated = (event: fabric.IEvent) => {
+    console.log('selection:updated - ', event)
   }
 
   const handleSelectionCleared = () => {
@@ -212,12 +225,12 @@ export function CanvasEditor({
   }
 
   const handleObjectAdded = (event: fabric.IEvent) => {
+    console.log('object:added', event)
+
     const { target } = event
 
     if (!canvas) return
     if (!target) return
-
-    console.log('object:added', target)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -227,8 +240,7 @@ export function CanvasEditor({
   }
 
   const handleObjectModified = (event: fabric.IEvent) => {
-    const { target } = event
-    console.log('object:modified', target)
+    console.log('object:modified', event)
 
     if (!canvas) return
 
@@ -236,8 +248,7 @@ export function CanvasEditor({
   }
 
   const handleObjectScaling = (event: fabric.IEvent) => {
-    const { target } = event
-    console.log('object:scaling', target)
+    console.log('object:scaling', event)
 
     if (!canvas) return
 
@@ -245,12 +256,12 @@ export function CanvasEditor({
   }
 
   const handleObjectRemoved = (event: fabric.IEvent) => {
+    console.log('object:removed', event)
+
     const { target } = event
 
     if (!canvas) return
     if (!target) return
-
-    console.log('object:removed', target)
 
     saveToStorage(canvas!)
   }

@@ -33,26 +33,37 @@ export const loadCustomFabricObjects = () => {
     initialize(text: string, options: fabric.IObjectOptions) {
       this.callSuper('initialize', text, options)
       this.set('bulletType', options.bulletType || '')
+
+      // This logic adds a bullet when a bullet list is added on canvas first time
+      const updatedText = this.text
+        .split('\n')
+        .map((line: string) =>
+          line.startsWith(getBulletChar(this.bulletType))
+            ? `${getBulletChar(this.bulletType)} ${line.slice(2)}`
+            : `${getBulletChar(this.bulletType)} ${line}`
+        )
+        .join('\n')
+      this.text = updatedText
+
+      this.set('text', updatedText)
     },
     onInput(e: Event) {
       this.callSuper('onInput', e)
 
-      const isList = this.text
+      const updatedText = this.text
         .split('\n')
-        .some((line: string) => line.startsWith(getBulletChar(this.bulletType)))
+        .map((line: string) =>
+          line.startsWith(getBulletChar(this.bulletType))
+            ? `${getBulletChar(this.bulletType)} ${line.slice(2)}`
+            : `${getBulletChar(this.bulletType)} ${line}`
+        )
+        .join('\n')
+      this.text = updatedText
 
-      if (!isList) {
-        const updatedText = this.text
-          .split('\n')
-          .map((line: string) => `${getBulletChar(this.bulletType)} ${line}`)
-          .join('\n')
-        this.text = updatedText
-
-        this.set('text', updatedText)
-        this.setSelectionStart(updatedText.length + 1) // +1 to move cursor to the end
-        this.setSelectionEnd(updatedText.length + 1) // +1 to move cursor to the end
-        this.canvas?.requestRenderAll()
-      }
+      this.set('text', updatedText)
+      this.setSelectionStart(updatedText.length + 1) // +1 to move cursor to the end
+      this.setSelectionEnd(updatedText.length + 1) // +1 to move cursor to the end
+      this.canvas?.requestRenderAll()
     },
     toObject() {
       return fabric.util.object.extend(this.callSuper('toObject'), {

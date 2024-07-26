@@ -36,6 +36,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             size: 'sm',
             radius: 'md',
             className: 'flex-none flex-grow',
+            isIconOnly: true,
           }}
           onClick={() => {
             canvas.sendToBack(activeObject)
@@ -53,6 +54,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             size: 'sm',
             radius: 'md',
             className: 'flex-none flex-grow',
+            isIconOnly: true,
           }}
           onClick={() => {
             canvas.bringForward(activeObject)
@@ -70,6 +72,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             size: 'sm',
             radius: 'md',
             className: 'flex-none flex-grow',
+            isIconOnly: true,
           }}
           onClick={() => {
             activeObject.set('flipX', !activeObject.flipX)
@@ -86,6 +89,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             size: 'sm',
             radius: 'md',
             className: 'flex-none flex-grow',
+            isIconOnly: true,
           }}
           onClick={() => {
             activeObject.set('flipY', !activeObject.flipY)
@@ -102,6 +106,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             size: 'sm',
             radius: 'md',
             className: 'flex-none flex-grow',
+            isIconOnly: true,
           }}
           onClick={() => {
             activeObject.clone((clonedObject: fabric.Object) => {
