@@ -25,7 +25,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <NextUIProvider>
       <QueryClientProvider client={queryClient}>
         <UserContextProvider>
-          {children}
+          <main className="moraa-light text-foreground bg-background">
+            {children}
+          </main>
           <Toaster position="bottom-right" reverseOrder={false} />
         </UserContextProvider>
       </QueryClientProvider>

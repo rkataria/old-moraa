@@ -142,7 +142,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
         className={cn(
           'flex justify-between items-center border-2 border-transparent rounded-md group/section-item',
           {
-            'border-purple-200 bg-purple-200': sectionActive,
+            'border-primary-200 bg-primary-200': sectionActive,
             'justify-center': !sidebarExpanded,
           }
         )}>

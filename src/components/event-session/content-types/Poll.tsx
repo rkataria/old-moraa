@@ -119,7 +119,7 @@ function PollOption({
         radius="sm"
         classNames={{
           label: 'font-bold text-black',
-          wrapper: 'border-2 border-purple-500 rounded',
+          wrapper: 'border-2 border-primary-500 rounded',
         }}>
         {pollOption}
       </Checkbox>
@@ -229,7 +229,7 @@ export function Poll({ frame, votes = [], voted, canVote = true }: PollProps) {
         backgroundColor: frame.config.backgroundColor,
       }}>
       <div className="w-4/5 rounded-md relative">
-        <div className="p-4">
+        <div>
           {showAnonymousToggle && (
             <div className="my-2 flex justify-end items-center">
               <Checkbox
@@ -253,12 +253,12 @@ export function Poll({ frame, votes = [], voted, canVote = true }: PollProps) {
               </Checkbox>
             </div>
           )}
-          <div className="mt-4 grid grid-cols-1 gap-4">
+          <div className="mt-4 grid grid-cols-1 gap-2">
             {options.map((option: string) => (
               <div
                 key={option}
                 className={cn(
-                  'relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 h-12 rounded-lg overflow-hidden',
+                  'relative w-full h-14 px-4 z-0 flex justify-between items-center gap-2 bg-primary-50 rounded-lg overflow-hidden',
                   {
                     'cursor-default': voted || !canVote,
                   },
@@ -288,7 +288,7 @@ export function Poll({ frame, votes = [], voted, canVote = true }: PollProps) {
                       className={cn(
                         'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
                         {
-                          'bg-purple-500':
+                          'bg-primary-500':
                             votedOptions.includes(option) || !canVote,
                         }
                       )}

@@ -1,6 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
 
 import { Button, Input } from '@nextui-org/react'
+import { SiMiro } from 'react-icons/si'
+
+import { FrameFormContainer } from './FrameFormContainer'
 
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { EventContext } from '@/contexts/EventContext'
@@ -85,17 +88,23 @@ export function MiroEmbedEditor({
   }
 
   return (
-    <div className="flex flex-col justify-center items-center gap-4 h-full">
+    <FrameFormContainer
+      headerIcon={<SiMiro size={72} className="text-primary" />}
+      headerTitle="Embed Miro Board"
+      headerDescription="Easily embed Miro board into Moraa Frame for seamless collaboration and smooth editing."
+      footerNote="Make sure the Miro board is publically accessible or shared with participants.">
       <Input
-        size="sm"
-        className="w-1/2 rounded-md"
-        placeholder="Enter miro board url or board Id"
-        onChange={(e) => setBoardIdentifier(e.target.value)}
+        variant="bordered"
+        color="primary"
+        label="Miro Board URL(or ID)"
+        className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
+        placeholder="Enter Miro board url or board id"
         value={boardIdentifier}
+        onChange={(e) => setBoardIdentifier(e.target.value)}
       />
-      <Button size="lg" color="primary" onClick={saveMiroUrl}>
-        Save
+      <Button color="primary" variant="ghost" fullWidth onClick={saveMiroUrl}>
+        Embed Miro Board
       </Button>
-    </div>
+    </FrameFormContainer>
   )
 }

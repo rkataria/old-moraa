@@ -5,39 +5,65 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card-foreground: 0 0% 3.9%;
-    --primary: 240 6% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --radius: 0.5rem;
-  }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-  }
-}
-
-@layer base {
   html,
   * {
     @apply scroll-smooth;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-outfit;
   }
+}
+
+@layer components {
+  .heading-1 {
+    @apply text-5xl font-semibold;
+  }
+
+  .heading-1-bold {
+    @apply text-5xl font-bold;
+  }
+
+  .heading-2 {
+    @apply text-4xl font-semibold;
+  }
+
+  .heading-2-bold {
+    @apply text-4xl font-bold;
+  }
+
+  .heading-3 {
+    @apply text-3xl font-semibold;
+  }
+
+  .heading-3-bold {
+    @apply text-3xl font-bold;
+  }
+
+  .subheading-1 {
+    @apply text-2xl font-semibold;
+  }
+
+  .subheading-2 {
+    @apply text-xl font-semibold;
+  }
+
+  .subheading-3 {
+    @apply text-lg font-semibold;
+  }
+
+  .body-bold {
+    @apply text-base font-bold;
+  }
+
+  .body-normal {
+    @apply text-base font-normal;
+  }
+
+  .body-thin {
+    @apply text-base font-thin;
+  }
+
+
 }
 
 /* Google Fonts */
@@ -93,7 +119,7 @@
 /* Tiptap Editor */
 
 .tiptap {
-  @apply p-2 min-h-full;
+  @apply min-h-full;
 }
 
 .ProseMirror-focused {
@@ -230,7 +256,7 @@
 /* Block Content Styles */
 .block-content-header,
 .block-content-paragraph {
-  @apply p-4 w-full;
+  @apply w-full;
 }
 .block-content-header h1 {
   @apply text-4xl font-bold;

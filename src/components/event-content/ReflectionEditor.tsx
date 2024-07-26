@@ -42,10 +42,7 @@ function PreviewCard({
   return (
     <Card
       shadow="none"
-      className={cn(
-        'border border-slate-300 rounded-2xl shadow-lg',
-        className
-      )}>
+      className={cn('border-2 border-primary-200 rounded-md', className)}>
       <CardHeader>
         <div className="flex justify-start items-center gap-5">
           <Avatar
@@ -53,16 +50,17 @@ function PreviewCard({
             radius="full"
             size="md"
             className="min-w-fit"
+            color="primary"
             src={getAvatarForName(`${isAnonymous ? 'A' : username}`)}
           />
-          <h4 className="text-small font-semibold leading-none text-default-600">
+          <h4 className="text-small font-semibold leading-none text-primary-500">
             {isAnonymous ? 'Anonymous' : username}
           </h4>
         </div>
       </CardHeader>
       <CardBody className="pt-0 flex flex-col justify-between">
         <div>
-          <p className="text-gray-600">{reflection}</p>
+          <p className="text-gray-500">{reflection}</p>
         </div>
         <div>
           {reactions?.length > 0 && <Divider className="my-3" />}
@@ -72,10 +70,11 @@ function PreviewCard({
                 <Chip
                   className={cn('font-bold')}
                   variant="flat"
+                  color="primary"
                   avatar={
                     <em-emoji set="apple" id={reaction.reaction} size={20} />
                   }>
-                  <span className="font-bold text-slate-600">
+                  <span className="font-bold text-primary-600">
                     {getReactionCount(reaction.reaction)}
                   </span>
                 </Chip>
@@ -84,8 +83,9 @@ function PreviewCard({
                 <Chip
                   className="font-bold mt-4"
                   variant="flat"
+                  color="primary"
                   avatar={<em-emoji set="apple" id="heart_eyes" size={20} />}>
-                  <span className="font-bold text-slate-600">{3}</span>
+                  <span className="font-bold text-primary-600">{3}</span>
                 </Chip>
               )}
             </div>
@@ -145,14 +145,22 @@ function Responses({
 
   if (frameResponses.length === 0) {
     return (
-      <div className="w-full h-full grid place-items-center">
-        <PreviewCard
-          disabled
-          username="Learner"
-          reflection="User's typed response will be shown here.."
-          reactions={[]}
-          className="w-fit"
-        />
+      <div className="w-full h-full grid grid-cols-3 items-start justify-start gap-4 pt-4">
+        {Array.from({ length: 9 }, (_, index) => (
+          <div
+            key={index}
+            style={{
+              opacity: (8 - index) / 10,
+            }}>
+            <PreviewCard
+              disabled
+              username={`Participant ${index + 1}`}
+              reflection={`Participant ${index + 1}'s response will be shown here...`}
+              reactions={[]}
+              className="w-full h-auto"
+            />
+          </div>
+        ))}
       </div>
     )
   }

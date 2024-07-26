@@ -38,7 +38,7 @@ export function MoraaBoard({ frame, isInteractive = true }: MoraaBoardProps) {
   return (
     <div
       style={{ backgroundColor: frame.config.backgroundColor }}
-      className="relative w-full flex-auto flex flex-col justify-center items-center px-4 z-[0] h-full">
+      className="relative w-full flex-auto flex flex-col justify-center items-center py-4 z-[0] h-full">
       {store.status !== 'synced-remote' ? (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <ContentLoading />

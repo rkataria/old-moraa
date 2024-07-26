@@ -128,50 +128,48 @@ export function PollForm({ frame: frameFromRemote }: PollFormProps) {
       <FrameTextBlock blockType="paragraph" />
       <div
         className={clsx(
-          'absolute w-full h-auto flex justify-start items-start'
+          'absolute w-4/5 h-auto flex justify-start items-start mt-4'
         )}>
-        <div className="p-8 w-4/5">
-          <ul>
-            {options.map((option: string, index: number) => (
-              <li
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                className="flex justify-between items-center mb-2 rounded-md font-semibold bg-black/5 text-black">
-                <ReactTextareaAutosize
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  ref={(el: any) => {
-                    optionsRef.current[index] = el
-                  }}
-                  // autoFocus={option.length === 0 && question?.length !== 0} // FIXME: focus is conflicting with the arrow key navigation for agenda panel
-                  className={clsx(
-                    'w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none'
-                  )}
-                  value={option}
-                  placeholder={`Option ${index + 1}`}
-                  onChange={(e) => updateOption(e, index)}
-                  onKeyDown={focusOnFirstEmptyOption}
-                />
-                <button
-                  type="button"
-                  aria-label="delete"
-                  className="p-4"
-                  onClick={() => deleteOption(index)}>
-                  <IconTrash size={16} />
-                </button>
-              </li>
-            ))}
-            <li>
+        <ul className="w-full">
+          {options.map((option: string, index: number) => (
+            <li
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              className="flex justify-between items-center mb-2 rounded-md font-semibold bg-primary-50 text-foreground">
+              <ReactTextareaAutosize
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ref={(el: any) => {
+                  optionsRef.current[index] = el
+                }}
+                // autoFocus={option.length === 0 && question?.length !== 0} // FIXME: focus is conflicting with the arrow key navigation for agenda panel
+                className={clsx(
+                  'w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none'
+                )}
+                value={option}
+                placeholder={`Option ${index + 1}`}
+                onChange={(e) => updateOption(e, index)}
+                onKeyDown={focusOnFirstEmptyOption}
+              />
               <button
                 type="button"
-                className={clsx(
-                  'w-full text-center p-4 border-2 border-black rounded-md mb-2 font-semibold cursor-pointer text-black outline-none hover:outline-none'
-                )}
-                onClick={addNewOption}>
-                Add option
+                aria-label="delete"
+                className="p-4"
+                onClick={() => deleteOption(index)}>
+                <IconTrash size={16} />
               </button>
             </li>
-          </ul>
-        </div>
+          ))}
+          <li>
+            <button
+              type="button"
+              className={clsx(
+                'w-full text-center p-4 border-2 border-black rounded-md mb-2 font-semibold cursor-pointer text-black outline-none hover:outline-none'
+              )}
+              onClick={addNewOption}>
+              Add option
+            </button>
+          </li>
+        </ul>
       </div>
     </>
   )

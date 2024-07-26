@@ -106,20 +106,25 @@ export function EditableReflectionCard({
   }
 
   return (
-    <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl min-w-fit">
-      <CardHeader className="z-[0]">
+    <Card
+      shadow="none"
+      className={cn('border-2 border-primary-200 rounded-md')}>
+      <CardHeader>
         <div className="flex justify-start items-center gap-2">
           <Avatar
             isBordered
             radius="full"
             size="md"
             className="min-w-fit"
+            color="primary"
             src={getAvatarForName(username, avatarUrl)}
           />
-          <span className="semibold">{username}</span>
+          <h4 className="text-small font-semibold leading-none text-primary-500">
+            {username}
+          </h4>
         </div>
       </CardHeader>
-      <CardBody>
+      <CardBody className="pt-0 flex flex-col justify-between">
         <Textarea
           className="text-sm"
           placeholder="Enter your reflection here."
@@ -127,7 +132,7 @@ export function EditableReflectionCard({
           onChange={onChangeReflection}
         />
       </CardBody>
-      <CardFooter>
+      <CardFooter className="pt-0">
         <div
           className={cn('flex items-center gap-2 w-full', {
             'justify-between': frame.config?.allowAnonymously,
@@ -143,9 +148,15 @@ export function EditableReflectionCard({
             </div>
           )}
           <div className="flex items-center gap-2">
+            {editEnabled && (
+              <Button color="danger" variant="light" onClick={handleCancel}>
+                Reset
+              </Button>
+            )}
             <Button
               type="button"
-              size="sm"
+              color="primary"
+              variant="ghost"
               onClick={() => {
                 removeTyping()
                 if (!selfResponse) {
@@ -168,11 +179,6 @@ export function EditableReflectionCard({
               }}>
               Submit
             </Button>
-            {editEnabled && (
-              <Button size="sm" onClick={handleCancel}>
-                Cancel
-              </Button>
-            )}
           </div>
         </div>
       </CardFooter>

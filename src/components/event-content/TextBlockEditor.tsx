@@ -158,7 +158,7 @@ const getExtensions = (type: string, placeholder: string | undefined) => {
         Placeholder.configure({
           placeholder: placeholder || 'Can you add some further context?',
           emptyEditorClass:
-            'text-gray-500 text-left before:content-[attr(data-placeholder)] tracking-tight',
+            'text-gray-400 text-left before:content-[attr(data-placeholder)]',
         }),
         KeyboardShortcuts,
         Highlight,
@@ -230,30 +230,37 @@ export function TextBlockEditor({
     )
   }
 
-  const renderEditor = () => (
-    <ScrollShadow
-      hideScrollBar
-      isEnabled={block.type === 'richtext'}
-      orientation="vertical"
-      className={cn('w-full max-h-full', {
-        'h-full': fillAvailableHeight,
-      })}>
-      {/* floating controls */}
-      <InlineTableControls editor={editor} />
-      {/* // bubble menu controls  */}
-      <InlineToolbarControls editor={editor} />
+  const renderEditor = () => {
+    const editorContentClassNames =
+      'rounded-sm outline-none w-full h-full min-h-full transition-all duration-500'
 
-      <EditorContent
-        editor={editor}
-        className={cn(
-          'rounded-sm outline-none w-full h-full min-h-full transition-all duration-500',
-          {
-            richText: block.type === 'richtext',
-          }
-        )}
-      />
-    </ScrollShadow>
-  )
+    if (block.type === 'richtext') {
+      return (
+        <ScrollShadow
+          hideScrollBar
+          orientation="vertical"
+          className={cn('w-full max-h-full', {
+            'h-full': fillAvailableHeight,
+          })}>
+          {/* floating controls */}
+          <InlineTableControls editor={editor} />
+          {/* // bubble menu controls  */}
+          <InlineToolbarControls editor={editor} />
+
+          <EditorContent
+            editor={editor}
+            className={cn(editorContentClassNames, {
+              richText: block.type === 'richtext',
+            })}
+          />
+        </ScrollShadow>
+      )
+    }
+
+    return (
+      <EditorContent editor={editor} className={cn(editorContentClassNames)} />
+    )
+  }
 
   return (
     <div

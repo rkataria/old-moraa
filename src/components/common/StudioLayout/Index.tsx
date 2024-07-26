@@ -25,7 +25,7 @@ export function StudioLayout({
 }: StudioLayoutProps) {
   return (
     <StudioLayoutContextProvider>
-      <div className="flex flex-col justify-start items-start h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+      <div className="flex flex-col justify-start items-start h-screen overflow-hidden">
         <Header>{header}</Header>
         <div className="flex-auto flex justify-start items-start w-full z-0">
           {/* Left Sidebar */}

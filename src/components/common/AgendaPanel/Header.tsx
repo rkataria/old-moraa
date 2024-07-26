@@ -8,8 +8,8 @@ import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
 
-export const HEADER_HEIGHT = 56
-export const HEADER_HEIGHT_WHEN_MINIMIZED = 56
+export const HEADER_HEIGHT = 40
+export const HEADER_HEIGHT_WHEN_MINIMIZED = 40
 
 export function Header() {
   const { listDisplayMode, toggleListDisplayMode } = useAgendaPanel()

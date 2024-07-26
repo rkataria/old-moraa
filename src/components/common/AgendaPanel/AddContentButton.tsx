@@ -30,8 +30,9 @@ export function AddContentButton({ className }: { className?: string }) {
         fullWidth={expanded}
         isIconOnly={!expanded}
         radius="md"
-        variant="solid"
-        className="bg-primary text-white flex justify-center items-center gap-2 shadow-lg tracking-tight"
+        variant="ghost"
+        color="primary"
+        className="flex justify-center items-center gap-2 shadow-lg tracking-tight"
         onClick={() => {
           setOpenContentTypePicker?.(true)
         }}>

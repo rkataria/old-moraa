@@ -99,7 +99,7 @@ export function SectionOverview() {
               startContent={
                 <p className="font-bold">{categoriesCount.goodies}</p>
               }
-              className="bg-white shadow-md pl-2  border border-purple-200">
+              className="bg-white shadow-md pl-2  border border-primary-200">
               Goodies
             </Chip>
           </div>

@@ -6,9 +6,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Checkbox, Chip, Input } from '@nextui-org/react'
 import { Controller, useForm } from 'react-hook-form'
 import { BsExclamationCircleFill } from 'react-icons/bs'
-import { IoCheckmarkCircleSharp, IoLinkOutline } from 'react-icons/io5'
+import { IoCheckmarkCircleSharp } from 'react-icons/io5'
+import { SiGoogleslides } from 'react-icons/si'
 import * as yup from 'yup'
 
+import { FrameFormContainer } from './FrameFormContainer'
 import { ContentLoading } from '../common/ContentLoading'
 import { GoogleSlideEmbed } from '../common/GoogleSlideEmbed'
 import { Loading } from '../common/Loading'
@@ -130,102 +132,101 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
 
   if (mode === 'edit') {
     return (
-      <div className="flex items-center justify-center flex-col mt-4 h-full">
-        <div className="grid gap-4 w-full max-w-[40rem] bg-[#f7f7f7] p-[6.25rem] rounded-[2.5rem]">
+      <FrameFormContainer
+        headerIcon={<SiGoogleslides size={72} className="text-primary" />}
+        headerTitle="Import/Embed Google Slides"
+        headerDescription="Easily import and embed editable Google Slides into Moraa Frame for seamless integration and smooth editing."
+        footerNote="Publicly accessible Google Slides can only be imported as Moraa Frames.">
+        <Controller
+          control={googleSlideEmbedForm.control}
+          name="googleSlideUrl"
+          render={({ field, fieldState }) => (
+            <Input
+              {...field}
+              variant="bordered"
+              color="primary"
+              label="Google Slides URL"
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
+              placeholder="Enter google slides url"
+              isInvalid={!!fieldState.error?.message}
+              errorMessage={fieldState.error?.message}
+              classNames={{
+                inputWrapper: 'shadow-none',
+              }}
+            />
+          )}
+        />
+        <div className="flex items-center gap-4">
           <Controller
             control={googleSlideEmbedForm.control}
-            name="googleSlideUrl"
+            name="startPosition"
             render={({ field, fieldState }) => (
               <Input
-                {...field}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                {...(field as any)}
                 variant="bordered"
-                className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
-                placeholder="Enter Google Slide Url"
+                color="primary"
+                label="Presentation Start Position"
+                type="number"
+                className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
+                placeholder="Enter start position"
                 isInvalid={!!fieldState.error?.message}
                 errorMessage={fieldState.error?.message}
-                startContent={
-                  <IoLinkOutline
-                    size={24}
-                    className="text-gray-400 -rotate-45"
-                  />
-                }
                 classNames={{
-                  inputWrapper: 'shadow-none border-black/30 border-[1px]',
+                  inputWrapper: 'shadow-none',
                 }}
               />
             )}
           />
-          <div className="flex items-center gap-8">
-            <Controller
-              control={googleSlideEmbedForm.control}
-              name="startPosition"
-              render={({ field, fieldState }) => (
-                <Input
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  {...(field as any)}
-                  variant="bordered"
-                  label="Presentation start position"
-                  type="number"
-                  className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
-                  placeholder="Enter start position"
-                  isInvalid={!!fieldState.error?.message}
-                  errorMessage={fieldState.error?.message}
-                  classNames={{
-                    inputWrapper: 'shadow-none border-black/30 border-[1px]',
-                  }}
-                />
-              )}
-            />
 
-            <Controller
-              control={googleSlideEmbedForm.control}
-              name="endPosition"
-              render={({ field, fieldState }) => (
-                <Input
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  {...(field as any)}
-                  variant="bordered"
-                  label="Presentation end position"
-                  type="number"
-                  className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
-                  placeholder="Enter end position"
-                  isInvalid={!!fieldState.error?.message}
-                  errorMessage={fieldState.error?.message}
-                  classNames={{
-                    inputWrapper: 'shadow-none border-black/30 border-[1px]',
-                  }}
-                />
-              )}
-            />
-          </div>
-
-          <div className="flex gap-4 justify-between items-center">
-            <Controller
-              control={googleSlideEmbedForm.control}
-              name="importAsIndividualFrames"
-              render={({ field, fieldState }) => (
-                <Checkbox
-                  size="sm"
-                  className="items-baseline"
-                  isSelected={field.value}
-                  isInvalid={!!fieldState.error?.message}
-                  onValueChange={(value) => field.onChange(value)}>
-                  Import as Moraa Frames
-                </Checkbox>
-              )}
-            />
-
-            <Button
-              type="submit"
-              color={
-                googleSlideEmbedForm.formState.isValid ? 'primary' : 'default'
-              }
-              onClick={googleSlideEmbedForm.handleSubmit(handleEmbed)}>
-              Embed Slides
-            </Button>
-          </div>
+          <Controller
+            control={googleSlideEmbedForm.control}
+            name="endPosition"
+            render={({ field, fieldState }) => (
+              <Input
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                {...(field as any)}
+                variant="bordered"
+                color="primary"
+                label="Presentation End Position"
+                type="number"
+                className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
+                placeholder="Enter end position"
+                isInvalid={!!fieldState.error?.message}
+                errorMessage={fieldState.error?.message}
+                classNames={{
+                  inputWrapper: 'shadow-none',
+                }}
+              />
+            )}
+          />
         </div>
-      </div>
+        <Controller
+          control={googleSlideEmbedForm.control}
+          name="importAsIndividualFrames"
+          render={({ field, fieldState }) => (
+            <Checkbox
+              size="sm"
+              className="items-baseline"
+              isSelected={field.value}
+              isInvalid={!!fieldState.error?.message}
+              onValueChange={(value) => field.onChange(value)}>
+              I would like to import Google Slides into Moraa Frames.
+            </Checkbox>
+          )}
+        />
+
+        <Button
+          variant="bordered"
+          color="primary"
+          disabled={!googleSlideEmbedForm.formState.isValid}
+          type="submit"
+          onClick={googleSlideEmbedForm.handleSubmit(handleEmbed)}>
+          {googleSlideEmbedForm.getValues('importAsIndividualFrames')
+            ? 'Import Google Slides'
+            : 'Embed Google Slides'}
+        </Button>
+      </FrameFormContainer>
     )
   }
 

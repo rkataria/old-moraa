@@ -34,9 +34,14 @@ import { cn, getOjectPublicUrl } from '@/utils/utils'
 interface FrameProps {
   frame: IFrame
   isInteractive?: boolean
+  fullWidth?: boolean
 }
 
-export function FramePreview({ frame, isInteractive = true }: FrameProps) {
+export function FramePreview({
+  frame,
+  isInteractive = true,
+  fullWidth,
+}: FrameProps) {
   const previewRef = useRef<HTMLDivElement>(null)
 
   // const { totalHeight } = useDimensions(previewRef)
@@ -71,12 +76,15 @@ export function FramePreview({ frame, isInteractive = true }: FrameProps) {
         backgroundColor: frame.config.backgroundColor,
         // ...thumbnailStyle(),
       }}
-      className={cn('relative group w-full h-full bg-white flex flex-col p-4', {
-        '!p-0': frame.type === ContentType.TEXT_IMAGE && !isInteractive,
-        'px-[20%]': frame.type === ContentType.RICH_TEXT && isInteractive,
-        'overflow-y-scroll scrollbar-none':
-          frame.type === ContentType.RICH_TEXT,
-      })}>
+      className={cn(
+        'relative group w-full h-full bg-white flex flex-col gap-2 p-4',
+        {
+          '!p-0': frame.type === ContentType.TEXT_IMAGE && !isInteractive,
+          'px-[20%]': frame.type === ContentType.RICH_TEXT && isInteractive,
+          'overflow-y-scroll scrollbar-none':
+            frame.type === ContentType.RICH_TEXT,
+        }
+      )}>
       <FrameTitleDescriptionPreview frame={frame as any} />
 
       <div
@@ -127,6 +135,7 @@ export function FramePreview({ frame, isInteractive = true }: FrameProps) {
           <VideoEmbedEditor
             frame={frame as VideoEmbedFrameType}
             showControls={isInteractive}
+            fullWidth={fullWidth}
           />
         )}
         {frame.type === ContentType.MIRO_EMBED && (

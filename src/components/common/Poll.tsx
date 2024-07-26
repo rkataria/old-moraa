@@ -104,14 +104,14 @@ function PollOption({
         radius="sm"
         classNames={{
           label: 'font-bold text-black',
-          wrapper: 'border-2 border-purple-500 rounded',
+          wrapper: 'border-2 border-primary-500 rounded',
         }}>
         {pollOption}
       </Checkbox>
     )
   }
 
-  return <p className="font-bold">{pollOption}</p>
+  return <p className="font-bold px-4">{pollOption}</p>
 }
 
 interface PollProps {
@@ -192,76 +192,74 @@ export function Poll({ frame, votes = [], voted, onVote, isOwner }: PollProps) {
       style={{
         backgroundColor: frame.config.backgroundColor,
       }}>
-      <div className="w-4/5 mt-10 rounded-md relative">
-        <div className="p-4">
-          <h2
-            className="w-full border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-4xl font-bold"
-            style={{
-              color: frame.config.textColor,
-            }}>
-            {question}
-          </h2>
+      <div className="w-4/5 rounded-md relative">
+        <h2
+          className="heading-1 w-full border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0"
+          style={{
+            color: frame.config.textColor,
+          }}>
+          {question}
+        </h2>
 
-          <div className="mt-4 grid grid-cols-1 gap-4">
-            {options.map((option: string) => (
+        <div className="mt-4 grid grid-cols-1 gap-2">
+          {options.map((option: string) => (
+            <div
+              key={option}
+              className={cn(
+                'relative w-full z-0 flex justify-between items-center gap-2 bg-primary-200 p-4 rounded-lg overflow-hidden',
+                {
+                  'cursor-default': voted || isOwner,
+                },
+                {
+                  'cursor-pointer': !voted || !isOwner,
+                }
+              )}
+              onClick={() => {
+                if (
+                  voted ||
+                  isOwner ||
+                  frame.config.allowVoteOnMultipleOptions
+                ) {
+                  return
+                }
+
+                onVote?.(frame, [option])
+              }}>
               <div
-                key={option}
                 className={cn(
-                  'relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 rounded-lg overflow-hidden',
-                  {
-                    'cursor-default': voted || isOwner,
-                  },
-                  {
-                    'cursor-pointer': !voted || !isOwner,
-                  }
+                  'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
+                  { 'bg-primary-500': hasVotedOn(option) || isOwner }
                 )}
-                onClick={() => {
-                  if (
-                    voted ||
-                    isOwner ||
-                    frame.config.allowVoteOnMultipleOptions
-                  ) {
-                    return
-                  }
-
-                  onVote?.(frame, [option])
-                }}>
-                <div
-                  className={cn(
-                    'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
-                    { 'bg-purple-500': hasVotedOn(option) || isOwner }
-                  )}
-                  style={{
-                    width: `${getOptionWidth(option)}%`,
-                  }}
-                />
-                <div className="absolute left-0 top-0 h-full w-full flex justify-center items-center text-xl font-bold text-black/10 pointer-events-none">
-                  {getOptionWidth(option)}%
-                </div>
-                <PollOption
-                  frame={frame}
-                  pollOption={option}
-                  isOwner={isOwner}
-                  voted={voted}
-                  isOptionSelected={isOptionSelected}
-                  handleVoteCheckbox={handleVoteCheckbox}
-                />
-                <div className="absolute right-4">
-                  <VoteUsers votes={votes} option={option} />
-                </div>
+                style={{
+                  width: `${getOptionWidth(option)}%`,
+                }}
+              />
+              <div className="absolute left-0 top-0 h-full w-full flex justify-center items-center text-xl font-bold text-black/10 pointer-events-none">
+                {getOptionWidth(option)}%
               </div>
-            ))}
-            {voteButtonVisible && (
-              <div className="flex justify-end items-center mt-8 mb-4">
-                <Button
-                  type="button"
-                  color="primary"
-                  onClick={() => onVote?.(frame, selectedOptions)}>
-                  Submit
-                </Button>
+              <PollOption
+                frame={frame}
+                pollOption={option}
+                isOwner={isOwner}
+                voted={voted}
+                isOptionSelected={isOptionSelected}
+                handleVoteCheckbox={handleVoteCheckbox}
+              />
+              <div className="absolute right-4">
+                <VoteUsers votes={votes} option={option} />
               </div>
-            )}
-          </div>
+            </div>
+          ))}
+          {voteButtonVisible && (
+            <div className="flex justify-end items-center mt-8 mb-4">
+              <Button
+                type="button"
+                color="primary"
+                onClick={() => onVote?.(frame, selectedOptions)}>
+                Submit
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

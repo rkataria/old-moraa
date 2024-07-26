@@ -95,12 +95,12 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
           key={`frame-${frame?.id}`}
           data-miniframe-id={frame?.id}
           className={cn(
-            'relative cursor-pointer rounded-md border-0  hover:bg-purple-200 overflow-hidden',
+            'relative cursor-pointer rounded-md border-0  hover:bg-primary-200 overflow-hidden',
             {
               'max-w-[calc(100%_-_2rem)] border border-gray-300':
                 listDisplayMode === 'grid',
               'w-full': listDisplayMode === 'list',
-              'bg-purple-300': frameActive,
+              'bg-primary-200': frameActive,
               'border-2 border-gray-600':
                 frameActive && listDisplayMode === 'grid',
               'border-transparent':
@@ -143,7 +143,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
               className={cn(
                 'flex justify-between items-center p-2 border-2 border-transparent',
                 {
-                  'border-purple-200': frameActive,
+                  'border-primary-200': frameActive,
                   'border-gray-100':
                     currentFrame?.id !== frame?.id &&
                     listDisplayMode === 'grid',
@@ -197,9 +197,9 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
       <div
         data-miniframe-id={frame?.id}
         className={cn(
-          'flex justify-center items-center cursor-pointer p-1.5 border-1 border-transparent hover:bg-purple-500',
+          'flex justify-center items-center cursor-pointer p-1.5 border-1 border-transparent hover:bg-primary-200',
           {
-            'bg-purple-200': frameActive,
+            'bg-primary-200': frameActive,
           }
         )}
         onClick={() => {

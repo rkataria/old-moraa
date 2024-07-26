@@ -15,6 +15,7 @@ export type FilePickerType = {
   classNames?: {
     wrapper: string
   }
+  label?: string
 }
 
 export function FilePicker({
@@ -23,6 +24,7 @@ export function FilePicker({
   fullWidth,
   classNames,
   uploadProgress,
+  label,
 }: FilePickerType) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -39,17 +41,17 @@ export function FilePicker({
     <div
       className={clsx(
         'font-sans border-box flex justify-center mx-auto rounded-lg relative overflow-hidden',
-        'border-2 border-dashed border-gray-200',
+        'border-2 border-dashed border-primary-200',
         { 'w-96': !fullWidth, 'w-full': fullWidth },
         classNames?.wrapper
       )}>
       <div
         className={clsx(
           'flex flex-col items-center justify-center w-full h-auto',
-          'relative mb-10 bg-white bg-gray-100',
+          'relative bg-primary-50',
           {
             'w-4/5 h-32 max-w-xs': !fullWidth,
-            'w-full h-full py-[20%]': fullWidth,
+            'w-full h-full py-12': fullWidth,
           }
         )}
         {...getRootProps()}>
@@ -57,7 +59,7 @@ export function FilePicker({
           <input {...getInputProps()} id="file-upload" />
           <div className="z-20 flex flex-col-reverse items-center justify-center w-full h-full cursor-pointer">
             <p className="z-10 text-xs font-light text-center text-gray-500">
-              Drag & Drop your file(s) here
+              {label || 'Drag & Drop your file(s) here'}
             </p>
             <svg
               className="z-10 w-8 h-8 text-indigo-400"

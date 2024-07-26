@@ -21,9 +21,9 @@ export function OverviewButton({ label }: { label?: string }) {
     <Button
       startContent={<BsBookmarkFill size={18} />}
       className={cn(
-        'hover:bg-purple-200 bg-transparent w-full justify-start font-semibold text-md p-3',
+        'hover:bg-primary-200 bg-transparent w-full justify-start font-semibold text-md p-3',
         {
-          'bg-purple-200': overviewOpen,
+          'bg-primary-200': overviewOpen,
           'justify-center': !label,
         }
       )}

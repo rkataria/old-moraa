@@ -116,7 +116,7 @@ function PollOption({ frame, pollOption, voted }: PollOptionProps) {
         radius="sm"
         classNames={{
           label: 'font-bold text-black',
-          wrapper: 'border-2 border-purple-500 rounded',
+          wrapper: 'border-2 border-primary-500 rounded',
         }}>
         {pollOption}
       </Checkbox>
@@ -164,36 +164,34 @@ export function PollPreview({ frame, votes = [], voted }: PollProps) {
       style={{
         backgroundColor: frame.config.backgroundColor,
       }}>
-      <div className="w-4/5 mt-10 rounded-md relative">
-        <div className="p-4">
-          <div className="mt-4 grid grid-cols-1 gap-4">
-            {options.map((option: string) => (
+      <div className="w-4/5 rounded-md relative">
+        <div className="mt-4 grid grid-cols-1 gap-2">
+          {options.map((option: string) => (
+            <div
+              key={option}
+              className={cn(
+                'relative w-full h-14 px-4 z-0 flex justify-between items-center gap-2 bg-primary-50 rounded-lg overflow-hidden'
+              )}>
               <div
-                key={option}
                 className={cn(
-                  'relative w-full z-0 flex justify-between items-center gap-2 bg-purple-200 p-4 h-12 rounded-lg overflow-hidden'
-                )}>
-                <div
-                  className={cn(
-                    'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
-                    {
-                      'bg-purple-500': votedOptions.includes(option),
-                    }
-                  )}
-                  style={{
-                    width: `${getOptionWidth(option)}%`,
-                  }}
-                />
-                <div className="absolute left-0 top-0 h-full w-full flex justify-center items-center text-xl font-bold text-black/10 pointer-events-none">
-                  {getOptionWidth(option)}%
-                </div>
-                <PollOption frame={frame} pollOption={option} voted={voted} />
-                <div className="absolute right-4">
-                  <VoteUsers votes={votes} option={option} />
-                </div>
+                  'absolute transition-all left-0 top-0 h-full z-[-1] w-0',
+                  {
+                    'bg-primary-500': votedOptions.includes(option),
+                  }
+                )}
+                style={{
+                  width: `${getOptionWidth(option)}%`,
+                }}
+              />
+              <div className="absolute left-0 top-0 h-full w-full flex justify-center items-center text-xl font-bold text-black/10 pointer-events-none">
+                {getOptionWidth(option)}%
               </div>
-            ))}
-          </div>
+              <PollOption frame={frame} pollOption={option} voted={voted} />
+              <div className="absolute right-4">
+                <VoteUsers votes={votes} option={option} />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

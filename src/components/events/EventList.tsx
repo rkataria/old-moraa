@@ -72,7 +72,7 @@ export function EventList() {
           variant="bordered"
           showShadow
           boundaries={2}
-          color="primary"
+          color="secondary"
           showControls
           page={currentPage}
           total={pages}
@@ -95,7 +95,7 @@ export function EventList() {
           <Button
             as={Link}
             to="/events/create"
-            className="bg-black text-white mt-12"
+            className="bg-primary text-white mt-12"
             startContent={<MdOutlineAddBox className="text-lg" />}>
             Create new
           </Button>
@@ -116,7 +116,7 @@ export function EventList() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button className="bg-black text-white" as={Link} to="/events/create">
+          <Button color="primary" as={Link} to="/events/create">
             <p className="flex items-center gap-2">
               Create new <MdOutlineAddBox className="text-[18px]" />
             </p>

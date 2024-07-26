@@ -6,8 +6,8 @@ import 'tldraw/tldraw.css'
 
 import { useContext, useRef, useState } from 'react'
 
+import { Button } from '@nextui-org/button'
 import { Card } from '@nextui-org/react'
-import { IoAddSharp } from 'react-icons/io5'
 import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line import/no-cycle
@@ -24,6 +24,7 @@ import { FrameStatus } from '@/services/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
+
 // eslint-disable-next-line import/no-cycle
 
 export type BreakoutFrame = IFrame & {
@@ -208,7 +209,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
   }
 
   return (
-    <div className="ml-8 mt-6">
+    <div className="w-full h-full pt-4">
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
         <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
           {frame.content?.breakoutRooms?.map((breakout, idx) => (
@@ -227,26 +228,19 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         </div>
       </RenderIf>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS}>
-        <Card key="breakout-group-activity" className="border p-4 w-[75%]">
+        <Card
+          key="breakout-group-activity"
+          shadow="none"
+          className="border-2 border-primary-200 p-4 w-full h-full">
           <div className="flex justify-between gap-4">
-            <span className="text-md font-semibold">Activity</span>
-            <RenderIf isTrue={editable}>
-              <span className="flex gap-2">
-                <IoAddSharp
-                  className="border border-dashed border-gray-400 text-gray-400"
-                  onClick={() => {
-                    setOpenContentTypePicker(true)
-                  }}
-                />
-              </span>
-            </RenderIf>
+            <span className="text-md font-semibold">Group Activity</span>
           </div>
-          <div className="border border-dashed border-gray-200 p-2 text-gray-400 mt-4 h-96 flex items-center justify-center">
+          <div className="h-full border border-dotted border-primary-200 p-2 mt-4 flex items-center justify-center rounded-md">
             <RenderIf isTrue={Boolean(frame?.content?.groupActivityId)}>
               {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
               <div
                 ref={thumbnailContainerRef}
-                className="relative w-full h-full"
+                className="relative h-full aspect-video"
                 onClick={() => {
                   if (!editable) return
                   setCurrentFrame(
@@ -259,10 +253,22 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
                 />
               </div>
             </RenderIf>
-            <RenderIf isTrue={!frame?.content?.groupActivityId}>
-              <div className="text-center p-10">
-                You can add existing slide from any section or add new slide
-                which will be added under the Breakout section
+            <RenderIf isTrue={!frame?.content?.groupActivityId && !preview}>
+              <div className="flex flex-col gap-4 w-1/2">
+                <div className="text-center">
+                  You can add existing slide from any section or add new slide
+                  which will be added under the Breakout section
+                </div>
+                <div className="flex justify-center items-center">
+                  <Button
+                    color="primary"
+                    variant="ghost"
+                    onClick={() => {
+                      setOpenContentTypePicker(true)
+                    }}>
+                    Add Group Activity
+                  </Button>
+                </div>
               </div>
             </RenderIf>
           </div>

@@ -147,14 +147,14 @@ export function MeetingSetupScreen() {
         <div className="flex flex-col justify-start w-1/2 m-8">
           <div className="w-1/2 flex text-center flex-col min-w-[300px]">
             <h2 className="mt-2 font-semibold">Welcome {name}!</h2>
-            <p className="mt-2 text-purple-500">
+            <p className="mt-2 text-primary-500">
               {isHost
                 ? 'You are joining as Host'
                 : 'You are joining as Learner'}
             </p>
             <input
               disabled={!selfParticipant.permissions.canEditDisplayName}
-              className="mt-2 outline-none p-2 rounded font-normal border-2 border-purple-500 bg-white"
+              className="mt-2 outline-none p-2 rounded font-normal border-2 border-primary-500 bg-white"
               value={name}
               onChange={(e) => {
                 setName(e.target.value)

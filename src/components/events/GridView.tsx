@@ -29,7 +29,9 @@ export function GridView({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 min-[1920px]:grid-cols-5">
       {eventRows.map((event) => (
-        <div className="relative border rounded-lg p-[1.25rem] flex flex-col justify-between shadow-sm">
+        <div
+          key={event.id}
+          className="relative border rounded-lg p-[1.25rem] flex flex-col justify-between shadow-sm">
           <div>
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-4">

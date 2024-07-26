@@ -1,8 +1,9 @@
 import { useContext } from 'react'
 
-import { Image } from '@nextui-org/react'
-import { Link } from 'lucide-react'
+import { Button } from '@nextui-org/button'
+import { Link } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { IoIosArrowBack } from 'react-icons/io'
 
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
 import { Toolbars } from '../common/content-types/MoraaSlide/Toolbars'
@@ -56,9 +57,11 @@ export function Header({
   return (
     <div className="h-full p-2">
       <div className="flex justify-between items-center h-12 w-full">
-        <div className="flex justify-start items-center gap-3">
+        <div className="flex justify-start items-center gap-1">
           <Link to="/events">
-            <Image src="/logo-icon-square.svg" />
+            <Button isIconOnly variant="light">
+              <IoIosArrowBack size={20} />
+            </Button>
           </Link>
           <span className="font-medium">{event?.name}</span>
         </div>

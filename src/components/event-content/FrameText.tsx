@@ -115,11 +115,12 @@ export function FrameText({
       maxLength={TITLE_CHARACTER_LIMIT}
       onChange={updateText}
       onKeyDown={onTextKeyDown}
+      maxRows={2}
       className={cn(
-        'w-full text-start border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 font-bold text-gray-800 placeholder-gray-500 resize-none tracking-tight',
+        'w-full text-start border-0 bg-transparent outline-none hover:outline-none focus:ring-0 focus:border-0 text-gray-800 placeholder-gray-500 resize-none',
         className,
         {
-          'text-4xl': ['question', 'title'].includes(changedKey),
+          'heading-2-bold': ['question', 'title'].includes(changedKey),
         }
       )}
     />

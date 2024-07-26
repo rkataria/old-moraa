@@ -34,6 +34,7 @@ export function FrameThumbnailCard({
         frame={frame}
         isInteractive={false}
         key={JSON.stringify(frame?.content)}
+        fullWidth
       />
     </div>
   )

@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import groupBy from 'lodash.groupby'
 
@@ -59,7 +61,7 @@ function HostView() {
   const selfResponse = selfResponses[0] as IReflectionResponse | undefined
 
   return (
-    <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
+    <>
       <SelfReflectionCard
         username={username}
         avatarUrl={user.avatar_url}
@@ -69,7 +71,7 @@ function HostView() {
         <ReflectionCard key={res.id} response={res} isOwner={false} />
       ))}
       <TypingUsers />
-    </div>
+    </>
   )
 }
 
@@ -111,15 +113,13 @@ function ParticipantView() {
   const key = `dm-${dyteMeetingId}-br-${JSON.stringify(isBreakoutActive)}`
 
   return (
-    <div key={key}>
-      <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <SelfReflectionCard username={username} selfResponse={selfResponse} />
-        {otherResponses.map((res) => (
-          <ReflectionCard key={res.id} response={res} isOwner={false} />
-        ))}
-        <TypingUsers />
-      </div>
-    </div>
+    <React.Fragment key={key}>
+      <SelfReflectionCard username={username} selfResponse={selfResponse} />
+      {otherResponses.map((res) => (
+        <ReflectionCard key={res.id} response={res} isOwner={false} />
+      ))}
+      <TypingUsers />
+    </React.Fragment>
   )
 }
 
@@ -128,18 +128,12 @@ export function Reflection({ frame }: ReflectionProps) {
 
   return (
     <div
-      className="w-full flex justify-center items-start"
+      className="w-full flex justify-start items-start mt-4"
       style={{
         backgroundColor: frame.content.backgroundColor,
       }}>
-      <div className="w-4/5 mt-2 rounded-md relative">
-        <div className="p-4">
-          {/* <FrameTitle
-            textColor={frame.content.textColor}
-            title={frame.content.title}
-          /> */}
-          {isHost ? <HostView /> : <ParticipantView />}
-        </div>
+      <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-2">
+        {isHost ? <HostView /> : <ParticipantView />}
       </div>
     </div>
   )

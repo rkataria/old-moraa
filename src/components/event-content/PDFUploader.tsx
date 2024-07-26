@@ -4,8 +4,10 @@ import { useContext, useEffect, useState } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
+import { FaFilePdf } from 'react-icons/fa'
 import { pdfjs, Document, Page } from 'react-pdf'
 
+import { FrameFormContainer } from './FrameFormContainer'
 import { FilePicker } from '../common/FilePicker'
 import { PageControls } from '../common/PageControls'
 
@@ -19,7 +21,7 @@ import {
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { QueryKeys } from '@/utils/query-keys'
-import { cn, getFileObjectFromBlob } from '@/utils/utils'
+import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
   frame: IFrame & {
@@ -116,7 +118,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
     switch (true) {
       case downloadPDFQuery.isLoading:
         return (
-          <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
+          <div className="w-full h-full flex justify-center items-center">
             <Loading />
           </div>
         )
@@ -124,35 +126,42 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
       case uploadPDFMutation.isPending:
       case !fileUrl:
         return (
-          <div className="flex flex-col justify-center w-[50vw]">
-            <FilePicker
-              fullWidth
-              supportedFormats={{ 'application/pdf': ['.pdf'] }}
-              uploadProgress={
-                uploadPDFMutation.isPending || downloadPDFQuery.isPending
-                  ? uploadProgress
-                  : 0
-              }
-              onUpload={(files) => {
-                const fileList = []
-                if (files) {
-                  for (const file of files) {
-                    fileList.push(file)
-                  }
-                  uploadAndSetFile(fileList[0])
+          <FrameFormContainer
+            headerIcon={<FaFilePdf size={72} className="text-primary" />}
+            headerTitle="Embed PDF"
+            headerDescription="Easily embed PDF file into Moraa Frame."
+            footerNote="Uploading password protected PDF file won't be accessible by Participants">
+            <div className="w-full">
+              <FilePicker
+                fullWidth
+                label="Drag & drop pdf file here or click here to upload file"
+                supportedFormats={{ 'application/pdf': ['.pdf'] }}
+                uploadProgress={
+                  uploadPDFMutation.isPending || downloadPDFQuery.isPending
+                    ? uploadProgress
+                    : 0
                 }
-              }}
-            />
-          </div>
+                onUpload={(files) => {
+                  const fileList = []
+                  if (files) {
+                    for (const file of files) {
+                      fileList.push(file)
+                    }
+                    uploadAndSetFile(fileList[0])
+                  }
+                }}
+              />
+            </div>
+          </FrameFormContainer>
         )
 
       case !!downloadPDFQuery.data:
         return (
-          <div>
+          <div className="w-4/5 h-full flex justify-start items-start gap-4">
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
-              className="relative aspect-video h-[520px] m-auto overflow-y-auto scrollbar-thin"
+              className="relative aspect-video h-full ml-0 overflow-y-auto scrollbar-thin"
               loading={
                 <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
                   <Loading />
@@ -182,12 +191,5 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
     }
   }
 
-  return (
-    <div
-      className={cn(
-        'w-full h-full flex flex-col justify-center items-center bg-white'
-      )}>
-      {getInnerContent()}
-    </div>
-  )
+  return <>{getInnerContent()}</>
 }

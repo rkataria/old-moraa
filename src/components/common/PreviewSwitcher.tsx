@@ -6,7 +6,6 @@ import { LuTv } from 'react-icons/lu'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
-import { cn } from '@/utils/utils'
 
 export function PreviewSwitcher() {
   const { preview, setPreview } = useContext(EventContext) as EventContextType
@@ -18,12 +17,10 @@ export function PreviewSwitcher() {
 
   return (
     <Button
-      color="danger"
+      color={preview ? 'danger' : 'success'}
       size="sm"
       radius="md"
-      className={cn({
-        'bg-[#7C3AED] text-white': !preview,
-      })}
+      className="text-white"
       endContent={<LuTv size={16} className="rotate-180" />}
       onClick={() => setPreview(!preview)}>
       {preview ? 'Exit Preview' : 'Preview'}

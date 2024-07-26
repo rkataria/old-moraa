@@ -208,7 +208,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
                 <div className="grid gap-2">
                   <Button
                     variant="bordered"
-                    className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-purple-400 bg-purple-100"
+                    className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
                     onClick={handleGeneratePoll}
                     startContent={
                       <HiOutlineChartBarSquare className="text-[1.5rem] shrink-0" />
@@ -217,7 +217,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
                   </Button>
                   <Button
                     variant="bordered"
-                    className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-purple-400 bg-purple-100"
+                    className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
                     onClick={handleSummarizeSection}
                     startContent={
                       <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
@@ -260,7 +260,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
             <div className="flex items-center gap-2 p-2">
               <Button
                 variant="bordered"
-                className="justify-start text-xs  h-[2.0625rem] px-2 border-1 border-purple-400"
+                className="justify-start text-xs  h-[2.0625rem] px-2 border-1 border-primary-400"
                 onClick={handleGeneratePoll}
                 startContent={
                   <HiOutlineChartBarSquare className="text-[1.5rem] shrink-0" />
@@ -269,7 +269,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
               </Button>
               <Button
                 variant="bordered"
-                className="justify-start text-xs h-[2.0625rem] px-2 border-1 border-purple-400"
+                className="justify-start text-xs h-[2.0625rem] px-2 border-1 border-primary-400"
                 onClick={handleSummarizeSection}
                 startContent={
                   <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />

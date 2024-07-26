@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 
+import { Button } from '@nextui-org/button'
 import { IconTrash } from '@tabler/icons-react'
 import { useThrottle } from '@uidotdev/usehooks'
 import clsx from 'clsx'
@@ -97,48 +98,48 @@ export function PollEditor({ frame: frameFromRemote }: PollEditorProps) {
         onSuccessiveEnters={focusOnFirstEmptyOption}
       />
       <FrameTextBlock blockType="paragraph" />
-      <div className={clsx('w-full h-auto flex justify-start items-start')}>
-        <div className="w-4/5">
-          <ul>
-            {options.map((option: string, index: number) => (
-              <li
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                className="flex justify-between items-center mb-2 rounded-md font-semibold bg-black/5 text-black">
-                <ReactTextareaAutosize
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  ref={(el: any) => {
-                    optionsRef.current[index] = el
-                  }}
-                  className={clsx(
-                    'w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none'
-                  )}
-                  value={option}
-                  placeholder={`Option ${index + 1}`}
-                  onChange={(e) => updateOption(e, index)}
-                  onKeyDown={focusOnFirstEmptyOption}
-                />
-                <button
-                  type="button"
-                  aria-label="delete"
-                  className="p-4"
-                  onClick={() => deleteOption(index)}>
-                  <IconTrash size={16} />
-                </button>
-              </li>
-            ))}
-            <li>
+      <div
+        className={clsx(
+          'w-4/5 h-auto flex flex-col justify-start items-start mt-4'
+        )}>
+        <ul className="w-full">
+          {options.map((option: string, index: number) => (
+            <li
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              className="flex justify-between items-center mb-2 rounded-md font-semibold bg-primary-50 text-foreground">
+              <ReactTextareaAutosize
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ref={(el: any) => {
+                  optionsRef.current[index] = el
+                }}
+                className={clsx(
+                  'w-full text-left p-4 bg-transparent  border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none'
+                )}
+                value={option}
+                placeholder={`Option ${index + 1}`}
+                onChange={(e) => updateOption(e, index)}
+                onKeyDown={focusOnFirstEmptyOption}
+              />
               <button
                 type="button"
-                className={clsx(
-                  'w-full text-center p-4 border-2 border-black rounded-md mb-2 font-semibold cursor-pointer text-black outline-none hover:outline-none'
-                )}
-                onClick={addNewOption}>
-                Add option
+                aria-label="delete"
+                className="p-4"
+                onClick={() => deleteOption(index)}>
+                <IconTrash size={16} />
               </button>
             </li>
-          </ul>
-        </div>
+          ))}
+        </ul>
+        <Button
+          fullWidth
+          size="lg"
+          variant="ghost"
+          color="primary"
+          className="h-14"
+          onClick={addNewOption}>
+          Add option
+        </Button>
       </div>
     </>
   )
