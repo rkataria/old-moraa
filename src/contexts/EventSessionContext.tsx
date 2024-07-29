@@ -9,6 +9,7 @@ import {
 
 import { sendNotification } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { DyteParticipant } from '@dytesdk/web-core'
 import { useParams } from '@tanstack/react-router'
 import isEqual from 'lodash.isequal'
 import uniqBy from 'lodash.uniqby'
@@ -101,6 +102,29 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame])
+
+  useEffect(() => {
+    const handleParticipantJoined = (newParticipant: DyteParticipant) => {
+      if (dyteMeeting.participants.count > 3) {
+        // joinedParticipant is the newly joined participant in the meet.
+        const newJoinedParticipant = dyteMeeting.participants.joined.get(
+          newParticipant.id
+        )
+        newJoinedParticipant?.disableAudio()
+      }
+    }
+    dyteMeeting.participants.joined.on(
+      'participantJoined',
+      handleParticipantJoined
+    )
+
+    return () => {
+      dyteMeeting.participants.joined.off(
+        'participantJoined',
+        handleParticipantJoined
+      )
+    }
+  }, [dyteMeeting])
 
   useEffect(() => {
     if (!meeting?.id) return
