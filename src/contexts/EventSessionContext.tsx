@@ -161,7 +161,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       } else if (sections?.length > 0) {
         const _currentFrame = sections
           .flatMap((s) => s.frames)
-          .find((s) => s.id === _activeSession.data?.currentFrameId)
+          .find((s) => s?.id === _activeSession.data?.currentFrameId)
         setCurrentFrame(_currentFrame || (sections[0].frames || [])[0])
       }
     }
