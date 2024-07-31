@@ -116,7 +116,7 @@ export function MiroEmbedEditor({
         onChange={(e) => setBoardIdentifier(e.target.value)}
       />
       <Button color="primary" variant="ghost" fullWidth onClick={saveMiroUrl}>
-        Embed Miro Board
+        {isUpdating ? 'Save' : 'Embed'} Miro Board
       </Button>
       <RenderIf isTrue={isUpdating}>
         <AiOutlineClose
