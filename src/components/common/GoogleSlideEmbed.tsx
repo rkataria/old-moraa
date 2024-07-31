@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-import { Skeleton } from '@nextui-org/react'
 import ReactGoogleSlides from 'react-google-slides'
 
 import { PageControls } from './PageControls'
@@ -33,7 +32,12 @@ export function GoogleSlideEmbed({
   return (
     <div className="relative w-full h-full">
       {loading && (
-        <Skeleton className="absolute left-0 top-0 w-full h-full rounded-md" />
+        // <Skeleton className="absolute left-0 top-0 w-full h-full rounded-md" />
+        <img
+          src="/moraa-loader.gif"
+          alt="moraa-loader"
+          className="absolute left-0 top-0 w-full h-full rounded-md"
+        />
       )}
       <ReactGoogleSlides
         width="100%"
