@@ -182,12 +182,12 @@ export function ResponsiveVideoPlayer({
       {showControls && playerControl === PlayerControl.CUSTOM && (
         <div
           className={cn(
-            'absolute left-0 w-full h-12 p-2 -bottom-12 bg-gradient-to-b from-transparent to-black/80 duration-300',
+            'absolute left-0 w-full h-12 p-2 -bottom-12 bg-gradient-to-b duration-300',
             {
               'bottom-0': !(hideControls && playing),
             }
           )}>
-          <div className="flex justify-start items-center gap-4 h-full w-full text-white p-3 rounded-sm">
+          <div className="flex justify-start items-center gap-4 h-full w-full bg-white p-3 rounded-sm">
             {playing ? (
               <IconPlayerPauseFilled onClick={handlePause} />
             ) : (
