@@ -2,8 +2,8 @@ import { useContext, useState } from 'react'
 
 import { Button, Input } from '@nextui-org/react'
 import { AiOutlineClose } from 'react-icons/ai'
+import { CiEdit } from 'react-icons/ci'
 import { FaYoutube } from 'react-icons/fa'
-import { MdOutlineEdit } from 'react-icons/md'
 
 import { FrameFormContainer } from './FrameFormContainer'
 import { RenderIf } from '../common/RenderIf/RenderIf'
@@ -62,10 +62,12 @@ export function VideoEmbedEditor({
           )}>
           <ResponsiveVideoPlayer url={videoUrl} showControls={showControls} />
         </div>
-        <MdOutlineEdit
-          className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg border bg-primary text-white cursor-pointer"
-          onClick={() => setIsEditMode(true)}
-        />
+        <RenderIf isTrue={!preview}>
+          <CiEdit
+            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg border bg-primary text-white cursor-pointer"
+            onClick={() => setIsEditMode(true)}
+          />
+        </RenderIf>
       </div>
     )
   }
@@ -86,7 +88,12 @@ export function VideoEmbedEditor({
         onChange={(e) => setVideoUrl(e.target.value)}
         value={videoUrl}
       />
-      <Button color="primary" variant="ghost" fullWidth onClick={saveVideoUrl}>
+      <Button
+        color="primary"
+        variant="ghost"
+        fullWidth
+        onClick={saveVideoUrl}
+        disabled={!videoUrl}>
         {isUpdating ? 'Save' : 'Embed'} Youtube Video
       </Button>
       <RenderIf isTrue={isUpdating}>

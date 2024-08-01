@@ -7,9 +7,10 @@ import {
   IconVolume2,
   IconVolume3,
 } from '@tabler/icons-react'
+import { useDebounce } from '@uidotdev/usehooks'
 import ReactPlayer from 'react-player/lazy'
 
-import { formatSecondsToDuration } from '@/utils/utils'
+import { formatSecondsToDuration, cn } from '@/utils/utils'
 
 export enum PlayerControl {
   CUSTOM = 'custom',
@@ -44,7 +45,14 @@ export function ResponsiveVideoPlayer({
   playerState,
   onPlayerStateChange,
 }: ResponsiveVideoPlayerProps) {
+  const [hideControls, setHideControls] = useState(true)
+  const [hoveringOnContainer, setHoveringOnContainer] = useState<null | string>(
+    null
+  )
+
   const playerRef = useRef<ReactPlayer>(null)
+  const hovered = useDebounce(hoveringOnContainer, 3000)
+
   const [currentPlayerState, setCurrentPlayerState] =
     useState<ResponsiveVideoPlayerState>({
       playing: false,
@@ -72,6 +80,13 @@ export function ResponsiveVideoPlayer({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerState])
+
+  useEffect(() => {
+    if (!hovered) return
+    setTimeout(() => {
+      setHideControls(true)
+    }, 3000)
+  }, [hovered])
 
   const handlePlay = () => {
     if (!showControls) return
@@ -123,11 +138,18 @@ export function ResponsiveVideoPlayer({
     playerRef.current?.seekTo(parseFloat(e.target.value))
   }
 
+  const handleMouseMove = () => {
+    setHoveringOnContainer(`${Math.random()}-hovering`)
+    setHideControls(false)
+  }
+
   const { playing, loop, volume, muted, playbackRate, played } =
     currentPlayerState
 
   return (
-    <div className="relative w-full pt-[56.25%] rounded-md overflow-hidden">
+    <div
+      className="relative w-full pt-[56.25%] rounded-md overflow-hidden"
+      onMouseMove={handleMouseMove}>
       <ReactPlayer
         ref={playerRef}
         url={url}
@@ -158,8 +180,14 @@ export function ResponsiveVideoPlayer({
       />
       {/* Player Custom Control */}
       {showControls && playerControl === PlayerControl.CUSTOM && (
-        <div className="absolute bottom-0 left-0 w-full h-12 p-2">
-          <div className="flex justify-start items-center gap-4 h-full w-full bg-white p-3 rounded-sm">
+        <div
+          className={cn(
+            'absolute left-0 w-full h-12 p-2 -bottom-12 bg-gradient-to-b from-transparent to-black duration-300',
+            {
+              'bottom-0': !(hideControls && playing),
+            }
+          )}>
+          <div className="flex justify-start items-center gap-4 h-full w-full text-white p-3 rounded-sm">
             {playing ? (
               <IconPlayerPauseFilled onClick={handlePause} />
             ) : (
@@ -171,6 +199,7 @@ export function ResponsiveVideoPlayer({
                 <IconVolume2 onClick={handleMuteToggle} />
               )}
               {volume === 0 && <IconVolume3 onClick={handleMuteToggle} />}
+
               <input
                 type="range"
                 min={0}
@@ -225,6 +254,9 @@ export function ResponsiveVideoPlayer({
             View Mode
           </span>
         </div>
+      )}
+      {hideControls && playing && (
+        <div className="absolute top-0 left-0 w-full h-full z-[1] opacity-0" />
       )}
     </div>
   )

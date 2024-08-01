@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 
 import { Button, Input } from '@nextui-org/react'
 import { AiOutlineClose } from 'react-icons/ai'
-import { MdOutlineEdit } from 'react-icons/md'
+import { CiEdit } from 'react-icons/ci'
 import { SiMiro } from 'react-icons/si'
 
 import { FrameFormContainer } from './FrameFormContainer'
@@ -90,10 +90,12 @@ export function MiroEmbedEditor({
     return (
       <div className="relative w-full h-full">
         <MiroEmbed frame={frame} />
-        <MdOutlineEdit
-          className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg border bg-primary text-white cursor-pointer"
-          onClick={() => setIsEditMode(true)}
-        />
+        <RenderIf isTrue={!preview}>
+          <CiEdit
+            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg border bg-primary text-white cursor-pointer"
+            onClick={() => setIsEditMode(true)}
+          />
+        </RenderIf>
       </div>
     )
   }
@@ -115,7 +117,12 @@ export function MiroEmbedEditor({
         value={boardIdentifier}
         onChange={(e) => setBoardIdentifier(e.target.value)}
       />
-      <Button color="primary" variant="ghost" fullWidth onClick={saveMiroUrl}>
+      <Button
+        color="primary"
+        variant="ghost"
+        fullWidth
+        onClick={saveMiroUrl}
+        disabled={!boardIdentifier}>
         {isUpdating ? 'Save' : 'Embed'} Miro Board
       </Button>
       <RenderIf isTrue={isUpdating}>
