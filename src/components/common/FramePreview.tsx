@@ -10,7 +10,7 @@ import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
 import { MoraaSlidePreview } from './content-types/MoraaSlide/Preview'
 import { PDFViewer, PDFViewerFrameType } from './content-types/PDFViewer'
-import { PollFrame, PollPreview } from './content-types/PollPreview'
+import { PollPreview } from './content-types/Poll/Preview'
 import { TextImageFrameType } from './content-types/TextImage'
 import { FrameTitleDescriptionPreview } from './FrameTitleDescriptionPreview'
 import {
@@ -28,23 +28,24 @@ import { Cover, CoverFrameType } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
 // import { useDimensions } from '@/hooks/useDimensions'
-import { IFrame } from '@/types/frame.type'
+import { IFrame, PollFrame } from '@/types/frame.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
 interface FrameProps {
   frame: IFrame
   isInteractive?: boolean
   fullWidth?: boolean
+  asThumbnail?: boolean
 }
 
 export function FramePreview({
   frame,
   isInteractive = true,
   fullWidth,
+  asThumbnail,
 }: FrameProps) {
   const previewRef = useRef<HTMLDivElement>(null)
 
-  // const { totalHeight } = useDimensions(previewRef)
   useEffect(() => {
     if (!frame) return
 
@@ -54,27 +55,11 @@ export function FramePreview({
     )
   }, [frame])
 
-  // const thumbnailStyle = () => {
-  //   if (isInteractive) return {}
-  //   if (frame.type === ContentType.RICH_TEXT) {
-  //     const scaleDown = (209 / totalHeight) * 3
-
-  //     return {
-  //       scale: scaleDown > 1 ? 1 : scaleDown,
-  //       transformOrigin: 'top',
-  //       height: totalHeight,
-  //     }
-  //   }
-
-  //   return null
-  // }
-
   return (
     <div
       ref={previewRef}
       style={{
         backgroundColor: frame.config.backgroundColor,
-        // ...thumbnailStyle(),
       }}
       className={cn(
         'relative group w-full h-full bg-white flex flex-col gap-2 p-4',
@@ -117,7 +102,10 @@ export function FramePreview({
           />
         )}
         {frame.type === ContentType.POLL && (
-          <PollPreview frame={frame as PollFrame} votes={[]} voted={false} />
+          <PollPreview
+            frame={frame as PollFrame}
+            disableAnimation={!isInteractive! && asThumbnail}
+          />
         )}
         {frame.type === ContentType.GOOGLE_SLIDES_IMPORT && (
           <div className="w-full h-full flex justify-center items-center">

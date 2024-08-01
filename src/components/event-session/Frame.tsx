@@ -4,7 +4,6 @@ import React, { useContext, useEffect } from 'react'
 
 import { GoogleSlides } from './content-types/GoogleSlides'
 import { PDFViewer } from './content-types/PDFViewer'
-import { Poll, Vote } from './content-types/Poll'
 import { Reflection } from './content-types/Reflection'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
@@ -19,11 +18,12 @@ import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { Poll } from '@/components/event-session/content-types/Poll/Poll'
 import { TextImage } from '@/components/event-session/content-types/TextImage'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { type IReflectionFrame } from '@/types/frame.type'
+import { Vote, type IReflectionFrame } from '@/types/frame.type'
 import { checkVoted } from '@/utils/content.util'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
@@ -106,7 +106,7 @@ export function Frame() {
 
   return (
     <div
-      className={cn('relative h-full w-full', {
+      className={cn('relative h-full w-full p-4', {
         'px-[20%] h-screen overflow-y-scroll scrollbar-none':
           currentFrame.type === ContentType.RICH_TEXT,
       })}>

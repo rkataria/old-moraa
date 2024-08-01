@@ -113,7 +113,20 @@ export const getDefaultContent = ({
     case ContentType.POLL:
       return {
         question: '',
-        options: ['', '', ''],
+        options: [
+          {
+            name: '',
+            color: '#E7E0FF',
+          },
+          {
+            name: '',
+            color: '#E7E0FF',
+          },
+          {
+            name: '',
+            color: '#E7E0FF',
+          },
+        ],
         blocks: [paragraphBlock],
       }
 
