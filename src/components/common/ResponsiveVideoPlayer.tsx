@@ -182,7 +182,7 @@ export function ResponsiveVideoPlayer({
       {showControls && playerControl === PlayerControl.CUSTOM && (
         <div
           className={cn(
-            'absolute left-0 w-full h-12 p-2 -bottom-12 bg-gradient-to-b from-transparent to-black duration-300',
+            'absolute left-0 w-full h-12 p-2 -bottom-12 bg-gradient-to-b from-transparent to-black/80 duration-300',
             {
               'bottom-0': !(hideControls && playing),
             }
