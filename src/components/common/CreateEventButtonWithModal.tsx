@@ -20,6 +20,7 @@ import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
 import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
+import { cn } from '@/utils/utils'
 
 interface ICreateEventButtonWithModal {
   isEdit?: boolean
@@ -149,21 +150,19 @@ export function CreateEventButtonWithModal({
                 <NewEventForm
                   onSubmit={onSubmit}
                   defaultValue={defaultValues}
-                  renderAction={() => (
+                  renderAction={({ disableAction }) => (
                     <div className="flex justify-end mb-4">
-                      <Button
-                        variant="bordered"
-                        className="mr-2"
-                        onClick={() => setOpen(false)}
-                        isDisabled={eventMutation.isPending}>
-                        Cancel
-                      </Button>
                       <Button
                         type="submit"
                         color="primary"
                         variant="solid"
-                        isLoading={eventMutation.isPending}>
-                        {isEdit ? 'Save' : 'Create'}
+                        disabled={disableAction}
+                        isLoading={eventMutation.isPending}
+                        className={cn({
+                          'opacity-100': !disableAction,
+                          'opacity-50 hover:opacity-50': disableAction,
+                        })}>
+                        {isEdit ? 'Update' : 'Create'}
                       </Button>
                     </div>
                   )}

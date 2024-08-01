@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Image, Textarea } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
@@ -6,13 +8,11 @@ import { Controller, useForm } from 'react-hook-form'
 import { CiEdit } from 'react-icons/ci'
 import * as yup from 'yup'
 
-import {
-  FileUploader,
-  FileWithoutSignedUrl,
-} from '@/components/event-content/FileUploader'
+import { LocalFilePicker } from '@/components/common/LocalFilePicker'
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event.service'
+import { cn } from '@/utils/utils'
 
 export type CreateEventFormData = yup.InferType<
   typeof createEventValidationSchema
@@ -26,6 +26,9 @@ const createEventValidationSchema = yup.object({
 })
 
 export function LeftSection() {
+  const [imageObject, setImageObject] = useState<string | undefined>(undefined)
+  const [imageUploadProgress, setImageUploadProgress] = useState<number>(0)
+  const [imageUploading, setImageUploading] = useState<boolean>(false)
   const { eventId } = useParams({ strict: false })
   const eventData = useEvent({ id: eventId })
 
@@ -57,15 +60,14 @@ export function LeftSection() {
     // eslint-disable-next-line consistent-return
     return updateEventMutation.mutateAsync(payload, {
       onSuccess: () => {
-        eventData.refetch()
         createEventForm.reset(createEventForm.getValues())
+        eventData.refetch()
       },
     })
   }
 
-  const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
-    const file = files?.[0]
-    createEventForm.setValue('imageUrl', file.url, { shouldDirty: true })
+  const handleFileUpload = (imageUrl: string) => {
+    createEventForm.setValue('imageUrl', imageUrl, { shouldDirty: true })
   }
 
   return (
@@ -81,7 +83,7 @@ export function LeftSection() {
                 name="imageUrl"
                 render={({ field }) => (
                   <Image
-                    src={field.value || IMAGE_PLACEHOLDER}
+                    src={imageObject || field.value || IMAGE_PLACEHOLDER}
                     classNames={{
                       img: 'w-full h-full object-cover',
                       wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
@@ -89,18 +91,37 @@ export function LeftSection() {
                   />
                 )}
               />
-              <FileUploader
-                maxNumberOfFiles={1}
-                allowedFileTypes={['.jpg', '.jpeg', '.png']}
+              {imageUploading && (
+                <div
+                  className={cn(
+                    'absolute left-0 top-0 w-full h-full flex justify-center items-center rounded-e-md text-white text-md font-bold z-10 bg-black/80'
+                  )}
+                  style={{
+                    opacity: 100 - imageUploadProgress,
+                  }}>
+                  {parseInt(imageUploadProgress.toString(), 10)}%
+                </div>
+              )}
+              <LocalFilePicker
+                accept="image/png, image/jpeg, image/jpg"
+                fileName={`event-image-${event.id}`}
                 bucketName="image-uploads"
-                triggerProps={{
-                  className:
-                    'min-w-8 w-8 h-8 bg-black/60 text-white max-w-14 border-2 border-white rounded-xl shrink-0 hover:bg-black/20 absolute right-0 bottom-0 m-3 z-[10] rounded-full',
-                  isIconOnly: true,
-                  children: <CiEdit className="shrink-0 text-lg" />,
-                  variant: 'light',
+                uploadRemote
+                trigger={
+                  <div className="absolute bottom-2 right-2 z-10 h-8 w-8 rounded-full bg-black/40 text-white flex justify-center items-center cursor-pointer hover:bg-black/50 transition-all duration-300">
+                    <CiEdit size={20} />
+                  </div>
+                }
+                onSelect={(file) => {
+                  setImageUploading(true)
+                  const _imageObject = window.URL.createObjectURL(file)
+                  setImageObject(_imageObject)
                 }}
-                onPublicFilesUploaded={handleFileUpload}
+                onUpload={(response) => {
+                  setImageUploading(false)
+                  handleFileUpload(response?.url)
+                }}
+                onProgressChange={setImageUploadProgress}
               />
             </div>
             <div className="h-full flex flex-col justify-between gap-8">
@@ -144,9 +165,11 @@ export function LeftSection() {
               {createEventForm.formState.isDirty && (
                 <Button
                   type="submit"
-                  className="w-full bg-black text-white shadow-xl"
+                  color="primary"
+                  variant="solid"
+                  fullWidth
                   isLoading={updateEventMutation.isPending}>
-                  Save
+                  Update
                 </Button>
               )}
             </div>

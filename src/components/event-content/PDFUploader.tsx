@@ -8,7 +8,7 @@ import { FaFilePdf } from 'react-icons/fa'
 import { pdfjs, Document, Page } from 'react-pdf'
 
 import { FrameFormContainer } from './FrameFormContainer'
-import { FilePicker } from '../common/FilePicker'
+import { FilePickerDropzone } from '../common/FilePickerDropzone'
 import { PageControls } from '../common/PageControls'
 
 import { Loading } from '@/components/common/Loading'
@@ -132,7 +132,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
             headerDescription="Easily embed PDF file into Moraa Frame."
             footerNote="Uploading password protected PDF file won't be accessible by Participants">
             <div className="w-full">
-              <FilePicker
+              <FilePickerDropzone
                 fullWidth
                 label="Drag & drop pdf file here or click here to upload file"
                 supportedFormats={{ 'application/pdf': ['.pdf'] }}

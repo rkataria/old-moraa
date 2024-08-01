@@ -5,9 +5,10 @@ import { cn } from '@/utils/utils'
 
 export type MeetingControlButtonProps = {
   children: React.ReactNode
-  tooltipProps: TooltipProps
+  tooltipProps?: TooltipProps
   buttonProps: ButtonProps
   hideTooltip?: boolean
+  buttonLabel?: string
   onClick: () => void
 }
 
