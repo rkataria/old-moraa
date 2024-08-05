@@ -1,9 +1,12 @@
 import { useContext, useEffect, useState } from 'react'
 
 import { Button, Input } from '@nextui-org/react'
+import { AiOutlineClose } from 'react-icons/ai'
+import { CiEdit } from 'react-icons/ci'
 import { SiMiro } from 'react-icons/si'
 
 import { FrameFormContainer } from './FrameFormContainer'
+import { RenderIf } from '../common/RenderIf/RenderIf'
 
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { EventContext } from '@/contexts/EventContext'
@@ -84,13 +87,25 @@ export function MiroEmbedEditor({
   }
 
   if (isEmbedView) {
-    return <MiroEmbed frame={frame} />
+    return (
+      <div className="relative w-full h-full">
+        <MiroEmbed frame={frame} />
+        <RenderIf isTrue={!preview}>
+          <CiEdit
+            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg border bg-primary text-white cursor-pointer"
+            onClick={() => setIsEditMode(true)}
+          />
+        </RenderIf>
+      </div>
+    )
   }
+
+  const isUpdating = isEditMode && frame.content?.boardId?.length > 0
 
   return (
     <FrameFormContainer
       headerIcon={<SiMiro size={72} className="text-primary" />}
-      headerTitle="Embed Miro Board"
+      headerTitle={`${isUpdating ? 'Edit' : 'Embed'} Miro Board`}
       headerDescription="Easily embed Miro board into Moraa Frame for seamless collaboration and smooth editing."
       footerNote="Make sure the Miro board is publically accessible or shared with participants.">
       <Input
@@ -102,9 +117,20 @@ export function MiroEmbedEditor({
         value={boardIdentifier}
         onChange={(e) => setBoardIdentifier(e.target.value)}
       />
-      <Button color="primary" variant="ghost" fullWidth onClick={saveMiroUrl}>
-        Embed Miro Board
+      <Button
+        color="primary"
+        variant="ghost"
+        fullWidth
+        onClick={saveMiroUrl}
+        disabled={!boardIdentifier}>
+        {isUpdating ? 'Save' : 'Embed'} Miro Board
       </Button>
+      <RenderIf isTrue={isUpdating}>
+        <AiOutlineClose
+          className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg border bg-primary text-white cursor-pointer"
+          onClick={() => setIsEditMode(false)}
+        />
+      </RenderIf>
     </FrameFormContainer>
   )
 }

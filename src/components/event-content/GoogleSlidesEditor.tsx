@@ -55,7 +55,7 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
       importAsIndividualFrames: false,
     },
   })
-
+  const formWatchValues = googleSlideEmbedForm.watch()
   const [importingSlidesStatus, setImportingSlidesStatus] = useState('')
 
   const [mode, setMode] = useState(
@@ -147,7 +147,7 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
               color="primary"
               label="Google Slides URL"
               className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
-              placeholder="Enter google slides url"
+              placeholder="Paste google slides url"
               isInvalid={!!fieldState.error?.message}
               errorMessage={fieldState.error?.message}
               classNames={{
@@ -156,7 +156,7 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
             />
           )}
         />
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <Controller
             control={googleSlideEmbedForm.control}
             name="startPosition"
@@ -200,7 +200,7 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
               />
             )}
           />
-        </div>
+        </div> */}
         <Controller
           control={googleSlideEmbedForm.control}
           name="importAsIndividualFrames"
@@ -217,14 +217,14 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
         />
 
         <Button
-          variant="bordered"
+          variant="ghost"
           color="primary"
-          disabled={!googleSlideEmbedForm.formState.isValid}
+          // disabled={!googleSlideEmbedForm.formState.isValid}
           type="submit"
           onClick={googleSlideEmbedForm.handleSubmit(handleEmbed)}>
-          {googleSlideEmbedForm.getValues('importAsIndividualFrames')
-            ? 'Import Google Slides'
-            : 'Embed Google Slides'}
+          {formWatchValues.importAsIndividualFrames
+            ? 'Import Slides'
+            : 'Embed Presentation'}
         </Button>
       </FrameFormContainer>
     )
