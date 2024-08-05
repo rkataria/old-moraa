@@ -10,6 +10,7 @@ import { ChatsToggle } from './ChatsToggle'
 import { LeaveMeetingToggle } from './LeaveMeetingToggle'
 import { LobbyViewToggle } from './LobbyViewToggle'
 import { MediaSettingsToggle } from './MediaSettingsToggle'
+import { MeetingRecordingButton } from './MeetingRecordingButton'
 import { MicToggle } from './MicToggle'
 import { ParticipantsToggle } from './ParticipantsToggle'
 import { PresentationToggle } from './PresentationToggle'
@@ -113,6 +114,7 @@ export function MeetingHeader({
         <WhiteBoardToggle />
         <BreakoutHeaderButton />
         <Timer />
+        <MeetingRecordingButton />
       </div>
 
       <div className="flex justify-end items-center gap-3">
