@@ -1,8 +1,8 @@
 .ProseMirror {
   @apply caret-black dark:caret-white outline-0;
 }
-#ai-page-editor .ProseMirror{
-  @apply px-8
+#ai-page-editor .ProseMirror {
+  @apply px-8;
 }
 
 /* .ProseMirror > * {
@@ -32,4 +32,20 @@
 
 .ProseMirror .ProseMirror-gapcursor:after {
   @apply border-t-black/40 dark:border-t-white/40 w-full -top-[1.5em] max-w-2xl mx-auto left-0 right-0;
+}
+
+.tiptap-uppy-upload input,
+*[contenteditable],
+*[contenteditable] * {
+  -webkit-user-select: none !important;
+}
+
+.tiptap-uppy-upload .uppy-Dashboard-AddFiles {
+  border: none !important;
+  margin: 0 !important;
+  background: white;
+}
+.tiptap-uppy-upload .uppy-Dashboard-AddFiles-title{
+  font-size: 1rem;
+  font-family: 'Outfit Variable';
 }

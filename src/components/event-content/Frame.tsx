@@ -15,8 +15,8 @@ import { PDFUploader } from './PDFUploader'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
-import { AiPageEditor } from '../common/content-types/AiPage/AiPageEditor'
 import { MoraaSlide } from '../common/content-types/MoraaSlide/MoraaSlide'
+import { RichTextEditor } from '../common/content-types/RichText/Editor'
 import { FramePreview } from '../common/FramePreview'
 
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
@@ -61,7 +61,7 @@ export function Frame({ frame }: FrameProps) {
     [ContentType.IMAGE_VIEWER]: (
       <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
     ),
-    [ContentType.RICH_TEXT]: <AiPageEditor frame={frame} />,
+    [ContentType.RICH_TEXT]: <RichTextEditor frame={frame} />,
 
     [ContentType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
     [ContentType.MORAA_BOARD]: <MoraaBoardEditor frame={frame} />,

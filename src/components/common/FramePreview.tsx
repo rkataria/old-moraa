@@ -5,12 +5,12 @@ import { useEffect, useRef } from 'react'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from './breakout/BreakoutFrame'
-import { AiPageEditor } from './content-types/AiPage/AiPageEditor'
 import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
 import { MoraaSlidePreview } from './content-types/MoraaSlide/Preview'
 import { PDFViewer, PDFViewerFrameType } from './content-types/PDFViewer'
 import { PollPreview } from './content-types/Poll/Preview'
+import { RichTextPreview } from './content-types/RichText/Preview'
 import { TextImageFrameType } from './content-types/TextImage'
 import { FrameTitleDescriptionPreview } from './FrameTitleDescriptionPreview'
 import {
@@ -42,7 +42,7 @@ export function FramePreview({
   frame,
   isInteractive = true,
   fullWidth,
-  asThumbnail,
+  asThumbnail = false,
 }: FrameProps) {
   const previewRef = useRef<HTMLDivElement>(null)
 
@@ -76,6 +76,7 @@ export function FramePreview({
         data-frame-id={frame.id}
         className={cn('relative w-full h-full rounded-md  transition-all', {
           'overflow-auto': frame.type !== ContentType.RICH_TEXT,
+          'overflow-hidden': frame.type === ContentType.RICH_TEXT,
         })}>
         {frame.type === ContentType.MORAA_SLIDE && (
           <MoraaSlidePreview
@@ -130,7 +131,11 @@ export function FramePreview({
           <MiroEmbedEditor viewOnly frame={frame as MiroEmbedFrameType} />
         )}
         {frame.type === ContentType.RICH_TEXT && (
-          <AiPageEditor frame={frame} editable={false} />
+          <RichTextPreview
+            key={frame.config.allowToCollaborate}
+            frame={frame}
+            asThumbnail={asThumbnail}
+          />
         )}
         {frame.type === ContentType.MORAA_BOARD && (
           <MoraaBoard frame={frame as MoraaBoardFrame} isInteractive={false} />

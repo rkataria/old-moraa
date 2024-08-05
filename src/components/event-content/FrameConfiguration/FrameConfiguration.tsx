@@ -9,6 +9,7 @@ import { MoraaBoardConfiguration } from './MoraaBoardConfiguration'
 import { PdfConfiguration } from './PdfConfiguration'
 import { PollConfiguration } from './PollConfiguration'
 import { ReflectionConfiguration } from './ReflectionConfiguration'
+import { RichTextConfiguration } from './RichTextConfiguration'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
@@ -30,7 +31,7 @@ export function FrameConfiguration() {
     [ContentType.VIDEO_EMBED]: null,
     [ContentType.TEXT_IMAGE]: null,
     [ContentType.IMAGE_VIEWER]: null,
-    [ContentType.RICH_TEXT]: null,
+    [ContentType.RICH_TEXT]: <RichTextConfiguration />,
     [ContentType.MIRO_EMBED]: null,
     [ContentType.MORAA_BOARD]: (
       <MoraaBoardConfiguration key={currentFrame.id} />

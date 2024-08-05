@@ -55,6 +55,28 @@ export const useBlockEditor = ({
     setCollabToken(res.collabToken)
   }
 
+  const collaborativeExtensions = [
+    Collaboration.configure({
+      document: ydoc,
+    }),
+    CollaborationCursor.configure({
+      provider,
+      user: { ...editorInfo, active: true },
+    }),
+  ]
+
+  const collaboration = () => {
+    if (!editable) {
+      return [
+        Collaboration.configure({
+          document: ydoc,
+        }),
+      ]
+    }
+
+    return collaborativeExtensions
+  }
+
   const editor = useEditor(
     {
       autofocus: true,
@@ -75,26 +97,25 @@ export const useBlockEditor = ({
         ...ExtensionKit({
           provider,
         }),
-        Collaboration.configure({
-          document: ydoc,
-        }),
-        CollaborationCursor.configure({
-          provider,
-          user: editorInfo,
-        }),
+
+        ...collaboration(),
+
         Ai.configure({
           appId: TIPTAP_AI_APP_ID,
           token: aiToken,
           baseUrl: TIPTAP_AI_BASE_URL,
           autocompletion: true,
+
           onLoading: () => {
             setIsAiLoading(true)
             setAiError(null)
           },
+
           onSuccess: () => {
             setIsAiLoading(false)
             setAiError(null)
           },
+
           onError: (error) => {
             setIsAiLoading(false)
             setAiError(error.message)
@@ -125,7 +146,7 @@ export const useBlockEditor = ({
     const uniqueUsers = uniqBy(
       editor.storage.collaborationCursor?.users,
       (user: EditorUser) => user.name
-    )
+    ).filter((user) => !!user?.name)
 
     return uniqueUsers.map((user: EditorUser) => {
       const names = user.name?.split(' ')
