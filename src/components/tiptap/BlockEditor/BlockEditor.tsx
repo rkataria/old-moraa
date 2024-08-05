@@ -81,6 +81,7 @@ export function BlockEditor({
     <Loader label="AI is now doing its job." />,
     document.body
   )
+
   if (!editable) {
     return (
       <EditorContent
@@ -93,7 +94,7 @@ export function BlockEditor({
 
   return (
     <EditorContext.Provider value={providerValue}>
-      <div className="flex h-[calc(100vh_-_198px)]" ref={menuContainerRef}>
+      <div className="flex w-full h-full" ref={menuContainerRef}>
         <Sidebar
           isOpen={leftSidebar.isOpen}
           onClose={leftSidebar.close}
@@ -112,7 +113,7 @@ export function BlockEditor({
             id="ai-page-editor"
             editor={editor}
             ref={editorRef}
-            className="overflow-y-scroll w-full h-full pl-[58px] scrollbar-none pt-6"
+            className="overflow-y-scroll w-full h-full pl-[58px] scrollbar-none pt-6 pb-[5rem]"
           />
           <ContentItemMenu editor={editor} />
           <LinkMenu editor={editor} appendTo={menuContainerRef} />

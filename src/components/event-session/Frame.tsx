@@ -5,10 +5,10 @@ import React, { useContext, useEffect } from 'react'
 import { GoogleSlides } from './content-types/GoogleSlides'
 import { PDFViewer } from './content-types/PDFViewer'
 import { Reflection } from './content-types/Reflection'
+import { RichTextLive } from './content-types/RichTextLive'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
 import { BreakoutFrameLive } from '../common/breakout/BreakoutLive'
-import { AiPageEditor } from '../common/content-types/AiPage/AiPageEditor'
 import { MoraaBoard } from '../common/content-types/MoraaBoard'
 import { MoraaSlidePreview } from '../common/content-types/MoraaSlide/Preview'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
@@ -25,7 +25,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { Vote, type IReflectionFrame } from '@/types/frame.type'
 import { checkVoted } from '@/utils/content.util'
-import { cn, getOjectPublicUrl } from '@/utils/utils'
+import { getOjectPublicUrl } from '@/utils/utils'
 
 export function Frame() {
   const { currentFrame, currentFrameResponses, currentFrameLoading, isHost } =
@@ -86,9 +86,7 @@ export function Frame() {
         src={getOjectPublicUrl(currentFrame.content?.path as string)}
       />
     ),
-    [ContentType.RICH_TEXT]: (
-      <AiPageEditor frame={currentFrame} editable={false} />
-    ),
+    [ContentType.RICH_TEXT]: <RichTextLive frame={currentFrame} />,
     [ContentType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
     [ContentType.MORAA_BOARD]: <MoraaBoard frame={currentFrame as any} />,
     [ContentType.MORAA_SLIDE]: (
@@ -105,11 +103,7 @@ export function Frame() {
   const renderer = renderersByContentType[currentFrame.type]
 
   return (
-    <div
-      className={cn('relative h-full w-full p-4', {
-        'px-[20%] h-screen overflow-y-scroll scrollbar-none':
-          currentFrame.type === ContentType.RICH_TEXT,
-      })}>
+    <div className="relative h-full w-full flex flex-col gap-2 p-4">
       <FrameTitleDescriptionPreview frame={currentFrame as any} />
       {renderer}
     </div>

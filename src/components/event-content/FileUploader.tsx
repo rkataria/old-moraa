@@ -51,6 +51,7 @@ type FileUploaderProps = {
   hint?: string
   triggerProps?: ButtonProps
   hideLoader?: boolean
+  useModal?: boolean
   onFilePickerOpen?: (open: boolean) => void
   onFilesUploaded?: (files: FileWithSignedUrl[]) => void
   onPublicFilesUploaded?: (files: FileWithoutSignedUrl[]) => void
@@ -66,6 +67,7 @@ export function FileUploader({
   hint = 'You can upload files from your local device, Dropbox, Google Drive, One Drive, Unsplash, or a URL',
   triggerProps = {},
   hideLoader = false,
+  useModal = true,
   onFilePickerOpen,
   onFilesUploaded,
   onPublicFilesUploaded,
@@ -259,6 +261,24 @@ export function FileUploader({
   const onOpenChange = (open: boolean) => {
     setOpen(open)
     onFilePickerOpen?.(open)
+  }
+
+  if (!useModal && uppyInstance) {
+    return (
+      <DashboardUI
+        id="uppy-dashy"
+        uppy={uppyInstance!}
+        width="100%"
+        height="100%"
+        autoFocus
+        note={hint}
+        locale={{
+          strings: {
+            poweredBy: '',
+          },
+        }}
+      />
+    )
   }
 
   return (
