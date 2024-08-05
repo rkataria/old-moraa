@@ -4,6 +4,7 @@ import { IoColorPaletteOutline } from 'react-icons/io5'
 
 import { CanvasAppearance } from './CanvasAppearance'
 import { CommonAppearance } from './CommonAppearance'
+import { PollAppearance } from './PollAppearance'
 import { TextImageAppearance } from './TextImageAppearance'
 import { ConfigurationHeader } from '../FrameConfiguration/ConfigurationHeader'
 
@@ -24,7 +25,7 @@ export function FrameAppearance() {
     [ContentType.VIDEO]: null,
     [ContentType.GOOGLE_SLIDES_IMPORT]: null,
     [ContentType.COVER]: null,
-    [ContentType.POLL]: null,
+    [ContentType.POLL]: <PollAppearance />,
     [ContentType.GOOGLE_SLIDES]: null,
     [ContentType.PDF_VIEWER]: null,
     [ContentType.REFLECTION]: null,

@@ -110,6 +110,44 @@ export interface IPollResponse {
   }
 }
 
+export interface PollOption {
+  name: string
+  color: string
+}
+
+export interface PollPreviewOption {
+  name: string
+  color: string
+  percentage: number
+  votedUsers: any
+}
+
+export type Vote = {
+  id: string
+  participant: {
+    enrollment: {
+      user_id: string
+      profile: {
+        first_name: string
+        last_name: string
+        avatar_url: string
+      }
+    }
+  }
+  response: VoteResponse
+}
+export type VoteResponse = {
+  selected_options: string[]
+  anonymous: boolean
+}
+
+export type PollFrame = IFrame & {
+  content: {
+    question: string
+    options: PollOption[]
+  }
+}
+
 export interface IReflectionFrame extends IFrame {
   content: {
     backgroundColor: string

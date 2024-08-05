@@ -1,16 +1,13 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Avatar, Image, Input, Textarea } from '@nextui-org/react'
 import { Control, Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
-import {
-  FileUploader,
-  FileWithoutSignedUrl,
-} from '../event-content/FileUploader'
+import { LocalFilePicker } from './LocalFilePicker'
 
 import { eventTypes } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
@@ -45,7 +42,11 @@ export type CreateEventFormProps<
        * so a least one of the button rendered using the `renderAction` should have `type="submit"`
        * @returns {ReactElement}
        */
-      renderAction?: () => ReactElement
+      renderAction?: ({
+        disableAction,
+      }: {
+        disableAction: boolean
+      }) => ReactElement
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       defaultValue?: any
     }
@@ -53,6 +54,9 @@ export type CreateEventFormProps<
 export function NewEventForm<
   FormData extends CreateEventFormData = CreateEventFormData,
 >({ onSubmit, renderAction, defaultValue }: CreateEventFormProps<FormData>) {
+  const [imageObject, setImageObject] = useState<string | undefined>(undefined)
+  const [imageUploadProgress, setImageUploadProgress] = useState<number>(0)
+  const [imageUploading, setImageUploading] = useState<boolean>(false)
   const createEventForm = useForm<CreateEventFormData>({
     resolver: yupResolver(createEventValidationSchema),
     defaultValues: defaultValue || {
@@ -63,10 +67,8 @@ export function NewEventForm<
     },
   })
 
-  const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
-    const file = files?.[0]
-
-    createEventForm.setValue('imageUrl', file.url)
+  const handleFileUpload = (imageUrl: string) => {
+    createEventForm.setValue('imageUrl', imageUrl)
   }
 
   const FormContentJSX = (
@@ -87,15 +89,13 @@ export function NewEventForm<
             />
           )}
         />
-        <FileUploader
-          maxNumberOfFiles={1}
-          allowedFileTypes={['.jpg', '.jpeg', '.png']}
+        <LocalFilePicker
+          accept="image/png, image/jpeg, image/jpg"
+          fileName={`event-image-${Date.now()}`}
           bucketName="image-uploads"
-          triggerProps={{
-            className:
-              'w-14 h-14 max-w-14 rounded-xl shrink-0 hover:bg-transparent',
-            isIconOnly: true,
-            children: (
+          uploadRemote
+          trigger={
+            <div className="w-12 h-12 max-w-12 rounded-xl shrink-0 hover:bg-transparent relative overflow-hidden">
               <Controller
                 control={createEventForm.control}
                 name="imageUrl"
@@ -103,7 +103,7 @@ export function NewEventForm<
                   <Avatar
                     name="+"
                     isBordered
-                    src={field.value}
+                    src={imageObject || field.value}
                     classNames={{
                       base: cn('w-full h-full rounded-xl bg-transparent', {
                         'border-2 border-default-200': !field.value,
@@ -113,10 +113,29 @@ export function NewEventForm<
                   />
                 )}
               />
-            ),
-            variant: 'light',
+              {imageUploading && (
+                <div
+                  className={cn(
+                    'absolute left-0 top-0 w-full h-full flex justify-center items-center z-[1] rounded-e-md text-white text-md font-bold bg-black/80'
+                  )}
+                  style={{
+                    opacity: 100 - imageUploadProgress,
+                  }}>
+                  {parseInt(imageUploadProgress.toString(), 10)}%
+                </div>
+              )}
+            </div>
+          }
+          onSelect={(file) => {
+            setImageUploading(true)
+            const _imageObject = window.URL.createObjectURL(file)
+            setImageObject(_imageObject)
           }}
-          onPublicFilesUploaded={handleFileUpload}
+          onUpload={(response) => {
+            setImageUploading(false)
+            handleFileUpload(response?.url)
+          }}
+          onProgressChange={setImageUploadProgress}
         />
       </div>
 
@@ -185,7 +204,9 @@ export function NewEventForm<
         </div>
       </div>
 
-      {renderAction?.()}
+      {renderAction?.({
+        disableAction: imageUploading,
+      })}
     </div>
   )
 

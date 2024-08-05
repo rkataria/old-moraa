@@ -1,14 +1,13 @@
 import { useContext } from 'react'
 
 import { fabric } from 'fabric'
-import { IoImageOutline } from 'react-icons/io5'
 
 import { HistoryControls } from './HistoryControls'
 import { ListBox } from './ListBox'
-import { ShapesControls } from './ShapesControls'
+import { ShapePicker } from './ShapePicker/ShapePicker'
 import { TextBox } from './TextBox'
+import { MediaPicker } from '../../MediaPicker/MediaPicker'
 
-import { FileUploader } from '@/components/event-content/FileUploader'
 import { EventContext } from '@/contexts/EventContext'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
@@ -25,40 +24,85 @@ export function Toolbars() {
     <>
       <TextBox />
       <ListBox />
-      <FileUploader
-        onFilesUploaded={(urls) => {
-          const url = urls?.[0]?.signedUrl
+      <MediaPicker
+        onSelectCallback={(img) => {
+          if (!img) return
 
-          if (!url) return
-
-          fabric.Image.fromURL(url, (img) => {
-            img.set({
-              left: 100,
-              top: 100,
-            })
-            img.scaleToWidth(100)
-            img.set('centeredRotation', true)
-            canvas?.add(img)
-            canvas.setActiveObject(img)
+          const fabricImg = new fabric.Image(img, {
+            left: 100,
+            top: 100,
           })
+
+          fabricImg.scaleToWidth(300)
+          fabricImg.set('centeredRotation', true)
+          canvas?.add(fabricImg)
+          canvas.setActiveObject(fabricImg)
         }}
-        triggerProps={{
-          variant: 'light',
-          size: 'lg',
-          radius: 'md',
-          className:
-            'flex-none flex flex-col justify-center items-center gap-1',
-          isIconOnly: true,
-          children: (
-            <>
-              <IoImageOutline size={18} />
-              <span className="text-xs mt-1">Media</span>
-            </>
-          ),
+        onSelect={(file) => {
+          const reader = new FileReader()
+
+          reader.addEventListener(
+            'load',
+            () => {
+              const img = new Image()
+
+              img.onload = () => {
+                const fabricImg = new fabric.Image(img, {
+                  left: 100,
+                  top: 100,
+                })
+
+                fabricImg.scaleToWidth(300)
+                fabricImg.set('centeredRotation', true)
+                canvas?.add(fabricImg)
+                canvas.setActiveObject(fabricImg)
+              }
+
+              img.src = reader.result as string
+            },
+            false
+          )
+
+          if (file) {
+            reader.readAsDataURL(file)
+          }
         }}
       />
+      <ShapePicker
+        onSelectCallback={(svg) => {
+          fabric.loadSVGFromString(svg, (objects) => {
+            // Add without grouping
+            const obj = objects[0]
+            obj.set('left', 100)
+            obj.set('top', 100)
+            obj.scaleToWidth(200)
+            obj.set('centeredRotation', true)
 
-      <ShapesControls />
+            canvas.add(obj)
+            canvas.setActiveObject(obj)
+          })
+        }}
+        onSelect={(svgFile) => {
+          // Load SVG file
+          const reader = new FileReader()
+
+          reader.readAsText(svgFile)
+
+          reader.onload = (e) => {
+            const svg = e.target?.result as string
+
+            fabric.loadSVGFromString(svg, (objects, options) => {
+              const group = new fabric.Group(objects, options)
+
+              group.scaleToWidth(300)
+              group.set('centeredRotation', true)
+              canvas?.add(group)
+              canvas.setActiveObject(group)
+            })
+          }
+        }}
+      />
+      {/* <ShapesControls /> */}
       <HistoryControls />
     </>
   )

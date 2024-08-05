@@ -6,9 +6,8 @@ import { useCallback } from 'react'
 import clsx from 'clsx'
 import { Accept, useDropzone } from 'react-dropzone'
 
-export type FilePickerType = {
+export type FilePickerDropzoneType = {
   supportedFormats: Accept
-  onUpload: (files: File[] | null) => void
   fullWidth?: boolean
   // Upload progress is a number from 1 to 100 which represent the upload status.
   uploadProgress?: number
@@ -16,16 +15,17 @@ export type FilePickerType = {
     wrapper: string
   }
   label?: string
+  onUpload: (files: File[] | null) => void
 }
 
-export function FilePicker({
+export function FilePickerDropzone({
   onUpload,
   supportedFormats,
   fullWidth,
   classNames,
   uploadProgress,
   label,
-}: FilePickerType) {
+}: FilePickerDropzoneType) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles[0]) onUpload(acceptedFiles)
