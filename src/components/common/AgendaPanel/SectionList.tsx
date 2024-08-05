@@ -83,10 +83,8 @@ export function SectionList() {
       )[1]
       const section = sections.find((s) => s.id === sectionId)
       if (section) {
-        const [removed] = section.frames.splice(source.index, 1)
-        section?.frames.splice(destination.index, 0, removed)
+        reorderFrame(result, provided)
       }
-      reorderFrame(result, provided)
     } else {
       const sourceSectionId = source.droppableId.split(
         'frame-droppable-sectionId-'

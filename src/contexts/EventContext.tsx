@@ -462,7 +462,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     )
 
     const sectionsWithFrames = meetingSections.map((section) => {
-      const sectionFrames = section.frames.map(
+      const validFrameIds = section.frames.filter((f: string) => !!f)
+
+      const sectionFrames = validFrameIds.map(
         (id: string) => frames.find((s: any) => s?.id === id) as IFrame
       )
 
@@ -1045,6 +1047,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         source.index,
         destination.index
       )
+
+      console.log('source items', source.index, destination.index, items)
+
       await updateSection({
         sectionPayload: {
           frames: items,
