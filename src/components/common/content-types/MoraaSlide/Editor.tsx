@@ -39,6 +39,24 @@ const initializeCanvas = ({ frameId }: { frameId: string }) => {
   return canvas
 }
 
+const updateCanvasViewportTransform = (
+  canvas: fabric.Canvas,
+  width: number,
+  height: number
+) => {
+  if (!canvas) return
+
+  const scale = width / canvas.getWidth()
+  const zoom = canvas.getZoom() * scale
+  canvas.setDimensions({
+    width,
+    height, // containerWidth / ratio,
+  })
+
+  canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0])
+  canvas.renderAll()
+}
+
 export const handleDeleteSelection = (
   canvas: fabric.Canvas,
   frameId: string,
@@ -80,7 +98,15 @@ export function CanvasEditor({
   )
   const { setCanvas, setHistory } = useMoraaSlideStore((state) => state)
 
+  // Delete shortcut for windows
   useHotkeys('Delete', () => {
+    if (!canvas) return
+
+    handleDeleteSelection(canvas, frameId, setCanvas)
+  })
+
+  // Delete shortcut for mac
+  useHotkeys('backspace', () => {
     if (!canvas) return
 
     handleDeleteSelection(canvas, frameId, setCanvas)
@@ -169,7 +195,12 @@ export function CanvasEditor({
       canvas.clear()
 
       canvas.loadFromJSON(JSON.parse(frameCanvasData || '{}'), () => {
-        canvas.renderAll()
+        const containerWidth =
+          canvasContainerRef.current?.clientWidth || canvas.getWidth()
+        const containerHeight =
+          canvasContainerRef.current?.clientHeight || canvas.getHeight()
+
+        updateCanvasViewportTransform(canvas, containerWidth, containerHeight)
       })
     }
 
@@ -299,18 +330,8 @@ export function CanvasEditor({
   const resizeCanvas = (width: number, height: number) => {
     if (!canvas) return
 
-    const containerWidth = width
-    const containerHeight = height
+    updateCanvasViewportTransform(canvas, width, height)
 
-    const scale = containerWidth / canvas.getWidth()
-    const zoom = canvas.getZoom() * scale
-    canvas.setDimensions({
-      width: containerWidth,
-      height: containerHeight, // containerWidth / ratio,
-    })
-
-    canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0])
-    canvas.renderAll()
     setCanvas(frameId, canvas)
   }
 
@@ -323,7 +344,7 @@ export function CanvasEditor({
         <div
           ref={canvasContainerRef}
           className={cn(
-            'flex-auto w-full aspect-video max-w-5xl m-auto ml-0 bg-transparent rounded-sm overflow-hidden',
+            'flex-auto w-full aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-sm overflow-hidden',
             'border-2 border-black/10'
           )}>
           <canvas ref={canvasRef} id={`canvas-${frameId}`} />

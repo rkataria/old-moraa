@@ -1,8 +1,10 @@
 import { useContext } from 'react'
 
+import { Button } from '@nextui-org/react'
 import { fabric } from 'fabric'
 
-import { FileUploader } from '@/components/event-content/FileUploader'
+import { MediaPicker } from '../../MediaPicker/MediaPicker'
+
 import { EventContext } from '@/contexts/EventContext'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
@@ -21,21 +23,16 @@ export function ImageSettings() {
 
   return (
     <div className="pt-4">
-      <FileUploader
-        title="Replace Image"
-        triggerProps={{
-          fullWidth: true,
-        }}
-        onFilesUploaded={(urls) => {
-          const url = urls?.[0]?.signedUrl
+      <MediaPicker
+        trigger={<Button fullWidth>Replace Image</Button>}
+        placement="left"
+        onSelectCallback={(img) => {
+          if (!img) return
 
-          if (!url) return
-
-          activeObject.setSrc(url, () => {
-            canvas.setActiveObject(activeObject)
-            canvas?.renderAll()
-            canvas?.fire('object:modified', { target: activeObject })
-          })
+          activeObject.setElement(img)
+          activeObject.setCoords()
+          canvas?.renderAll()
+          canvas?.fire('object:modified', { target: activeObject })
         }}
       />
     </div>

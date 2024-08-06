@@ -224,6 +224,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
           subtitleText.getBoundingRect().top +
           subtitleText.getBoundingRect().height +
           10,
+        splitByGrapheme: true,
       })
 
       canvas.clear()

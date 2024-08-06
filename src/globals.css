@@ -16,51 +16,51 @@
 
 @layer components {
   .heading-1 {
-    @apply text-5xl font-semibold;
+    @apply text-5xl leading-normal font-semibold;
   }
 
   .heading-1-bold {
-    @apply text-5xl font-bold;
+    @apply text-5xl leading-normal font-bold;
   }
 
   .heading-2 {
-    @apply text-4xl font-semibold;
+    @apply text-4xl leading-normal font-semibold;
   }
 
   .heading-2-bold {
-    @apply text-4xl font-bold;
+    @apply text-4xl leading-normal font-bold;
   }
 
   .heading-3 {
-    @apply text-3xl font-semibold;
+    @apply text-3xl leading-normal font-semibold;
   }
 
   .heading-3-bold {
-    @apply text-3xl font-bold;
+    @apply text-3xl leading-normal font-bold;
   }
 
   .subheading-1 {
-    @apply text-2xl font-semibold;
+    @apply text-2xl leading-normal font-semibold;
   }
 
   .subheading-2 {
-    @apply text-xl font-semibold;
+    @apply text-xl leading-normal font-semibold;
   }
 
   .subheading-3 {
-    @apply text-lg font-semibold;
+    @apply text-lg leading-normal font-semibold;
   }
 
   .body-bold {
-    @apply text-base font-bold;
+    @apply text-base leading-normal font-bold;
   }
 
   .body-normal {
-    @apply text-base font-normal;
+    @apply text-base leading-normal font-normal;
   }
 
   .body-thin {
-    @apply text-base font-thin;
+    @apply text-base leading-normal font-thin;
   }
 
 

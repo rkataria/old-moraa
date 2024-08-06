@@ -80,6 +80,7 @@ export function TextBox() {
       fontWeight,
       left: 100,
       top: 100,
+      splitByGrapheme: true,
     })
 
     setOpen(false)

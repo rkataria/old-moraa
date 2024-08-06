@@ -77,7 +77,6 @@ export function MoraaSlideActiveObjectAppearance() {
         <Button
           color="danger"
           fullWidth
-          size="sm"
           radius="md"
           onClick={() => {
             handleDeleteSelection(canvas, currentFrame.id, setCanvas)

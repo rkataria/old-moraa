@@ -51,12 +51,7 @@ function ScheduleSessionButton({
           }
         }}>
         <DropdownItem key="re-schedule" className="p-0" closeOnSelect>
-          <Button
-            variant="solid"
-            color="primary"
-            size="sm"
-            radius="md"
-            fullWidth>
+          <Button variant="solid" color="primary" radius="md" fullWidth>
             Re-schedule event
           </Button>
         </DropdownItem>
@@ -82,7 +77,7 @@ function ActionButton({
   ) {
     return (
       <>
-        <ButtonGroup variant="solid" color="primary" size="sm" radius="md">
+        <ButtonGroup variant="solid" color="primary" size="md" radius="md">
           <Button
             as={Link}
             to={`/event-session/${eventId}`}

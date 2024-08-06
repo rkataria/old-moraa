@@ -18,7 +18,6 @@ export function PreviewSwitcher() {
   return (
     <Button
       color={preview ? 'danger' : 'success'}
-      size="sm"
       radius="md"
       className="text-white"
       endContent={<LuTv size={16} className="rotate-180" />}

@@ -43,12 +43,14 @@ const MENU_OPTIONS = {
 
 type MediaPickerProps = {
   trigger?: React.ReactNode
-  onSelect: (file: File) => void
-  onSelectCallback: (imageElment: HTMLImageElement) => void
+  placement?: 'top' | 'bottom' | 'left' | 'right'
+  onSelect?: (file: File) => void
+  onSelectCallback?: (imageElment: HTMLImageElement) => void
 }
 
 export function MediaPicker({
   trigger,
+  placement = 'bottom',
   onSelect,
   onSelectCallback,
 }: MediaPickerProps) {
@@ -60,7 +62,7 @@ export function MediaPicker({
 
   return (
     <Popover
-      placement="bottom"
+      placement={placement}
       offset={10}
       showArrow
       isOpen={open}
@@ -135,7 +137,7 @@ export function MediaPicker({
                     const file = e.target.files?.[0]
                     if (file) {
                       setOpen(false)
-                      onSelect(file)
+                      onSelect?.(file)
                     }
                   }}
                 />
@@ -151,7 +153,7 @@ export function MediaPicker({
               fileType={fileType}
               onSelectCallback={(imageElment) => {
                 setOpen(false)
-                onSelectCallback(imageElment)
+                onSelectCallback?.(imageElment)
               }}
             />
           </div>
