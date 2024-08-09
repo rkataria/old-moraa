@@ -20,7 +20,7 @@ import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
 import { loadTemplate } from '@/utils/canvas-templates'
 
-export function CanvasAppearance() {
+export function MoraaSlideAppearance() {
   const [open, setOpen] = useState(false)
   const { currentFrame } = useContext(EventContext) as EventContextType
   const { templateKey } = useMoraaSlideStore((state) => state)

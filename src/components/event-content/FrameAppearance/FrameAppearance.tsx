@@ -2,8 +2,8 @@ import { useContext } from 'react'
 
 import { IoColorPaletteOutline } from 'react-icons/io5'
 
-import { CanvasAppearance } from './CanvasAppearance'
 import { CommonAppearance } from './CommonAppearance'
+import { MoraaSlideAppearance } from './MoraaSlideAppearance'
 import { PollAppearance } from './PollAppearance'
 import { TextImageAppearance } from './TextImageAppearance'
 import { ConfigurationHeader } from '../FrameConfiguration/ConfigurationHeader'
@@ -35,7 +35,7 @@ export function FrameAppearance() {
     [ContentType.RICH_TEXT]: null,
     [ContentType.MIRO_EMBED]: null,
     [ContentType.MORAA_BOARD]: null,
-    [ContentType.MORAA_SLIDE]: <CanvasAppearance key={currentFrame.id} />,
+    [ContentType.MORAA_SLIDE]: <MoraaSlideAppearance key={currentFrame.id} />,
     [ContentType.BREAKOUT]: null,
   }
 
@@ -51,7 +51,7 @@ export function FrameAppearance() {
           title={canvasActiveObject.type!}
         />
         <div className="pt-8 flex flex-col gap-4">
-          <CanvasAppearance key={currentFrame.id} />
+          <MoraaSlideAppearance key={currentFrame.id} />
         </div>
       </div>
     )
