@@ -2,9 +2,10 @@ import { useContext, useState } from 'react'
 
 import {
   Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Tooltip,
 } from '@nextui-org/react'
 import { fabric } from 'fabric'
@@ -16,47 +17,49 @@ import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
-type TextStyle = {
-  label: string
+export type TYPOGRAPHY = {
+  name: string
   fontSize: number
-  fontWeight: 'bold' | 'normal' | '800'
+  fontWeight: number
+  content?: string
 }
 
-export const MORAA_SLIDE_TYPOGRAPHY: TextStyle[] = [
+export const TYPOGRAPHY_LIST: TYPOGRAPHY[] = [
   {
-    label: 'Title',
-    fontSize: 56,
-    fontWeight: '800',
-  },
-  {
-    label: 'Heading',
+    name: 'Title',
     fontSize: 48,
-    fontWeight: '800',
+    fontWeight: 700,
+    content: 'Title Here',
   },
   {
-    label: 'Subheading',
-    fontSize: 42,
-    fontWeight: '800',
+    name: 'Subtitle',
+    fontSize: 36,
+    fontWeight: 500,
+    content: 'Title Here',
   },
   {
-    label: 'Normal Text',
-    fontSize: 32,
-    fontWeight: 'normal',
+    name: 'Heading',
+    fontSize: 28,
+    fontWeight: 500,
+    content: 'Heading Here',
   },
   {
-    label: 'Small Text',
-    fontSize: 22,
-    fontWeight: 'normal',
+    name: 'Subheading',
+    fontSize: 20,
+    fontWeight: 400,
+    content: 'Subheading Here',
   },
   {
-    label: 'Paragraph',
-    fontSize: 18,
-    fontWeight: 'normal',
+    name: 'Body Text',
+    fontSize: 16,
+    fontWeight: 400,
+    content: 'Body Text Here',
   },
   {
-    label: 'Extra Small Text',
-    fontSize: 12,
-    fontWeight: 'normal',
+    name: 'Small Text',
+    fontSize: 14,
+    fontWeight: 400,
+    content: 'Small Text Here',
   },
 ]
 
@@ -70,8 +73,9 @@ export function TextBox() {
 
   if (!canvas) return null
 
-  const addTextbox = ({ label, fontSize, fontWeight }: TextStyle) => {
-    const textbox = new fabric.Textbox(label, {
+  const addTextbox = ({ name, fontSize, fontWeight, content }: TYPOGRAPHY) => {
+    const textbox = new fabric.Textbox(content || name, {
+      name,
       fontFamily: fonts.inter.style.fontFamily,
       fontSize,
       width: canvas.getWidth() * 0.3,
@@ -93,13 +97,8 @@ export function TextBox() {
   return (
     <Tooltip content="Text" placement="bottom">
       <div>
-        <Popover
-          placement="bottom"
-          offset={20}
-          showArrow
-          isOpen={open}
-          onOpenChange={setOpen}>
-          <PopoverTrigger>
+        <Dropdown showArrow offset={10} onOpenChange={setOpen}>
+          <DropdownTrigger>
             <Button
               variant="light"
               size="lg"
@@ -111,27 +110,19 @@ export function TextBox() {
               <RxText size={18} />
               <span className="text-xs mt-1">Text</span>
             </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <div className="px-1 py-2 w-[200px] flex flex-col gap-2">
-              {MORAA_SLIDE_TYPOGRAPHY.map((style) => (
-                <button
-                  key={style.label}
-                  type="button"
-                  className="flex justify-start items-center w-full hover:bg-gray-100 rounded-md"
-                  style={{
-                    fontFamily: fonts.inter.style.fontFamily,
-                    fontSize: style.fontSize * 0.5,
-                    fontWeight: style.fontWeight,
-                    padding: `${style.fontSize * 0.2}px 8px`,
-                  }}
-                  onClick={() => addTextbox(style)}>
-                  {style.label}
-                </button>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+          </DropdownTrigger>
+          <DropdownMenu>
+            {TYPOGRAPHY_LIST.map((typography) => (
+              <DropdownItem
+                key={typography.name}
+                onClick={() => addTextbox(typography)}>
+                <div className="flex justify-start items-center gap-2 p-1">
+                  <span>{typography.name}</span>
+                </div>
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
       </div>
     </Tooltip>
   )

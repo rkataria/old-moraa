@@ -8,6 +8,7 @@ import { ActiveSelectionSettings } from '@/components/common/content-types/Moraa
 import { BulletListSettings } from '@/components/common/content-types/MoraaSlide/BulletListSettings'
 import { handleDeleteSelection } from '@/components/common/content-types/MoraaSlide/Editor'
 import { ImageSettings } from '@/components/common/content-types/MoraaSlide/ImageSettings'
+import { RectSettings } from '@/components/common/content-types/MoraaSlide/RectSettings'
 import { TextboxSettings } from '@/components/common/content-types/MoraaSlide/TextboxSettings'
 import { EventContext } from '@/contexts/EventContext'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
@@ -48,7 +49,7 @@ export function MoraaSlideActiveObjectAppearance() {
     [ObjectType.TEXT]: <TextboxSettings />,
     [ObjectType.TEXTBOX]: <TextboxSettings />,
     [ObjectType.IMAGE]: <ImageSettings />,
-    [ObjectType.RECT]: null,
+    [ObjectType.RECT]: <RectSettings />,
     [ObjectType.CIRCLE]: null,
     [ObjectType.TRIANGLE]: null,
     [ObjectType.LINE]: null,

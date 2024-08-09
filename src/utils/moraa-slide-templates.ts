@@ -1,6 +1,6 @@
 import { fabric } from 'fabric'
 
-import { MORAA_SLIDE_TYPOGRAPHY } from '@/components/common/content-types/MoraaSlide/TextBox'
+import { TYPOGRAPHY_LIST } from '@/components/common/content-types/MoraaSlide/TextBox'
 import { fonts } from '@/libs/fonts'
 
 export type Template = {
@@ -8,6 +8,13 @@ export type Template = {
   name: string
   loadTemplate: (canvas: fabric.Canvas) => fabric.Canvas
 }
+
+const titleTypography = TYPOGRAPHY_LIST[0]
+// const subtitleTypography = TYPOGRAPHY_LIST[1]
+const headingTypography = TYPOGRAPHY_LIST[2]
+const subheadingTypography = TYPOGRAPHY_LIST[3]
+const bodyTypography = TYPOGRAPHY_LIST[4]
+const smallTypography = TYPOGRAPHY_LIST[5]
 
 export const MORAA_SLIDE_TEMPLATES: Template[] = [
   {
@@ -29,9 +36,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       const author = '- Anonymous'
 
       const quoteText = new fabric.Textbox(quote, {
-        name: 'quote',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[2].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[2].fontWeight,
+        name: headingTypography.name,
+        fontSize: headingTypography.fontSize,
+        fontWeight: headingTypography.fontWeight,
         fontFamily: fonts.inter.style.fontFamily,
         textAlign: 'center',
         width: canvas.getWidth() * 0.9,
@@ -40,9 +47,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const authorText = new fabric.Textbox(author, {
-        name: 'author',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[5].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[5].fontWeight,
+        name: bodyTypography.name,
+        fontSize: bodyTypography.fontSize,
+        fontWeight: bodyTypography.fontWeight,
         fontFamily: fonts.inter.style.fontFamily,
         textAlign: 'center',
         width: canvas.getWidth() * 0.6,
@@ -70,9 +77,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       const title = 'A light minimalist template'
 
       const titleText = new fabric.Textbox(title, {
-        name: 'title',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[0].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[0].fontWeight,
+        name: titleTypography.name,
+        fontSize: titleTypography.fontSize,
+        fontWeight: titleTypography.fontWeight,
         fontFamily: fonts.inter.style.fontFamily,
         textAlign: 'center',
         padding: 10,
@@ -100,9 +107,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       const footerCenter = new Date().toLocaleDateString('en-US')
 
       const titleText = new fabric.Textbox(title, {
-        name: 'title',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[0].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[0].fontWeight,
+        name: headingTypography.name,
+        fontSize: headingTypography.fontSize,
+        fontWeight: headingTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'center',
         padding: 10,
@@ -112,9 +119,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const subtitleText = new fabric.Textbox(subtitle, {
-        name: 'subtitle',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[5].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[5].fontWeight,
+        name: subheadingTypography.name,
+        fontSize: subheadingTypography.fontSize,
+        fontWeight: subheadingTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'center',
         padding: 2,
@@ -127,9 +134,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const footerLeftText = new fabric.Textbox(footerLeft, {
-        name: 'footer-left',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
+        name: smallTypography.name,
+        fontSize: smallTypography.fontSize,
+        fontWeight: smallTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'left',
         padding: 2,
@@ -139,9 +146,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const footerRightText = new fabric.Textbox(footerRight, {
-        name: 'footer-right',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
+        name: smallTypography.name,
+        fontSize: smallTypography.fontSize,
+        fontWeight: smallTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'right',
         padding: 2,
@@ -151,9 +158,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const footerCenterText = new fabric.Textbox(footerCenter, {
-        name: 'footer-center',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
+        name: smallTypography.name,
+        fontSize: smallTypography.fontSize,
+        fontWeight: smallTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'center',
         padding: 2,
@@ -185,9 +192,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         'Ramen freemium conversion incubator buyer creative supply chain gen-z crowdsource. Pitch research & development seed round disruptive analytics. Churn rate freemium business-to-consumer business model canvas MVP. Marketing facebook seed round. A/B testing alpha user experience return on investment termsheet funding churn rate strategy mass market agile development early adopters.\n\n This is a new paragraph with a line break.'
 
       const titleText = new fabric.Textbox(title, {
-        name: 'title',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[2].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[2].fontWeight,
+        name: headingTypography.name,
+        fontSize: headingTypography.fontSize,
+        fontWeight: headingTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'left',
         padding: 10,
@@ -197,9 +204,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const subtitleText = new fabric.Textbox(subtitle, {
-        name: 'subtitle',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[5].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[5].fontWeight,
+        name: subheadingTypography.name,
+        fontSize: subheadingTypography.fontSize,
+        fontWeight: subheadingTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'left',
         padding: 10,
@@ -212,9 +219,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const paragraphText = new fabric.Textbox(paragraph, {
-        name: 'paragraph',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
+        name: smallTypography.name,
+        fontSize: smallTypography.fontSize,
+        fontWeight: smallTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'left',
         padding: 10,
@@ -273,9 +280,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       )
 
       const title = new fabric.Textbox(titleText, {
-        name: 'title',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[3].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[3].fontWeight,
+        name: headingTypography.name,
+        fontSize: headingTypography.fontSize,
+        fontWeight: headingTypography.fontWeight,
         fontFamily: fonts.tiltWarp.style.fontFamily,
         textAlign: 'left',
         padding: 10,
@@ -285,9 +292,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const subtitle = new fabric.Textbox(subtitleText, {
-        name: 'subtitle',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
+        name: subheadingTypography.name,
+        fontSize: subheadingTypography.fontSize,
+        fontWeight: subheadingTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'left',
         padding: 10,
@@ -297,9 +304,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const paragraphText = new fabric.Textbox(paragraph, {
-        name: 'paragraph',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
+        name: smallTypography.name,
+        fontSize: smallTypography.fontSize,
+        fontWeight: smallTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'left',
         padding: 10,
@@ -347,9 +354,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const title = new fabric.Textbox(titleText, {
-        name: 'title',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[3].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[3].fontWeight,
+        name: headingTypography.name,
+        fontSize: headingTypography.fontSize,
+        fontWeight: headingTypography.fontWeight,
         fontFamily: fonts.tiltWarp.style.fontFamily,
         textAlign: 'left',
         padding: 10,
@@ -359,9 +366,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const subtitle = new fabric.Textbox(subtitleText, {
-        name: 'subtitle',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
+        name: subheadingTypography.name,
+        fontSize: subheadingTypography.fontSize,
+        fontWeight: subheadingTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'left',
         padding: 10,
@@ -371,9 +378,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       const paragraphText = new fabric.Textbox(paragraph, {
-        name: 'paragraph',
-        fontSize: MORAA_SLIDE_TYPOGRAPHY[6].fontSize,
-        fontWeight: MORAA_SLIDE_TYPOGRAPHY[6].fontWeight,
+        name: smallTypography.name,
+        fontSize: smallTypography.fontSize,
+        fontWeight: smallTypography.fontWeight,
         fontFamily: fonts.poppins.style.fontFamily,
         textAlign: 'left',
         padding: 10,

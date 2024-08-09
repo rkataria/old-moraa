@@ -4,13 +4,23 @@ import { fabric } from 'fabric'
 import ResizeObserver from 'rc-resize-observer'
 import { useHotkeys } from 'react-hotkeys-hook'
 
-import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { BubbleMenu } from './BubbleMenu'
+
 import { HistoryFeature } from '@/libs/fabric-history'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { loadCustomFabricObjects } from '@/utils/custom-fabric-objects'
 import { cn } from '@/utils/utils'
 
 loadCustomFabricObjects()
+
+// eslint-disable-next-line wrap-iife, func-names
+fabric.Textbox.prototype.toObject = function () {
+  // eslint-disable-next-line func-names
+  // @ts-expect-error silence!
+  return fabric.util.object.extend(this.callSuper('toObject'), {
+    name: this.name,
+  })
+}
 
 interface CanvasProps {
   frameId: string
@@ -24,6 +34,7 @@ const initializeCanvas = ({ frameId }: { frameId: string }) => {
   fabric.Object.prototype.cornerColor = '#22d3ee'
   fabric.Object.prototype.cornerSize = 10
   fabric.Object.prototype.borderColor = '#22d3ee'
+  fabric.Object.prototype.cornerStyle = 'circle'
 
   const canvas = new fabric.Canvas(`canvas-${frameId}`, {
     selectionBorderColor: '#979797',
@@ -90,7 +101,6 @@ export function CanvasEditor({
   frameBackgroundColor,
   saveToStorage,
 }: CanvasProps) {
-  const { setRightSidebarVisiblity } = useStudioLayout()
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvas = useMoraaSlideStore(
@@ -239,7 +249,7 @@ export function CanvasEditor({
     if (canvas) {
       canvas.isDrawingMode = false
 
-      setRightSidebarVisiblity('frame-appearance')
+      // setRightSidebarVisiblity('frame-appearance')
 
       setCanvas(frameId, canvas)
     }
@@ -344,10 +354,11 @@ export function CanvasEditor({
         <div
           ref={canvasContainerRef}
           className={cn(
-            'flex-auto w-full aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-sm overflow-hidden',
+            'relative flex-auto w-full aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-sm overflow-hidden',
             'border-2 border-black/10'
           )}>
           <canvas ref={canvasRef} id={`canvas-${frameId}`} />
+          <BubbleMenu canvas={canvas!} />
         </div>
       </ResizeObserver>
     </div>

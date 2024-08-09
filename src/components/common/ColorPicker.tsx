@@ -4,10 +4,12 @@ import { cn } from '@/utils/utils'
 
 export function ColorPicker({
   defaultColor,
+  style,
   className,
   onchange,
 }: {
   defaultColor?: string
+  style?: React.CSSProperties
   className?: string
   onchange: (color: string) => void
 }) {
@@ -24,6 +26,7 @@ export function ColorPicker({
       className={cn('cursor-pointer w-5 h-5 rounded-full bg-white', className)}
       style={{
         backgroundColor: color,
+        ...style,
       }}>
       <input
         type="color"
