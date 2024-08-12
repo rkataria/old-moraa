@@ -10,12 +10,17 @@ import { useData } from './hooks/useData'
 import { DropdownButton } from '@/components/tiptap/ui/Dropdown'
 import { Icon } from '@/components/tiptap/ui/Icon'
 import { Toolbar } from '@/components/tiptap/ui/Toolbar'
+import { cn } from '@/utils/utils'
 
 export type ContentItemMenuProps = {
   editor: Editor
+  classnames?: {
+    menu: string
+    gripButton: string
+  }
 }
 
-export function ContentItemMenu({ editor }: ContentItemMenuProps) {
+export function ContentItemMenu({ editor, classnames }: ContentItemMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const data = useData()
   const actions = useContentItemActions(
@@ -41,7 +46,7 @@ export function ContentItemMenu({ editor }: ContentItemMenuProps) {
         offset: [-2, 16],
         zIndex: 99,
       }}>
-      <div className="flex items-center gap-0.5">
+      <div className={cn('flex items-center gap-0.5', classnames?.menu)}>
         <Toolbar.Button onClick={actions.handleAdd}>
           <Icon name="Plus" />
         </Toolbar.Button>
@@ -50,7 +55,7 @@ export function ContentItemMenu({ editor }: ContentItemMenuProps) {
           placement="bottom"
           onOpenChange={(open) => setMenuOpen(open)}>
           <PopoverTrigger>
-            <Toolbar.Button>
+            <Toolbar.Button className={classnames?.gripButton}>
               <Icon name="GripVertical" />
             </Toolbar.Button>
           </PopoverTrigger>

@@ -159,7 +159,9 @@ export function ListView({
       classNames={{
         table: isLoading && 'min-h-[25rem]',
       }}
-      onRowAction={(key) => router.navigate({ to: `/events/${key}` })}>
+      onRowAction={(key) =>
+        router.navigate({ to: `/events/${key}?action=view` })
+      }>
       <TableHeader columns={eventTableColumns}>
         {(column) => (
           <TableColumn key={column.key} allowsSorting={column.sortable}>

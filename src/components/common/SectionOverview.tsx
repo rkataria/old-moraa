@@ -1,9 +1,11 @@
 import { useContext } from 'react'
 
 import { Chip } from '@nextui-org/react'
-/* eslint-disable react/no-danger */
+import uniqBy from 'lodash.uniqby'
 
 import { EditableLabel } from './EditableLabel'
+import { RenderIf } from './RenderIf/RenderIf'
+import { SessionColorTracker } from '../event-content/overview-frame/SessionPlanner/ColorTracker'
 
 import { EventContext } from '@/contexts/EventContext'
 import { FrameStatus } from '@/services/types/enums'
@@ -40,6 +42,7 @@ export function SectionOverview() {
     let collaborative = 0
     let goodies = 0
     let presentation = 0
+    let tags: string[] = []
     filteredFrames.forEach((frame) => {
       const isCollaborative = collaborativeTypes.includes(frame.type)
       const isPresentationType = presentationTypes.includes(frame.type)
@@ -48,9 +51,13 @@ export function SectionOverview() {
       if (isCollaborative) collaborative += 1
       if (isPresentationType) presentation += 1
       if (isGoodiesType) goodies += 1
+      if (frame.config.tags) {
+        tags = [...tags, ...frame.config.tags]
+      }
     })
 
     return {
+      tags,
       collaborative,
       goodies,
       presentation,
@@ -59,15 +66,18 @@ export function SectionOverview() {
 
   const categoriesCount = getTypesCount()
 
+  const distinctTags = uniqBy(categoriesCount.tags, (tag: string) => tag)
+
   return (
-    <div className="bg-pattern-1 w-full h-full">
-      <div className="w-full h-full grid gap-4 place-items-center bg-white bg-opacity-30">
-        <div className="grid place-items-center">
+    <div className="w-full h-full bg-pattern-1">
+      <div className="grid w-full h-full bg-white place-items-center bg-opacity-30">
+        <div className="grid gap-8 place-items-center">
           <EditableLabel
+            showTooltip={false}
             wrapperClass="text-center"
             readOnly={!editable}
             label={section.name}
-            className="font-semibold cursor-pointer tracking-tight text-4xl 2xl:text-5xl line-clamp-none"
+            className="text-4xl font-semibold tracking-tight cursor-pointer 2xl:text-5xl line-clamp-none"
             onUpdate={(value: string) => {
               updateSection({
                 sectionPayload: { name: value },
@@ -75,13 +85,25 @@ export function SectionOverview() {
               })
             }}
           />
-          <div className="flex gap-4 mt-8">
+          <RenderIf isTrue={distinctTags?.length > 0}>
+            <div className="flex flex-wrap gap-2 justify-center max-h-[300px] py-2 overflow-y-scroll scrollbar-none">
+              {distinctTags.map((tag) => (
+                <Chip
+                  variant="bordered"
+                  size="sm"
+                  className="p-3 font-medium bg-transparent rounded-md border-1">
+                  {tag}
+                </Chip>
+              ))}
+            </div>
+          </RenderIf>
+          <div className="flex gap-4 my-4">
             <Chip
               variant="flat"
               startContent={
                 <p className="font-bold">{categoriesCount.collaborative}</p>
               }
-              className="bg-white shadow-md pl-2 border border-green-200">
+              className="pl-2 bg-white border border-green-200 shadow-md">
               Collaborative
             </Chip>
 
@@ -90,7 +112,7 @@ export function SectionOverview() {
               startContent={
                 <p className="font-bold">{categoriesCount.presentation}</p>
               }
-              className="bg-white shadow-md pl-2  border border-blue-200">
+              className="pl-2 bg-white border border-blue-200 shadow-md">
               Presentation
             </Chip>
 
@@ -99,10 +121,17 @@ export function SectionOverview() {
               startContent={
                 <p className="font-bold">{categoriesCount.goodies}</p>
               }
-              className="bg-white shadow-md pl-2  border border-primary-200">
+              className="pl-2 bg-white border shadow-md border-primary-200">
               Goodies
             </Chip>
           </div>
+          <RenderIf
+            isTrue={section.frames.some((frame) => !!frame.config.colorCode)}>
+            <SessionColorTracker
+              colorCodes={section.frames.map((frame) => frame.config.colorCode)}
+              className="w-[300px] h-6 shadow-xl"
+            />
+          </RenderIf>
         </div>
       </div>
     </div>

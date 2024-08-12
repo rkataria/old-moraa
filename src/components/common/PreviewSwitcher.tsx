@@ -1,13 +1,16 @@
 import { useContext } from 'react'
 
 import { Button } from '@nextui-org/react'
-import { LuTv } from 'react-icons/lu'
+import { useNavigate } from '@tanstack/react-router'
+import { CiEdit } from 'react-icons/ci'
+import { LuCheck } from 'react-icons/lu'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 
 export function PreviewSwitcher() {
+  const navigate = useNavigate()
   const { preview, setPreview } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
 
@@ -15,14 +18,22 @@ export function PreviewSwitcher() {
     return null
   }
 
+  const handlePreviewSwitcher = () => {
+    setPreview(!preview)
+
+    navigate({
+      search: { action: preview ? 'edit' : 'view' },
+    })
+  }
+
   return (
     <Button
-      color={preview ? 'danger' : 'success'}
+      color="primary"
       radius="md"
-      className="text-white"
-      endContent={<LuTv size={16} className="rotate-180" />}
-      onClick={() => setPreview(!preview)}>
-      {preview ? 'Exit Preview' : 'Preview'}
+      className="shadow-md"
+      startContent={!preview ? <LuCheck size={20} /> : <CiEdit size={20} />}
+      onClick={handlePreviewSwitcher}>
+      {preview ? 'Edit' : 'Done Editing'}
     </Button>
   )
 }

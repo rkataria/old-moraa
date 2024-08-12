@@ -36,7 +36,11 @@ export function BottomControls() {
         height: `${bottomControlsHeight}px`,
       }}>
       <AddContentButton className="flex-auto" />
-      <Button isIconOnly variant="ghost" onClick={toggleLeftSidebar}>
+      <Button
+        isIconOnly
+        variant="ghost"
+        onClick={toggleLeftSidebar}
+        className="border-1">
         {leftSidebarVisiblity === 'maximized' ? (
           <LuPanelLeftClose size={18} />
         ) : (

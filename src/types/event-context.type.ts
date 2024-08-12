@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
-import { ISection, IFrame } from './frame.type'
+import { ISection, IFrame, ISectionConfig } from './frame.type'
 
 export type EventModeType = 'view' | 'edit' | 'present'
 
@@ -38,6 +38,7 @@ export type EventContextType = {
   setOverviewOpen: (open: boolean) => void
   openContentTypePicker: boolean
   setOpenContentTypePicker: Dispatch<SetStateAction<boolean>>
+  setAddedFromSessionPlanner: Dispatch<SetStateAction<boolean>>
   addFrameToSection: ({
     frame,
     section,
@@ -91,6 +92,8 @@ export type EventContextType = {
     sectionPayload: {
       name?: string
       frames?: string[]
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      config?: ISectionConfig
     }
     sectionId?: string
     meetingId?: string

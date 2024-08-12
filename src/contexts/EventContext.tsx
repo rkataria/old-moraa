@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useContext, useEffect, useState } from 'react'
 
-import { useParams } from '@tanstack/react-router'
+import { useParams, useRouter } from '@tanstack/react-router'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -30,6 +30,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const useEventData = useEvent({
     id: eventId as string,
   })
+  const router = useRouter()
+  const eventViewFromQuery = router.latestLocation.search.action
 
   const { currentUser } = useAuth()
   const { permissions } = useEventPermissions()
@@ -61,10 +63,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const [insertInSectionId, setInsertInSectionId] = useState<string | null>(
     null
   )
-
+  const [addedFromSessionPlanner, setAddedFromSessionPlanner] = useState(false)
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>('')
 
-  const [preview, setPreview] = useState<boolean>(false)
+  const [preview, setPreview] = useState<boolean>(true)
 
   const [error, setError] = useState<{
     frameId: string
@@ -76,6 +78,16 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     setMeeting(useEventData.meeting)
   }, [useEventData.meeting])
+
+  useEffect(() => {
+    if (!useEventData.event?.owner_id || !currentUser?.id) return
+
+    if (useEventData.event?.owner_id !== currentUser?.id) return
+
+    if (eventViewFromQuery === 'edit') {
+      setPreview(false)
+    }
+  }, [currentUser?.id, eventViewFromQuery, useEventData.event?.owner_id])
 
   useEffect(() => {
     if (!useEventData.event || !currentUser) return
@@ -584,8 +596,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     }
 
     setShowFramePlaceholder(false)
-    setCurrentFrame(frameResponse.data)
-    setOverviewOpen(false)
+    if (!addedFromSessionPlanner) {
+      setCurrentFrame(frameResponse.data)
+      setOverviewOpen(false)
+    }
+
+    if (addedFromSessionPlanner) setAddedFromSessionPlanner(false)
+
     setCurrentSectionId(null)
   }
 
@@ -1282,6 +1299,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         updateSectionsWithReorderedFrames,
         addNewFrameLoader,
         setAddNewFrameLoader,
+        setAddedFromSessionPlanner,
         ...actions,
       }}>
       {children}

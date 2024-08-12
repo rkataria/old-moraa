@@ -10,7 +10,7 @@ import { getAvatar, getProfileName } from '../../UserAvatar'
 import { BlockEditor } from '@/components/tiptap/BlockEditor'
 import { useProfile } from '@/hooks/useProfile'
 import { fetchTokens } from '@/services/tiptap.service'
-import { IFrame } from '@/types/frame.type'
+import { cn } from '@/utils/utils'
 
 export interface AiState {
   isAiLoading: boolean
@@ -18,11 +18,18 @@ export interface AiState {
 }
 
 export function RichTextEditor({
-  frame,
+  editorId,
   editable = true,
+  showHeader = true,
+  classNames,
+  onEmptyContent,
 }: {
-  frame: IFrame
+  editorId: string
   editable?: boolean
+  showHeader?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  classNames?: any
+  onEmptyContent?: () => void
 }) {
   const [provider, setProvider] = useState<TiptapCollabProvider | null>(null)
   const [collabToken, setCollabToken] = useState<string | null>(null)
@@ -33,7 +40,7 @@ export function RichTextEditor({
   const name = getProfileName(profile)
   const avatar = getAvatar(profile)
 
-  const room = frame.id
+  const room = editorId
 
   const ydoc = useMemo(() => new YDoc(), [])
 
@@ -75,7 +82,7 @@ export function RichTextEditor({
   }
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className={cn('flex h-full', classNames?.wrapper)}>
       <BlockEditor
         aiToken={aiToken}
         ydoc={ydoc}
@@ -85,6 +92,9 @@ export function RichTextEditor({
         editable={editable}
         setAiToken={setAiToken}
         setCollabToken={setCollabToken}
+        showHeader={showHeader}
+        classNames={classNames}
+        onEmptyContent={onEmptyContent}
       />
     </div>
   )

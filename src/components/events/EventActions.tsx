@@ -83,11 +83,11 @@ export function EventActions({
     }
 
     if (key === 'edit') {
-      editEventModal.onOpen()
+      router.navigate({ to: `/events/${event.id}?action=edit` })
     }
 
     if (key === 'view') {
-      router.navigate({ to: `/events/${event.id}` })
+      router.navigate({ to: `/events/${event.id}?action=view` })
     }
   }
 
@@ -102,7 +102,7 @@ export function EventActions({
               variant="light"
               radius="full"
               className="shrink-0">
-              <IoEllipsisVerticalOutline className="flex shrink-0 text-xl text-gray-600 cursor-pointer" />
+              <IoEllipsisVerticalOutline className="flex text-xl text-gray-600 cursor-pointer shrink-0" />
             </Button>
           }
           actions={actions}
@@ -118,7 +118,7 @@ export function EventActions({
             isIconOnly
             variant="light"
             onClick={() => actionHandler(action.key)}
-            className="w-auto h-auto flex items-center !gap-2 hover:bg-transparent">
+            className="w-auto h-auto !min-w-fit flex items-center !gap-2 hover:bg-transparent">
             {action.icon}
           </Button>
         ))}

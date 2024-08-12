@@ -25,10 +25,6 @@ export function Header() {
         <>
           <OverviewButton label="Overview" />
           <div className={cn('flex justify-end items-center gap-2')}>
-            {/* <Button size="sm" variant="flat" isIconOnly>
-              <BsSearch size={18} />
-            </Button> */}
-
             <ListToggleButton
               listDisplayMode={listDisplayMode}
               toggleListDisplayMode={toggleListDisplayMode}
@@ -50,7 +46,7 @@ export function Header() {
 
   return (
     <div
-      className="flex justify-between items-center gap-2 px-1"
+      className="flex items-center justify-between gap-2 px-1"
       style={{
         height: `${height}px`,
       }}>

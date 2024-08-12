@@ -89,7 +89,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
             <EditableLabel
               readOnly={actionDisabled}
               label={section.name}
-              className="text-sm font-semibold cursor-pointer tracking-tight"
+              className="text-sm font-semibold tracking-tight cursor-pointer"
               onUpdate={(value: string) => {
                 updateSection({
                   sectionPayload: { name: value },
@@ -110,7 +110,7 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
 
     return (
       <div
-        className="flex justify-center items-center cursor-pointer p-1"
+        className="flex items-center justify-center p-1 cursor-pointer"
         onClick={handleSectionClick}>
         <LuLayers size={22} />
       </div>

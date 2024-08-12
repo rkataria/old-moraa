@@ -53,7 +53,12 @@ export function RightSidebar() {
       case 'frame-configuration':
         return <FrameConfiguration />
       case 'frame-notes':
-        return <NoteOverlay editable={permissions.canUpdateNotes} />
+        return (
+          <NoteOverlay
+            editable={permissions.canUpdateNotes}
+            key={currentFrame?.notes}
+          />
+        )
       case 'event-settings':
         return (
           <div className="p-4">

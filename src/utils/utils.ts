@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import toast from 'react-hot-toast'
+import { IoIosSquare } from 'react-icons/io'
 import { twMerge } from 'tailwind-merge'
 
 import { ISection } from '@/types/frame.type'
@@ -136,4 +137,43 @@ export function scrollParentToChild({
       parent.scrollTop += scrollBot + bottomOffset
     }
   }
+}
+
+export const sortByStatus = (
+  a: { status?: string },
+  b: { status?: string },
+  status: string
+) => (b.status === status ? 1 : 0) - (a.status === status ? 1 : 0)
+
+export const FrameColorCodes = {
+  exercise: {
+    key: 'exercise',
+    label: 'Exercise',
+    icon: IoIosSquare({ color: '#16a34a', size: 24 }),
+    color: '#16a34a',
+  },
+  theory: {
+    key: 'theory',
+    label: 'Theory',
+    icon: IoIosSquare({ color: '#2563eb', size: 24 }),
+    color: '#2563eb',
+  },
+  discussion: {
+    key: 'discussion',
+    label: 'Discussion/Debriefing',
+    icon: IoIosSquare({ color: '#dc2626', size: 24 }),
+    color: '#dc2626',
+  },
+  break: {
+    key: 'break',
+    label: 'Break',
+    icon: IoIosSquare({ color: '#fde047', size: 24 }),
+    color: '#fde047',
+  },
+  energizer: {
+    key: 'energizer',
+    label: 'Energizer/IceBreaker',
+    icon: IoIosSquare({ color: '#7c3aed', size: 24 }),
+    color: '#7c3aed',
+  },
 }

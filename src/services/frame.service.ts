@@ -11,7 +11,7 @@ const getFrames = async ({
   sectionIds?: string[]
   frameIds?: string[]
 }) => {
-  const query = supabaseClient.from('frame').select('*,notes(id,content)')
+  const query = supabaseClient.from('frame').select('*')
 
   if (meetingId) query.eq('meeting_id', meetingId)
   if (sectionIds) query.in('section_id', sectionIds)

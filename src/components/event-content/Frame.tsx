@@ -61,7 +61,12 @@ export function Frame({ frame }: FrameProps) {
     [ContentType.IMAGE_VIEWER]: (
       <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
     ),
-    [ContentType.RICH_TEXT]: <RichTextEditor frame={frame} />,
+    [ContentType.RICH_TEXT]: (
+      <RichTextEditor
+        editorId={frame.id}
+        classNames={{ wrapper: 'overflow-hidden' }}
+      />
+    ),
 
     [ContentType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
     [ContentType.MORAA_BOARD]: <MoraaBoardEditor frame={frame} />,

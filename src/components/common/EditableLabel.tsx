@@ -12,6 +12,7 @@ export function EditableLabel({
   label,
   className = '',
   wrapperClass = '',
+  showTooltip = true,
   onClick,
   onUpdate,
 }: {
@@ -19,6 +20,7 @@ export function EditableLabel({
   label: string
   className?: string
   wrapperClass?: string
+  showTooltip?: boolean
   onClick?: () => void
   onUpdate: (value: string) => void
 }) {
@@ -36,6 +38,7 @@ export function EditableLabel({
         wrapperClass
       )}>
       <Tooltip
+        isDisabled={!showTooltip}
         showArrow
         placement="right"
         offset={15}

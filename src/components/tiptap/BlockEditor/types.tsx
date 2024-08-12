@@ -12,6 +12,10 @@ export interface TiptapProps {
   editable?: boolean
   setAiToken: (token: string) => void
   setCollabToken: (token: string) => void
+  showHeader?: boolean
+  onEmptyContent?: () => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  classNames?: any
 }
 
 export type EditorUser = {

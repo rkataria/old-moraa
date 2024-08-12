@@ -22,5 +22,5 @@ export function RichTextPreview({
       frame.config.allowToCollaborate
     ) && !preview
 
-  return <RichTextEditor frame={frame} editable={canEditRichText} />
+  return <RichTextEditor editorId={frame.id} editable={canEditRichText} />
 }

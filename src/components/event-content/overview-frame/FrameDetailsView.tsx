@@ -1,6 +1,10 @@
+import { useState } from 'react'
+
 import { Image } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
 
+import { RichTextEditor } from '@/components/common/content-types/RichText/Editor'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Date } from '@/components/enroll/Date'
 import { useEvent } from '@/hooks/useEvent'
 import { cn } from '@/utils/utils'
@@ -24,6 +28,7 @@ function Dates({
   )
 }
 export function FrameDetailsView({ className }: { className?: string }) {
+  const [hideblurb, setHideBlurb] = useState(false)
   const { eventId }: { eventId: string } = useParams({ strict: false })
   const useEventData = useEvent({
     id: eventId as string,
@@ -32,8 +37,8 @@ export function FrameDetailsView({ className }: { className?: string }) {
   const { event } = useEventData
 
   return (
-    <div className={cn('max-w-[60rem] mx-auto', className)}>
-      <div className="grid grid-cols-[0.5fr_1fr] items-start gap-[3rem]">
+    <div className={cn('max-w-[60rem]', className)}>
+      <div className="grid grid-cols-[0.5fr_1fr] items-start gap-[3rem] bg-white rounded-xl p-4">
         <Image
           src={
             event?.image_url ||
@@ -56,6 +61,16 @@ export function FrameDetailsView({ className }: { className?: string }) {
           </div>
         </div>
       </div>
+      <RenderIf isTrue={!hideblurb}>
+        <div className="mt-4 bg-white p-4 pt-2">
+          <RichTextEditor
+            editorId={eventId}
+            showHeader={false}
+            editable={false}
+            onEmptyContent={() => setHideBlurb(true)}
+          />
+        </div>
+      </RenderIf>
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 
 import { Button } from '@nextui-org/react'
-import { BsPlusSquare } from 'react-icons/bs'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -25,19 +24,23 @@ export function AddContentButton({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn('flex justify-center items-center', className)}>
+    <div
+      className={cn('flex justify-center items-center shadow-2xl', className)}>
       <Button
         fullWidth={expanded}
         isIconOnly={!expanded}
         radius="md"
-        variant="ghost"
         color="primary"
-        className="flex justify-center items-center gap-2 shadow-lg tracking-tight"
+        className="flex items-center justify-center gap-2 tracking-tight "
+        endContent={
+          <span className="flex w-[18px] h-[18px] border text-center justify-center items-center rounded-sm text-lg">
+            +
+          </span>
+        }
         onClick={() => {
           setOpenContentTypePicker?.(true)
         }}>
         {expanded && <span>Add Frame</span>}
-        <BsPlusSquare size={16} />
       </Button>
     </div>
   )

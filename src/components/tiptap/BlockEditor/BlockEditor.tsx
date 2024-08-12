@@ -11,6 +11,7 @@ import { TiptapProps } from './types'
 import { ContentItemMenu } from '../menus/ContentItemMenu'
 import { TextMenu } from '../menus/TextMenu'
 
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { EditorContext } from '@/components/tiptap/context/EditorContext'
 import ImageBlockMenu from '@/components/tiptap/extensions/ImageBlock/components/ImageBlockMenu'
 import { ColumnsMenu } from '@/components/tiptap/extensions/MultiColumn/menus'
@@ -32,6 +33,7 @@ import '@/styles/tiptap/list.css'
 import '@/styles/tiptap/placeholder.css'
 import '@/styles/tiptap/table.css'
 import '@/styles/tiptap/typography.css'
+import { cn } from '@/utils/utils'
 
 export function BlockEditor({
   aiToken,
@@ -41,6 +43,9 @@ export function BlockEditor({
   editable,
   setAiToken,
   setCollabToken,
+  showHeader = true,
+  classNames,
+  onEmptyContent,
 }: TiptapProps) {
   const aiState = useAIState()
   const menuContainerRef = useRef(null)
@@ -55,6 +60,7 @@ export function BlockEditor({
       editable,
       setCollabToken,
       setAiToken,
+      onEmptyContent,
     })
 
   const displayedUsers = users.slice(0, 3)
@@ -95,27 +101,40 @@ export function BlockEditor({
   return (
     <EditorContext.Provider value={providerValue}>
       <div className="flex w-full h-full" ref={menuContainerRef}>
-        <Sidebar
-          isOpen={leftSidebar.isOpen}
-          onClose={leftSidebar.close}
-          editor={editor}
-        />
-        <div className="relative w-full h-full border bg-[#FEFEFE] rounded-3xl px-[0.5625rem] overflow-hidden">
-          <EditorHeader
-            characters={characterCount.characters()}
-            collabState={collabState}
-            users={displayedUsers}
-            words={characterCount.words()}
-            isSidebarOpen={leftSidebar.isOpen}
-            toggleSidebar={leftSidebar.toggle}
+        <RenderIf isTrue={showHeader}>
+          <Sidebar
+            isOpen={leftSidebar.isOpen}
+            onClose={leftSidebar.close}
+            editor={editor}
           />
+        </RenderIf>
+
+        <div
+          className={cn(
+            'relative w-full h-full border bg-[#FEFEFE] rounded-3xl px-[0.5625rem]',
+            classNames?.container
+          )}>
+          <RenderIf isTrue={showHeader}>
+            <EditorHeader
+              characters={characterCount.characters()}
+              collabState={collabState}
+              users={displayedUsers}
+              words={characterCount.words()}
+              isSidebarOpen={leftSidebar.isOpen}
+              toggleSidebar={leftSidebar.toggle}
+            />
+          </RenderIf>
+
           <EditorContent
             id="ai-page-editor"
             editor={editor}
             ref={editorRef}
-            className="overflow-y-scroll w-full h-full pl-[58px] scrollbar-none pt-6 pb-[5rem]"
+            className={cn(
+              'overflow-y-scroll w-full h-full pl-[58px] scrollbar-none pt-6 pb-[5rem]',
+              classNames?.editor
+            )}
           />
-          <ContentItemMenu editor={editor} />
+          <ContentItemMenu editor={editor} classnames={classNames} />
           <LinkMenu editor={editor} appendTo={menuContainerRef} />
           <TextMenu editor={editor} />
           <ColumnsMenu editor={editor} appendTo={menuContainerRef} />

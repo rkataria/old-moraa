@@ -46,13 +46,16 @@ export interface ISection {
   frames: IFrame[]
   meeting_id?: string
   status?: string
+  config?: ISectionConfig
 }
 
 export interface IbreakoutRooms {
   name: string
   activityId?: string
 }
-
+export interface ISectionConfig {
+  time?: number
+}
 export interface IFrame {
   id: string
   name: string

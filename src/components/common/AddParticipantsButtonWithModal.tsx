@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import {
   Button,
@@ -21,9 +21,11 @@ import {
   ParticipantsFormData,
 } from './AddParticipantsForm'
 
+import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventService } from '@/services/event/event-service'
+import { EventContextType } from '@/types/event-context.type'
 
 type addParticipant = ParticipantsFormData & {
   closeonSave?: boolean
@@ -80,7 +82,7 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
           {() => (
             <>
               <ModalHeader className="flex flex-col gap-1 bg-primary text-white h-[9.125rem] p-6">
-                <h2 className="font-md font-semibold">Invite People</h2>
+                <h2 className="font-semibold font-md">Invite People</h2>
                 <p className="text-sm font-normal">
                   Add participants, moderators and co-creators using their email
                   address
@@ -104,13 +106,13 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
                     await deleteParticipantMutation.mutateAsync(participantId)
                   }}
                   renderAction={({ showActions = false }) => (
-                    <div className="flex justify-between my-4 border-t pt-3">
+                    <div className="flex justify-between pt-3 my-4 border-t">
                       <CopyToClipboard
                         text={`${window.location.origin}/enroll/${eventId}`}
                         onCopy={() => toast.success('Copied')}>
                         <Button
                           variant="light"
-                          className="text-blue-400 px-0 hover:bg-transparent"
+                          className="px-0 text-blue-400 hover:bg-transparent"
                           startContent={<FaLink />}
                           disableAnimation
                           disableRipple>
@@ -153,11 +155,14 @@ export function AddParticipantsButtonWithModal({
 }: {
   eventId: string
 }) {
+  const { preview } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
 
   if (!permissions.canManageEnrollment) {
     return null
   }
+
+  if (!preview) return null
 
   return <ButtonWithModal eventId={eventId} />
 }

@@ -19,5 +19,11 @@ export function RichTextLive({ frame }: { frame: IFrame }) {
     return false
   }
 
-  return <RichTextEditor frame={frame} editable={canEditInLive()} />
+  return (
+    <RichTextEditor
+      editorId={frame.id}
+      editable={canEditInLive()}
+      classNames={{ wrapper: 'overflow-hidden' }}
+    />
+  )
 }

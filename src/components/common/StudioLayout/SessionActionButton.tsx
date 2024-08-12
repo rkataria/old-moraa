@@ -1,3 +1,5 @@
+import { useContext } from 'react'
+
 import {
   Button,
   ButtonGroup,
@@ -14,8 +16,10 @@ import { ScheduleEventButtonWithModal } from '../ScheduleEventButtonWithModal'
 
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
+import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventStatus } from '@/services/types/enums'
+import { EventContextType } from '@/types/event-context.type'
 
 function ScheduleSessionButton({
   scheduleModal,
@@ -77,7 +81,12 @@ function ActionButton({
   ) {
     return (
       <>
-        <ButtonGroup variant="solid" color="primary" size="md" radius="md">
+        <ButtonGroup
+          variant="solid"
+          color="secondary"
+          size="md"
+          radius="md"
+          className="shadow-md">
           <Button
             as={Link}
             to={`/event-session/${eventId}`}
@@ -102,7 +111,14 @@ function ActionButton({
 
   if (eventStatus === EventStatus.SCHEDULED) {
     return (
-      <Button as={Link} to={`/event-session/${eventId}`} title="Join Session">
+      <Button
+        variant="solid"
+        radius="md"
+        color="secondary"
+        as={Link}
+        to={`/event-session/${eventId}`}
+        className="shadow-md"
+        title="Join Session">
         Join live session
       </Button>
     )
@@ -118,11 +134,15 @@ export function SessionActionButton({
   eventId: string
   eventStatus: string
 }) {
+  const { preview } = useContext(EventContext) as EventContextType
+
   const { permissions } = useEventPermissions()
 
   if (!permissions.canAccessSession) {
     return null
   }
+  console.log(preview)
+  if (!preview) return null
 
   return <ActionButton eventId={eventId} eventStatus={eventStatus} />
 }

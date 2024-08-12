@@ -67,7 +67,7 @@ export function EventList() {
     if (!pages || pages < 2) return null
 
     return (
-      <div className="flex w-full justify-center mt-4">
+      <div className="flex justify-center w-full mt-4">
         <Pagination
           variant="bordered"
           showShadow
@@ -95,7 +95,7 @@ export function EventList() {
           <Button
             as={Link}
             to="/events/create"
-            className="bg-primary text-white mt-12"
+            className="mt-12 text-white bg-primary"
             startContent={<MdOutlineAddBox className="text-lg" />}>
             Create new
           </Button>
@@ -110,16 +110,22 @@ export function EventList() {
     return (
       <div className="flex items-center justify-between mt-10">
         <div>
-          <p className="font-semibold text-3xl">Calendar of Happenings</p>
-          <p className="text-sm mt-2">
+          <p className="text-3xl font-semibold">Calendar of Happenings</p>
+          <p className="mt-2 text-sm">
             Life is about moments: don&apos;t wait for them, create them.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button color="primary" as={Link} to="/events/create">
-            <p className="flex items-center gap-2">
-              Create new <MdOutlineAddBox className="text-[18px]" />
-            </p>
+          <Button
+            color="primary"
+            as={Link}
+            to="/events/create"
+            endContent={
+              <span className="flex w-[18px] h-[18px] border text-center justify-center items-center rounded-sm text-lg">
+                +
+              </span>
+            }>
+            Create new
           </Button>
           <ListToggleButton
             listDisplayMode={listDisplayMode}
@@ -162,9 +168,9 @@ export function EventList() {
     <>
       {renderHeader()}
 
-      <div className="mt-8 flow-root h-full">
-        <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8 h-full">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8 h-full">
+      <div className="flow-root h-full mt-8">
+        <div className="h-full -mx-4 -my-2 sm:-mx-6 lg:-mx-8">
+          <div className="inline-block h-full min-w-full py-2 align-middle sm:px-6 lg:px-8">
             {getView()}
             {getPagination()}
           </div>

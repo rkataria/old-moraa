@@ -80,6 +80,7 @@ export function FrameManager() {
     let frameConfig = {
       textColor: '#000',
       allowVoteOnMultipleOptions: false,
+      time: 1,
     }
 
     const breakoutConfigKeyName =

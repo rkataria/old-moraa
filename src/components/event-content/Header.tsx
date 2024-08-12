@@ -8,7 +8,6 @@ import { IoIosArrowBack } from 'react-icons/io'
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
 import { Toolbars } from '../common/content-types/MoraaSlide/Toolbars'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
-import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -35,20 +34,14 @@ export function Header({
 
   useHotkeys('n', toggleNotesSidebar, [rightSidebarVisiblity])
 
-  const renderActionButtons = () => {
-    if (preview) return null
+  const renderActionButtons = () => (
+    <>
+      <AddParticipantsButtonWithModal eventId={event.id} />
 
-    return (
-      <>
-        <div className="flex items-center">
-          <AIChatbotToggleButton />
-          <AddParticipantsButtonWithModal eventId={event.id} />
-        </div>
-
-        <SessionActionButton eventId={event.id} eventStatus={event.status} />
-      </>
-    )
-  }
+      <SessionActionButton eventId={event.id} eventStatus={event.status} />
+      <PreviewSwitcher />
+    </>
+  )
 
   if (!event) return null
 
@@ -56,8 +49,8 @@ export function Header({
 
   return (
     <div className="h-full p-2">
-      <div className="flex justify-between items-center h-12 w-full">
-        <div className="flex justify-start items-center gap-1">
+      <div className="flex items-center justify-between w-full h-12">
+        <div className="flex items-center justify-start gap-1">
           <Link to="/events">
             <Button isIconOnly variant="light">
               <IoIosArrowBack size={20} />
@@ -68,9 +61,8 @@ export function Header({
         {editable && currentFrame?.type === ContentType.MORAA_SLIDE && (
           <Toolbars />
         )}
-        <div className="flex justify-start items-center gap-2 h-full">
+        <div className="flex items-center justify-start h-full gap-1">
           {renderActionButtons()}
-          <PreviewSwitcher />
         </div>
       </div>
     </div>

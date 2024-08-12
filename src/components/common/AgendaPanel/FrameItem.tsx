@@ -117,7 +117,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             setCurrentFrame(frame)
           }}>
           {eventSessionData?.breakoutSlideId === frame?.id ? (
-            <div className="absolute top-0 right-0 bg-secondary p-1 rounded-bl-md rounded-tr-md">
+            <div className="absolute top-0 right-0 p-1 bg-secondary rounded-bl-md rounded-tr-md">
               <p className="text-xs text-gray-800">In Breakout</p>
             </div>
           ) : null}
@@ -149,7 +149,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                     listDisplayMode === 'grid',
                 }
               )}>
-              <div className="flex justify-start items-center gap-2 flex-auto">
+              <div className="flex items-center justify-start flex-auto gap-2">
                 <ContentTypeIcon
                   frameType={frame.type}
                   classNames="text-gray-800"

@@ -34,6 +34,7 @@ export const useBlockEditor = ({
   editable,
   setAiToken,
   setCollabToken,
+  onEmptyContent,
 }: {
   aiToken: string
   ydoc: YDoc
@@ -42,6 +43,7 @@ export const useBlockEditor = ({
   editable?: boolean
   setAiToken: (t: string) => void
   setCollabToken: (t: string) => void
+  onEmptyContent: () => void
 }) => {
   const leftSidebar = useSidebar()
   const [collabState, setCollabState] = useState<WebSocketStatus>(
@@ -85,6 +87,7 @@ export const useBlockEditor = ({
         provider?.on('synced', () => {
           if (editor.isEmpty) {
             // editor.commands.setContent(initialContent)
+            onEmptyContent?.()
           }
         })
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
