@@ -1,18 +1,13 @@
 import { useState } from 'react'
 
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-} from '@nextui-org/react'
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
 import toast from 'react-hot-toast'
 
 import { ScheduleEventForm, ScheduleEventFormData } from './ScheduleEventForm'
+import { Button } from '../ui/Button'
 
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
@@ -129,11 +124,10 @@ export function ScheduleEventButtonWithModal({
       renderAction={(renderProps) => {
         const render = withoutModal ? renderProps.hasNewChanges : true
 
-        return !render ? (
-          <div />
-        ) : (
+        return !render ? null : (
           <div className="flex justify-end mb-4">
             <Button
+              size="sm"
               variant="bordered"
               className="mr-2"
               onClick={closeModal}
@@ -141,6 +135,7 @@ export function ScheduleEventButtonWithModal({
               Cancel
             </Button>
             <Button
+              size="sm"
               type="submit"
               color="primary"
               variant="solid"
@@ -157,18 +152,18 @@ export function ScheduleEventButtonWithModal({
     return form()
   }
 
+  if (!showLabel) return null
+
   return (
     <div>
-      {showLabel && (
-        <Button
-          onClick={() => setOpen(true)}
-          variant="solid"
-          color="primary"
-          radius="md"
-          fullWidth>
-          {actionButtonLabel}
-        </Button>
-      )}
+      <Button
+        size="sm"
+        variant="solid"
+        color="primary"
+        fullWidth
+        onClick={() => setOpen(true)}>
+        {actionButtonLabel}
+      </Button>
 
       <Modal
         size="2xl"

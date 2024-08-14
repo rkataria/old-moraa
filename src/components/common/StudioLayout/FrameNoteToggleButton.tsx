@@ -36,12 +36,13 @@ export function FrameNoteToggleButton() {
   return (
     <Tooltip content="Frame Notes" placement="left">
       <Button
+        size="sm"
         isIconOnly
-        onClick={toggleSidebar}
         variant="light"
-        className={cn('cursor-pointer text-[#52525B]', {
-          'text-[#7C3AED]': rightSidebarVisiblity === 'frame-notes',
-        })}>
+        className={cn('bg-gray-100 hover:bg-gray-200', {
+          'bg-primary-100': rightSidebarVisiblity === 'frame-notes',
+        })}
+        onClick={toggleSidebar}>
         <LuClipboardEdit size={20} strokeWidth={1.7} />
       </Button>
     </Tooltip>

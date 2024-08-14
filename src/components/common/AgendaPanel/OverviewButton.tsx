@@ -1,8 +1,9 @@
 import { useContext } from 'react'
 
-import { Button, cn } from '@nextui-org/react'
-import { BsBookmarkFill } from 'react-icons/bs'
+import { cn } from '@nextui-org/react'
+import { GoChecklist } from 'react-icons/go'
 
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
@@ -17,14 +18,19 @@ export function OverviewButton({ label }: { label?: string }) {
 
   if (eventMode === 'present') return <div />
 
+  const isIconOnly = !label
+
   return (
     <Button
-      startContent={<BsBookmarkFill size={18} />}
+      size="sm"
+      fullWidth={!isIconOnly}
+      isIconOnly={isIconOnly}
+      startContent={<GoChecklist size={18} />}
       className={cn(
-        'hover:bg-primary-200 bg-transparent w-full justify-start font-semibold text-md p-3',
+        'font-semibold bg-transparent flex justify-start hover:bg-gray-200',
         {
-          'bg-primary-200': overviewOpen,
-          'justify-center': !label,
+          'bg-primary-100': overviewOpen,
+          'flex justify-center items-center m-auto': isIconOnly,
         }
       )}
       onClick={handleOverviewClick}>

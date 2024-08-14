@@ -1,8 +1,6 @@
 import { useContext } from 'react'
 
 import {
-  Button,
-  ButtonGroup,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -16,6 +14,7 @@ import { ScheduleEventButtonWithModal } from '../ScheduleEventButtonWithModal'
 
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventStatus } from '@/services/types/enums'
@@ -36,13 +35,14 @@ function ScheduleSessionButton({
     <Dropdown
       placement="bottom-end"
       closeOnSelect={false}
+      className="rounded-md"
       shouldCloseOnInteractOutside={(Element) => {
         const wrapperElement = document.getElementById('schedule-event-form')
 
         return !wrapperElement?.contains(Element)
       }}>
       <DropdownTrigger>
-        <Button isIconOnly>
+        <Button size="sm" isIconOnly className="rounded-s-none">
           <ChevronDownIcon />
         </Button>
       </DropdownTrigger>
@@ -54,8 +54,11 @@ function ScheduleSessionButton({
             scheduleModal.onOpen()
           }
         }}>
-        <DropdownItem key="re-schedule" className="p-0" closeOnSelect>
-          <Button variant="solid" color="primary" radius="md" fullWidth>
+        <DropdownItem
+          key="re-schedule"
+          className="p-0 rounded-md"
+          closeOnSelect>
+          <Button size="sm" variant="solid" fullWidth>
             Re-schedule event
           </Button>
         </DropdownItem>
@@ -81,21 +84,18 @@ function ActionButton({
   ) {
     return (
       <>
-        <ButtonGroup
-          variant="solid"
-          color="secondary"
-          size="md"
-          radius="md"
-          className="shadow-md">
-          <Button
-            as={Link}
-            to={`/event-session/${eventId}`}
-            title="Start Session">
-            <Link to={`/event-session/${eventId}`}>Start live session</Link>
-          </Button>
+        <div className="flex justify-center items-center gap-0">
+          <Link to={`/event-session/${eventId}`}>
+            <Button
+              as={Link}
+              size="sm"
+              title="Start session"
+              className="rounded-e-none">
+              Start live session
+            </Button>
+          </Link>
           <ScheduleSessionButton scheduleModal={scheduleModal} />
-        </ButtonGroup>
-
+        </div>
         <ScheduleEventButtonWithModal
           id="re-schedule"
           showLabel={false}
@@ -111,16 +111,16 @@ function ActionButton({
 
   if (eventStatus === EventStatus.SCHEDULED) {
     return (
-      <Button
-        variant="solid"
-        radius="md"
-        color="secondary"
-        as={Link}
-        to={`/event-session/${eventId}`}
-        className="shadow-md"
-        title="Join Session">
-        Join live session
-      </Button>
+      <Link to={`/event-session/${eventId}`}>
+        <Button
+          as={Link}
+          size="sm"
+          variant="solid"
+          color="secondary"
+          title="Join live session">
+          Join live session
+        </Button>
+      </Link>
     )
   }
 
@@ -141,7 +141,6 @@ export function SessionActionButton({
   if (!permissions.canAccessSession) {
     return null
   }
-  console.log(preview)
   if (!preview) return null
 
   return <ActionButton eventId={eventId} eventStatus={eventStatus} />

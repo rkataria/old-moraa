@@ -1,6 +1,6 @@
 import { cn } from '@/utils/utils'
 
-export const HEADER_HEIGHT = 64
+export const HEADER_HEIGHT = 56
 
 export function Header({ children }: { children: React.ReactNode }) {
   return (

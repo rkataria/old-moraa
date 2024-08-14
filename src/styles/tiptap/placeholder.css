@@ -6,7 +6,10 @@
   content: 'Type  /  to browse options';
 }
 
-.ProseMirror.ProseMirror-focused > [data-type='columns'] > [data-type='column'] > p.is-empty.has-focus::before {
+.ProseMirror.ProseMirror-focused
+  > [data-type='columns']
+  > [data-type='column']
+  > p.is-empty.has-focus::before {
   content: 'Type  /  to browse options';
 }
 

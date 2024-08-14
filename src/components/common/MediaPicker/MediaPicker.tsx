@@ -2,12 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { BiSolidImage, BiSolidVideos } from 'react-icons/bi'
 import { FaPhotoVideo, FaUnsplash } from 'react-icons/fa'
 import { SiIcons8 } from 'react-icons/si'
@@ -15,6 +10,7 @@ import { SiIcons8 } from 'react-icons/si'
 import { MediaProviderContent, MediaProviderType } from './MediaProviderContent'
 import { SideMenuItem } from './SideMenuItem'
 
+import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/utils'
 
 const MENU_OPTIONS = {
@@ -72,7 +68,6 @@ export function MediaPicker({
           <Button
             variant="light"
             size="lg"
-            radius="md"
             isIconOnly
             className={cn('flex flex-col justify-center items-center gap-1', {
               'bg-primary text-white hover:bg-primary hover:text-white': open,
@@ -141,9 +136,9 @@ export function MediaPicker({
                     }
                   }}
                 />
-                <div className="w-full p-2 rounded-md bg-primary text-white text-center cursor-pointer">
-                  Upload Media
-                </div>
+                <Button size="sm" color="primary" fullWidth>
+                  Upload media
+                </Button>
               </label>
             </div>
           </div>

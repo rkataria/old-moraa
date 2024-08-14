@@ -6,8 +6,7 @@ import 'tldraw/tldraw.css'
 
 import { useContext, useRef, useState } from 'react'
 
-import { Button } from '@nextui-org/button'
-import { Card } from '@nextui-org/react'
+import { Button, Card } from '@nextui-org/react'
 import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line import/no-cycle

@@ -1,10 +1,9 @@
-import { useState } from 'react'
-
-import { Button } from '@nextui-org/react'
-import { Link, useLocation } from '@tanstack/react-router'
+import { useLocation, useRouter } from '@tanstack/react-router'
 import { IconType } from 'react-icons'
 import { HiOutlineTemplate } from 'react-icons/hi'
 import { LuCalendarHeart, LuHome, LuLibrary } from 'react-icons/lu'
+
+import { Button } from '../ui/Button'
 
 import { cn } from '@/utils/utils'
 
@@ -14,45 +13,50 @@ type TNavigation = {
   icon: IconType
 }
 
+const navigation: TNavigation[] = [
+  {
+    name: 'Home',
+    href: '/events',
+    icon: LuHome,
+  },
+  {
+    name: 'My workshops',
+    href: '/workshops',
+    icon: LuCalendarHeart,
+  },
+  {
+    name: 'My Library',
+    href: '/library',
+    icon: LuLibrary,
+  },
+  {
+    name: 'Community templates',
+    href: '/templates',
+    icon: HiOutlineTemplate,
+  },
+]
+
 export function SidebarItem() {
   const location = useLocation()
-  const [navigation] = useState<TNavigation[]>([
-    {
-      name: 'Home',
-      href: '/events',
-      icon: LuHome,
-    },
-    {
-      name: 'My workshops',
-      href: '/workshops',
-      icon: LuCalendarHeart,
-    },
-    {
-      name: 'My Library',
-      href: '/library',
-      icon: LuLibrary,
-    },
-    {
-      name: 'Community templates',
-      href: '/templates',
-      icon: HiOutlineTemplate,
-    },
-  ])
+  const { history } = useRouter()
 
   return (
-    <div className="grid gap-2">
+    <div className="flex flex-col gap-2">
       {navigation.map((item) => (
         <Button
-          as={Link}
-          to={item.href}
-          variant="light"
+          key={item.name}
+          size="sm"
+          fullWidth
           className={cn(
-            'hover:bg-[#EDE0FB] w-full justify-start font-semibold text-slate-600 tracking-tight gap-[0.625rem]',
+            'flex justify-start items-center gap-2 bg-transparent hover:bg-gray-200',
             {
-              'bg-[#EDE0FB]': item.href === location.pathname,
+              'bg-primary-100': item.href === location.pathname,
             }
-          )}>
-          <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+          )}
+          onClick={() => {
+            history.push(item.href)
+          }}>
+          <item.icon className="shrink-0" aria-hidden="true" size={18} />
           {item.name}
         </Button>
       ))}

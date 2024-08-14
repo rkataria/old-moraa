@@ -13,6 +13,7 @@ import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
 import { RenderIf } from '../RenderIf/RenderIf'
 
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
@@ -95,14 +96,12 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
           key={`frame-${frame?.id}`}
           data-miniframe-id={frame?.id}
           className={cn(
-            'relative cursor-pointer rounded-md border-0  hover:bg-primary-200 overflow-hidden',
+            'relative cursor-pointer rounded-md overflow-hidden hover:bg-gray-200',
             {
-              'max-w-[calc(100%_-_2rem)] border border-gray-300':
+              'border-2 border-gray-100 hover:border-gray-300':
                 listDisplayMode === 'grid',
-              'w-full': listDisplayMode === 'list',
-              'bg-primary-200': frameActive,
-              'border-2 border-gray-600':
-                frameActive && listDisplayMode === 'grid',
+              'bg-primary-100': frameActive,
+              'border-primary-200': frameActive && listDisplayMode === 'grid',
               'border-transparent':
                 listDisplayMode === 'list' && currentFrame?.id !== frame?.id,
               'border border-green-700':
@@ -141,9 +140,9 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             </div>
             <div
               className={cn(
-                'flex justify-between items-center p-2 border-2 border-transparent',
+                'flex justify-between items-center px-2 h-8 hover:bg-gray-200 group-hover/frame-item:bg-gray-200',
                 {
-                  'border-primary-200': frameActive,
+                  'bg-primary-100': frameActive,
                   'border-gray-100':
                     currentFrame?.id !== frame?.id &&
                     listDisplayMode === 'grid',
@@ -196,20 +195,22 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     return (
       <div
         data-miniframe-id={frame?.id}
-        className={cn(
-          'flex justify-center items-center cursor-pointer p-1.5 border-1 border-transparent hover:bg-primary-200',
-          {
+        className={cn('flex justify-center items-center')}>
+        <Button
+          size="sm"
+          isIconOnly
+          className={cn('m-auto bg-gray-100 hover:bg-gray-200', {
             'bg-primary-200': frameActive,
-          }
-        )}
-        onClick={() => {
-          setCurrentFrame(frame)
-        }}>
-        <ContentTypeIcon
-          frameType={frame.type}
-          classNames="text-gray-800"
-          tooltipProps={{ placement: 'right', offset: 12 }}
-        />
+          })}
+          onClick={() => {
+            setCurrentFrame(frame)
+          }}>
+          <ContentTypeIcon
+            frameType={frame.type}
+            classNames="text-black h-4 w-4"
+            tooltipProps={{ placement: 'right', offset: 12 }}
+          />
+        </Button>
       </div>
     )
   }

@@ -1,14 +1,14 @@
-import { Button } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu'
 
 import { AddContentButton } from './AddContentButton'
 
+import { Button } from '@/components/ui/Button'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
 
 export const BOTTOM_CONTROLS_HEIGHT = 52
-export const BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED = 104
+export const BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED = 90
 
 export function BottomControls() {
   const { leftSidebarVisiblity, toggleLeftSidebar } = useStudioLayout()
@@ -29,18 +29,14 @@ export function BottomControls() {
 
   return (
     <div
-      className={cn('px-2 flex justify-between items-center gap-2', {
+      className={cn('flex justify-between items-center gap-2', {
         'flex-col py-2': leftSidebarVisiblity === 'minimized',
       })}
       style={{
         height: `${bottomControlsHeight}px`,
       }}>
       <AddContentButton className="flex-auto" />
-      <Button
-        isIconOnly
-        variant="ghost"
-        onClick={toggleLeftSidebar}
-        className="border-1">
+      <Button size="sm" isIconOnly variant="flat" onClick={toggleLeftSidebar}>
         {leftSidebarVisiblity === 'maximized' ? (
           <LuPanelLeftClose size={18} />
         ) : (

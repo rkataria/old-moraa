@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 
-import { Button } from '@nextui-org/button'
+import { Button } from '@nextui-org/react'
 import { useThrottle } from '@uidotdev/usehooks'
 import clsx from 'clsx'
 import isEqual from 'lodash.isequal'

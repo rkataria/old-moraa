@@ -3,13 +3,7 @@
 
 import { useContext, useState } from 'react'
 
-import {
-  Button,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  Modal,
-} from '@nextui-org/react'
+import { ModalBody, ModalContent, ModalHeader, Modal } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
@@ -20,6 +14,7 @@ import {
   AddParticipantsForm,
   ParticipantsFormData,
 } from './AddParticipantsForm'
+import { Button } from '../ui/Button'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
@@ -73,7 +68,11 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
 
   return (
     <>
-      <Button isIconOnly variant="light" onClick={() => setOpen(true)}>
+      <Button
+        size="sm"
+        isIconOnly
+        variant="light"
+        onClick={() => setOpen(true)}>
         <LuUserPlus size={20} className="text-[#52525B]" />
       </Button>
 
@@ -111,6 +110,7 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
                         text={`${window.location.origin}/enroll/${eventId}`}
                         onCopy={() => toast.success('Copied')}>
                         <Button
+                          size="sm"
                           variant="light"
                           className="px-0 text-blue-400 hover:bg-transparent"
                           startContent={<FaLink />}
@@ -123,6 +123,7 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
                       {showActions && (
                         <div className="flex items-center">
                           <Button
+                            size="sm"
                             variant="bordered"
                             color="default"
                             className="mr-2"
@@ -130,6 +131,7 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
                             Close
                           </Button>
                           <Button
+                            size="sm"
                             type="submit"
                             color="primary"
                             variant="solid"

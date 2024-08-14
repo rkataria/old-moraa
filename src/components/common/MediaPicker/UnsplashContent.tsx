@@ -4,13 +4,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { useEffect, useState } from 'react'
 
-import { Button } from '@nextui-org/react'
 import Masonry from 'react-responsive-masonry'
 import { createApi } from 'unsplash-js'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
 
 import { SearchInput } from './SearchInput'
 import { ContentLoading } from '../ContentLoading'
+
+import { Button } from '@/components/ui/Button'
 
 const unsplashAPI = createApi({
   // Don't forget to set your access token here!
@@ -103,6 +104,7 @@ export function UnsplashContent({
       {renderContent()}
       <div className="flex justify-center items-center">
         <Button
+          size="sm"
           variant="light"
           onClick={() => {
             if (currentPage < totalPages) {

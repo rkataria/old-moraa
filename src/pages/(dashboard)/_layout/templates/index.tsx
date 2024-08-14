@@ -3,16 +3,16 @@ import { GiAirBalloon } from 'react-icons/gi'
 
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
 
-export function Page() {
+export const Route = createFileRoute('/(dashboard)/_layout/templates/')({
+  component: () => <TemplatesPage />,
+})
+
+function TemplatesPage() {
   return (
     <EmptyPlaceholder
-      label="Community Templates Coming soon!"
+      title="Community templates coming soon!"
       description="Under development!"
       icon={<GiAirBalloon className=" text-[200px] text-gray-200" />}
     />
   )
 }
-
-export const Route = createFileRoute('/templates/')({
-  component: Page,
-})

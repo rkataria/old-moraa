@@ -134,14 +134,16 @@ export function ListView({
 
         case 'status':
           return (
-            <Chip
-              variant="flat"
-              size="sm"
-              radius="full"
-              color={getStatusColor(event.status)}
-              classNames={{ base: 'text-center' }}>
-              {event.status}
-            </Chip>
+            <div className="flex justify-start items-center">
+              <Chip
+                variant="flat"
+                size="sm"
+                radius="full"
+                color={getStatusColor(event.status)}
+                classNames={{ base: 'text-center' }}>
+                {event.status}
+              </Chip>
+            </div>
           )
         default:
           return cellValue
@@ -152,10 +154,11 @@ export function ListView({
 
   return (
     <Table
-      aria-label="Example table with dynamic content"
       sortDescriptor={sortDescriptor}
       onSortChange={setSortDescriptor}
       selectionMode="single"
+      shadow="none"
+      className="border-1 border-gray200 rounded-lg shadow-sm"
       classNames={{
         table: isLoading && 'min-h-[25rem]',
       }}

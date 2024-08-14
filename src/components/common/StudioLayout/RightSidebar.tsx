@@ -14,7 +14,8 @@ export function RightSidebar({ children }: { children: ReactNode }) {
   return (
     <div
       className={cn(
-        'flex-none w-64 h-[calc(100%_-_0.5rem)] ml-2 rounded-md bg-transparent text-black dark:text-white scrollbar-none',
+        'flex-none w-64 h-[calc(100%_-_0.5rem)] ml-2 bg-transparent text-black dark:text-white scrollbar-none',
+        'border-1 border-gray-200 rounded-md bg-white',
         CONTAINER_OVERFLOW_CLASSNAMES,
         {
           hidden: !rightSidebarVisiblity,

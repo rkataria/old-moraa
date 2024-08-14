@@ -12,6 +12,7 @@ import { EditableLabel } from '../EditableLabel'
 import { SectionDropdownActions } from '../SectionDropdownActions'
 import { StrictModeDroppable } from '../StrictModeDroppable'
 
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -72,51 +73,6 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
   const sectionActive = !overviewOpen && currentSectionId === section.id
 
-  const renderSectionHeader = () => {
-    if (sidebarExpanded) {
-      return (
-        <>
-          <div
-            className="flex justify-start items-center flex-auto gap-2 p-1.5"
-            onClick={handleSectionClick}>
-            <IoChevronForward
-              className={cn('duration-300 shrink-0 cursor-pointer', {
-                'rotate-90': sectionExpanded,
-              })}
-              onClick={() => toggleExpandedSection(section.id)}
-            />
-            <LuLayers size={22} className="flex-none" />
-            <EditableLabel
-              readOnly={actionDisabled}
-              label={section.name}
-              className="text-sm font-semibold tracking-tight cursor-pointer"
-              onUpdate={(value: string) => {
-                updateSection({
-                  sectionPayload: { name: value },
-                  sectionId: section.id,
-                })
-              }}
-            />
-          </div>
-          <div className={cn('hidden group-hover/section-item:block')}>
-            <SectionDropdownActions
-              section={section}
-              onDelete={() => setIsDeleteModalOpen(true)}
-            />
-          </div>
-        </>
-      )
-    }
-
-    return (
-      <div
-        className="flex items-center justify-center p-1 cursor-pointer"
-        onClick={handleSectionClick}>
-        <LuLayers size={22} />
-      </div>
-    )
-  }
-
   const duplicateFrame = (frame: IFrame) => {
     const newFrame = {
       id: uuidv4(),
@@ -136,18 +92,66 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
     })
   }
 
+  const renderItem = () => {
+    if (sidebarExpanded) {
+      return (
+        <div
+          className={cn(
+            'flex justify-between items-center rounded-md px-2 group/section-item hover:bg-gray-200 hover:border-gray-200',
+            {
+              'bg-primary-100': sectionActive,
+            }
+          )}>
+          <div
+            className="flex justify-start items-center flex-auto gap-2 h-8 border-0 rounded-md"
+            onClick={handleSectionClick}>
+            <IoChevronForward
+              className={cn('duration-300 shrink-0 cursor-pointer', {
+                'rotate-90': sectionExpanded,
+              })}
+              onClick={() => toggleExpandedSection(section.id)}
+            />
+            <LuLayers size={18} className="flex-none" />
+            <EditableLabel
+              readOnly={actionDisabled}
+              label={section.name}
+              className="text-sm font-semibold tracking-tight cursor-pointer"
+              onUpdate={(value: string) => {
+                updateSection({
+                  sectionPayload: { name: value },
+                  sectionId: section.id,
+                })
+              }}
+            />
+          </div>
+          <div className={cn('hidden group-hover/section-item:block')}>
+            <SectionDropdownActions
+              section={section}
+              onDelete={() => setIsDeleteModalOpen(true)}
+            />
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className={cn('flex justify-center items-center')}>
+        <Button
+          size="sm"
+          isIconOnly
+          className={cn('m-auto bg-gray-100', {
+            'bg-primary-200': sectionActive,
+          })}
+          onClick={handleSectionClick}>
+          <LuLayers size={18} />
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div>
-      <div
-        className={cn(
-          'flex justify-between items-center border-2 border-transparent rounded-md group/section-item',
-          {
-            'border-primary-200 bg-primary-200': sectionActive,
-            'justify-center': !sidebarExpanded,
-          }
-        )}>
-        {renderSectionHeader()}
-      </div>
+      {renderItem()}
       <StrictModeDroppable
         droppableId={`frame-droppable-sectionId-${section.id}`}
         type="frame">

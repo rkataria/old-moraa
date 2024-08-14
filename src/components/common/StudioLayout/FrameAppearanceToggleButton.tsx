@@ -16,13 +16,14 @@ export function FrameAppearanceToggleButton() {
   return (
     <Tooltip content="Frame Appearance" placement="left">
       <Button
+        size="sm"
         isIconOnly
-        onClick={toggleSidebar}
         variant="light"
-        className={cn('cursor-pointer text-[#52525B]', {
-          'text-[#7C3AED]': rightSidebarVisiblity === 'frame-appearance',
-        })}>
-        <IoColorPaletteOutline size={20} strokeWidth={1.7} />
+        className={cn('bg-gray-100 hover:bg-gray-200', {
+          'bg-primary-100': rightSidebarVisiblity === 'frame-appearance',
+        })}
+        onClick={toggleSidebar}>
+        <IoColorPaletteOutline size={18} strokeWidth={1.7} />
       </Button>
     </Tooltip>
   )

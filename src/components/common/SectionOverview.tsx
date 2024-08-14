@@ -69,7 +69,7 @@ export function SectionOverview() {
   const distinctTags = uniqBy(categoriesCount.tags, (tag: string) => tag)
 
   return (
-    <div className="w-full h-full bg-pattern-1">
+    <div className="w-full h-full">
       <div className="grid w-full h-full bg-white place-items-center bg-opacity-30">
         <div className="grid gap-8 place-items-center">
           <EditableLabel

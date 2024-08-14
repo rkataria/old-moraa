@@ -15,7 +15,10 @@ export function MainContent({
 
   return (
     <div
-      className={cn('flex-auto h-full overflow-hidden p-0', {})}
+      className={cn(
+        'flex-auto h-full overflow-hidden p-0',
+        'border-1 border-gray-200 rounded-md'
+      )}
       style={{
         maxHeight: MAIN_CONTAINER_HEIGHT,
       }}>

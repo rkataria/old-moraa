@@ -1,6 +1,7 @@
-import { Button, ButtonProps } from '@nextui-org/react'
+import { ButtonProps } from '@nextui-org/react'
 import { BsGrid, BsList } from 'react-icons/bs'
 
+import { Button } from '@/components/ui/Button'
 import { useFlags } from '@/flags/client'
 
 export function ListToggleButton({
@@ -19,11 +20,11 @@ export function ListToggleButton({
   return (
     <Button
       {...buttonProps}
-      size="md"
+      size="sm"
       variant="flat"
       isIconOnly
       onClick={toggleListDisplayMode}>
-      {listDisplayMode === 'list' ? <BsGrid size={18} /> : <BsList size={18} />}
+      {listDisplayMode === 'list' ? <BsGrid size={16} /> : <BsList size={16} />}
     </Button>
   )
 }

@@ -174,42 +174,4 @@ export function ReflectionCard({
       </CardBody>
     </Card>
   )
-
-  return (
-    <Card className="shadow-lg border hover:shadow-xl duration-100 rounded-2xl">
-      <CardHeader className="z-0">
-        <div className="flex justify-start items-center gap-5">
-          <Avatar
-            isBordered
-            radius="full"
-            size="md"
-            className="min-w-fit"
-            src={getAvatar()}
-          />
-          <h4 className="text-small font-semibold leading-none text-default-600">
-            {isAnonymous ? 'Anonymous' : username}
-            {isOwner && ' (you)'}
-          </h4>
-        </div>
-      </CardHeader>
-      <CardBody className="pt-0 flex flex-col justify-between">
-        <div>
-          <p className="text-gray-600">{reflection}</p>
-          {isOwner && (
-            <Button
-              variant="light"
-              onClick={enableEditReflection}
-              className="w-auto p-0 min-w-fit h-auto text-xs text-slate-600">
-              <span>Edit</span>
-            </Button>
-          )}
-        </div>
-
-        <div>
-          <Divider className="my-3" />
-          <Reactions responseId={responseId} />
-        </div>
-      </CardBody>
-    </Card>
-  )
 }

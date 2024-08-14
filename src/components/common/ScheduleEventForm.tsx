@@ -101,7 +101,9 @@ export type ScheduleEventFormProps<
        * so a least one of the button rendered using the `renderAction` should have `type="submit"`
        * @returns {ReactElement}
        */
-      renderAction?: (renderProps: { hasNewChanges: boolean }) => ReactElement
+      renderAction?: (renderProps: {
+        hasNewChanges: boolean
+      }) => ReactElement | null
     }
 )
 

@@ -25,16 +25,12 @@ export function DropdownActions({
   return (
     <Dropdown placement="bottom-start">
       <DropdownTrigger>{triggerIcon}</DropdownTrigger>
-      <DropdownMenu
-        aria-label="Dropdown menu with icons"
-        items={actions}
-        onAction={onAction}>
+      <DropdownMenu items={actions} onAction={onAction}>
         {(item) => (
           <DropdownItem
             key={item.key}
-            color="default"
             startContent={item.icon}
-            className="flex items-center gap-4">
+            className="flex items-center gap-2 hover:bg-gray-200">
             {item.label}
           </DropdownItem>
         )}

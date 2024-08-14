@@ -125,7 +125,7 @@ export function SectionList() {
     <div
       ref={sectionListRef}
       className={cn(
-        'flex flex-col gap-3 overflow-y-auto scrollbar-none scrollbar-thumb-gray-300 scrollbar-track-gray-100 scroll-smooth h-full w-full px-1 py-4',
+        'flex flex-col gap-3 overflow-y-auto scrollbar-none scrollbar-thumb-gray-300 scrollbar-track-gray-100 scroll-smooth h-full w-full py-2',
         {
           'gap-2 py-2': !expanded,
         }

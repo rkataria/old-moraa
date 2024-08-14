@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { SortDescriptor, Pagination, Button } from '@nextui-org/react'
+import { SortDescriptor, Pagination } from '@nextui-org/react'
 import { Link } from '@tanstack/react-router'
 import { IoCalendarClear } from 'react-icons/io5'
 import { MdOutlineAddBox } from 'react-icons/md'
@@ -9,6 +9,7 @@ import { GridView } from './GridView'
 import { ListView } from './ListView'
 import { ListToggleButton } from '../common/AgendaPanel/ListToggleButton'
 import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
+import { Button } from '../ui/Button'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useEvents } from '@/hooks/useEvents'
@@ -88,17 +89,18 @@ export function EventList() {
   if (eventRows.length === 0 && !isLoading) {
     return (
       <EmptyPlaceholder
-        label="No Upcoming events"
-        description="You have no upcoming events. Why not create one?"
         icon={<IoCalendarClear className=" text-[200px] text-gray-200" />}
-        endContent={
-          <Button
-            as={Link}
-            to="/events/create"
-            className="mt-12 text-white bg-primary"
-            startContent={<MdOutlineAddBox className="text-lg" />}>
-            Create new
-          </Button>
+        title="No upcoming events"
+        description="You don't have any upcoming events. Create one now!"
+        actionButton={
+          <Link to="/events/create">
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
+              Create new
+            </Button>
+          </Link>
         }
       />
     )
@@ -108,25 +110,22 @@ export function EventList() {
     if (eventRows?.length === 0 && !isLoading) return null
 
     return (
-      <div className="flex items-center justify-between mt-10">
+      <div className="flex justify-between items-start">
         <div>
-          <p className="text-3xl font-semibold">Calendar of Happenings</p>
-          <p className="mt-2 text-sm">
+          <p className="text-2xl font-semibold">Calendar of Happenings</p>
+          <p className="text-sm mt-1 text-gray-500">
             Life is about moments: don&apos;t wait for them, create them.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            color="primary"
-            as={Link}
-            to="/events/create"
-            endContent={
-              <span className="flex w-[18px] h-[18px] border text-center justify-center items-center rounded-sm text-lg">
-                +
-              </span>
-            }>
-            Create new
-          </Button>
+          <Link to="/events/create">
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
+              Create new
+            </Button>
+          </Link>
           <ListToggleButton
             listDisplayMode={listDisplayMode}
             toggleListDisplayMode={() =>
@@ -165,17 +164,12 @@ export function EventList() {
   }
 
   return (
-    <>
+    <div className="w-full">
       {renderHeader()}
-
-      <div className="flow-root h-full mt-8">
-        <div className="h-full -mx-4 -my-2 sm:-mx-6 lg:-mx-8">
-          <div className="inline-block h-full min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            {getView()}
-            {getPagination()}
-          </div>
-        </div>
+      <div className="mt-10">
+        {getView()}
+        {getPagination()}
       </div>
-    </>
+    </div>
   )
 }

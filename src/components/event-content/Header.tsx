@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 
-import { Button } from '@nextui-org/button'
 import { Link } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { IoIosArrowBack } from 'react-icons/io'
@@ -9,6 +8,7 @@ import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonW
 import { Toolbars } from '../common/content-types/MoraaSlide/Toolbars'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
+import { Button } from '../ui/Button'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -37,7 +37,6 @@ export function Header({
   const renderActionButtons = () => (
     <>
       <AddParticipantsButtonWithModal eventId={event.id} />
-
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
       <PreviewSwitcher />
     </>
@@ -48,12 +47,12 @@ export function Header({
   const editable = isOwner && !preview
 
   return (
-    <div className="h-full p-2">
+    <div className="h-full px-3 py-1">
       <div className="flex items-center justify-between w-full h-12">
-        <div className="flex items-center justify-start gap-1">
+        <div className="flex items-center justify-start gap-2">
           <Link to="/events">
-            <Button isIconOnly variant="light">
-              <IoIosArrowBack size={20} />
+            <Button size="sm" variant="light" isIconOnly>
+              <IoIosArrowBack size={16} />
             </Button>
           </Link>
           <span className="font-medium">{event?.name}</span>
@@ -61,7 +60,7 @@ export function Header({
         {editable && currentFrame?.type === ContentType.MORAA_SLIDE && (
           <Toolbars />
         )}
-        <div className="flex items-center justify-start h-full gap-1">
+        <div className="flex items-center justify-start h-full gap-2">
           {renderActionButtons()}
         </div>
       </div>

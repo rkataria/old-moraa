@@ -1,9 +1,10 @@
 import { useContext } from 'react'
 
-import { Button } from '@nextui-org/react'
 import { useNavigate } from '@tanstack/react-router'
 import { CiEdit } from 'react-icons/ci'
 import { LuCheck } from 'react-icons/lu'
+
+import { Button } from '../ui/Button'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -28,12 +29,11 @@ export function PreviewSwitcher() {
 
   return (
     <Button
+      size="sm"
       color="primary"
-      radius="md"
-      className="shadow-md"
-      startContent={!preview ? <LuCheck size={20} /> : <CiEdit size={20} />}
+      startContent={!preview ? <LuCheck size={16} /> : <CiEdit size={16} />}
       onClick={handlePreviewSwitcher}>
-      {preview ? 'Edit' : 'Done Editing'}
+      {preview ? 'Edit' : 'Done editing'}
     </Button>
   )
 }

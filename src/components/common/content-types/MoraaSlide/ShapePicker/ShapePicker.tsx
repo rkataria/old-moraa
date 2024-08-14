@@ -2,17 +2,13 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { LuShapes } from 'react-icons/lu'
 
 import { SHAPE_TYPES, ShapePickerContent } from './ShapePickerContent'
 import { SideMenuItem } from './SideMenuItem'
 
+import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/utils'
 
 const MENU_OPTIONS = [
@@ -69,9 +65,8 @@ export function ShapePicker({
       <PopoverTrigger>
         {trigger || (
           <Button
-            variant="light"
             size="lg"
-            radius="md"
+            variant="light"
             isIconOnly
             className={cn('flex flex-col justify-center items-center gap-1', {
               'bg-primary text-white hover:bg-primary hover:text-white': open,

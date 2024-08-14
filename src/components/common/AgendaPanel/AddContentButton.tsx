@@ -1,7 +1,8 @@
 import { useContext } from 'react'
 
-import { Button } from '@nextui-org/react'
+import { AiOutlinePlusSquare } from 'react-icons/ai'
 
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -23,25 +24,32 @@ export function AddContentButton({ className }: { className?: string }) {
     return <div />
   }
 
+  if (expanded) {
+    return (
+      <div className={cn('flex justify-center items-center', className)}>
+        <Button
+          size="sm"
+          color="primary"
+          fullWidth
+          endContent={<AiOutlinePlusSquare size={18} />}
+          onClick={() => {
+            setOpenContentTypePicker?.(true)
+          }}>
+          Add frame
+        </Button>
+      </div>
+    )
+  }
+
   return (
-    <div
-      className={cn('flex justify-center items-center shadow-2xl', className)}>
-      <Button
-        fullWidth={expanded}
-        isIconOnly={!expanded}
-        radius="md"
-        color="primary"
-        className="flex items-center justify-center gap-2 tracking-tight "
-        endContent={
-          <span className="flex w-[18px] h-[18px] border text-center justify-center items-center rounded-sm text-lg">
-            +
-          </span>
-        }
-        onClick={() => {
-          setOpenContentTypePicker?.(true)
-        }}>
-        {expanded && <span>Add Frame</span>}
-      </Button>
-    </div>
+    <Button
+      size="sm"
+      color="primary"
+      isIconOnly
+      onClick={() => {
+        setOpenContentTypePicker?.(true)
+      }}>
+      <AiOutlinePlusSquare size={18} />
+    </Button>
   )
 }

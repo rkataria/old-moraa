@@ -4,11 +4,10 @@ import { UserMenu } from './UserMenu'
 
 export function SidebarComponent() {
   return (
-    <div className="sticky top-0 w-72 bg-white dark:bg-gray-800 h-screen hidden md:flex flex-col">
-      <div className="flex grow flex-col gap-y-5 overflow-y-auto px-1 pb-4">
-        <div className="flex items-center justify-between pr-3">
-          <MoraaLogo color="primary" filled className="ml-3" />
-
+    <div className="sticky left-0 top-0 w-56 h-screen px-2 border-r-1 border-gray-200 shrink-0">
+      <div className="flex flex-col grow gap-y-5 overflow-y-auto pb-4">
+        <div className="flex items-center justify-between">
+          <MoraaLogo color="primary" filled />
           <UserMenu />
         </div>
         <SidebarItem />

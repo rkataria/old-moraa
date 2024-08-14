@@ -22,7 +22,7 @@ export function Header() {
   const renderContent = () => {
     if (expanded) {
       return (
-        <>
+        <div className="flex items-center justify-between gap-2">
           <OverviewButton label="Overview" />
           <div className={cn('flex justify-end items-center gap-2')}>
             <ListToggleButton
@@ -30,23 +30,15 @@ export function Header() {
               toggleListDisplayMode={toggleListDisplayMode}
             />
           </div>
-        </>
+        </div>
       )
     }
 
-    return (
-      <div
-        className={cn(
-          'flex flex-col justify-center items-center gap-2 w-full'
-        )}>
-        <OverviewButton />
-      </div>
-    )
+    return <OverviewButton />
   }
 
   return (
     <div
-      className="flex items-center justify-between gap-2 px-1"
       style={{
         height: `${height}px`,
       }}>

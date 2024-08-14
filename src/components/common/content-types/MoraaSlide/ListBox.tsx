@@ -2,7 +2,6 @@
 import { useContext, useState } from 'react'
 
 import {
-  Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -11,6 +10,7 @@ import {
 import { fabric } from 'fabric'
 import { IoListSharp } from 'react-icons/io5'
 
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { fonts } from '@/libs/fonts'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
@@ -91,7 +91,6 @@ export function ListBox() {
             <Button
               variant="light"
               size="lg"
-              radius="md"
               isIconOnly
               className={cn('flex flex-col justify-center items-center gap-1', {
                 'bg-black text-white hover:bg-black hover:text-white': open,

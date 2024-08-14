@@ -57,7 +57,7 @@ export function AgendaPanel() {
 
   return (
     <AgendaPanelContextProvider>
-      <div className="w-full h-full max-h-full">
+      <div className="w-full h-full max-h-full px-3">
         <Header />
         <SectionList />
         <BottomControls />

@@ -3,16 +3,16 @@ import { GiAirBalloon } from 'react-icons/gi'
 
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
 
-export function Page() {
+export const Route = createFileRoute('/(dashboard)/_layout/workshops/')({
+  component: () => <WorkshopsPage />,
+})
+
+function WorkshopsPage() {
   return (
     <EmptyPlaceholder
-      label="Library Coming soon!"
+      title="Workshops coming soon!"
       description="Under development!"
       icon={<GiAirBalloon className=" text-[200px] text-gray-200" />}
     />
   )
 }
-
-export const Route = createFileRoute('/library/')({
-  component: Page,
-})

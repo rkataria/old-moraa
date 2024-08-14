@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react'
 
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -11,6 +10,7 @@ import {
 import { fabric } from 'fabric'
 import { RxText } from 'react-icons/rx'
 
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { fonts } from '@/libs/fonts'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
@@ -102,7 +102,6 @@ export function TextBox() {
             <Button
               variant="light"
               size="lg"
-              radius="md"
               isIconOnly
               className={cn('flex flex-col justify-center items-center gap-1', {
                 'bg-black text-white hover:bg-black hover:text-white': open,

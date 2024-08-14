@@ -6,8 +6,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
 } from '@nextui-org/react'
+
+import { Button } from '../ui/Button'
 
 type DeleteConfirmationModalProps = {
   open: boolean
@@ -40,10 +41,11 @@ export function DeleteConfirmationModal({
             </ModalHeader>
             <ModalBody>{description || 'Are you sure to delete?'}</ModalBody>
             <ModalFooter>
-              <Button variant="light" onPress={onClose}>
+              <Button size="sm" variant="light" onPress={onClose}>
                 Cancel
               </Button>
               <Button
+                size="sm"
                 color="danger"
                 isLoading={loading}
                 onPress={() => {
