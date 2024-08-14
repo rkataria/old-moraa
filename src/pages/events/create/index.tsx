@@ -3,7 +3,12 @@ import { useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Image, Textarea } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  useParams,
+  useRouter,
+} from '@tanstack/react-router'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { CiEdit } from 'react-icons/ci'
@@ -11,10 +16,7 @@ import { IoMdArrowBack } from 'react-icons/io'
 import * as yup from 'yup'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
-import {
-  FileUploader,
-  FileWithoutSignedUrl,
-} from '@/components/event-content/FileUploader'
+import { LocalFilePicker } from '@/components/common/LocalFilePicker'
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
@@ -35,6 +37,10 @@ const createEventValidationSchema = yup.object({
 
 export function EventsCreatePage() {
   const [showPageLoader, setShowPageLoader] = useState(false)
+  const { eventId } = useParams({ strict: false })
+  const [imageObject, setImageObject] = useState<string | undefined>(undefined)
+  const [imageUploadProgress, setImageUploadProgress] = useState<number>(0)
+  const [imageUploading, setImageUploading] = useState<boolean>(false)
 
   const createEventForm = useForm<CreateEventFormData>({
     resolver: yupResolver(createEventValidationSchema),
@@ -81,9 +87,8 @@ export function EventsCreatePage() {
     return <ContentLoading fullPage />
   }
 
-  const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
-    const file = files?.[0]
-    createEventForm.setValue('imageUrl', file.url)
+  const handleFileUpload = (imageUrl: string) => {
+    createEventForm.setValue('imageUrl', imageUrl)
   }
 
   return (
@@ -109,7 +114,7 @@ export function EventsCreatePage() {
                 name="imageUrl"
                 render={({ field }) => (
                   <Image
-                    src={field.value || IMAGE_PLACEHOLDER}
+                    src={imageObject || field.value || IMAGE_PLACEHOLDER}
                     classNames={{
                       img: 'w-full h-full object-cover',
                       wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
@@ -117,7 +122,20 @@ export function EventsCreatePage() {
                   />
                 )}
               />
-              <FileUploader
+
+              {imageUploading && (
+                <div
+                  className={cn(
+                    'absolute left-0 top-0 w-full h-full flex justify-center items-center rounded-e-md text-white text-md font-bold z-10 bg-black/80'
+                  )}
+                  style={{
+                    opacity: 100 - imageUploadProgress,
+                  }}>
+                  {parseInt(imageUploadProgress.toString(), 10)}%
+                </div>
+              )}
+
+              {/* <FileUploader
                 maxNumberOfFiles={1}
                 allowedFileTypes={['.jpg', '.jpeg', '.png']}
                 bucketName="image-uploads"
@@ -129,6 +147,28 @@ export function EventsCreatePage() {
                   variant: 'light',
                 }}
                 onPublicFilesUploaded={handleFileUpload}
+              /> */}
+
+              <LocalFilePicker
+                accept="image/png, image/jpeg, image/jpg"
+                fileName={`event-image-${eventId}`}
+                bucketName="image-uploads"
+                uploadRemote
+                trigger={
+                  <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition-all duration-300 rounded-full cursor-pointer bottom-2 right-2 bg-black/40 hover:bg-black/50">
+                    <CiEdit size={20} />
+                  </div>
+                }
+                onSelect={(file) => {
+                  setImageUploading(true)
+                  const _imageObject = window.URL.createObjectURL(file)
+                  setImageObject(_imageObject)
+                }}
+                onUpload={(response) => {
+                  setImageUploading(false)
+                  handleFileUpload(response?.url)
+                }}
+                onProgressChange={setImageUploadProgress}
               />
             </div>
             <div className="h-full flex flex-col justify-between gap-8">

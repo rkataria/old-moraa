@@ -131,16 +131,20 @@ export function FrameItem({
             'relative w-full bg-white group/frame grid grid-cols-[100px_12px_1fr_1fr_1fr] hover:bg-gray-50',
             {
               'grid-cols-[100px_12px_1fr_1fr_1fr_0.2fr]': showToggle,
+              'grid-cols-[100px_12px_1fr_1fr_1fr]': preview,
             }
           )}>
           <div className="absolute flex flex-col items-center justify-center -ml-[43px] -mr-4 opacity-0 w-[50px] group-hover/frame:opacity-100 ">
-            <div {..._provided.dragHandleProps}>
-              <MdOutlineDragIndicator
-                height={40}
-                width={30}
-                className="text-gray-400"
-              />
-            </div>
+            <RenderIf isTrue={!preview}>
+              <div {..._provided.dragHandleProps}>
+                <MdOutlineDragIndicator
+                  height={40}
+                  width={30}
+                  className="text-gray-400"
+                />
+              </div>
+            </RenderIf>
+
             <AddItemBar
               sectionId={section.id}
               frameId={frame.id}
@@ -191,7 +195,7 @@ export function FrameItem({
             />
           </div>
           <Tags frameId={frame.id} config={frame.config} />
-          <Note frameId={frame.id} notes={frame.notes} wrapOnblur />
+          <Note frameId={frame.id} notes={frame.notes} />
           {editable && (
             <div
               className={cn('items-center justify-center scale-75 hidden', {

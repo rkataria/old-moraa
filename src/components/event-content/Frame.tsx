@@ -64,7 +64,10 @@ export function Frame({ frame }: FrameProps) {
     [ContentType.RICH_TEXT]: (
       <RichTextEditor
         editorId={frame.id}
-        classNames={{ wrapper: 'overflow-hidden' }}
+        classNames={{
+          wrapper: 'overflow-hidden',
+          container: 'overflow-hidden',
+        }}
       />
     ),
 

@@ -70,6 +70,7 @@ export function Note({
         }}
         variant="bordered"
         minRows={1}
+        autoFocus
         isReadOnly={preview}
         defaultValue={notes}
         onChange={handleBlockChange}

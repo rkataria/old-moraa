@@ -3,13 +3,20 @@
 
 // import { Button } from '@components/tiptap/ui/Button'
 
-import { FileUploader } from '@/components/event-content/FileUploader'
+import { useState } from 'react'
+
+import { Button } from '@nextui-org/react'
+
+import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
+import { uploadFile } from '@/services/storage.service'
 
 export function ImageUploader({
   onUpload,
 }: {
   onUpload: (url: string) => void
 }) {
+  const [imageUploadProgress, setImageUploadProgress] = useState<number>(0)
+
   // const { loading, uploadFile } = useUploader({ onUpload })
   // const { handleUploadClick, ref } = useFileUpload()
   // const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
@@ -35,20 +42,50 @@ export function ImageUploader({
   //   draggedInside && 'bg-neutral-100'
   // )
 
-  const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
-    const file = files?.[0]
-    onUpload(file.url)
-  }
+  // const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
+  //   const file = files?.[0]
+  //   onUpload(file.url)
+  // }
 
   return (
-    <div className="tiptap-uppy-upload" contentEditable={false}>
-      <FileUploader
+    <div
+      className="realtive tiptap-uppy-upload text-center"
+      contentEditable={false}>
+      {imageUploadProgress === 0 ? (
+        <MediaPicker
+          trigger={
+            <Button fullWidth className="relative" variant="light">
+              Select image
+            </Button>
+          }
+          placement="center"
+          onSelectCallback={(img) => {
+            if (!img) return
+            onUpload(img.src)
+          }}
+          onSelect={async (file) => {
+            console.log(file)
+            const response = await uploadFile({
+              file,
+              fileName: `tiptap-.${file.name.split('.').pop()}`,
+              bucketName: 'image-uploads',
+              onProgressChange: setImageUploadProgress,
+            })
+            if (response?.url) {
+              onUpload(response.url)
+            }
+          }}
+        />
+      ) : (
+        `${imageUploadProgress}%`
+      )}
+      {/* <FileUploader
         maxNumberOfFiles={1}
         allowedFileTypes={['.jpg', '.jpeg', '.png']}
         bucketName="image-uploads"
         useModal={false}
         onPublicFilesUploaded={handleFileUpload}
-      />
+      /> */}
     </div>
   )
 

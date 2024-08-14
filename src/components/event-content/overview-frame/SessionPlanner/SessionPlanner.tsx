@@ -189,41 +189,44 @@ export function SessionPlanner({
                                       !expandedSections.includes(section.id),
                                   }
                                 )}>
-                                <div className="relative h-[18px]">
-                                  <DropdownActions
-                                    triggerIcon={
-                                      <Button
-                                        isIconOnly
-                                        variant="light"
-                                        className="w-auto h-auto min-w-1"
-                                        {...sectionDraggableProvided.dragHandleProps}>
-                                        <MdDragIndicator className="text-base text-gray-400" />
-                                      </Button>
-                                    }
-                                    actions={[
-                                      {
-                                        key: 'published',
-                                        label: 'Move published frames at top',
-                                        icon: <IoIosArrowRoundUp />,
-                                      },
-                                      {
-                                        key: 'unpublished',
-                                        label: 'Move Unpublished frames at top',
-                                        icon: (
-                                          <IoIosArrowRoundUp className="rotate-180" />
-                                        ),
-                                      },
-                                      {
-                                        key: 'reset',
-                                        label: 'Reset',
-                                        icon: <RxReset />,
-                                      },
-                                    ]}
-                                    onAction={(key) =>
-                                      handleSectionSorting(section.id, key)
-                                    }
-                                  />
-                                </div>
+                                <RenderIf isTrue={!preview}>
+                                  <div className="relative h-[18px]">
+                                    <DropdownActions
+                                      triggerIcon={
+                                        <Button
+                                          isIconOnly
+                                          variant="light"
+                                          className="w-auto h-auto min-w-1"
+                                          {...sectionDraggableProvided.dragHandleProps}>
+                                          <MdDragIndicator className="text-base text-gray-400" />
+                                        </Button>
+                                      }
+                                      actions={[
+                                        {
+                                          key: 'published',
+                                          label: 'Move published frames at top',
+                                          icon: <IoIosArrowRoundUp />,
+                                        },
+                                        {
+                                          key: 'unpublished',
+                                          label:
+                                            'Move Unpublished frames at top',
+                                          icon: (
+                                            <IoIosArrowRoundUp className="rotate-180" />
+                                          ),
+                                        },
+                                        {
+                                          key: 'reset',
+                                          label: 'Reset',
+                                          icon: <RxReset />,
+                                        },
+                                      ]}
+                                      onAction={(key) =>
+                                        handleSectionSorting(section.id, key)
+                                      }
+                                    />
+                                  </div>
+                                </RenderIf>
 
                                 <AddItemBar
                                   sectionId={section.id}
