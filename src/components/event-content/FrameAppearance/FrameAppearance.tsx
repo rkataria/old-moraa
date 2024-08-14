@@ -15,9 +15,7 @@ import { EventContextType } from '@/types/event-context.type'
 
 export function FrameAppearance() {
   const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
+  const { activeObject } = useMoraaSlideStore((state) => state)
 
   if (!currentFrame) return null
 
@@ -41,14 +39,12 @@ export function FrameAppearance() {
 
   const renderer = renderersByContentType[currentFrame.type]
 
-  const canvasActiveObject = canvas?.getActiveObject()
-
-  if (canvasActiveObject) {
+  if (activeObject) {
     return (
       <div className="p-2 text-sm">
         <ConfigurationHeader
           icon={<IoColorPaletteOutline size={18} />}
-          title={canvasActiveObject.type!}
+          title={activeObject.type!}
         />
         <div className="pt-8 flex flex-col gap-4">
           <MoraaSlideAppearance key={currentFrame.id} />

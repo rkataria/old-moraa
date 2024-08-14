@@ -11,10 +11,12 @@ interface MoraaSlideState {
     [key: string]: HistoryFeature | null
   }
   templateKey: string | null
+  activeObject: fabric.Object | null
   setTemplateKey: (templateKey: string | null) => void
   setCanvas: (frameId: string, canvas: fabric.Canvas) => void
   setHistory: (frameId: string, history: HistoryFeature) => void
   getCanvasObjects: (frameId: string) => fabric.Object[]
+  setActiveObject: (object: fabric.Object | null) => void
   reset: () => void
 }
 
@@ -22,6 +24,7 @@ const initialState = {
   canvasInstances: {},
   history: {},
   templateKey: null,
+  activeObject: null,
 }
 
 export const useMoraaSlideStore = create<MoraaSlideState>((set, get) => ({
@@ -37,6 +40,9 @@ export const useMoraaSlideStore = create<MoraaSlideState>((set, get) => ({
     const state = get()
 
     return state.canvasInstances[frameId]?.getObjects() || []
+  },
+  setActiveObject: (object: fabric.Object | null) => {
+    set({ activeObject: object })
   },
   reset: () => {
     set(initialState)

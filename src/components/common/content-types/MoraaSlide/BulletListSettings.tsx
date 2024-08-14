@@ -20,11 +20,9 @@ export function BulletListSettings() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
 
   if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject() as fabric.Textbox
 
   if (!activeObject) return null
 
@@ -43,10 +41,11 @@ export function BulletListSettings() {
       )
       .join('\n')
 
-    activeObject.set('text', updatedText)
-    activeObject.set('bulletType', type)
+    canvas.getActiveObject()?.set('text', updatedText)
+    canvas.getActiveObject()?.set('bulletType', type)
     canvas.renderAll()
     canvas.fire('object:modified')
+
     setCanvas(currentFrame?.id as string, canvas)
   }
 

@@ -11,20 +11,16 @@ export function Position() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
 
-  if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject()
-
-  if (!activeObject) return null
+  if (!canvas || !activeObject) return null
 
   const updatePosition = (
     key: 'left' | 'top' | 'width' | 'height' | 'angle',
     value: string
   ) => {
     if (key === 'width') {
-      activeObject.scaleToWidth(parseInt(value, 10))
+      canvas.getActiveObject()?.scaleToWidth(parseInt(value, 10))
       canvas?.renderAll()
       setCanvas(currentFrame?.id as string, canvas)
 
@@ -32,14 +28,14 @@ export function Position() {
     }
 
     if (key === 'height') {
-      activeObject.scaleToHeight(parseInt(value, 10))
+      canvas.getActiveObject()?.scaleToHeight(parseInt(value, 10))
       canvas?.renderAll()
       setCanvas(currentFrame?.id as string, canvas)
 
       return
     }
 
-    activeObject.set(key, parseInt(value, 10))
+    canvas.getActiveObject()?.set(key, parseInt(value, 10))
     canvas?.renderAll()
     setCanvas(currentFrame?.id as string, canvas)
   }
@@ -71,7 +67,7 @@ export function Position() {
           classNames={{
             input: 'text-right',
           }}
-          defaultValue={Math.ceil(left!).toString()}
+          value={Math.ceil(left!).toString()}
           onChange={(e) => updatePosition('left', e.target.value)}
         />
         <Input
@@ -93,7 +89,7 @@ export function Position() {
           classNames={{
             input: 'text-right',
           }}
-          defaultValue={Math.ceil(top!).toString()}
+          value={Math.ceil(top!).toString()}
           onChange={(e) => updatePosition('top', e.target.value)}
         />
         <Input
@@ -115,7 +111,7 @@ export function Position() {
           classNames={{
             input: 'text-right',
           }}
-          defaultValue={Math.ceil(objectWidth!).toString()}
+          value={Math.ceil(objectWidth!).toString()}
           onChange={(e) => updatePosition('width', e.target.value)}
         />
         <Input
@@ -137,7 +133,7 @@ export function Position() {
           classNames={{
             input: 'text-right',
           }}
-          defaultValue={Math.ceil(objectHeight!).toString()}
+          value={Math.ceil(objectHeight!).toString()}
           onChange={(e) => updatePosition('height', e.target.value)}
         />
         <Input
@@ -162,7 +158,7 @@ export function Position() {
           classNames={{
             input: 'text-right',
           }}
-          defaultValue={Math.ceil(angle!).toString()}
+          value={Math.ceil(angle!).toString()}
           onChange={(e) => updatePosition('angle', e.target.value)}
         />
       </div>

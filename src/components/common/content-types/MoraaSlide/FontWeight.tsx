@@ -33,16 +33,14 @@ export function FontWeight() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
 
   if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject() as fabric.Textbox
 
   if (!activeObject) return null
 
   const selectedFontKey = FONT_WEIGHTS.find((f) =>
-    f.key.includes(activeObject?.fontWeight as string)
+    f.key.includes((activeObject as fabric.Textbox).fontWeight as string)
   )?.key
 
   return (

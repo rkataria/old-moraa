@@ -29,11 +29,14 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
   if (!activeObject) return null
 
   const updateTypography = (typography: TYPOGRAPHY) => {
-    activeObject.set('name', typography.name)
-    activeObject.set('fontSize', typography.fontSize)
-    activeObject.set('fontWeight', typography.fontWeight)
-    setTypographyName(typography.name)
+    const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+    _activeObject.set('name', typography.name)
+    _activeObject.set('fontSize', typography.fontSize)
+    _activeObject.set('fontWeight', typography.fontWeight)
     canvas.renderAll()
+
+    setTypographyName(typography.name)
   }
 
   return (
@@ -67,7 +70,9 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         number={activeObject.fontSize}
         min={10}
         onChange={(value: number) => {
-          activeObject.set('fontSize', Number(value))
+          const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+          _activeObject.set('fontSize', Number(value))
           canvas.renderAll()
         }}
       />
@@ -78,8 +83,11 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
           className="h-4 w-4 border-2 border-black/20"
           defaultColor={activeObject.fill as string}
           onchange={(color) => {
-            activeObject.set('fill', color)
+            const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+            _activeObject.set('fill', color)
             canvas.renderAll()
+            canvas.fire('object:modified', { target: activeObject })
           }}
         />
       </div>
@@ -91,7 +99,9 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         isIconOnly
         className="h-7 text-sm flex justify-center items-center gap-1 px-1"
         onClick={() => {
-          activeObject.set(
+          const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+          _activeObject.set(
             'fontWeight',
             activeObject.fontWeight === 700 ? 400 : 700
           )
@@ -105,7 +115,9 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         isIconOnly
         className="h-7 text-sm flex justify-center items-center gap-1 px-1"
         onClick={() => {
-          activeObject.set(
+          const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+          _activeObject.set(
             'fontStyle',
             activeObject.fontStyle === 'italic' ? 'normal' : 'italic'
           )

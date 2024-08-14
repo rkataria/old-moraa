@@ -70,16 +70,12 @@ const SHADOWS: SHADOW[] = [
 ]
 
 export function ImageBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
-  const activeObject = canvas.getActiveObject() as fabric.Image
-
-  if (!activeObject) return null
-
   const addShadow = (shadow: SHADOW) => {
     if (!shadow) return
 
     const shadowObject = new fabric.Shadow(shadow.shadowOptions)
 
-    activeObject.set('shadow', shadowObject)
+    canvas.getActiveObject()?.set('shadow', shadowObject)
     canvas.renderAll()
   }
 
@@ -99,8 +95,10 @@ export function ImageBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         onSelect={() => {}}
         onSelectCallback={(imageElement) => {
           if (!imageElement) return
-          activeObject.setElement(imageElement)
-          activeObject.setCoords()
+          const _activeObject = canvas.getActiveObject() as fabric.Image
+
+          _activeObject?.setElement(imageElement)
+          _activeObject?.setCoords()
           canvas.renderAll()
         }}
       />

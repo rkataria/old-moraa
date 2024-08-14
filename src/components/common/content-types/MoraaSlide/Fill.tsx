@@ -14,11 +14,9 @@ export function Fill() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
 
   if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject()
 
   if (!activeObject) return null
 
@@ -30,7 +28,7 @@ export function Fill() {
   return (
     <div className="flex flex-col gap-3 pt-4">
       <LabelWithInlineControl
-        label="Fill"
+        label="Fill Color"
         className="items-center"
         control={
           <ColorPicker
@@ -40,12 +38,13 @@ export function Fill() {
               activeObject.set('fill', color)
               canvas.renderAll()
               setCanvas(currentFrame?.id as string, canvas)
+              canvas.fire('object:modified', { target: activeObject })
             }}
           />
         }
       />
       <LabelWithInlineControl
-        label="Stroke Color"
+        label="Border Color"
         className="items-center"
         control={
           <ColorPicker
@@ -60,7 +59,7 @@ export function Fill() {
         }
       />
       <LabelWithInlineControl
-        label="Stroke Width"
+        label="Border Width"
         className="flex-col"
         control={
           <Slider

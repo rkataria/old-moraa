@@ -10,6 +10,7 @@ type NumberInputCaretProps = {
   min?: number
   number?: number
   allowNegative?: boolean
+  step?: number
   classNames?: {
     wrapper?: string
     input?: string
@@ -22,6 +23,7 @@ export function NumberInputCaret({
   min = 0,
   number = 16,
   allowNegative = false,
+  step = 1,
   classNames,
   onChange,
 }: NumberInputCaretProps) {
@@ -46,6 +48,7 @@ export function NumberInputCaret({
         )}
         value={value}
         min={allowNegative ? undefined : min}
+        step={step}
         onChange={(e) => handleNumberChange(+e.target.value)}
       />
       <div className="flex flex-col w-5">
@@ -54,7 +57,7 @@ export function NumberInputCaret({
             'hover:bg-gray-100 rounded-t-sm flex justify-center items-center',
             classNames?.caret
           )}
-          onClick={() => handleNumberChange(value + 1)}>
+          onClick={() => handleNumberChange(value + step)}>
           <PiCaretUp size={14} />
         </div>
         <div
@@ -64,7 +67,7 @@ export function NumberInputCaret({
           )}
           onClick={() => {
             if (value > 0 || allowNegative) {
-              handleNumberChange(value - 1)
+              handleNumberChange(value - step)
             }
           }}>
           <PiCaretDown size={14} />

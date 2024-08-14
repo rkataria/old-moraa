@@ -19,16 +19,14 @@ export function TextAlignControls() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
 
-  if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject() as fabric.Textbox
-
-  if (!activeObject) return null
+  if (!canvas || !activeObject) return null
 
   const aligText = (align: string) => {
-    activeObject.set('textAlign', align)
+    const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+    _activeObject.set('textAlign', align)
     canvas.renderAll()
     setCanvas(currentFrame?.id as string, canvas)
   }
@@ -40,11 +38,15 @@ export function TextAlignControls() {
           content: 'Align left',
         }}
         buttonProps={{
-          variant: activeObject?.textAlign === 'left' ? 'solid' : 'flat',
+          variant:
+            (activeObject as fabric.Textbox)?.textAlign === 'left'
+              ? 'solid'
+              : 'flat',
           size: 'sm',
           radius: 'md',
           className: cn('flex-none flex-grow', {
-            'bg-gray-200': activeObject?.textAlign === 'left',
+            'bg-gray-200':
+              (activeObject as fabric.Textbox)?.textAlign === 'left',
           }),
           isIconOnly: true,
         }}
@@ -56,11 +58,15 @@ export function TextAlignControls() {
           content: 'Align center',
         }}
         buttonProps={{
-          variant: activeObject?.textAlign === 'center' ? 'solid' : 'flat',
+          variant:
+            (activeObject as fabric.Textbox)?.textAlign === 'center'
+              ? 'solid'
+              : 'flat',
           size: 'sm',
           radius: 'md',
           className: cn('flex-none flex-grow', {
-            'bg-gray-200': activeObject?.textAlign === 'left',
+            'bg-gray-200':
+              (activeObject as fabric.Textbox)?.textAlign === 'left',
           }),
           isIconOnly: true,
         }}
@@ -72,11 +78,15 @@ export function TextAlignControls() {
           content: 'Align right',
         }}
         buttonProps={{
-          variant: activeObject?.textAlign === 'right' ? 'solid' : 'flat',
+          variant:
+            (activeObject as fabric.Textbox)?.textAlign === 'right'
+              ? 'solid'
+              : 'flat',
           size: 'sm',
           radius: 'md',
           className: cn('flex-none flex-grow', {
-            'bg-gray-200': activeObject?.textAlign === 'left',
+            'bg-gray-200':
+              (activeObject as fabric.Textbox)?.textAlign === 'left',
           }),
           isIconOnly: true,
         }}
@@ -88,11 +98,15 @@ export function TextAlignControls() {
           content: 'Justify',
         }}
         buttonProps={{
-          variant: activeObject?.textAlign === 'justify' ? 'solid' : 'flat',
+          variant:
+            (activeObject as fabric.Textbox)?.textAlign === 'justify'
+              ? 'solid'
+              : 'flat',
           size: 'sm',
           radius: 'md',
           className: cn('flex-none flex-grow', {
-            'bg-gray-200': activeObject?.textAlign === 'left',
+            'bg-gray-200':
+              (activeObject as fabric.Textbox)?.textAlign === 'left',
           }),
           isIconOnly: true,
         }}

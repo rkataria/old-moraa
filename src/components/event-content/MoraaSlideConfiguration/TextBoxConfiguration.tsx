@@ -13,13 +13,14 @@ export function TextboxConfiguration() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
+  const activeObject = useMoraaSlideStore((state) => state.activeObject)
 
   if (!canvas) return null
 
-  const activeObject = canvas.getActiveObject() as fabric.Textbox
-
   const handleFontWeightChange = (weight: string) => {
-    activeObject.set('fontWeight', weight)
+    const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+    _activeObject.set('fontWeight', weight)
     canvas.renderAll()
   }
 
@@ -31,7 +32,7 @@ export function TextboxConfiguration() {
           <div className="flex gap-2 justify-between items-center">
             <FontSize />
             <FontWeight
-              weight={activeObject.fontWeight as string}
+              weight={(activeObject as fabric.Textbox).fontWeight as string}
               onFontWeightChange={handleFontWeightChange}
             />
           </div>

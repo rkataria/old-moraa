@@ -8,7 +8,7 @@ export function ConfigurationHeader({
   return (
     <div className="flex justify-start items-center gap-2">
       {icon}
-      <h3 className="font-semibold">{title}</h3>
+      <h3 className="font-semibold capitalize">{title}</h3>
     </div>
   )
 }

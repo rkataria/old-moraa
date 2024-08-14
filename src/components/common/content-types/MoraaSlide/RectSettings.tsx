@@ -11,12 +11,11 @@ export function RectSettings() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
+  const activeObject = useMoraaSlideStore(
+    (state) => state.activeObject
+  ) as fabric.Rect
 
-  if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject() as fabric.Rect
-
-  if (!activeObject) return null
+  if (!canvas || !activeObject) return null
 
   return (
     <div>
@@ -29,8 +28,10 @@ export function RectSettings() {
             caret: 'hover:bg-gray-200',
           }}
           onChange={(value: number) => {
-            activeObject.set('rx', Number(value))
-            activeObject.set('ry', Number(value))
+            const _activeObject = canvas.getActiveObject() as fabric.Rect
+
+            _activeObject?.set('rx', Number(value))
+            _activeObject?.set('ry', Number(value))
             canvas.renderAll()
           }}
         />

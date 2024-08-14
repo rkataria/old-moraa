@@ -3,6 +3,8 @@ import { useContext } from 'react'
 import { FontFamily } from './FontFamily'
 import { TwoWayNumberCounter } from './FontSizeControl'
 import { FontWeight } from './FontWeight'
+import { LetterSpacing } from './LetterSpacing'
+import { LineHeight } from './LineHeight'
 import { TextAlignControls } from './TextAlignControls'
 import { TextStyleControls } from './TextStyleControls'
 
@@ -15,16 +17,14 @@ export function TextboxSettings() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
 
-  if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject() as fabric.Textbox
-
-  if (!activeObject) return null
+  if (!canvas || !activeObject) return null
 
   const handleFontSizeChange = (size: number) => {
-    activeObject.set('fontSize', size)
+    const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+    _activeObject.set('fontSize', size)
     canvas.renderAll()
     setCanvas(currentFrame?.id as string, canvas)
   }
@@ -37,7 +37,7 @@ export function TextboxSettings() {
           <FontFamily />
           <div className="flex gap-2 justify-between items-center">
             <TwoWayNumberCounter
-              defaultCount={activeObject.fontSize as number}
+              defaultCount={(activeObject as fabric.Textbox).fontSize as number}
               onCountChange={handleFontSizeChange}
               noNegative
               incrementStep={1}
@@ -46,6 +46,8 @@ export function TextboxSettings() {
           </div>
         </div>
       </div>
+      <LetterSpacing canvas={canvas} />
+      <LineHeight canvas={canvas} />
       <div className="py-2">
         <h3 className="font-semibold">Alignment</h3>
         <div className="pt-2 flex gap-2">

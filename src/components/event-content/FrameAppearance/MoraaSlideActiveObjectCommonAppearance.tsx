@@ -16,11 +16,9 @@ export function MoraaSlideActiveObjectCommonAppearance() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
 
-  if (!canvas) return null
-
-  const activeObject = canvas?.getActiveObject() as fabric.Textbox
+  if (!canvas || !activeObject) return null
 
   return (
     <div className="flex flex-col gap-2">
@@ -39,7 +37,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            canvas.sendToBack(activeObject)
+            canvas.sendToBack(canvas.getActiveObject() as fabric.Object)
             canvas.renderAll()
             setCanvas(currentFrame?.id as string, canvas)
           }}>
@@ -57,7 +55,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            canvas.bringForward(activeObject)
+            canvas.getActiveObject()?.bringForward()
             canvas.renderAll()
             setCanvas(currentFrame?.id as string, canvas)
           }}>
@@ -75,7 +73,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            activeObject.set('flipX', !activeObject.flipX)
+            canvas.getActiveObject()?.set('flipX', !activeObject.flipX)
             canvas.renderAll()
           }}>
           <PiFlipHorizontalFill size={18} />
@@ -92,7 +90,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            activeObject.set('flipY', !activeObject.flipY)
+            canvas.getActiveObject()?.set('flipY', !activeObject.flipY)
             canvas.renderAll()
           }}>
           <PiFlipVerticalFill size={18} />
@@ -109,7 +107,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            activeObject.clone((clonedObject: fabric.Object) => {
+            canvas.getActiveObject()?.clone((clonedObject: fabric.Object) => {
               clonedObject.set({
                 left: clonedObject.left! + 10,
                 top: clonedObject.top! + 10,

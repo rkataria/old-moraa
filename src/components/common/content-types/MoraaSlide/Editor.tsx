@@ -35,6 +35,12 @@ const initializeCanvas = ({ frameId }: { frameId: string }) => {
   fabric.Object.prototype.cornerSize = 10
   fabric.Object.prototype.borderColor = '#22d3ee'
   fabric.Object.prototype.cornerStyle = 'circle'
+  fabric.Object.prototype.setControlsVisibility({
+    mt: false,
+    mb: false,
+    ml: false,
+    mr: false,
+  })
 
   const canvas = new fabric.Canvas(`canvas-${frameId}`, {
     selectionBorderColor: '#979797',
@@ -106,7 +112,9 @@ export function CanvasEditor({
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[frameId] || null
   )
-  const { setCanvas, setHistory } = useMoraaSlideStore((state) => state)
+  const { setCanvas, setHistory, setActiveObject } = useMoraaSlideStore(
+    (state) => state
+  )
 
   // Delete shortcut for windows
   useHotkeys('Delete', () => {
@@ -186,6 +194,9 @@ export function CanvasEditor({
     const history = new HistoryFeature(_canvas)
 
     setHistory(frameId, history)
+
+    // Set active object to null when frameId changes
+    setActiveObject(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameId])
 
@@ -220,6 +231,8 @@ export function CanvasEditor({
     canvas.on('object:modified', handleObjectModified)
     canvas.on('object:scaling', handleObjectScaling)
     canvas.on('object:removed', handleObjectRemoved)
+    canvas.on('object:moving', handleObjectMoving)
+    canvas.on('object:rotating', handleObjectRotating)
     canvas.on('selection:created', handleSelectionCreated)
     canvas.on('selection:updated', handleSelectionUpdated)
     canvas.on('selection:cleared', handleSelectionCleared)
@@ -233,6 +246,8 @@ export function CanvasEditor({
       canvas.off('object:modified', handleObjectModified)
       canvas.off('object:scaling', handleObjectScaling)
       canvas.off('object:removed', handleObjectRemoved)
+      canvas.off('object:moving', handleObjectMoving)
+      canvas.off('object:rotating', handleObjectRotating)
       canvas.off('selection:created', handleSelectionCreated)
       canvas.off('selection:updated', handleSelectionUpdated)
       canvas.off('selection:cleared', handleSelectionCleared)
@@ -244,33 +259,33 @@ export function CanvasEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvas, frameCanvasData])
 
-  const handleSelectionCreated = (event: fabric.IEvent) => {
-    console.log('selected:created - ', event)
-    if (canvas) {
-      canvas.isDrawingMode = false
+  const handleSelectionCreated = () => {
+    if (!canvas) return
 
-      // setRightSidebarVisiblity('frame-appearance')
+    canvas.isDrawingMode = false
 
-      setCanvas(frameId, canvas)
-    }
+    const activeObject = canvas.getActiveObject()
+    setActiveObject(activeObject)
   }
 
-  const handleSelectionUpdated = (event: fabric.IEvent) => {
-    console.log('selection:updated - ', event)
+  const handleSelectionUpdated = () => {
+    if (!canvas) return
+
+    const activeObject = canvas.getActiveObject()
+    setActiveObject(activeObject)
   }
 
   const handleSelectionCleared = () => {
-    if (canvas) {
-      setCanvas(frameId, canvas)
-    }
+    if (!canvas) return
+
+    setActiveObject(null)
   }
 
   const handleObjectAdded = (event: fabric.IEvent) => {
-    console.log('object:added', event)
+    if (!canvas) return
 
     const { target } = event
 
-    if (!canvas) return
     if (!target) return
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -280,29 +295,51 @@ export function CanvasEditor({
     saveToStorage(canvas!)
   }
 
-  const handleObjectModified = (event: fabric.IEvent) => {
-    console.log('object:modified', event)
-
+  const handleObjectModified = () => {
     if (!canvas) return
+
+    const activeObject = canvas.getActiveObject()
+    setActiveObject(activeObject)
 
     saveToStorage(canvas!)
   }
 
-  const handleObjectScaling = (event: fabric.IEvent) => {
-    console.log('object:scaling', event)
-
+  const handleObjectScaling = () => {
     if (!canvas) return
+
+    const activeObject = canvas.getActiveObject()
+    setActiveObject(activeObject)
 
     saveToStorage(canvas!)
   }
 
   const handleObjectRemoved = (event: fabric.IEvent) => {
-    console.log('object:removed', event)
+    if (!canvas) return
 
     const { target } = event
 
-    if (!canvas) return
     if (!target) return
+
+    const activeObject = canvas.getActiveObject()
+    setActiveObject(activeObject)
+
+    saveToStorage(canvas!)
+  }
+
+  const handleObjectMoving = () => {
+    if (!canvas) return
+
+    const activeObject = canvas.getActiveObject()
+    setActiveObject(activeObject)
+
+    saveToStorage(canvas!)
+  }
+
+  const handleObjectRotating = () => {
+    if (!canvas) return
+
+    const activeObject = canvas.getActiveObject()
+    setActiveObject(activeObject)
 
     saveToStorage(canvas!)
   }

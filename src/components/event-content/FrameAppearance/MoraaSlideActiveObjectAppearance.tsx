@@ -35,15 +35,13 @@ export function MoraaSlideActiveObjectAppearance() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
 
   if (!currentFrame) return null
 
   if (!canvas) {
     return <div>Loading...</div>
   }
-
-  const activeObject = canvas.getActiveObject()
 
   const renderersByContentType: Record<ObjectType, React.ReactNode> = {
     [ObjectType.TEXT]: <TextboxSettings />,

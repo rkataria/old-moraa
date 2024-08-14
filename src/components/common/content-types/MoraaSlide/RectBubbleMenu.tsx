@@ -6,8 +6,12 @@ import { BubbleMenuMoreOptions } from './BubbleMenuMoreOptions'
 import { ColorPicker } from '../../ColorPicker'
 import { NumberInputCaret } from '../../NumberInputCaret'
 
+import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
+
 export function RectBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
-  const activeObject = canvas.getActiveObject() as fabric.Rect
+  const activeObject = useMoraaSlideStore(
+    (state) => state.activeObject
+  ) as fabric.Rect
   const [stroke, setStroke] = useState<string>(activeObject.stroke as string)
 
   return (
@@ -18,8 +22,11 @@ export function RectBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
           className="h-4 w-4 border-2 border-black/20 cursor-pointer"
           defaultColor={activeObject.fill as string}
           onchange={(color) => {
-            activeObject.set('fill', color)
+            const _activeObject = canvas.getActiveObject() as fabric.Rect
+
+            _activeObject.set('fill', color)
             canvas.renderAll()
+            canvas.fire('object:modified', { target: _activeObject })
           }}
         />
         <span>Fill</span>
@@ -35,7 +42,7 @@ export function RectBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
           }}
           onchange={(color) => {
             setStroke(color)
-            activeObject.set('stroke', color)
+            canvas.getActiveObject()?.set('stroke', color)
             canvas.renderAll()
           }}
         />
@@ -44,7 +51,7 @@ export function RectBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
       <NumberInputCaret
         number={activeObject.strokeWidth}
         onChange={(value: number) => {
-          activeObject.set('strokeWidth', Number(value))
+          canvas.getActiveObject()?.set('strokeWidth', Number(value))
           canvas.renderAll()
         }}
       />

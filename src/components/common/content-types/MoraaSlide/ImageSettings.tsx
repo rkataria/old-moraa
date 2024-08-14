@@ -14,10 +14,11 @@ export function ImageSettings() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
+  const activeObject = useMoraaSlideStore(
+    (state) => state.activeObject
+  ) as fabric.Image
 
   if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject() as fabric.Image
 
   if (!activeObject || activeObject.type !== 'image') return null
 
@@ -29,10 +30,12 @@ export function ImageSettings() {
         onSelectCallback={(img) => {
           if (!img) return
 
-          activeObject.setElement(img)
-          activeObject.setCoords()
+          const _activeObject = canvas.getActiveObject() as fabric.Image
+
+          _activeObject.setElement(img)
+          _activeObject.setCoords()
           canvas?.renderAll()
-          canvas?.fire('object:modified', { target: activeObject })
+          canvas?.fire('object:modified', { target: _activeObject })
         }}
       />
     </div>

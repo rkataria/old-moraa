@@ -27,6 +27,7 @@ export function MoraaSlideAppearance() {
   const canvas = useMoraaSlideStore(
     (state) => state.canvasInstances[currentFrame?.id as string]
   )
+  const { activeObject } = useMoraaSlideStore((state) => state)
 
   useEffect(() => {
     if (!templateKey) return
@@ -36,8 +37,6 @@ export function MoraaSlideAppearance() {
   }, [templateKey])
 
   if (!currentFrame || !canvas) return null
-
-  const activeObject = canvas.getActiveObject()
 
   if (activeObject) {
     return <MoraaSlideActiveObjectAppearance />
