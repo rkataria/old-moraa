@@ -93,7 +93,7 @@ export function BlockEditor({
       <EditorContent
         editor={editor}
         ref={editorRef}
-        className="flex-1 overflow-y-auto scrollbar-none"
+        className="flex-1 overflow-y-auto scrollbar-thin"
       />
     )
   }
@@ -130,7 +130,7 @@ export function BlockEditor({
             editor={editor}
             ref={editorRef}
             className={cn(
-              'overflow-y-scroll w-full h-full pl-[58px] scrollbar-none pt-6 pb-[5rem]',
+              'overflow-y-scroll w-full h-full pl-[3.625rem] scrollbar-thin pt-6 pb-[5rem]',
               classNames?.editor
             )}
           />

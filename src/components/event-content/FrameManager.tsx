@@ -26,7 +26,7 @@ import {
 } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
-import { FrameStatus } from '@/services/types/enums'
+import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
@@ -45,6 +45,7 @@ export function FrameManager() {
     useState<boolean>(false)
 
   const {
+    preview,
     loading,
     syncing,
     currentFrame,
@@ -54,10 +55,9 @@ export function FrameManager() {
     insertAfterFrameId,
     insertInSectionId,
     addFrameToSection,
-    setAddNewFrameLoader,
   } = useContext(EventContext) as EventContextType
 
-  useHotkeys('f', () => setOpenContentTypePicker(true), [])
+  useHotkeys('f', () => !preview && setOpenContentTypePicker(true), [preview])
 
   const handleAddNewFrame = (
     contentType: ContentType,
@@ -87,7 +87,6 @@ export function FrameManager() {
       breakoutType === BREAKOUT_TYPES.ROOMS
         ? 'breakoutRoomsCount'
         : 'participantPerGroup'
-    setAddNewFrameLoader(true)
 
     if (contentType === ContentType.BREAKOUT) {
       const breakoutPayload = {

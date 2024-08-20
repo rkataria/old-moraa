@@ -2,7 +2,7 @@ import { useContext } from 'react'
 
 import { SwitchControl } from '@/components/common/SwitchControl'
 import { EventContext } from '@/contexts/EventContext'
-import { FrameStatus } from '@/services/types/enums'
+import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 
 export function CommonConfiguration() {

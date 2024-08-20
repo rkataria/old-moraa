@@ -20,7 +20,7 @@
     "fix-lint": "eslint --fix .",
     "-=-=-=-=-=-=-=-=-=-=-=-=": "",
     "prepare": "husky",
-    "sync-db-types": "supabase gen types typescript --project-id pcwxaszjgtcbxjdlsguj > services/types/supabase-db.d.ts && prettier -w services/types/supabase-db.d.ts"
+    "sync-db-types": "supabase gen types --lang=typescript --project-id pcwxaszjgtcbxjdlsguj > src/types/supabase-db.d.ts && prettier -w src/types/supabase-db.d.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.13",
@@ -36,7 +36,10 @@
     "@hocuspocus/provider": "^2.13.5",
     "@hookform/resolvers": "^3.9.0",
     "@internationalized/date": "^3.5.4",
-    "@nextui-org/react": "2.4.6",
+    "@nextui-org/button": "^2.0.35",
+    "@nextui-org/react": "^2.4.6",
+    "@nextui-org/tooltip": "^2.0.37",
+    "@reduxjs/toolkit": "^2.2.7",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/realtime-js": "~2.9.4",
@@ -149,9 +152,11 @@
     "react-multi-email": "^1.0.23",
     "react-pdf": "^9.1.0",
     "react-player": "^2.16.0",
+    "react-redux": "^9.1.2",
     "react-resizable-panels": "^2.0.20",
     "react-responsive-masonry": "^2.3.0",
     "react-textarea-autosize": "^8.5.3",
+    "redux": "^5.0.1",
     "supabase": "^1.183.5",
     "tailwind-merge": "^2.4.0",
     "tailwind-scrollbar": "^3.1.0",

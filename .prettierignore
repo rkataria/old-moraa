@@ -7,3 +7,4 @@ build/
 ios/
 .env
 public/scripts/pdf.worker.min.mjs
+src/route-tree.gen.ts

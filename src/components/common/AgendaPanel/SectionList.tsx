@@ -28,7 +28,6 @@ export function SectionList() {
     sections,
     reorderSection,
     reorderFrame,
-    updateSectionsWithReorderedFrames,
     eventMode,
     preview,
   } = useContext(EventContext) as EventContextType
@@ -73,44 +72,8 @@ export function SectionList() {
 
     updateSectionList(items)
   }
-
   const handleOnDragEndFrame = (result: any, provided: any) => {
-    const { source, destination } = result
-
-    if (destination.droppableId === source.droppableId) {
-      const sectionId = source.droppableId.split(
-        'frame-droppable-sectionId-'
-      )[1]
-      const section = sections.find((s) => s.id === sectionId)
-      if (section) {
-        reorderFrame(result, provided)
-      }
-    } else {
-      const sourceSectionId = source.droppableId.split(
-        'frame-droppable-sectionId-'
-      )[1]
-      const destinationSectionId = destination.droppableId.split(
-        'frame-droppable-sectionId-'
-      )[1]
-
-      const sourceSection = sections.find((s) => s.id === sourceSectionId)
-      const destinationSection = sections.find(
-        (s) => s.id === destinationSectionId
-      )
-
-      if (!sourceSection || !destinationSection) return null
-
-      const [removed] = sourceSection.frames.splice(source.index, 1)
-
-      destinationSection.frames.splice(destination.index, 0, removed)
-      updateSectionsWithReorderedFrames(
-        removed,
-        sourceSection,
-        destinationSection,
-        sourceSectionId,
-        destinationSectionId
-      )
-    }
+    reorderFrame(result, provided)
 
     updateSectionList([...sections])
 

@@ -17,11 +17,8 @@ export type EventContextType = {
   syncing: boolean
   isOwner: boolean
   sections: ISection[]
-  showSectionPlaceholder: boolean
-  showFramePlaceholder: boolean
   preview: boolean
   insertAfterSectionId: string | null
-  addNewFrameLoader: boolean
   insertAfterFrameId: string | null
   insertInSectionId: string | null
   selectedSectionId: string | null
@@ -32,7 +29,6 @@ export type EventContextType = {
   setInsertAfterSectionId: (sectionId: string | null) => void
   setInsertInSectionId: (sectionId: string | null) => void
   setSelectedSectionId: (sectionId: string | null) => void
-  setAddNewFrameLoader: (loader: boolean) => void
   setPreview: (preview: boolean) => void
   setCurrentFrame: (frame: IFrame | null) => void
   setOverviewOpen: (open: boolean) => void
@@ -56,13 +52,6 @@ export type EventContextType = {
     framePayload: Partial<IFrame>
     frameId: string
     allowParticipantToUpdate?: boolean
-  }) => void
-  updateFrames: ({
-    framePayload,
-    frameIds,
-  }: {
-    framePayload: Partial<IFrame>
-    frameIds: string[]
   }) => void
   deleteFrame: (frame: IFrame) => void
   importGoogleSlides: (data: {
@@ -103,13 +92,4 @@ export type EventContextType = {
   moveDownSection: (section: ISection) => void
   getFrameById: (frameId: string) => IFrame
   deleteBreakoutFrames: (frame: IFrame) => void
-  updateSectionsWithReorderedFrames: (
-    removed: IFrame,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    sourceSection: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    destinationSection: any,
-    sourceSectionId: string,
-    destinationSectionId: string
-  ) => void
 }

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Json } from '@/types/supabase-db'
 import { supabaseClient } from '@/utils/supabase/client'
 
 const getSections = async ({
@@ -66,6 +67,7 @@ const updateSection = async ({
   payload: {
     name?: string
     frames?: string[]
+    config?: Json
   }
   meetingId?: string
   sectionId?: string
@@ -85,6 +87,41 @@ const updateSection = async ({
   )
 }
 
+const updateSections = async ({
+  payload,
+}: {
+  payload: {
+    id: string
+    frames: string[]
+  }[]
+  sectionId?: string
+}) => {
+  const query = supabaseClient.from('section').upsert(payload).select('*')
+
+  // TODO: Remove this code in future once https://learnsight.atlassian.net/browse/DEV-604 is completed
+  const data = payload.reduce<{ id: string; section_id: string }[]>(
+    (acc, section) => {
+      section.frames.forEach((frame) =>
+        acc.push({
+          id: frame,
+          section_id: section.id,
+        })
+      )
+
+      return acc
+    },
+    []
+  )
+  const frameUpdateQuery = supabaseClient.from('frame').upsert(data)
+
+  return Promise.allSettled([query, frameUpdateQuery]).then(
+    ([res]: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
 const deleteSection = async ({ sectionId }: { sectionId: string }) => {
   const res = await supabaseClient.from('section').delete().eq('id', sectionId)
 
@@ -96,5 +133,6 @@ export const SectionService = {
   getSection,
   createSection,
   updateSection,
+  updateSections,
   deleteSection,
 }

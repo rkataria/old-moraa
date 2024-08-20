@@ -134,8 +134,18 @@ const createEvent = async (event: ICreateEventPayload) => {
     .insert([event])
     .select()
 
+  await new Promise((resolve) => {
+    setTimeout(resolve, 500)
+  })
+
+  const { data: meeting } = await supabaseClient
+    .from('meeting')
+    .select()
+    .eq('event_id', data?.[0]?.id)
+    .single()
+
   return {
-    data: data?.[0],
+    data: { ...data?.[0], meeting },
     error,
   }
 }

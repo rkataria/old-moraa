@@ -31,7 +31,9 @@ import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { FrameStatus } from '@/services/types/enums'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { bulkUpdateFrameStatusThunk } from '@/stores/thunks/frame.thunks'
+import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { ISection } from '@/types/frame.type'
 import { cn, sortByStatus } from '@/utils/utils'
@@ -44,18 +46,16 @@ export function SessionPlanner({
   header?: ReactNode
 }) {
   const plannerRef = useRef<HTMLDivElement | null>(null)
+  const dispatch = useStoreDispatch()
 
   const { width: plannerWidth } = useDimensions(plannerRef)
 
   const {
     sections,
-    showSectionPlaceholder,
     preview,
     eventMode,
-    updateFrames,
     reorderSection,
     reorderFrame,
-    addSection,
     updateSection,
     setAddedFromSessionPlanner,
   } = useContext(EventContext) as EventContextType
@@ -67,19 +67,27 @@ export function SessionPlanner({
   ])
 
   useEffect(() => {
-    setFilteredSections(sections)
+    console.log(
+      'sections.filter((f) => f.id.length > 0)',
+      sections.filter((f) => f.id.length > 0)
+    )
+    setFilteredSections(sections.filter((f) => f.id.length > 0))
   }, [sections])
+
+  console.log('sections', filteredSections)
 
   const changeSectionStatus = (
     section: ISection,
     newState: FrameStatus.DRAFT | FrameStatus.PUBLISHED
   ) => {
-    updateFrames({
-      frameIds: section.frames.map((frame) => frame.id),
-      framePayload: {
+    if (!permissions.canUpdateFrame) return
+
+    dispatch(
+      bulkUpdateFrameStatusThunk({
+        frameIds: section.frames.map((frame) => frame.id),
         status: newState,
-      },
-    })
+      })
+    )
   }
 
   const handleExpandSection = (id: string) => {
@@ -135,7 +143,7 @@ export function SessionPlanner({
   return (
     <div
       ref={plannerRef}
-      className={cn('flex flex-col flex-1 bg-white pl-4 pr-1 pb-8', className)}>
+      className={cn('flex flex-col flex-1 bg-white pl-4 pb-8', className)}>
       {header}
       <div className="scrollbar-none">
         <DragDropContext
@@ -258,7 +266,7 @@ export function SessionPlanner({
                                   showTooltip={false}
                                   className="text-sm font-bold tracking-tight text-primary/80"
                                   label={section.name}
-                                  readOnly={false}
+                                  readOnly={preview}
                                   onUpdate={(value: string) => {
                                     updateSection({
                                       sectionPayload: { name: value },
@@ -276,16 +284,17 @@ export function SessionPlanner({
 
                               <div
                                 className={cn(
-                                  'flex justify-between items-center gap-2 w-[230px]',
+                                  'flex justify-between items-center gap-2 w-[18.75rem]',
                                   {
                                     'justify-end': !editable,
                                   }
                                 )}>
                                 <SessionColorTracker
-                                  colorCodes={section.frames.map(
-                                    (frame) => frame.config.colorCode
-                                  )}
-                                  className="h-4"
+                                  colorCodes={section.frames.map((frame) => ({
+                                    colorCode: frame?.config?.colorCode,
+                                    timeSpan: frame?.config?.time,
+                                  }))}
+                                  className="h-4 w-[18.75rem]"
                                 />
                                 <RenderIf isTrue={editable}>
                                   <div
@@ -360,15 +369,6 @@ export function SessionPlanner({
             )}
           </StrictModeDroppable>
         </DragDropContext>
-      </div>
-      <div className="flex justify-center mt-4">
-        <Button
-          color="primary"
-          variant="solid"
-          isLoading={showSectionPlaceholder}
-          onClick={() => addSection({ addToLast: true })}>
-          Add Section
-        </Button>
       </div>
     </div>
   )

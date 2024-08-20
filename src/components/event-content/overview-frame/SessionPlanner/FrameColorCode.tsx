@@ -40,7 +40,11 @@ export function FrameColorCode({
   return (
     <div>
       <Tooltip
-        content={selectedColor?.label || 'Select Category'}
+        content={
+          selectedColor?.label === 'None'
+            ? 'Select category'
+            : selectedColor?.label || 'Select Category'
+        }
         color="primary"
         showArrow
         placement="left"

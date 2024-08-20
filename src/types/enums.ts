@@ -9,6 +9,7 @@ export enum EventUserRole {
 
 export enum EventType {
   COURSE = 'course',
+  WORKSHOP = 'workshop',
 }
 
 export enum EventStatus {

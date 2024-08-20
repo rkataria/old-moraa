@@ -1,14 +1,10 @@
-import { Fragment, useContext } from 'react'
+import { Fragment } from 'react'
 
 import { FrameItem } from './FrameItem'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
-import { EventContext } from '@/contexts/EventContext'
-import { FrameStatus } from '@/services/types/enums'
-import { EventContextType } from '@/types/event-context.type'
 import { ISection } from '@/types/frame.type'
-import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
 export function FramesList({
@@ -18,12 +14,12 @@ export function FramesList({
   section: ISection
   plannerWidth: number
 }) {
-  const { isOwner, preview, eventMode } = useContext(
-    EventContext
-  ) as EventContextType
+  // const { isOwner, preview, eventMode } = useContext(
+  //   EventContext
+  // ) as EventContextType
 
-  const statusFilter =
-    isOwner && !preview && (eventMode === 'edit' || eventMode === 'present')
+  // const statusFilter =
+  //   isOwner && !preview && (eventMode === 'edit' || eventMode === 'present')
 
   return (
     <div className="m">
@@ -43,10 +39,7 @@ export function FramesList({
               <div className="w-full">
                 <div>
                   <div className="flex flex-col justify-start items-start gap-[4px] pt-2 w-full bg-primary/5 transition-all">
-                    {getFilteredFramesByStatus({
-                      frames: section.frames,
-                      status: statusFilter ? null : FrameStatus.PUBLISHED,
-                    }).map((frame, frameIndex) => (
+                    {section.frames.map((frame, frameIndex) => (
                       <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
                         <Fragment key={frame.id}>
                           <FrameItem

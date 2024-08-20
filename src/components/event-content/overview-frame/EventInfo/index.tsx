@@ -1,9 +1,9 @@
 import { BlurbEditor } from './BlurbEditor'
 import { EventDetails } from './EventDetails'
 
-export function LeftSection() {
+export function EventInfo() {
   return (
-    <div className="flex flex-col h-full gap-6">
+    <div className="flex flex-col gap-3 h-full w-[900px] mx-auto scrollbar-none">
       <EventDetails />
       <BlurbEditor />
     </div>

@@ -91,8 +91,8 @@ export default {
         'moraa-light': {
           extend: 'light',
           colors: {
-            foreground: '#2E1E4A ',
-            background: '#FAFAFA ',
+            foreground: '#2E1E4A',
+            background: '#FAFAFA',
           },
           layout: {
             fontSize: {

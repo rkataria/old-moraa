@@ -20,6 +20,12 @@ import { LocalFilePicker } from '@/components/common/LocalFilePicker'
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
+import { FrameService } from '@/services/frame.service'
+import { MeetingService } from '@/services/meeting.service'
+import { SectionService } from '@/services/section.service'
+import { ICreateEventPayload } from '@/types/event.type'
+import { IFrame } from '@/types/frame.type'
+import { getDefaultCoverFrame } from '@/utils/content.util'
 import { eventTypes } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
@@ -57,7 +63,53 @@ export function EventsCreatePage() {
   const router = useRouter()
 
   const eventMutation = useMutation({
-    mutationFn: EventService.createEvent,
+    mutationFn: (data: ICreateEventPayload) =>
+      EventService.createEvent(data).then(async (newEvent) => {
+        const sectionResponse = await SectionService.createSection({
+          name: 'Section 1',
+          // TODO: Fix this meeting ID
+          meeting_id: newEvent.data.meeting?.id,
+          frames: [],
+        }).catch(() => {
+          toast.error(
+            'Failed to create section in newly created event, Please try creating manually.'
+          )
+        })
+        const firstFrame = getDefaultCoverFrame({
+          name: createEventForm.getValues('name'),
+          title: createEventForm.getValues('name'),
+          description: createEventForm.getValues('description'),
+        }) as IFrame
+
+        const newFrame = await FrameService.createFrame({
+          ...firstFrame,
+          section_id: sectionResponse.data.id!,
+          // TODO: Fix this meeting ID
+          meeting_id: newEvent.data.meeting?.id,
+        }).catch(() =>
+          toast.error(
+            'Failed to create frame in newly created event, Please try creating manually.'
+          )
+        )
+
+        await Promise.allSettled([
+          SectionService.updateSection({
+            meetingId: newEvent.data.meeting.id,
+            sectionId: sectionResponse.data.id!,
+            payload: {
+              frames: [newFrame.data.id],
+            },
+          }),
+          MeetingService.updateMeeting({
+            meetingId: newEvent.data.meeting.id!,
+            meetingPayload: {
+              sections: [sectionResponse.data.id],
+            },
+          }),
+        ])
+
+        return newEvent
+      }),
   })
 
   const onSubmit = async (values: CreateEventFormData) => {
@@ -73,7 +125,7 @@ export function EventsCreatePage() {
 
     // eslint-disable-next-line consistent-return
     return eventMutation.mutateAsync(payload, {
-      onSuccess: ({ data }) => {
+      onSuccess: async ({ data }) => {
         if (data) {
           toast.success('Event has been created!')
           router.navigate({ to: `/events/${data.id}` })
@@ -106,8 +158,8 @@ export function EventsCreatePage() {
       <form
         onSubmit={createEventForm.handleSubmit(onSubmit)}
         aria-label="new-event">
-        <div className="max-w-[960px] mx-auto py-4">
-          <div className="grid grid-cols-[36%_64%] items-start gap-8">
+        <div className="max-w-[960px] mx-auto py-4 pt-8">
+          <div className="grid grid-cols-[35%_65%] items-start gap-8">
             <div className="relative aspect-square">
               <Controller
                 control={createEventForm.control}
@@ -116,7 +168,7 @@ export function EventsCreatePage() {
                   <Image
                     src={imageObject || field.value || IMAGE_PLACEHOLDER}
                     classNames={{
-                      img: 'w-full h-full object-cover',
+                      img: 'w-full h-full object-cover border',
                       wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
                     }}
                   />
@@ -134,21 +186,6 @@ export function EventsCreatePage() {
                   {parseInt(imageUploadProgress.toString(), 10)}%
                 </div>
               )}
-
-              {/* <FileUploader
-                maxNumberOfFiles={1}
-                allowedFileTypes={['.jpg', '.jpeg', '.png']}
-                bucketName="image-uploads"
-                triggerProps={{
-                  className:
-                    'w-8 h-8 bg-black/60 text-white max-w-14 border-2 border-white rounded-xl shrink-0 hover:bg-black/20 absolute right-0 bottom-0 m-3 z-[10] rounded-full',
-                  isIconOnly: true,
-                  children: <CiEdit className="shrink-0 text-lg" />,
-                  variant: 'light',
-                }}
-                onPublicFilesUploaded={handleFileUpload}
-              /> */}
-
               <LocalFilePicker
                 accept="image/png, image/jpeg, image/jpg"
                 fileName={`event-image-${eventId}`}
@@ -184,8 +221,14 @@ export function EventsCreatePage() {
                     errorMessage={fieldState.error?.message}
                     minRows={1}
                     classNames={{
-                      input: 'text-3xl font-bold tracking-tight text-black/80',
+                      input:
+                        'text-[40px] font-semibold tracking-tight text-black/80 leading-[50px]',
                       inputWrapper: 'border-none p-0 shadow-none',
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                      }
                     }}
                   />
                 )}
@@ -209,6 +252,7 @@ export function EventsCreatePage() {
                   />
                 )}
               />
+
               <div>
                 <p className="text-sm font-medium mb-1">
                   What will you use event for?

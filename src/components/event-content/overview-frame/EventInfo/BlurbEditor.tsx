@@ -15,14 +15,14 @@ export function BlurbEditor({ editable = true }: { editable?: boolean }) {
   const { eventId } = useParams({ strict: false })
   const [showPlaceholder, setShowPlaceholder] = useState(false)
 
+  if (preview && showPlaceholder) return null
+
   return (
     <div
-      className={cn(
-        'relative bg-white rounded-xl py-4 border min-h-[300px] group/blurb',
-        {
-          'px-4': preview,
-        }
-      )}
+      className={cn('relative bg-gray-50 rounded-md group/blurb', {
+        'p-4 px-6': preview,
+        'min-h-[300px]': !preview,
+      })}
       onPointerOver={() => {
         if (preview) return
         setShowPlaceholder(false)
@@ -34,10 +34,11 @@ export function BlurbEditor({ editable = true }: { editable?: boolean }) {
         editable={editable && !preview}
         onEmptyContent={() => setShowPlaceholder(true)}
         classNames={{
-          container: 'border-none',
-          editor: 'p-0',
-          menu: 'grid -mr-4 gap-[-10px] ',
-          gripButton: '-mt-2',
+          container: 'border-none bg-gray-50 pt-6',
+          menu: ' -mr-4',
+          // gripButton: '-mt-2',
+          editor: 'overflow-visible p-0 h-auto',
+          wrapper: 'h-auto',
         }}
       />
       <RenderIf isTrue={showPlaceholder}>

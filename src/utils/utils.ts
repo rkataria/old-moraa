@@ -139,6 +139,24 @@ export function scrollParentToChild({
   }
 }
 
+export const areArraysDifferent = <T>(
+  array1: Array<T>,
+  array2: Array<T>
+): boolean => {
+  if (array1.length !== array2.length) {
+    return true
+  }
+
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < array1.length; i++) {
+    if (array1[i] !== array2[i]) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export const sortByStatus = (
   a: { status?: string },
   b: { status?: string },
@@ -175,5 +193,11 @@ export const FrameColorCodes = {
     label: 'Energizer/IceBreaker',
     icon: IoIosSquare({ color: '#7c3aed', size: 24 }),
     color: '#7c3aed',
+  },
+  none: {
+    key: 'none',
+    label: 'None',
+    icon: IoIosSquare({ color: '#F3F4F6', size: 24 }),
+    color: '#F3F4F6',
   },
 }

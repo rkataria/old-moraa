@@ -38,9 +38,9 @@ export function BottomControls() {
       <AddContentButton className="flex-auto" />
       <Button size="sm" isIconOnly variant="flat" onClick={toggleLeftSidebar}>
         {leftSidebarVisiblity === 'maximized' ? (
-          <LuPanelLeftClose size={18} />
+          <LuPanelLeftClose size={18} strokeWidth={1.2} />
         ) : (
-          <LuPanelLeftOpen size={18} />
+          <LuPanelLeftOpen size={18} strokeWidth={1.2} />
         )}
       </Button>
     </div>

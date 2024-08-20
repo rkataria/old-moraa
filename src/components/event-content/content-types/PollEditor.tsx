@@ -153,7 +153,7 @@ export function PollEditor({ frame: frameFromRemote }: PollEditorProps) {
             color="primary"
             radius="md"
             onClick={addNewOption}>
-            Add option
+            + Add option
           </Button>
         </div>
       </div>

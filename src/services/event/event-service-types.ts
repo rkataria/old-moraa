@@ -1,4 +1,4 @@
-import { SupabaseTables } from '../types/supabase-db-overrides'
+import { SupabaseTables } from '../../types/supabase-db-overrides'
 
 export type CreateEventPayload = Pick<
   SupabaseTables<'event'>,

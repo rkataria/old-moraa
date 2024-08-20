@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext } from 'react'
 
-import { useQuery } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
-import userflow from 'userflow.js'
+
+import { useStoreSelector } from './useRedux'
 
 import { supabaseClient } from '@/utils/supabase/client'
 
@@ -25,36 +25,19 @@ export function UserContextProvider({
   children,
 }: React.PropsWithChildren<object>) {
   const router = useRouter()
-  const userQuery = useQuery({
-    queryKey: ['CURRENT_USER'],
-    queryFn: () => supabaseClient.auth.getSession(),
-    select: (data) => data.data.session?.user,
-  })
-
-  useEffect(() => {
-    supabaseClient.auth.onAuthStateChange(() => {
-      userQuery.refetch()
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const userState = useStoreSelector((state) => state.user.currentUser)
 
   const logout = async () => {
     await supabaseClient.auth.signOut()
     router.navigate({ to: '/' })
   }
 
-  useEffect(() => {
-    if (!userQuery.data?.id) return
-    userflow.init(`${import.meta.env.VITE_USERFLOW_ID}`)
-    userflow.identify(userQuery.data.id)
-  }, [userQuery?.data?.id])
-
   return (
     <UserContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
-        currentUser: userQuery.data,
-        isLoading: userQuery.isLoading,
+        currentUser: userState.user,
+        isLoading: userState.isLoading,
         logout,
       }}>
       {children}

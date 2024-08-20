@@ -19,7 +19,7 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
-import { FrameStatus } from '@/services/types/enums'
+import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'

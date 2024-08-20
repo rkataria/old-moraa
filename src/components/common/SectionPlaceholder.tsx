@@ -1,16 +1,14 @@
-import { useContext } from 'react'
-
 import { Skeleton } from '@nextui-org/react'
 
-import { EventContext } from '@/contexts/EventContext'
-import { EventContextType } from '@/types/event-context.type'
+import { useStoreSelector } from '@/hooks/useRedux'
 
 export function SectionPlaceholder() {
-  const { showSectionPlaceholder } = useContext(
-    EventContext
-  ) as EventContextType
+  const isAddSectionLoading = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.sectionState.createSectionThunk.isLoading
+  )
 
-  if (showSectionPlaceholder) {
+  if (isAddSectionLoading) {
     return (
       <div className="flex-none w-full flex justify-start items-center gap-2 px-2 mt-2">
         <Skeleton className="flex-none flex rounded-full w-8 h-8" />

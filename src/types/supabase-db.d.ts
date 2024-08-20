@@ -17,6 +17,7 @@ export type Database = {
           event_role: string | null
           id: string
           meeting_token: string | null
+          role_id: string | null
           status: string | null
           updated_at: string | null
           user_id: string | null
@@ -28,6 +29,7 @@ export type Database = {
           event_role?: string | null
           id?: string
           meeting_token?: string | null
+          role_id?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -39,11 +41,19 @@ export type Database = {
           event_role?: string | null
           id?: string
           meeting_token?: string | null
+          role_id?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: 'enrollment_role_id_fkey'
+            columns: ['role_id']
+            isOneToOne: false
+            referencedRelation: 'role'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'public_enrollment_event_id_fkey'
             columns: ['event_id']
@@ -121,6 +131,7 @@ export type Database = {
           id: string
           meeting_id: string | null
           name: string | null
+          notes: string | null
           section_id: string | null
           status: string | null
           type: string | null
@@ -133,6 +144,7 @@ export type Database = {
           id?: string
           meeting_id?: string | null
           name?: string | null
+          notes?: string | null
           section_id?: string | null
           status?: string | null
           type?: string | null
@@ -145,6 +157,7 @@ export type Database = {
           id?: string
           meeting_id?: string | null
           name?: string | null
+          notes?: string | null
           section_id?: string | null
           status?: string | null
           type?: string | null
@@ -285,7 +298,7 @@ export type Database = {
           {
             foreignKeyName: 'notes_frame_id_fkey'
             columns: ['frame_id']
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: 'frame'
             referencedColumns: ['id']
           },
@@ -415,13 +428,6 @@ export type Database = {
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'public_reaction_slide_response_id_fkey'
-            columns: ['slide_response_id']
-            isOneToOne: false
-            referencedRelation: 'slide_response'
-            referencedColumns: ['id']
-          },
-          {
             foreignKeyName: 'reaction_frame_response_id_fkey'
             columns: ['frame_response_id']
             isOneToOne: false
@@ -430,8 +436,33 @@ export type Database = {
           },
         ]
       }
+      role: {
+        Row: {
+          created_at: string
+          id: string
+          name: string | null
+          permissions: Json[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          permissions?: Json[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          permissions?: Json[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       section: {
         Row: {
+          config: Json | null
           created_at: string
           frames: string[] | null
           id: string
@@ -441,6 +472,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          config?: Json | null
           created_at?: string
           frames?: string[] | null
           id?: string
@@ -450,6 +482,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          config?: Json | null
           created_at?: string
           frames?: string[] | null
           id?: string

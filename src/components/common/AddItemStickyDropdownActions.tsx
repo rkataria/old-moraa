@@ -15,6 +15,7 @@ import { BsCardText, BsCollection } from 'react-icons/bs'
 import { LuPlusCircle } from 'react-icons/lu'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { EventContextType } from '@/types/event-context.type'
 
 const descriptionMap: {
@@ -50,14 +51,19 @@ export function AddItemStickyDropdownActions({
     preview,
     isOwner,
     eventMode,
-    showSectionPlaceholder,
-    showFramePlaceholder,
     currentFrame,
     selectedSectionId,
     addSection,
     setInsertAfterFrameId,
     setInsertInSectionId,
   } = useContext(EventContext) as EventContextType
+  const isAddSectionLoading = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.sectionState.createSectionThunk.isLoading
+  )
+  const isAddFrameLoading = useStoreSelector(
+    (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
+  )
 
   const addItem = (selectedOptionValue: string) => {
     if (selectedOptionValue === 'new-section') {
@@ -93,7 +99,7 @@ export function AddItemStickyDropdownActions({
     <ButtonGroup
       variant="flat"
       className="bg-black text-white max-w-[300px] rounded-md overflow-hidden mt-2"
-      isDisabled={showSectionPlaceholder || showFramePlaceholder}>
+      isDisabled={isAddSectionLoading || isAddFrameLoading}>
       <Button
         startContent={<LuPlusCircle />}
         className="bg-black text-white"

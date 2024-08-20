@@ -5,10 +5,9 @@ import uniqBy from 'lodash.uniqby'
 
 import { EditableLabel } from './EditableLabel'
 import { RenderIf } from './RenderIf/RenderIf'
-import { SessionColorTracker } from '../event-content/overview-frame/SessionPlanner/ColorTracker'
 
 import { EventContext } from '@/contexts/EventContext'
-import { FrameStatus } from '@/services/types/enums'
+import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import {
   collaborativeTypes,
@@ -97,7 +96,7 @@ export function SectionOverview() {
               ))}
             </div>
           </RenderIf>
-          <div className="flex gap-4 my-4">
+          {/* <div className="flex gap-4 my-4">
             <Chip
               variant="flat"
               startContent={
@@ -124,14 +123,14 @@ export function SectionOverview() {
               className="pl-2 bg-white border shadow-md border-primary-200">
               Goodies
             </Chip>
-          </div>
-          <RenderIf
+          </div> */}
+          {/* <RenderIf
             isTrue={section.frames.some((frame) => !!frame.config.colorCode)}>
             <SessionColorTracker
               colorCodes={section.frames.map((frame) => frame.config.colorCode)}
               className="w-[300px] h-6 shadow-xl"
             />
-          </RenderIf>
+          </RenderIf> */}
         </div>
       </div>
     </div>

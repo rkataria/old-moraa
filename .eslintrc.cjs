@@ -82,6 +82,7 @@ module.exports = {
     'operator-linebreak': 'off',
     'function-paren-newline': 'off',
     'max-len': 'off',
+    'no-param-reassign': 'off',
     'comma-dangle': 'off',
     'no-underscore-dangle': 'off',
     'no-nested-ternary': 'off',

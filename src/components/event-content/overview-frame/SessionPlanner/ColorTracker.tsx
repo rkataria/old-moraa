@@ -1,5 +1,4 @@
 import { Tooltip } from '@nextui-org/react'
-import countBy from 'lodash.countby'
 
 import { cn, FrameColorCodes } from '@/utils/utils'
 
@@ -40,31 +39,40 @@ export function SessionColorTracker({
   colorCodes,
   className,
 }: {
-  colorCodes: string[]
+  colorCodes: { colorCode: string; timeSpan: number }[]
   className?: string
 }) {
-  const filteredColors = colorCodes.map((color) =>
-    !color ? 'Not selected' : color
-  )
+  function calculateTimePercentages(
+    data: { colorCode: string; timeSpan: number }[]
+  ) {
+    const totalTime = data.reduce((sum, item) => sum + (item.timeSpan || 0), 0)
 
-  const colorCounts = countBy(filteredColors)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const timeByColorCode = data.reduce((acc: any, item) => {
+      const colorCode = item.colorCode || 'none'
+      if (!acc[colorCode]) {
+        acc[colorCode] = 0
+      }
+      acc[colorCode] += item.timeSpan || 0
 
-  const totalColors = filteredColors.length
+      return acc
+    }, {})
 
-  const colorPercentagesArray = colorCounts
-    ? Object.entries(colorCounts).map(([colorKey, count]) => ({
-        label:
-          FrameColorCodes[`${colorKey as keyof typeof FrameColorCodes}`]
-            ?.label || 'Not Selected',
-        value: totalColors
-          ? // eslint-disable-next-line radix
-            parseInt(((count / totalColors) * 100).toFixed(2))
-          : 0,
-        color:
-          FrameColorCodes[`${colorKey as keyof typeof FrameColorCodes}`]
-            ?.color || '#D9D9D9',
-      }))
-    : []
+    const percentages = Object.keys(timeByColorCode).map((colorCode) => ({
+      label: colorCode,
+      // eslint-disable-next-line radix
+      value: parseInt(
+        ((timeByColorCode[colorCode] / totalTime) * 100).toFixed(1)
+      ),
+      color:
+        FrameColorCodes[`${colorCode as keyof typeof FrameColorCodes}`]
+          ?.color || '#D9D9D9',
+    }))
 
-  return <ColorTracker tracks={colorPercentagesArray} className={className} />
+    return percentages
+  }
+
+  const tracks = calculateTimePercentages(colorCodes)
+
+  return <ColorTracker tracks={tracks} className={className} />
 }

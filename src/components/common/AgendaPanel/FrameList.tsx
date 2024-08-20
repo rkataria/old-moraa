@@ -10,6 +10,7 @@ import { FramePlaceholder } from '../FramePlaceholder'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useEventContext } from '@/contexts/EventContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { IFrame } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
@@ -28,13 +29,11 @@ export function FrameList({
   duplicateFrame,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
-  const {
-    sections,
-    currentFrame,
-    insertAfterFrameId,
-    addNewFrameLoader,
-    currentSectionId,
-  } = useEventContext()
+  const { sections, currentFrame, insertAfterFrameId, currentSectionId } =
+    useEventContext()
+  const isAddFrameLoading = useStoreSelector(
+    (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
+  )
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
@@ -112,7 +111,7 @@ export function FrameList({
                   </Draggable>
                   <RenderIf
                     isTrue={
-                      addNewFrameLoader &&
+                      isAddFrameLoading &&
                       (currentFrame?.section_id === frame.section_id ||
                         currentSectionId === frame.section_id) &&
                       ((_insertAfterFrameId &&

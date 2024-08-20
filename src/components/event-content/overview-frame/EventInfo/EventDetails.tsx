@@ -74,10 +74,8 @@ export function EventDetails() {
   }
 
   return (
-    <div className="p-4 h-fit">
-      <form
-        onSubmit={createEventForm.handleSubmit(onSubmit)}
-        aria-label="new-event">
+    <div className="h-fit">
+      <form onSubmit={createEventForm.handleSubmit(onSubmit)}>
         <div className="py-4">
           <div className="flex items-start gap-8">
             <div className="relative aspect-square">
@@ -88,7 +86,8 @@ export function EventDetails() {
                   <Image
                     src={imageObject || field.value || IMAGE_PLACEHOLDER}
                     classNames={{
-                      wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
+                      wrapper:
+                        '!max-w-none h-full rounded-lg overflow-hidden shadow-lg',
                       img: 'w-full object-cover h-full rounded-lg w-[20rem] h-[20rem]',
                     }}
                   />
@@ -141,7 +140,8 @@ export function EventDetails() {
                     errorMessage={fieldState.error?.message}
                     minRows={1}
                     classNames={{
-                      input: 'text-3xl font-bold tracking-tight text-black/80',
+                      input:
+                        'text-[40px] font-semibold tracking-tight text-black/80 leading-[50px]',
                       inputWrapper: 'border-none p-0 shadow-none',
                     }}
                   />

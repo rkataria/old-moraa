@@ -117,7 +117,7 @@ const dashboardLayoutEventsIndexRoute = dashboardLayoutEventsIndexImport.update(
   {
     path: '/events/',
     getParentRoute: () => dashboardLayoutRoute,
-  } as any
+  } as any,
 )
 
 // Populate the FileRoutesByPath interface

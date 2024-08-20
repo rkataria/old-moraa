@@ -3,19 +3,41 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 import { useParams, useRouter } from '@tanstack/react-router'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
-import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
-import { useAuth } from '@/hooks/useAuth'
-import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { FrameService } from '@/services/frame.service'
-import { MeetingService } from '@/services/meeting.service'
-import { SectionService } from '@/services/section.service'
+import {
+  useEventLoadingSelector,
+  useEventSelector,
+} from '@/stores/hooks/useEventSections'
+import {
+  clearCurrentEventIdAction,
+  setCurrentEventIdAction,
+  setCurrentSectionIdAction,
+  setIsOverviewOpenAction,
+  setIsPreviewOpenAction,
+  setCurrentFrameIdAction,
+} from '@/stores/slices/event/current-event/event.slice'
+import { reorderSectionsAction } from '@/stores/slices/event/current-event/meeting.slice'
+import { reorderFrameAction } from '@/stores/slices/event/current-event/section.slice'
+import {
+  createFrameThunk,
+  deleteFrameThunk,
+  updateFrameThunk,
+} from '@/stores/thunks/frame.thunks'
+import {
+  createSectionThunk,
+  deleteSectionsThunk,
+  updateSectionThunk,
+} from '@/stores/thunks/section.thunks'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
 import { ISection, IFrame } from '@/types/frame.type'
-import { ContentType, getDefaultCoverFrame } from '@/utils/content.util'
+import { FrameModel } from '@/types/models'
+import { Json } from '@/types/supabase-db'
+import { withPermissionCheck } from '@/utils/permissions'
 import { supabaseClient } from '@/utils/supabase/client'
 
 interface EventProviderProps {
@@ -27,33 +49,44 @@ export const EventContext = createContext<EventContextType | null>(null)
 
 export function EventProvider({ children, eventMode }: EventProviderProps) {
   const { eventId } = useParams({ strict: false })
-  const useEventData = useEvent({
-    id: eventId as string,
-  })
+  const currentFrame = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.frameState.frame.data?.find(
+        (frame) =>
+          frame.id === store.event.currentEvent.eventState.currentFrameId
+      ) || null
+  )
+  const isOverviewOpen = useStoreSelector(
+    (store) => store.event.currentEvent.eventState.isOverviewOpen
+  )
+  const currentSectionId = useStoreSelector(
+    (store) => store.event.currentEvent.eventState.currentSectionId
+  )
+  const isOwner = useStoreSelector(
+    (store) => store.event.currentEvent.eventState.isCurrentUserOwnerOfEvent
+  )
+  const dispatch = useStoreDispatch()
   const router = useRouter()
   const eventViewFromQuery = router.latestLocation.search.action
 
-  const { currentUser } = useAuth()
+  const currentUser = useStoreSelector((state) => state.user.currentUser.user)
   const { permissions } = useEventPermissions()
 
-  const [sections, setSections] = useState<any[]>([])
-  const [currentFrame, setCurrentFrame] = useState<any>(null)
-  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null)
-  const [overviewOpen, setOverviewOpen] = useState<any>(false)
+  const sections = useEventSelector()
+  console.log('sections inside event contect', sections)
 
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [addNewFrameLoader, setAddNewFrameLoader] = useState<boolean>(false)
-  const [syncing, setSyncing] = useState<boolean>(false)
-  const [isOwner, setIsOwner] = useState<boolean>(false)
-  const supabase = supabaseClient
-  const [meeting, setMeeting] = useState<any>(null)
-  const [showSectionPlaceholder, setShowSectionPlaceholder] =
-    useState<boolean>(false)
-  const [showFramePlaceholder, setShowFramePlaceholder] =
-    useState<boolean>(false)
-
+  const loading = useEventLoadingSelector()
+  const syncing = useStoreSelector(
+    (state) => state.event.currentEvent.frameState.updateFrameThunk.isLoading
+  )
+  const event = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.event.data
+  )
+  const meeting = useStoreSelector(
+    (state) => state.event.currentEvent.meetingState.meeting.data
+  )
   const [insertAfterFrameId, setInsertAfterFrameId] = useState<string | null>(
     null
   )
@@ -63,10 +96,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const [insertInSectionId, setInsertInSectionId] = useState<string | null>(
     null
   )
-  const [addedFromSessionPlanner, setAddedFromSessionPlanner] = useState(false)
+  const [, setAddedFromSessionPlanner] = useState(false)
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>('')
 
-  const [preview, setPreview] = useState<boolean>(true)
+  const isPreviewOpen = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.isPreviewOpen
+  )
 
   const [error, setError] = useState<{
     frameId: string
@@ -74,362 +109,22 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   } | null>(null)
 
   useEffect(() => {
-    if (!useEventData.meeting) return
-
-    setMeeting(useEventData.meeting)
-  }, [useEventData.meeting])
+    if (eventId) {
+      dispatch(setCurrentEventIdAction(eventId))
+    } else {
+      dispatch(clearCurrentEventIdAction())
+    }
+  }, [dispatch, eventId])
 
   useEffect(() => {
-    if (!useEventData.event?.owner_id || !currentUser?.id) return
+    if (!event?.owner_id || !currentUser?.id) return
 
-    if (useEventData.event?.owner_id !== currentUser?.id) return
+    if (event?.owner_id !== currentUser?.id) return
 
     if (eventViewFromQuery === 'edit') {
-      setPreview(false)
+      dispatch(setIsPreviewOpenAction(false))
     }
-  }, [currentUser?.id, eventViewFromQuery, useEventData.event?.owner_id])
-
-  useEffect(() => {
-    if (!useEventData.event || !currentUser) return
-
-    setIsOwner(useEventData.event.owner_id === currentUser?.id)
-    // if (useEventData.event.owner_id === currentUser?.id) setOverviewOpen(true)
-    setOverviewOpen(true)
-  }, [useEventData.event, currentUser])
-
-  useEffect(() => {
-    if (!meeting?.id) return
-
-    // Don't subscribe to the changes if the user is not the owner and the event mode is not present
-    // if (eventMode !== 'present' || !isOwner) return
-    // if (eventMode === 'edit' && !isOwner) return
-
-    // subscribe to the meeting updates
-    const meetingUpdateSubscription = supabase
-      .channel('meeting-update-channel')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'meeting',
-          filter: `id=eq.${meeting.id}`,
-        },
-        (payload) => {
-          console.log('Meeting change received!', payload)
-          if (payload?.new) {
-            setMeeting(payload.new)
-          }
-        }
-      )
-      .subscribe()
-
-    // subscribe to the section updates
-    const sectionUpdateSubscription = supabase
-      .channel('section-update-channel')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'section',
-          filter: `meeting_id=eq.${meeting.id}`,
-        },
-        async (payload) => {
-          console.log('Section change received!', payload)
-
-          if (payload.eventType === 'UPDATE') {
-            /**
-             * Two approaches are considered for handling section updates:
-             *
-             * 1. Fetch the updated section, including all frame contents, and update the section's state.
-             * 2. Update the section's state based on the payload data.
-             *
-             * Currently, the first approach is implemented to maintain frame order consistency and mitigate potential issues with content updates. However, this approach is not optimal, and further optimization or a refinement of the second approach may be necessary.
-             */
-
-            // Approach - 1
-            const updatedSection = payload.new
-
-            const sectionResponse = await SectionService.getSection(
-              updatedSection.id
-            )
-
-            if (sectionResponse.error) {
-              console.error(
-                'error while fetching section: ',
-                sectionResponse.error
-              )
-
-              return
-            }
-
-            const currentSectionWithFramesContent = sectionResponse.data
-            // const previousFrameIds = sections
-            //   .find((s) => s.id === updatedSection.id)
-            //   ?.frames.map((frame: IFrame) => frame.id)
-            // const newFrameIds = currentSectionWithFramesContent.frames || []
-            // const diffFrameIds = newFrameIds.filter(
-            //   (frameId: string) => !previousFrameIds?.includes(frameId)
-            // )
-
-            // if (diffFrameIds.length > 0) {
-            //   setCurrentFrame(
-            //     currentSectionWithFramesContent.framesWithContent.find(
-            //       (s) => s.id === diffFrameIds[0]
-            //     )
-            //   )
-            // }
-
-            setSections((prevSections) => {
-              const updatedSections = prevSections.map((section) => {
-                if (section.id === updatedSection.id) {
-                  const updateFramesOrder =
-                    currentSectionWithFramesContent.frames?.map(
-                      (frameId: string) =>
-                        currentSectionWithFramesContent.framesWithContent.find(
-                          (s: any) => s.id === frameId
-                        )
-                    )
-
-                  return {
-                    ...sectionResponse.data,
-                    frames: updateFramesOrder || [],
-                    framesWithContent: undefined,
-                  }
-                }
-
-                return section
-              })
-
-              return updatedSections
-            })
-
-            setAddNewFrameLoader(false)
-
-            // Approach - 2
-            // if (payload.eventType === 'UPDATE') {
-            //   const updatedSection = payload.new
-            //   const _currentSection = sections.find(
-            //     (s) => s.id === updatedSection.id
-            //   )
-
-            //   if (!_currentSection) return null
-
-            //   const newFrameIds = updatedSection.frames // [1, 2, 4]
-            //   const previousFrameIds = _currentSection.frames.map(
-            //     (frame: IFrame) => frame.id
-            //   ) // [1, 2, 3]
-            //   const diffFrameIds = newFrameIds.filter(
-            //     (frameId: string) => !previousFrameIds.includes(frameId)
-            //   )
-
-            //   console.log('diffFrameIds', diffFrameIds)
-            //   console.log('previousFrameIds', previousFrameIds)
-            //   console.log('newFrameIds', newFrameIds)
-
-            //   // Check if the frame is added
-            //   if (diffFrameIds.length > 0) {
-            //     const sectionResponse = await SectionService.getSection(
-            //       updatedSection.id
-            //     )
-
-            //     if (sectionResponse.error) {
-            //       console.error(
-            //         'error while fetching section: ',
-            //         sectionResponse.error
-            //       )
-
-            //       return null
-            //     }
-
-            //     const currentSectionWithFramesContent = sectionResponse.data
-            //     const firstNewFrame =
-            //       currentSectionWithFramesContent.framesWithContent.find(
-            //         (s) => s.id === diffFrameIds[0]
-            //       )
-
-            //     const updatedSections = sections.map((section) => {
-            //       if (section.id === updatedSection.id) {
-            //         const updateFramesOrder =
-            //           currentSectionWithFramesContent.frames?.map(
-            //             (frameId: string) =>
-            //               currentSectionWithFramesContent.framesWithContent.find(
-            //                 (s) => s.id === frameId
-            //               )
-            //           )
-
-            //         return {
-            //           ...sectionResponse.data,
-            //           frames: updateFramesOrder || [],
-            //           framesWithContent: undefined,
-            //         }
-            //       }
-
-            //       return section
-            //     })
-            //     console.log('diffframeIds updatedSections', updatedSections)
-            //     setCurrentFrame(firstNewFrame)
-            //     setSections(updatedSections)
-            //     setInsertAfterFrameId(null)
-            //     setShowFramePlaceholder(false)
-
-            //     return null
-            //   }
-
-            //   const isFramesOrderedChanged =
-            //     newFrameIds.join(',') !== previousFrameIds.join(',')
-
-            //   // Check if the frames order is changed
-            //   if (isFramesOrderedChanged) {
-            //     // Updated frames order
-            //     const orderedFrames = newFrameIds.map((frameId: string) =>
-            //       _currentSection.frames.find(
-            //         (frame: IFrame) => frame.id === frameId
-            //       )
-            //     )
-            //     const updatedSections = sections.map((section) => {
-            //       if (section.id === updatedSection.id) {
-            //         return { ...updatedSection, frames: orderedFrames }
-            //       }
-
-            //       return section
-            //     })
-
-            //     console.log('diffOrder updatedSections', updatedSections)
-            //     setSections(updatedSections)
-            //     setCurrentFrame(
-            //       getNextFrame({ sections: updatedSections, currentFrame })
-            //     )
-            //     setInsertAfterFrameId(null)
-            //     setShowFramePlaceholder(false)
-
-            //     return null
-            //   }
-
-            //   const updatedSections = sections.map((section) => {
-            //     if (section.id === updatedSection.id) {
-            //       return { ...updatedSection, frames: section.frames }
-            //     }
-
-            //     return section
-            //   })
-
-            //   console.log('updatedSections', updatedSections)
-            //   setSections(updatedSections)
-            //   setInsertAfterFrameId(null)
-            //   setShowFramePlaceholder(false)
-
-            //   return null
-            // }
-          }
-        }
-      )
-      .subscribe()
-
-    // subscribe to the frame updates
-    const frameUpdateSubscription = supabase
-      .channel('frame-update-channel')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'frame',
-          filter: `meeting_id=eq.${meeting.id}`,
-        },
-        (payload) => {
-          if (payload.eventType === 'UPDATE') {
-            let updatedFrame = payload.new
-
-            setSections((prevSections) =>
-              prevSections.map((section) => {
-                if (section.id === updatedFrame.section_id) {
-                  updatedFrame = {
-                    ...section.frames.find(
-                      (frame: IFrame) => frame?.id === updatedFrame?.id
-                    ),
-                    ...updatedFrame,
-                  }
-
-                  return {
-                    ...section,
-                    frames: section.frames.map((frame: IFrame) =>
-                      frame?.id === updatedFrame?.id ? updatedFrame : frame
-                    ),
-                  }
-                }
-
-                return section
-              })
-            )
-
-            if (updatedFrame.id === currentFrame?.id) {
-              setCurrentFrame(updatedFrame)
-            }
-          }
-
-          if (payload.eventType === 'DELETE') {
-            const deletedFrameId = payload.old?.id
-            const sectionFrameDeletedFrom = sections.find((section) =>
-              section.frames.find(
-                (frame: IFrame) => frame?.id === deletedFrameId
-              )
-            )
-            const deletedFrame = sectionFrameDeletedFrom?.frames.find(
-              (frame: IFrame) => frame?.id === deletedFrameId
-            )
-
-            const deletedFrameIndex = sectionFrameDeletedFrom?.frames.findIndex(
-              (s: IFrame) => s.id === deletedFrameId
-            )
-            const previousFrame =
-              sectionFrameDeletedFrom?.frames[deletedFrameIndex - 1]
-
-            setSections((prevSections) =>
-              prevSections.map((section) => {
-                if (section.id === deletedFrame?.section_id) {
-                  return {
-                    ...section,
-                    frames: section.frames.filter(
-                      (frame: IFrame) => frame?.id !== deletedFrame.id
-                    ),
-                  }
-                }
-
-                return section
-              })
-            )
-
-            if (previousFrame) {
-              setCurrentFrame(previousFrame)
-            }
-          }
-        }
-      )
-      .subscribe()
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      meetingUpdateSubscription.unsubscribe()
-      sectionUpdateSubscription.unsubscribe()
-      frameUpdateSubscription.unsubscribe()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.id, sections, isOwner, currentFrame?.id])
-
-  useEffect(() => {
-    if (!meeting) return
-
-    if (meeting?.sections && meeting.sections.length > 0) {
-      fetchSectionsWithFrames({ ids: meeting.sections })
-
-      return
-    }
-    addFirstFrame()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.sections])
+  }, [currentUser?.id, eventViewFromQuery, event?.owner_id, dispatch])
 
   // useEffect(() => {
   //   if (!currentFrame) return
@@ -447,289 +142,80 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   //   })
   // }, [currentFrame])
 
-  const fetchSectionsWithFrames = async ({ ids }: { ids: string[] }) => {
-    const getSectionsData = await SectionService.getSections({
-      sectionIds: ids,
-    })
-
-    if (getSectionsData.error) {
-      console.error('error while fetching sections: ', getSectionsData.error)
-
-      return
-    }
-
-    const getFramesData = await FrameService.getFrames({
-      sectionIds: getSectionsData.data.map((s: any) => s.id),
-    })
-
-    if (getFramesData.error) {
-      console.error('error while fetching frames: ', getFramesData.error)
-
-      return
-    }
-
-    const frames = getFramesData.data
-    const meetingSections: any[] = ids.map((id: string) =>
-      getSectionsData.data.find((s: any) => s.id === id)
-    )
-
-    const sectionsWithFrames = meetingSections.map((section) => {
-      const validFrameIds = section.frames.filter((f: string) => !!f)
-
-      const sectionFrames = validFrameIds.map(
-        (id: string) => frames.find((s: any) => s?.id === id) as IFrame
-      )
-
-      return {
-        ...section,
-        frames: sectionFrames,
-      }
-    })
-
-    setShowSectionPlaceholder(false)
-    setSections(sectionsWithFrames)
-
-    if (!currentFrame) {
-      setCurrentFrame(sectionsWithFrames[0]?.frames[0])
-    }
-
-    setLoading(false)
-  }
-
-  const addFirstFrame = async () => {
-    setLoading(true)
-
-    const firstFrame = getDefaultCoverFrame({
-      name: useEventData.event.name,
-      title: useEventData.event.name,
-      description: useEventData.event.description,
-    }) as IFrame
-
-    await addFrameToSection({ frame: firstFrame })
-    setLoading(false)
-  }
-
   const addFrameToSection = async ({
     frame,
     section,
     afterFrameId,
   }: {
     frame: Partial<IFrame>
-    section?: Partial<ISection>
+    section: ISection
     afterFrameId?: string
   }) => {
-    let _section
-    let newSection = false
-
-    if (!section?.id) {
-      // 1. Create a new section
-      const sectionResponse = await SectionService.createSection({
-        name: `Section ${(sections?.length || 0) + 1}`,
-        meeting_id: meeting?.id,
-        frames: [],
+    dispatch(
+      createFrameThunk({
+        frame: frame as Partial<FrameModel>,
+        insertAfterFrameId: afterFrameId,
+        meetingId: meeting!.id,
+        sectionId: section!.id,
       })
+    )
 
-      if (sectionResponse.error) {
-        console.error('error while creating section: ', sectionResponse.error)
+    // if
 
-        return
-      }
+    // if (!addedFromSessionPlanner) {
+    //   // TODO: Fix this below line
+    //   // dispatch(setCurrentFrameId(frameResponse.data.id))
+    //   dispatch(setIsOverviewOpenAction(false))
+    // }
 
-      _section = sectionResponse.data
-      newSection = true
-    } else {
-      _section = {
-        ...section,
-        frames: section?.frames?.map((s) => s?.id) || [],
-      }
-    }
-
-    if (!_section) return
-
-    // 2. Create a new frame
-    setShowFramePlaceholder(true)
-
-    const frameResponse = await FrameService.createFrame({
-      ...frame,
-      section_id: _section.id!,
-      meeting_id: meeting?.id,
-    })
-
-    if (frameResponse.error) {
-      console.error('error while creating frame: ', frameResponse.error)
-      setShowFramePlaceholder(false)
-
-      return
-    }
-
-    // 3. Update the section with the frame
-    const updatedSectionFrameIds = _section.frames || []
-
-    if (afterFrameId) {
-      const index = updatedSectionFrameIds.indexOf(afterFrameId)
-      updatedSectionFrameIds.splice(index + 1, 0, frameResponse.data.id)
-    } else {
-      updatedSectionFrameIds.push(frameResponse.data.id)
-    }
-
-    const updateSectionData = await updateSection({
-      sectionPayload: {
-        frames: updatedSectionFrameIds,
-      },
-      sectionId: _section.id,
-    })
-
-    if (!updateSectionData) {
-      setShowFramePlaceholder(false)
-
-      return
-    }
-
-    if (newSection) {
-      // 4. Update the meeting with the section
-      await updateMeeting({
-        meetingPayload: {
-          sections: [...(meeting.sections || []), _section.id],
-        },
-        meetingId: meeting.id,
-      })
-    }
-
-    setShowFramePlaceholder(false)
-    if (!addedFromSessionPlanner) {
-      setCurrentFrame(frameResponse.data)
-      setOverviewOpen(false)
-    }
-
-    if (addedFromSessionPlanner) setAddedFromSessionPlanner(false)
-
-    setCurrentSectionId(null)
+    // if (addedFromSessionPlanner) setAddedFromSessionPlanner(false)
+    console.log('k', isOverviewOpen)
+    // setCurrentSectionIdAction(null)
   }
 
   const addSection = async ({
     name,
-    addToLast,
     afterSectionId,
   }: Parameters<EventContextType['addSection']>[0]) => {
-    if (showSectionPlaceholder) return
-
     const sectionName = name || `Section ${(sections?.length || 0) + 1}`
 
-    setShowSectionPlaceholder(true)
-    const sectionResponse = await SectionService.createSection({
-      name: sectionName,
-      meeting_id: meeting?.id,
-      frames: [],
-    })
-
-    if (sectionResponse.error) {
-      console.error('error while creating section: ', sectionResponse.error)
-
-      return
-    }
-
-    const sectionIds = meeting.sections || []
-    const _currentSectionId = currentFrame?.section_id
-
-    if (_currentSectionId && !addToLast && !afterSectionId) {
-      const index = sectionIds.indexOf(currentSectionId)
-      sectionIds.splice(index + 1, 0, sectionResponse.data.id)
-    } else if (afterSectionId) {
-      const index = sectionIds.indexOf(afterSectionId)
-      sectionIds.splice(index + 1, 0, sectionResponse.data.id)
-    } else {
-      // Add the section at the end
-      sectionIds.push(sectionResponse.data.id)
-    }
-    setSelectedSectionId(sectionResponse.data.id)
-    setInsertInSectionId(sectionResponse.data.id)
-    // Update the sections on meeting
-    await updateMeeting({
-      meetingPayload: {
-        sections: sectionIds,
-      },
-      meetingId: meeting.id,
-    })
+    dispatch(
+      createSectionThunk({
+        meetingId: meeting!.id,
+        sectionName,
+        frameIds: [],
+        insertAfterSectionId: afterSectionId,
+      })
+    )
   }
 
   const updateSection = async ({
     sectionPayload,
     sectionId,
-    meetingId,
   }: {
     sectionPayload: {
       name?: string
       frames?: string[]
+      config?: Json
     }
-    sectionId?: string
-    meetingId?: string
+    sectionId: string
   }) => {
-    const sectionResponse = await SectionService.updateSection({
-      payload: { ...sectionPayload },
-      sectionId,
-      meetingId,
-    })
-
-    if (sectionResponse.error) {
-      console.error('error while updating section: ', sectionResponse.error)
-
-      return null
-    }
-
-    return sectionResponse.data
+    dispatch(
+      updateSectionThunk({
+        sectionId,
+        data: {
+          name: sectionPayload.name || null,
+          frames: sectionPayload.frames || null,
+          config: sectionPayload.config || null,
+        },
+      })
+    )
   }
 
   const deleteSection = async ({ sectionId }: { sectionId: string }) => {
-    const response = await MeetingService.updateMeeting({
-      meetingPayload: {
-        sections: meeting.sections.filter((id: string) => id !== sectionId),
-      },
-      meetingId: meeting.id,
-    })
-
-    if (response.error) {
-      toast.error('Error while deleting section')
-
-      return false
-    }
-
-    // delete section from db- will also cascade delete to frames, frame-response...
-    const deleteResponse = await SectionService.deleteSection({ sectionId })
-
-    if (deleteResponse.error) {
-      toast.error('Error while deleting section')
-
-      return false
-    }
-
-    toast.success('Section deleted successfully')
+    dispatch(deleteSectionsThunk({ sectionId }))
 
     return true
-  }
-
-  const updateMeeting = async ({
-    meetingPayload,
-    meetingId,
-  }: {
-    meetingPayload: {
-      sections: string[]
-    }
-    meetingId: string
-  }) => {
-    const meetingResponse = await MeetingService.updateMeeting({
-      meetingPayload: {
-        sections: meetingPayload.sections,
-      },
-      meetingId,
-    })
-
-    if (meetingResponse.error) {
-      console.error('error while updating meeting: ', meetingResponse.error)
-
-      return null
-    }
-
-    return meetingResponse.data
   }
 
   const importGoogleSlides = async ({
@@ -743,12 +229,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     startPosition: number
     endPosition: number | undefined
   }) => {
-    const importGoogleSlidesResponse = await supabase.functions.invoke(
+    const importGoogleSlidesResponse = await supabaseClient.functions.invoke(
       'import-google-slides',
       {
         body: {
           googleSlideUrl,
-          meetingId: meeting.id,
+          meetingId: meeting!.id,
           sectionId: frame.section_id,
           startPosition,
           endPosition,
@@ -817,46 +303,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (!frameId) return null
     if (Object.keys(framePayload).length === 0) return null
 
-    setSyncing(true)
-    const updateFrameResponse = await FrameService.updateFrame({
-      framePayload,
-      frameId,
-    })
-
-    if (updateFrameResponse.error) {
-      console.error('error while updating frame: ', updateFrameResponse.error)
-
-      return null
-    }
-
-    setSyncing(false)
-
-    return null
-  }
-
-  const updateFrames = async ({
-    framePayload,
-    frameIds,
-  }: {
-    framePayload: Partial<IFrame>
-    frameIds: string[]
-  }) => {
-    if (!frameIds.length) return null
-    if (Object.keys(framePayload).length === 0) return null
-
-    setSyncing(true)
-    const updateFrameResponse = await FrameService.updateFrames({
-      framePayload,
-      frameIds,
-    })
-
-    if (updateFrameResponse?.error) {
-      console.error('error while updating frame: ', updateFrameResponse.error)
-
-      return null
-    }
-
-    setSyncing(false)
+    dispatch(
+      updateFrameThunk({
+        frameId,
+        frame: framePayload as Partial<FrameModel>,
+      })
+    )
 
     return null
   }
@@ -870,21 +322,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const deleteFrame = async (frame: IFrame) => {
-    _deleteFrame(frame.id)
-
-    // Update the section with the frame
-    const section = sections.find((s) => s.id === frame.section_id)
-
-    const _frames = section.frames
-      .filter((s: IFrame) => s?.id !== frame.id)
-      .filter((s: IFrame) => s?.id)
-
-    await updateSection({
-      sectionPayload: {
-        frames: _frames.map((s: IFrame) => s?.id),
-      },
-      sectionId: section.id,
-    })
+    dispatch(deleteFrameThunk({ frameId: frame.id }))
 
     return null
   }
@@ -910,254 +348,91 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     // Update the section with the frame
     const section = sections.find((s) => s.id === frame.section_id)
 
-    const _frames = section.frames
-      .filter((s: IFrame) => !breakoutIds?.includes(s?.id))
-      .filter((s: IFrame) => s?.id)
+    const _frames = section!.frames
+      .filter((s) => !breakoutIds?.includes(s?.id))
+      .filter((s) => s?.id)
 
     await updateSection({
       sectionPayload: {
-        frames: _frames.map((s: IFrame) => s?.id),
+        frames: _frames.map((s) => s?.id),
       },
-      sectionId: section.id,
+      sectionId: section!.id,
     })
 
     return null
   }
 
-  const moveUpFrame = async (frame: IFrame) => {
+  const moveUpFrame = (frame: IFrame) => {
     const section = sections.find((s) => s.id === frame.section_id)
-    const index = section.frames.findIndex((s: IFrame) => s?.id === frame.id)
-    if (index === 0) return null
+    const index = section!.frames.findIndex((s) => s?.id === frame.id)
+    if (index === 0) return
 
-    const sectionFramesCopy = [...section.frames]
-
-    const temp = sectionFramesCopy[index - 1]
-    sectionFramesCopy[index - 1] = sectionFramesCopy[index]
-    sectionFramesCopy[index] = temp
-
-    await updateSection({
-      sectionPayload: {
-        frames: sectionFramesCopy.map((i: IFrame) => i.id),
-      },
-      sectionId: section.id,
-    })
-
-    const updatedSections = sections.map((s) =>
-      s.id === section.id
-        ? {
-            ...s,
-            frames: sectionFramesCopy,
-          }
-        : s
+    dispatch(
+      reorderFrameAction({
+        destinationSectionId: section!.id,
+        destinationIndex: index - 1,
+        frameId: frame.id,
+      })
     )
-
-    setSections(updatedSections)
-
-    return null
   }
 
   const moveUpSection = async (section: ISection) => {
     const index = sections.findIndex((s) => s.id === section.id)
-    if (index === 0) return null
+    if (index === 0) return
 
-    const sectionsCopy = [...sections]
-
-    const temp = sectionsCopy[index - 1]
-    sectionsCopy[index - 1] = sectionsCopy[index]
-    sectionsCopy[index] = temp
-
-    const updateMeetingResponseData = await updateMeeting({
-      meetingPayload: {
-        sections: sectionsCopy.map((s) => s.id),
-      },
-      meetingId: meeting.id,
-    })
-
-    if (!updateMeetingResponseData) return null
-
-    setSections(sectionsCopy)
-
-    return null
+    dispatch(
+      reorderSectionsAction({
+        destinationIndex: index - 1,
+        sourceIndex: index,
+      })
+    )
   }
 
   const moveDownSection = async (section: ISection) => {
     const index = sections.findIndex((s) => s.id === section.id)
-    if (index === sections.length - 1) return null
+    if (index === sections.length - 1) return
 
-    const sectionsCopy = [...sections]
-
-    const temp = sectionsCopy[index + 1]
-    sectionsCopy[index + 1] = sectionsCopy[index]
-    sectionsCopy[index] = temp
-
-    const updateMeetingResponseData = await updateMeeting({
-      meetingPayload: {
-        sections: sectionsCopy.map((s) => s.id),
-      },
-      meetingId: meeting.id,
-    })
-
-    if (!updateMeetingResponseData) return null
-
-    setSections(sectionsCopy)
-
-    return null
+    dispatch(
+      reorderSectionsAction({
+        destinationIndex: index + 1,
+        sourceIndex: index,
+      })
+    )
   }
 
   const moveDownFrame = async (frame: IFrame) => {
     const section = sections.find((s) => s.id === frame.section_id)
-    const index = section.frames.findIndex((s: IFrame) => s?.id === frame.id)
-    if (index === section.frames.length - 1) return null
+    const index = section!.frames.findIndex((s) => s?.id === frame.id)
+    if (index === section!.frames.length - 1) return
 
-    const sectionFramesCopy = [...section.frames]
-
-    const temp = sectionFramesCopy[index + 1]
-    sectionFramesCopy[index + 1] = sectionFramesCopy[index]
-    sectionFramesCopy[index] = temp
-
-    await updateSection({
-      sectionPayload: {
-        frames: sectionFramesCopy.map((i: IFrame) => i?.id),
-      },
-      sectionId: section.id,
-    })
-
-    const updatedSections = sections.map((s) =>
-      s.id === section.id
-        ? {
-            ...s,
-            frames: sectionFramesCopy,
-          }
-        : s
+    dispatch(
+      reorderFrameAction({
+        destinationSectionId: section!.id,
+        destinationIndex: index + 1,
+        frameId: frame.id,
+      })
     )
-
-    setSections(updatedSections)
-
-    return null
-  }
-
-  const reorder = (list: string[], startIndex: number, endIndex: number) => {
-    const result = list
-    const [removed] = result.splice(startIndex, 1)
-    result.splice(endIndex, 0, removed)
-
-    return result
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reorderFrame = async (result: OnDragEndResponder | any) => {
-    const { source, destination } = result
+    const { destination, draggableId } = result
+    const frameId = draggableId.split('frame-draggable-frameId-')[1]
+    const destinationSectionId = destination.droppableId.split(
+      'frame-droppable-sectionId-'
+    )[1]
 
-    if (!destination) {
-      return null
-    }
+    if (!destination) return null
 
-    if (destination.droppableId === source.droppableId) {
-      const sectionId = source.droppableId.split(
-        'frame-droppable-sectionId-'
-      )[1]
-      const section = sections.find((s) => s.id === sectionId)
-      if (!section) return null
-
-      const items = reorder(
-        section.frames.map((s: IFrame) => s?.id),
-        source.index,
-        destination.index
-      )
-
-      console.log('source items', source.index, destination.index, items)
-
-      await updateSection({
-        sectionPayload: {
-          frames: items,
-        },
-        sectionId,
+    dispatch(
+      reorderFrameAction({
+        frameId,
+        destinationSectionId,
+        destinationIndex: result.destination.index,
       })
-    } else {
-      const sourceSectionId = source.droppableId.split(
-        'frame-droppable-sectionId-'
-      )[1]
-      const destinationSectionId = destination.droppableId.split(
-        'frame-droppable-sectionId-'
-      )[1]
-
-      const sourceSection = sections.find((s) => s.id === sourceSectionId)
-      const destinationSection = sections.find(
-        (s) => s.id === destinationSectionId
-      )
-
-      if (!sourceSection || !destinationSection) return null
-
-      const [removed] = sourceSection.frames.splice(source.index, 1)
-
-      destinationSection.frames.splice(destination.index, 0, removed)
-      updateSectionsWithReorderedFrames(
-        removed,
-        sourceSection,
-        destinationSection,
-        sourceSectionId,
-        destinationSectionId
-      )
-    }
+    )
 
     return null
-  }
-
-  const updateSectionsWithReorderedFrames = async (
-    removed: IFrame,
-    sourceSection: any,
-    destinationSection: any,
-    sourceSectionId: string,
-    destinationSectionId: string
-  ) => {
-    const removedIds = [removed?.id]
-    if (removed?.type === ContentType.BREAKOUT) {
-      if (removed?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
-        removed?.content?.breakoutRooms?.map((ele: any) => {
-          if (ele?.activityId) {
-            removedIds.push(ele?.activityId)
-          }
-
-          return ele
-        })
-      } else if (removed?.content?.groupActivityId) {
-        removedIds.push(removed?.content?.groupActivityId as string)
-      }
-    }
-
-    const sourceIds = sourceSection.frames
-      .map((i: IFrame) => i?.id)
-      .filter((i: string) => !removedIds.includes(i))
-
-    const destinationIds: string[] = [
-      ...destinationSection.frames.map((i: IFrame) => i?.id),
-      ...removedIds,
-    ]
-
-    await updateSection({
-      sectionPayload: {
-        frames: sourceIds,
-      },
-      sectionId: sourceSectionId,
-    })
-
-    removedIds.map(async (id: string) => {
-      await updateFrame({
-        framePayload: {
-          section_id: destinationSectionId,
-        },
-        frameId: id,
-      })
-    })
-
-    await updateSection({
-      sectionPayload: {
-        frames: destinationIds.filter(
-          (item, pos) => destinationIds?.indexOf(item) === pos
-        ),
-      },
-      sectionId: destinationSectionId,
-    })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1166,13 +441,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     if (destination.droppableId !== 'section-droppable') return
     if (source.droppableId !== 'section-droppable') return
 
-    const items = reorder(meeting.sections, source.index, destination.index)
-    await updateMeeting({
-      meetingPayload: {
-        sections: items,
-      },
-      meetingId: meeting.id,
-    })
+    dispatch(
+      reorderSectionsAction({
+        sourceIndex: source.index as number,
+        destinationIndex: destination.index as number,
+      })
+    )
   }
 
   const getFrameById = (frameId: string): IFrame => {
@@ -1187,26 +461,19 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     () =>
       permissions.canUpdateFrame &&
       eventMode === 'edit' &&
-      setPreview(!preview),
-    [preview, permissions.canUpdateFrame, eventMode]
+      dispatch(setIsPreviewOpenAction(!isPreviewOpen)),
+    [isPreviewOpen, permissions.canUpdateFrame, eventMode]
   )
-  useHotkeys('ESC', () => permissions.canUpdateFrame && setPreview(false), [
-    permissions.canUpdateFrame,
-  ])
+  useHotkeys(
+    'ESC',
+    () => permissions.canUpdateFrame && dispatch(setIsPreviewOpenAction(false)),
+    [permissions.canUpdateFrame]
+  )
 
   useHotkeys('alt + n', () => addSection({}))
 
-  function withPermissionCheck(func: any, permitted: boolean) {
-    if (permitted) {
-      return func
-    }
-
-    return () => 'permission denied'
-  }
-
   const actions = {
     updateFrame: withPermissionCheck(updateFrame, permissions.canUpdateFrame),
-    updateFrames: withPermissionCheck(updateFrames, permissions.canUpdateFrame),
     deleteFrame: withPermissionCheck(deleteFrame, permissions.canDeleteFrame),
     moveUpFrame: withPermissionCheck(moveUpFrame, permissions.canUpdateFrame),
     moveDownFrame: withPermissionCheck(
@@ -1262,15 +529,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
               : 'view'
             : eventMode,
         meeting,
-        currentFrame,
-        overviewOpen,
+        currentFrame: currentFrame as IFrame | null,
+        overviewOpen: isOverviewOpen,
         loading,
         syncing,
-        isOwner,
-        sections,
-        showSectionPlaceholder,
-        showFramePlaceholder,
-        preview,
+        isOwner: isOwner || false,
+        sections: sections as ISection[],
+        preview: isPreviewOpen,
         error,
         openContentTypePicker,
         currentSectionId,
@@ -1279,16 +544,18 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         insertInSectionId,
         selectedSectionId,
         setOpenContentTypePicker,
-        setPreview,
+        setPreview: (preview) => dispatch(setIsPreviewOpenAction(preview)),
         setCurrentFrame: (frame) => {
-          setCurrentFrame(frame)
+          if (frame?.id) dispatch(setCurrentFrameIdAction(frame?.id))
 
-          if (frame) setOverviewOpen(false)
+          if (frame) dispatch(setIsOverviewOpenAction(false))
         },
-        setCurrentSectionId,
+        setCurrentSectionId: (sectionId) => {
+          dispatch(setCurrentSectionIdAction(sectionId))
+        },
         setOverviewOpen: (open) => {
-          setCurrentFrame(null)
-          setOverviewOpen(open)
+          dispatch(setCurrentFrameIdAction(null))
+          dispatch(setIsOverviewOpenAction(open))
         },
 
         setInsertAfterSectionId,
@@ -1296,9 +563,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         setInsertInSectionId,
         setSelectedSectionId,
         getFrameById,
-        updateSectionsWithReorderedFrames,
-        addNewFrameLoader,
-        setAddNewFrameLoader,
         setAddedFromSessionPlanner,
         ...actions,
       }}>

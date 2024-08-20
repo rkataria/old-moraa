@@ -1,16 +1,15 @@
-import { useContext } from 'react'
-
 import { Skeleton } from '@nextui-org/react'
 
-import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
-import { EventContextType } from '@/types/event-context.type'
+import { useStoreSelector } from '@/hooks/useRedux'
 
 export function FramePlaceholder() {
-  const { showFramePlaceholder } = useContext(EventContext) as EventContextType
+  const isAddFrameLoading = useStoreSelector(
+    (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
+  )
   const { listDisplayMode } = useAgendaPanel()
 
-  if (!showFramePlaceholder) return null
+  if (!isAddFrameLoading) return null
 
   const renderSkeleton = () => {
     if (listDisplayMode === 'list') {

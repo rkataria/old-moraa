@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { contentTypes } from '@/components/common/ContentTypePicker'
-import { FrameStatus } from '@/services/types/enums'
+import { FrameStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 
 export const headerBlock = {

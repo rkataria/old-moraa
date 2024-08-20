@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CreateEventPayload, ScheduleEventPayload } from './event-service-types'
+import { FrameStatus } from '../../types/enums'
 import { APIService } from '../api-service'
-import { FrameStatus } from '../types/enums'
 
 export class EventService extends APIService {
   static async createEvent(eventData: CreateEventPayload) {

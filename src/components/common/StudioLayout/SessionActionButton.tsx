@@ -17,7 +17,7 @@ import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { EventStatus } from '@/services/types/enums'
+import { EventStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 
 function ScheduleSessionButton({
