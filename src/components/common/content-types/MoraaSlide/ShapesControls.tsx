@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/alt-text */
-import { useContext } from 'react'
 
 import {
   Button,
@@ -12,9 +11,7 @@ import {
 import { fabric } from 'fabric'
 import { RiShapesLine } from 'react-icons/ri'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 type Shape = {
   name: string
@@ -60,11 +57,7 @@ const SHAPES: Shape[] = [
 ]
 
 export function ShapesControls() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
 
@@ -85,11 +78,8 @@ export function ShapesControls() {
     path.rotate(shape.rotate || 0)
     canvas.add(path)
     canvas.viewportCenterObject(path)
-
     canvas.setActiveObject(path)
     canvas.renderAll()
-
-    setCanvas(currentFrame?.id as string, canvas)
   }
 
   return (

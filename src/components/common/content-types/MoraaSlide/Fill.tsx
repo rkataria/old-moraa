@@ -1,22 +1,16 @@
-import { useContext } from 'react'
-
 import { Slider } from '@nextui-org/react'
 
 import { ColorPicker } from '../../ColorPicker'
 import { LabelWithInlineControl } from '../../LabelWithInlineControl'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function Fill() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject()
 
   if (!activeObject) return null
 
@@ -37,7 +31,6 @@ export function Fill() {
             onchange={(color) => {
               activeObject.set('fill', color)
               canvas.renderAll()
-              setCanvas(currentFrame?.id as string, canvas)
               canvas.fire('object:modified', { target: activeObject })
             }}
           />
@@ -53,7 +46,6 @@ export function Fill() {
             onchange={(color) => {
               activeObject.set('stroke', color)
               canvas.renderAll()
-              setCanvas(currentFrame?.id as string, canvas)
             }}
           />
         }
@@ -74,7 +66,6 @@ export function Fill() {
             onChange={(value) => {
               activeObject.set('strokeWidth', value as number)
               canvas.renderAll()
-              setCanvas(currentFrame?.id as string, canvas)
             }}
           />
         }
@@ -95,7 +86,6 @@ export function Fill() {
             onChange={(value) => {
               activeObject.set('opacity', value as number)
               canvas.renderAll()
-              setCanvas(currentFrame?.id as string, canvas)
             }}
           />
         }

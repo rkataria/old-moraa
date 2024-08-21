@@ -10,12 +10,16 @@ import { ConfigurationHeader } from '../FrameConfiguration/ConfigurationHeader'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { EventContextType } from '@/types/event-context.type'
 
 export function FrameAppearance() {
   const { currentFrame } = useContext(EventContext) as EventContextType
-  const { activeObject } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
+
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject()
 
   if (!currentFrame) return null
 
@@ -41,12 +45,12 @@ export function FrameAppearance() {
 
   if (activeObject) {
     return (
-      <div className="p-2 text-sm">
+      <div>
         <ConfigurationHeader
           icon={<IoColorPaletteOutline size={18} />}
           title={activeObject.type!}
         />
-        <div className="pt-8 flex flex-col gap-4">
+        <div className="p-4 flex flex-col gap-4">
           <MoraaSlideAppearance key={currentFrame.id} />
         </div>
       </div>
@@ -54,12 +58,12 @@ export function FrameAppearance() {
   }
 
   return (
-    <div className="p-2 text-sm">
+    <div>
       <ConfigurationHeader
         icon={<IoColorPaletteOutline size={18} />}
         title="Appearance"
       />
-      <div className="pt-8 flex flex-col gap-4">
+      <div className="p-4 flex flex-col gap-4">
         <CommonAppearance />
         {renderer}
       </div>

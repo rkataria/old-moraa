@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import { FaRegClone } from 'react-icons/fa'
 import { PiFlipHorizontalFill, PiFlipVerticalFill } from 'react-icons/pi'
 import { RiBringForward, RiSendBackward } from 'react-icons/ri'
@@ -7,18 +5,17 @@ import { RiBringForward, RiSendBackward } from 'react-icons/ri'
 import { Fill } from '@/components/common/content-types/MoraaSlide/Fill'
 import { Position } from '@/components/common/content-types/MoraaSlide/Position'
 import { ControlButton } from '@/components/common/ControlButton'
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { dupliacateObjects } from '@/utils/moraa-slide'
 
 export function MoraaSlideActiveObjectCommonAppearance() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
-  if (!canvas || !activeObject) return null
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject() as fabric.Object
+
+  // if (!activeObject) return null
 
   return (
     <div className="flex flex-col gap-2">
@@ -37,9 +34,8 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            canvas.sendToBack(canvas.getActiveObject() as fabric.Object)
+            canvas.sendToBack(activeObject)
             canvas.renderAll()
-            setCanvas(currentFrame?.id as string, canvas)
           }}>
           <RiSendBackward size={18} />
         </ControlButton>
@@ -55,9 +51,8 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            canvas.getActiveObject()?.bringForward()
+            activeObject.bringForward()
             canvas.renderAll()
-            setCanvas(currentFrame?.id as string, canvas)
           }}>
           <RiBringForward size={18} />
         </ControlButton>
@@ -73,7 +68,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            canvas.getActiveObject()?.set('flipX', !activeObject.flipX)
+            activeObject?.set('flipX', !activeObject.flipX)
             canvas.renderAll()
           }}>
           <PiFlipHorizontalFill size={18} />
@@ -90,7 +85,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            canvas.getActiveObject()?.set('flipY', !activeObject.flipY)
+            activeObject?.set('flipY', !activeObject.flipY)
             canvas.renderAll()
           }}>
           <PiFlipVerticalFill size={18} />
@@ -107,16 +102,7 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             isIconOnly: true,
           }}
           onClick={() => {
-            canvas.getActiveObject()?.clone((clonedObject: fabric.Object) => {
-              clonedObject.set({
-                left: clonedObject.left! + 10,
-                top: clonedObject.top! + 10,
-              })
-              canvas.add(clonedObject)
-              canvas.setActiveObject(clonedObject)
-              canvas.renderAll()
-              setCanvas(currentFrame?.id as string, canvas)
-            })
+            dupliacateObjects(canvas)
           }}>
           <FaRegClone size={18} />
         </ControlButton>

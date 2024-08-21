@@ -1,13 +1,9 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { useContext } from 'react'
-
 import { Select, SelectItem } from '@nextui-org/react'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { fonts } from '@/libs/fonts'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
 
 type FontFamilyOption = {
   key: string
@@ -50,18 +46,19 @@ const FONT_FAMILIES: FontFamilyOption[] = [
 ]
 
 function loadAndUse({ font, canvas }: { font: string; canvas: fabric.Canvas }) {
-  const activeObject = canvas?.getActiveObject() as fabric.Textbox
-
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
   activeObject.set('fontFamily', font)
-  canvas?.renderAll()
+  canvas.renderAll()
 }
 
 export function FontFamily() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const activeObjectState = canvas?.getActiveObject() as fabric.Textbox
+  const { canvas } = useMoraaSlideEditorContext()
+
+  if (!canvas) return null
+
+  const activeObjectState = canvas.getActiveObject() as fabric.Textbox
+
+  if (!activeObjectState) return null
 
   const selectedFontKey = FONT_FAMILIES.find((f) =>
     f.key.includes(activeObjectState?.fontFamily as string)

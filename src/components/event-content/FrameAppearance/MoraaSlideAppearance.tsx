@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   Button,
@@ -13,30 +13,27 @@ import { IoCloseOutline } from 'react-icons/io5'
 import { MoraaSlideActiveObjectAppearance } from './MoraaSlideActiveObjectAppearance'
 import { MoraaSlideTemplates } from '../MoraaSlideConfiguration/MoraaSlideTemplates'
 
-import { BackgroundControlsModal } from '@/components/common/content-types/MoraaSlide/BackgroundControlsModal'
+import { MoraaSlideBackgroundControls } from '@/components/common/content-types/MoraaSlide/BackgroundControls'
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
-import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
 import { loadTemplate } from '@/utils/canvas-templates'
 
 export function MoraaSlideAppearance() {
   const [open, setOpen] = useState(false)
-  const { currentFrame } = useContext(EventContext) as EventContextType
   const { templateKey } = useMoraaSlideStore((state) => state)
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { activeObject } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
   useEffect(() => {
-    if (!templateKey) return
+    if (!templateKey || !canvas) return
 
     loadTemplate(canvas, templateKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [templateKey])
+  }, [canvas, templateKey])
 
-  if (!currentFrame || !canvas) return null
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject()
 
   if (activeObject) {
     return <MoraaSlideActiveObjectAppearance />
@@ -45,13 +42,8 @@ export function MoraaSlideAppearance() {
   return (
     <>
       <LabelWithInlineControl
-        label="Background"
-        className="flex justify-between items-center gap-2"
-        control={<BackgroundControlsModal onClose={() => {}} />}
-      />
-      <LabelWithInlineControl
         label="Layout"
-        className="flex flex-col gap-2"
+        className="flex flex-col gap-2 font-semibold"
         control={
           <Popover
             isOpen={open}
@@ -85,9 +77,9 @@ export function MoraaSlideAppearance() {
                 classNames={{
                   tabList:
                     'gap-6 w-full relative rounded-none p-0 border-b border-divider',
-                  cursor: 'w-full bg-[#22d3ee]',
+                  cursor: 'w-full bg-primary',
                   tab: 'max-w-fit px-0 h-12',
-                  tabContent: 'group-data-[selected=true]:text-[#06b6d4]',
+                  tabContent: 'group-data-[selected=true]:text-primary',
                   panel: 'w-full h-full',
                 }}>
                 <Tab
@@ -117,6 +109,7 @@ export function MoraaSlideAppearance() {
           </Popover>
         }
       />
+      <MoraaSlideBackgroundControls />
     </>
   )
 }

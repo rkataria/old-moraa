@@ -2,391 +2,225 @@ import { useEffect, useRef } from 'react'
 
 import { fabric } from 'fabric'
 import ResizeObserver from 'rc-resize-observer'
-import { useHotkeys } from 'react-hotkeys-hook'
 
 import { BubbleMenu } from './BubbleMenu'
 
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { useMoraaSlideShortcuts } from '@/hooks/useMoraaSlideShortcuts'
 import { HistoryFeature } from '@/libs/fabric-history'
+import {
+  enableGuidelines,
+  handleCanvasObjectAdded,
+  handleCanvasObjectModified,
+  handleCanvasObjectMoving,
+  handleCanvasObjectRemoved,
+  handleCanvasObjectRotating,
+  handleCanvasObjectScaling,
+  handleCanvasObjectSkewing,
+  handleCanvasSelectionCleared,
+  handleCanvasSelectionCreated,
+  handleCanvasSelectionUpdated,
+  initializeFabric,
+  initialSetup,
+  resizeCanvas,
+} from '@/libs/moraa-slide-editor'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { loadCustomFabricObjects } from '@/utils/custom-fabric-objects'
+import { MORAA_SLIDE_TEMPLATES } from '@/utils/moraa-slide-templates'
 import { cn } from '@/utils/utils'
 
-loadCustomFabricObjects()
-
-// eslint-disable-next-line wrap-iife, func-names
-fabric.Textbox.prototype.toObject = function () {
-  // eslint-disable-next-line func-names
-  // @ts-expect-error silence!
-  return fabric.util.object.extend(this.callSuper('toObject'), {
-    name: this.name,
-  })
-}
-
-interface CanvasProps {
+interface MoraaSlideEditorProps {
   frameId: string
+  frameTemplate: string
   frameCanvasData: string | null
+  // eslint-disable-next-line react/no-unused-prop-types
+  canvasObjects?: fabric.Object[]
   frameBackgroundColor: string | null
   saveToStorage: (canvas: fabric.Canvas) => void
 }
 
-const initializeCanvas = ({ frameId }: { frameId: string }) => {
-  fabric.Object.prototype.transparentCorners = false
-  fabric.Object.prototype.cornerColor = '#22d3ee'
-  fabric.Object.prototype.cornerSize = 10
-  fabric.Object.prototype.borderColor = '#22d3ee'
-  fabric.Object.prototype.cornerStyle = 'circle'
-  fabric.Object.prototype.setControlsVisibility({
-    mt: false,
-    mb: false,
-    ml: false,
-    mr: false,
-  })
+// NOTE: This function adds custom fabric object support and modify initial canvas settings
+initialSetup()
 
-  const canvas = new fabric.Canvas(`canvas-${frameId}`, {
-    selectionBorderColor: '#979797',
-    selectionColor: 'transparent',
-    selectionDashArray: [4, 4],
-    selectionLineWidth: 1,
-    backgroundColor: 'transparent',
-    centeredRotation: true,
-    selection: true,
-    // selectionKey: 'ctrlKey',
-  })
-
-  return canvas
-}
-
-const updateCanvasViewportTransform = (
-  canvas: fabric.Canvas,
-  width: number,
-  height: number
-) => {
-  if (!canvas) return
-
-  const scale = width / canvas.getWidth()
-  const zoom = canvas.getZoom() * scale
-  canvas.setDimensions({
-    width,
-    height, // containerWidth / ratio,
-  })
-
-  canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0])
-  canvas.renderAll()
-}
-
-export const handleDeleteSelection = (
-  canvas: fabric.Canvas,
-  frameId: string,
-  setCanvas: (frameId: string, canvas: fabric.Canvas) => void
-) => {
-  let activeObjects: fabric.Object[] = []
-  const activeObject = canvas.getActiveObject()
-
-  if (!activeObject) return
-
-  if (activeObject?.type === 'activeSelection') {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    activeObjects = activeObject.getObjects()
-  } else {
-    activeObjects.push(activeObject)
-  }
-
-  canvas.discardActiveObject()
-  activeObjects.forEach((o) => {
-    canvas.remove(o)
-  })
-
-  canvas.renderAll()
-  setCanvas(frameId, canvas)
-}
-
-export function CanvasEditor({
+export function MoraaSlideEditor({
   frameId,
+  frameTemplate,
   frameCanvasData,
   frameBackgroundColor,
   saveToStorage,
-}: CanvasProps) {
-  const canvasContainerRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[frameId] || null
-  )
-  const { setCanvas, setHistory, setActiveObject } = useMoraaSlideStore(
-    (state) => state
-  )
+}: MoraaSlideEditorProps) {
+  const fabricRef = useRef<fabric.Canvas | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const canvasContainerRef = useRef<HTMLDivElement | null>(null)
 
-  // Delete shortcut for windows
-  useHotkeys('Delete', () => {
-    if (!canvas) return
-
-    handleDeleteSelection(canvas, frameId, setCanvas)
-  })
-
-  // Delete shortcut for mac
-  useHotkeys('backspace', () => {
-    if (!canvas) return
-
-    handleDeleteSelection(canvas, frameId, setCanvas)
-  })
-
-  useHotkeys('ctrl+v', () => {
-    if (!canvas) return
-
-    if (!navigator.clipboard) {
-      console.log('Clipboard API not found')
-
-      return
-    }
-
-    const activeObject = canvas.getActiveObject()
-    if (activeObject) return
-
-    navigator.clipboard.read().then((clipboardItems) => {
-      clipboardItems.forEach((clipboardItem) => {
-        if (!clipboardItem.types.includes('image/png')) return
-
-        clipboardItem.getType('image/png').then((blob) => {
-          const pasteImage = new Image()
-          pasteImage.src = URL.createObjectURL(blob)
-          pasteImage.onload = () => {
-            const imgInstance = new fabric.Image(pasteImage, {
-              left: 100,
-              top: 100,
-              angle: 0,
-              opacity: 1,
-              scaleX: 1,
-              scaleY: 1,
-            })
-
-            canvas.add(imgInstance)
-            canvas.renderAll()
-            setCanvas(frameId, canvas)
-          }
-        })
-      })
-    })
-  })
+  const { setCanvas } = useMoraaSlideEditorContext()
+  const { setHistory, setActiveObject } = useMoraaSlideStore()
+  useMoraaSlideShortcuts()
 
   useEffect(() => {
-    if (!frameId) return
-
-    if (!canvasContainerRef.current) return
-    if (!canvasRef.current) return
-
-    canvasRef.current.width = canvasContainerRef.current?.clientWidth || 0
-    canvasRef.current.height = canvasContainerRef.current?.clientHeight || 0
-
-    const _canvas = initializeCanvas({
-      frameId,
-    })
-
-    _canvas.setDimensions({
-      width: canvasContainerRef.current.clientWidth,
-      height: canvasContainerRef.current.clientHeight,
-    })
-    _canvas.setZoom(1)
-    _canvas.renderAll()
-
-    setCanvas(frameId, _canvas)
-
-    // Enable history feature
-    const history = new HistoryFeature(_canvas)
-
-    setHistory(frameId, history)
-
-    // Set active object to null when frameId changes
     setActiveObject(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameId])
 
   useEffect(() => {
+    const canvas = initializeFabric({
+      fabricRef,
+      canvasRef,
+      canvasContainerRef,
+    })
+
+    // Enable history feature
+    const history = new HistoryFeature(canvas)
+
+    setHistory(frameId, history)
+
+    // Enable guidelines
+    enableGuidelines(canvas)
+
+    if (!canvas) return
+
+    // Array.from(canvasObjects).forEach((object) => {
+    //   fabric.util.enlivenObjects(
+    //     [object],
+    //     (enlivenedObjects: fabric.Object[]) => {
+    //       enlivenedObjects.forEach((enlivenedObj) => {
+    //         // if element is active, keep it in active state so that it can be edited further
+    //         // if (activeObjectRef.current?.objectId === objectId) {
+    //         //   fabricRef.current?.setActiveObject(enlivenedObj)
+    //         // }
+
+    //         // add object to canvas
+    //         fabricRef.current?.add(enlivenedObj)
+    //       })
+    //     },
+    //     /**
+    //      * specify namespace of the object for fabric to render it on canvas
+    //      * A namespace is a string that is used to identify the type of
+    //      * object.
+    //      *
+    //      * Fabric Namespace: http://fabricjs.com/docs/fabric.html
+    //      */
+    //     'fabric'
+    //   )
+    // })
+    // fabricRef.current?.renderAll()
+
+    if (frameCanvasData) {
+      canvas.loadFromJSON(frameCanvasData, () => {
+        canvas.renderAll()
+      })
+    } else {
+      // Load frame template
+      const template = MORAA_SLIDE_TEMPLATES.find(
+        (t) => t.key === frameTemplate
+      )
+
+      if (template) {
+        template.loadTemplate(canvas)
+      }
+    }
+
+    setCanvas(canvas)
+
+    canvas.on('object:added', async (options) => {
+      handleCanvasObjectAdded({ options, fabricRef, frameId })
+
+      const { target } = options
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (target && !target.uuid) {
+        saveToStorage(canvas)
+      }
+    })
+    canvas.on('object:modified', async (options) => {
+      handleCanvasObjectModified({ options })
+      saveToStorage(canvas)
+
+      // Update active object
+      const activeObject = canvas.getActiveObject()
+
+      if (activeObject) {
+        setActiveObject(activeObject)
+      }
+    })
+    canvas.on('object:removed', async (options) => {
+      handleCanvasObjectRemoved({ options })
+      saveToStorage(canvas)
+    })
+    canvas.on('object:moving', async (options) => {
+      handleCanvasObjectMoving({ options })
+      // saveToStorage(canvas)
+    })
+    canvas.on('object:scaling', async (options) => {
+      handleCanvasObjectScaling({ options })
+      // saveToStorage(canvas)
+    })
+    canvas.on('object:rotating', async (options) => {
+      handleCanvasObjectRotating({ options })
+      // saveToStorage(canvas)
+    })
+    canvas.on('object:skewing', async (options) => {
+      handleCanvasObjectSkewing({ options })
+      // saveToStorage(canvas)
+    })
+    canvas.on('selection:created', async (options) => {
+      handleCanvasSelectionCreated({ options, canvas })
+
+      const activeObject = canvas.getActiveObject()
+
+      if (activeObject) {
+        setActiveObject(activeObject)
+      }
+    })
+    canvas.on('selection:updated', async (options) => {
+      handleCanvasSelectionUpdated({ options, canvas })
+
+      const activeObject = canvas.getActiveObject()
+
+      if (activeObject) {
+        setActiveObject(activeObject)
+      }
+    })
+    canvas.on('selection:cleared', async (options) => {
+      handleCanvasSelectionCleared({ options })
+
+      const activeObject = canvas.getActiveObject()
+
+      if (activeObject) {
+        setActiveObject(activeObject)
+      }
+    })
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      canvas.off('object:added')
+      canvas.off('object:modified')
+      canvas.off('object:removed')
+      canvas.off('object:moving')
+      canvas.off('object:scaling')
+      canvas.off('object:rotating')
+      canvas.off('object:skewing')
+      canvas.off('selection:created')
+      canvas.off('selection:updated')
+      canvas.off('selection:cleared')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frameId, frameCanvasData])
+
+  useEffect(() => {
     if (frameBackgroundColor) {
-      canvas?.setBackgroundColor(`${frameBackgroundColor}E6`, () => {
-        canvas?.renderAll()
+      fabricRef.current?.setBackgroundColor(`${frameBackgroundColor}E6`, () => {
+        fabricRef.current?.renderAll()
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameBackgroundColor])
 
-  useEffect(() => {
-    if (!canvas) return
-
-    if (frameCanvasData) {
-      canvas.clear()
-
-      canvas.loadFromJSON(JSON.parse(frameCanvasData || '{}'), () => {
-        const containerWidth =
-          canvasContainerRef.current?.clientWidth || canvas.getWidth()
-        const containerHeight =
-          canvasContainerRef.current?.clientHeight || canvas.getHeight()
-
-        updateCanvasViewportTransform(canvas, containerWidth, containerHeight)
-      })
-    }
-
-    // Attach event listeners
-
-    canvas.on('object:added', handleObjectAdded)
-    canvas.on('object:modified', handleObjectModified)
-    canvas.on('object:scaling', handleObjectScaling)
-    canvas.on('object:removed', handleObjectRemoved)
-    canvas.on('object:moving', handleObjectMoving)
-    canvas.on('object:rotating', handleObjectRotating)
-    canvas.on('selection:created', handleSelectionCreated)
-    canvas.on('selection:updated', handleSelectionUpdated)
-    canvas.on('selection:cleared', handleSelectionCleared)
-    canvas.on('mouse:over', handleMouseOver)
-    canvas.on('mouse:down', handleMouseDown)
-    canvas.on('mouse:out', handleMouseOut)
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      canvas.off('object:added', handleObjectAdded)
-      canvas.off('object:modified', handleObjectModified)
-      canvas.off('object:scaling', handleObjectScaling)
-      canvas.off('object:removed', handleObjectRemoved)
-      canvas.off('object:moving', handleObjectMoving)
-      canvas.off('object:rotating', handleObjectRotating)
-      canvas.off('selection:created', handleSelectionCreated)
-      canvas.off('selection:updated', handleSelectionUpdated)
-      canvas.off('selection:cleared', handleSelectionCleared)
-      canvas.off('mouse:over', handleMouseOver)
-      canvas.off('mouse:down', handleMouseDown)
-      canvas.off('mouse:out', handleMouseOut)
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canvas, frameCanvasData])
-
-  const handleSelectionCreated = () => {
-    if (!canvas) return
-
-    canvas.isDrawingMode = false
-
-    const activeObject = canvas.getActiveObject()
-    setActiveObject(activeObject)
-  }
-
-  const handleSelectionUpdated = () => {
-    if (!canvas) return
-
-    const activeObject = canvas.getActiveObject()
-    setActiveObject(activeObject)
-  }
-
-  const handleSelectionCleared = () => {
-    if (!canvas) return
-
-    setActiveObject(null)
-  }
-
-  const handleObjectAdded = (event: fabric.IEvent) => {
-    if (!canvas) return
-
-    const { target } = event
-
-    if (!target) return
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (target.uuid) return
-
-    saveToStorage(canvas!)
-  }
-
-  const handleObjectModified = () => {
-    if (!canvas) return
-
-    const activeObject = canvas.getActiveObject()
-    setActiveObject(activeObject)
-
-    saveToStorage(canvas!)
-  }
-
-  const handleObjectScaling = () => {
-    if (!canvas) return
-
-    const activeObject = canvas.getActiveObject()
-    setActiveObject(activeObject)
-
-    saveToStorage(canvas!)
-  }
-
-  const handleObjectRemoved = (event: fabric.IEvent) => {
-    if (!canvas) return
-
-    const { target } = event
-
-    if (!target) return
-
-    const activeObject = canvas.getActiveObject()
-    setActiveObject(activeObject)
-
-    saveToStorage(canvas!)
-  }
-
-  const handleObjectMoving = () => {
-    if (!canvas) return
-
-    const activeObject = canvas.getActiveObject()
-    setActiveObject(activeObject)
-
-    saveToStorage(canvas!)
-  }
-
-  const handleObjectRotating = () => {
-    if (!canvas) return
-
-    const activeObject = canvas.getActiveObject()
-    setActiveObject(activeObject)
-
-    saveToStorage(canvas!)
-  }
-
-  const handleMouseOver = (event: fabric.IEvent) => {
-    if (!canvas) return
-
-    const { target } = event
-    if (target) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      target._renderControls(canvas.contextTop, {
-        hasControls: false,
-      })
-      canvas.renderAll()
-    }
-  }
-
-  const handleMouseDown = () => {
-    if (!canvas) return
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    canvas.clearContext(canvas.contextTop)
-  }
-
-  const handleMouseOut = () => {
-    if (!canvas) return
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    canvas.clearContext(canvas.contextTop)
-  }
-
-  const resizeCanvas = (width: number, height: number) => {
-    if (!canvas) return
-
-    updateCanvasViewportTransform(canvas, width, height)
-
-    setCanvas(frameId, canvas)
-  }
-
   return (
-    <div>
+    <div className="w-full h-full">
       <ResizeObserver
-        onResize={({ width, height }) => {
-          resizeCanvas(width, height)
+        onResize={() => {
+          resizeCanvas({ fabricRef, canvasContainerRef })
         }}>
         <div
           ref={canvasContainerRef}
@@ -395,7 +229,7 @@ export function CanvasEditor({
             'border-2 border-black/10'
           )}>
           <canvas ref={canvasRef} id={`canvas-${frameId}`} />
-          <BubbleMenu canvas={canvas!} />
+          <BubbleMenu canvas={fabricRef.current!} />
         </div>
       </ResizeObserver>
     </div>

@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import {
   Popover,
@@ -11,10 +11,8 @@ import { fabric } from 'fabric'
 import { IoListSharp } from 'react-icons/io5'
 
 import { Button } from '@/components/ui/Button'
-import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { fonts } from '@/libs/fonts'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export const BULLET_TYPES: {
@@ -32,11 +30,7 @@ export const getBulletChar = (type: string) => BULLET_TYPES[type]
 
 export function ListBox() {
   const [open, setOpen] = useState(false)
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
 
@@ -54,7 +48,7 @@ export function ListBox() {
     canvas.selection = true
     canvas.add(textbox)
     canvas.setActiveObject(textbox)
-    setCanvas(currentFrame?.id as string, canvas)
+    canvas.renderAll()
 
     setOpen(false)
   }
@@ -73,7 +67,7 @@ export function ListBox() {
     canvas.selection = true
     canvas.add(textbox)
     canvas.setActiveObject(textbox)
-    setCanvas(currentFrame?.id as string, canvas)
+    canvas.renderAll()
 
     setOpen(false)
   }

@@ -6,13 +6,12 @@ import { BubbleMenuMoreOptions } from './BubbleMenuMoreOptions'
 import { ColorPicker } from '../../ColorPicker'
 import { NumberInputCaret } from '../../NumberInputCaret'
 
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-
 export function RectBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
-  const activeObject = useMoraaSlideStore(
-    (state) => state.activeObject
-  ) as fabric.Rect
-  const [stroke, setStroke] = useState<string>(activeObject.stroke as string)
+  const activeObject = canvas.getActiveObject()
+
+  const [stroke, setStroke] = useState<string>(activeObject?.stroke as string)
+
+  if (!activeObject) return null
 
   return (
     <div className="flex justify-start items-center gap-1">

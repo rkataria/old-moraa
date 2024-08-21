@@ -20,12 +20,9 @@ import { LocalFilePicker } from '@/components/common/LocalFilePicker'
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
-import { FrameService } from '@/services/frame.service'
 import { MeetingService } from '@/services/meeting.service'
 import { SectionService } from '@/services/section.service'
 import { ICreateEventPayload } from '@/types/event.type'
-import { IFrame } from '@/types/frame.type'
-import { getDefaultCoverFrame } from '@/utils/content.util'
 import { eventTypes } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
@@ -75,29 +72,32 @@ export function EventsCreatePage() {
             'Failed to create section in newly created event, Please try creating manually.'
           )
         })
-        const firstFrame = getDefaultCoverFrame({
-          name: createEventForm.getValues('name'),
-          title: createEventForm.getValues('name'),
-          description: createEventForm.getValues('description'),
-        }) as IFrame
 
-        const newFrame = await FrameService.createFrame({
-          ...firstFrame,
-          section_id: sectionResponse.data.id!,
-          // TODO: Fix this meeting ID
-          meeting_id: newEvent.data.meeting?.id,
-        }).catch(() =>
-          toast.error(
-            'Failed to create frame in newly created event, Please try creating manually.'
-          )
-        )
+        // // Add default cover frame to newly created event
+        // const firstFrame = getDefaultCoverFrame({
+        //   name: createEventForm.getValues('name'),
+        //   title: createEventForm.getValues('name'),
+        //   description: createEventForm.getValues('description'),
+        // }) as IFrame
+
+        // const newFrame = await FrameService.createFrame({
+        //   ...firstFrame,
+        //   section_id: sectionResponse.data.id!,
+        //   // TODO: Fix this meeting ID
+        //   meeting_id: newEvent.data.meeting?.id,
+        // }).catch(() =>
+        //   toast.error(
+        //     'Failed to create frame in newly created event, Please try creating manually.'
+        //   )
+        // )
 
         await Promise.allSettled([
           SectionService.updateSection({
             meetingId: newEvent.data.meeting.id,
             sectionId: sectionResponse.data.id!,
             payload: {
-              frames: [newFrame.data.id],
+              // frames: [newFrame.data.id],
+              frames: [],
             },
           }),
           MeetingService.updateMeeting({

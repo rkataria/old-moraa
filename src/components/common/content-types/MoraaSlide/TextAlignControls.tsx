@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import {
   BsJustify,
   BsTextCenter,
@@ -9,26 +7,21 @@ import {
 
 import { ControlButton } from '../../ControlButton'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { cn } from '@/utils/utils'
 
 export function TextAlignControls() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
-  if (!canvas || !activeObject) return null
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
+
+  if (!activeObject) return null
 
   const aligText = (align: string) => {
-    const _activeObject = canvas.getActiveObject() as fabric.Textbox
-
-    _activeObject.set('textAlign', align)
+    activeObject.set('textAlign', align)
     canvas.renderAll()
-    setCanvas(currentFrame?.id as string, canvas)
   }
 
   return (
@@ -43,7 +36,6 @@ export function TextAlignControls() {
               ? 'solid'
               : 'flat',
           size: 'sm',
-          radius: 'md',
           className: cn('flex-none flex-grow', {
             'bg-gray-200':
               (activeObject as fabric.Textbox)?.textAlign === 'left',
@@ -63,7 +55,6 @@ export function TextAlignControls() {
               ? 'solid'
               : 'flat',
           size: 'sm',
-          radius: 'md',
           className: cn('flex-none flex-grow', {
             'bg-gray-200':
               (activeObject as fabric.Textbox)?.textAlign === 'left',
@@ -83,7 +74,6 @@ export function TextAlignControls() {
               ? 'solid'
               : 'flat',
           size: 'sm',
-          radius: 'md',
           className: cn('flex-none flex-grow', {
             'bg-gray-200':
               (activeObject as fabric.Textbox)?.textAlign === 'left',
@@ -103,7 +93,6 @@ export function TextAlignControls() {
               ? 'solid'
               : 'flat',
           size: 'sm',
-          radius: 'md',
           className: cn('flex-none flex-grow', {
             'bg-gray-200':
               (activeObject as fabric.Textbox)?.textAlign === 'left',

@@ -9,6 +9,8 @@ import { init } from 'emoji-mart'
 import { Toaster } from 'react-hot-toast'
 import { Provider as ReduxProvider } from 'react-redux'
 
+import { MoraaSlideEditorContextProvider } from './MoraaSlideEditorContext'
+
 import { UserContextProvider } from '@/hooks/useAuth'
 import { store } from '@/stores/store'
 
@@ -22,10 +24,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <NextUIProvider>
         <QueryClientProvider client={queryClient}>
           <UserContextProvider>
-            <main className="moraa-light text-foreground bg-background">
-              {children}
-            </main>
-            <Toaster position="bottom-right" reverseOrder={false} />
+            <MoraaSlideEditorContextProvider>
+              <main className="moraa-light text-foreground bg-background">
+                {children}
+              </main>
+              <Toaster position="bottom-right" reverseOrder={false} />
+            </MoraaSlideEditorContextProvider>
           </UserContextProvider>
         </QueryClientProvider>
       </NextUIProvider>

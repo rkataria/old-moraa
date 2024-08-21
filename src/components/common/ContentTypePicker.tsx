@@ -25,7 +25,6 @@ import { TbNews } from 'react-icons/tb'
 import { ContentTypeCard } from './ContentTypeCard'
 import { RenderIf } from './RenderIf/RenderIf'
 
-import { getContentType } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
 
 export interface IContentType {
@@ -68,6 +67,48 @@ export const contentTypes: IContentType[] = [
     description: 'Create a blank canvas to draw, write',
     contentType: ContentType.MORAA_SLIDE,
     templateKey: 'blank',
+  },
+  {
+    name: 'Intro',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a intro frame to start your session',
+    contentType: ContentType.MORAA_SLIDE,
+    templateKey: 'intro',
+  },
+  {
+    name: 'Quote',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a quote frame to inspire your audience',
+    contentType: ContentType.MORAA_SLIDE,
+    templateKey: 'quote',
+  },
+  {
+    name: 'Main Title',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a main title frame to start your session',
+    contentType: ContentType.MORAA_SLIDE,
+    templateKey: 'main-title',
+  },
+  {
+    name: 'Article',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a article frame to share your content',
+    contentType: ContentType.MORAA_SLIDE,
+    templateKey: 'article',
+  },
+  {
+    name: 'Image Left',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a image left frame to share your content',
+    contentType: ContentType.MORAA_SLIDE,
+    templateKey: 'article-image-left',
+  },
+  {
+    name: 'Image Right',
+    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Create a image right frame to share your content',
+    contentType: ContentType.MORAA_SLIDE,
+    templateKey: 'article-image-right',
   },
   {
     name: 'Page',
@@ -168,6 +209,12 @@ export function ContentTypePicker({
 
   const presentationContent = [
     getContentType(ContentType.MORAA_SLIDE, 'blank'),
+    getContentType(ContentType.MORAA_SLIDE, 'intro'),
+    getContentType(ContentType.MORAA_SLIDE, 'quote'),
+    getContentType(ContentType.MORAA_SLIDE, 'main-title'),
+    getContentType(ContentType.MORAA_SLIDE, 'article'),
+    getContentType(ContentType.MORAA_SLIDE, 'article-image-left'),
+    getContentType(ContentType.MORAA_SLIDE, 'article-image-right'),
     getContentType(ContentType.RICH_TEXT),
   ]
 
@@ -264,4 +311,18 @@ export function ContentTypePicker({
       </ModalContent>
     </Modal>
   )
+}
+
+export const getContentType = (
+  frameType: ContentType,
+  templateKey?: string
+) => {
+  if (templateKey) {
+    return contentTypes.find(
+      (type) =>
+        type.contentType === frameType && type.templateKey === templateKey
+    )
+  }
+
+  return contentTypes.find((type) => type.contentType === frameType)
 }

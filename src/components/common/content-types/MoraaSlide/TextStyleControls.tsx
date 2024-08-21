@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import { useHotkeys } from 'react-hotkeys-hook'
 import {
   BsTypeBold,
@@ -10,15 +8,10 @@ import {
 
 import { ControlButton } from '../../ControlButton'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function TextStyleControls() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
+  const { canvas } = useMoraaSlideEditorContext()
 
   useHotkeys('ctrl+b', () => {
     handleBold()
@@ -35,7 +28,7 @@ export function TextStyleControls() {
 
   if (!canvas) return null
 
-  const activeObject = canvas?.getActiveObject() as fabric.Textbox
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
 
   if (!activeObject) return null
 
@@ -82,7 +75,6 @@ export function TextStyleControls() {
         buttonProps={{
           variant: activeObject?.fontWeight === 'bold' ? 'solid' : 'flat',
           size: 'sm',
-          radius: 'md',
           className: 'flex-none flex-grow',
           isIconOnly: true,
         }}
@@ -96,7 +88,6 @@ export function TextStyleControls() {
         buttonProps={{
           variant: activeObject?.underline ? 'solid' : 'flat',
           size: 'sm',
-          radius: 'md',
           className: 'flex-none flex-grow',
           isIconOnly: true,
         }}
@@ -110,7 +101,6 @@ export function TextStyleControls() {
         buttonProps={{
           variant: activeObject?.fontStyle === 'italic' ? 'solid' : 'flat',
           size: 'sm',
-          radius: 'md',
           className: 'flex-none flex-grow',
           isIconOnly: true,
         }}
@@ -124,7 +114,6 @@ export function TextStyleControls() {
         buttonProps={{
           variant: activeObject?.linethrough ? 'solid' : 'flat',
           size: 'sm',
-          radius: 'md',
           className: 'flex-none flex-grow',
           isIconOnly: true,
         }}

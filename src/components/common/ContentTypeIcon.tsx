@@ -1,8 +1,7 @@
 import { Tooltip, TooltipProps } from '@nextui-org/react'
 
-import { ContentType } from './ContentTypePicker'
+import { ContentType, getContentType } from './ContentTypePicker'
 
-import { getContentType } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
 
 export function ContentTypeIcon({

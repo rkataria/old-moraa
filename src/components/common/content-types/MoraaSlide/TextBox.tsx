@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import {
   Dropdown,
@@ -11,10 +11,8 @@ import { fabric } from 'fabric'
 import { RxText } from 'react-icons/rx'
 
 import { Button } from '@/components/ui/Button'
-import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { fonts } from '@/libs/fonts'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export type TYPOGRAPHY = {
@@ -65,11 +63,7 @@ export const TYPOGRAPHY_LIST: TYPOGRAPHY[] = [
 
 export function TextBox() {
   const [open, setOpen] = useState(false)
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
 
@@ -91,7 +85,7 @@ export function TextBox() {
     canvas.selection = true
     canvas.add(textbox)
     canvas.setActiveObject(textbox)
-    setCanvas(currentFrame?.id as string, canvas)
+    canvas.renderAll()
   }
 
   return (
@@ -114,6 +108,7 @@ export function TextBox() {
             {TYPOGRAPHY_LIST.map((typography) => (
               <DropdownItem
                 key={typography.name}
+                className="px-2 h-8 hover:bg-gray-200"
                 onClick={() => addTextbox(typography)}>
                 <div className="flex justify-start items-center gap-2 p-1">
                   <span>{typography.name}</span>

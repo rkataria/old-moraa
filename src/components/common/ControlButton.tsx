@@ -1,4 +1,6 @@
-import { Button, ButtonProps, Tooltip, TooltipProps } from '@nextui-org/react'
+import { ButtonProps, Tooltip, TooltipProps } from '@nextui-org/react'
+
+import { Button } from '../ui/Button'
 
 import { cn } from '@/utils/utils'
 

@@ -1,43 +1,36 @@
-import { useContext } from 'react'
-
 import { Input } from '@nextui-org/react'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function Position() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
-  if (!canvas || !activeObject) return null
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return null
 
   const updatePosition = (
     key: 'left' | 'top' | 'width' | 'height' | 'angle',
     value: string
   ) => {
     if (key === 'width') {
-      canvas.getActiveObject()?.scaleToWidth(parseInt(value, 10))
-      canvas?.renderAll()
-      setCanvas(currentFrame?.id as string, canvas)
+      activeObject.scaleToWidth(parseInt(value, 10))
+      canvas.renderAll()
 
       return
     }
 
     if (key === 'height') {
-      canvas.getActiveObject()?.scaleToHeight(parseInt(value, 10))
-      canvas?.renderAll()
-      setCanvas(currentFrame?.id as string, canvas)
+      activeObject.scaleToHeight(parseInt(value, 10))
+      canvas.renderAll()
 
       return
     }
 
-    canvas.getActiveObject()?.set(key, parseInt(value, 10))
-    canvas?.renderAll()
-    setCanvas(currentFrame?.id as string, canvas)
+    activeObject.set(key, parseInt(value, 10))
+    canvas.renderAll()
   }
 
   const { left, top, width, height, scaleX, scaleY, angle } = activeObject

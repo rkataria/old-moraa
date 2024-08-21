@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import { FontFamily } from './FontFamily'
 import { TwoWayNumberCounter } from './FontSizeControl'
 import { FontWeight } from './FontWeight'
@@ -8,25 +6,20 @@ import { LineHeight } from './LineHeight'
 import { TextAlignControls } from './TextAlignControls'
 import { TextStyleControls } from './TextStyleControls'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function TextboxSettings() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
-  if (!canvas || !activeObject) return null
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
+
+  if (!activeObject) return null
 
   const handleFontSizeChange = (size: number) => {
-    const _activeObject = canvas.getActiveObject() as fabric.Textbox
-
-    _activeObject.set('fontSize', size)
+    activeObject.set('fontSize', size)
     canvas.renderAll()
-    setCanvas(currentFrame?.id as string, canvas)
   }
 
   return (
@@ -46,8 +39,8 @@ export function TextboxSettings() {
           </div>
         </div>
       </div>
-      <LetterSpacing canvas={canvas} />
-      <LineHeight canvas={canvas} />
+      <LetterSpacing />
+      <LineHeight />
       <div className="py-2">
         <h3 className="font-semibold">Alignment</h3>
         <div className="pt-2 flex gap-2">

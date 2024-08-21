@@ -37,7 +37,7 @@ export function SwitchControl({
         <Switch
           isSelected={value}
           size="sm"
-          color="success"
+          color="primary"
           classNames={{
             wrapper: 'h-5 w-9 mr-0',
             thumb: cn('w-3 h-3'),

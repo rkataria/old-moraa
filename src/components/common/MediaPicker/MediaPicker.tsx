@@ -40,6 +40,7 @@ const MENU_OPTIONS = {
 type MediaPickerProps = {
   trigger?: React.ReactNode
   placement?: 'top' | 'bottom' | 'left' | 'right'
+  crop?: boolean
   onSelect?: (file: File) => void
   onSelectCallback?: (imageElment: HTMLImageElement) => void
 }
@@ -47,6 +48,7 @@ type MediaPickerProps = {
 export function MediaPicker({
   trigger,
   placement = 'bottom',
+  crop = true,
   onSelect,
   onSelectCallback,
 }: MediaPickerProps) {
@@ -77,7 +79,7 @@ export function MediaPicker({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[672px] rounded-md p-0">
+      <PopoverContent className="relative w-[672px] rounded-md p-0">
         <div className="h-96 flex justify-start items-stretch w-full">
           <div className="w-48 h-full border-r-2 p-4 flex flex-col justify-between gap-8">
             <div className="flex flex-col gap-4">
@@ -146,6 +148,7 @@ export function MediaPicker({
             <MediaProviderContent
               provider={provider}
               fileType={fileType}
+              crop={crop}
               onSelectCallback={(imageElment) => {
                 setOpen(false)
                 onSelectCallback?.(imageElment)

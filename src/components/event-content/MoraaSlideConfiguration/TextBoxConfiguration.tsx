@@ -1,26 +1,18 @@
-import { useContext } from 'react'
-
 import { FontFamily } from './FontFamily'
 import { FontSize } from './FontSize'
 import { FontWeight } from './FontWeight'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function TextboxConfiguration() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const activeObject = useMoraaSlideStore((state) => state.activeObject)
+  const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
 
-  const handleFontWeightChange = (weight: string) => {
-    const _activeObject = canvas.getActiveObject() as fabric.Textbox
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
 
-    _activeObject.set('fontWeight', weight)
+  const handleFontWeightChange = (weight: string) => {
+    activeObject.set('fontWeight', weight)
     canvas.renderAll()
   }
 

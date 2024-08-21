@@ -5,14 +5,13 @@ import { LuRedo, LuUndo } from 'react-icons/lu'
 import { HeaderButton } from './HeaderButton'
 
 import { EventContext } from '@/contexts/EventContext'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
 
 export function HistoryControls() {
   const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
+  const { canvas } = useMoraaSlideEditorContext()
   const history = useMoraaSlideStore(
     (state) => state.history[currentFrame?.id as string]
   )

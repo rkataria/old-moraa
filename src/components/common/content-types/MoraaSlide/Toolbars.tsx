@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import { fabric } from 'fabric'
 
 import { HistoryControls } from './HistoryControls'
@@ -8,15 +6,10 @@ import { ShapePicker } from './ShapePicker/ShapePicker'
 import { TextBox } from './TextBox'
 import { MediaPicker } from '../../MediaPicker/MediaPicker'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function Toolbars() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
+  const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
 
@@ -80,6 +73,7 @@ export function Toolbars() {
 
             canvas.add(obj)
             canvas.setActiveObject(obj)
+            canvas.renderAll()
           })
         }}
         onSelect={(svgFile) => {
@@ -98,11 +92,11 @@ export function Toolbars() {
               group.set('centeredRotation', true)
               canvas?.add(group)
               canvas.setActiveObject(group)
+              canvas.renderAll()
             })
           }
         }}
       />
-      {/* <ShapesControls /> */}
       <HistoryControls />
     </>
   )

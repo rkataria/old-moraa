@@ -16,6 +16,8 @@ import { TYPOGRAPHY, TYPOGRAPHY_LIST } from './TextBox'
 import { ColorPicker } from '../../ColorPicker'
 import { NumberInputCaret } from '../../NumberInputCaret'
 
+import { loadFont } from '@/utils/utils'
+
 export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
   const [typographyName, setTypographyName] = useState<string>('')
   const activeObject = canvas.getActiveObject() as fabric.Textbox
@@ -28,7 +30,11 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
 
   if (!activeObject) return null
 
-  const updateTypography = (typography: TYPOGRAPHY) => {
+  const updateTypography = async (typography: TYPOGRAPHY) => {
+    const fontLoaded = await loadFont(typography.name, typography.fontWeight)
+
+    if (!fontLoaded) return
+
     const _activeObject = canvas.getActiveObject() as fabric.Textbox
 
     _activeObject.set('name', typography.name)
@@ -38,6 +44,8 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
 
     setTypographyName(typography.name)
   }
+
+  if (!activeObject || !activeObject.fontSize) return null
 
   return (
     <div className="flex justify-start items-center gap-1">
@@ -56,6 +64,7 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
           {TYPOGRAPHY_LIST.map((typography) => (
             <DropdownItem
               key={typography.name}
+              className="px-2 h-8 hover:bg-gray-200"
               onClick={() => updateTypography(typography)}>
               <div className="flex justify-start items-center gap-2 p-1">
                 <span>{typography.name}</span>
@@ -69,6 +78,42 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
       <NumberInputCaret
         number={activeObject.fontSize}
         min={10}
+        selectOnFocus
+        dropdownItems={[
+          {
+            name: '14',
+            value: 14,
+          },
+          {
+            name: '16',
+            value: 16,
+          },
+          {
+            name: '20',
+            value: 20,
+          },
+          {
+            name: '24',
+            value: 24,
+          },
+          {
+            name: '32',
+            value: 32,
+          },
+          {
+            name: '48',
+            value: 48,
+          },
+          {
+            name: '64',
+            value: 64,
+          },
+          {
+            name: '128',
+            value: 128,
+          },
+        ]}
+        selectedKeys={[activeObject.fontSize.toString()]}
         onChange={(value: number) => {
           const _activeObject = canvas.getActiveObject() as fabric.Textbox
 
@@ -98,8 +143,15 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         variant={activeObject.fontWeight === 700 ? 'flat' : 'light'}
         isIconOnly
         className="h-7 text-sm flex justify-center items-center gap-1 px-1"
-        onClick={() => {
+        onClick={async () => {
           const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+          const fontLoaded = await loadFont(
+            _activeObject.fontFamily!,
+            _activeObject.fontWeight === 700 ? 400 : 700
+          )
+
+          if (!fontLoaded) return
 
           _activeObject.set(
             'fontWeight',
@@ -114,8 +166,15 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         variant={activeObject.fontStyle === 'italic' ? 'flat' : 'light'}
         isIconOnly
         className="h-7 text-sm flex justify-center items-center gap-1 px-1"
-        onClick={() => {
+        onClick={async () => {
           const _activeObject = canvas.getActiveObject() as fabric.Textbox
+          const fontLoaded = await loadFont(
+            _activeObject.fontFamily!,
+            _activeObject.fontWeight as number,
+            _activeObject.fontStyle === 'italic' ? 'normal' : 'italic'
+          )
+
+          if (!fontLoaded) return
 
           _activeObject.set(
             'fontStyle',

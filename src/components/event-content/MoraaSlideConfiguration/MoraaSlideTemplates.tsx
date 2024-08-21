@@ -1,23 +1,16 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext } from 'react'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { MORAA_SLIDE_TEMPLATES, Template } from '@/utils/moraa-slide-templates'
 
 export function MoraaSlideTemplates() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
+
+  if (!canvas) return null
 
   const loadTemplate = (template: Template) => {
-    if (!canvas) return
-
-    setCanvas(currentFrame?.id as string, template.loadTemplate(canvas))
+    template.loadTemplate(canvas)
   }
 
   return (

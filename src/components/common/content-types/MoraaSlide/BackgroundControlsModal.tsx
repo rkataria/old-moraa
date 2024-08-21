@@ -6,17 +6,17 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
 } from '@nextui-org/react'
 import { fabric } from 'fabric'
 import { IoColorPalette } from 'react-icons/io5'
 
 import { ColorPicker } from '../../ColorPicker'
 import { ControlButton } from '../../ControlButton'
+import { MediaPicker } from '../../MediaPicker/MediaPicker'
 
-import { FileUploader } from '@/components/event-content/FileUploader'
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { EventContextType } from '@/types/event-context.type'
 
 type BackgroundControlsModalProps = {
@@ -31,9 +31,7 @@ export function BackgroundControlsModal({
   ) as EventContextType
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
+  const { canvas } = useMoraaSlideEditorContext()
 
   useEffect(() => {
     setLoading(!open)
@@ -102,36 +100,23 @@ export function BackgroundControlsModal({
                   </div>
                   <div className="flex justify-between items-center">
                     <h3>Image</h3>
-                    <FileUploader
-                      onFilesUploaded={(urls) => {
-                        const url = urls?.[0]?.signedUrl
-
-                        if (!url) return
-
+                    <MediaPicker
+                      placement="left"
+                      trigger={
+                        <Button variant="bordered" size="sm">
+                          Upload Image
+                        </Button>
+                      }
+                      onSelectCallback={(imageElment) => {
                         setLoading(true)
 
-                        fabric.Image.fromURL(url, (img) => {
-                          img.set({
-                            left: 0,
-                            top: 0,
-                          })
-
-                          img.scaleToHeight(canvas.getHeight())
-                          img.scaleToWidth(canvas.getWidth())
-                          canvas.setBackgroundImage(
-                            img,
-                            canvas.renderAll.bind(canvas)
-                          )
-                          canvas.fire('object:modified', { target: img })
+                        fabric.Image.fromURL(imageElment.src, (img) => {
+                          canvas.backgroundImage = img
                           canvas.renderAll()
+                          canvas.fire('object:modified')
                           setLoading(false)
                           handleClose()
                         })
-                      }}
-                      triggerProps={{
-                        size: 'sm',
-                        radius: 'md',
-                        variant: 'ghost',
                       }}
                     />
                   </div>
@@ -144,7 +129,8 @@ export function BackgroundControlsModal({
                   </Button>
                 )}
                 <Button
-                  color="secondary"
+                  color="primary"
+                  size="sm"
                   isLoading={loading}
                   onPress={handleClose}>
                   {loading ? 'Applying background image' : 'Done'}

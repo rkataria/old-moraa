@@ -109,7 +109,10 @@ export function SectionItem({ section, actionDisabled }: SectionItemProps) {
               className={cn('duration-300 shrink-0 cursor-pointer', {
                 'rotate-90': sectionExpanded,
               })}
-              onClick={() => toggleExpandedSection(section.id)}
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleExpandedSection(section.id)
+              }}
             />
             <LuLayers size={18} className="flex-none" />
             <EditableLabel

@@ -2,12 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { fabric } from 'fabric'
 
-export const loadTemplate = (
-  canvas: fabric.Canvas | null,
-  templateKey: string
-) => {
-  if (!canvas) return
-
+export const loadTemplate = (canvas: fabric.Canvas, templateKey: string) => {
   canvas.clear()
 
   switch (templateKey) {

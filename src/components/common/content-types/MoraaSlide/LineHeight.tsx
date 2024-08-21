@@ -1,13 +1,15 @@
 import { NumberInputCaret } from '../../NumberInputCaret'
 
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
-export function LineHeight({ canvas }: { canvas: fabric.Canvas }) {
-  const activeObject = useMoraaSlideStore(
-    (state) => state.activeObject
-  ) as fabric.Textbox
+export function LineHeight() {
+  const { canvas } = useMoraaSlideEditorContext()
 
-  if (!canvas || !activeObject) return null
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
+
+  if (!activeObject) return null
 
   return (
     <div>
@@ -23,9 +25,7 @@ export function LineHeight({ canvas }: { canvas: fabric.Canvas }) {
             caret: 'hover:bg-gray-200',
           }}
           onChange={(value: number) => {
-            const _activeObject = canvas.getActiveObject() as fabric.Textbox
-
-            _activeObject?.set('lineHeight', Number(value))
+            activeObject?.set('lineHeight', Number(value))
             canvas.renderAll()
           }}
         />

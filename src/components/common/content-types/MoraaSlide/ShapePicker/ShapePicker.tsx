@@ -16,7 +16,7 @@ const MENU_OPTIONS = [
     label: SHAPE_TYPES.BASIC,
   },
   {
-    label: SHAPE_TYPES.ARROWS,
+    label: SHAPE_TYPES.LINES,
     disabled: true,
   },
   {

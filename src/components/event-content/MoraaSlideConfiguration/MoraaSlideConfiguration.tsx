@@ -1,14 +1,10 @@
-import { useContext } from 'react'
-
 import { LuPencilRuler } from 'react-icons/lu'
 
 import { ObjectPosition } from './ObjectPostion'
 import { TextboxConfiguration } from './TextBoxConfiguration'
 import { ConfigurationHeader } from '../FrameConfiguration/ConfigurationHeader'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 enum ObjectType {
   TEXT = 'text',
@@ -23,15 +19,11 @@ enum ObjectType {
 }
 
 export function MoraaSlideSettings() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { activeObject } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
-  if (!canvas) {
-    return <div>Loading...</div>
-  }
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject()
 
   const renderersByContentType: Record<ObjectType, React.ReactNode> = {
     [ObjectType.TEXT]: <TextboxConfiguration />,

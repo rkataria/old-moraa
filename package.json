@@ -144,6 +144,7 @@
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",
     "react-dropzone": "^14.2.3",
+    "react-easy-crop": "^5.0.8",
     "react-google-slides": "^4.0.0",
     "react-hook-form": "^7.52.1",
     "react-hot-toast": "^2.4.1",

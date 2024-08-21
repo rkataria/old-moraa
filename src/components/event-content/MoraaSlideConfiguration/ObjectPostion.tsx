@@ -1,22 +1,15 @@
-import { useContext } from 'react'
-
 import { Input } from '@nextui-org/react'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function ObjectPosition() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
+  const { canvas } = useMoraaSlideEditorContext()
 
-  const activeObject = canvas?.getActiveObject()
+  if (!canvas) return null
 
-  if (!activeObject) {
-    return null
-  }
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return null
 
   const updatePosition = (
     key: 'left' | 'top' | 'width' | 'height',

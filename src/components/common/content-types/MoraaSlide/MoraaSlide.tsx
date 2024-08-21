@@ -1,31 +1,33 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 
-import { CanvasEditor } from './Editor'
+import { MoraaSlideEditor } from './Editor'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 
-interface CanvasProps {
+interface MoraaSlideProps {
   frame: IFrame & {
     content: {
-      defaultTemplateKey: string
+      defaultTemplate: string
       canvas: string
       svg: string
+      objects: fabric.Object[]
     }
   }
 }
 
 const SAVE_TO_STORAGE_DELAY = 1000
 
-export function MoraaSlide({ frame }: CanvasProps) {
+export function MoraaSlide({ frame }: MoraaSlideProps) {
   // const { setRightSidebarVisiblity } = useStudioLayout()
   const { updateFrame } = useContext(EventContext) as EventContextType
   const [canvasData] = useState<string | null>(frame.content?.canvas)
+  const [canvasObjects] = useState<fabric.Object[]>(frame.content?.objects)
   const [frameBackgroundColor, setFrameBackgroundColor] = useState<
     string | null
   >(frame.config?.backgroundColor)
-  const saveTimeout = useRef<NodeJS.Timeout | null>(null)
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (frame.config?.backgroundColor) {
@@ -37,12 +39,14 @@ export function MoraaSlide({ frame }: CanvasProps) {
   }, [frame.config?.backgroundColor])
 
   const saveToStorage = (canvas: fabric.Canvas) => {
-    if (saveTimeout?.current) {
-      clearTimeout(saveTimeout.current as NodeJS.Timeout)
+    if (saveTimeoutRef?.current) {
+      clearTimeout(saveTimeoutRef.current as NodeJS.Timeout)
     }
 
     const timeout = setTimeout(() => {
       const json = canvas.toJSON()
+      const objects = canvas.getObjects()
+      const objectsJson = objects.map((object) => object.toJSON())
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       json.objects.forEach((object: any) => {
@@ -73,22 +77,25 @@ export function MoraaSlide({ frame }: CanvasProps) {
                 height: canvas.getHeight(),
               },
             }),
+            objects: objectsJson,
           },
         },
         frameId: frame.id,
       })
 
-      saveTimeout.current = null
+      saveTimeoutRef.current = null
     }, SAVE_TO_STORAGE_DELAY)
 
-    saveTimeout.current = timeout
+    saveTimeoutRef.current = timeout
   }
 
   return (
-    <CanvasEditor
+    <MoraaSlideEditor
       key={frame.id}
       frameId={frame.id}
+      frameTemplate={frame.content.defaultTemplate}
       frameCanvasData={canvasData}
+      canvasObjects={canvasObjects}
       frameBackgroundColor={frameBackgroundColor}
       saveToStorage={saveToStorage}
     />

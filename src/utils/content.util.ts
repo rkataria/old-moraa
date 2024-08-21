@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
-import { contentTypes } from '@/components/common/ContentTypePicker'
+import { getContentType } from '@/components/common/ContentTypePicker'
 import { FrameStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 
@@ -225,20 +225,6 @@ export const isFrameInteractive = (frame: IFrame) =>
 
 export const frameHasFrameResponses = (frame: IFrame) =>
   [ContentType.POLL, ContentType.REFLECTION].includes(frame.type)
-
-export const getContentType = (
-  frameType: ContentType,
-  templateKey?: string
-) => {
-  if (templateKey) {
-    return contentTypes.find(
-      (type) =>
-        type.contentType === frameType && type.templateKey === templateKey
-    )
-  }
-
-  return contentTypes.find((type) => type.contentType === frameType)
-}
 
 export const isFrameThumbnailAvailable = (frameType: ContentType) =>
   [

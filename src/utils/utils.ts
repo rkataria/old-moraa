@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx'
+import FontFaceObserver from 'fontfaceobserver'
 import toast from 'react-hot-toast'
 import { IoIosSquare } from 'react-icons/io'
 import { twMerge } from 'tailwind-merge'
@@ -200,4 +201,23 @@ export const FrameColorCodes = {
     icon: IoIosSquare({ color: '#F3F4F6', size: 24 }),
     color: '#F3F4F6',
   },
+}
+
+export async function loadFont(
+  font: string,
+  fontWeight = 400,
+  fontStyle = 'normal'
+) {
+  try {
+    await new FontFaceObserver(font, {
+      weight: fontWeight,
+      style: fontStyle,
+    }).load()
+
+    return true
+  } catch (error) {
+    console.error(error, font)
+
+    return false
+  }
 }

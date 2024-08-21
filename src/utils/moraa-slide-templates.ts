@@ -25,6 +25,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
 
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
 
+      canvas.requestRenderAll()
+      canvas.fire('object:modified')
+
       return canvas
     },
   },
@@ -67,6 +70,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       canvas.add(quoteText)
       canvas.add(authorText)
 
+      canvas.renderAll()
+      canvas.fire('object:modified')
+
       return canvas
     },
   },
@@ -92,6 +98,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
 
       canvas.add(titleText)
       canvas.viewportCenterObject(titleText)
+
+      canvas.renderAll()
+      canvas.fire('object:modified')
 
       return canvas
     },
@@ -179,6 +188,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       canvas.add(footerRightText)
       canvas.add(footerCenterText)
 
+      canvas.renderAll()
+      canvas.fire('object:modified')
+
       return canvas
     },
   },
@@ -241,6 +253,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       canvas.add(titleText)
       canvas.add(subtitleText)
       canvas.add(paragraphText)
+
+      canvas.renderAll()
+      canvas.fire('object:modified')
 
       return canvas
     },
@@ -326,6 +341,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
 
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
 
+      canvas.renderAll()
+      canvas.fire('object:modified')
+
       return canvas
     },
   },
@@ -398,6 +416,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       canvas.requestRenderAll()
 
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+
+      canvas.renderAll()
+      canvas.fire('object:modified')
 
       return canvas
     },

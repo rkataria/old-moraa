@@ -1,28 +1,26 @@
-import { useContext } from 'react'
-
-import { Button, ButtonGroup } from '@nextui-org/react'
+import { ButtonGroup } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { Button } from '@/components/ui/Button'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function FontSize() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const activeObject = canvas?.getActiveObject() as fabric.Textbox
+  const { canvas } = useMoraaSlideEditorContext()
 
-  const fontSize = activeObject?.fontSize as number
-
-  // hotkeys
   useHotkeys('-', () => {
     handleFontSizeChange(fontSize - 1)
   })
-  useHotkeys('-', () => {
+  useHotkeys('+', () => {
     handleFontSizeChange(fontSize + 1)
   })
+
+  if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
+
+  if (!activeObject) return null
+
+  const fontSize = activeObject.fontSize as number
 
   const handleFontSizeChange = (newSize: number) => {
     activeObject.set('fontSize', newSize)
@@ -30,7 +28,7 @@ export function FontSize() {
   }
 
   return (
-    <ButtonGroup radius="md">
+    <ButtonGroup>
       <Button
         size="sm"
         variant="flat"

@@ -1,28 +1,19 @@
 /* eslint-disable react/button-has-type */
-import { useContext } from 'react'
 
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 
 import { BULLET_CHARS, BULLET_TYPES, getBulletChar } from './ListBox'
 import { LabelWithInlineControl } from '../../LabelWithInlineControl'
 
-import { EventContext } from '@/contexts/EventContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { EventContextType } from '@/types/event-context.type'
+import { Button } from '@/components/ui/Button'
+import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function BulletListSettings() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
-  const canvas = useMoraaSlideStore(
-    (state) => state.canvasInstances[currentFrame?.id as string]
-  )
-  const { activeObject, setCanvas } = useMoraaSlideStore((state) => state)
+  const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
+
+  const activeObject = canvas.getActiveObject()
 
   if (!activeObject) return null
 
@@ -45,8 +36,6 @@ export function BulletListSettings() {
     canvas.getActiveObject()?.set('bulletType', type)
     canvas.renderAll()
     canvas.fire('object:modified')
-
-    setCanvas(currentFrame?.id as string, canvas)
   }
 
   return (
@@ -71,12 +60,7 @@ function BulletTypeDropdown({
   onChange: (type: string) => void
 }) {
   const items = Object.keys(BULLET_TYPES).map((key) => (
-    <Button
-      size="sm"
-      variant="flat"
-      isIconOnly
-      radius="full"
-      onClick={() => onChange(key)}>
+    <Button size="sm" variant="flat" isIconOnly onClick={() => onChange(key)}>
       {BULLET_TYPES[key]}
     </Button>
   ))
@@ -84,7 +68,7 @@ function BulletTypeDropdown({
   return (
     <Popover placement="bottom">
       <PopoverTrigger>
-        <Button size="sm" variant="flat" isIconOnly radius="full">
+        <Button size="sm" variant="flat" isIconOnly>
           {BULLET_TYPES[type]}
         </Button>
       </PopoverTrigger>

@@ -6,7 +6,7 @@ import { MORAA_SLIDE_SHAPES } from '@/constants/moraa-slide-shapes'
 
 export enum SHAPE_TYPES {
   BASIC = 'Basic',
-  ARROWS = 'Arrows',
+  LINES = 'Lines',
   BANNERS = 'Banners',
   CALLOUTS = 'Callouts',
   STARS_AND_BUBBLES = 'Stars & Bubbles',
@@ -39,7 +39,7 @@ export function ShapePickerContent({
         return (
           <div key={`${type}-${index}`}>
             <h3 className="font-semibold">{type}</h3>
-            <div className="flex justify-start items-start gap-4 flex-wrap py-4">
+            <div className="grid grid-cols-6 place-items-center gap-8 py-4">
               {MORAA_SLIDE_SHAPES[type].map((shape, shapeIndex: number) => (
                 <div
                   key={`${shape.label}-${shapeIndex}`}

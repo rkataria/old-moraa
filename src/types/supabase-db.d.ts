@@ -640,7 +640,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_or_replace_object_in_frame: {
+        Args: {
+          p_frame_id: string
+          p_object_id: string
+          p_object_value: Json
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
