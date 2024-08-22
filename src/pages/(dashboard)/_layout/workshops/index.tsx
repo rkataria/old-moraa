@@ -2,9 +2,11 @@ import { createFileRoute } from '@tanstack/react-router'
 import { GiAirBalloon } from 'react-icons/gi'
 
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
+import { beforeLoad } from '@/utils/before-load'
 
 export const Route = createFileRoute('/(dashboard)/_layout/workshops/')({
   component: () => <WorkshopsPage />,
+  beforeLoad,
 })
 
 function WorkshopsPage() {

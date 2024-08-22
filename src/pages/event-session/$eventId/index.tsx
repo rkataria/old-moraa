@@ -12,6 +12,7 @@ import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
 import { useDyteListeners } from '@/hooks/useDyteBreakoutListeners'
 import { useEnrollment } from '@/hooks/useEnrollment'
+import { beforeLoad } from '@/utils/before-load'
 
 type EventSessionPageInnerProps = {
   roomJoined: boolean
@@ -20,6 +21,7 @@ type EventSessionPageInnerProps = {
 
 export const Route = createFileRoute('/event-session/$eventId/')({
   component: EventSessionPage,
+  beforeLoad,
 })
 
 export function EventSessionPageInner({
