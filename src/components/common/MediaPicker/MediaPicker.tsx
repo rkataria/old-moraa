@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { BiSolidImage, BiSolidVideos } from 'react-icons/bi'
@@ -48,10 +48,11 @@ type MediaPickerProps = {
 export function MediaPicker({
   trigger,
   placement = 'bottom',
-  crop = true,
+  crop = false,
   onSelect,
   onSelectCallback,
 }: MediaPickerProps) {
+  const localFileInputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState(false)
   const [provider, setProvider] = useState<MediaProviderType>(
     MediaProviderType.LIBRARY
@@ -126,6 +127,7 @@ export function MediaPicker({
             <div>
               <label htmlFor="upload">
                 <input
+                  ref={localFileInputRef}
                   type="file"
                   id="upload"
                   className="hidden"
@@ -138,7 +140,13 @@ export function MediaPicker({
                     }
                   }}
                 />
-                <Button size="sm" color="primary" fullWidth>
+                <Button
+                  size="sm"
+                  color="primary"
+                  fullWidth
+                  onClick={() => {
+                    localFileInputRef.current?.click()
+                  }}>
                   Upload media
                 </Button>
               </label>
@@ -150,8 +158,8 @@ export function MediaPicker({
               fileType={fileType}
               crop={crop}
               onSelectCallback={(imageElment) => {
-                setOpen(false)
                 onSelectCallback?.(imageElment)
+                setOpen(false)
               }}
             />
           </div>

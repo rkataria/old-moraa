@@ -18,6 +18,7 @@ export function Toolbars() {
       <TextBox />
       <ListBox />
       <MediaPicker
+        crop
         onSelectCallback={(img) => {
           if (!img) return
 

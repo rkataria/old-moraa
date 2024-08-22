@@ -37,8 +37,8 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   )
 
   const { eventId } = useParams({ strict: false })
-  const { event, meeting } = useEvent({ id: eventId })
-  const { enrollment } = useEnrollment({ eventId })
+  const { event, meeting } = useEvent({ id: eventId! })
+  const { enrollment } = useEnrollment({ eventId: eventId! })
   const [inputVal, setInputVal] = useState<string>('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
