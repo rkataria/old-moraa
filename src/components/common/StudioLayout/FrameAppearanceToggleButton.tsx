@@ -1,5 +1,7 @@
-import { Button, Tooltip } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import { IoColorPaletteOutline } from 'react-icons/io5'
+
+import { Tooltip } from '../ShortuctTooltip'
 
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
@@ -14,7 +16,7 @@ export function FrameAppearanceToggleButton() {
   }
 
   return (
-    <Tooltip content="Frame Appearance" placement="left">
+    <Tooltip label="Frame Appearance" placement="left">
       <Button
         size="sm"
         isIconOnly

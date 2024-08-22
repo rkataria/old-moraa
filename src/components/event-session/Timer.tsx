@@ -18,7 +18,7 @@ import { RenderIf } from '../common/RenderIf/RenderIf'
 import { ControlButton } from '@/components/common/ControlButton'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { cn, zeroPad } from '@/utils/utils'
+import { cn, KeyboardShortcuts, zeroPad } from '@/utils/utils'
 
 const defaultDuration: Readonly<number> = 5 * 60
 
@@ -200,7 +200,8 @@ export function Timer() {
             ),
           }}
           tooltipProps={{
-            content: isTimerRunning ? 'Time Remaining' : 'Launch Timer',
+            label: KeyboardShortcuts.Live.startAndStopTimer.label,
+            actionKey: KeyboardShortcuts.Live.startAndStopTimer.key,
           }}
           onClick={handleTimerButtonClick}>
           {isTimerRunning ? (

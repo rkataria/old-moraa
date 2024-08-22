@@ -1,5 +1,7 @@
-import { Button, Tooltip } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import { LuSettings } from 'react-icons/lu'
+
+import { Tooltip } from '../ShortuctTooltip'
 
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'

@@ -26,7 +26,7 @@ export function LeaveMeetingToggle() {
           endContent: <MdLogout size={16} className="text-white" />,
         }}
         tooltipProps={{
-          content: 'Leave meeting',
+          label: 'Leave meeting',
         }}
         onClick={() => setState({ activeLeaveConfirmation: true })}>
         Leave

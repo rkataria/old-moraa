@@ -1,12 +1,13 @@
-import { ButtonProps, Tooltip, TooltipProps } from '@nextui-org/react'
+import { ButtonProps } from '@nextui-org/react'
 
+import { Tooltip, TooltipComponentProps } from './ShortuctTooltip'
 import { Button } from '../ui/Button'
 
 import { cn } from '@/utils/utils'
 
 export type MeetingControlButtonProps = {
   children: React.ReactNode
-  tooltipProps?: TooltipProps
+  tooltipProps?: TooltipComponentProps
   buttonProps: ButtonProps
   hideTooltip?: boolean
   buttonLabel?: string

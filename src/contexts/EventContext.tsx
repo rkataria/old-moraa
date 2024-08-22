@@ -73,7 +73,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const { permissions } = useEventPermissions()
 
   const sections = useEventSelector()
-  console.log('sections inside event contect', sections)
 
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
@@ -119,10 +118,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   useEffect(() => {
     if (!event?.owner_id || !currentUser?.id) return
 
-    if (event?.owner_id !== currentUser?.id) return
+    if (event.owner_id !== currentUser.id) return
 
-    if (eventViewFromQuery === 'edit') {
-      dispatch(setIsPreviewOpenAction(false))
+    if (eventViewFromQuery === 'view') {
+      dispatch(setIsPreviewOpenAction(true))
     }
   }, [currentUser?.id, eventViewFromQuery, event?.owner_id, dispatch])
 
@@ -457,20 +456,32 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   useHotkeys(
-    'p',
-    () =>
-      permissions.canUpdateFrame &&
-      eventMode === 'edit' &&
-      dispatch(setIsPreviewOpenAction(!isPreviewOpen)),
-    [isPreviewOpen, permissions.canUpdateFrame, eventMode]
+    'e',
+    () => {
+      if (permissions.canUpdateFrame && eventMode === 'edit') {
+        dispatch(setIsPreviewOpenAction(false))
+        router.navigate({
+          search: { action: 'edit' },
+        })
+      }
+    },
+    [permissions.canUpdateFrame, eventMode]
   )
+
   useHotkeys(
-    'ESC',
-    () => permissions.canUpdateFrame && dispatch(setIsPreviewOpenAction(false)),
+    'p',
+    () => {
+      if (eventMode !== 'edit') return
+      if (!permissions.canUpdateFrame) return
+      dispatch(setIsPreviewOpenAction(true))
+      router.navigate({
+        search: { action: 'view' },
+      })
+    },
     [permissions.canUpdateFrame]
   )
 
-  useHotkeys('alt + n', () => addSection({}))
+  useHotkeys('alt + N', () => !isPreviewOpen && addSection({}), [isPreviewOpen])
 
   const actions = {
     updateFrame: withPermissionCheck(updateFrame, permissions.canUpdateFrame),

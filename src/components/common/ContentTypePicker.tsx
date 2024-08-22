@@ -1,13 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import {
-  Modal,
-  ModalContent,
-  ModalBody,
-  Tooltip,
-  Button,
-} from '@nextui-org/react'
+import { Modal, ModalContent, ModalBody, Button } from '@nextui-org/react'
 import {
   IconCards,
   IconAlignCenter,
@@ -24,6 +18,7 @@ import { TbNews } from 'react-icons/tb'
 
 import { ContentTypeCard } from './ContentTypeCard'
 import { RenderIf } from './RenderIf/RenderIf'
+import { Tooltip } from './ShortuctTooltip'
 
 import { cn } from '@/utils/utils'
 

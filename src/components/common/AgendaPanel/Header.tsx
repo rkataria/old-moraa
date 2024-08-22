@@ -3,6 +3,7 @@
 
 import { ListToggleButton } from './ListToggleButton'
 import { OverviewButton } from './OverviewButton'
+import { Tooltip } from '../ShortuctTooltip'
 
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -25,10 +26,17 @@ export function Header() {
         <div className="flex items-center justify-between gap-2">
           <OverviewButton label="Overview" />
           <div className={cn('flex justify-end items-center gap-2')}>
-            <ListToggleButton
-              listDisplayMode={listDisplayMode}
-              toggleListDisplayMode={toggleListDisplayMode}
-            />
+            <Tooltip
+              label={listDisplayMode === 'list' ? 'Grid View' : 'List View'}
+              actionKey={listDisplayMode === 'list' ? 'G' : 'L'}
+              placement="bottom">
+              <div>
+                <ListToggleButton
+                  listDisplayMode={listDisplayMode}
+                  toggleListDisplayMode={toggleListDisplayMode}
+                />
+              </div>
+            </Tooltip>
           </div>
         </div>
       )

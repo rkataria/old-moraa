@@ -2,6 +2,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu'
 
 import { AddContentButton } from './AddContentButton'
+import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -19,13 +20,15 @@ export function BottomControls() {
       : BOTTOM_CONTROLS_HEIGHT
 
   useHotkeys(
-    'ctrl + [',
+    '[',
     toggleLeftSidebar,
     {
       enableOnFormTags: ['INPUT', 'TEXTAREA'],
     },
     [toggleLeftSidebar]
   )
+
+  const leftSideBarMaximized = leftSidebarVisiblity === 'maximized'
 
   return (
     <div
@@ -36,13 +39,17 @@ export function BottomControls() {
         height: `${bottomControlsHeight}px`,
       }}>
       <AddContentButton className="flex-auto" />
-      <Button size="sm" isIconOnly variant="flat" onClick={toggleLeftSidebar}>
-        {leftSidebarVisiblity === 'maximized' ? (
-          <LuPanelLeftClose size={18} strokeWidth={1.2} />
-        ) : (
-          <LuPanelLeftOpen size={18} strokeWidth={1.2} />
-        )}
-      </Button>
+      <Tooltip
+        label={leftSideBarMaximized ? 'Collapse' : 'Expand'}
+        actionKey="[">
+        <Button size="sm" isIconOnly variant="flat" onClick={toggleLeftSidebar}>
+          {leftSidebarVisiblity === 'maximized' ? (
+            <LuPanelLeftClose size={18} strokeWidth={1.2} />
+          ) : (
+            <LuPanelLeftOpen size={18} strokeWidth={1.2} />
+          )}
+        </Button>
+      </Tooltip>
     </div>
   )
 }

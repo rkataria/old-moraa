@@ -14,6 +14,7 @@ import {
   AddParticipantsForm,
   ParticipantsFormData,
 } from './AddParticipantsForm'
+import { Tooltip } from './ShortuctTooltip'
 import { Button } from '../ui/Button'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -68,13 +69,15 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
 
   return (
     <>
-      <Button
-        size="sm"
-        isIconOnly
-        variant="light"
-        onClick={() => setOpen(true)}>
-        <LuUserPlus size={20} className="text-[#52525B]" />
-      </Button>
+      <Tooltip label="Invite others">
+        <Button
+          size="sm"
+          isIconOnly
+          variant="light"
+          onClick={() => setOpen(true)}>
+          <LuUserPlus size={20} className="text-[#52525B]" />
+        </Button>
+      </Tooltip>
 
       <Modal size="2xl" isOpen={open} onClose={() => setOpen(false)}>
         <ModalContent>

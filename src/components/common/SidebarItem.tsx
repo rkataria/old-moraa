@@ -1,7 +1,12 @@
 import { useLocation, useRouter } from '@tanstack/react-router'
 import { IconType } from 'react-icons'
 import { HiOutlineTemplate } from 'react-icons/hi'
-import { LuCalendarHeart, LuHome, LuLibrary } from 'react-icons/lu'
+import {
+  LuCalendarHeart,
+  LuHelpCircle,
+  LuHome,
+  LuLibrary,
+} from 'react-icons/lu'
 
 import { Button } from '../ui/Button'
 
@@ -33,6 +38,11 @@ const navigation: TNavigation[] = [
     name: 'Community templates',
     href: '/templates',
     icon: HiOutlineTemplate,
+  },
+  {
+    name: 'Help & Support',
+    href: '/help',
+    icon: LuHelpCircle,
   },
 ]
 

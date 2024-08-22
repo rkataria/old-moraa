@@ -1,10 +1,11 @@
 import { useContext } from 'react'
 
+import { Switch, SwitchThumbIconProps } from '@nextui-org/react'
 import { useNavigate } from '@tanstack/react-router'
-import { CiEdit } from 'react-icons/ci'
-import { LuCheck } from 'react-icons/lu'
+import { BsEyeFill } from 'react-icons/bs'
+import { MdEdit } from 'react-icons/md'
 
-import { Button } from '../ui/Button'
+import { Tooltip } from './ShortuctTooltip'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -26,14 +27,25 @@ export function PreviewSwitcher() {
       search: { action: preview ? 'edit' : 'view' },
     })
   }
+  const getThumbIcon = (props: SwitchThumbIconProps) =>
+    props.isSelected ? (
+      <BsEyeFill size={12} className="text-primary" />
+    ) : (
+      <MdEdit size={12} {...props} className="text-primary" />
+    )
 
   return (
-    <Button
-      size="sm"
-      color="primary"
-      startContent={!preview ? <LuCheck size={16} /> : <CiEdit size={16} />}
-      onClick={handlePreviewSwitcher}>
-      {preview ? 'Edit' : 'Done editing'}
-    </Button>
+    <Tooltip
+      label={preview ? 'Switch to edit mode' : 'Switch to preview mode'}
+      actionKey={preview ? 'E' : 'P'}>
+      <Switch
+        size="md"
+        isSelected={preview}
+        color="primary"
+        onClick={handlePreviewSwitcher}
+        thumbIcon={getThumbIcon}
+        classNames={{ wrapper: 'mr-0' }}
+      />
+    </Tooltip>
   )
 }

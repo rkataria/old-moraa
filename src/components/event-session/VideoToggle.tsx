@@ -4,7 +4,7 @@ import { IoVideocamOffOutline, IoVideocamOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function VideoToggle({ className = '' }: { className?: string }) {
   const self = useDyteSelector((state) => state.self)
@@ -38,7 +38,8 @@ export function VideoToggle({ className = '' }: { className?: string }) {
         ),
       }}
       tooltipProps={{
-        content: isVideoEnabled ? 'Hide video' : 'Show video',
+        label: KeyboardShortcuts.Live.startAndStopVideo.label,
+        actionKey: KeyboardShortcuts.Live.startAndStopVideo.key,
       }}
       onClick={handleVideo}>
       {isVideoEnabled ? (

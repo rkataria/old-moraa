@@ -15,6 +15,8 @@ import {
 import { MdBlurOn } from 'react-icons/md'
 import { RiSparkling2Fill } from 'react-icons/ri'
 
+import { Tooltip } from '../common/ShortuctTooltip'
+
 import { VIRTUAL_BACKGROUND_IMAGES } from '@/constants/dyte'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
@@ -139,15 +141,17 @@ export function VideoBackgroundSettingsButtonWithModal({
 
   return (
     <>
-      <Button
-        isIconOnly
-        radius="full"
-        color="primary"
-        className={cn('flex justify-center items-center')}
-        {...buttonProps}
-        onClick={() => setOpen(true)}>
-        <RiSparkling2Fill size={20} className="text-white" />
-      </Button>
+      <Tooltip label="Video Settings">
+        <Button
+          isIconOnly
+          radius="full"
+          color="primary"
+          className={cn('flex justify-center items-center shrink-0')}
+          {...buttonProps}
+          onClick={() => setOpen(true)}>
+          <RiSparkling2Fill size={20} className="text-white" />
+        </Button>
+      </Tooltip>
 
       <Modal
         size="5xl"

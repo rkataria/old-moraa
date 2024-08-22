@@ -4,7 +4,7 @@ import { IoMicOutline, IoMicOffOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function MicToggle({ className = '' }: { className?: string }) {
   const self = useDyteSelector((state) => state.self)
@@ -38,7 +38,8 @@ export function MicToggle({ className = '' }: { className?: string }) {
         ),
       }}
       tooltipProps={{
-        content: isMicEnabled ? 'Mute' : 'Unmute',
+        label: KeyboardShortcuts.Live.muteUnmute.label,
+        actionKey: KeyboardShortcuts.Live.muteUnmute.key,
       }}
       onClick={handleMic}>
       {isMicEnabled ? (

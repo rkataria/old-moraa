@@ -1,5 +1,7 @@
-import { Button, Tooltip, cn } from '@nextui-org/react'
+import { Button, cn } from '@nextui-org/react'
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+
+import { Tooltip } from './ShortuctTooltip'
 
 import { useHotkeys } from '@/hooks/useHotkeys'
 

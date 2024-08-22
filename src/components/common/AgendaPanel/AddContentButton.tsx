@@ -2,6 +2,8 @@ import { useContext } from 'react'
 
 import { AiOutlinePlusSquare } from 'react-icons/ai'
 
+import { Tooltip } from '../ShortuctTooltip'
+
 import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -27,29 +29,33 @@ export function AddContentButton({ className }: { className?: string }) {
   if (expanded) {
     return (
       <div className={cn('flex justify-center items-center', className)}>
-        <Button
-          size="sm"
-          color="primary"
-          fullWidth
-          endContent={<AiOutlinePlusSquare size={18} />}
-          onClick={() => {
-            setOpenContentTypePicker?.(true)
-          }}>
-          Add frame
-        </Button>
+        <Tooltip label="Add a new frame" actionKey="F">
+          <Button
+            size="sm"
+            color="primary"
+            fullWidth
+            endContent={<AiOutlinePlusSquare size={18} />}
+            onClick={() => {
+              setOpenContentTypePicker?.(true)
+            }}>
+            Add frame
+          </Button>
+        </Tooltip>
       </div>
     )
   }
 
   return (
-    <Button
-      size="sm"
-      color="primary"
-      isIconOnly
-      onClick={() => {
-        setOpenContentTypePicker?.(true)
-      }}>
-      <AiOutlinePlusSquare size={18} />
-    </Button>
+    <Tooltip label="Add a new frame" actionKey="F">
+      <Button
+        size="sm"
+        color="primary"
+        isIconOnly
+        onClick={() => {
+          setOpenContentTypePicker?.(true)
+        }}>
+        <AiOutlinePlusSquare size={18} />
+      </Button>
+    </Tooltip>
   )
 }

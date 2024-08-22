@@ -11,7 +11,6 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { toast } from 'react-hot-toast'
-import { useHotkeys } from 'react-hotkeys-hook'
 
 import { ContentLoading } from './ContentLoading'
 import { CreateEventFormData, NewEventForm } from './NewEventForm'
@@ -48,7 +47,6 @@ export function CreateEventButtonWithModal({
   const [open, setOpen] = useState<boolean>(false)
   const { currentUser } = useAuth()
   const [showPageLoader, setShowPageLoader] = useState(false)
-  useHotkeys('n', () => setOpen(true), [])
   const router = useRouter()
 
   const eventService = isEdit

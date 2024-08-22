@@ -1,5 +1,4 @@
-import { Tooltip } from '@nextui-org/react'
-
+import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { cn, FrameColorCodes } from '@/utils/utils'
 
 interface ITrack {

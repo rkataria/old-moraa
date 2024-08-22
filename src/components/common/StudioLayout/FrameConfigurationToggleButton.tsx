@@ -1,7 +1,8 @@
-import { Tooltip } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import { BsSliders } from 'react-icons/bs'
 
-import { Button } from '@/components/ui/Button'
+import { Tooltip } from '../ShortuctTooltip'
+
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
 
@@ -17,7 +18,7 @@ export function FrameConfigurationToggleButton() {
   }
 
   return (
-    <Tooltip content="Frame Configuration" placement="left">
+    <Tooltip label="Frame Configuration" placement="left">
       <Button
         size="sm"
         isIconOnly

@@ -12,7 +12,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Tooltip,
 } from '@nextui-org/react'
 import { Editor } from '@tiptap/react'
 import { HexColorPicker } from 'react-colorful'
@@ -38,6 +37,7 @@ import {
 import { MdInvertColors } from 'react-icons/md'
 
 import { FileUploader } from './FileUploader'
+import { Tooltip } from '../common/ShortuctTooltip'
 
 import { cn, isColorDark } from '@/utils/utils'
 

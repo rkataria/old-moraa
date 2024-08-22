@@ -7,7 +7,7 @@ import { IoChatbubblesOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function ChatsToggle({
   isChatsSidebarOpen,
@@ -53,7 +53,8 @@ export function ChatsToggle({
           }),
         }}
         tooltipProps={{
-          content: isChatsSidebarOpen ? 'Hide Chats' : 'Show Chats',
+          label: KeyboardShortcuts.Live.chats.label,
+          actionKey: KeyboardShortcuts.Live.chats.key,
         }}
         onClick={handleChat}>
         <IoChatbubblesOutline size={20} />

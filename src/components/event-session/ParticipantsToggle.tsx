@@ -3,7 +3,7 @@ import { IoPeopleOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function ParticipantsToggle({
   isParticipantsSidebarOpen,
@@ -26,9 +26,8 @@ export function ParticipantsToggle({
         }),
       }}
       tooltipProps={{
-        content: isParticipantsSidebarOpen
-          ? 'Hide Participants'
-          : 'Show Participants',
+        label: KeyboardShortcuts.Live.participants.label,
+        actionKey: KeyboardShortcuts.Live.participants.key,
       }}
       onClick={onClick}>
       <IoPeopleOutline size={20} />

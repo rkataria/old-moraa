@@ -1,12 +1,14 @@
 import { useContext } from 'react'
 
-import { Link } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { IoIosArrowBack } from 'react-icons/io'
 
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
 import { Toolbars } from '../common/content-types/MoraaSlide/Toolbars'
+import { HelpButton } from '../common/HelpButton'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
+import { Tooltip } from '../common/ShortuctTooltip'
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 import { Button } from '../ui/Button'
 
@@ -21,6 +23,7 @@ export function Header({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   event: any
 }) {
+  const navigate = useNavigate()
   const { isOwner, preview, currentFrame } = useContext(
     EventContext
   ) as EventContextType
@@ -39,6 +42,7 @@ export function Header({
       <AddParticipantsButtonWithModal eventId={event.id} />
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
       <PreviewSwitcher />
+      <HelpButton />
     </>
   )
 
@@ -50,11 +54,16 @@ export function Header({
     <div className="h-full px-3 py-1">
       <div className="flex items-center justify-between w-full h-12">
         <div className="flex items-center justify-start gap-2">
-          <Link to="/events">
-            <Button size="sm" variant="light" isIconOnly>
+          <Tooltip label="Back to dashboard">
+            <Button
+              size="sm"
+              variant="light"
+              isIconOnly
+              onClick={() => navigate({ to: '/events' })}>
               <IoIosArrowBack size={16} />
             </Button>
-          </Link>
+          </Tooltip>
+
           <span className="font-medium">{event?.name}</span>
         </div>
         {editable && currentFrame?.type === ContentType.MORAA_SLIDE && (

@@ -24,7 +24,7 @@ export function MediaSettingsToggle({
         ),
       }}
       tooltipProps={{
-        content: 'Media Setting',
+        label: 'Media Setting',
       }}
       onClick={onClick}>
       <IoEllipsisVertical size={20} />

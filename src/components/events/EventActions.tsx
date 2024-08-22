@@ -85,7 +85,7 @@ export function EventActions({
     }
 
     if (key === 'edit') {
-      router.navigate({ to: `/events/${event.id}?action=edit` })
+      router.navigate({ to: `/events/${event.id}` })
     }
 
     if (key === 'view') {

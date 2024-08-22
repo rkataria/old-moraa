@@ -2,10 +2,10 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Key, useContext, useRef } from 'react'
 
-import { Tooltip } from '@nextui-org/react'
 import { HiOutlinePaintBrush } from 'react-icons/hi2'
 
 import { DropdownActions } from '@/components/common/DropdownActions'
+import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { cn, FrameColorCodes, isColorDark } from '@/utils/utils'

@@ -1,8 +1,10 @@
 import { useContext } from 'react'
 
-import { Button, Tooltip } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { LuClipboardEdit } from 'react-icons/lu'
+
+import { Tooltip } from '../ShortuctTooltip'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -34,7 +36,7 @@ export function FrameNoteToggleButton() {
   }
 
   return (
-    <Tooltip content="Frame Notes" placement="left">
+    <Tooltip label="Notes" actionKey="N" placement="left">
       <Button
         size="sm"
         isIconOnly

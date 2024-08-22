@@ -14,7 +14,7 @@ import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 const EMOJIS = [
   'heart',
@@ -80,7 +80,8 @@ export function ReactWithEmojiToggle() {
               ),
             }}
             tooltipProps={{
-              content: 'React with emoji',
+              label: KeyboardShortcuts.Live.emoji.label,
+              actionKey: KeyboardShortcuts.Live.emoji.key,
             }}
             onClick={() => {
               setIsOpen((o) => !o)

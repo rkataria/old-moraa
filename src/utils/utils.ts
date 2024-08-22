@@ -203,6 +203,91 @@ export const FrameColorCodes = {
   },
 }
 
+export const KeyboardShortcuts = {
+  Dashboard: {
+    createNew: {
+      label: 'Create a new event',
+      key: 'N',
+    },
+  },
+  'Studio Mode': {
+    newSection: {
+      label: 'Create a new section at last',
+      key: 'alt + N',
+    },
+    newFrame: {
+      label: 'Add a new frame',
+      key: 'F',
+    },
+    edit: {
+      label: 'Switch to Edit Mode',
+      key: 'E',
+    },
+    preview: {
+      label: 'Switch to Preview Mode',
+      key: 'P',
+    },
+    notes: {
+      label: 'Notes',
+      key: 'N',
+    },
+  },
+
+  'Agenda Panel': {
+    grid: {
+      label: 'Grid View',
+      key: 'G',
+    },
+    list: {
+      label: 'Grid View',
+      key: 'L',
+    },
+    expandAndCollapse: {
+      label: 'Collapse/Expand',
+      key: '[',
+    },
+  },
+  Live: {
+    muteUnmute: {
+      label: 'Mute / unmute',
+      key: 'M',
+    },
+    startAndStopVideo: {
+      label: 'Start / stop video',
+      key: 'V',
+    },
+    raiseAndLowerHand: {
+      label: 'Raise/lower hand',
+      key: 'H',
+    },
+    startAndStopPresentation: {
+      label: 'Start / stop presentation',
+      key: 'S',
+    },
+    emoji: {
+      label: 'Emoji',
+      key: 'E',
+    },
+
+    startAndStopTimer: {
+      label: 'Start / stop timer',
+      key: 'T',
+    },
+    whiteboard: {
+      label: 'Start whiteboard',
+      key: 'W',
+    },
+    participants: {
+      label: 'Show / hide participants',
+      key: 'P',
+    },
+    chats: {
+      label: 'Show / hide Chats',
+      key: 'C',
+    },
+  },
+}
+
 export async function loadFont(
   font: string,
   fontWeight = 400,

@@ -5,7 +5,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Tooltip,
 } from '@nextui-org/react'
 import { Duration, DurationObjectUnits } from 'luxon'
 import { IoCloseCircle, IoTimeOutline } from 'react-icons/io5'
@@ -13,6 +12,7 @@ import { IoCloseCircle, IoTimeOutline } from 'react-icons/io5'
 import { Minutes } from './Minutes'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
+import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'

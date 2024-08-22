@@ -1,7 +1,9 @@
 import { useContext, useMemo } from 'react'
 
-import { Button, Tooltip, cn } from '@nextui-org/react'
+import { Button, cn } from '@nextui-org/react'
 import { IconChevronUp, IconChevronDown } from '@tabler/icons-react'
+
+import { Tooltip } from './ShortuctTooltip'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'

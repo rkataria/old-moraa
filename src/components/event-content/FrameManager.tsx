@@ -33,6 +33,7 @@ import { getDefaultContent } from '@/utils/content.util'
 
 export function FrameManager() {
   const { eventId } = useParams({ strict: false })
+
   const { event, isLoading: eventLoading } = useEvent({ id: eventId as string })
   const [selectedContentType, setContentType] = useState<ContentType | null>(
     null

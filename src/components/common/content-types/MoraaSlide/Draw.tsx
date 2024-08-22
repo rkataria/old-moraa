@@ -6,12 +6,12 @@ import {
   PopoverContent,
   PopoverTrigger,
   Slider,
-  Tooltip,
 } from '@nextui-org/react'
 import { MdOutlineDraw } from 'react-icons/md'
 
 import { ColorPicker } from '../../ColorPicker'
 import { LabelWithInlineControl } from '../../LabelWithInlineControl'
+import { Tooltip } from '../../ShortuctTooltip'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { cn } from '@/utils/utils'

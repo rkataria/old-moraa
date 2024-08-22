@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from 'react'
 
 import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { Tooltip } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 
@@ -22,6 +21,8 @@ import { VideoToggle } from './VideoToggle'
 import { WhiteBoardToggle } from './WhiteBoardToggle'
 import { BreakoutHeaderButton } from '../common/breakout/BreakoutToggleButton'
 import { ControlButton } from '../common/ControlButton'
+import { HelpButton } from '../common/HelpButton'
+import { Tooltip } from '../common/ShortuctTooltip'
 import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -75,7 +76,7 @@ export function MeetingHeader({
   return (
     <div className="h-16 px-2 z-[9] bg-transparent flex justify-between items-center">
       <div className="flex justify-end items-center gap-6">
-        <Tooltip content={event.name} closeDelay={100}>
+        <Tooltip label={event.name} closeDelay={100}>
           <span className="max-w-[10.9375rem] overflow-hidden !whitespace-nowrap text-ellipsis">
             {event.name}
           </span>
@@ -88,7 +89,7 @@ export function MeetingHeader({
             className: 'hover:bg-transparent p-0',
           }}
           tooltipProps={{
-            content: 'Meeting time',
+            label: 'Meeting time',
           }}
           onClick={() => {}}>
           <DyteClock meeting={meeting} className="m-0" />
@@ -139,6 +140,7 @@ export function MeetingHeader({
         />
 
         <LeaveMeetingToggle />
+        <HelpButton />
       </div>
     </div>
   )

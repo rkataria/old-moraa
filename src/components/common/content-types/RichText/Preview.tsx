@@ -13,14 +13,13 @@ export function RichTextPreview({
   frame: IFrame
   asThumbnail?: boolean
 }) {
-  const { preview, eventMode } = useContext(EventContext) as EventContextType
+  const { eventMode } = useContext(EventContext) as EventContextType
 
-  const canEditRichText =
-    !!(
-      !asThumbnail &&
-      eventMode !== 'present' &&
-      frame.config.allowToCollaborate
-    ) && !preview
+  const canEditRichText = !!(
+    !asThumbnail &&
+    eventMode !== 'present' &&
+    frame.config.allowToCollaborate
+  )
 
   return <RichTextEditor editorId={frame.id} editable={canEditRichText} />
 }

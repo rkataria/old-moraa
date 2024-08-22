@@ -6,7 +6,7 @@ import { ControlButton } from '../common/ControlButton'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { PresentationStatuses } from '@/types/event-session.type'
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function PresentationToggle() {
   const { presentationStatus, startPresentation, stopPresentation } =
@@ -44,7 +44,8 @@ export function PresentationToggle() {
         ),
       }}
       tooltipProps={{
-        content: presentationStarted ? 'Stop presenting' : 'Start presenting',
+        label: KeyboardShortcuts.Live.startAndStopPresentation.label,
+        actionKey: KeyboardShortcuts.Live.startAndStopPresentation.key,
       }}
       onClick={handlePresentationToggle}>
       {presentationStarted ? 'Stop' : 'Start'}

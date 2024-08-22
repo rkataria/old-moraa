@@ -9,7 +9,7 @@ import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function RaiseHandToggle() {
   const { meeting } = useDyteMeeting()
@@ -71,7 +71,8 @@ export function RaiseHandToggle() {
         ),
       }}
       tooltipProps={{
-        content: isHandRaised ? 'Lower hand' : 'Raise hand',
+        label: KeyboardShortcuts.Live.raiseAndLowerHand.label,
+        actionKey: KeyboardShortcuts.Live.raiseAndLowerHand.key,
       }}
       onClick={handleRaiseHand}>
       <IoHandRightOutline size={20} />

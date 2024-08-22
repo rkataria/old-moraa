@@ -1,6 +1,7 @@
-import { Tooltip, TooltipProps } from '@nextui-org/react'
+import { TooltipProps } from '@nextui-org/react'
 
 import { ContentType, getContentType } from './ContentTypePicker'
+import { Tooltip } from './ShortuctTooltip'
 
 import { cn } from '@/utils/utils'
 

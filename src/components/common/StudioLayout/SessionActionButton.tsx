@@ -7,7 +7,7 @@ import {
   DropdownTrigger,
   useDisclosure,
 } from '@nextui-org/react'
-import { Link } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { ChevronDownIcon } from 'lucide-react'
 
 import { ScheduleEventButtonWithModal } from '../ScheduleEventButtonWithModal'
@@ -74,6 +74,7 @@ function ActionButton({
   eventId: string
   eventStatus: string
 }) {
+  const router = useRouter()
   const scheduleModal = useDisclosure()
 
   const { permissions } = useEventPermissions()
@@ -85,15 +86,13 @@ function ActionButton({
     return (
       <>
         <div className="flex justify-center items-center gap-0">
-          <Link to={`/event-session/${eventId}`}>
-            <Button
-              as={Link}
-              size="sm"
-              title="Start session"
-              className="rounded-e-none">
-              Start live session
-            </Button>
-          </Link>
+          <Button
+            onClick={() => router.navigate({ to: `/event-session/${eventId}` })}
+            size="sm"
+            title="Start session"
+            className="rounded-e-none">
+            Start live session
+          </Button>
           <ScheduleSessionButton scheduleModal={scheduleModal} />
         </div>
         <ScheduleEventButtonWithModal
@@ -141,6 +140,7 @@ export function SessionActionButton({
   if (!permissions.canAccessSession) {
     return null
   }
+
   if (!preview) return null
 
   return <ActionButton eventId={eventId} eventStatus={eventStatus} />

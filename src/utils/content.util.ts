@@ -196,6 +196,7 @@ export const getDefaultCoverFrame = ({
   name,
   config: {
     textColor: '#000',
+    time: 1,
   },
   content: getDefaultContent({
     contentType: ContentType.COVER,

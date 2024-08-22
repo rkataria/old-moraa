@@ -3,7 +3,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useRef } from 'react'
 
-import { Tooltip } from '@nextui-org/react'
 import { IoAddSharp } from 'react-icons/io5'
 
 // TODO: Fix this.
@@ -11,6 +10,7 @@ import { IoAddSharp } from 'react-icons/io5'
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
+import { Tooltip } from '../ShortuctTooltip'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'

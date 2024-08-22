@@ -5,10 +5,11 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Tooltip,
 } from '@nextui-org/react'
 import { fabric } from 'fabric'
 import { RxText } from 'react-icons/rx'
+
+import { Tooltip } from '../../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'

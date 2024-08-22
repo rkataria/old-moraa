@@ -1,14 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useState } from 'react'
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tooltip,
-} from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { fabric } from 'fabric'
 import { IoListSharp } from 'react-icons/io5'
+
+import { Tooltip } from '../../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'

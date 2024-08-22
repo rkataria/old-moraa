@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useRef, useState } from 'react'
 
-import { Tooltip } from '@nextui-org/react'
+import { Tooltip } from './ShortuctTooltip'
 
 import { cn } from '@/utils/utils'
 

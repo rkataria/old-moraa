@@ -21,6 +21,8 @@ export function RightSidebar() {
   const { permissions } = useEventPermissions()
 
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
+
+  console.log('ko', rightSidebarVisiblity)
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), {
     enableOnFormTags: ['INPUT', 'TEXTAREA'],
   })
@@ -42,9 +44,9 @@ export function RightSidebar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editable, currentFrame?.id, rightSidebarVisiblity])
 
-  if (!editable) {
-    return null
-  }
+  // if (!editable) {
+  //   return null
+  // }
 
   const renderContent = () => {
     switch (rightSidebarVisiblity) {

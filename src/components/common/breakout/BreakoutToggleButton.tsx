@@ -35,7 +35,7 @@ export function BreakoutToggleButton({
         size: 'sm',
       }}
       tooltipProps={{
-        content: isActive
+        label: isActive
           ? 'Hide Breakouts'
           : isBreakoutActive
             ? 'View Active Breakout'

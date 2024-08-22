@@ -12,7 +12,7 @@ import {
   Key,
 } from 'react'
 
-import { Button, Switch, Tooltip } from '@nextui-org/react'
+import { Button, Switch } from '@nextui-org/react'
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 import { IoIosArrowRoundUp } from 'react-icons/io'
 import { IoChevronForward } from 'react-icons/io5'
@@ -27,6 +27,7 @@ import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
 import { DropdownActions } from '@/components/common/DropdownActions'
 import { EditableLabel } from '@/components/common/EditableLabel'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
+import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'

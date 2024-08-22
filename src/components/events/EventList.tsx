@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { SortDescriptor, Pagination } from '@nextui-org/react'
-import { Link } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoCalendarClear } from 'react-icons/io5'
 import { MdOutlineAddBox } from 'react-icons/md'
 
@@ -17,6 +18,8 @@ import { useEvents } from '@/hooks/useEvents'
 const rowsPerPage = 10
 
 export function EventList() {
+  const { navigate } = useRouter()
+
   const { currentUser } = useAuth()
   const [listDisplayMode, toggleListDisplayMode] = useState('list')
   const [currentPage, setCurrentPage] = useState(1)
@@ -28,6 +31,8 @@ export function EventList() {
   const [totalEventsCount, setTotalEventsCount] = useState(0)
 
   const pages = Math.ceil(totalEventsCount / rowsPerPage)
+
+  useHotkeys('n', () => navigate({ to: '/events/create' }), [])
 
   useEffect(() => {
     if (count) {
@@ -118,14 +123,13 @@ export function EventList() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link to="/events/create">
-            <Button
-              size="sm"
-              color="primary"
-              endContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
-              Create new
-            </Button>
-          </Link>
+          <Button
+            onClick={() => navigate({ to: '/events/create' })}
+            size="sm"
+            color="primary"
+            endContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
+            Create new
+          </Button>
           <ListToggleButton
             listDisplayMode={listDisplayMode}
             toggleListDisplayMode={() =>

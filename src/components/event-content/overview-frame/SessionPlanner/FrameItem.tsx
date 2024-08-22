@@ -4,7 +4,7 @@
 
 import { useContext } from 'react'
 
-import { Switch, Tooltip } from '@nextui-org/react'
+import { Switch } from '@nextui-org/react'
 import { Draggable } from 'react-beautiful-dnd'
 import {
   MdCheckCircle,
@@ -23,6 +23,7 @@ import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EditableLabel } from '@/components/common/EditableLabel'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
+import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'

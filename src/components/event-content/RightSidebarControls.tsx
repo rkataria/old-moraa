@@ -1,21 +1,35 @@
 import { useContext } from 'react'
 
+import { useHotkeys } from 'react-hotkeys-hook'
+
 import { FrameAppearanceToggleButton } from '../common/StudioLayout/FrameAppearanceToggleButton'
 import { FrameConfigurationToggleButton } from '../common/StudioLayout/FrameConfigurationToggleButton'
 import { FrameNoteToggleButton } from '../common/StudioLayout/FrameNoteToggleButton'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 
 export function RightSidebarControls() {
   const { currentFrame, eventMode, preview } = useContext(
     EventContext
   ) as EventContextType
+  const { setRightSidebarVisiblity } = useStudioLayout()
+
   const { permissions } = useEventPermissions()
 
   const editable =
     permissions.canUpdateFrame && eventMode === 'edit' && !preview
+
+  useHotkeys(
+    ']',
+    () => setRightSidebarVisiblity(null),
+    {
+      enableOnFormTags: ['INPUT', 'TEXTAREA'],
+    },
+    []
+  )
 
   // Hide the right sidebar controls if it is not editable
   if (!editable || !currentFrame) {
