@@ -36,6 +36,8 @@ export function FrameDetailsView({ className }: { className?: string }) {
   })
   const { event } = useEventData
 
+  if (!event) return null
+
   return (
     <div className={cn('max-w-[60rem] p-4', className)}>
       <div className="grid grid-cols-[0.5fr_1fr] items-start gap-[3rem] bg-white rounded-xl p-4">

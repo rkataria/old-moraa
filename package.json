@@ -134,6 +134,7 @@
     "lowlight": "2.9.0",
     "lucide-react": "^0.405.0",
     "luxon": "^3.4.4",
+    "marked": "^14.0.0",
     "nanoid": "^5.0.7",
     "openai": "^4.40.0",
     "rc-resize-observer": "^1.4.0",

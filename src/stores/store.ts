@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import { initializeStoreAction } from './actions/init'
 import { listenerMiddleware } from './listener'
+import { combinedAiReducer } from './slices/ai'
 import { combinedEventReducer } from './slices/event'
 import { combinedUserReducer } from './slices/user'
 
@@ -9,6 +10,7 @@ export const store = configureStore({
   reducer: {
     event: combinedEventReducer,
     user: combinedUserReducer,
+    ai: combinedAiReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(listenerMiddleware.middleware),
