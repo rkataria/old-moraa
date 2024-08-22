@@ -13,6 +13,7 @@ import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
 
 import { FlyingEmojisOverlay } from './FlyingEmojisOverlay'
+import { IdleModeConfirmation } from './IdleModeConfirmation'
 import { MainContainer } from './MainContainer'
 import { MeetingHeader } from './MeetingHeader'
 import { MeetingRightSidebar } from './MeetingRightSidebar'
@@ -46,7 +47,6 @@ export type DyteStates = {
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
   const { preview } = useContext(EventContext) as EventContextType
-
   const {
     isHost,
     eventSessionMode,
@@ -163,6 +163,7 @@ export function MeetingScreen() {
         open={isCreateBreakoutOpen}
         setOpen={() => setIsCreateBreakoutOpen(false)}
       />
+      <IdleModeConfirmation />
     </StudioLayout>
   )
 }

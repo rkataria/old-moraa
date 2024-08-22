@@ -169,6 +169,7 @@
     "tus-js-client": "^4.1.0",
     "uniqolor": "^1.1.1",
     "unsplash-js": "^7.0.19",
+    "use-sound": "^4.0.3",
     "userflow.js": "^2.12.0",
     "uuid": "^10.0.0",
     "vite": "^5.3.4",
