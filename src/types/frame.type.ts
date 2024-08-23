@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { ReactNode } from 'react'
+
 import { type AgendaFrameDisplayType } from './event.type'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
@@ -158,4 +160,10 @@ export interface IReflectionFrame extends IFrame {
     title: string
     description?: string
   }
+}
+
+export type FrameAction = {
+  key: string
+  label: string
+  icon: ReactNode
 }

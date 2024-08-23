@@ -3,23 +3,24 @@ import { useState, useRef, useEffect, MouseEvent } from 'react'
 import { Listbox, ListboxItem } from '@nextui-org/react'
 import { ReactNode } from '@tanstack/react-router'
 
+import { FrameAction } from '@/types/frame.type'
+
 export function ContextMenu({
   children,
   items,
   handleActions,
 }: {
   children: ReactNode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: { key: string; label: string; icon: ReactNode }[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleActions: (item: any) => void
+  items: FrameAction[]
+  handleActions: (item: FrameAction) => void
 }) {
   const [visible, setVisible] = useState(false)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const menuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const handleClickOutside = (event: globalThis.MouseEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleClickOutside = (event: any) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setVisible(false)
       }
