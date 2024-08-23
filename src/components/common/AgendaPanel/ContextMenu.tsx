@@ -3,6 +3,8 @@ import { useState, useRef, useEffect, MouseEvent } from 'react'
 import { Listbox, ListboxItem } from '@nextui-org/react'
 import { ReactNode } from '@tanstack/react-router'
 
+import { RenderIf } from '../RenderIf/RenderIf'
+
 import { FrameAction } from '@/types/frame.type'
 
 export function ContextMenu({
@@ -54,22 +56,21 @@ export function ContextMenu({
       ref={menuRef}
       className="relative inline-block w-full h-full">
       {children}
-      {visible && (
-        <div
-          className="fixed bg-white border border-gray-300 shadow-lg z-[200] py-1 mt-1 rounded-lg"
+      <RenderIf isTrue={visible}>
+        <Listbox
+          aria-label="Actions"
+          className="fixed w-fit bg-white border border-gray-300 shadow-lg z-[200] py-1 mt-1 rounded-lg"
           style={{ left: `${position.x}px`, top: `${position.y}px` }}>
-          <Listbox aria-label="Actions">
-            {items.map((item) => (
-              <ListboxItem
-                key={item.key}
-                onClick={() => handleActions(item)}
-                startContent={item.icon}>
-                {item.label}
-              </ListboxItem>
-            ))}
-          </Listbox>
-        </div>
-      )}
+          {items.map((item) => (
+            <ListboxItem
+              key={item.key}
+              onClick={() => handleActions(item)}
+              startContent={item.icon}>
+              {item.label}
+            </ListboxItem>
+          ))}
+        </Listbox>
+      </RenderIf>
     </div>
   )
 }
