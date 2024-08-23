@@ -1,42 +1,49 @@
+import { useMemo } from 'react'
+
 // eslint-disable-next-line import/no-cycle
 import { FramePreview } from '../FramePreview'
 
 import { IFrame } from '@/types/frame.type'
-import { isFrameThumbnailAvailable } from '@/utils/content.util'
 
 type FrameThumbnailCardProps = {
   frame: IFrame
   containerWidth: number
+  inViewPort?: boolean
 }
 
 export function FrameThumbnailCard({
   frame,
   containerWidth,
+  inViewPort,
 }: FrameThumbnailCardProps) {
-  if (!isFrameThumbnailAvailable(frame?.type)) {
-    return (
-      <div className="w-full h-full flex justify-center items-center font-semibold capitalize">
-        {frame?.type}
-      </div>
-    )
-  }
+  const width = 960
+  const height = 540
+
+  const memoizedFramePreview = useMemo(
+    () =>
+      inViewPort ? (
+        <FramePreview
+          frame={frame}
+          isInteractive={false}
+          fullWidth
+          asThumbnail
+        />
+      ) : (
+        'loading'
+      ),
+    [frame, inViewPort]
+  )
 
   return (
     <div
-      className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0"
+      className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0 hide-scrollbars"
       style={{
-        width: `${window.screen.width}px`,
-        height: `${(window.screen.width * 9) / 16}px`,
+        width: `${width}px`,
+        height: `${height}px`,
         transformOrigin: 'left top',
-        scale: `${(1 / window.screen.width) * containerWidth}`,
+        scale: `${(1 / width) * containerWidth}`,
       }}>
-      <FramePreview
-        frame={frame}
-        isInteractive={false}
-        key={JSON.stringify(frame?.content)}
-        fullWidth
-        asThumbnail
-      />
+      {memoizedFramePreview}
     </div>
   )
 }

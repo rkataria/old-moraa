@@ -141,7 +141,7 @@ export function SessionActionButton({
     return null
   }
 
-  if (!preview) return null
+  if (!preview && permissions.canUpdateFrame) return null
 
   return <ActionButton eventId={eventId} eventStatus={eventStatus} />
 }

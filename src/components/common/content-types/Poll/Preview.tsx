@@ -2,13 +2,19 @@ import { HorizontalPreview } from './HorizontalPreview'
 import { VerticalPreview } from './VerticalPreview'
 
 import { PollFrame, PollOption } from '@/types/frame.type'
+import { cn } from '@/utils/utils'
 
 interface PollProps {
   frame: PollFrame
   disableAnimation?: boolean
+  renderAsThumbnail?: boolean
 }
 
-export function PollPreview({ frame, disableAnimation }: PollProps) {
+export function PollPreview({
+  frame,
+  disableAnimation,
+  renderAsThumbnail = false,
+}: PollProps) {
   const { options } = frame.content
 
   const polls = options.map((option: PollOption, index) => ({
@@ -34,7 +40,10 @@ export function PollPreview({ frame, disableAnimation }: PollProps) {
       ) : (
         <HorizontalPreview
           options={polls}
-          className="w-[100%] xl:w-[50%]"
+          className={cn('w-[100%]', {
+            'w-full ': renderAsThumbnail,
+            'xl:w-[50%]': !renderAsThumbnail,
+          })}
           disableAnimation={disableAnimation}
         />
       )}
