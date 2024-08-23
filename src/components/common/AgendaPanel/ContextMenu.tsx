@@ -64,7 +64,10 @@ export function ContextMenu({
           {items.map((item) => (
             <ListboxItem
               key={item.key}
-              onClick={() => handleActions(item)}
+              onClick={() => {
+                handleActions(item)
+                setVisible(false)
+              }}
               startContent={item.icon}>
               {item.label}
             </ListboxItem>
