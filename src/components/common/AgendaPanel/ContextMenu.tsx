@@ -16,7 +16,7 @@ export function ContextMenu({
 }) {
   const [visible, setVisible] = useState(false)
   const [position, setPosition] = useState({ x: 0, y: 0 })
-  const menuRef = useRef(null)
+  const menuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const handleClickOutside = (event: globalThis.MouseEvent) => {
@@ -46,7 +46,7 @@ export function ContextMenu({
       className="relative inline-block w-full h-full">
       {children}
       {visible && (
-        <ul
+        <div
           ref={menuRef}
           className="fixed bg-white border border-gray-300 shadow-lg z-50 py-1 mt-1 rounded-lg"
           style={{ left: `${position.x}px`, top: `${position.y}px` }}>
@@ -60,7 +60,7 @@ export function ContextMenu({
               </ListboxItem>
             ))}
           </Listbox>
-        </ul>
+        </div>
       )}
     </div>
   )
