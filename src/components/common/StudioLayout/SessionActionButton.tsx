@@ -7,7 +7,7 @@ import {
   DropdownTrigger,
   useDisclosure,
 } from '@nextui-org/react'
-import { Link, useRouter } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 import { ChevronDownIcon } from 'lucide-react'
 
 import { ScheduleEventButtonWithModal } from '../ScheduleEventButtonWithModal'
@@ -110,16 +110,14 @@ function ActionButton({
 
   if (eventStatus === EventStatus.SCHEDULED) {
     return (
-      <Link to={`/event-session/${eventId}`}>
-        <Button
-          as={Link}
-          size="sm"
-          variant="solid"
-          color="secondary"
-          title="Join live session">
-          Join live session
-        </Button>
-      </Link>
+      <Button
+        onClick={() => router.navigate({ to: `/event-session/${eventId}` })}
+        size="sm"
+        variant="solid"
+        color="primary"
+        title="Join live session">
+        Join live session
+      </Button>
     )
   }
 
