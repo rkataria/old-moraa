@@ -21,22 +21,29 @@ export function ContextMenu({
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleClickOutside = (event: any) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        visible
+      ) {
         setVisible(false)
       }
     }
 
     document.addEventListener('click', handleClickOutside)
+    document.addEventListener('contextmenu', handleClickOutside)
 
     return () => {
       document.removeEventListener('click', handleClickOutside)
+      document.removeEventListener('contextmenu', handleClickOutside)
     }
-  }, [])
+  }, [visible])
 
   const handleContextMenu = (
     event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
   ) => {
     event.preventDefault()
+
     setPosition({ x: event.pageX, y: event.pageY })
     setVisible(true)
   }
@@ -44,12 +51,12 @@ export function ContextMenu({
   return (
     <div
       onContextMenu={handleContextMenu}
+      ref={menuRef}
       className="relative inline-block w-full h-full">
       {children}
       {visible && (
         <div
-          ref={menuRef}
-          className="fixed bg-white border border-gray-300 shadow-lg z-50 py-1 mt-1 rounded-lg"
+          className="fixed bg-white border border-gray-300 shadow-lg z-[200] py-1 mt-1 rounded-lg"
           style={{ left: `${position.x}px`, top: `${position.y}px` }}>
           <Listbox aria-label="Actions">
             {items.map((item) => (
