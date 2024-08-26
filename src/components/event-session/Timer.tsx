@@ -147,7 +147,10 @@ export function Timer() {
     setIsOpen(false)
   }
 
-  const handleTimerButtonClick = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleTimerButtonClick = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+
     if (!isHost) return
     setIsOpen(!isOpen)
   }

@@ -314,29 +314,31 @@ export function SessionPlanner({
                                       radius="sm">
                                       <div className="flex items-center gap-2">
                                         <p className="text-sm text-primary/80">
-                                          {section.frames.some(
+                                          {!section.frames.some(
                                             (frame) =>
                                               frame?.status ===
-                                              FrameStatus.PUBLISHED
+                                              FrameStatus.DRAFT
                                           )
                                             ? 'Unshare'
                                             : 'Share'}
                                         </p>
                                         <Switch
                                           size="sm"
-                                          isSelected={section.frames.some(
-                                            (frame) =>
-                                              frame?.status ===
-                                              FrameStatus.PUBLISHED
-                                          )}
+                                          isSelected={
+                                            !section.frames.some(
+                                              (frame) =>
+                                                frame?.status ===
+                                                FrameStatus.DRAFT
+                                            )
+                                          }
                                           className="p-0"
                                           onChange={() =>
                                             changeSectionStatus(
                                               section,
-                                              section.frames.some(
+                                              !section.frames.some(
                                                 (frame) =>
                                                   frame?.status ===
-                                                  FrameStatus.PUBLISHED
+                                                  FrameStatus.DRAFT
                                               )
                                                 ? FrameStatus.DRAFT
                                                 : FrameStatus.PUBLISHED

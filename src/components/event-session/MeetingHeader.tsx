@@ -45,10 +45,8 @@ export function MeetingHeader({
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
   const { isHost, eventSessionMode } = useEventSession()
-  const { rightSidebarVisiblity, setRightSidebarVisiblity, toggleLeftSidebar } =
-    useStudioLayout()
+  const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
 
-  useHotkeys('ctrl + [', toggleLeftSidebar, [])
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), [])
 
   if (!event) return null

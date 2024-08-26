@@ -22,14 +22,7 @@ export function KeyboardShortcutsModal({
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
-  useHotkeys(
-    'mod + /',
-    () => setIsOpen(true),
-    {
-      enableOnFormTags: ['INPUT', 'TEXTAREA'],
-    },
-    []
-  )
+  useHotkeys('mod + /', () => setIsOpen(true), [])
 
   const keyboardListing = () =>
     Object.entries(KeyboardShortcuts).map(([section, actions], index) => (

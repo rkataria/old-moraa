@@ -44,7 +44,10 @@ export function RaiseHandToggle() {
     meeting.participants.on('activeSpeaker', handleActiveSpeaker)
   }, [meeting.participants, isHandRaised, selfParticipant.id])
 
-  const handleRaiseHand = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleRaiseHand = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+
     onToggleHandRaised({
       handRaise: !isHandRaised,
       participantId: selfParticipant.id,

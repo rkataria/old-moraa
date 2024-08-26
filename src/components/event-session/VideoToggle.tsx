@@ -10,7 +10,10 @@ export function VideoToggle({ className = '' }: { className?: string }) {
   const self = useDyteSelector((state) => state.self)
   const isVideoEnabled = useDyteSelector((state) => state.self?.videoEnabled)
 
-  const handleVideo = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleVideo = (e?: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+
     if (isVideoEnabled) {
       self.disableVideo()
 
