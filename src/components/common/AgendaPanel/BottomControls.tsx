@@ -41,7 +41,8 @@ export function BottomControls() {
       <AddContentButton className="flex-auto" />
       <Tooltip
         label={leftSideBarMaximized ? 'Collapse' : 'Expand'}
-        actionKey={KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key}>
+        actionKey={KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key}
+        systemKeys={['ctrl']}>
         <Button size="sm" isIconOnly variant="flat" onClick={toggleLeftSidebar}>
           {leftSidebarVisiblity === 'maximized' ? (
             <LuPanelLeftClose size={18} strokeWidth={1.2} />
