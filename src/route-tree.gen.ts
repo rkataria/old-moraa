@@ -13,7 +13,6 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './pages/__root'
-import { Route as ErrorImport } from './pages/error'
 import { Route as IndexImport } from './pages/index'
 import { Route as LoginIndexImport } from './pages/login/index'
 import { Route as LoginMessagesImport } from './pages/login/messages'
@@ -38,11 +37,6 @@ const dashboardImport = createFileRoute('/(dashboard)')()
 
 const dashboardRoute = dashboardImport.update({
   id: '/(dashboard)',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ErrorRoute = ErrorImport.update({
-  path: '/error',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -123,7 +117,7 @@ const dashboardLayoutEventsIndexRoute = dashboardLayoutEventsIndexImport.update(
   {
     path: '/events/',
     getParentRoute: () => dashboardLayoutRoute,
-  } as any,
+  } as any
 )
 
 // Populate the FileRoutesByPath interface
@@ -135,13 +129,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/error': {
-      id: '/error'
-      path: '/error'
-      fullPath: '/error'
-      preLoaderRoute: typeof ErrorImport
       parentRoute: typeof rootRoute
     }
     '/(dashboard)': {
@@ -256,7 +243,6 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
-  ErrorRoute,
   dashboardRoute: dashboardRoute.addChildren({
     dashboardLayoutRoute: dashboardLayoutRoute.addChildren({
       dashboardLayoutEventsIndexRoute,
