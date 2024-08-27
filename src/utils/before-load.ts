@@ -6,8 +6,15 @@ export const beforeLoad = async ({
   context,
 }: {
   location: any
-  context: any
+  context: {
+    auth: {
+      isAuthenticated: boolean
+      loading: boolean
+    }
+  }
 }) => {
+  if (context.auth.loading) return
+
   if (!context.auth.isAuthenticated) {
     throw redirect({
       to: '/login',
