@@ -8,7 +8,7 @@ type ContentLoadingProps = {
 }
 
 export function ContentLoading({
-  message = 'Please wait...',
+  message,
   fullPage = false,
 }: ContentLoadingProps) {
   return (
@@ -21,7 +21,7 @@ export function ContentLoading({
       )}>
       <div>
         <Loading />
-        <p>{message}</p>
+        {message && <p>{message}</p>}
       </div>
     </div>
   )

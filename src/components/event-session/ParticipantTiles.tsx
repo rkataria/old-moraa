@@ -12,39 +12,32 @@ export function ParticipantTiles({
   // panelSize: number
 }) {
   const { meeting } = useDyteMeeting()
-  // const { activeSession } = useContext(
-  //   EventSessionContext
-  // ) as EventSessionContextType
   const activeParticipants = useDyteSelector((m) =>
     m.participants.active.toArray()
   )
   const selfParticipant = useDyteSelector((m) => m.self)
-  // const pinnedParticipants = useDyteSelector((m) =>
-  //   m.participants.pinned.toArray()
-  // )
   const pinnedParticipants = meeting.participants.pinned.toArray()
+  const isSelfPinned = selfParticipant.isPinned
 
   if (spotlightMode) {
-    if (pinnedParticipants.length > 0) {
+    if (pinnedParticipants.length > 0 || isSelfPinned) {
       const activeParticipantsWithoutPinned = activeParticipants.filter(
-        (p) => !pinnedParticipants.includes(p)
+        (p) => !p.isPinned
       )
-      const isSelfPinned = pinnedParticipants.find(
-        (p) => p.id === selfParticipant.id
-      )
-
-      const unpinnedParticipants = activeParticipantsWithoutPinned
 
       if (isSelfPinned) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        unpinnedParticipants.push(selfParticipant as any)
+        pinnedParticipants.push(selfParticipant as any)
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        activeParticipantsWithoutPinned.push(selfParticipant as any)
       }
 
       return (
         <ParticipantsSpotlightView
           key={activeParticipants.length}
           spotlightParticipants={pinnedParticipants}
-          participants={[...unpinnedParticipants]}
+          participants={[...activeParticipantsWithoutPinned]}
         />
       )
     }

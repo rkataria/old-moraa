@@ -1,7 +1,7 @@
-import { Button } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { LuSparkles } from 'react-icons/lu'
 
+import { Button } from '@/components/ui/Button'
 import { useFlags } from '@/flags/client'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -21,13 +21,14 @@ export function ToggleButton() {
 
   return (
     <Button
+      size="sm"
       isIconOnly
       onClick={toggleSidebar}
       variant="light"
-      className={cn('cursor-pointer text-[#52525B]', {
-        'text-[#7C3AED]': resizableRightSidebarVisiblity === 'ai-chat',
+      className={cn('cursor-pointer', {
+        'text-primary': resizableRightSidebarVisiblity === 'ai-chat',
       })}>
-      <LuSparkles size={20} strokeWidth={1.7} />
+      <LuSparkles size={18} strokeWidth={1.7} />
     </Button>
   )
 }

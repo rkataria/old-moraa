@@ -94,6 +94,7 @@ export function NewEventForm<
           fileName={`event-image-${Date.now()}`}
           bucketName="image-uploads"
           uploadRemote
+          crop
           trigger={
             <div className="w-12 h-12 max-w-12 rounded-xl shrink-0 hover:bg-transparent relative overflow-hidden">
               <Controller
@@ -126,10 +127,10 @@ export function NewEventForm<
               )}
             </div>
           }
-          onSelect={(file) => {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          onSelect={(imageObject) => {
             setImageUploading(true)
-            const _imageObject = window.URL.createObjectURL(file)
-            setImageObject(_imageObject)
+            setImageObject(imageObject)
           }}
           onUpload={(response) => {
             setImageUploading(false)

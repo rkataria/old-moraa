@@ -13,14 +13,10 @@ export function FramePlaceholder() {
 
   const renderSkeleton = () => {
     if (listDisplayMode === 'list') {
-      return <Skeleton className="rounded-md w-full h-10" />
+      return <Skeleton className="rounded-md w-full h-8" />
     }
 
-    return (
-      <div className="w-4/5">
-        <Skeleton className="rounded-md w-full h-[166px]" />
-      </div>
-    )
+    return <Skeleton className="rounded-md w-full h-[132px]" />
   }
 
   return <div className="mt-2 flex w-full">{renderSkeleton()}</div>

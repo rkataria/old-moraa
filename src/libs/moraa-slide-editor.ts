@@ -141,17 +141,29 @@ export const renderCanvas = ({
 
 export const handleCanvasObjectAdded = ({
   options,
-  // fabricRef,
+  fabricRef,
   // frameId,
+  saveToStorage,
 }: CanvasObjectAdded) => {
   console.log('handleCanvasObjectAdded', options)
 
-  // const { target } = options
+  const { target } = options
+
+  if (!target) return
+
+  if (target.type === 'textbox') {
+    loadAndUseFont(
+      fabricRef.current!,
+      target as fabric.Textbox,
+      (target as fabric.Textbox).fontFamily!
+    )
+  }
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  // if (target.uuid) return
-
-  // syncToStorage(fabricRef.current!, frameId, frameId, target?.toObject())
+  if (!target.uuid) {
+    saveToStorage(fabricRef.current!)
+  }
 }
 
 export const handleCanvasObjectModified = async ({
@@ -359,4 +371,15 @@ export const setObjectControlsVisibility = (canvas: fabric.Canvas) => {
   }
 
   canvas.renderAll()
+}
+
+export const loadAndUseFont = async (
+  canvas: fabric.Canvas,
+  textObject: fabric.Textbox,
+  fontFamily: string
+) => {
+  fabric.util.clearFabricFontCache()
+  textObject.set('fontFamily', fontFamily)
+  canvas.renderAll()
+  canvas.fire('object:modified')
 }
