@@ -6,6 +6,8 @@ import { beforeLoad } from '@/utils/before-load'
 
 export const Route = createFileRoute('/(dashboard)/_layout/workshops/')({
   component: () => <WorkshopsPage />,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   beforeLoad,
 })
 
