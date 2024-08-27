@@ -106,7 +106,7 @@ export function MoraaSlideEditor({
 
     if (frameCanvasData) {
       canvas.loadFromJSON(frameCanvasData, () => {
-        canvas.renderAll()
+        resizeCanvas({ fabricRef, canvasContainerRef })
       })
     } else {
       // Load frame template
@@ -122,15 +122,7 @@ export function MoraaSlideEditor({
     setCanvas(canvas)
 
     canvas.on('object:added', async (options) => {
-      handleCanvasObjectAdded({ options, fabricRef, frameId })
-
-      const { target } = options
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (target && !target.uuid) {
-        saveToStorage(canvas)
-      }
+      handleCanvasObjectAdded({ options, fabricRef, frameId, saveToStorage })
     })
     canvas.on('object:modified', async (options) => {
       handleCanvasObjectModified({ options })

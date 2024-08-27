@@ -109,15 +109,16 @@ export function EventDetails() {
                 fileName={`event-image-${event.id}`}
                 bucketName="image-uploads"
                 uploadRemote
+                crop
                 trigger={
                   <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition-all duration-300 rounded-full cursor-pointer bottom-2 right-2 bg-black/40 hover:bg-black/50">
                     <CiEdit size={20} />
                   </div>
                 }
-                onSelect={(file) => {
+                // eslint-disable-next-line @typescript-eslint/no-shadow
+                onSelect={(imageObject) => {
                   setImageUploading(true)
-                  const _imageObject = window.URL.createObjectURL(file)
-                  setImageObject(_imageObject)
+                  setImageObject(imageObject)
                 }}
                 onUpload={(response) => {
                   setImageUploading(false)

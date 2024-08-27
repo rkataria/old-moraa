@@ -2,6 +2,7 @@ export type CanvasObjectAdded = {
   options: fabric.IEvent
   fabricRef: React.MutableRefObject<fabric.Canvas | null>
   frameId: string
+  saveToStorage: (canvas: fabric.Canvas) => void
 }
 
 export type CanvasObjectModified = {

@@ -25,7 +25,7 @@ export function ParticipantsSpotlightView({
       <ParticipantsGridView
         gridSize={GRID_SIZE}
         gridStyles={{
-          'grid-cols-1': firstPageParticipants.length <= 4,
+          'grid-cols-2': firstPageParticipants.length <= 4,
           'grid-cols-4':
             firstPageParticipants.length > 4 &&
             firstPageParticipants.length <= 8,

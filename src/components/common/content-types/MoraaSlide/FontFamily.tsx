@@ -1,9 +1,11 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
 import { Select, SelectItem } from '@nextui-org/react'
+import { fabric } from 'fabric'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { fonts } from '@/libs/fonts'
+import { loadAndUseFont } from '@/libs/moraa-slide-editor'
 
 type FontFamilyOption = {
   key: string
@@ -79,12 +81,7 @@ export function FontFamily() {
       aria-label="Font Family"
       selectedKeys={selectedFontKey ? new Set([selectedFontKey]) : new Set()}
       onChange={(e) => {
-        const font = e.target.value
-
-        if (font) {
-          activeObject.set('fontFamily', font)
-          canvas.renderAll()
-        }
+        loadAndUseFont(canvas, activeObject, e.target.value)
       }}>
       {FONT_FAMILIES.map((_fontFamily: FontFamilyOption) => (
         <SelectItem

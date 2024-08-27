@@ -4,6 +4,7 @@ import { Select, SelectItem } from '@nextui-org/react'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { fonts } from '@/libs/fonts'
+import { loadAndUseFont } from '@/libs/moraa-slide-editor'
 
 type FontFamilyOption = {
   key: string
@@ -45,23 +46,17 @@ const FONT_FAMILIES: FontFamilyOption[] = [
   },
 ]
 
-function loadAndUse({ font, canvas }: { font: string; canvas: fabric.Canvas }) {
-  const activeObject = canvas.getActiveObject() as fabric.Textbox
-  activeObject.set('fontFamily', font)
-  canvas.renderAll()
-}
-
 export function FontFamily() {
   const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
 
-  const activeObjectState = canvas.getActiveObject() as fabric.Textbox
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
 
-  if (!activeObjectState) return null
+  if (!activeObject) return null
 
   const selectedFontKey = FONT_FAMILIES.find((f) =>
-    f.key.includes(activeObjectState?.fontFamily as string)
+    f.key.includes(activeObject?.fontFamily as string)
   )?.key
 
   return (
@@ -75,14 +70,7 @@ export function FontFamily() {
       aria-label="Font Family"
       selectedKeys={selectedFontKey ? new Set([selectedFontKey]) : new Set()}
       onChange={(e) => {
-        const font = e.target.value
-
-        if (font) {
-          loadAndUse({
-            font: font as unknown as string,
-            canvas: canvas as fabric.Canvas,
-          })
-        }
+        loadAndUseFont(canvas, activeObject, e.target.value)
       }}>
       {FONT_FAMILIES.map((_fontFamily: FontFamilyOption) => (
         <SelectItem
