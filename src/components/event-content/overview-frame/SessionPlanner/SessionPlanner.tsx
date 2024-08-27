@@ -8,8 +8,8 @@ import {
   Fragment,
   ReactNode,
   useRef,
-  useEffect,
   Key,
+  useEffect,
 } from 'react'
 
 import { Button, Switch } from '@nextui-org/react'
@@ -32,7 +32,8 @@ import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useStoreDispatch } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { updateExpandedSectionsInSessionPlannerAction } from '@/stores/slices/event/current-event/section.slice'
 import { bulkUpdateFrameStatusThunk } from '@/stores/thunks/frame.thunks'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
@@ -47,7 +48,6 @@ export function SessionPlanner({
   header?: ReactNode
 }) {
   const plannerRef = useRef<HTMLDivElement | null>(null)
-  const dispatch = useStoreDispatch()
 
   const { width: plannerWidth } = useDimensions(plannerRef)
 
@@ -61,21 +61,19 @@ export function SessionPlanner({
     setAddedFromSessionPlanner,
   } = useContext(EventContext) as EventContextType
 
+  const dispatch = useStoreDispatch()
+
   const [filteredSections, setFilteredSections] = useState(sections)
   const { permissions } = useEventPermissions()
-  const [expandedSections, setExpandedSections] = useState<string[]>([
-    sections?.[0]?.id,
-  ])
+
+  const expandedSections = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.sectionState.expandedSectionsInSessionPlanner
+  )
 
   useEffect(() => {
-    console.log(
-      'sections.filter((f) => f.id.length > 0)',
-      sections.filter((f) => f.id.length > 0)
-    )
     setFilteredSections(sections.filter((f) => f.id.length > 0))
   }, [sections])
-
-  console.log('sections', filteredSections)
 
   const changeSectionStatus = (
     section: ISection,
@@ -99,7 +97,9 @@ export function SessionPlanner({
       updatedExpandedSections.push(id)
     }
 
-    setExpandedSections(updatedExpandedSections)
+    dispatch(
+      updateExpandedSectionsInSessionPlannerAction(updatedExpandedSections)
+    )
   }
 
   const handleSectionSorting = (sectionId: string, criteria: Key) => {
