@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 
 import './globals.css'
+import { ContentLoading } from './components/common/ContentLoading'
 import { routeTree } from './route-tree.gen'
 import { supabaseClient } from './utils/supabase/client'
 
@@ -21,39 +22,44 @@ declare module '@tanstack/react-router' {
 }
 
 export function App() {
+  const [authContext, setAuthContext] = useState({
+    isAuthenticated: false,
+    loading: true,
+  })
+
   useEffect(() => {
     const getSession = async () => {
       const session = await supabaseClient.auth.getSession()
 
-      router.update({
-        context: {
-          auth: {
-            isAuthenticated: !!session?.data.session,
-          },
-        },
+      setAuthContext({
+        isAuthenticated: !!session?.data?.session,
+        loading: false,
       })
     }
 
     getSession()
 
     supabaseClient.auth.onAuthStateChange(async (_, session) => {
-      router.update({
-        context: {
-          auth: {
-            isAuthenticated: !!session,
-          },
-        },
+      setAuthContext({
+        isAuthenticated: !!session,
+        loading: false,
       })
     })
   }, [])
+
+  if (authContext.loading) {
+    return (
+      <div className="h-screen">
+        <ContentLoading />
+      </div>
+    )
+  }
 
   return (
     <RouterProvider
       router={router}
       context={{
-        auth: {
-          isAuthenticated: false,
-        },
+        auth: authContext,
       }}
     />
   )
