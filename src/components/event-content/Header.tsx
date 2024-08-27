@@ -9,6 +9,7 @@ import { Toolbars } from '../common/content-types/MoraaSlide/Toolbars'
 import { HelpButton } from '../common/HelpButton'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
 import { Tooltip } from '../common/ShortuctTooltip'
+import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 import { Button } from '../ui/Button'
 
@@ -39,6 +40,7 @@ export function Header({
 
   const renderActionButtons = () => (
     <>
+      <AIChatbotToggleButton />
       <AddParticipantsButtonWithModal eventId={event.id} />
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
       <PreviewSwitcher />

@@ -27,6 +27,7 @@ import { Route as EventSessionEventIdLayoutImport } from './pages/event-session/
 import { Route as dashboardLayoutWorkshopsIndexImport } from './pages/(dashboard)/_layout/workshops/index'
 import { Route as dashboardLayoutTemplatesIndexImport } from './pages/(dashboard)/_layout/templates/index'
 import { Route as dashboardLayoutLibraryIndexImport } from './pages/(dashboard)/_layout/library/index'
+import { Route as dashboardLayoutHelpIndexImport } from './pages/(dashboard)/_layout/help/index'
 import { Route as dashboardLayoutEventsIndexImport } from './pages/(dashboard)/_layout/events/index'
 
 // Create Virtual Routes
@@ -112,6 +113,11 @@ const dashboardLayoutLibraryIndexRoute =
     path: '/library/',
     getParentRoute: () => dashboardLayoutRoute,
   } as any)
+
+const dashboardLayoutHelpIndexRoute = dashboardLayoutHelpIndexImport.update({
+  path: '/help/',
+  getParentRoute: () => dashboardLayoutRoute,
+} as any)
 
 const dashboardLayoutEventsIndexRoute = dashboardLayoutEventsIndexImport.update(
   {
@@ -215,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardLayoutEventsIndexImport
       parentRoute: typeof dashboardLayoutImport
     }
+    '/(dashboard)/_layout/help/': {
+      id: '/_layout/help/'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof dashboardLayoutHelpIndexImport
+      parentRoute: typeof dashboardLayoutImport
+    }
     '/(dashboard)/_layout/library/': {
       id: '/_layout/library/'
       path: '/library'
@@ -247,6 +260,7 @@ export const routeTree = rootRoute.addChildren({
   dashboardRoute: dashboardRoute.addChildren({
     dashboardLayoutRoute: dashboardLayoutRoute.addChildren({
       dashboardLayoutEventsIndexRoute,
+      dashboardLayoutHelpIndexRoute,
       dashboardLayoutLibraryIndexRoute,
       dashboardLayoutTemplatesIndexRoute,
       dashboardLayoutWorkshopsIndexRoute,
@@ -297,6 +311,7 @@ export const routeTree = rootRoute.addChildren({
       "parent": "/",
       "children": [
         "/_layout/events/",
+        "/_layout/help/",
         "/_layout/library/",
         "/_layout/templates/",
         "/_layout/workshops/"
@@ -328,6 +343,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_layout/events/": {
       "filePath": "(dashboard)/_layout/events/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/help/": {
+      "filePath": "(dashboard)/_layout/help/index.tsx",
       "parent": "/_layout"
     },
     "/_layout/library/": {

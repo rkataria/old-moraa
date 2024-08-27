@@ -19,7 +19,7 @@ const unsplashAPI = createApi({
   accessKey: import.meta.env.VITE_UNSPLASH_ACCESS_KEY,
 })
 
-const DEFAULT_SEARCH_TEXT = 'nature'
+const DEFAULT_SEARCH_TEXT = 'creative'
 const PER_PAGE_COUNT = 12
 
 export function UnsplashContent({
@@ -39,14 +39,19 @@ export function UnsplashContent({
         query: searchText || DEFAULT_SEARCH_TEXT,
         page: currentPage,
         perPage: PER_PAGE_COUNT,
-        orientation: 'landscape',
+        // orientation: 'landscape',
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((result) => {
-        setImages((prevImages) => [
-          ...prevImages,
-          ...(result.response?.results || []),
-        ])
+        if (currentPage === 1) {
+          setImages(result.response?.results || [])
+        } else {
+          setImages((prevImages) => [
+            ...prevImages,
+            ...(result.response?.results || []),
+          ])
+        }
+
         setTotalPages(result.response?.total_pages || 1)
       })
       .catch(() => {
@@ -66,30 +71,46 @@ export function UnsplashContent({
     }
 
     return (
-      <Masonry columnsCount={2} gutter="1rem">
-        {images.map((image) => (
-          <div key={image.id} className="flex flex-col gap-1">
-            <img
-              src={image.urls.regular}
-              className="rounded-md w-full block"
-              alt=""
-              id={image.id}
-              onClick={() =>
-                onSelect(document.getElementById(image.id) as HTMLImageElement)
+      <>
+        <Masonry columnsCount={2} gutter="1rem">
+          {images.map((image) => (
+            <div key={image.id} className="flex flex-col gap-1">
+              <img
+                src={image.urls.regular}
+                className="rounded-md w-full block"
+                alt=""
+                id={image.id}
+                onClick={() =>
+                  onSelect(
+                    document.getElementById(image.id) as HTMLImageElement
+                  )
+                }
+              />
+              <p>
+                Photo by{' '}
+                <a
+                  href={`https://unsplash.com/@${image.user.username}`}
+                  target="_blank"
+                  rel="noreferrer">
+                  {image.user.name}
+                </a>
+              </p>
+            </div>
+          ))}
+        </Masonry>
+        <div className="flex justify-center items-center">
+          <Button
+            size="sm"
+            variant="light"
+            onClick={() => {
+              if (currentPage < totalPages) {
+                setCurrentPage(currentPage + 1)
               }
-            />
-            <p>
-              Photo by{' '}
-              <a
-                href={`https://unsplash.com/@${image.user.username}`}
-                target="_blank"
-                rel="noreferrer">
-                {image.user.name}
-              </a>
-            </p>
-          </div>
-        ))}
-      </Masonry>
+            }}>
+            Load more
+          </Button>
+        </div>
+      </>
     )
   }
 
@@ -102,18 +123,6 @@ export function UnsplashContent({
       />
 
       {renderContent()}
-      <div className="flex justify-center items-center">
-        <Button
-          size="sm"
-          variant="light"
-          onClick={() => {
-            if (currentPage < totalPages) {
-              setCurrentPage(currentPage + 1)
-            }
-          }}>
-          Load more
-        </Button>
-      </div>
     </div>
   )
 }

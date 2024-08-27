@@ -5,10 +5,13 @@ import { useState } from 'react'
 
 import { Slider } from '@nextui-org/react'
 import Cropper, { Area } from 'react-easy-crop'
+import { IoIosSquareOutline } from 'react-icons/io'
+import { LuRectangleHorizontal, LuRectangleVertical } from 'react-icons/lu'
 
 import { Icon8Content } from './Icon8Content'
 import { LibraryContent } from './LibraryContent'
 import { UnsplashContent } from './UnsplashContent'
+import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import getCroppedImg from '@/utils/crop-image'
@@ -38,6 +41,7 @@ export function MediaProviderContent({
   const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(
     null
   )
+  const [cropAspectRatio, setCropAspectRatio] = useState(1)
 
   const handleImageSelect = (imageElment: HTMLImageElement) => {
     if (crop && fileType === 'images') {
@@ -85,6 +89,39 @@ export function MediaProviderContent({
         <div className="flex justify-between items-center">
           <span className="text-md font-semibold">Crop Image</span>
           <div className="flex justify-end items-center gap-4">
+            <Tooltip content="1:1">
+              <Button
+                color="primary"
+                variant="light"
+                isIconOnly
+                onClick={() => {
+                  setCropAspectRatio(1)
+                }}>
+                <IoIosSquareOutline size={22} />
+              </Button>
+            </Tooltip>
+            <Tooltip content="16:9">
+              <Button
+                color="primary"
+                variant="light"
+                isIconOnly
+                onClick={() => {
+                  setCropAspectRatio(16 / 9)
+                }}>
+                <LuRectangleHorizontal size={22} />
+              </Button>
+            </Tooltip>
+            <Tooltip content="9:16">
+              <Button
+                color="primary"
+                variant="light"
+                isIconOnly
+                onClick={() => {
+                  setCropAspectRatio(9 / 16)
+                }}>
+                <LuRectangleVertical size={22} />
+              </Button>
+            </Tooltip>
             <Button
               color="primary"
               variant="light"
@@ -105,7 +142,7 @@ export function MediaProviderContent({
             crop={croppedArea}
             rotation={rotation}
             zoom={zoom}
-            aspect={16 / 9}
+            aspect={cropAspectRatio}
             onCropChange={setCroppedArea}
             onRotationChange={setRotation}
             onCropComplete={onCropComplete}

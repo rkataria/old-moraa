@@ -6,7 +6,7 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
 import { useIdle } from '@uidotdev/usehooks'
 import useSound from 'use-sound'
 
-import switchOnSound from '../../../public/switch-on.mp3'
+import switchOnSound from '../../../public/switch-on.mp3?url'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import useCountdown from '@/hooks/useCountdown'

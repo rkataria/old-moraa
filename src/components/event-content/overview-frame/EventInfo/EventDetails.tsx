@@ -33,7 +33,7 @@ export function EventDetails() {
   const [imageUploadProgress, setImageUploadProgress] = useState<number>(0)
   const [imageUploading, setImageUploading] = useState<boolean>(false)
   const { eventId } = useParams({ strict: false })
-  const eventData = useEvent({ id: eventId })
+  const eventData = useEvent({ id: eventId! })
 
   const { event } = eventData
 

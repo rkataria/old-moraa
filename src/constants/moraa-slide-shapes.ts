@@ -58,6 +58,14 @@ export const MORAA_SLIDE_SHAPES: {
       label: 'Line 1',
       svg: '<svg width="50px" xmlns="http://www.w3.org/2000/svg" class="shape-block-svg" version="2.0" viewBox="0 0 125 5" height="2px" style="overflow: visible;"><g><g><rect fill="transparent" stroke-width="0" x="0" y="-7.5" height="20" width="125"></rect><line x2="125" y1="2.5" y2="2.5" clip-path="url(#80f7e41b-541a-418f-bac0-b512ca303058)" style="stroke-width: 5;stroke: #2E1E4A"></line><line x2="125" y1="2.5" y2="2.5" stroke="transparent" marker-start="url(#1baa3230-5b62-4651-b1f7-60bfc91c8c56)" marker-end="url(#92a69e3c-694f-4f1d-9d7b-3a087e2547c4)" style="stroke-width: 5;stroke: #2E1E4A;"></line></g></g></svg>',
     },
+    {
+      label: 'Line 2',
+      svg: '<svg fill="rgba(46, 30, 74, 1)" width="50px" height="50px" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" id="arrow"><path d="M8.29289 2.29289C8.68342 1.90237 9.31658 1.90237 9.70711 2.29289L14.2071 6.79289C14.5976 7.18342 14.5976 7.81658 14.2071 8.20711L9.70711 12.7071C9.31658 13.0976 8.68342 13.0976 8.29289 12.7071C7.90237 12.3166 7.90237 11.6834 8.29289 11.2929L11 8.5H1.5C0.947715 8.5 0.5 8.05228 0.5 7.5C0.5 6.94772 0.947715 6.5 1.5 6.5H11L8.29289 3.70711C7.90237 3.31658 7.90237 2.68342 8.29289 2.29289Z"/></svg>',
+    },
+    {
+      label: 'Line 3',
+      svg: '<svg width="40px" height="40px" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2L13 13M1.5 2.5C0.947715 2.5 0.5 2.05228 0.5 1.5C0.5 0.947715 0.947715 0.5 1.5 0.5C2.05228 0.5 2.5 0.947715 2.5 1.5C2.5 2.05228 2.05228 2.5 1.5 2.5ZM13.5 14.5C12.9477 14.5 12.5 14.0523 12.5 13.5C12.5 12.9477 12.9477 12.5 13.5 12.5C14.0523 12.5 14.5 12.9477 14.5 13.5C14.5 14.0523 14.0523 14.5 13.5 14.5Z" stroke="rgba(46, 30, 74, 1)"/></svg>',
+    },
   ],
   Banners: [],
   Callouts: [],

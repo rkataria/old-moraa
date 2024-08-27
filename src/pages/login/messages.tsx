@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute, useLocation, useParams } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/login/messages')({
@@ -8,23 +9,23 @@ export function Messages() {
   const location = useLocation()
   const error = useParams({
     from: location.search,
-    select: (params) => params.error,
-  })
+    select: (params: any) => params.error,
+  } as any)
   const message = useParams({
     from: location.search,
-    select: (params) => params.message,
-  })
+    select: (params: any) => params.message,
+  } as any)
 
   return (
     <>
       {error && (
         <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-          {error}
+          {error as string}
         </p>
       )}
       {message && (
         <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-          {message}
+          {message as string}
         </p>
       )}
     </>

@@ -124,7 +124,7 @@ export function Visit() {
     }: ParticipantsFormData) => {
       try {
         const addResponse = await EventService.addParticipant({
-          eventId,
+          eventId: eventId as string,
           participants: _participants,
         })
 
