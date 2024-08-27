@@ -3,13 +3,13 @@ import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import { Button, ScrollShadow } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
-import { useActions, useUIState } from 'ai/rsc'
 import axios from 'axios'
 import { BsTrash3 } from 'react-icons/bs'
 import { HiOutlineDocumentText } from 'react-icons/hi'
 import { HiOutlineChartBarSquare } from 'react-icons/hi2'
 import { LuArrowUp } from 'react-icons/lu'
 import { RxCross1 } from 'react-icons/rx'
+import { useDispatch } from 'react-redux'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Converstations } from './AiChat/Converstations'
@@ -18,17 +18,28 @@ import { EventContext } from '@/contexts/EventContext'
 import { useEnrollment } from '@/hooks/useEnrollment'
 import { useEvent } from '@/hooks/useEvent'
 import { useProfile } from '@/hooks/useProfile'
-import { ClientMessage } from '@/pages/-action'
+import { useStoreSelector } from '@/hooks/useRedux'
+import {
+  addMessageAction,
+  addMessageInBulkAction,
+  setInputAction,
+  setMessagesAction,
+} from '@/stores/slices/ai/ai.slice'
+import { RootState } from '@/stores/store'
+import { fetchChatResponse } from '@/stores/thunks/ai.thunk'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function AIChat({ onClose }: { onClose: () => void }) {
+  const dispatch = useDispatch()
+  const { messages, input } = useStoreSelector(
+    (state: RootState) => state.ai.chat
+  )
+
   const { eventId } = useParams({ strict: false })
-  const { event, meeting } = useEvent({ id: eventId })
-  const { enrollment } = useEnrollment({ eventId })
-  const [input, setInput] = useState<string>('')
-  const [conversation, setConversation] = useUIState()
-  const { continueConversation } = useActions()
+  const { event, meeting } = useEvent({ id: eventId! })
+  const { enrollment } = useEnrollment({ eventId: eventId! })
+  const [inputVal, setInputVal] = useState<string>('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
   const { data: userProfile } = useProfile()
@@ -40,7 +51,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
     if (lastMessagePlaceholderRef.current) {
       lastMessagePlaceholderRef.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [conversation])
+  }, [messages])
 
   const handleGeneratePoll = async () => {
     let content = currentFrame?.content?.blocks
@@ -56,20 +67,23 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       content = `${event.name}, ${event.description}`
     }
     const topic = `"${content}"`
-    setConversation((currentConversation: ClientMessage[]) => [
-      ...currentConversation,
-      { id: uuidv4(), role: 'user', display: 'Generate Poll for me' },
-      {
-        id: uuidv4(),
-        role: 'assistant',
-        display: 'Generating Poll. Please wait!!',
-      },
-    ])
+    dispatch(
+      addMessageAction({ id: uuidv4(), role: 'user', content: inputVal })
+    )
+    dispatch(
+      addMessageInBulkAction([
+        { id: uuidv4(), role: 'user', content: 'Generate Poll for me' },
+        {
+          id: uuidv4(),
+          role: 'assistant',
+          content: 'Generating Poll. Please wait!!',
+        },
+      ])
+    )
+
     const message = await generatePoll(topic)
-    setConversation((currentConversation: ClientMessage[]) => [
-      ...currentConversation,
-      { id: uuidv4(), role: 'assistant', display: message },
-    ])
+
+    addMessageAction([{ id: uuidv4(), role: 'assistant', content: message }])
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -100,21 +114,23 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   }
 
   const handleSummarizeSection = async () => {
-    setConversation((currentConversation: ClientMessage[]) => [
-      ...currentConversation,
-      { id: uuidv4(), role: 'user', display: 'Summarize current section' },
-      {
-        id: uuidv4(),
-        role: 'assistant',
-        display: 'Creating a summary frame. Please wait!!',
-      },
-    ])
+    dispatch(
+      addMessageInBulkAction([
+        { id: uuidv4(), role: 'user', display: 'Summarize current section' },
+        {
+          id: uuidv4(),
+          role: 'assistant',
+          display: 'Creating a summary frame. Please wait!!',
+        },
+      ])
+    )
+
     const sectionId = currentSectionId ?? sections[0].id
     const message = await summarizeSection(sectionId, meeting.id)
-    setConversation((currentConversation: ClientMessage[]) => [
-      ...currentConversation,
-      { id: uuidv4(), role: 'assistant', display: message },
-    ])
+
+    dispatch(
+      addMessageAction([{ id: uuidv4(), role: 'assistant', content: message }])
+    )
   }
 
   async function summarizeSection(
@@ -140,20 +156,17 @@ export function AIChat({ onClose }: { onClose: () => void }) {
     }
   }
 
-  const handleSubmit = async (topic: string = input, _input = input) => {
-    setConversation((currentConversation: ClientMessage[]) => [
-      ...currentConversation,
-      { id: uuidv4(), role: 'user', display: _input },
-    ])
+  const handleSend = async () => {
+    dispatch(
+      addMessageInBulkAction([
+        { id: uuidv4(), role: 'user', content: inputVal },
+      ])
+    )
 
-    const message = await continueConversation(topic)
-
-    setConversation((currentConversation: ClientMessage[]) => [
-      ...currentConversation,
-      message,
-    ])
-
-    setInput('')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dispatch(fetchChatResponse(inputVal) as any)
+    dispatch(setInputAction(''))
+    setInputVal('')
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function autosize(e: any) {
@@ -161,7 +174,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
 
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit()
+      handleSend()
 
       return
     }
@@ -175,7 +188,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   const formHeight = textareaRef.current?.style.height
 
   const getAIContent = () => {
-    if (conversation.length === 0) {
+    if (messages.length === 0) {
       return (
         <div className="w-full h-full grid place-items-center">
           <div className="grid place-items-center gap-8">
@@ -255,7 +268,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       </div>
       <div className="p-1 border-1 border-gray-300 bg-white rounded-md mx-4 mb-2">
         {enrollment &&
-          conversation.length !== 0 &&
+          messages.length !== 0 &&
           ['Host', 'Moderator'].includes(enrollment.event_role) && (
             <div className="flex items-center gap-2 p-2">
               <Button
@@ -282,12 +295,12 @@ export function AIChat({ onClose }: { onClose: () => void }) {
           <textarea
             ref={textareaRef}
             rows={1}
-            value={input}
+            value={inputVal}
             onKeyDown={autosize}
             placeholder={`Hey ${userProfile?.first_name}! how can I help?`}
             className="overflow-hidden w-[calc(100%_-_4rem)] p-2 block text-sm resize-none bg-transparent border-none focus:outline-none flex-auto"
             onChange={(e) => {
-              setInput(e.target.value)
+              setInputVal(e.target.value)
             }}
           />
           <button
@@ -299,7 +312,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
                 'bg-black text-white': input,
               }
             )}
-            onClick={() => handleSubmit()}>
+            onClick={handleSend}>
             <LuArrowUp />
           </button>
         </div>
@@ -317,7 +330,7 @@ function AiChatSidebarWrapper({
   children: ReactNode
   onClose: () => void
 }) {
-  const [, setConversation] = useUIState()
+  const dispatch = useDispatch()
 
   return (
     <div className={cn('w-full h-full')}>
@@ -329,20 +342,12 @@ function AiChatSidebarWrapper({
           <Button
             variant="light"
             isIconOnly
-            onClick={() => setConversation([])}>
+            onClick={() => dispatch(setMessagesAction([]))}>
             <BsTrash3 size={18} />
           </Button>
           <Button variant="light" isIconOnly onClick={onClose}>
             <RxCross1 size={18} />
           </Button>
-          {/* <Button
-            variant="light"
-            isIconOnly
-            size="sm"
-            disabled
-            className="opacity-0 pointer-events-none">
-            <RiUnpinLine size={24} />
-          </Button> */}
         </div>
       </div>
       <div className={cn(contentClass)}>{children}</div>

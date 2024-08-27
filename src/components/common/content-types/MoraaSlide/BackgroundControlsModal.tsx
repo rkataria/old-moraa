@@ -110,13 +110,24 @@ export function BackgroundControlsModal({
                       onSelectCallback={(imageElment) => {
                         setLoading(true)
 
-                        fabric.Image.fromURL(imageElment.src, (img) => {
-                          canvas.backgroundImage = img
-                          canvas.renderAll()
-                          canvas.fire('object:modified')
-                          setLoading(false)
-                          handleClose()
-                        })
+                        fabric.Image.fromURL(
+                          imageElment.src,
+                          (img) => {
+                            img.set({
+                              originX: 'left',
+                              originY: 'top',
+                              left: 0,
+                              top: 0,
+                            })
+
+                            canvas.backgroundImage = img
+                            canvas.renderAll()
+                            canvas.fire('object:modified')
+                            setLoading(false)
+                            handleClose()
+                          },
+                          { crossOrigin: 'anonymous' }
+                        )
                       }}
                     />
                   </div>

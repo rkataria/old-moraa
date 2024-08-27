@@ -19,7 +19,7 @@ function Login() {
   const user = useAuth()
   const router = useRouter()
   const location = useLocation()
-  const { redirectTo } = location.search
+  const { redirectTo } = location.search as { redirectTo: string }
 
   useEffect(() => {
     if (user.currentUser && redirectTo) {

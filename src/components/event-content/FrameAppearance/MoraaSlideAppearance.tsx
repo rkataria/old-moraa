@@ -1,35 +1,11 @@
-import { useEffect, useState } from 'react'
-
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tab,
-  Tabs,
-} from '@nextui-org/react'
-import { IoCloseOutline } from 'react-icons/io5'
-
 import { MoraaSlideActiveObjectAppearance } from './MoraaSlideActiveObjectAppearance'
-import { MoraaSlideTemplates } from '../MoraaSlideConfiguration/MoraaSlideTemplates'
 
 import { MoraaSlideBackgroundControls } from '@/components/common/content-types/MoraaSlide/BackgroundControls'
-import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
-import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
-import { loadTemplate } from '@/utils/canvas-templates'
 
 export function MoraaSlideAppearance() {
-  const [open, setOpen] = useState(false)
-  const { templateKey } = useMoraaSlideStore((state) => state)
+  // const [open, setOpen] = useState(false)
   const { canvas } = useMoraaSlideEditorContext()
-
-  useEffect(() => {
-    if (!templateKey || !canvas) return
-
-    loadTemplate(canvas, templateKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canvas, templateKey])
 
   if (!canvas) return null
 
@@ -41,7 +17,7 @@ export function MoraaSlideAppearance() {
 
   return (
     <>
-      <LabelWithInlineControl
+      {/* <LabelWithInlineControl
         label="Layout"
         className="flex flex-col gap-2 font-semibold"
         control={
@@ -108,7 +84,7 @@ export function MoraaSlideAppearance() {
             </PopoverContent>
           </Popover>
         }
-      />
+      /> */}
       <MoraaSlideBackgroundControls />
     </>
   )

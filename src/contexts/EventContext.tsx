@@ -67,7 +67,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   )
   const dispatch = useStoreDispatch()
   const router = useRouter()
-  const eventViewFromQuery = router.latestLocation.search.action
+  const { action: eventViewFromQuery } = router.latestLocation.search as {
+    action: string
+  }
 
   const currentUser = useStoreSelector((state) => state.user.currentUser.user)
   const { permissions } = useEventPermissions()

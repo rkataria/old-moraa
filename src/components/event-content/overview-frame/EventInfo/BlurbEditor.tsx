@@ -29,7 +29,7 @@ export function BlurbEditor({ editable = true }: { editable?: boolean }) {
       }}>
       <RichTextEditor
         key={`${editable && !preview}`}
-        editorId={eventId}
+        editorId={eventId!}
         showHeader={false}
         editable={editable && !preview}
         onEmptyContent={() => setShowPlaceholder(true)}

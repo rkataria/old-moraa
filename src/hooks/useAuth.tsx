@@ -7,6 +7,7 @@ import { useStoreSelector } from './useRedux'
 import { supabaseClient } from '@/utils/supabase/client'
 
 type UserContextType = {
+  isAuthenticated: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   currentUser: any
   isLoading: boolean
@@ -14,6 +15,7 @@ type UserContextType = {
 }
 
 const UserContext = createContext<UserContextType>({
+  isAuthenticated: false,
   currentUser: undefined,
   isLoading: true,
   logout: () => {},
@@ -36,6 +38,7 @@ export function UserContextProvider({
     <UserContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
+        isAuthenticated: !!userState.user,
         currentUser: userState.user,
         isLoading: userState.isLoading,
         logout,
