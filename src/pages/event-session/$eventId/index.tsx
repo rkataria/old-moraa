@@ -21,6 +21,8 @@ type EventSessionPageInnerProps = {
 
 export const Route = createFileRoute('/event-session/$eventId/')({
   component: EventSessionPage,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   beforeLoad,
 })
 
