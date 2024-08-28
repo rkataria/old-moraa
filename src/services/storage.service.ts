@@ -6,12 +6,14 @@ export const uploadFile = async ({
   fileName,
   file,
   bucketName,
+  neverExpire = true,
   onProgressChange,
 }: {
   fileName: string
   file: File
-  onProgressChange?: (percentage: number) => void
   bucketName?: string
+  neverExpire?: boolean
+  onProgressChange?: (percentage: number) => void
 }) => {
   const {
     data: { session },
@@ -31,6 +33,7 @@ export const uploadFile = async ({
         bucketName: bucketName || 'assets-uploads',
         objectName: fileName,
       },
+
       chunkSize: 6 * 1024 * 1024, // NOTE: it must be set to 6MB (for now) do not change it
       onError(error) {
         console.log(`Failed because: ${error}`)
@@ -41,7 +44,7 @@ export const uploadFile = async ({
         onProgressChange?.(+percentage < 90 ? +percentage : 90) // Limit progress to 90% to avoid confusion as the signed url is not yet generated
       },
       onSuccess() {
-        getSignedUrl(bucketName!, fileName).then((data) => {
+        getSignedUrl(bucketName!, fileName, neverExpire).then((data) => {
           resolve({
             url: data.data?.signedUrl,
           })
@@ -75,11 +78,18 @@ export const downloadFile = (fileName: string, bucketName?: string) =>
 export const deleteFile = (fileName: string, bucketName?: string) =>
   supabaseClient.storage.from(bucketName || 'assets-uploads').remove([fileName])
 
-export const getSignedUrl = async (bucketName: string, objectName: string) =>
-  supabaseClient.storage
+export const getSignedUrl = async (
+  bucketName: string,
+  objectName: string,
+  neverExpire?: boolean
+) => {
+  const expireInSeconds = neverExpire ? 100 * 365 * 24 * 60 * 60 : 60000
+
+  return supabaseClient.storage
     .from(bucketName)
-    .createSignedUrl(objectName as string, 60000, {
+    .createSignedUrl(objectName as string, expireInSeconds, {
       transform: {
         quality: 50,
       },
     })
+}
