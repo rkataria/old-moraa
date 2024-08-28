@@ -115,11 +115,12 @@ export function MoraaSlideEditor({
       )
 
       if (template) {
-        template.loadTemplate(canvas)
+        const _canvas = template.loadTemplate(fabricRef.current!)
+
+        // NOTE: This is a workaround to fix the issue where the canvas is not rendered when the template is loaded, canvas object added event is not triggered and the canvas is not saved to storage when the template is loaded
+        saveToStorage(_canvas)
       }
     }
-
-    setCanvas(canvas)
 
     canvas.on('object:added', async (options) => {
       handleCanvasObjectAdded({ options, fabricRef, frameId, saveToStorage })
@@ -183,6 +184,8 @@ export function MoraaSlideEditor({
       }
     })
 
+    setCanvas(canvas)
+
     // eslint-disable-next-line consistent-return
     return () => {
       canvas.off('object:added')
@@ -197,7 +200,7 @@ export function MoraaSlideEditor({
       canvas.off('selection:cleared')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frameId, frameCanvasData])
+  }, [frameId, frameCanvasData, frameTemplate])
 
   useEffect(() => {
     if (frameBackgroundColor) {
