@@ -11,7 +11,6 @@ import { sendNotification } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
 import { useParams } from '@tanstack/react-router'
-import isEqual from 'lodash.isequal'
 import uniqBy from 'lodash.uniqby'
 
 import { EventContext } from './EventContext'
@@ -20,6 +19,7 @@ import type {
   IPollResponse,
   IReflectionResponse,
   IFrame,
+  ISection,
 } from '@/types/frame.type'
 
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
@@ -27,7 +27,9 @@ import { useEnrollment } from '@/hooks/useEnrollment'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useFrameReactions } from '@/hooks/useReactions'
 import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
-import { SessionService } from '@/services/session.service'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { useEventSelector } from '@/stores/hooks/useEventSections'
+import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventContextType } from '@/types/event-context.type'
 import {
   type EventSessionContextType,
@@ -44,12 +46,11 @@ interface EventSessionProviderProps {
   children: React.ReactNode
 }
 
-export type EventSessionMode = 'Preview' | 'Lobby' | 'Presentation'
-
 export const EventSessionContext =
   createContext<EventSessionContextType | null>(null)
 
 export function EventSessionProvider({ children }: EventSessionProviderProps) {
+  const dispatch = useStoreDispatch()
   const { eventId } = useParams({ strict: false })
   const { meeting: dyteMeeting } = useDyteMeeting()
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
@@ -57,21 +58,34 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
+  const sections = useEventSelector()
+  const currentFrame = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.frameState.frame.data?.find(
+        (frame) =>
+          frame.id ===
+          store.event.currentEvent.liveSessionState.activeSession.data?.data
+            ?.currentFrameId
+      ) || null
+  )
   const {
-    meeting,
-    sections,
-    currentFrame,
     eventMode,
     setCurrentFrame,
-    getFrameById,
+    currentFrame: eventContextCurrentFrame,
   } = useContext(EventContext) as EventContextType
 
   const { permissions } = useEventPermissions()
 
   const isHost = permissions.canAcessAllSessionControls
 
-  const [presentationStatus, setPresentationStatus] =
-    useState<PresentationStatuses>(PresentationStatuses.STOPPED)
+  const session = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.activeSession.data
+  )
+  const presentationStatus = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.presentationStatus
+  )
   const [currentFrameResponses, setCurrentFrameResponses] = useState<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     IReflectionResponse[] | IPollResponse[] | null
@@ -86,22 +100,25 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [breakoutSlideId, setBreakoutSlideId] = useState<string | null>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [activeSession, setActiveSession] = useState<any>(null)
+  const activeSession = session?.data
   const [videoMiddlewareConfig, setVideoMiddlewareConfig] =
     useState<VideoMiddlewareConfig | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [frameReactions, setFrameReactions] = useState<any>([])
   const { data: fetchedFrameReactions } = useFrameReactions(currentFrame?.id)
-  const [eventSessionMode, setEventSessionMode] =
-    useState<EventSessionMode>('Lobby')
+  const eventSessionMode = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.eventSessionMode
+  )
 
   useEffect(() => {
-    if (!currentFrame) return
-    if (eventSessionMode === 'Lobby' && isHost) {
-      setEventSessionMode('Preview')
+    if (eventContextCurrentFrame?.id) {
+      dispatch(
+        updateMeetingSessionDataAction({
+          currentFrameId: eventContextCurrentFrame?.id,
+        })
+      )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame])
+  }, [dispatch, eventContextCurrentFrame?.id])
 
   useEffect(() => {
     const handleParticipantJoined = (newParticipant: DyteParticipant) => {
@@ -127,125 +144,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [dyteMeeting])
 
   useEffect(() => {
-    if (!meeting?.id) return
-
-    const fetchActiveSession = async () => {
-      const getActiveSessionResponse = await SessionService.getActiveSession({
-        meetingId: meeting.id,
-      })
-
-      if (getActiveSessionResponse?.error || !getActiveSessionResponse?.data) {
-        console.error(
-          'failed to fetch active session:',
-          getActiveSessionResponse
-        )
-
-        return
-      }
-
-      const _activeSession = getActiveSessionResponse.data as {
-        data: {
-          presentationStatus?: PresentationStatuses
-          currentFrameId?: string
-        }
-      }
-
-      const newPresentationStatus =
-        _activeSession.data?.presentationStatus || PresentationStatuses.STOPPED
-
-      setPresentationStatus(newPresentationStatus)
-      setActiveSession(_activeSession)
-
-      if (newPresentationStatus === PresentationStatuses.STOPPED) {
-        setEventSessionMode('Lobby')
-      } else if (sections?.length > 0) {
-        const _currentFrame = sections
-          .flatMap((s) => s.frames)
-          .find((s) => s.id === _activeSession.data?.currentFrameId)
-        setCurrentFrame(_currentFrame || (sections[0].frames || [])[0])
-      }
-    }
-
-    fetchActiveSession()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting?.id, sections])
-
-  // Create a channel for the event
-  useEffect(() => {
-    if (!eventId || !realtimeChannel) return
-
-    // Listen for frame change events
-    realtimeChannel.on(
-      'broadcast',
-      { event: 'currentframe-change' },
-      ({ payload }) => {
-        const frameId = payload?.frameId
-
-        if (!frameId) return
-
-        const section = sections.find((s) =>
-          s.frames.some((frame) => frame.id === frameId)
-        )
-        if (!section) return
-
-        const frame = section.frames.find((s) => s.id === frameId)
-        if (!frame) return
-
-        if (frame.id === currentFrame?.id) return
-
-        setCurrentFrame(frame)
-      }
-    )
-
-    // Listen for presentation status change events
-    realtimeChannel.on(
-      'broadcast',
-      { event: 'presentation-status-change' },
-      ({ payload }) => {
-        const { newPresentationStatus, currentFrameId } = payload ?? {}
-        if (!newPresentationStatus) return
-
-        const getNewEventSessionMode = () => {
-          if (newPresentationStatus !== PresentationStatuses.STOPPED) {
-            return 'Presentation'
-          }
-          if (isHost) return 'Preview'
-
-          return 'Lobby'
-        }
-
-        // Get the presented frame by id
-        const presentationFrame = getFrameById(currentFrameId)
-        // Return if presentation is started but frame is not found
-        if (
-          newPresentationStatus === PresentationStatuses.STARTED &&
-          !presentationFrame
-        ) {
-          return
-        }
-
-        const newEventSessionMode = getNewEventSessionMode()
-
-        setEventSessionMode(newEventSessionMode)
-        setPresentationStatus(newPresentationStatus)
-        setCurrentFrame(presentationFrame)
-
-        if (newPresentationStatus === PresentationStatuses.STOPPED) {
-          setEventSessionMode('Lobby')
-        }
-      }
-    )
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel, eventId, sections])
-
-  useEffect(() => {
     if (!eventId || !realtimeChannel) return
     // Listen for hand raised events
     realtimeChannel.on('broadcast', { event: 'hand-raised' }, ({ payload }) => {
       const { participantId, participantName } = payload
 
-      if (!participantId || !participantName) return
+      if (!participantId) return
 
       const dyteNotificationObject = {
         id: new Date().getTime().toString(),
@@ -286,48 +190,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [fetchedFrameReactions])
 
   useEffect(() => {
-    if (!isHost) return
-    if (!activeSession) return
-
-    if (
-      activeSession?.data?.currentFrameId === currentFrame?.id &&
-      activeSession?.data?.presentationStatus === presentationStatus
-    ) {
-      return
-    }
-    if (eventSessionMode !== 'Preview') {
-      updateActiveSession({
-        currentFrameId: currentFrame?.id,
-        presentationStatus,
-      })
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentFrame,
-    presentationStatus,
-    eventSessionMode,
-    activeSession?.data?.currentFrameId,
-    activeSession?.data?.presentationStatus,
-  ])
-
-  useEffect(() => {
     if (!currentFrame || !realtimeChannel) return
 
-    if (
-      !isBreakoutActive &&
-      isHost &&
-      eventSessionMode === 'Presentation' &&
-      !currentFrame.content?.breakoutFrameId
-    ) {
-      realtimeChannel?.send({
-        type: 'broadcast',
-        event: 'currentframe-change',
-        payload: { frameId: currentFrame.id },
-      })
-    }
-
-    if (!frameHasFrameResponses(currentFrame)) {
+    if (!frameHasFrameResponses(currentFrame as IFrame)) {
       setCurrentFrameLoading(false)
 
       return
@@ -358,7 +223,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     fetchCurrentFrameResponses()
 
-    if (!frameHasFrameResponses(currentFrame)) return
+    if (!frameHasFrameResponses(currentFrame as IFrame)) return
 
     const channels = supabase
       .channel('frame-response-channel')
@@ -398,58 +263,39 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     if (!isHost || !realtimeChannel) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const nextFrame = getNextFrame({
-      sections,
-      currentFrame,
+      sections: sections as ISection[],
+      currentFrame: currentFrame as IFrame,
       onlyPublished: !isHost && eventMode !== 'present',
     })
 
     if (!nextFrame) return null
 
-    if (eventSessionMode === 'Preview') {
-      setCurrentFrame(nextFrame)
-
-      return null
-    }
-
-    realtimeChannel?.send({
-      type: 'broadcast',
-      event: 'currentframe-change',
-      payload: { frameId: nextFrame.id },
-    })
+    dispatch(
+      updateMeetingSessionDataAction({
+        currentFrameId: nextFrame.id,
+      })
+    )
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    realtimeChannel,
-    isHost,
-    sections,
-    currentFrame,
-    eventSessionMode,
-    eventMode,
-  ])
+  }, [realtimeChannel, isHost, sections, currentFrame, eventMode])
 
   const previousFrame = useCallback(() => {
     if (!isHost) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const previousFrame = getPreviousFrame({
-      sections,
-      currentFrame,
+      sections: sections as ISection[],
+      currentFrame: currentFrame as IFrame,
       onlyPublished: !isHost && eventMode !== 'present',
     })
 
     if (!previousFrame) return null
 
-    if (eventSessionMode === 'Preview') {
-      setCurrentFrame(previousFrame)
-
-      return null
-    }
-
-    realtimeChannel?.send({
-      type: 'broadcast',
-      event: 'currentframe-change',
-      payload: { frameId: previousFrame.id },
-    })
+    dispatch(
+      updateMeetingSessionDataAction({
+        currentFrameId: previousFrame.id,
+      })
+    )
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -458,30 +304,28 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const startPresentation = () => {
     const presentedFrame = currentFrame || sections[0].frames[0]
 
-    realtimeChannel?.send({
-      type: 'broadcast',
-      event: 'presentation-status-change',
-      payload: {
-        newPresentationStatus: PresentationStatuses.STARTED,
+    dispatch(
+      updateMeetingSessionDataAction({
+        presentationStatus: PresentationStatuses.STARTED,
         currentFrameId: presentedFrame.id,
-      },
-    })
+      })
+    )
   }
 
   const stopPresentation = () => {
-    realtimeChannel?.send({
-      type: 'broadcast',
-      event: 'presentation-status-change',
-      payload: { newPresentationStatus: PresentationStatuses.STOPPED },
-    })
+    dispatch(
+      updateMeetingSessionDataAction({
+        presentationStatus: PresentationStatuses.STOPPED,
+      })
+    )
   }
 
   const pausePresentation = () => {
-    realtimeChannel?.send({
-      type: 'broadcast',
-      event: 'presentation-status-change',
-      payload: { newPresentationStatus: PresentationStatuses.PAUSED },
-    })
+    dispatch(
+      updateMeetingSessionDataAction({
+        presentationStatus: PresentationStatuses.PAUSED,
+      })
+    )
   }
 
   const onVote = async (
@@ -706,12 +550,12 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const addParticipant = async (session?: any) => {
+  const addParticipant = async () => {
     const { data: existingParticipant, error: existingParticipantError } =
       await supabase
         .from('participant')
         .select()
-        .eq('session_id', session?.id ?? activeSession?.id)
+        .eq('session_id', session?.id ?? session?.id)
         .eq('enrollment_id', enrollment?.id)
         .single()
 
@@ -721,7 +565,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           .from('participant')
           .insert([
             {
-              session_id: session?.id ?? activeSession.id,
+              session_id: session?.id ?? session?.id,
               enrollment_id: enrollment.id,
             },
           ])
@@ -740,64 +584,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     setParticipant(existingParticipant)
   }
 
-  const joinMeeting = async () => {
-    // check if active session exists, else create one
-    const getActiveSessionResponse = await SessionService.getActiveSession({
-      meetingId: meeting?.id,
-    })
-
-    if (getActiveSessionResponse?.error || !getActiveSessionResponse?.data) {
-      // create new session in active state
-      const createSessionResponse = await SessionService.createSession({
-        meetingId: meeting?.id,
-      })
-
-      if (createSessionResponse?.error || !createSessionResponse?.data) {
-        console.error(
-          'failed to create session, error: ',
-          createSessionResponse
-        )
-
-        return
-      }
-      setActiveSession(createSessionResponse?.data)
-      await addParticipant(createSessionResponse.data)
-
-      return
-    }
-
-    setActiveSession(getActiveSessionResponse.data)
-    await addParticipant(getActiveSessionResponse.data)
-  }
-
-  useEffect(() => {
-    if (!activeSession?.id) return
-
-    const channels = supabase
-      .channel('session-channel')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'session',
-          filter: `id=eq.${activeSession?.id}&status=ACTIVE`,
-        },
-        (payload) => {
-          if (!payload?.new) return
-
-          if (isEqual(payload?.new, activeSession)) return
-
-          setActiveSession(payload?.new)
-        }
-      )
-      .subscribe()
-
-    return () => {
-      channels.unsubscribe()
-    }
-  }, [activeSession])
-
   const onToggleHandRaised = async ({
     handRaise,
     participantId,
@@ -809,7 +595,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }) => {
     if (!activeSession) return
 
-    const prevSessionRaisedHands = activeSession?.data?.handsRaised || []
+    const prevSessionRaisedHands = activeSession?.handsRaised || []
     let updateRaisedHands = prevSessionRaisedHands
     if (handRaise) {
       updateRaisedHands = [
@@ -830,9 +616,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       )
     }
 
-    await updateActiveSession({
-      handsRaised: updateRaisedHands,
-    })
+    dispatch(
+      updateMeetingSessionDataAction({
+        handsRaised: updateRaisedHands,
+      })
+    )
   }
 
   const updateTypingUsers = async ({
@@ -846,7 +634,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }) => {
     if (!activeSession) return
 
-    const prevSessionUserTypings = activeSession?.data?.typingUsers || []
+    const prevSessionUserTypings = activeSession?.typingUsers || []
 
     let updatedUserTypings = prevSessionUserTypings
 
@@ -863,9 +651,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       )
     }
 
-    await updateActiveSession({
-      typingUsers: updatedUserTypings,
-    })
+    dispatch(
+      updateMeetingSessionDataAction({
+        typingUsers: updatedUserTypings,
+      })
+    )
   }
 
   const flyEmoji = ({ emoji, name }: { emoji: string; name: string }) => {
@@ -881,20 +671,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
   const updateActiveSession = async (data: object) => {
     if (!activeSession) return
-
-    const updateSessionResponse = await SessionService.updateSession({
-      sessionPayload: {
-        data: {
-          ...activeSession.data,
-          ...data,
-        },
-      },
-      sessionId: activeSession.id,
-    })
-
-    if (updateSessionResponse?.error) {
-      console.error('failed to update session:', updateSessionResponse.error)
-    }
+    dispatch(updateMeetingSessionDataAction(data))
   }
 
   return (
@@ -902,8 +679,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         isHost,
-        currentFrame,
-        presentationStatus,
+        currentFrame: currentFrame as IFrame,
+        presentationStatus: presentationStatus as PresentationStatuses,
         currentFrameResponses,
         currentFrameLoading,
         participant,
@@ -920,7 +697,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         setIsBreakoutSlide,
         breakoutSlideId,
         setBreakoutSlideId,
-        setEventSessionMode,
         startPresentation,
         stopPresentation,
         pausePresentation,
@@ -932,7 +708,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         addReflection,
         updateReflection,
         emoteOnReflection,
-        joinMeeting,
+        addParticipant,
         onToggleHandRaised,
         setVideoMiddlewareConfig,
         updateTypingUsers,

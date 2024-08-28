@@ -22,7 +22,6 @@ export function RightSidebar() {
 
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
 
-  console.log('ko', rightSidebarVisiblity)
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), {
     enableOnFormTags: ['INPUT', 'TEXTAREA'],
   })

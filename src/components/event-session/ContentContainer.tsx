@@ -12,17 +12,17 @@ import { Frame } from './Frame'
 import { FrameControls } from '../common/FrameControls'
 import { FramePreview } from '../common/FramePreview'
 
-import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionContextType,
   PresentationStatuses,
 } from '@/types/event-session.type'
 
 export function ContentContainer() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
+  const { currentFrame } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
   const { permissions } = useEventPermissions()
 
   const {

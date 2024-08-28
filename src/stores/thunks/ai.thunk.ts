@@ -6,8 +6,8 @@ import { ChatState } from '../slices/ai/ai.slice'
 const API_KEY = import.meta.env.VITE_OPENAI_API_KEY
 const MODEL = 'gpt-3.5-turbo'
 
-export const fetchChatResponse = createAsyncThunk<string, string>(
-  'chat/fetchChatResponse',
+export const fetchChatThunk = createAsyncThunk<string, string>(
+  'chat/fetchChat',
   async (input: string, { getState, rejectWithValue }) => {
     const state = getState() as { ai: { chat: ChatState } }
     const { messages } = state.ai.chat

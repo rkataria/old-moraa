@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import {
   Dropdown,
   DropdownItem,
@@ -15,10 +13,9 @@ import { ScheduleEventButtonWithModal } from '../ScheduleEventButtonWithModal'
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
 import { Button } from '@/components/ui/Button'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventStatus } from '@/types/enums'
-import { EventContextType } from '@/types/event-context.type'
 
 function ScheduleSessionButton({
   scheduleModal,
@@ -131,8 +128,7 @@ export function SessionActionButton({
   eventId: string
   eventStatus: string
 }) {
-  const { preview } = useContext(EventContext) as EventContextType
-
+  const { preview } = useEventContext()
   const { permissions } = useEventPermissions()
 
   if (!permissions.canAccessSession) {

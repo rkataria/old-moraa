@@ -6,12 +6,17 @@ import { VideoMiddleware } from '@dytesdk/web-core'
 import { RealtimeChannel } from '@supabase/supabase-js'
 
 import type { IPollResponse, IReflectionResponse, IFrame } from './frame.type'
-import type { EventSessionMode } from '@/contexts/EventSessionContext'
 
 export enum PresentationStatuses {
   STARTED = 'started',
   STOPPED = 'stopped',
   PAUSED = 'paused',
+}
+
+export enum EventSessionMode {
+  PREVIEW = 'Preview',
+  LOBBY = 'Lobby',
+  PRESENTATION = 'Presentation',
 }
 
 export type VideoMiddlewareConfig = {
@@ -55,7 +60,6 @@ export type EventSessionContextType = {
   setBreakoutSlideId: Dispatch<SetStateAction<string | null>>
   isCreateBreakoutOpen: boolean
   setIsCreateBreakoutOpen: Dispatch<SetStateAction<boolean>>
-  setEventSessionMode: (mode: EventSessionMode) => void
   startPresentation: () => void
   stopPresentation: () => void
   pausePresentation: () => void
@@ -116,7 +120,7 @@ export type EventSessionContextType = {
     reactionId?: string
     action: string
   }) => void
-  joinMeeting?: () => void
+  addParticipant?: () => void
   onToggleHandRaised: ({
     handRaise,
     participantId,

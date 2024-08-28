@@ -19,9 +19,7 @@ export function RaiseHandToggle() {
     EventSessionContext
   ) as EventSessionContextType
 
-  const isHandRaised = activeSession?.data?.handsRaised?.includes(
-    selfParticipant.id
-  )
+  const isHandRaised = activeSession?.handsRaised?.includes(selfParticipant.id)
 
   const debouncedSelfSpeaker = useDebounce(selfSpeaker, 200)
 

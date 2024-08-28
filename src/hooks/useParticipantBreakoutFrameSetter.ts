@@ -3,25 +3,26 @@ import { useEffect } from 'react'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 
 import { useBreakoutRooms } from './useBreakoutRooms'
-import { useSharedState } from './useSharedState'
+import { useStoreSelector } from './useRedux'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 
 export const useParticipantBreakoutFrameSetter = () => {
   const { isCurrentDyteMeetingInABreakoutRoom } = useBreakoutRooms()
-  const [sharedState] = useSharedState<{
-    slideAssignedToRooms: { [x: string]: string }
-  }>()
+  const activeSessionData = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+  )
   const { meeting } = useDyteMeeting()
   const { getFrameById } = useEventContext()
   const { setCurrentFrame } = useEventSession()
 
   useEffect(() => {
     if (!isCurrentDyteMeetingInABreakoutRoom) return
-    if (Object.keys(sharedState?.slideAssignedToRooms || {}).length) {
+    if (Object.keys(activeSessionData?.slideAssignedToRooms || {}).length) {
       const activityId =
-        sharedState?.slideAssignedToRooms[
+        activeSessionData?.slideAssignedToRooms?.[
           meeting.connectedMeetings.currentMeetingId
         ]
       if (!activityId) return
@@ -33,6 +34,6 @@ export const useParticipantBreakoutFrameSetter = () => {
   }, [
     isCurrentDyteMeetingInABreakoutRoom,
     meeting.connectedMeetings.currentMeetingId,
-    sharedState?.slideAssignedToRooms,
+    activeSessionData?.slideAssignedToRooms,
   ])
 }

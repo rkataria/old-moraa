@@ -26,7 +26,7 @@ import {
   setMessagesAction,
 } from '@/stores/slices/ai/ai.slice'
 import { RootState } from '@/stores/store'
-import { fetchChatResponse } from '@/stores/thunks/ai.thunk'
+import { fetchChatThunk } from '@/stores/thunks/ai.thunk'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
@@ -164,7 +164,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
     )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch(fetchChatResponse(inputVal) as any)
+    dispatch(fetchChatThunk(inputVal) as any)
     dispatch(setInputAction(''))
     setInputVal('')
   }

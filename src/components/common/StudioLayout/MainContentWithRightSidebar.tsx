@@ -31,7 +31,6 @@ export function MainContentWithRightSidebar({
     rightSidebarVisiblity,
     resizableRightSidebarVisiblity,
   } = useStudioLayout()
-
   const containerWidth =
     leftSidebarVisiblity === 'maximized'
       ? `calc(100% - ${LEFT_SIDEBAR_WIDTH}px)`

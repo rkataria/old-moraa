@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { ReactNode } from '@tanstack/react-router'
 
 import { renameSliceActions } from '@/stores/helpers'
-import { fetchChatResponse } from '@/stores/thunks/ai.thunk'
+import { fetchChatThunk } from '@/stores/thunks/ai.thunk'
 
 export interface ClientMessage {
   id: string
@@ -24,7 +24,7 @@ const initialState: ChatState = {
   error: null,
 }
 
-export const aichatSlice = createSlice({
+export const aiChatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
@@ -43,11 +43,11 @@ export const aichatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchChatResponse.pending, (state) => {
+      .addCase(fetchChatThunk.pending, (state) => {
         state.loading = true
         state.error = null
       })
-      .addCase(fetchChatResponse.fulfilled, (state, action) => {
+      .addCase(fetchChatThunk.fulfilled, (state, action) => {
         state.messages.push({
           id: new Date().toISOString(),
           role: 'assistant',
@@ -55,7 +55,7 @@ export const aichatSlice = createSlice({
         })
         state.loading = false
       })
-      .addCase(fetchChatResponse.rejected, (state, action) => {
+      .addCase(fetchChatThunk.rejected, (state, action) => {
         state.messages.push({
           id: new Date().toISOString(),
           role: 'assistant',
@@ -71,4 +71,4 @@ export const {
   addMessageAction,
   addMessageInBulkAction,
   setMessagesAction,
-} = renameSliceActions(aichatSlice.actions)
+} = renameSliceActions(aiChatSlice.actions)

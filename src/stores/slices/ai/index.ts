@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 
-import { aichatSlice } from './ai.slice'
+import { aiChatSlice } from './ai.slice'
 
 export const combinedAiReducer = combineReducers({
-  chat: aichatSlice.reducer,
+  chat: aiChatSlice.reducer,
 })

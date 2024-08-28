@@ -1,17 +1,14 @@
-import { useContext } from 'react'
-
 import { LuGalleryVertical } from 'react-icons/lu'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { EventSessionContext } from '@/contexts/EventSessionContext'
-import { EventSessionContextType } from '@/types/event-session.type'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { EventSessionMode } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 export function LobbyViewToggle() {
-  const { setEventSessionMode } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const dispatch = useStoreDispatch()
 
   return (
     <ControlButton
@@ -25,7 +22,7 @@ export function LobbyViewToggle() {
         content: 'Toggle Lobby View',
       }}
       onClick={() => {
-        setEventSessionMode('Lobby')
+        dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
       }}>
       <LuGalleryVertical size={20} />
     </ControlButton>

@@ -2,9 +2,19 @@ import { MergeDeep } from 'type-fest'
 
 import { Database as DatabaseGenerated } from './supabase-db'
 
+import type { SessionState } from '@/stores/slices/event/current-event/live-session.slice'
+
 export { Json } from './supabase-db'
 
-export type DatabaseTypeOverrides = DatabaseGenerated
+export type DatabaseTypeOverrides = {
+  public: {
+    Tables: {
+      session: {
+        data: SessionState
+      }
+    }
+  }
+}
 
 // Override the type for a specific column in a view:
 export type Database = MergeDeep<DatabaseGenerated, DatabaseTypeOverrides>

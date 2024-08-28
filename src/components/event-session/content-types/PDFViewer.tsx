@@ -37,10 +37,10 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   )
 
   useEffect(() => {
-    if (!activeSession?.data?.PdfFrameLastPosition) return
+    if (!activeSession?.PdfFrameLastPosition) return
 
-    setPosition(activeSession?.data?.PdfFrameLastPosition)
-  }, [activeSession?.data?.PdfFrameLastPosition])
+    setPosition(activeSession?.PdfFrameLastPosition)
+  }, [activeSession?.PdfFrameLastPosition])
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>

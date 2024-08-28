@@ -32,10 +32,10 @@ export function GoogleSlides({ frame }: GoogleSlidesProps) {
     frame.content.googleSlideURL || (frame.content.googleSlideUrl as string)
 
   useEffect(() => {
-    if (!activeSession?.data?.GSlideLastPosition) return
+    if (!activeSession?.GSlideLastPosition) return
 
-    setPosition(activeSession?.data?.GSlideLastPosition)
-  }, [activeSession?.data?.GSlideLastPosition])
+    setPosition(activeSession?.GSlideLastPosition)
+  }, [activeSession?.GSlideLastPosition])
 
   useEffect(() => {
     if (!isHost) return

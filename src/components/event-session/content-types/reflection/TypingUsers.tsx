@@ -14,7 +14,7 @@ export function TypingUsers() {
   const selfParticipant = useDyteSelector((m) => m.self)
 
   const typingUsers: TypingUser[] | undefined =
-    activeSession?.data?.typingUsers?.filter(
+    activeSession?.typingUsers?.filter(
       (typingUser: TypingUser) =>
         typingUser.participantId !== selfParticipant.id
     )

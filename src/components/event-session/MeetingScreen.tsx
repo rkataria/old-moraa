@@ -29,8 +29,13 @@ import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useParticipantBreakoutFrameSetter } from '@/hooks/useParticipantBreakoutFrameSetter'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventContextType } from '@/types/event-context.type'
-import { PresentationStatuses } from '@/types/event-session.type'
+import {
+  EventSessionMode,
+  PresentationStatuses,
+} from '@/types/event-session.type'
 
 export type RightSiderbar =
   | 'participants'
@@ -47,13 +52,13 @@ export type DyteStates = {
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
   const { preview } = useContext(EventContext) as EventContextType
+  const dispatch = useStoreDispatch()
   const {
     isHost,
     eventSessionMode,
     presentationStatus,
     dyteStates,
     setDyteStates,
-    setEventSessionMode,
     updateActiveSession,
     updateTypingUsers,
     isCreateBreakoutOpen,
@@ -78,12 +83,12 @@ export function MeetingScreen() {
       isScreensharing ||
       presentationStatus === PresentationStatuses.STARTED
     ) {
-      setEventSessionMode('Presentation')
+      dispatch(updateEventSessionModeAction(EventSessionMode.PRESENTATION))
 
       return
     }
 
-    setEventSessionMode('Lobby')
+    dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScreensharing, activePlugin, presentationStatus, preview, isHost])
 
@@ -100,7 +105,7 @@ export function MeetingScreen() {
         participant.presetName?.includes('host') &&
         eventSessionMode === 'Presentation'
       ) {
-        setEventSessionMode('Lobby')
+        dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
         updateActiveSession({
           presentationStatus: PresentationStatuses.STOPPED,
         })

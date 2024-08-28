@@ -25,6 +25,11 @@ import { Loading } from '@/components/common/Loading'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useProfile } from '@/hooks/useProfile'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import {
+  getExistingOrCreateNewActiveSessionThunk,
+  getMeetingSessionThunk,
+} from '@/stores/thunks/session.thunk'
 import { EventSessionContextType } from '@/types/event-session.type'
 
 export function MeetingSetupScreen() {
@@ -33,6 +38,16 @@ export function MeetingSetupScreen() {
     isLoading: isLoadingProfile,
     isRequiredNames,
   } = useProfile()
+  const dispatch = useStoreDispatch()
+  const isMeetingOwner = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.isCurrentUserOwnerOfEvent
+  )
+  const meetingId = useStoreSelector(
+    (state) => state.event.currentEvent.meetingState.meeting.data?.id
+  )
+  const isMeetingSessionLoading = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.activeSession.isLoading
+  )
   const { eventId } = useParams({ strict: false })
   const { event } = useEvent({
     id: eventId as string,
@@ -41,7 +56,7 @@ export function MeetingSetupScreen() {
   const { meeting } = useDyteMeeting()
   const [name, setName] = useState<string>('')
   const [isHost, setIsHost] = useState<boolean>(false)
-  const { joinMeeting } = useContext(
+  const { addParticipant } = useContext(
     EventSessionContext
   ) as EventSessionContextType
   const [states, setStates] = useState({})
@@ -74,9 +89,16 @@ export function MeetingSetupScreen() {
     }
   }, [selfParticipant])
 
+  useEffect(() => {
+    if (!meetingId || isMeetingOwner === null) return
+    if (isMeetingOwner) {
+      dispatch(getExistingOrCreateNewActiveSessionThunk(meetingId))
+    } else dispatch(getMeetingSessionThunk(meetingId))
+  }, [dispatch, isMeetingOwner, meetingId])
+
   const handleJoinMeeting = async () => {
     meeting.join()
-    joinMeeting?.()
+    addParticipant?.()
   }
 
   selfParticipant?.setName(
@@ -163,6 +185,7 @@ export function MeetingSetupScreen() {
 
             <Button
               className="bg-black text-white mt-2"
+              disabled={isMeetingSessionLoading}
               onClick={handleJoinMeeting}>
               Join Meeting
             </Button>

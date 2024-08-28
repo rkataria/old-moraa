@@ -25,6 +25,37 @@ const getActiveSession = async ({
   )
 }
 
+/**
+ * This function takes the meeting ID and returns the session for that meeting
+ * If the session does not exist then creates a new session and then returns it.
+ * @param meetingId ID of the meeting
+ * @return SessionModel
+ */
+const getExistingOrCreateNewActiveSession = async ({
+  meetingId,
+}: {
+  meetingId: string
+}) => {
+  if (!meetingId) return null
+
+  const query = supabaseClient
+    .from('session')
+    .upsert({
+      id: meetingId,
+      meeting_id: meetingId,
+      status: 'LIVE',
+    })
+    .select()
+    .single()
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
 const createSession = async ({
   meetingId,
   status,
@@ -84,6 +115,7 @@ const updateSession = async ({
 
 export const SessionService = {
   getActiveSession,
+  getExistingOrCreateNewActiveSession,
   createSession,
   updateSession,
 }

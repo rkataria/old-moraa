@@ -28,7 +28,7 @@ export function ParticipantsGridView({
     EventSessionContext
   ) as EventSessionContextType
 
-  const handRaised = activeSession?.data?.handsRaised || []
+  const handRaised = activeSession?.handsRaised || []
 
   const handlePrevPage = () => {
     if (currentPage > 1) {

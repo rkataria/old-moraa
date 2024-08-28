@@ -13,7 +13,11 @@ export function PresentationToggle() {
     useEventSession()
 
   const presentationStarted =
-    presentationStatus !== PresentationStatuses.STOPPED
+    presentationStatus && presentationStatus !== PresentationStatuses.STOPPED
+  console.log(
+    '🚀 ~ PresentationToggle ~ presentationStarted:',
+    presentationStatus
+  )
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePresentationToggle = (e: any) => {

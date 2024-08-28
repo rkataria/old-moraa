@@ -13,7 +13,7 @@
     "-=-=-=-=-=-=-=-=-=-=-=-=-=": "",
     "check-format": "prettier -c .",
     "check-lint": "eslint .",
-    "check-types": "tsc -p tsconfig.json --pretty --noEmit",
+    "check-types": "tsc -p tsconfig.app.json --pretty --noEmit",
     "check-all": "yarn check-format && echo '\nChecking linting issues...' && yarn check-lint && echo 'All good with linting \n' && echo 'Checking Types...' && yarn check-types && echo '\n \t🚀 🚀  Everything is good  🚀 🚀 \n'",
     "=-=-=-=-=-=-=-=-=-=-=-=-=": "",
     "fix-format": "prettier -w .",
