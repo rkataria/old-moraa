@@ -37,7 +37,13 @@ export function ReactWithEmojiToggle() {
     EventSessionContext
   ) as EventSessionContextType
 
-  useHotkeys('e', () => setIsOpen(!isOpen), [isOpen])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleEmojiShortcut = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+    setIsOpen(!isOpen)
+  }
+
+  useHotkeys('e', handleEmojiShortcut, [isOpen, setIsOpen])
   useHotkeys('ESC', () => setIsOpen(false), [])
 
   const handleEmoji = (emojiIndex: number) => {

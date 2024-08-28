@@ -31,11 +31,13 @@ import { supabaseClient } from '@/utils/supabase/client'
 type SectionState = {
   section: ThunkState<Array<SectionModel>>
   createSectionThunk: ThunkState<SectionModel>
+  expandedSectionsInSessionPlanner: string[]
 }
 
 const initialState: SectionState = {
   section: buildThunkState<Array<SectionModel>>([]),
   createSectionThunk: buildThunkState<SectionModel>(),
+  expandedSectionsInSessionPlanner: [],
 }
 
 export const sectionSlice = createSlice({
@@ -88,6 +90,15 @@ export const sectionSlice = createSlice({
           )
         }
       })
+    },
+
+    updateExpandedSectionsInSessionPlanner: (
+      state,
+      action: PayloadAction<string[]>
+    ) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      state.expandedSectionsInSessionPlanner = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -168,6 +179,12 @@ attachStoreListener({
     const meetingId =
       getState().event.currentEvent.meetingState.meeting.data?.id
 
+    dispatch(
+      updateExpandedSectionsInSessionPlannerAction([
+        getState().event.currentEvent.sectionState.section.data?.[0]
+          ?.id as string,
+      ])
+    )
     supabaseClient
       .channel(`event:${eventId}-1`)
       .on(
@@ -292,5 +309,9 @@ attachStoreListener({
   },
 })
 
-export const { updateSectionAction, insertSectionAction, reorderFrameAction } =
-  renameSliceActions(sectionSlice.actions)
+export const {
+  updateSectionAction,
+  insertSectionAction,
+  reorderFrameAction,
+  updateExpandedSectionsInSessionPlannerAction,
+} = renameSliceActions(sectionSlice.actions)

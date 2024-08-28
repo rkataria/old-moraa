@@ -28,7 +28,10 @@ export function ChatsToggle({
     })
   }, [meeting, selfParticipant.userId])
 
-  const handleChat = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleChat = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+
     setNewMessageReceived(false)
     onClick()
   }

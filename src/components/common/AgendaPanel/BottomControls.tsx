@@ -6,7 +6,7 @@ import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export const BOTTOM_CONTROLS_HEIGHT = 52
 export const BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED = 90
@@ -20,7 +20,7 @@ export function BottomControls() {
       : BOTTOM_CONTROLS_HEIGHT
 
   useHotkeys(
-    '[',
+    KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key,
     toggleLeftSidebar,
     {
       enableOnFormTags: ['INPUT', 'TEXTAREA'],
@@ -41,7 +41,8 @@ export function BottomControls() {
       <AddContentButton className="flex-auto" />
       <Tooltip
         label={leftSideBarMaximized ? 'Collapse' : 'Expand'}
-        actionKey="[">
+        actionKey={KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key}
+        systemKeys={['ctrl']}>
         <Button size="sm" isIconOnly variant="flat" onClick={toggleLeftSidebar}>
           {leftSidebarVisiblity === 'maximized' ? (
             <LuPanelLeftClose size={18} strokeWidth={1.2} />

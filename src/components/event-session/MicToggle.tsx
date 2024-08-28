@@ -10,7 +10,10 @@ export function MicToggle({ className = '' }: { className?: string }) {
   const self = useDyteSelector((state) => state.self)
   const isMicEnabled = useDyteSelector((state) => state.self?.audioEnabled)
 
-  const handleMic = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleMic = (e?: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+
     if (isMicEnabled) {
       self.disableAudio()
 

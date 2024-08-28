@@ -426,3 +426,8 @@ input[type='number']::-webkit-outer-spin-button {
 .moraa-slide-preview svg {
   @apply absolute left-0 top-0 w-full h-full;
 }
+
+/* Using this one to hide scrollbars for thumbnails */
+.hide-scrollbars div {
+  overflow: hidden; /* Hide scrollbars for all divs inside */
+}

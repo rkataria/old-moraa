@@ -105,7 +105,8 @@ export function FramePreview({
         {frame.type === ContentType.POLL && (
           <PollPreview
             frame={frame as PollFrame}
-            disableAnimation={!isInteractive! && asThumbnail}
+            disableAnimation={!isInteractive && asThumbnail}
+            renderAsThumbnail={asThumbnail}
           />
         )}
         {frame.type === ContentType.GOOGLE_SLIDES_IMPORT && (
@@ -125,6 +126,7 @@ export function FramePreview({
             frame={frame as VideoEmbedFrameType}
             showControls={isInteractive}
             fullWidth={fullWidth}
+            key={(frame as VideoEmbedFrameType).content.videoUrl}
           />
         )}
         {frame.type === ContentType.MIRO_EMBED && (

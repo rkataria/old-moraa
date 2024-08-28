@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext, useRef, useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { RxDotsVertical } from 'react-icons/rx'
 
 import { AddItemBar } from './AddItemBar'
-import { FrameThumbnailCard } from './FrameThumbnailCard'
+import { FrameGridView } from './FrameGridView'
 import { ContentTypeIcon } from '../ContentTypeIcon'
 import { ContentType } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
-import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
@@ -48,7 +47,6 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
 
   const { listDisplayMode, currentSectionId } = useAgendaPanel()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
-  const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
   const eventSessionData = useEventSession()
 
@@ -78,11 +76,6 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
-  const { width: containerWidth } = useDimensions(
-    thumbnailContainerRef,
-    sidebarExpanded
-  )
-
   const editable =
     permissions.canUpdateFrame && !preview && eventMode === 'edit'
 
@@ -91,6 +84,19 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
 
   const renderFrameContent = () => {
     if (sidebarExpanded) {
+      if (listDisplayMode === 'grid') {
+        return (
+          <FrameGridView
+            frame={frame}
+            handleFrameAction={handleFrameAction}
+            sidebarExpanded={sidebarExpanded}
+            editable={editable}
+            frameActive={frameActive}
+            eventSessionData={eventSessionData}
+          />
+        )
+      }
+
       return (
         <div
           key={`frame-${frame?.id}`}
@@ -98,12 +104,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
           className={cn(
             'relative cursor-pointer rounded-md overflow-hidden hover:bg-gray-200',
             {
-              'border-2 border-gray-100 hover:border-gray-300':
-                listDisplayMode === 'grid',
               'bg-primary-100': frameActive,
-              'border-primary-200': frameActive && listDisplayMode === 'grid',
-              'border-transparent':
-                listDisplayMode === 'list' && currentFrame?.id !== frame?.id,
+              'border-transparent': currentFrame?.id !== frame?.id,
               'border border-green-700':
                 eventSessionData?.breakoutSlideId === frame?.id,
             }
@@ -125,27 +127,11 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
               'relative flex flex-col transition-all duration-400 ease-in-out group/frame-item'
             )}>
             <div
-              className={cn('w-full aspect-video bg-gray-100', {
-                hidden: listDisplayMode === 'list',
-                block: listDisplayMode === 'grid',
-              })}>
-              <div
-                ref={thumbnailContainerRef}
-                className="relative w-full h-full">
-                <FrameThumbnailCard
-                  frame={frame}
-                  containerWidth={containerWidth}
-                />
-              </div>
-            </div>
-            <div
               className={cn(
                 'flex justify-between items-center px-2 h-8 hover:bg-gray-200 group-hover/frame-item:bg-gray-200',
                 {
                   'bg-primary-100': frameActive,
-                  'border-gray-100':
-                    currentFrame?.id !== frame?.id &&
-                    listDisplayMode === 'grid',
+                  'border-gray-100': currentFrame?.id !== frame?.id,
                 }
               )}>
               <div className="flex items-center justify-start flex-auto gap-2">
@@ -182,12 +168,6 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
               </RenderIf>
             </div>
           </div>
-          <DeleteFrameModal
-            isModalOpen={isDeleteModalOpen}
-            onClose={() => setIsDeleteModalOpen(false)}
-            handleDelete={handleDelete}
-            frame={frame}
-          />
         </div>
       )
     }
@@ -223,6 +203,12 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
           <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
         </RenderIf>
       )}
+      <DeleteFrameModal
+        isModalOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        handleDelete={handleDelete}
+        frame={frame}
+      />
     </div>
   )
 }

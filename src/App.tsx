@@ -4,6 +4,8 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 
 import './globals.css'
 import { ContentLoading } from './components/common/ContentLoading'
+import { Error } from './components/Error'
+import { NotFound } from './components/NotFound'
 import { routeTree } from './route-tree.gen'
 import { supabaseClient } from './utils/supabase/client'
 
@@ -11,6 +13,13 @@ const router = createRouter({
   routeTree,
   context: {
     auth: undefined!,
+  },
+  defaultNotFoundComponent() {
+    return <NotFound />
+  },
+
+  defaultErrorComponent() {
+    return <Error />
   },
 })
 

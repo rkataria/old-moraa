@@ -21,7 +21,10 @@ export function WhiteBoardToggle() {
 
   const isWhiteboardActive = whiteboardPlugin?.active
 
-  const handleWhiteBoard = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleWhiteBoard = async (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+
     if (!whiteboardPlugin) return
 
     if (whiteboardPlugin.active) {

@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   Dropdown,
   DropdownTrigger,
@@ -9,7 +7,7 @@ import {
 import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
 import { IoDuplicateOutline } from 'react-icons/io5'
 
-const frameActions = [
+export const frameActions = [
   {
     key: 'delete',
     label: 'Delete',

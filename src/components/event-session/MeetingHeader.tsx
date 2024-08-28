@@ -23,7 +23,6 @@ import { BreakoutHeaderButton } from '../common/breakout/BreakoutToggleButton'
 import { ControlButton } from '../common/ControlButton'
 import { HelpButton } from '../common/HelpButton'
 import { Tooltip } from '../common/ShortuctTooltip'
-import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
@@ -46,10 +45,8 @@ export function MeetingHeader({
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
   const { isHost, eventSessionMode } = useEventSession()
-  const { rightSidebarVisiblity, setRightSidebarVisiblity, toggleLeftSidebar } =
-    useStudioLayout()
+  const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
 
-  useHotkeys('ctrl + [', toggleLeftSidebar, [])
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), [])
 
   if (!event) return null
@@ -119,7 +116,6 @@ export function MeetingHeader({
       </div>
 
       <div className="flex justify-end items-center gap-3">
-        {isHost && <AIChatbotToggleButton />}
         <ParticipantsToggle
           isParticipantsSidebarOpen={rightSidebarVisiblity === 'participants'}
           onClick={() => {

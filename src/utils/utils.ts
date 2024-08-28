@@ -244,7 +244,7 @@ export const KeyboardShortcuts = {
     },
     expandAndCollapse: {
       label: 'Collapse/Expand',
-      key: '[',
+      key: 'ctrl + [',
     },
   },
   Live: {

@@ -11,7 +11,7 @@ export type MeetingControlButtonProps = {
   buttonProps: ButtonProps
   hideTooltip?: boolean
   buttonLabel?: string
-  onClick: () => void
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 export function getButtonClassName(isActive: boolean) {

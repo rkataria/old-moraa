@@ -15,7 +15,9 @@ export function PresentationToggle() {
   const presentationStarted =
     presentationStatus !== PresentationStatuses.STOPPED
 
-  const handlePresentationToggle = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handlePresentationToggle = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
     if (presentationStatus === PresentationStatuses.STOPPED) {
       startPresentation()
 

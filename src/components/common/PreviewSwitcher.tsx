@@ -2,7 +2,7 @@ import { useContext } from 'react'
 
 import { Switch, SwitchThumbIconProps } from '@nextui-org/react'
 import { useNavigate } from '@tanstack/react-router'
-import { BsEyeFill } from 'react-icons/bs'
+import { IoEyeSharp } from 'react-icons/io5'
 import { MdEdit } from 'react-icons/md'
 
 import { Tooltip } from './ShortuctTooltip'
@@ -29,9 +29,9 @@ export function PreviewSwitcher() {
   }
   const getThumbIcon = (props: SwitchThumbIconProps) =>
     props.isSelected ? (
-      <BsEyeFill size={12} className="text-primary" />
+      <MdEdit size={16} className="text-white" />
     ) : (
-      <MdEdit size={12} {...props} className="text-primary" />
+      <IoEyeSharp size={16} {...props} className="text-white" />
     )
 
   return (
@@ -39,12 +39,16 @@ export function PreviewSwitcher() {
       label={preview ? 'Switch to edit mode' : 'Switch to preview mode'}
       actionKey={preview ? 'E' : 'P'}>
       <Switch
-        size="md"
-        isSelected={preview}
-        color="primary"
+        size="lg"
+        isSelected={!preview}
         onClick={handlePreviewSwitcher}
         thumbIcon={getThumbIcon}
-        classNames={{ wrapper: 'mr-0' }}
+        classNames={{
+          wrapper: 'mr-0 !bg-white border',
+          thumb: 'bg-primary !shrink-0',
+        }}
+        endContent={<MdEdit size={16} color="gray" />}
+        startContent={<IoEyeSharp size={16} color="gray" />}
       />
     </Tooltip>
   )

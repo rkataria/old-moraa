@@ -12,7 +12,12 @@ export function ParticipantsToggle({
   isParticipantsSidebarOpen: boolean
   onClick: () => void
 }) {
-  useHotkeys('p', onClick)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleShortCut = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+    onClick()
+  }
+  useHotkeys('p', handleShortCut)
 
   return (
     <ControlButton
