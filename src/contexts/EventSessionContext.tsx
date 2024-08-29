@@ -301,13 +301,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame, eventSessionMode, isHost, sections, eventMode])
 
-  const startPresentation = () => {
-    const presentedFrame = currentFrame || sections[0].frames[0]
-
+  const startPresentation = (frameId: string) => {
     dispatch(
       updateMeetingSessionDataAction({
         presentationStatus: PresentationStatuses.STARTED,
-        currentFrameId: presentedFrame.id,
+        currentFrameId: frameId,
       })
     )
   }
