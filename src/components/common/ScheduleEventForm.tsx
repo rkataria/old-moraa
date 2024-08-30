@@ -17,15 +17,13 @@ import { GoDot, GoDotFill } from 'react-icons/go'
 import { RiTimeZoneLine } from 'react-icons/ri'
 import * as yup from 'yup'
 
+import { LocalFilePicker } from './LocalFilePicker'
 import { DateWithTime } from './Schedule/DateWithTime'
-import {
-  FileUploader,
-  FileWithoutSignedUrl,
-} from '../event-content/FileUploader'
 
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { TimeZones } from '@/constants/timezone'
 import { getOffset } from '@/utils/date'
+import { cn } from '@/utils/utils'
 
 const scheduleEventValidationSchema = yup.object({
   timezone: yup.string().required().label('Timezone'),
@@ -116,8 +114,10 @@ export function ScheduleEventForm<
   onSubmit,
   renderAction,
 }: ScheduleEventFormProps<FormData>) {
+  const [imageObject, setImageObject] = useState<string | undefined>(undefined)
+  const [imageUploadProgress, setImageUploadProgress] = useState<number>(0)
+  const [imageUploading, setImageUploading] = useState<boolean>(false)
   const [searchValue, setSearchValue] = useState('')
-
   const participantsForm = useForm<ScheduleEventFormData>({
     resolver: yupResolver(scheduleEventValidationSchema),
     defaultValues: defaultValue || {
@@ -133,9 +133,8 @@ export function ScheduleEventForm<
   const control = (formControl ||
     participantsForm.control) as Control<ScheduleEventFormData>
 
-  const handleFileUpload = (files: FileWithoutSignedUrl[]) => {
-    const file = files?.[0]
-    participantsForm.setValue('imageUrl', file.url, { shouldDirty: true })
+  const handleFileUpload = (url: string) => {
+    participantsForm.setValue('imageUrl', url, { shouldDirty: true })
   }
 
   const getTimeZoneValue = () => {
@@ -162,7 +161,7 @@ export function ScheduleEventForm<
             name="imageUrl"
             render={({ field }) => (
               <Image
-                src={field.value || IMAGE_PLACEHOLDER}
+                src={imageObject || field.value || IMAGE_PLACEHOLDER}
                 classNames={{
                   img: 'w-full h-full object-cover',
                   wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
@@ -170,18 +169,38 @@ export function ScheduleEventForm<
               />
             )}
           />
-          <FileUploader
-            maxNumberOfFiles={1}
-            allowedFileTypes={['.jpg', '.jpeg', '.png']}
+          {imageUploading && (
+            <div
+              className={cn(
+                'absolute left-0 top-0 w-full h-full flex justify-center items-center rounded-e-md text-white text-md font-bold z-10 bg-black/80'
+              )}
+              style={{
+                opacity: 100 - imageUploadProgress,
+              }}>
+              {parseInt(imageUploadProgress.toString(), 10)}%
+            </div>
+          )}
+          <LocalFilePicker
+            accept="image/png, image/jpeg, image/jpg"
+            fileName={`event-image-${id}`}
             bucketName="image-uploads"
-            triggerProps={{
-              className:
-                'min-w-8 w-8 h-8 bg-black/60 text-white max-w-14 rounded-xl shrink-0 hover:bg-black/40 absolute right-0 bottom-0 m-3 z-[10] rounded-full border-2 border-white',
-              isIconOnly: true,
-              children: <CiEdit className="shrink-0 text-lg" />,
-              variant: 'light',
+            uploadRemote
+            crop
+            trigger={
+              <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition-all duration-300 rounded-full cursor-pointer bottom-2 right-2 bg-black/40 hover:bg-black/50">
+                <CiEdit size={20} />
+              </div>
+            }
+            // eslint-disable-next-line @typescript-eslint/no-shadow
+            onSelect={(imageObject) => {
+              setImageUploading(true)
+              setImageObject(imageObject)
             }}
-            onPublicFilesUploaded={handleFileUpload}
+            onUpload={(response) => {
+              setImageUploading(false)
+              handleFileUpload(response?.url)
+            }}
+            onProgressChange={setImageUploadProgress}
           />
         </div>
 

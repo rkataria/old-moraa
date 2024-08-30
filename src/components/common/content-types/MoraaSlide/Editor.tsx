@@ -123,6 +123,7 @@ export function MoraaSlideEditor({
     }
 
     canvas.on('object:added', async (options) => {
+      // TODO: This event is not triggered when canvas data/template is loaded
       handleCanvasObjectAdded({ options, fabricRef, frameId, saveToStorage })
     })
     canvas.on('object:modified', async (options) => {

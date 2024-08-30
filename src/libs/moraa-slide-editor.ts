@@ -159,6 +159,12 @@ export const handleCanvasObjectAdded = ({
     )
   }
 
+  if (target.name === 'guide-rect') {
+    target.set({
+      hoverCursor: 'context-menu',
+    })
+  }
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if (!target.uuid) {

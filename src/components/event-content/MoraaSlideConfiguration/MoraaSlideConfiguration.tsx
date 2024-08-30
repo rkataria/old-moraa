@@ -2,8 +2,8 @@ import { LuPencilRuler } from 'react-icons/lu'
 
 import { ObjectPosition } from './ObjectPostion'
 import { TextboxConfiguration } from './TextBoxConfiguration'
-import { ConfigurationHeader } from '../FrameConfiguration/ConfigurationHeader'
 
+import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 enum ObjectType {
@@ -43,7 +43,7 @@ export function MoraaSlideSettings() {
 
   return (
     <div className="p-2 pr-0 text-sm">
-      <ConfigurationHeader
+      <RightSidebarHeader
         icon={<LuPencilRuler />}
         title={activeObject?.type || 'Design'}
       />

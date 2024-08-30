@@ -22,6 +22,7 @@ function PreviewCard({
   reflection,
   reactions,
   className,
+  style = {},
 }: {
   disabled?: boolean
   isAnonymous?: boolean
@@ -29,6 +30,7 @@ function PreviewCard({
   reflection: string
   reactions: FrameReaction[]
   className?: string
+  style?: React.CSSProperties
 }) {
   const distinctReactions = uniqBy(
     reactions,
@@ -42,7 +44,8 @@ function PreviewCard({
   return (
     <Card
       shadow="none"
-      className={cn('border-2 border-primary-200 rounded-md', className)}>
+      className={cn('border-2 border-primary-100 rounded-md', className)}
+      style={style}>
       <CardHeader>
         <div className="flex justify-start items-center gap-5">
           <Avatar
@@ -147,19 +150,17 @@ function Responses({
     return (
       <div className="w-full h-full grid grid-cols-3 items-start justify-start gap-4 pt-4">
         {Array.from({ length: 9 }, (_, index) => (
-          <div
+          <PreviewCard
             key={index}
+            disabled
+            username={`Participant ${index + 1}`}
+            reflection={`Participant ${index + 1}'s response will be shown here...`}
+            reactions={[]}
+            className={cn('w-full h-full')}
             style={{
               opacity: (8 - index) / 10,
-            }}>
-            <PreviewCard
-              disabled
-              username={`Participant ${index + 1}`}
-              reflection={`Participant ${index + 1}'s response will be shown here...`}
-              reactions={[]}
-              className="w-full h-auto"
-            />
-          </div>
+            }}
+          />
         ))}
       </div>
     )

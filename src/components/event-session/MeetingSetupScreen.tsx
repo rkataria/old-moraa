@@ -5,13 +5,11 @@ import {
   DyteAvatar,
   DyteDialogManager,
   DyteNameTag,
-  DyteNotifications,
   DyteParticipantTile,
   DyteParticipantsAudio,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { Button } from '@nextui-org/react'
-import { useParams, Link } from '@tanstack/react-router'
+import { useParams, useRouter } from '@tanstack/react-router'
 import { IoMdArrowBack } from 'react-icons/io'
 
 import { MediaSettingsToggle } from './MediaSettingsToggle'
@@ -20,6 +18,7 @@ import { MicToggle } from './MicToggle'
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
 import { VideoToggle } from './VideoToggle'
 import { NamesForm } from '../auth/NamesForm'
+import { Button } from '../ui/Button'
 
 import { Loading } from '@/components/common/Loading'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -33,6 +32,7 @@ import {
 import { EventSessionContextType } from '@/types/event-session.type'
 
 export function MeetingSetupScreen() {
+  const router = useRouter()
   const {
     data: profile,
     isLoading: isLoadingProfile,
@@ -122,12 +122,17 @@ export function MeetingSetupScreen() {
 
   return (
     <div className="w-full h-screen flex flex-col justify-start items-center gap-4 pt-36 bg-pattern-1">
-      <Link to={`/events/${event.id}`}>
-        <Button className="fixed top-6 gap-4 left-6 !bg-transparent">
-          <IoMdArrowBack />
-          Back
-        </Button>
-      </Link>
+      <Button
+        size="sm"
+        className="fixed top-6 left-6 bg-transparent"
+        onClick={() => {
+          router.navigate({
+            to: `/events/${eventId}`,
+          })
+        }}>
+        <IoMdArrowBack />
+        <span>Back</span>
+      </Button>
       <div className="mb-12">
         <h1 className="mb-2 text-5xl font-black text-center">{event.name}</h1>
         {event.description && (
@@ -184,7 +189,9 @@ export function MeetingSetupScreen() {
             />
 
             <Button
-              className="bg-black text-white mt-2"
+              size="md"
+              className="mt-2"
+              color="primary"
               disabled={isMeetingSessionLoading}
               onClick={handleJoinMeeting}>
               Join Meeting
@@ -197,7 +204,6 @@ export function MeetingSetupScreen() {
 
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
-      <DyteNotifications meeting={meeting} />
       <DyteDialogManager
         meeting={meeting}
         states={states}

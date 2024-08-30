@@ -4,7 +4,6 @@ import { BsSliders } from 'react-icons/bs'
 
 import { BreakoutConfiguration } from './BreakoutConfiguration'
 import { CommonConfiguration } from './CommonConfiguration'
-import { ConfigurationHeader } from './ConfigurationHeader'
 import { MoraaBoardConfiguration } from './MoraaBoardConfiguration'
 import { PdfConfiguration } from './PdfConfiguration'
 import { PollConfiguration } from './PollConfiguration'
@@ -12,6 +11,7 @@ import { ReflectionConfiguration } from './ReflectionConfiguration'
 import { RichTextConfiguration } from './RichTextConfiguration'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
@@ -44,7 +44,7 @@ export function FrameConfiguration() {
 
   return (
     <div className="p-2 text-sm">
-      <ConfigurationHeader icon={<BsSliders />} title="Configuration" />
+      <RightSidebarHeader icon={<BsSliders />} title="Configuration" />
       <div className="pt-8 flex flex-col gap-4">
         <CommonConfiguration />
         {renderer}

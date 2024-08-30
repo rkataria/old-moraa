@@ -78,13 +78,13 @@ function Reactions({ responseId }: ReactionsProps) {
                 className={cn(
                   'font-bold hover:bg-primary group/item duration-300 cursor-pointer',
                   {
-                    'border border-[#7C3AED] bg-[#DAC8FA]':
+                    'border border-primary bg-primary-100':
                       participantEmotedOnReaction(reaction),
                   }
                 )}
                 variant="flat"
                 avatar={<em-emoji set="apple" id={reaction} size={20} />}>
-                <span className="font-bold text-slate-600 group-hover/item:text-white ">
+                <span className="font-bold text-gray-600 group-hover/item:text-white ">
                   {countsByReaction[reaction]}
                 </span>
               </Chip>
@@ -95,7 +95,7 @@ function Reactions({ responseId }: ReactionsProps) {
       <EmojiPicker
         triggerIcon={
           <Button variant="light" className="w-[30px] h-[26px] p-0 min-w-fit">
-            <MdOutlineAddReaction className="text-slate-400 text-xl mt-[0.0625rem]" />
+            <MdOutlineAddReaction className="text-gray-400 text-xl mt-[0.0625rem]" />
           </Button>
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

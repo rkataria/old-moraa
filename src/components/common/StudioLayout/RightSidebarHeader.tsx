@@ -1,4 +1,4 @@
-export function ConfigurationHeader({
+export function RightSidebarHeader({
   title,
   icon,
 }: {

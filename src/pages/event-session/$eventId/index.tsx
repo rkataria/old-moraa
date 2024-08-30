@@ -81,7 +81,7 @@ function EventSessionPage() {
 
   if (meetingEl.current) {
     provideDyteDesignSystem(meetingEl.current, {
-      googleFont: 'Inter',
+      googleFont: 'Outfit',
       // sets light background colors
       theme: 'light',
       colors: {

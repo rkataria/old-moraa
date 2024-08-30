@@ -6,9 +6,9 @@ import { CommonAppearance } from './CommonAppearance'
 import { MoraaSlideAppearance } from './MoraaSlideAppearance'
 import { PollAppearance } from './PollAppearance'
 import { TextImageAppearance } from './TextImageAppearance'
-import { ConfigurationHeader } from '../FrameConfiguration/ConfigurationHeader'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { EventContext } from '@/contexts/EventContext'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { EventContextType } from '@/types/event-context.type'
@@ -46,7 +46,7 @@ export function FrameAppearance() {
   if (activeObject) {
     return (
       <div>
-        <ConfigurationHeader
+        <RightSidebarHeader
           icon={<IoColorPaletteOutline size={18} />}
           title={activeObject.type!}
         />
@@ -59,7 +59,7 @@ export function FrameAppearance() {
 
   return (
     <div>
-      <ConfigurationHeader
+      <RightSidebarHeader
         icon={<IoColorPaletteOutline size={18} />}
         title="Appearance"
       />

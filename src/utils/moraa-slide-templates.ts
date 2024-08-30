@@ -16,12 +16,43 @@ const subheadingTypography = TYPOGRAPHY_LIST[3]
 const bodyTypography = TYPOGRAPHY_LIST[4]
 const smallTypography = TYPOGRAPHY_LIST[5]
 
+const loadCenterGuideHelperRect = (canvas: fabric.Canvas) => {
+  console.log(
+    'loadCenterGuideHelperRect',
+    canvas.getWidth(),
+    canvas.getHeight()
+  )
+  // NOTE: Add a background rect to make guides visible to center objects
+  // const rect = new fabric.Rect({
+  //   name: 'guide-rect',
+  //   left: 0,
+  //   top: 0,
+  //   width: canvas.getWidth(),
+  //   height: canvas.getHeight(),
+  //   fill: '#f0f0f000',
+  //   selectable: false,
+  //   lockMovementX: true,
+  //   lockMovementY: true,
+  //   lockScalingX: true,
+  //   lockScalingY: true,
+  //   lockRotation: true,
+  //   lockScalingFlip: true,
+  //   lockUniScaling: true,
+  //   hoverCursor: 'context-menu',
+  // })
+  // canvas.add(rect)
+  // canvas.sendToBack(rect)
+}
+
 export const MORAA_SLIDE_TEMPLATES: Template[] = [
   {
     key: 'blank',
     name: 'Blank',
     loadTemplate: (canvas: fabric.Canvas) => {
       canvas.clear()
+
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
 
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
 
@@ -65,6 +96,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
 
       canvas.clear()
 
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
+
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
 
       canvas.add(quoteText)
@@ -93,6 +127,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
       })
 
       canvas.clear()
+
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
 
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
 
@@ -180,6 +217,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
 
       canvas.clear()
 
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
+
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
 
       canvas.add(titleText)
@@ -248,6 +288,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
 
       canvas.clear()
 
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
+
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
 
       canvas.add(titleText)
@@ -265,6 +308,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
     name: 'Image Left',
     loadTemplate: (canvas: fabric.Canvas) => {
       canvas.clear()
+
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
 
       const canvasWidth = canvas.getWidth()
 
@@ -353,6 +399,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
     loadTemplate: (canvas: fabric.Canvas) => {
       canvas.clear()
 
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
+
       const titleText = 'A beautiful image'
       const subtitleText = 'This is a subtitle for your beautiful presentation'
       const paragraph =
@@ -428,6 +477,9 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
     name: 'Background Image',
     loadTemplate: (canvas: fabric.Canvas) => {
       canvas.clear()
+
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
 
       const imageUrl =
         'https://images.unsplash.com/photo-1574001412367-cf5f9756bb32?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1920&h=1920&fit=max&ixid=eyJhcHBfaWQiOjgzNjd9'

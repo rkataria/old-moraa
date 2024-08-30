@@ -44,7 +44,22 @@ export function MoraaSlide({ frame }: MoraaSlideProps) {
     }
 
     const timeout = setTimeout(() => {
-      const json = canvas.toJSON()
+      const json = canvas.toJSON([
+        'lockMovementX',
+        'lockMovementY',
+        'lockRotation',
+        'lockScalingX',
+        'lockScalingY',
+        'lockUniScaling',
+        'lockSkewingX',
+        'lockSkewingY',
+        'lockScalingFlip',
+        'lockObject',
+        'lock',
+        'hoverCursor',
+        'name',
+      ])
+
       const objects = canvas.getObjects()
       const objectsJson = objects.map((object) => object.toJSON())
 
