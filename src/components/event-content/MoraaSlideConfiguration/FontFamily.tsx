@@ -3,51 +3,15 @@
 import { Select, SelectItem } from '@nextui-org/react'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
-import { fonts } from '@/libs/fonts'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { FONT_FAMILIES } from '@/libs/fonts'
 import { loadAndUseFont } from '@/libs/moraa-slide-editor'
-
-type FontFamilyOption = {
-  key: string
-  label: string
-}
-
-const FONT_FAMILIES: FontFamilyOption[] = [
-  {
-    label: 'Times New Roman',
-    key: 'Times New Roman',
-  },
-  {
-    label: 'Inter',
-    key: fonts.inter.style.fontFamily,
-  },
-  {
-    label: 'Roboto Mono',
-    key: fonts.robotoMono.style.fontFamily,
-  },
-  {
-    label: 'Tilt Warp',
-    key: fonts.tiltWarp.style.fontFamily,
-  },
-  {
-    label: 'Poppins',
-    key: fonts.poppins.style.fontFamily,
-  },
-  {
-    label: 'Roboto',
-    key: fonts.roboto.style.fontFamily,
-  },
-  {
-    label: 'Oswald',
-    key: fonts.oswald.style.fontFamily,
-  },
-  {
-    label: 'Permanent Marker',
-    key: fonts.permanentMarker.style.fontFamily,
-  },
-]
 
 export function FontFamily() {
   const { canvas } = useMoraaSlideEditorContext()
+  const activeObjectState = useStoreSelector(
+    (state) => state.event.currentEvent.moraaSlideState.activeObject
+  ) as fabric.Textbox
 
   if (!canvas) return null
 
@@ -56,8 +20,8 @@ export function FontFamily() {
   if (!activeObject) return null
 
   const selectedFontKey = FONT_FAMILIES.find((f) =>
-    f.key.includes(activeObject?.fontFamily as string)
-  )?.key
+    f.value.includes(activeObjectState.fontFamily as string)
+  )?.value
 
   return (
     <Select
@@ -72,11 +36,11 @@ export function FontFamily() {
       onChange={(e) => {
         loadAndUseFont(canvas, activeObject, e.target.value)
       }}>
-      {FONT_FAMILIES.map((_fontFamily: FontFamilyOption) => (
+      {FONT_FAMILIES.map((_fontFamily) => (
         <SelectItem
-          key={_fontFamily.key}
+          key={_fontFamily.value}
           style={{
-            fontFamily: _fontFamily.key,
+            fontFamily: _fontFamily.value,
           }}>
           {_fontFamily.label}
         </SelectItem>

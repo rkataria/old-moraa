@@ -39,12 +39,12 @@ export function MoraaSlideActiveObjectAppearance() {
     [ObjectType.TEXTBOX]: <TextboxSettings />,
     [ObjectType.IMAGE]: <ImageSettings />,
     [ObjectType.RECT]: <RectSettings />,
-    [ObjectType.CIRCLE]: null,
-    [ObjectType.TRIANGLE]: null,
-    [ObjectType.LINE]: null,
-    [ObjectType.POLYLINE]: null,
-    [ObjectType.POLYGON]: null,
-    [ObjectType.ELLIPSE]: null,
+    [ObjectType.CIRCLE]: <RectSettings />,
+    [ObjectType.TRIANGLE]: <RectSettings />,
+    [ObjectType.LINE]: <RectSettings />,
+    [ObjectType.POLYLINE]: <RectSettings />,
+    [ObjectType.POLYGON]: <RectSettings />,
+    [ObjectType.ELLIPSE]: <RectSettings />,
     [ObjectType.BULLET_LIST]: (
       <>
         <TextboxSettings />

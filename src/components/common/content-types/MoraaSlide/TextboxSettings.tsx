@@ -1,10 +1,10 @@
 import { FontFamily } from './FontFamily'
-import { TwoWayNumberCounter } from './FontSizeControl'
 import { FontWeight } from './FontWeight'
 import { LetterSpacing } from './LetterSpacing'
 import { LineHeight } from './LineHeight'
 import { TextAlignControls } from './TextAlignControls'
 import { TextStyleControls } from './TextStyleControls'
+import { NumberInputCaret } from '../../NumberInputCaret'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
@@ -29,12 +29,17 @@ export function TextboxSettings() {
         <div className="pt-2 flex flex-col gap-2">
           <FontFamily />
           <div className="flex gap-2 justify-between items-center">
-            <TwoWayNumberCounter
-              defaultCount={(activeObject as fabric.Textbox).fontSize as number}
-              onCountChange={handleFontSizeChange}
-              noNegative
-              incrementStep={1}
-            />
+            <div className="flex justify-start items-center gap-2">
+              {/* <span className="w-11">Size</span> */}
+              <NumberInputCaret
+                number={Math.ceil((activeObject as fabric.Textbox).fontSize!)}
+                selectOnFocus
+                selectedKeys={[
+                  (activeObject as fabric.Textbox).fontSize!.toString(),
+                ]}
+                onChange={handleFontSizeChange}
+              />
+            </div>
             <FontWeight />
           </div>
         </div>

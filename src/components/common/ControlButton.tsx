@@ -16,8 +16,7 @@ export type MeetingControlButtonProps = {
 
 export function getButtonClassName(isActive: boolean) {
   return cn('flex-none', {
-    'bg-black text-white': isActive,
-    'bg-white text-black': !isActive,
+    'bg-primary': isActive,
   })
 }
 

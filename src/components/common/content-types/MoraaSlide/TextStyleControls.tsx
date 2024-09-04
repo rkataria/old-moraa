@@ -9,9 +9,13 @@ import {
 import { ControlButton } from '../../ControlButton'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 
 export function TextStyleControls() {
   const { canvas } = useMoraaSlideEditorContext()
+  const activeObjectState = useStoreSelector(
+    (state) => state.event.currentEvent.moraaSlideState.activeObject
+  ) as fabric.Textbox
 
   useHotkeys('ctrl+b', () => {
     handleBold()
@@ -33,7 +37,7 @@ export function TextStyleControls() {
   if (!activeObject) return null
 
   const handleBold = () => {
-    if (activeObject.fontWeight === 'bold') {
+    if (activeObjectState.fontWeight === 'bold') {
       activeObject.set('fontWeight', 'normal')
       canvas.renderAll()
 
@@ -45,7 +49,7 @@ export function TextStyleControls() {
   }
 
   const handleItalic = () => {
-    if (activeObject.fontStyle === 'italic') {
+    if (activeObjectState.fontStyle === 'italic') {
       activeObject.set('fontStyle', 'normal')
       canvas.renderAll()
 
@@ -73,9 +77,9 @@ export function TextStyleControls() {
           content: 'Bold',
         }}
         buttonProps={{
-          variant: activeObject?.fontWeight === 'bold' ? 'solid' : 'flat',
+          variant: activeObjectState.fontWeight === 'bold' ? 'solid' : 'light',
           size: 'sm',
-          className: 'flex-none flex-grow',
+          className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
           isIconOnly: true,
         }}
         onClick={handleBold}>
@@ -86,9 +90,9 @@ export function TextStyleControls() {
           content: 'Underline',
         }}
         buttonProps={{
-          variant: activeObject?.underline ? 'solid' : 'flat',
+          variant: activeObjectState.underline ? 'solid' : 'light',
           size: 'sm',
-          className: 'flex-none flex-grow',
+          className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
           isIconOnly: true,
         }}
         onClick={handleUnderline}>
@@ -99,9 +103,9 @@ export function TextStyleControls() {
           content: 'Italic',
         }}
         buttonProps={{
-          variant: activeObject?.fontStyle === 'italic' ? 'solid' : 'flat',
+          variant: activeObjectState.fontStyle === 'italic' ? 'solid' : 'light',
           size: 'sm',
-          className: 'flex-none flex-grow',
+          className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
           isIconOnly: true,
         }}
         onClick={handleItalic}>
@@ -112,9 +116,9 @@ export function TextStyleControls() {
           content: 'Strikethrough',
         }}
         buttonProps={{
-          variant: activeObject?.linethrough ? 'solid' : 'flat',
+          variant: activeObjectState.linethrough ? 'solid' : 'light',
           size: 'sm',
-          className: 'flex-none flex-grow',
+          className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
           isIconOnly: true,
         }}
         onClick={handleStrikethrough}>

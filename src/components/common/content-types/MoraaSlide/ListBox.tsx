@@ -9,7 +9,7 @@ import { Tooltip } from '../../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
-import { fonts } from '@/libs/fonts'
+import { DEFAULT_FONT_FAMILY } from '@/libs/fonts'
 import { cn } from '@/utils/utils'
 
 export const BULLET_TYPES: {
@@ -33,7 +33,7 @@ export function ListBox() {
 
   const addList = (type: string) => {
     const textbox = new fabric.BulletList('Enter item here', {
-      fontFamily: fonts.inter.style.fontFamily,
+      fontFamily: DEFAULT_FONT_FAMILY,
       width: 300,
       fontSize: 18,
       padding: 5,
@@ -52,7 +52,7 @@ export function ListBox() {
 
   const addNumberList = () => {
     const textbox = new fabric.NumberList('Enter item here', {
-      fontFamily: fonts.inter.style.fontFamily,
+      fontFamily: DEFAULT_FONT_FAMILY,
       width: 300,
       fontSize: 18,
       padding: 5,

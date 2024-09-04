@@ -1,7 +1,7 @@
 import { fabric } from 'fabric'
 
 import { TYPOGRAPHY_LIST } from '@/components/common/content-types/MoraaSlide/TextBox'
-import { fonts } from '@/libs/fonts'
+import { DEFAULT_FONT_FAMILY } from '@/libs/fonts'
 
 export type Template = {
   key: string
@@ -17,11 +17,7 @@ const bodyTypography = TYPOGRAPHY_LIST[4]
 const smallTypography = TYPOGRAPHY_LIST[5]
 
 const loadCenterGuideHelperRect = (canvas: fabric.Canvas) => {
-  console.log(
-    'loadCenterGuideHelperRect',
-    canvas.getWidth(),
-    canvas.getHeight()
-  )
+  console.log('loadCenterGuideHelperRect', canvas)
   // NOTE: Add a background rect to make guides visible to center objects
   // const rect = new fabric.Rect({
   //   name: 'guide-rect',
@@ -73,7 +69,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: headingTypography.name,
         fontSize: headingTypography.fontSize,
         fontWeight: headingTypography.fontWeight,
-        fontFamily: fonts.inter.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'center',
         width: canvas.getWidth() * 0.9,
         left: canvas.getWidth() * 0.05,
@@ -84,7 +80,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: bodyTypography.name,
         fontSize: bodyTypography.fontSize,
         fontWeight: bodyTypography.fontWeight,
-        fontFamily: fonts.inter.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'center',
         width: canvas.getWidth() * 0.6,
         left: canvas.getWidth() * 0.2,
@@ -120,7 +116,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: titleTypography.name,
         fontSize: titleTypography.fontSize,
         fontWeight: titleTypography.fontWeight,
-        fontFamily: fonts.inter.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'center',
         padding: 10,
         width: canvas.getWidth() * 0.6,
@@ -156,7 +152,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: headingTypography.name,
         fontSize: headingTypography.fontSize,
         fontWeight: headingTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'center',
         padding: 10,
         width: canvas.getWidth() * 0.6,
@@ -168,7 +164,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: subheadingTypography.name,
         fontSize: subheadingTypography.fontSize,
         fontWeight: subheadingTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'center',
         padding: 2,
         width: canvas.getWidth() * 0.6,
@@ -183,7 +179,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: smallTypography.name,
         fontSize: smallTypography.fontSize,
         fontWeight: smallTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 2,
         width: canvas.getWidth() * 0.3,
@@ -195,7 +191,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: smallTypography.name,
         fontSize: smallTypography.fontSize,
         fontWeight: smallTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'right',
         padding: 2,
         width: canvas.getWidth() * 0.3,
@@ -207,7 +203,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: smallTypography.name,
         fontSize: smallTypography.fontSize,
         fontWeight: smallTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'center',
         padding: 2,
         width: canvas.getWidth() * 0.3,
@@ -247,7 +243,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: headingTypography.name,
         fontSize: headingTypography.fontSize,
         fontWeight: headingTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvas.getWidth() * 0.6,
@@ -259,7 +255,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: subheadingTypography.name,
         fontSize: subheadingTypography.fontSize,
         fontWeight: subheadingTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvas.getWidth() * 0.6,
@@ -274,7 +270,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: smallTypography.name,
         fontSize: smallTypography.fontSize,
         fontWeight: smallTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvas.getWidth() * 0.8,
@@ -344,7 +340,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: headingTypography.name,
         fontSize: headingTypography.fontSize,
         fontWeight: headingTypography.fontWeight,
-        fontFamily: fonts.tiltWarp.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvasWidth * 0.4,
@@ -356,7 +352,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: subheadingTypography.name,
         fontSize: subheadingTypography.fontSize,
         fontWeight: subheadingTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvasWidth * 0.4,
@@ -368,7 +364,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: smallTypography.name,
         fontSize: smallTypography.fontSize,
         fontWeight: smallTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvasWidth * 0.4,
@@ -424,7 +420,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: headingTypography.name,
         fontSize: headingTypography.fontSize,
         fontWeight: headingTypography.fontWeight,
-        fontFamily: fonts.tiltWarp.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvas.getWidth() * 0.4,
@@ -436,7 +432,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: subheadingTypography.name,
         fontSize: subheadingTypography.fontSize,
         fontWeight: subheadingTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvas.getWidth() * 0.4,
@@ -448,7 +444,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         name: smallTypography.name,
         fontSize: smallTypography.fontSize,
         fontWeight: smallTypography.fontWeight,
-        fontFamily: fonts.poppins.style.fontFamily,
+        fontFamily: DEFAULT_FONT_FAMILY,
         textAlign: 'left',
         padding: 10,
         width: canvas.getWidth() * 0.4,

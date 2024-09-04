@@ -13,7 +13,7 @@ import { Tooltip } from '../../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
-import { fonts } from '@/libs/fonts'
+import { DEFAULT_FONT_FAMILY } from '@/libs/fonts'
 import { cn } from '@/utils/utils'
 
 export type TYPOGRAPHY = {
@@ -71,7 +71,7 @@ export function TextBox() {
   const addTextbox = ({ name, fontSize, fontWeight, content }: TYPOGRAPHY) => {
     const textbox = new fabric.Textbox(content || name, {
       name,
-      fontFamily: fonts.inter.style.fontFamily,
+      fontFamily: DEFAULT_FONT_FAMILY,
       fontSize,
       width: canvas.getWidth() * 0.3,
       fill: '#000',

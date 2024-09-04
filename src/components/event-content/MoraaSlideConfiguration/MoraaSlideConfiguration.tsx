@@ -4,7 +4,7 @@ import { ObjectPosition } from './ObjectPostion'
 import { TextboxConfiguration } from './TextBoxConfiguration'
 
 import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
-import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 
 enum ObjectType {
   TEXT = 'text',
@@ -19,11 +19,9 @@ enum ObjectType {
 }
 
 export function MoraaSlideSettings() {
-  const { canvas } = useMoraaSlideEditorContext()
-
-  if (!canvas) return null
-
-  const activeObject = canvas.getActiveObject()
+  const activeObjectState = useStoreSelector(
+    (state) => state.event.currentEvent.moraaSlideState.activeObject
+  )
 
   const renderersByContentType: Record<ObjectType, React.ReactNode> = {
     [ObjectType.TEXT]: <TextboxConfiguration />,
@@ -37,15 +35,15 @@ export function MoraaSlideSettings() {
     [ObjectType.ELLIPSE]: null,
   }
 
-  const renderer = activeObject
-    ? renderersByContentType[activeObject.type as ObjectType]
+  const renderer = activeObjectState
+    ? renderersByContentType[activeObjectState.type as ObjectType]
     : null
 
   return (
     <div className="p-2 pr-0 text-sm">
       <RightSidebarHeader
         icon={<LuPencilRuler />}
-        title={activeObject?.type || 'Design'}
+        title={activeObjectState?.type || 'Design'}
       />
       <div className="pt-4 flex flex-col gap-2">
         <ObjectPosition />

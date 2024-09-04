@@ -4,6 +4,7 @@
 import { fabric } from 'fabric'
 import { AlignGuidelines } from 'fabric-guideline-plugin'
 
+import { setActiveObjectAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
 import {
   CanvasObjectAdded,
   CanvasObjectModified,
@@ -174,30 +175,82 @@ export const handleCanvasObjectAdded = ({
 
 export const handleCanvasObjectModified = async ({
   options,
+  canvas,
+  dispatch,
 }: CanvasObjectModified) => {
   console.log('handleCanvasObjectModified', options)
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(
+    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
+  )
 }
 
-export const handleCanvasObjectMoving = ({ options }: CanvasObjectModified) => {
+export const handleCanvasObjectMoving = ({
+  options,
+  canvas,
+  dispatch,
+}: CanvasObjectModified) => {
   console.log('handleCanvasObjectMoving', options)
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(
+    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
+  )
 }
 
 export const handleCanvasObjectScaling = ({
   options,
+  canvas,
+  dispatch,
 }: CanvasObjectModified) => {
   console.log('handleCanvasObjectScaling', options)
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(
+    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
+  )
 }
 
 export const handleCanvasObjectRotating = ({
   options,
+  canvas,
+  dispatch,
 }: CanvasObjectModified) => {
   console.log('handleCanvasObjectRotating', options)
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(
+    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
+  )
 }
 
 export const handleCanvasObjectSkewing = ({
   options,
+  canvas,
+  dispatch,
 }: CanvasObjectModified) => {
   console.log('handleCanvasObjectSkewing', options)
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(
+    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
+  )
 }
 
 export const handleCanvasObjectRemoved = ({ options }: CanvasObjectRemoved) => {
@@ -207,25 +260,48 @@ export const handleCanvasObjectRemoved = ({ options }: CanvasObjectRemoved) => {
 export const handleCanvasSelectionCreated = ({
   options,
   canvas,
+  dispatch,
 }: CanvasSelectionCreated) => {
   console.log('handleCanvasSelectionCreated', options)
-
   setObjectControlsVisibility(canvas)
+
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(
+    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
+  )
 }
 
 export const handleCanvasSelectionUpdated = ({
   options,
   canvas,
+  dispatch,
 }: CanvasSelectionUpdated) => {
   console.log('handleCanvasSelectionUpdated', options)
 
   setObjectControlsVisibility(canvas)
+
+  const activeObject = canvas.getActiveObject()
+
+  if (!activeObject) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(
+    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
+  )
 }
 
 export const handleCanvasSelectionCleared = ({
   options,
+  dispatch,
 }: CanvasSelectionCleared) => {
   console.log('handleCanvasSelectionCleared', options)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(setActiveObjectAction(undefined))
 }
 
 export const handleDeleteObjects = (canvas: fabric.Canvas) => {

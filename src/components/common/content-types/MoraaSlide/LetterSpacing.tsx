@@ -17,10 +17,6 @@ export function LetterSpacing() {
         <h3>Letter Spacing</h3>
         <NumberInputCaret
           number={activeObject.charSpacing}
-          classNames={{
-            input: 'bg-transparent border-2 border-black/10 h-7',
-            caret: 'hover:bg-gray-200',
-          }}
           onChange={(value: number) => {
             activeObject?.set('charSpacing', Number(value))
             canvas.renderAll()

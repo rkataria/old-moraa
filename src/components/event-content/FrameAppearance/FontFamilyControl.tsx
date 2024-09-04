@@ -9,33 +9,7 @@ import {
 } from '@nextui-org/react'
 
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
-
-const FRAME_FONT_FAMILIES = [
-  {
-    name: 'Inter',
-    fontStyle: 'Inter',
-  },
-  {
-    name: 'Roboto',
-    fontStyle: 'Roboto',
-  },
-  {
-    name: 'Poppins',
-    fontStyle: 'Poppins',
-  },
-  {
-    name: 'Montserrat',
-    fontStyle: 'Montserrat',
-  },
-  {
-    name: 'Lato',
-    fontStyle: 'Lato',
-  },
-  {
-    name: 'Open Sans',
-    fontStyle: 'Open Sans',
-  },
-]
+import { FONT_FAMILIES } from '@/libs/fonts'
 
 export function FontFamilyControl() {
   return (
@@ -73,13 +47,13 @@ function FontSelector() {
           const selectedItems = Array.from(data)
           setSelectedFontFamily(selectedItems[0] as string)
         }}>
-        {FRAME_FONT_FAMILIES.map((fontFamily) => (
+        {FONT_FAMILIES.map((fontFamily) => (
           <DropdownItem
-            key={fontFamily.fontStyle}
+            key={fontFamily.value}
             style={{
-              fontFamily: fontFamily.fontStyle,
+              fontFamily: fontFamily.value,
             }}>
-            {fontFamily.name}
+            {fontFamily.label}
           </DropdownItem>
         ))}
       </DropdownMenu>

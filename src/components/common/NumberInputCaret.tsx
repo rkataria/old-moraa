@@ -32,6 +32,7 @@ type NumberInputCaretProps = {
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>
   dropdownItems?: DropdownItem[]
   selectedKeys?: string[]
+  hideCaret?: boolean
   onChange: (number: number) => void
 }
 
@@ -46,6 +47,7 @@ export function NumberInputCaret({
   inputProps,
   dropdownItems = [],
   selectedKeys = [],
+  hideCaret = false,
   onChange,
 }: NumberInputCaretProps) {
   const [value, setValue] = useState<number>(number)
@@ -148,34 +150,36 @@ export function NumberInputCaret({
       )}>
       {renderInput()}
 
-      <div className="flex flex-col gap-0 w-5">
-        <div
-          className={cn(
-            'hover:bg-gray-100 rounded-t-md flex justify-center items-center border-1 border-gray-200',
-            classNames?.caret,
-            {
-              'opacity-50 hover:bg-white': max && value === max,
-            }
-          )}
-          onClick={() => handleNumberChange(value + step)}>
-          <PiCaretUp size={14} />
+      {!hideCaret && (
+        <div className="flex flex-col gap-0 w-5">
+          <div
+            className={cn(
+              'hover:bg-gray-100 rounded-t-md flex justify-center items-center border-1 border-gray-200',
+              classNames?.caret,
+              {
+                'opacity-50 hover:bg-white': max && value === max,
+              }
+            )}
+            onClick={() => handleNumberChange(value + step)}>
+            <PiCaretUp size={14} />
+          </div>
+          <div
+            className={cn(
+              'hover:bg-gray-100 rounded-b-md flex justify-center items-center border-1 border-gray-200',
+              classNames?.caret,
+              {
+                'opacity-50 hover:bg-white': value === 0 && !allowNegative,
+              }
+            )}
+            onClick={() => {
+              if (value > 0 || allowNegative) {
+                handleNumberChange(value - step)
+              }
+            }}>
+            <PiCaretDown size={14} />
+          </div>
         </div>
-        <div
-          className={cn(
-            'hover:bg-gray-100 rounded-b-md flex justify-center items-center border-1 border-gray-200',
-            classNames?.caret,
-            {
-              'opacity-50 hover:bg-white': value === 0 && !allowNegative,
-            }
-          )}
-          onClick={() => {
-            if (value > 0 || allowNegative) {
-              handleNumberChange(value - step)
-            }
-          }}>
-          <PiCaretDown size={14} />
-        </div>
-      </div>
+      )}
     </div>
   )
 }

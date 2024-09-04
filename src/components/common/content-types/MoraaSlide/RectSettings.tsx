@@ -16,15 +16,11 @@ export function RectSettings() {
       <div className="py-2 flex justify-between items-center">
         <h3>Rounded Corners</h3>
         <NumberInputCaret
-          number={activeObject.left}
-          classNames={{
-            input: 'bg-transparent border-2 border-black/20 h-7',
-            caret: 'hover:bg-gray-200',
-          }}
+          min={0}
+          number={Math.ceil(activeObject.rx!)}
           onChange={(value: number) => {
-            // activeObject.set('rx', Number(value))
-            // activeObject.set('ry', Number(value))
-            activeObject.set('left', value)
+            activeObject.set('rx', Number(value))
+            activeObject.set('ry', Number(value))
             canvas.renderAll()
           }}
         />

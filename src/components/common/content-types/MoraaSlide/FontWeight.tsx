@@ -52,15 +52,13 @@ export function FontWeight() {
 
   return (
     <Select
-      className="w-full max-w-[100px] flex-none text-xs"
+      className="w-full max-w-[120px] flex-none text-xs"
       size="sm"
       value={selectedFontKey}
       variant="bordered"
-      classNames={
-        {
-          // mainWrapper: 'h-8',
-        }
-      }
+      classNames={{
+        trigger: 'border-1 rounded-md shadow-none',
+      }}
       aria-label="Font Weight"
       selectedKeys={selectedFontKey ? new Set([selectedFontKey]) : new Set()}
       onChange={async (e) => {

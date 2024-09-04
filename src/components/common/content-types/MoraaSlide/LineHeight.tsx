@@ -19,11 +19,6 @@ export function LineHeight() {
           number={activeObject.lineHeight}
           min={0.1}
           step={0.1}
-          classNames={{
-            input:
-              'bg-transparent border-2 border-black/10 h-7 w-12 rounded-sm',
-            caret: 'hover:bg-gray-200',
-          }}
           onChange={(value: number) => {
             activeObject?.set('lineHeight', Number(value))
             canvas.renderAll()

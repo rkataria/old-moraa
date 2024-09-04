@@ -1,9 +1,13 @@
 import { Input } from '@nextui-org/react'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 
 export function ObjectPosition() {
   const { canvas } = useMoraaSlideEditorContext()
+  const activeObjectState = useStoreSelector(
+    (state) => state.event.currentEvent.moraaSlideState.activeObject
+  ) as fabric.Textbox
 
   if (!canvas) return null
 
@@ -33,7 +37,7 @@ export function ObjectPosition() {
     canvas?.renderAll()
   }
 
-  const { left, top, width, height, scaleX, scaleY } = activeObject
+  const { left, top, width, height, scaleX, scaleY } = activeObjectState
 
   const objectWidth = width! * scaleX!
   const objectHeight = height! * scaleY!

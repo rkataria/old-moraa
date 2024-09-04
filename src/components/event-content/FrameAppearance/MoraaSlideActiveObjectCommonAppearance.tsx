@@ -27,10 +27,8 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             content: 'Send to back',
           }}
           buttonProps={{
-            variant: 'flat',
             size: 'sm',
-            radius: 'md',
-            className: 'flex-none flex-grow',
+            className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
             isIconOnly: true,
           }}
           onClick={() => {
@@ -44,10 +42,8 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             content: 'Bring forward',
           }}
           buttonProps={{
-            variant: 'flat',
             size: 'sm',
-            radius: 'md',
-            className: 'flex-none flex-grow',
+            className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
             isIconOnly: true,
           }}
           onClick={() => {
@@ -61,10 +57,8 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             content: 'Flip horizontally',
           }}
           buttonProps={{
-            variant: 'flat',
             size: 'sm',
-            radius: 'md',
-            className: 'flex-none flex-grow',
+            className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
             isIconOnly: true,
           }}
           onClick={() => {
@@ -78,10 +72,8 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             content: 'Flip vertically',
           }}
           buttonProps={{
-            variant: 'flat',
             size: 'sm',
-            radius: 'md',
-            className: 'flex-none flex-grow',
+            className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
             isIconOnly: true,
           }}
           onClick={() => {
@@ -95,16 +87,14 @@ export function MoraaSlideActiveObjectCommonAppearance() {
             content: 'Clone',
           }}
           buttonProps={{
-            variant: 'flat',
             size: 'sm',
-            radius: 'md',
-            className: 'flex-none flex-grow',
+            className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
             isIconOnly: true,
           }}
           onClick={() => {
             dupliacateObjects(canvas)
           }}>
-          <FaRegClone size={18} />
+          <FaRegClone size={16} />
         </ControlButton>
       </div>
     </div>

@@ -61,13 +61,13 @@ export function BubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
     if (!canvas) return
 
     canvas.on('selection:created', () => {
-      const target = canvas.getActiveObject()
-      if (target) {
+      const activeObject = canvas.getActiveObject()
+      if (activeObject) {
         setBubbleMenuOptions({
-          left: calculateBubbleMenuPosition(target).left,
-          top: calculateBubbleMenuPosition(target).top,
+          left: calculateBubbleMenuPosition(activeObject).left,
+          top: calculateBubbleMenuPosition(activeObject).top,
           visible: true,
-          type: target.type!,
+          type: activeObject.type!,
         })
       } else {
         setBubbleMenuOptions(null)
@@ -75,13 +75,13 @@ export function BubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
     })
 
     canvas.on('selection:updated', () => {
-      const target = canvas.getActiveObject()
-      if (target) {
+      const activeObject = canvas.getActiveObject()
+      if (activeObject) {
         setBubbleMenuOptions({
-          left: calculateBubbleMenuPosition(target).left,
-          top: calculateBubbleMenuPosition(target).top,
+          left: calculateBubbleMenuPosition(activeObject).left,
+          top: calculateBubbleMenuPosition(activeObject).top,
           visible: true,
-          type: target.type!,
+          type: activeObject.type!,
         })
       } else {
         setBubbleMenuOptions(null)
@@ -89,13 +89,13 @@ export function BubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
     })
 
     canvas.on('object:moving', () => {
-      const target = canvas.getActiveObject()
-      if (target) {
+      const activeObject = canvas.getActiveObject()
+      if (activeObject) {
         setBubbleMenuOptions({
-          left: calculateBubbleMenuPosition(target).left,
-          top: calculateBubbleMenuPosition(target).top,
+          left: calculateBubbleMenuPosition(activeObject).left,
+          top: calculateBubbleMenuPosition(activeObject).top,
           visible: true,
-          type: target.type!,
+          type: activeObject.type!,
         })
       } else {
         setBubbleMenuOptions(null)

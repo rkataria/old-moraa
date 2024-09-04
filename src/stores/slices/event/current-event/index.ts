@@ -4,6 +4,7 @@ import { eventSlice } from './event.slice'
 import { frameSlice } from './frame.slice'
 import { liveSessionSlice } from './live-session.slice'
 import { meetingSlice } from './meeting.slice'
+import { moraaSlideSlice } from './moraa-slide.slice'
 import { sectionSlice } from './section.slice'
 
 export const currentEventReducer = combineReducers({
@@ -12,4 +13,5 @@ export const currentEventReducer = combineReducers({
   frameState: frameSlice.reducer,
   sectionState: sectionSlice.reducer,
   liveSessionState: liveSessionSlice.reducer,
+  moraaSlideState: moraaSlideSlice.reducer,
 })

@@ -117,7 +117,7 @@ const dashboardLayoutEventsIndexRoute = dashboardLayoutEventsIndexImport.update(
   {
     path: '/events/',
     getParentRoute: () => dashboardLayoutRoute,
-  } as any
+  } as any,
 )
 
 // Populate the FileRoutesByPath interface
@@ -271,7 +271,6 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/error",
         "/",
         "/login/messages",
         "/login/",
@@ -288,9 +287,6 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/_layout"
       ]
-    },
-    "/error": {
-      "filePath": "error.tsx"
     },
     "/_layout": {
       "filePath": "(dashboard)/_layout.tsx",

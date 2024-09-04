@@ -4,9 +4,11 @@ import { fabric } from 'fabric'
 import ResizeObserver from 'rc-resize-observer'
 
 import { BubbleMenu } from './BubbleMenu'
+import { LoadFonts } from './LoadFonts'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { useMoraaSlideShortcuts } from '@/hooks/useMoraaSlideShortcuts'
+import { useStoreDispatch } from '@/hooks/useRedux'
 import { HistoryFeature } from '@/libs/fabric-history'
 import {
   enableGuidelines,
@@ -25,6 +27,7 @@ import {
   resizeCanvas,
 } from '@/libs/moraa-slide-editor'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
+import { setActiveObjectAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
 import { MORAA_SLIDE_TEMPLATES } from '@/utils/moraa-slide-templates'
 import { cn } from '@/utils/utils'
 
@@ -55,9 +58,10 @@ export function MoraaSlideEditor({
   const { setCanvas } = useMoraaSlideEditorContext()
   const { setHistory, setActiveObject } = useMoraaSlideStore()
   useMoraaSlideShortcuts()
+  const dispatch = useStoreDispatch()
 
   useEffect(() => {
-    setActiveObject(null)
+    dispatch(setActiveObjectAction(undefined))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameId])
 
@@ -77,32 +81,6 @@ export function MoraaSlideEditor({
     enableGuidelines(canvas)
 
     if (!canvas) return
-
-    // Array.from(canvasObjects).forEach((object) => {
-    //   fabric.util.enlivenObjects(
-    //     [object],
-    //     (enlivenedObjects: fabric.Object[]) => {
-    //       enlivenedObjects.forEach((enlivenedObj) => {
-    //         // if element is active, keep it in active state so that it can be edited further
-    //         // if (activeObjectRef.current?.objectId === objectId) {
-    //         //   fabricRef.current?.setActiveObject(enlivenedObj)
-    //         // }
-
-    //         // add object to canvas
-    //         fabricRef.current?.add(enlivenedObj)
-    //       })
-    //     },
-    //     /**
-    //      * specify namespace of the object for fabric to render it on canvas
-    //      * A namespace is a string that is used to identify the type of
-    //      * object.
-    //      *
-    //      * Fabric Namespace: http://fabricjs.com/docs/fabric.html
-    //      */
-    //     'fabric'
-    //   )
-    // })
-    // fabricRef.current?.renderAll()
 
     if (frameCanvasData) {
       canvas.loadFromJSON(frameCanvasData, () => {
@@ -127,38 +105,31 @@ export function MoraaSlideEditor({
       handleCanvasObjectAdded({ options, fabricRef, frameId, saveToStorage })
     })
     canvas.on('object:modified', async (options) => {
-      handleCanvasObjectModified({ options })
+      handleCanvasObjectModified({ options, canvas, dispatch })
       saveToStorage(canvas)
-
-      // Update active object
-      const activeObject = canvas.getActiveObject()
-
-      if (activeObject) {
-        setActiveObject(activeObject)
-      }
     })
     canvas.on('object:removed', async (options) => {
-      handleCanvasObjectRemoved({ options })
+      handleCanvasObjectRemoved({ options, canvas, dispatch })
       saveToStorage(canvas)
     })
     canvas.on('object:moving', async (options) => {
-      handleCanvasObjectMoving({ options })
+      handleCanvasObjectMoving({ options, canvas, dispatch })
       // saveToStorage(canvas)
     })
     canvas.on('object:scaling', async (options) => {
-      handleCanvasObjectScaling({ options })
+      handleCanvasObjectScaling({ options, canvas, dispatch })
       // saveToStorage(canvas)
     })
     canvas.on('object:rotating', async (options) => {
-      handleCanvasObjectRotating({ options })
+      handleCanvasObjectRotating({ options, canvas, dispatch })
       // saveToStorage(canvas)
     })
     canvas.on('object:skewing', async (options) => {
-      handleCanvasObjectSkewing({ options })
+      handleCanvasObjectSkewing({ options, canvas, dispatch })
       // saveToStorage(canvas)
     })
     canvas.on('selection:created', async (options) => {
-      handleCanvasSelectionCreated({ options, canvas })
+      handleCanvasSelectionCreated({ options, canvas, dispatch })
 
       const activeObject = canvas.getActiveObject()
 
@@ -167,7 +138,7 @@ export function MoraaSlideEditor({
       }
     })
     canvas.on('selection:updated', async (options) => {
-      handleCanvasSelectionUpdated({ options, canvas })
+      handleCanvasSelectionUpdated({ options, canvas, dispatch })
 
       const activeObject = canvas.getActiveObject()
 
@@ -176,7 +147,7 @@ export function MoraaSlideEditor({
       }
     })
     canvas.on('selection:cleared', async (options) => {
-      handleCanvasSelectionCleared({ options })
+      handleCanvasSelectionCleared({ options, dispatch })
 
       const activeObject = canvas.getActiveObject()
 
@@ -214,6 +185,7 @@ export function MoraaSlideEditor({
 
   return (
     <div className="w-full h-full">
+      <LoadFonts />
       <ResizeObserver
         onResize={() => {
           resizeCanvas({ fabricRef, canvasContainerRef })

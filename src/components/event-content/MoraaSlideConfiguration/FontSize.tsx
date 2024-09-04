@@ -3,9 +3,13 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button } from '@/components/ui/Button'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 
 export function FontSize() {
   const { canvas } = useMoraaSlideEditorContext()
+  const activeObjectState = useStoreSelector(
+    (state) => state.event.currentEvent.moraaSlideState.activeObject
+  ) as fabric.Textbox
 
   useHotkeys('-', () => {
     handleFontSizeChange(fontSize - 1)
@@ -20,7 +24,7 @@ export function FontSize() {
 
   if (!activeObject) return null
 
-  const fontSize = activeObject.fontSize as number
+  const fontSize = activeObjectState.fontSize as number
 
   const handleFontSizeChange = (newSize: number) => {
     activeObject.set('fontSize', newSize)

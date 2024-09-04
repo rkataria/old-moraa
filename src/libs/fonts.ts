@@ -1,32 +1,53 @@
-/* eslint-disable camelcase */
-
-const inter = { style: { fontFamily: 'Inter', fontWeight: undefined } }
-const robotoMono = {
-  style: { fontFamily: 'Roboto Mono', fontWeight: undefined },
-}
-const tiltWarp = { style: { fontFamily: 'Tilt Warp', fontWeight: undefined } }
-const poppins = { style: { fontFamily: 'Poppins', fontWeight: undefined } }
-
-const roboto = { style: { fontFamily: 'Roboto', fontWeight: undefined } }
-
-const oswald = { style: { fontFamily: 'Oswald', fontWeight: undefined } }
-
-const permanentMarker = {
-  style: { fontFamily: 'Permanent Marker', fontWeight: undefined },
+type FontFamilyOption = {
+  label: string
+  value: string
 }
 
-const monoton = { style: { fontFamily: 'Monoton', fontWeight: undefined } }
+export const FONT_FAMILIES: FontFamilyOption[] = [
+  {
+    label: 'Outfit',
+    value: 'Outfit Variable',
+  },
+  {
+    label: 'Times New Roman',
+    value: 'Times New Roman',
+  },
+  {
+    label: 'Inter',
+    value: 'Inter',
+  },
+  {
+    label: 'Roboto Mono',
+    value: 'Roboto Mono',
+  },
+  {
+    label: 'Tilt Warp',
+    value: 'Tilt Warp',
+  },
+  {
+    label: 'Poppins',
+    value: 'Poppins',
+  },
+  {
+    label: 'Roboto',
+    value: 'Roboto',
+  },
+  {
+    label: 'Oswald',
+    value: 'Oswald',
+  },
+  {
+    label: 'Permanent Marker',
+    value: 'Permanent Marker',
+  },
+  {
+    label: 'Monoton',
+    value: 'Monoton',
+  },
+  {
+    label: 'Lobster',
+    value: 'Lobster',
+  },
+]
 
-const lobster = { style: { fontFamily: 'Lobster', fontWeight: undefined } }
-
-export const fonts = {
-  inter,
-  robotoMono,
-  tiltWarp,
-  poppins,
-  roboto,
-  oswald,
-  permanentMarker,
-  monoton,
-  lobster,
-}
+export const DEFAULT_FONT_FAMILY = FONT_FAMILIES[0].value

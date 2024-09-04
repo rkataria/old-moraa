@@ -34,10 +34,10 @@ export function TextAlignControls() {
           variant:
             (activeObject as fabric.Textbox)?.textAlign === 'left'
               ? 'solid'
-              : 'flat',
+              : 'light',
           size: 'sm',
           className: cn('flex-none flex-grow', {
-            'bg-gray-200':
+            'bg-gray-100 hover:bg-gray-200':
               (activeObject as fabric.Textbox)?.textAlign === 'left',
           }),
           isIconOnly: true,
@@ -53,10 +53,10 @@ export function TextAlignControls() {
           variant:
             (activeObject as fabric.Textbox)?.textAlign === 'center'
               ? 'solid'
-              : 'flat',
+              : 'light',
           size: 'sm',
           className: cn('flex-none flex-grow', {
-            'bg-gray-200':
+            'bg-gray-100 hover:bg-gray-200':
               (activeObject as fabric.Textbox)?.textAlign === 'left',
           }),
           isIconOnly: true,
@@ -72,10 +72,10 @@ export function TextAlignControls() {
           variant:
             (activeObject as fabric.Textbox)?.textAlign === 'right'
               ? 'solid'
-              : 'flat',
+              : 'light',
           size: 'sm',
           className: cn('flex-none flex-grow', {
-            'bg-gray-200':
+            'bg-gray-100 hover:bg-gray-200':
               (activeObject as fabric.Textbox)?.textAlign === 'left',
           }),
           isIconOnly: true,
@@ -91,10 +91,10 @@ export function TextAlignControls() {
           variant:
             (activeObject as fabric.Textbox)?.textAlign === 'justify'
               ? 'solid'
-              : 'flat',
+              : 'light',
           size: 'sm',
           className: cn('flex-none flex-grow', {
-            'bg-gray-200':
+            'bg-gray-100 hover:bg-gray-200':
               (activeObject as fabric.Textbox)?.textAlign === 'left',
           }),
           isIconOnly: true,
