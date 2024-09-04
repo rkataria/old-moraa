@@ -3,12 +3,7 @@ import { useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Image, Textarea } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
-import {
-  createFileRoute,
-  Link,
-  useParams,
-  useRouter,
-} from '@tanstack/react-router'
+import { createFileRoute, useParams, useRouter } from '@tanstack/react-router'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { CiEdit } from 'react-icons/ci'
@@ -147,12 +142,12 @@ export function EventsCreatePage() {
     <div className="bg-gradient-to-b from-[#e9deff] to-[#feffe1] w-screen min-h-screen">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-4">
-          <Link to="/events">
-            <Button className="fixed top-6 left-6 !bg-transparent">
-              <IoMdArrowBack />
-              Back
-            </Button>
-          </Link>
+          <Button
+            className="fixed top-6 left-6 !bg-transparent"
+            onClick={() => router.navigate({ to: '/events' })}>
+            <IoMdArrowBack />
+            Back
+          </Button>
         </div>
       </div>
       <form

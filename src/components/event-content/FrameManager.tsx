@@ -59,7 +59,6 @@ export function FrameManager() {
   } = useContext(EventContext) as EventContextType
 
   useHotkeys('f', () => !preview && setOpenContentTypePicker(true), [preview])
-
   const handleAddNewFrame = (
     contentType: ContentType,
     templateKey?: string,

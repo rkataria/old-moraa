@@ -1,4 +1,8 @@
-import { extendVariants, Button as NextUIButton } from '@nextui-org/react'
+import {
+  ButtonProps,
+  extendVariants,
+  Button as NextUIButton,
+} from '@nextui-org/react'
 
 export const Button = extendVariants(NextUIButton, {
   variants: {
@@ -14,4 +18,8 @@ export const Button = extendVariants(NextUIButton, {
   defaultVariants: {
     size: 'sm',
   },
-})
+}) as React.FC<ButtonProps & { preventFocusOnPress?: boolean }>
+
+Button.defaultProps = {
+  preventFocusOnPress: true,
+}

@@ -6,6 +6,7 @@ import { useParams } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
 import toast from 'react-hot-toast'
 
+import { RenderIf } from './RenderIf/RenderIf'
 import { ScheduleEventForm, ScheduleEventFormData } from './ScheduleEventForm'
 import { Button } from '../ui/Button'
 
@@ -152,18 +153,18 @@ export function ScheduleEventButtonWithModal({
     return form()
   }
 
-  if (!showLabel) return null
-
   return (
     <div>
-      <Button
-        size="sm"
-        variant="solid"
-        color="primary"
-        fullWidth
-        onClick={() => setOpen(true)}>
-        {actionButtonLabel}
-      </Button>
+      <RenderIf isTrue={showLabel}>
+        <Button
+          size="sm"
+          variant="solid"
+          color="primary"
+          fullWidth
+          onClick={() => setOpen(true)}>
+          {actionButtonLabel}
+        </Button>
+      </RenderIf>
 
       <Modal
         size="2xl"

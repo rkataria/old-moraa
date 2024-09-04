@@ -1,8 +1,9 @@
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Chip, Input } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
+import isEqual from 'lodash.isequal'
 import {
   Control,
   Controller,
@@ -46,6 +47,7 @@ const participantsListValidationSchema = yup
       participantId: yup.string(),
       isHost: yup.boolean(),
       role: yup.string().required(),
+      inQueue: yup.boolean().optional(),
       email: yup
         .string()
         .email()
@@ -136,10 +138,37 @@ export function AddParticipantsForm<
 
   const control = (formControl ||
     participantsForm.control) as Control<ParticipantsFormData>
+
   const participantsFieldArray = useFieldArray({
     control,
     name: 'participants',
   })
+
+  const prevDefaultValue = useRef<FormData['participants'] | undefined>(
+    undefined
+  )
+
+  useEffect(() => {
+    if (isEqual(defaultValue, prevDefaultValue.current)) return
+
+    const newArray = participantsFieldArray.fields.map((emailItem) => {
+      const isInDefaultValue = defaultValue?.find(
+        (e) => e.email === emailItem.email
+      )
+      if (isInDefaultValue) {
+        return isInDefaultValue
+      }
+
+      return emailItem
+    })
+
+    participantsForm.reset({
+      participants: newArray,
+    })
+
+    prevDefaultValue.current = defaultValue
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValue, participantsFieldArray.fields])
 
   const deleteParticipant = async ({
     participantId,
@@ -228,9 +257,10 @@ export function AddParticipantsForm<
                   variant="light"
                   radius="full"
                   isLoading={
-                    fakeDeleteParticipantMutation.isPending &&
-                    arrayField.participantId ===
-                      fakeDeleteParticipantMutation.variables
+                    arrayField?.inQueue ||
+                    (fakeDeleteParticipantMutation.isPending &&
+                      arrayField.participantId ===
+                        fakeDeleteParticipantMutation.variables)
                   }>
                   <BsThreeDotsVertical />
                 </Button>
@@ -259,12 +289,14 @@ export function AddParticipantsForm<
   return (
     <div>
       <EmailInput
-        isInviteLoading={addParticipantsMutation.isPending && !showActions}
+        // isInviteLoading={addParticipantsMutation.isPending && !showActions}
         onEnter={(email: string, role: string) => {
           participantsFieldArray.append({ email, role })
           setShowActions(true)
         }}
         onInvite={(email: string, role: string) => {
+          participantsFieldArray.append({ email, role, inQueue: true })
+
           addParticipantsMutation.mutate({
             participants: [...participantsFieldArray.fields, { email, role }],
             closeonSave: false,

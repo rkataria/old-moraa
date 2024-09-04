@@ -10,10 +10,12 @@ import { cn } from '@/components/tiptap/lib/utils'
 export type TableOfContentsProps = {
   editor: CoreEditor
   onItemClick?: () => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  editorRef?: any
 }
 
 export const TableOfContents = memo(
-  ({ editor, onItemClick }: TableOfContentsProps) => {
+  ({ editor, onItemClick, editorRef }: TableOfContentsProps) => {
     const [data, setData] = useState<TableOfContentsStorage | null>(null)
 
     useEffect(() => {
@@ -32,34 +34,42 @@ export const TableOfContents = memo(
       }
     }, [editor])
 
-    return (
-      <>
-        <div className="mb-2 text-xs font-semibold uppercase text-neutral-500 dark:text-neutral-400">
-          Table of contents
-        </div>
-        {data && data.content.length > 0 ? (
-          <div className="flex flex-col gap-1">
-            {data.content.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                style={{ marginLeft: `${1 * item.level - 1}rem` }}
-                onClick={onItemClick}
-                className={cn(
-                  'block font-medium text-neutral-500 dark:text-neutral-300 p-1 rounded bg-opacity-10 text-sm hover:text-neutral-800 transition-all hover:bg-black hover:bg-opacity-5 truncate w-full',
-                  item.isActive &&
-                    'text-neutral-800 bg-neutral-100 dark:text-neutral-100 dark:bg-neutral-900'
-                )}>
-                {item.itemIndex}. {item.textContent}
-              </a>
-            ))}
+    const scrollToElementById = (id: string) => {
+      if (editorRef.current) {
+        // Find the target element by id within the container
+        const escapedId = CSS.escape(id)
+        // Find the target element by id within the container
+        const targetElement = editorRef.current.querySelector(`#${escapedId}`)
+        if (targetElement) {
+          // Scroll the container to make the target element visible
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          })
+        }
+      }
+      onItemClick?.()
+    }
+
+    return data && data.content.length > 0 ? (
+      <div className="overflow-y-auto scrollbar-thin w-[315px] pt-4">
+        {data.content.map((item) => (
+          // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+          <div
+            key={item.id}
+            style={{ paddingLeft: `${1 * item.level - 1}rem` }}
+            onClick={() => scrollToElementById(item.id)}
+            className={cn(
+              'w-[93%] outline-none line-clamp-1 text-sm tracking-tight break-all font-medium text-gray-500 cursor-pointer mb-4'
+            )}>
+            {item.itemIndex}. &nbsp;{item.textContent}
           </div>
-        ) : (
-          <div className="text-sm text-neutral-500">
-            Start adding headlines to your document …
-          </div>
-        )}
-      </>
+        ))}
+      </div>
+    ) : (
+      <div className="text-sm text-neutral-500">
+        Start adding headlines to your document …
+      </div>
     )
   }
 )

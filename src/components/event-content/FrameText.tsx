@@ -9,7 +9,6 @@ import { ContentType } from '../common/ContentTypePicker'
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { getFrameName } from '@/utils/getFrameName'
 import { cn } from '@/utils/utils'
 
 export function FrameText({
@@ -23,14 +22,16 @@ export function FrameText({
   disableEnter?: boolean
   onSuccessiveEnters?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }) {
-  const { preview, updateFrame, currentFrame, sections } = useContext(
+  const { preview, updateFrame, currentFrame } = useContext(
     EventContext
   ) as EventContextType
 
   const placeholder =
     currentFrame?.type === ContentType.POLL
       ? "What's the question?"
-      : 'Subject that shaped thoughts and opinions to reflect upon...'
+      : currentFrame?.type === ContentType.REFLECTION
+        ? 'Subject that shaped thoughts and opinions to reflect upon...'
+        : "What's the title?"
 
   const getChangedKey = () => {
     if (currentFrame?.type === ContentType.POLL && type === 'title') {
@@ -90,16 +91,17 @@ export function FrameText({
           ...currentFrame.content,
           [changedKey]: debouncedText,
         },
-        name: getFrameName({
-          frame: {
-            ...currentFrame,
-            content: {
-              ...currentFrame.content,
-              [changedKey]: debouncedText,
-            },
-          },
-          sections,
-        }),
+        // name: getFrameName({
+        //   frame: {
+        //     ...currentFrame,
+        //     content: {
+        //       ...currentFrame.content,
+        //       [changedKey]: debouncedText,
+        //     },
+        //   },
+        //   sections,
+        // }),
+        name: debouncedText,
       },
       frameId: currentFrame.id,
     })

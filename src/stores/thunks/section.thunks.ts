@@ -82,7 +82,7 @@ export const updateSectionThunk = createAsyncThunk<
     const response = await SectionService.updateSection({
       sectionId,
       payload: {
-        name: data.name || '',
+        ...(data.name && { name: data.name }),
         frames: data.frames || undefined,
         config: data.config || undefined,
       },

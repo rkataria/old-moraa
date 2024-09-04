@@ -48,7 +48,7 @@ export function DateWithTime({ control, dateName, timeName }: IDateWithTime) {
               isInvalid={!!fieldState.error?.message}
               startContent={
                 <p className="absolute bg-white text-sm w-[70%] text-black">
-                  {DateTime.fromISO(field.value).toFormat('ccc, dd LLLL')}
+                  {DateTime.fromISO(field.value).toFormat('ccc, dd LLL')}
                 </p>
               }
               onChange={(value) =>

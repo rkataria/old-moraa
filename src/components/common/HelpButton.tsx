@@ -10,8 +10,9 @@ export function HelpButton() {
         size="sm"
         isIconOnly
         variant="light"
-        onClick={() => window.open('/help', '_blank', 'noopener,noreferrer')}>
-        <IoIosHelpCircleOutline size={18} className="text-[#52525B]" />
+        onClick={() => window.open('/help', '_blank', 'noopener,noreferrer')}
+        className="shrink-0">
+        <IoIosHelpCircleOutline size={24} className="text-[#52525B]" />
       </Button>
     </Tooltip>
   )

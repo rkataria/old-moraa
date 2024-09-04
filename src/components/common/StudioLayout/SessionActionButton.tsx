@@ -29,23 +29,14 @@ function ScheduleSessionButton({
   }
 
   return (
-    <Dropdown
-      placement="bottom-end"
-      closeOnSelect={false}
-      className="rounded-md"
-      shouldCloseOnInteractOutside={(Element) => {
-        const wrapperElement = document.getElementById('schedule-event-form')
-
-        return !wrapperElement?.contains(Element)
-      }}>
+    <Dropdown placement="bottom-end" className="rounded-md">
       <DropdownTrigger>
-        <Button size="sm" isIconOnly className="rounded-s-none">
+        <Button color="primary" size="sm" isIconOnly className="rounded-s-none">
           <ChevronDownIcon />
         </Button>
       </DropdownTrigger>
       <DropdownMenu
         className="p-0"
-        closeOnSelect={false}
         onAction={(key) => {
           if (key === 're-schedule') {
             scheduleModal.onOpen()
@@ -53,11 +44,9 @@ function ScheduleSessionButton({
         }}>
         <DropdownItem
           key="re-schedule"
-          className="p-0 rounded-md"
+          className="p-2 rounded-md"
           closeOnSelect>
-          <Button size="sm" variant="solid" fullWidth>
-            Re-schedule event
-          </Button>
+          Re-schedule event
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
@@ -84,6 +73,7 @@ function ActionButton({
       <>
         <div className="flex justify-center items-center gap-0">
           <Button
+            color="primary"
             onClick={() => router.navigate({ to: `/event-session/${eventId}` })}
             size="sm"
             title="Start session"

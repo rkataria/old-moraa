@@ -118,7 +118,7 @@ export function FrameTextBlock({
         editable={editableId === block.id}
         placeholder={
           localFrame.type === ContentType.REFLECTION
-            ? "Write out problem areas that you or user's may noticed while studying or analysing in live session. Sample learner's reflections card displayed below, showcasing how it appears during live sessions."
+            ? "Write out problem areas that you or user's may noticed while studying or analyzing in live session. Sample learner's reflections card displayed below, showcasing how it appears during live sessions."
             : ''
         }
         onChange={(updatedBlock) => {

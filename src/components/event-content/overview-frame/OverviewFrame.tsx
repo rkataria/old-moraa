@@ -19,6 +19,7 @@ export function OverviewFrame() {
     addSection,
     setOpenContentTypePicker,
     setAddedFromSessionPlanner,
+    insertInSectionId,
   } = useContext(EventContext) as EventContextType
 
   const isAddSectionLoading = useStoreSelector(
@@ -68,7 +69,11 @@ export function OverviewFrame() {
               color="primary"
               variant="solid"
               isLoading={isAddSectionLoading}
-              onClick={() => addSection({ addToLast: true })}>
+              onClick={() =>
+                insertInSectionId
+                  ? addSection({ afterSectionId: insertInSectionId })
+                  : addSection({ addToLast: true })
+              }>
               + Add Section
             </Button>
             <Button

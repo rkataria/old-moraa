@@ -1,6 +1,10 @@
 .ProseMirror {
   @apply caret-black dark:caret-white outline-0;
 }
+#editor-preview .ProseMirror {
+  @apply min-h-[auto];
+}
+
 #ai-page-editor .ProseMirror {
   @apply px-8;
 }

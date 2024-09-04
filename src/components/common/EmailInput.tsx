@@ -1,4 +1,4 @@
-import { KeyboardEvent } from 'react'
+import { KeyboardEvent, useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Input, Button, Chip } from '@nextui-org/react'
@@ -27,6 +27,7 @@ export function EmailInput({
   onInvite,
   isInviteLoading = false,
 }: EmailInputProps) {
+  const [showError, setShowError] = useState(true)
   const { control, handleSubmit, setValue, setError } = useForm({
     resolver: yupResolver(schema),
     defaultValues: { email: '', role: 'Participant' },
@@ -35,12 +36,16 @@ export function EmailInput({
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
+      setShowError(true)
+
       handleSubmit(({ email, role }: { email?: string; role: string }) => {
         if (email) {
           onEnter(email, role)
           setValue('email', '')
         }
       })()
+    } else {
+      setShowError(false)
     }
   }
 
@@ -82,10 +87,10 @@ export function EmailInput({
                 <AiOutlineUsergroupAdd className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
               }
               onKeyDown={handleKeyPress}
-              errorMessage={fieldState.error?.message}
-              isInvalid={!!fieldState.error}
+              errorMessage={showError && fieldState.error?.message}
+              isInvalid={showError && !!fieldState.error}
               classNames={{
-                inputWrapper: 'bg-transparent shadow-none',
+                inputWrapper: '!bg-transparent shadow-none',
                 helperWrapper: 'py-0 absolute bottom-[2.8125rem]',
               }}
             />
@@ -119,7 +124,10 @@ export function EmailInput({
         color="primary"
         variant="solid"
         isLoading={isInviteLoading}
-        onClick={handleSubmit(onInviteSubmit)}>
+        onClick={() => {
+          setShowError(true)
+          handleSubmit(onInviteSubmit)()
+        }}>
         Invite People
       </Button>
     </div>

@@ -40,11 +40,12 @@ export function Header({
 
   const renderActionButtons = () => (
     <>
+      <HelpButton />
+
       <AIChatbotToggleButton />
       <AddParticipantsButtonWithModal eventId={event.id} />
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
       <PreviewSwitcher />
-      <HelpButton />
     </>
   )
 

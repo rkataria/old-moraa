@@ -66,6 +66,7 @@ export const eventSlice = createSlice({
     ) => {
       state.currentSectionId = action.payload
     },
+    resetEvent: () => initialState,
   },
   extraReducers: (builder) => {
     attachThunkToBuilder({
@@ -86,6 +87,9 @@ attachStoreListener({
           state.user.currentUser.user!.id
       )
     )
+    dispatch(setCurrentFrameIdAction(null))
+    dispatch(setCurrentSectionIdAction(null))
+    dispatch(setIsOverviewOpenAction(true))
   },
 })
 
@@ -121,4 +125,5 @@ export const {
   setIsPreviewOpenAction,
   setIsCurrentUserOwnerOfEventAction,
   setCurrentFrameIdAction,
+  resetEventAction,
 } = renameSliceActions(eventSlice.actions)

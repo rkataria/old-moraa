@@ -22,7 +22,10 @@ import {
   setCurrentFrameIdAction,
 } from '@/stores/slices/event/current-event/event.slice'
 import { reorderSectionsAction } from '@/stores/slices/event/current-event/meeting.slice'
-import { reorderFrameAction } from '@/stores/slices/event/current-event/section.slice'
+import {
+  handleExpandedSectionsInSessionPlannerAction,
+  reorderFrameAction,
+} from '@/stores/slices/event/current-event/section.slice'
 import {
   createFrameThunk,
   deleteFrameThunk,
@@ -124,7 +127,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     if (eventViewFromQuery === 'view') {
       dispatch(setIsPreviewOpenAction(true))
+
+      return
     }
+    dispatch(setIsPreviewOpenAction(false))
   }, [currentUser?.id, eventViewFromQuery, event?.owner_id, dispatch])
 
   // useEffect(() => {
@@ -142,6 +148,17 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   //     inline: 'center',
   //   })
   // }, [currentFrame])
+
+  const handleSectionExpansionInSessionPlanner = (sectionId: string) => {
+    if (isOverviewOpen) {
+      dispatch(
+        handleExpandedSectionsInSessionPlannerAction({
+          id: sectionId,
+          keepExpanded: true,
+        })
+      )
+    }
+  }
 
   const addFrameToSection = async ({
     frame,
@@ -161,17 +178,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       })
     )
 
-    // if
-
-    // if (!addedFromSessionPlanner) {
-    //   // TODO: Fix this below line
-    //   // dispatch(setCurrentFrameId(frameResponse.data.id))
-    //   dispatch(setIsOverviewOpenAction(false))
-    // }
-
-    // if (addedFromSessionPlanner) setAddedFromSessionPlanner(false)
-    console.log('k', isOverviewOpen)
-    // setCurrentSectionIdAction(null)
+    handleSectionExpansionInSessionPlanner(section.id)
+    setInsertAfterFrameId(frame.id!)
   }
 
   const addSection = async ({

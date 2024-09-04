@@ -4,44 +4,39 @@ import { TextBlockView } from '../event-session/content-types/common/TextBlockVi
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { IFrame, TextBlock } from '@/types/frame.type'
 
-export function FrameTitleDescriptionPreview({ frame }: { frame: IFrame }) {
+export function FrameTitleDescription({ frame }: { frame: IFrame }) {
+  const frameTitle = frame.content?.title || frame.content?.question
+
+  return (
+    <>
+      <FrameTitle title={(frameTitle as string) || ''} />
+      <TextBlockView
+        block={
+          frame.content?.blocks?.find(
+            (block) => block.type === 'paragraph'
+          ) as TextBlock
+        }
+      />
+    </>
+  )
+}
+
+export function FrameTitleDescriptionPreview({
+  frame,
+  asThumbnail = false,
+}: {
+  frame: IFrame
+  asThumbnail?: boolean
+}) {
   if (!frame) return null
 
   if ([ContentType.COVER, ContentType.TEXT_IMAGE].includes(frame.type)) {
     return null
   }
-  const frameTitle = frame.content?.title || frame.content?.question
 
-  const renderTitle = () => {
-    if ([ContentType.POLL, ContentType.REFLECTION].includes(frame.type)) {
-      return <FrameTitle title={(frameTitle as string) || ''} />
-    }
-
-    return (
-      <TextBlockView
-        block={
-          frame.content?.blocks?.find(
-            (block) => block.type === 'header'
-          ) as TextBlock
-        }
-      />
-    )
+  if (frame.type === ContentType.RICH_TEXT) {
+    if (!frame.config.allowToCollaborate && !asThumbnail) return null
   }
 
-  const renderDescription = () => (
-    <TextBlockView
-      block={
-        frame.content?.blocks?.find(
-          (block) => block.type === 'paragraph'
-        ) as TextBlock
-      }
-    />
-  )
-
-  return (
-    <>
-      {renderTitle()}
-      {renderDescription()}
-    </>
-  )
+  return <FrameTitleDescription frame={frame} />
 }

@@ -92,7 +92,6 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
               </ModalHeader>
               <ModalBody className="mt-4">
                 <AddParticipantsForm
-                  key={JSON.stringify(participants)}
                   defaultValue={
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     participants?.map((participant: any) => ({

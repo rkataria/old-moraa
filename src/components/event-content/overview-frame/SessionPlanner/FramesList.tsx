@@ -14,15 +14,8 @@ export function FramesList({
   section: ISection
   plannerWidth: number
 }) {
-  // const { isOwner, preview, eventMode } = useContext(
-  //   EventContext
-  // ) as EventContextType
-
-  // const statusFilter =
-  //   isOwner && !preview && (eventMode === 'edit' || eventMode === 'present')
-
   return (
-    <div className="m">
+    <div>
       <StrictModeDroppable
         droppableId={`frame-droppable-sectionId-${section?.id}`}
         type="frame">
@@ -32,7 +25,6 @@ export function FramesList({
             ref={frameProvided.innerRef}
             className={cn('rounded-sm transition-all w-full', {
               'bg-gray-50': snapshot.isDraggingOver,
-              // 'cursor-grab': !actionDisabled,
             })}
             {...frameProvided.droppableProps}>
             <div className="w-full relative">

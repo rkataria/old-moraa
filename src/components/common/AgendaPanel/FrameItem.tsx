@@ -42,6 +42,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     deleteFrame,
     setCurrentFrame,
     deleteBreakoutFrames,
+    setInsertAfterFrameId,
+    setInsertInSectionId,
   } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
 
@@ -90,7 +92,6 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             frame={frame}
             handleFrameAction={handleFrameAction}
             sidebarExpanded={sidebarExpanded}
-            editable={editable}
             frameActive={frameActive}
             eventSessionData={eventSessionData}
           />
@@ -114,7 +115,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             if (!permissions.canUpdateFrame && eventMode === 'present') {
               return
             }
-
+            setInsertAfterFrameId(frame.id)
+            setInsertInSectionId(frame.section_id!)
             setCurrentFrame(frame)
           }}>
           {eventSessionData?.breakoutSlideId === frame?.id ? (

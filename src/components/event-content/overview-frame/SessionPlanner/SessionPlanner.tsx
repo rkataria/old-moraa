@@ -33,7 +33,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { updateExpandedSectionsInSessionPlannerAction } from '@/stores/slices/event/current-event/section.slice'
+import { handleExpandedSectionsInSessionPlannerAction } from '@/stores/slices/event/current-event/section.slice'
 import { bulkUpdateFrameStatusThunk } from '@/stores/thunks/frame.thunks'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
@@ -59,6 +59,9 @@ export function SessionPlanner({
     reorderFrame,
     updateSection,
     setAddedFromSessionPlanner,
+    insertInSectionId,
+    setInsertInSectionId,
+    setInsertAfterFrameId,
   } = useContext(EventContext) as EventContextType
 
   const dispatch = useStoreDispatch()
@@ -86,19 +89,6 @@ export function SessionPlanner({
         frameIds: section.frames.map((frame) => frame.id),
         status: newState,
       })
-    )
-  }
-
-  const handleExpandSection = (id: string) => {
-    let updatedExpandedSections = [...expandedSections]
-    if (expandedSections.includes(id)) {
-      updatedExpandedSections = updatedExpandedSections.filter((i) => i !== id)
-    } else {
-      updatedExpandedSections.push(id)
-    }
-
-    dispatch(
-      updateExpandedSectionsInSessionPlannerAction(updatedExpandedSections)
     )
   }
 
@@ -134,6 +124,17 @@ export function SessionPlanner({
     }
 
     setFilteredSections(updatedSections)
+  }
+
+  const handleSectionClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    sectionId: string
+  ) => {
+    e.stopPropagation()
+    if (insertInSectionId === sectionId) return
+    setInsertInSectionId(sectionId)
+    setInsertAfterFrameId(null)
+    // dispatch(setCurrentFrameIdAction(null))
   }
 
   const editable =
@@ -173,8 +174,11 @@ export function SessionPlanner({
                         className={cn('w-full bg-gray-100 rounded-lg border ', {
                           'border-l-8 border-r-8 border-b-8 shadow-sm':
                             expandedSections.includes(section.id),
+                          'border-primary-100':
+                            insertInSectionId === section.id && !preview,
                         })}
                         ref={sectionDraggableProvided.innerRef}
+                        onClick={(e) => handleSectionClick(e, section.id)}
                         {...sectionDraggableProvided.draggableProps}>
                         <Fragment key={section.id}>
                           <div>
@@ -183,9 +187,6 @@ export function SessionPlanner({
                                 'flex w-full items-center bg-white gap-2 p-2 border-b group/section',
                                 {
                                   'rounded-lg': !expandedSections.includes(
-                                    section.id
-                                  ),
-                                  'rounded-t-lg': expandedSections.includes(
                                     section.id
                                   ),
                                 }
@@ -239,7 +240,10 @@ export function SessionPlanner({
 
                                 <AddItemBar
                                   sectionId={section.id}
-                                  frameId={section.frames?.[0]?.id}
+                                  frameId={
+                                    section.frames?.[section.frames.length - 1]
+                                      ?.id
+                                  }
                                   trigger={
                                     <p
                                       className="text-xl text-gray-400 cursor-pointer"
@@ -260,7 +264,13 @@ export function SessionPlanner({
                                     ),
                                   }
                                 )}
-                                onClick={() => handleExpandSection(section.id)}
+                                onClick={() =>
+                                  dispatch(
+                                    handleExpandedSectionsInSessionPlannerAction(
+                                      { id: section.id }
+                                    )
+                                  )
+                                }
                               />
                               <div style={{ flex: 2 }}>
                                 <EditableLabel

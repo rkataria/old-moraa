@@ -25,6 +25,8 @@ import { EditableLabel } from '@/components/common/EditableLabel'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { setCurrentFrameIdAction } from '@/stores/slices/event/current-event/event.slice'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
@@ -47,17 +49,25 @@ export function FrameItem({
     eventMode,
     updateFrame,
     setAddedFromSessionPlanner,
+    insertAfterFrameId,
   } = useContext(EventContext) as EventContextType
+
+  const dispatch = useStoreDispatch()
 
   const editable = isOwner && !preview && eventMode === 'edit'
 
   const onFrameTitleChange = (frameId: string, title: string) => {
     if (!editable) return
+    const changedKey = frame.type === ContentType.POLL ? 'question' : 'title'
 
     updateFrame({
       frameId,
       framePayload: {
         name: title,
+        content: {
+          ...frame.content,
+          [changedKey]: title,
+        },
       },
     })
   }
@@ -125,6 +135,7 @@ export function FrameItem({
       isDragDisabled={!editable}>
       {(_provided) => (
         <div
+          id={frame.id}
           key={frame.id}
           ref={_provided.innerRef}
           {..._provided.draggableProps}
@@ -133,9 +144,11 @@ export function FrameItem({
             {
               'grid-cols-[100px_12px_1fr_1fr_1fr_0.2fr]': showToggle,
               'grid-cols-[100px_12px_1fr_1fr_1fr]': preview,
+              'before:absolute before:w-2 before:bg-primary-300 before:h-[108%] before:-top-0.5 before:-left-2 ':
+                insertAfterFrameId === frame.id && !preview,
             }
           )}>
-          <div className="absolute flex flex-col items-center justify-center -ml-[43px] -mr-4 opacity-0 w-[50px] group-hover/frame:opacity-100 ">
+          <div className="absolute flex flex-col items-center justify-center -ml-[43px] -mr-4 opacity-0 w-[50px] group-hover/frame:opacity-100">
             <RenderIf isTrue={!preview}>
               <div {..._provided.dragHandleProps}>
                 <MdOutlineDragIndicator
@@ -152,7 +165,10 @@ export function FrameItem({
               trigger={
                 <p
                   className="text-xl text-gray-400 cursor-pointer"
-                  onClick={() => setAddedFromSessionPlanner(true)}>
+                  onClick={() => {
+                    dispatch(setCurrentFrameIdAction(frame?.id))
+                    setAddedFromSessionPlanner(true)
+                  }}>
                   +
                 </p>
               }

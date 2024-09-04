@@ -1,10 +1,14 @@
+import { useContext } from 'react'
+
 import { useHotkeys } from 'react-hotkeys-hook'
 import { LuSparkles } from 'react-icons/lu'
 
 import { Button } from '@/components/ui/Button'
+import { EventContext } from '@/contexts/EventContext'
 import { useFlags } from '@/flags/client'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function ToggleButton() {
@@ -34,6 +38,8 @@ export function ToggleButton() {
 }
 
 export function AIChatbotToggleButton() {
+  const { preview } = useContext(EventContext) as EventContextType
+
   const { flags } = useFlags()
 
   const { permissions } = useEventPermissions()
@@ -43,6 +49,8 @@ export function AIChatbotToggleButton() {
   if (!permissions.canUpdateFrame) {
     return null
   }
+
+  if (preview) return null
 
   return <ToggleButton />
 }

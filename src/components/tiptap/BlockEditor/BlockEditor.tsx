@@ -10,6 +10,8 @@ import { EditorHeader } from './components/EditorHeader'
 import { TiptapProps } from './types'
 import { ContentItemMenu } from '../menus/ContentItemMenu'
 import { TextMenu } from '../menus/TextMenu'
+import { Icon } from '../ui/Icon'
+import { Toolbar } from '../ui/Toolbar'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { EditorContext } from '@/components/tiptap/context/EditorContext'
@@ -46,6 +48,8 @@ export function BlockEditor({
   showHeader = true,
   classNames,
   onEmptyContent,
+  startContent,
+  visibleSideBar,
 }: TiptapProps) {
   const aiState = useAIState()
   const menuContainerRef = useRef(null)
@@ -90,11 +94,54 @@ export function BlockEditor({
 
   if (!editable) {
     return (
-      <EditorContent
-        editor={editor}
-        ref={editorRef}
-        className="flex-1 overflow-y-auto scrollbar-thin"
-      />
+      <>
+        <div
+          className={cn('flex flex-col', {
+            'border-r': leftSidebar.isOpen,
+          })}>
+          <RenderIf isTrue={!visibleSideBar}>
+            <div className="flex items-center gap-1">
+              <Toolbar.Button
+                tooltip={leftSidebar.isOpen ? 'Close sidebar' : 'Open sidebar'}
+                onClick={() => {
+                  leftSidebar.toggle()
+                }}
+                active={leftSidebar.isOpen}>
+                <div>
+                  <Icon
+                    name={leftSidebar.isOpen ? 'PanelLeftClose' : 'PanelLeft'}
+                  />
+                </div>
+              </Toolbar.Button>
+              <RenderIf isTrue={leftSidebar.isOpen}>
+                <p className="font-medium">Table of contents</p>
+              </RenderIf>
+            </div>
+
+            <Sidebar
+              isOpen={leftSidebar.isOpen}
+              onClose={leftSidebar.close}
+              editor={editor}
+              editorRef={editorRef}
+            />
+          </RenderIf>
+        </div>
+
+        <div
+          className={cn('flex flex-col w-full', {
+            'ml-4': leftSidebar.isOpen,
+          })}>
+          <EditorContent
+            id="editor-preview"
+            editor={editor}
+            ref={editorRef}
+            className={cn('flex-1 overflow-y-auto scrollbar-thin', {
+              'px-[15%]': !leftSidebar.isOpen && !visibleSideBar,
+            })}>
+            {startContent}
+          </EditorContent>
+        </div>
+      </>
     )
   }
 
@@ -106,12 +153,13 @@ export function BlockEditor({
             isOpen={leftSidebar.isOpen}
             onClose={leftSidebar.close}
             editor={editor}
+            editorRef={editorRef}
           />
         </RenderIf>
 
         <div
           className={cn(
-            'relative w-full h-full border bg-[#FEFEFE] rounded-3xl px-[0.5625rem]',
+            'relative w-full h-full border bg-[#FEFEFE] rounded-3xl px-[0.5625rem] flex flex-col',
             classNames?.container
           )}>
           <RenderIf isTrue={showHeader}>
@@ -130,7 +178,7 @@ export function BlockEditor({
             editor={editor}
             ref={editorRef}
             className={cn(
-              'overflow-y-scroll w-full h-full pl-[3.625rem] scrollbar-thin pt-6 pb-[5rem]',
+              'overflow-y-scroll w-full pl-[3.625rem] scrollbar-thin pt-6 pb-[5rem] h-full',
               classNames?.editor
             )}
           />

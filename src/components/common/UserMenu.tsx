@@ -24,7 +24,10 @@ export function UserMenu() {
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
           <Button size="sm" isIconOnly>
-            <UserAvatar profile={profile} />
+            <UserAvatar
+              profile={profile}
+              avatarProps={{ radius: 'sm', size: 'sm' }}
+            />
           </Button>
         </DropdownTrigger>
         <DropdownMenu aria-label="Profile Actions" variant="flat">

@@ -5,13 +5,10 @@ import { useContext, useRef } from 'react'
 
 import { Button } from '@nextui-org/button'
 import { IoCheckmarkCircle } from 'react-icons/io5'
-import { RxDotsVertical } from 'react-icons/rx'
 
 import { ContextMenu } from './ContextMenu'
 import { FrameThumbnailCard } from './FrameThumbnailCard'
-import { ContentTypeIcon } from '../ContentTypeIcon'
-import { EditableLabel } from '../EditableLabel'
-import { frameActions, FrameActions } from '../FrameActions'
+import { frameActions } from '../FrameActions'
 import { RenderIf } from '../RenderIf/RenderIf'
 import { Tooltip } from '../ShortuctTooltip'
 
@@ -28,7 +25,6 @@ export function FrameGridView({
   frame,
   handleFrameAction,
   sidebarExpanded,
-  editable,
   frameActive,
   eventSessionData,
 }: {
@@ -36,19 +32,17 @@ export function FrameGridView({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleFrameAction: (item: any) => void
   sidebarExpanded: boolean
-  editable: boolean
   frameActive: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   eventSessionData: any
 }) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
-
   const {
     eventMode,
-    updateFrame,
 
     setCurrentFrame,
   } = useContext(EventContext) as EventContextType
+
   const { permissions } = useEventPermissions()
 
   const { width: containerWidth } = useDimensions(
@@ -115,41 +109,6 @@ export function FrameGridView({
                 inViewPort={isVisible}
               />
             </div>
-          </div>
-          <div className="absolute -bottom-8 w-full flex justify-between items-center px-1 h-8 bg-gray-200 group-hover/frame-item:botom-0 duration-100">
-            <div className="flex items-center justify-start flex-auto gap-1">
-              <ContentTypeIcon
-                frameType={frame.type}
-                classNames="text-gray-800 w-4 h-4"
-              />
-              <EditableLabel
-                readOnly={!editable}
-                label={frame.name}
-                className="text-xs tracking-tight"
-                onUpdate={(value) => {
-                  if (!editable) return
-                  if (frame.name === value) return
-
-                  updateFrame({
-                    framePayload: { name: value },
-                    frameId: frame?.id,
-                  })
-                }}
-              />
-            </div>
-
-            <RenderIf isTrue={editable && !frame?.content?.breakoutFrameId}>
-              <div className="z-[100]">
-                <FrameActions
-                  triggerIcon={
-                    <div className="cursor-pointer">
-                      <RxDotsVertical />
-                    </div>
-                  }
-                  handleActions={handleFrameAction}
-                />
-              </div>
-            </RenderIf>
           </div>
         </div>
       </div>

@@ -1,25 +1,28 @@
-import { useContext } from 'react'
+import { ReactNode } from '@tanstack/react-router'
 
 import { RichTextEditor } from './Editor'
 
-import { EventContext } from '@/contexts/EventContext'
-import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 
 export function RichTextPreview({
   frame,
   asThumbnail,
+  startContent,
 }: {
   frame: IFrame
   asThumbnail?: boolean
+  startContent?: ReactNode
 }) {
-  const { eventMode } = useContext(EventContext) as EventContextType
+  const canEditRichText = !!(!asThumbnail && frame.config.allowToCollaborate)
 
-  const canEditRichText = !!(
-    !asThumbnail &&
-    eventMode !== 'present' &&
-    frame.config.allowToCollaborate
+  const visibleStartContent = !asThumbnail && !canEditRichText
+
+  return (
+    <RichTextEditor
+      editorId={frame.id}
+      editable={canEditRichText}
+      startContent={visibleStartContent ? startContent : null}
+      visibleSideBar={asThumbnail}
+    />
   )
-
-  return <RichTextEditor editorId={frame.id} editable={canEditRichText} />
 }

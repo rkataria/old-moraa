@@ -45,20 +45,20 @@ export function FrameTitleDescriptionPanel() {
     currentFrame.type
   )
 
-  const getTitle = () => {
-    if (currentFrame.type === ContentType.REFLECTION) {
-      return <FrameText disableEnter type="title" />
-    }
+  // const getTitle = () => {
+  //   if (currentFrame.type === ContentType.REFLECTION) {
+  //     return <FrameText disableEnter type="title" />
+  //   }
 
-    return (
-      <FrameTextBlock
-        blockType="header"
-        editableId={editableId}
-        onClick={(blockId: string) => setEditableId(blockId)}
-      />
-    )
-  }
-
+  //   return (
+  //     <FrameTextBlock
+  //       blockType="header"
+  //       editableId={editableId}
+  //       onClick={(blockId: string) => setEditableId(blockId)}
+  //     />
+  //   )
+  // }
+  const getTitle = () => <FrameText disableEnter type="title" />
   const getDescription = () => (
     <FrameTextBlock
       blockType="paragraph"

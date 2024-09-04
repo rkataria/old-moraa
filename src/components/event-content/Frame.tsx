@@ -66,7 +66,7 @@ export function Frame({ frame }: FrameProps) {
         editorId={frame.id}
         classNames={{
           wrapper: 'overflow-hidden',
-          container: 'overflow-hidden',
+          container: 'flex flex-col overflow-hidden',
         }}
       />
     ),

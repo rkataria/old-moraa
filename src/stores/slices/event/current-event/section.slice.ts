@@ -92,13 +92,24 @@ export const sectionSlice = createSlice({
       })
     },
 
-    updateExpandedSectionsInSessionPlanner: (
+    handleExpandedSectionsInSessionPlanner: (
       state,
-      action: PayloadAction<string[]>
+      action: PayloadAction<{ id: string; keepExpanded?: boolean }>
     ) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      state.expandedSectionsInSessionPlanner = action.payload
+      const { id, keepExpanded = false } = action.payload
+      const expandedSections = state.expandedSectionsInSessionPlanner
+
+      if (!expandedSections.includes(id)) {
+        state.expandedSectionsInSessionPlanner = [...expandedSections, id]
+
+        return
+      }
+
+      if (keepExpanded) return
+
+      state.expandedSectionsInSessionPlanner = expandedSections.filter(
+        (s) => s !== id
+      )
     },
   },
   extraReducers: (builder) => {
@@ -180,10 +191,10 @@ attachStoreListener({
       getState().event.currentEvent.meetingState.meeting.data?.id
 
     dispatch(
-      updateExpandedSectionsInSessionPlannerAction([
-        getState().event.currentEvent.sectionState.section.data?.[0]
+      handleExpandedSectionsInSessionPlannerAction({
+        id: getState().event.currentEvent.sectionState.section.data?.[0]
           ?.id as string,
-      ])
+      })
     )
     supabaseClient
       .channel(`event:${eventId}-1`)
@@ -313,5 +324,5 @@ export const {
   updateSectionAction,
   insertSectionAction,
   reorderFrameAction,
-  updateExpandedSectionsInSessionPlannerAction,
+  handleExpandedSectionsInSessionPlannerAction,
 } = renameSliceActions(sectionSlice.actions)

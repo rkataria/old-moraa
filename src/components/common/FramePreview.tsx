@@ -1,7 +1,7 @@
 // TODO: Fix any types
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from './breakout/BreakoutFrame'
@@ -12,7 +12,10 @@ import { PDFViewer, PDFViewerFrameType } from './content-types/PDFViewer'
 import { PollPreview } from './content-types/Poll/Preview'
 import { RichTextPreview } from './content-types/RichText/Preview'
 import { TextImageFrameType } from './content-types/TextImage'
-import { FrameTitleDescriptionPreview } from './FrameTitleDescriptionPreview'
+import {
+  FrameTitleDescription,
+  FrameTitleDescriptionPreview,
+} from './FrameTitleDescriptionPreview'
 import {
   MiroEmbedEditor,
   MiroEmbedFrameType,
@@ -27,7 +30,6 @@ import { TextImage } from '../event-session/content-types/TextImage'
 import { Cover, CoverFrameType } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
-// import { useDimensions } from '@/hooks/useDimensions'
 import { IFrame, PollFrame } from '@/types/frame.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
@@ -44,8 +46,6 @@ export function FramePreview({
   fullWidth,
   asThumbnail = false,
 }: FrameProps) {
-  const previewRef = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
     if (!frame) return
 
@@ -57,20 +57,20 @@ export function FramePreview({
 
   return (
     <div
-      ref={previewRef}
       style={{
         backgroundColor: frame.config.backgroundColor,
       }}
       className={cn(
         'relative group w-full h-full bg-white flex flex-col gap-2 p-4',
         {
-          '!p-0': frame.type === ContentType.TEXT_IMAGE && !isInteractive,
-          'px-[20%]': frame.type === ContentType.RICH_TEXT && isInteractive,
           'overflow-y-scroll scrollbar-none':
             frame.type === ContentType.RICH_TEXT,
         }
       )}>
-      <FrameTitleDescriptionPreview frame={frame as any} />
+      <FrameTitleDescriptionPreview
+        frame={frame as any}
+        asThumbnail={asThumbnail}
+      />
 
       <div
         data-frame-id={frame.id}
@@ -137,6 +137,7 @@ export function FramePreview({
             key={frame.config.allowToCollaborate}
             frame={frame}
             asThumbnail={asThumbnail}
+            startContent={<FrameTitleDescription frame={frame as any} />}
           />
         )}
         {frame.type === ContentType.MORAA_BOARD && (

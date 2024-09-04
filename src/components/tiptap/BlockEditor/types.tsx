@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'
+
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import { Language } from '@tiptap-pro/extension-ai'
 
@@ -16,6 +18,8 @@ export interface TiptapProps {
   onEmptyContent?: () => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   classNames?: any
+  startContent?: ReactNode
+  visibleSideBar?: boolean
 }
 
 export type EditorUser = {
