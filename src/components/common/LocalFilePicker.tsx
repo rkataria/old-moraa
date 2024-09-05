@@ -46,7 +46,7 @@ export function LocalFilePicker({
     const file = dataURLToFile(fileUrl, fileName)
     const response = await uploadFile({
       file,
-      fileName: `${fileName}.${file.name.split('.').pop()}`,
+      fileName,
       bucketName,
       onProgressChange,
     })

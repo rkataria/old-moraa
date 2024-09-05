@@ -106,7 +106,7 @@ export function EventDetails() {
               )}
               <LocalFilePicker
                 accept="image/png, image/jpeg, image/jpg"
-                fileName={`event-image-${event.id}`}
+                fileName={`event-image-${eventId}`}
                 bucketName="image-uploads"
                 uploadRemote
                 crop
