@@ -116,6 +116,8 @@ export function MeetingHeader({
       </div>
 
       <div className="flex justify-end items-center gap-3">
+        <HelpButton />
+
         <ParticipantsToggle
           isParticipantsSidebarOpen={rightSidebarVisiblity === 'participants'}
           onClick={() => {
@@ -136,7 +138,6 @@ export function MeetingHeader({
         />
 
         <LeaveMeetingToggle />
-        <HelpButton />
       </div>
     </div>
   )

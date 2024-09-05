@@ -1,4 +1,4 @@
-import { Key, useContext } from 'react'
+import { useContext } from 'react'
 
 import { Tab, Tabs } from '@nextui-org/react'
 import { useNavigate } from '@tanstack/react-router'
@@ -6,6 +6,7 @@ import { LuRectangleVertical } from 'react-icons/lu'
 import { MdEdit } from 'react-icons/md'
 
 import { Tooltip } from './ShortuctTooltip'
+import { Button } from '../ui/Button'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -21,16 +22,25 @@ export function PreviewSwitcher() {
     return null
   }
 
-  const handlePreviewSwitcher = (selectedKey: Key) => {
-    if (preview && selectedKey === 'preview') return
-    if (!preview && selectedKey === 'edit') return
-
+  const handlePreviewSwitcher = () => {
     setPreview(!preview)
 
     navigate({
       search: { action: preview ? 'edit' : 'view' },
     })
   }
+
+  return (
+    <Button
+      variant={preview ? 'bordered' : 'solid'}
+      size="sm"
+      color="primary"
+      onClick={handlePreviewSwitcher}
+      className="border-1"
+      startContent={preview ? <MdEdit size={20} /> : null}>
+      {preview ? 'Edit' : 'Done editing'}
+    </Button>
+  )
 
   return (
     <Tabs

@@ -10,7 +10,7 @@ export const Route = createFileRoute('/(dashboard)/_layout/help/')({
 function TemplatesPage() {
   return (
     <>
-      <div className="relative w-full bg-gradient-to-r from-primary to-[#e9e9d2] p-10 pb-0">
+      <div className="relative w-full bg-gradient-to-r from-primary to-[#e9e9d2] p-10 pb-0 rounded-xl">
         <p className="text-4xl font-bold text-white">Moraa Support</p>
         <p className="text-white mt-1 mb-14">
           Welcome to Moraa! Nice to see you here. Let’s get started!
