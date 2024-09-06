@@ -64,7 +64,9 @@ export function FrameList({
         frames?.map(
           (frame, frameIndex) =>
             frame && (
-              <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
+              <RenderIf
+                key={frame.id}
+                isTrue={!frame?.content?.breakoutFrameId}>
                 <div className="flex flex-col">
                   <Draggable
                     key={`frame-draggable-${frame?.id}`}

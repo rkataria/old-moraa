@@ -8,7 +8,11 @@ import { setActiveObjectAction } from '@/stores/slices/event/current-event/moraa
 import {
   CanvasObjectAdded,
   CanvasObjectModified,
+  CanvasObjectMoving,
   CanvasObjectRemoved,
+  CanvasObjectRotating,
+  CanvasObjectScaling,
+  CanvasObjectSkewing,
   CanvasSelectionCleared,
   CanvasSelectionCreated,
   CanvasSelectionUpdated,
@@ -177,84 +181,81 @@ export const handleCanvasObjectModified = async ({
   options,
   canvas,
   dispatch,
+  saveToStorage,
 }: CanvasObjectModified) => {
   console.log('handleCanvasObjectModified', options)
   const activeObject = canvas.getActiveObject()
 
-  if (!activeObject) return
+  if (activeObject) {
+    dispatch(setActiveObjectAction(activeObject))
+  }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch(
-    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
-  )
+  saveToStorage(canvas)
 }
 
 export const handleCanvasObjectMoving = ({
   options,
   canvas,
   dispatch,
-}: CanvasObjectModified) => {
+}: CanvasObjectMoving) => {
   console.log('handleCanvasObjectMoving', options)
   const activeObject = canvas.getActiveObject()
 
   if (!activeObject) return
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch(
-    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
-  )
+  dispatch(setActiveObjectAction(activeObject))
 }
 
 export const handleCanvasObjectScaling = ({
   options,
   canvas,
   dispatch,
-}: CanvasObjectModified) => {
+}: CanvasObjectScaling) => {
   console.log('handleCanvasObjectScaling', options)
   const activeObject = canvas.getActiveObject()
 
   if (!activeObject) return
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch(
-    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
-  )
+  dispatch(setActiveObjectAction(activeObject))
 }
 
 export const handleCanvasObjectRotating = ({
   options,
   canvas,
   dispatch,
-}: CanvasObjectModified) => {
+}: CanvasObjectRotating) => {
   console.log('handleCanvasObjectRotating', options)
   const activeObject = canvas.getActiveObject()
 
   if (!activeObject) return
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch(
-    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
-  )
+  dispatch(setActiveObjectAction(activeObject))
 }
 
 export const handleCanvasObjectSkewing = ({
   options,
   canvas,
   dispatch,
-}: CanvasObjectModified) => {
+}: CanvasObjectSkewing) => {
   console.log('handleCanvasObjectSkewing', options)
   const activeObject = canvas.getActiveObject()
 
   if (!activeObject) return
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch(
-    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
-  )
+  dispatch(setActiveObjectAction(activeObject))
 }
 
-export const handleCanvasObjectRemoved = ({ options }: CanvasObjectRemoved) => {
+export const handleCanvasObjectRemoved = ({
+  options,
+  canvas,
+  saveToStorage,
+}: CanvasObjectRemoved) => {
   console.log('handleCanvasObjectRemoved', options)
+
+  saveToStorage(canvas)
 }
 
 export const handleCanvasSelectionCreated = ({
@@ -270,9 +271,7 @@ export const handleCanvasSelectionCreated = ({
   if (!activeObject) return
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch(
-    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
-  )
+  dispatch(setActiveObjectAction(activeObject))
 }
 
 export const handleCanvasSelectionUpdated = ({
@@ -289,9 +288,7 @@ export const handleCanvasSelectionUpdated = ({
   if (!activeObject) return
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch(
-    setActiveObjectAction(JSON.parse(JSON.stringify(activeObject.toJSON())))
-  )
+  dispatch(setActiveObjectAction(activeObject))
 }
 
 export const handleCanvasSelectionCleared = ({
