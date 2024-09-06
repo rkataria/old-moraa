@@ -65,7 +65,6 @@ export function FrameAppearance() {
       />
       <div className="p-4 flex flex-col gap-4">
         <CommonAppearance />
-        <p>kkk</p>
         {renderer}
       </div>
     </div>
