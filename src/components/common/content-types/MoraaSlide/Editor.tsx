@@ -193,8 +193,8 @@ export function MoraaSlideEditor({
         <div
           ref={canvasContainerRef}
           className={cn(
-            'relative flex-auto w-full aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-sm overflow-hidden',
-            'border-2 border-black/10'
+            'relative flex-auto w-full aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-md overflow-hidden',
+            'border-2 border-gray-100'
           )}>
           <canvas ref={canvasRef} id={`canvas-${frameId}`} />
           <BubbleMenu canvas={fabricRef.current!} />

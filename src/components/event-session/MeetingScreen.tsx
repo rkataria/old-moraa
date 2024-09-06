@@ -101,10 +101,7 @@ export function MeetingScreen() {
         participantId: participant.id,
       })
 
-      if (
-        participant.presetName?.includes('host') &&
-        eventSessionMode === 'Presentation'
-      ) {
+      if (isHost && eventSessionMode === EventSessionMode.PRESENTATION) {
         dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
         updateActiveSession({
           presentationStatus: PresentationStatuses.STOPPED,

@@ -126,7 +126,7 @@ export function BubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
     [FabricObjectType.CIRCLE]: <RectBubbleMenu canvas={canvas} />,
     [FabricObjectType.POLYGON]: <RectBubbleMenu canvas={canvas} />,
     [FabricObjectType.IMAGE]: <ImageBubbleMenu canvas={canvas} />,
-    [FabricObjectType.PATH]: null,
+    [FabricObjectType.PATH]: <RectBubbleMenu canvas={canvas} />,
     [FabricObjectType.GROUP]: <GroupBubbleMenu canvas={canvas} />,
     [FabricObjectType.ACTIVE_SELECTION]: null,
   }

@@ -115,16 +115,50 @@ attachStoreListener({
 })
 
 attachStoreListener({
+  matcher: isAnyOf(
+    liveSessionSlice.actions.updateMeetingSessionData,
+    liveSessionSlice.actions.silentUpdateMeetingSessionData
+  ),
+  effect: (_, { getState, getOriginalState, dispatch }) => {
+    const { isCurrentUserOwnerOfEvent } =
+      getState().event.currentEvent.eventState
+    const newSessionData =
+      getState().event.currentEvent.liveSessionState.activeSession.data?.data
+    const oldEventSessionMode =
+      getOriginalState().event.currentEvent.liveSessionState.eventSessionMode
+
+    if (
+      newSessionData?.presentationStatus === PresentationStatuses.STOPPED &&
+      newSessionData?.currentFrameId
+    ) {
+      const newEventSessionMode = isCurrentUserOwnerOfEvent
+        ? EventSessionMode.PREVIEW
+        : EventSessionMode.LOBBY
+      if (oldEventSessionMode !== newEventSessionMode) {
+        dispatch(updateEventSessionModeAction(newEventSessionMode))
+      }
+    } else {
+      const newEventSessionMode = EventSessionMode.PRESENTATION
+      if (oldEventSessionMode !== newEventSessionMode) {
+        dispatch(updateEventSessionModeAction(newEventSessionMode))
+      }
+    }
+  },
+})
+
+attachStoreListener({
   predicate: isAnyOf(
     getExistingOrCreateNewActiveSessionThunk.fulfilled,
     getMeetingSessionThunk.fulfilled
   ),
-  effect: (_, { dispatch, getState }) => {
+  effect: (action, { dispatch, getState }) => {
     const meetingId =
-      getState().event.currentEvent.liveSessionState.activeSession.data
-        ?.meeting_id
-    const { eventId, isCurrentUserOwnerOfEvent } =
-      getState().event.currentEvent.eventState
+      action.type === getMeetingSessionThunk.fulfilled.type
+        ? getState().event.currentEvent.meetingState.meeting!.data!.id
+        : getState().event.currentEvent.liveSessionState.activeSession.data
+            ?.meeting_id
+
+    const { eventId } = getState().event.currentEvent.eventState
 
     supabaseClient
       .channel(`event:${eventId}-3`, { config: { broadcast: { self: false } } })
@@ -138,10 +172,12 @@ attachStoreListener({
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (payload: RealtimePostgresChangesPayload<{ data?: SessionState }>) => {
-          if (
-            payload.eventType !== 'INSERT' &&
-            payload.eventType !== 'UPDATE'
-          ) {
+          if (payload.eventType === 'INSERT') {
+            dispatch(getMeetingSessionThunk(meetingId!))
+
+            return
+          }
+          if (payload.eventType !== 'UPDATE') {
             return
           }
           if (!payload.new.data) return
@@ -153,24 +189,6 @@ attachStoreListener({
               newSessionData
             )
           )
-
-          if (
-            newSessionData.presentationStatus ===
-              PresentationStatuses.STOPPED &&
-            newSessionData.currentFrameId
-          ) {
-            dispatch(
-              updateEventSessionModeAction(
-                isCurrentUserOwnerOfEvent
-                  ? EventSessionMode.PREVIEW
-                  : EventSessionMode.LOBBY
-              )
-            )
-          } else {
-            dispatch(
-              updateEventSessionModeAction(EventSessionMode.PRESENTATION)
-            )
-          }
         }
       )
       .subscribe()

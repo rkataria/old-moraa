@@ -10,6 +10,7 @@ import {
   Image,
   Textarea,
 } from '@nextui-org/react'
+import { useParams } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
 import { Control, Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { CiEdit } from 'react-icons/ci'
@@ -118,6 +119,7 @@ export function ScheduleEventForm<
   const [imageUploadProgress, setImageUploadProgress] = useState<number>(0)
   const [imageUploading, setImageUploading] = useState<boolean>(false)
   const [searchValue, setSearchValue] = useState('')
+  const { eventId } = useParams({ strict: false })
   const participantsForm = useForm<ScheduleEventFormData>({
     resolver: yupResolver(scheduleEventValidationSchema),
     defaultValues: defaultValue || {
@@ -182,7 +184,7 @@ export function ScheduleEventForm<
           )}
           <LocalFilePicker
             accept="image/png, image/jpeg, image/jpg"
-            fileName={`event-image-${id}`}
+            fileName={`event-image-${eventId}`}
             bucketName="image-uploads"
             uploadRemote
             crop

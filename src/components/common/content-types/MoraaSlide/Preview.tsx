@@ -11,7 +11,7 @@ export function MoraaSlidePreview({ frameCanvasSvg }: MoraaSlidePreviewProps) {
     <div className="w-full h-full flex justify-center items-center">
       <LoadFonts />
       <div
-        className="relative w-full h-fit aspect-video moraa-slide-preview rounded-md overflow-hidden bg-black/5"
+        className="relative w-full h-fit aspect-video moraa-slide-preview rounded-md overflow-hidden"
         dangerouslySetInnerHTML={{
           __html: frameCanvasSvg || '',
         }}
