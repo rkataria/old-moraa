@@ -20,8 +20,6 @@ import { ContentTypeCard } from './ContentTypeCard'
 import { RenderIf } from './RenderIf/RenderIf'
 import { Tooltip } from './ShortuctTooltip'
 
-import { cn } from '@/utils/utils'
-
 export interface IContentType {
   name: string
   icon: React.ReactNode
@@ -225,7 +223,7 @@ export function ContentTypePicker({
       size="lg"
       isOpen={open}
       onClose={onClose}
-      className={cn('max-h-[96vh] shadow-2xl slide-in')}
+      className="max-h-[96vh] shadow-2xl slide-in"
       classNames={{ wrapper: 'justify-start scrollbar-none duration-300' }}
       scrollBehavior="inside"
       backdrop="transparent">

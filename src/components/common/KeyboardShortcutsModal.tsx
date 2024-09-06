@@ -74,7 +74,10 @@ export function KeyboardShortcutsModal({
     <Modal
       isOpen={isOpen || disclosure?.isOpen}
       onClose={closeModal}
-      classNames={{ wrapper: 'justify-end scrollbar-none' }}>
+      classNames={{ wrapper: 'justify-end scrollbar-none' }}
+      className="max-h-[96vh] shadow-2xl"
+      scrollBehavior="inside"
+      backdrop="transparent">
       <ModalContent>
         {() => (
           <>
