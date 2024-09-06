@@ -54,7 +54,7 @@ export function ParticipantTile({
           />
         </DyteNameTag>
         {handRaised && (
-          <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-[#FAC036]" />
+          <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-primary" />
         )}
         {participant.id === selfParticipant.id && (
           <VideoBackgroundSettingsButtonWithModal

@@ -10,7 +10,6 @@ import {
   DyteParticipantsAudio,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { DyteParticipant } from '@dytesdk/web-core'
 
 import { FlyingEmojisOverlay } from './FlyingEmojisOverlay'
 import { IdleModeConfirmation } from './IdleModeConfirmation'
@@ -55,12 +54,9 @@ export function MeetingScreen() {
   const dispatch = useStoreDispatch()
   const {
     isHost,
-    eventSessionMode,
     presentationStatus,
     dyteStates,
     setDyteStates,
-    updateActiveSession,
-    updateTypingUsers,
     isCreateBreakoutOpen,
     setIsCreateBreakoutOpen,
     breakoutSlideId,
@@ -92,33 +88,34 @@ export function MeetingScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScreensharing, activePlugin, presentationStatus, preview, isHost])
 
-  useEffect(() => {
-    if (!meeting) return
+  // NOTE: Commented out as this is not needed and causes an glitch when participant leaves
+  // useEffect(() => {
+  //   if (!meeting) return
 
-    const handleParticipantLeft = (participant: DyteParticipant) => {
-      updateTypingUsers({
-        isTyping: false,
-        participantId: participant.id,
-      })
+  //   const handleParticipantLeft = (participant: DyteParticipant) => {
+  //     updateTypingUsers({
+  //       isTyping: false,
+  //       participantId: participant.id,
+  //     })
 
-      if (isHost && eventSessionMode === EventSessionMode.PRESENTATION) {
-        dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
-        updateActiveSession({
-          presentationStatus: PresentationStatuses.STOPPED,
-        })
-      }
-    }
+  //     if (isHost && eventSessionMode === EventSessionMode.PRESENTATION) {
+  //       dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
+  //       updateActiveSession({
+  //         presentationStatus: PresentationStatuses.STOPPED,
+  //       })
+  //     }
+  //   }
 
-    meeting.participants.joined.on('participantLeft', handleParticipantLeft)
+  //   meeting.participants.joined.on('participantLeft', handleParticipantLeft)
 
-    function onUnmount() {
-      meeting.participants.joined.off('participantLeft', handleParticipantLeft)
-    }
+  //   function onUnmount() {
+  //     meeting.participants.joined.off('participantLeft', handleParticipantLeft)
+  //   }
 
-    // eslint-disable-next-line consistent-return
-    return onUnmount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting, eventSessionMode])
+  //   // eslint-disable-next-line consistent-return
+  //   return onUnmount
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [meeting, eventSessionMode])
 
   const BottomContentElement =
     isHost &&

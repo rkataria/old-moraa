@@ -105,12 +105,10 @@ export function MoraaSlideEditor({
       handleCanvasObjectAdded({ options, fabricRef, frameId, saveToStorage })
     })
     canvas.on('object:modified', async (options) => {
-      handleCanvasObjectModified({ options, canvas, dispatch })
-      saveToStorage(canvas)
+      handleCanvasObjectModified({ options, canvas, dispatch, saveToStorage })
     })
     canvas.on('object:removed', async (options) => {
-      handleCanvasObjectRemoved({ options, canvas, dispatch })
-      saveToStorage(canvas)
+      handleCanvasObjectRemoved({ options, canvas, dispatch, saveToStorage })
     })
     canvas.on('object:moving', async (options) => {
       handleCanvasObjectMoving({ options, canvas, dispatch })

@@ -1,5 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 
+import { v4 as uuidv4 } from 'uuid'
+
 import { MoraaSlideEditor } from './Editor'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -68,7 +70,7 @@ export function MoraaSlide({ frame }: MoraaSlideProps) {
         if (object.uuid) return
 
         // eslint-disable-next-line no-param-reassign
-        object.uuid = Math.random().toString(36).substring(7)
+        object.uuid = uuidv4()
       })
 
       updateFrame({

@@ -158,7 +158,7 @@ export function MeetingSetupScreen() {
 
             <VideoBackgroundSettingsButtonWithModal
               buttonProps={{
-                className: 'absolute top-2 right-2 bg-black/50',
+                className: 'absolute top-2 right-2',
               }}
             />
           </DyteParticipantTile>

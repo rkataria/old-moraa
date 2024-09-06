@@ -13,7 +13,9 @@ export const store = configureStore({
     ai: combinedAiReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+    getDefaultMiddleware({
+      serializableCheck: false, // NOTE: Adding this to allow to store moraa slide active object instance in redux store
+    }).prepend(listenerMiddleware.middleware),
   devTools: true,
 })
 

@@ -89,7 +89,12 @@ export function ContentContainer() {
   }
 
   if (recentActivePlugin) {
-    return <DytePluginMain meeting={meeting} plugin={recentActivePlugin} />
+    return (
+      <div className="relative h-full w-full">
+        <div className="absolute right-0 top-0 w-8 h-8 rounded-full bg-[#f5f5f5]" />
+        <DytePluginMain meeting={meeting} plugin={recentActivePlugin} />
+      </div>
+    )
   }
 
   if (presentationStatus === PresentationStatuses.STOPPED && !isHost) {
