@@ -19,6 +19,7 @@ import { ScreenShareToggle } from './ScreenShareToggle'
 import { Timer } from './Timer'
 import { VideoToggle } from './VideoToggle'
 import { WhiteBoardToggle } from './WhiteBoardToggle'
+import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
 import { BreakoutHeaderButton } from '../common/breakout/BreakoutToggleButton'
 import { ControlButton } from '../common/ControlButton'
 import { HelpButton } from '../common/HelpButton'
@@ -117,7 +118,7 @@ export function MeetingHeader({
 
       <div className="flex justify-end items-center gap-3">
         <HelpButton />
-
+        <AddParticipantsButtonWithModal eventId={eventId!} />
         <ParticipantsToggle
           isParticipantsSidebarOpen={rightSidebarVisiblity === 'participants'}
           onClick={() => {

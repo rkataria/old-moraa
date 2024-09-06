@@ -159,14 +159,14 @@ export function AddParticipantsButtonWithModal({
 }: {
   eventId: string
 }) {
-  const { preview } = useContext(EventContext) as EventContextType
+  const { preview, eventMode } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
 
   if (!permissions.canManageEnrollment) {
     return null
   }
 
-  if (!preview) return null
+  if (!preview && eventMode === 'edit') return null
 
   return <ButtonWithModal eventId={eventId} />
 }
