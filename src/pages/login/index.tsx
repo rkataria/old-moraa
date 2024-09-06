@@ -96,7 +96,6 @@ function Login() {
             providers={['google']}
             appearance={{
               theme: ThemeSupa,
-              className: { input: 'focus-none' },
               variables: {
                 default: {
                   colors: {
