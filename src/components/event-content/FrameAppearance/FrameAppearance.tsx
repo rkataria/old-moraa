@@ -17,9 +17,9 @@ export function FrameAppearance() {
   const { currentFrame } = useContext(EventContext) as EventContextType
   const { canvas } = useMoraaSlideEditorContext()
 
-  if (!canvas) return null
+  // if (!canvas) return null
 
-  const activeObject = canvas.getActiveObject()
+  const activeObject = canvas?.getActiveObject()
 
   if (!currentFrame) return null
 

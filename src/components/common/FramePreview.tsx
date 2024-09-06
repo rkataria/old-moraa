@@ -65,6 +65,7 @@ export function FramePreview({
         {
           'overflow-y-scroll scrollbar-none':
             frame.type === ContentType.RICH_TEXT,
+          '!p-0': asThumbnail && frame.type === ContentType.MORAA_SLIDE,
         }
       )}>
       <FrameTitleDescriptionPreview

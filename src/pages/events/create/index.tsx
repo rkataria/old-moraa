@@ -155,7 +155,7 @@ export function EventsCreatePage() {
         aria-label="new-event">
         <div className="max-w-[960px] mx-auto py-4 pt-8">
           <div className="grid grid-cols-[35%_65%] items-start gap-8">
-            <div className="relative aspect-square">
+            <div className="relative aspect-square rounded-lg overflow-hidden">
               <Controller
                 control={createEventForm.control}
                 name="imageUrl"
@@ -164,7 +164,7 @@ export function EventsCreatePage() {
                     src={imageObject || field.value || IMAGE_PLACEHOLDER}
                     classNames={{
                       img: 'w-full h-full object-cover border',
-                      wrapper: '!max-w-none h-full rounded-lg overflow-hidden',
+                      wrapper: '!max-w-none h-full',
                     }}
                   />
                 )}
@@ -173,7 +173,7 @@ export function EventsCreatePage() {
               {imageUploading && (
                 <div
                   className={cn(
-                    'absolute left-0 top-0 w-full h-full flex justify-center items-center rounded-e-md text-white text-md font-bold z-10 bg-black/80'
+                    'absolute left-0 top-0 w-full h-full flex justify-center items-center text-white text-md font-bold z-10 bg-black/80'
                   )}
                   style={{
                     opacity: 100 - imageUploadProgress,

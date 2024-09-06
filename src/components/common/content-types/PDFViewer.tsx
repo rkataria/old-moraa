@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 
 import { Skeleton } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
+import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import { pdfjs, Document, Page } from 'react-pdf'
+
+import { EmptyPlaceholder } from '../EmptyPlaceholder'
 
 import { PageControls } from '@/components/common/PageControls'
 import { downloadPDFFile } from '@/services/pdf.service'
@@ -56,6 +59,18 @@ export function PDFViewer({ frame, showControls = true }: PDFViewerProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDocumentLoadSuccess: any = ({ numPages: nextNumPages }: any) => {
     setTotalPages(nextNumPages)
+  }
+
+  if (downloadPDFMutation.isError) {
+    return (
+      <EmptyPlaceholder
+        icon={
+          <AiOutlineExclamationCircle className="w-[60px] h-[60px] text-red-500" />
+        }
+        title="Failed to Load PDF"
+        description="We encountered an issue while trying to load the PDF. Please try again..."
+      />
+    )
   }
 
   if (!downloadPDFMutation.isSuccess) {

@@ -1,7 +1,6 @@
 import { Header } from './Header'
 import { LeftSidebar } from './LeftSidebar'
 import { MainContentWithRightSidebar } from './MainContentWithRightSidebar'
-import { KeyboardShortcutsModal } from '../KeyboardShortcutsModal'
 
 import { StudioLayoutContextProvider } from '@/hooks/useStudioLayout'
 
@@ -40,7 +39,6 @@ export function StudioLayout({
             {children}
           </MainContentWithRightSidebar>
         </div>
-        <KeyboardShortcutsModal />
       </div>
     </StudioLayoutContextProvider>
   )

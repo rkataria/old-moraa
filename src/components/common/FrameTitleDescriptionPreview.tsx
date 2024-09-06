@@ -34,6 +34,8 @@ export function FrameTitleDescriptionPreview({
     return null
   }
 
+  if (asThumbnail && frame.type === ContentType.MORAA_SLIDE) return null
+
   if (frame.type === ContentType.RICH_TEXT) {
     if (!frame.config.allowToCollaborate && !asThumbnail) return null
   }

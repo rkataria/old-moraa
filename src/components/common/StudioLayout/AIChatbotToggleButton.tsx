@@ -3,6 +3,8 @@ import { useContext } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { LuSparkles } from 'react-icons/lu'
 
+import { Tooltip } from '../ShortuctTooltip'
+
 import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useFlags } from '@/flags/client'
@@ -24,16 +26,18 @@ export function ToggleButton() {
   useHotkeys('a', toggleSidebar, [resizableRightSidebarVisiblity])
 
   return (
-    <Button
-      size="sm"
-      isIconOnly
-      onClick={toggleSidebar}
-      variant="light"
-      className={cn('cursor-pointer', {
-        'text-primary': resizableRightSidebarVisiblity === 'ai-chat',
-      })}>
-      <LuSparkles size={18} strokeWidth={1.7} />
-    </Button>
+    <Tooltip label="Assist" actionKey="A">
+      <Button
+        size="sm"
+        isIconOnly
+        onClick={toggleSidebar}
+        variant="light"
+        className={cn('cursor-pointer', {
+          'text-primary': resizableRightSidebarVisiblity === 'ai-chat',
+        })}>
+        <LuSparkles size={18} strokeWidth={1.7} />
+      </Button>
+    </Tooltip>
   )
 }
 

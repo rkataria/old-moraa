@@ -13,16 +13,25 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { RenderIf } from './RenderIf/RenderIf'
 
+import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
+
 import { KeyboardShortcuts } from '@/utils/utils'
 
 export function KeyboardShortcutsModal({
+  disclosure,
   withoutModal = false,
 }: {
   withoutModal?: boolean
+  disclosure?: UseDisclosureReturn
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
   useHotkeys('mod + /', () => setIsOpen(true), [])
+
+  const closeModal = () => {
+    setIsOpen(false)
+    disclosure?.onClose()
+  }
 
   const keyboardListing = () =>
     Object.entries(KeyboardShortcuts).map(([section, actions], index) => (
@@ -63,17 +72,21 @@ export function KeyboardShortcutsModal({
 
   return (
     <Modal
-      isOpen={isOpen}
-      onOpenChange={(open) => setIsOpen(open)}
-      classNames={{ wrapper: 'justify-end scrollbar-none' }}>
+      isOpen={isOpen || disclosure?.isOpen}
+      onClose={closeModal}
+      classNames={{ wrapper: 'justify-end scrollbar-none' }}
+      className="max-h-[96vh] shadow-2xl"
+      scrollBehavior="inside"
+      backdrop="transparent">
       <ModalContent>
         {() => (
           <>
             <ModalHeader>
-              <p>Shortcuts</p>
+              <p>Help</p>
             </ModalHeader>
             <ModalBody>
-              <div className="max-h-[70vh] overflow-y-scroll scrollbar-none">
+              <p className="text-lg font-medium">Keyboard Shortcuts</p>
+              <div className="max-h-[90vh] overflow-y-scroll scrollbar-none">
                 {keyboardListing()}
               </div>
             </ModalBody>
