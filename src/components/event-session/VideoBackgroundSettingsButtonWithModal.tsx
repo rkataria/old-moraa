@@ -5,7 +5,6 @@ import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import DyteVideoBackgroundTransformer from '@dytesdk/video-background-transformer'
 import {
   Image as NextUiImage,
-  Button,
   ButtonProps,
   Modal,
   ModalBody,
@@ -16,6 +15,7 @@ import { MdBlurOn } from 'react-icons/md'
 import { RiSparkling2Fill } from 'react-icons/ri'
 
 import { Tooltip } from '../common/ShortuctTooltip'
+import { Button } from '../ui/Button'
 
 import { VIRTUAL_BACKGROUND_IMAGES } from '@/constants/dyte'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -144,12 +144,15 @@ export function VideoBackgroundSettingsButtonWithModal({
       <Tooltip label="Video Settings">
         <Button
           isIconOnly
+          size="sm"
           radius="full"
           color="primary"
-          className={cn('flex justify-center items-center shrink-0')}
+          className={cn(
+            'flex justify-center items-center shrink-0 rounded-full text-white'
+          )}
           {...buttonProps}
           onClick={() => setOpen(true)}>
-          <RiSparkling2Fill size={20} className="text-white" />
+          <RiSparkling2Fill size={20} />
         </Button>
       </Tooltip>
 

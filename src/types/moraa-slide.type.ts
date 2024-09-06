@@ -11,12 +11,14 @@ export type CanvasObjectModified = {
   options: fabric.IEvent
   canvas: fabric.Canvas
   dispatch: Dispatch
+  saveToStorage: (canvas: fabric.Canvas) => void
 }
 
 export type CanvasObjectRemoved = {
   options: fabric.IEvent
   canvas: fabric.Canvas
   dispatch: Dispatch
+  saveToStorage: (canvas: fabric.Canvas) => void
 }
 
 export type CanvasObjectMoving = {

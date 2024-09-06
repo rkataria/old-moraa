@@ -132,7 +132,7 @@ attachStoreListener({
       newSessionData?.currentFrameId
     ) {
       const newEventSessionMode = isCurrentUserOwnerOfEvent
-        ? EventSessionMode.PREVIEW
+        ? EventSessionMode.LOBBY
         : EventSessionMode.LOBBY
       if (oldEventSessionMode !== newEventSessionMode) {
         dispatch(updateEventSessionModeAction(newEventSessionMode))

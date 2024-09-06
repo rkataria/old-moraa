@@ -71,7 +71,7 @@ export function MeetingHeader({
   }
 
   return (
-    <div className="h-16 px-2 z-[9] bg-transparent flex justify-between items-center">
+    <div className="h-14 px-2 z-[9] bg-transparent flex justify-between items-center">
       <div className="flex justify-end items-center gap-6">
         <Tooltip label={event.name} closeDelay={100}>
           <span className="max-w-[10.9375rem] overflow-hidden !whitespace-nowrap text-ellipsis">

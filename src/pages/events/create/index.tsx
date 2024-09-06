@@ -252,7 +252,7 @@ export function EventsCreatePage() {
                 <p className="text-sm font-medium mb-1">
                   What will you use event for?
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-sm text-gray-400">
                   Your choice will help us recommended the right templates for
                   you.
                 </p>
@@ -268,7 +268,7 @@ export function EventsCreatePage() {
                             className={cn(
                               'p-7 h-full grid gap-3 grid-rows-3 place-items-center text-center bg-white rounded-lg border border-transparent shadow-none duration-200',
                               {
-                                'border-[#7C3AED] shadow-md':
+                                'border-primary shadow-md':
                                   field.value === eventType.key,
                                 'opacity-70': eventType.disabled,
                                 'cursor-pointer': !eventType.disabled,
@@ -289,10 +289,10 @@ export function EventsCreatePage() {
                               width={65}
                               className="border border-gray-200 p-2 rounded-full"
                             />
-                            <p className="text-slate-600 font-semibold">
+                            <p className="text-gray-600 font-semibold">
                               {eventType.label}
                             </p>
-                            <p className="text-xs text-slate-600">
+                            <p className="text-sm text-gray-600">
                               {eventType.description}
                             </p>
                           </div>
@@ -304,7 +304,7 @@ export function EventsCreatePage() {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-black text-white shadow-xl"
+                className="w-full bg-primary text-white shadow-xl"
                 isLoading={eventMutation.isPending}>
                 Create
               </Button>

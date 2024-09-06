@@ -9,6 +9,7 @@ import { ControlButton } from '../common/ControlButton'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
@@ -17,18 +18,19 @@ export function PresentationToggle() {
   const { sections } = useEventContext()
   const {
     currentFrame,
-    activeSession,
     presentationStatus,
     startPresentation,
     stopPresentation,
   } = useEventSession()
 
+  const activeSessionCurrentFrameId = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.currentFrameId
+  )
+
   const presentationStarted =
     presentationStatus && presentationStatus !== PresentationStatuses.STOPPED
-  console.log(
-    '🚀 ~ PresentationToggle ~ presentationStarted:',
-    presentationStatus
-  )
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePresentationToggle = (e: any) => {
@@ -48,8 +50,8 @@ export function PresentationToggle() {
 
     switch (key) {
       case 'start-from-where-you-left':
-        if (!activeSession?.data?.currentFrameId) return
-        startPresentation(activeSession?.data?.currentFrameId)
+        if (!activeSessionCurrentFrameId) return
+        startPresentation(activeSessionCurrentFrameId)
         break
       case 'start-from-beginning':
         if (!sections[0]?.frames[0]?.id) return
