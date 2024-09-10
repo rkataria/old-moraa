@@ -405,14 +405,6 @@ export function AgendaPanelContextProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame])
 
-  useEffect(() => {
-    if (overviewOpen) {
-      setCurrentFrame(null)
-      setCurrentSectionId(null)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [overviewOpen])
-
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }

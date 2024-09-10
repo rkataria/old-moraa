@@ -3,10 +3,12 @@ import { supabaseClient } from '@/utils/supabase/client'
 
 const getActiveSession = async ({
   meetingId,
+  connectedDyteMeetingId = null,
   status,
 }: {
   meetingId: string
   status?: string
+  connectedDyteMeetingId?: string | null
 }) => {
   if (!meetingId) return null
 
@@ -15,7 +17,14 @@ const getActiveSession = async ({
     .select('*')
     .eq('status', status || 'ACTIVE')
     .eq('meeting_id', meetingId)
-    .single()
+
+  if (connectedDyteMeetingId) {
+    query.eq('connected_dyte_meeting_id', connectedDyteMeetingId)
+  } else {
+    query.is('connected_dyte_meeting_id', null)
+  }
+
+  query.single()
 
   return query.then(
     (res: any) => res,
@@ -25,28 +34,18 @@ const getActiveSession = async ({
   )
 }
 
-/**
- * This function takes the meeting ID and returns the session for that meeting
- * If the session does not exist then creates a new session and then returns it.
- * @param meetingId ID of the meeting
- * @return SessionModel
- */
-const getExistingOrCreateNewActiveSession = async ({
-  meetingId,
+const createSessionForBreakouts = async ({
+  dyteMeetings,
 }: {
-  meetingId: string
+  dyteMeetings: Array<{
+    connected_dyte_meeting_id: string
+    meeting_id: string
+    data: object
+  }>
 }) => {
-  if (!meetingId) return null
-
   const query = supabaseClient
     .from('session')
-    .upsert({
-      id: meetingId,
-      meeting_id: meetingId,
-      status: 'LIVE',
-    })
-    .select()
-    .single()
+    .insert(dyteMeetings.map((session) => ({ ...session, status: 'LIVE' })))
 
   return query.then(
     (res: any) => res,
@@ -54,6 +53,52 @@ const getExistingOrCreateNewActiveSession = async ({
       throw error
     }
   )
+}
+
+const deleteAllExistingBreakoutSessions = async ({
+  meetingId,
+}: {
+  meetingId: string
+}) => {
+  const query = supabaseClient
+    .from('session')
+    .delete()
+    .eq('meeting_id', meetingId)
+    .not('connected_dyte_meeting_id', 'is', null)
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const getExistingOrCreateNewActiveSession = async ({
+  meetingId,
+}: {
+  meetingId: string
+}) => {
+  if (!meetingId) return null
+
+  const getQuery = await supabaseClient
+    .from('session')
+    .select('*')
+    .eq('meeting_id', meetingId)
+    .eq('status', 'LIVE')
+    .is('connected_dyte_meeting_id', null)
+    .select()
+    .single()
+
+  if (getQuery.data === null) {
+    return createSession({
+      meetingId,
+      defaultData: null,
+      status: 'LIVE',
+    })
+  }
+
+  return getQuery
 }
 
 const createSession = async ({
@@ -116,6 +161,8 @@ const updateSession = async ({
 export const SessionService = {
   getActiveSession,
   getExistingOrCreateNewActiveSession,
+  deleteAllExistingBreakoutSessions,
   createSession,
+  createSessionForBreakouts,
   updateSession,
 }

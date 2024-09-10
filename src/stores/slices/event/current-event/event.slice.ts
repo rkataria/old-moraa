@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+// eslint-disable-next-line import/no-cycle
+
 import { getRealtimeChannelsForEvent } from '@/services/realtime/supabase-realtime.service'
 import {
   attachThunkToBuilder,
@@ -79,14 +81,15 @@ export const eventSlice = createSlice({
 
 attachStoreListener({
   actionCreator: getEventThunk.fulfilled,
-  effect: (_, { dispatch, getState }) => {
+  effect: (action, { dispatch, getState }) => {
     const state = getState()
+    const event = action.payload
     dispatch(
       setIsCurrentUserOwnerOfEventAction(
-        state.event.currentEvent.eventState.event.data!.owner_id ===
-          state.user.currentUser.user!.id
+        event?.owner_id === state.user.currentUser.user?.id
       )
     )
+    if (state.event.currentEvent.liveSessionState.currentDyteMeetingId) return
     dispatch(setCurrentFrameIdAction(null))
     dispatch(setCurrentSectionIdAction(null))
     dispatch(setIsOverviewOpenAction(true))

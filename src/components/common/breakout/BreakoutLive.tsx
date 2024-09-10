@@ -5,7 +5,7 @@
 
 import 'tldraw/tldraw.css'
 
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { Card } from '@nextui-org/react'
@@ -20,8 +20,6 @@ import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useDimensions } from '@/hooks/useDimensions'
-import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { IFrame } from '@/types/frame.type'
 // eslint-disable-next-line import/no-cycle
 
@@ -43,16 +41,10 @@ export function BreakoutFrameLive({
   frame,
   isEditable = false,
 }: BreakoutProps) {
-  const dispatch = useStoreDispatch()
-  const { isOwner, preview, currentFrame, getFrameById, setCurrentFrame } =
-    useEventContext()
+  const { isOwner, preview, getFrameById, setCurrentFrame } = useEventContext()
   const { isHost } = useEventSession()
   const { meeting } = useDyteMeeting()
   const { isBreakoutActive } = useBreakoutRooms()
-  const activeSessionData = useStoreSelector(
-    (state) =>
-      state.event.currentEvent.liveSessionState.activeSession.data?.data
-  )
 
   const editable = isOwner && !preview && isEditable
 
@@ -62,46 +54,6 @@ export function BreakoutFrameLive({
     thumbnailContainerRef,
     'maximized'
   )
-
-  useEffect(() => {
-    if (!isBreakoutActive) {
-      dispatch(
-        updateMeetingSessionDataAction({
-          slideAssignedToRooms: {},
-        })
-      )
-
-      return
-    }
-    if (Object.keys(activeSessionData?.slideAssignedToRooms || {}).length) {
-      return
-    }
-    const slideAssignedToRooms: { [x: string]: string } = {}
-    if (currentFrame?.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
-      currentFrame?.content?.breakoutRooms?.forEach((b, idx) => {
-        slideAssignedToRooms[
-          meeting.connectedMeetings.meetings[idx].id as string
-        ] = b.activityId as string
-      })
-      dispatch(
-        updateMeetingSessionDataAction({
-          slideAssignedToRooms,
-        })
-      )
-    } else {
-      meeting.connectedMeetings.meetings.forEach((meet) => {
-        if (!meet.id) return
-        slideAssignedToRooms[meet.id] = currentFrame?.content
-          ?.groupActivityId as string
-      })
-      dispatch(
-        updateMeetingSessionDataAction({
-          slideAssignedToRooms,
-        })
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame, isBreakoutActive, isHost])
 
   return (
     <div>

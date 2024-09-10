@@ -1,3 +1,4 @@
+import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { Button } from '@nextui-org/react'
 import { IoPeopleOutline } from 'react-icons/io5'
 
@@ -7,6 +8,9 @@ import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { SessionService } from '@/services/session.service'
+import { PresentationStatuses } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
 import { ContentType } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
@@ -48,6 +52,7 @@ export function BreakoutToggleButton({
 }
 
 export function BreakoutHeaderButton() {
+  const dyteMeeting = useDyteMeeting()
   const {
     isHost,
     isBreakoutSlide,
@@ -59,6 +64,9 @@ export function BreakoutHeaderButton() {
     breakoutSlideId,
     realtimeChannel,
   } = useEventSession()
+  const meetingId = useStoreSelector(
+    (store) => store.event.currentEvent.meetingState.meeting.data?.id
+  )
   const { sections } = useEventContext()
 
   const { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom } =
@@ -71,6 +79,7 @@ export function BreakoutHeaderButton() {
     .find((frame) => frame?.id === breakoutSlideId)
 
   const onBreakoutStartOnBreakoutSlide = async () => {
+    if (!meetingId) return
     try {
       await breakoutRoomsInstance?.startBreakoutRooms({
         /*
@@ -92,6 +101,25 @@ export function BreakoutHeaderButton() {
           })
         }, 500)
       }
+      try {
+        await SessionService.deleteAllExistingBreakoutSessions({ meetingId })
+      } catch {
+        /* empty */
+      }
+
+      SessionService.createSessionForBreakouts({
+        dyteMeetings: dyteMeeting.meeting.connectedMeetings.meetings.map(
+          (meet, index) => ({
+            connected_dyte_meeting_id: meet.id!,
+            data: {
+              currentFrameId:
+                currentFrame?.content!.breakoutRooms?.[index].activityId,
+              presentationStatus: PresentationStatuses.STARTED,
+            },
+            meeting_id: meetingId,
+          })
+        ),
+      })
     } catch (err) {
       console.log('🚀 ~ onBreakoutStartOnBreakoutSlide ~ err:', err)
     }

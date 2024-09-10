@@ -119,11 +119,6 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             setInsertInSectionId(frame.section_id!)
             setCurrentFrame(frame)
           }}>
-          {eventSessionData?.breakoutSlideId === frame?.id ? (
-            <div className="absolute top-0 right-0 p-1 bg-secondary rounded-bl-md rounded-tr-md">
-              <p className="text-xs text-gray-800">In Breakout</p>
-            </div>
-          ) : null}
           <div
             className={cn(
               'relative flex flex-col transition-all duration-400 ease-in-out group/frame-item'

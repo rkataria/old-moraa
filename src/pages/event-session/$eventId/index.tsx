@@ -10,14 +10,13 @@ import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScree
 import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContext'
 import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
-import { useDyteListeners } from '@/hooks/useDyteBreakoutListeners'
 import { useEnrollment } from '@/hooks/useEnrollment'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import {
+  removeDyteClientAction,
+  setDyteClientAction,
+} from '@/stores/slices/event/current-event/live-session.slice'
 import { beforeLoad } from '@/utils/before-load'
-
-type EventSessionPageInnerProps = {
-  roomJoined: boolean
-  isBreakoutLoading: boolean
-}
 
 export const Route = createFileRoute('/event-session/$eventId/')({
   component: EventSessionPage,
@@ -26,11 +25,13 @@ export const Route = createFileRoute('/event-session/$eventId/')({
   beforeLoad,
 })
 
-export function EventSessionPageInner({
-  roomJoined,
-  isBreakoutLoading,
-}: EventSessionPageInnerProps) {
-  // useBreakoutRoom()
+export function EventSessionPageInner() {
+  const isRoomJoined = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.isMeetingJoined
+  )
+  const isBreakoutLoading = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.isDyteMeetingLoading
+  )
   if (isBreakoutLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
@@ -39,7 +40,7 @@ export function EventSessionPageInner({
     )
   }
 
-  if (roomJoined) {
+  if (isRoomJoined) {
     return <MeetingScreen />
   }
 
@@ -48,14 +49,21 @@ export function EventSessionPageInner({
 
 function EventSessionPage() {
   const { eventId } = useParams({ strict: false })
+  const dispatch = useStoreDispatch()
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
   const meetingEl = useRef<HTMLDivElement>(null)
-  const [dyteMeeting, initDyteMeeting] = useDyteClient()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [dyteClient, initDyteMeeting] = useDyteClient()
 
-  const { isBreakoutLoading, isRoomJoined } = useDyteListeners(dyteMeeting)
+  useEffect(() => {
+    if (dyteClient) {
+      dispatch(setDyteClientAction(dyteClient))
+    } else {
+      dispatch(removeDyteClientAction())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dyteClient])
 
   useEffect(() => {
     if (!enrollment?.meeting_token) return
@@ -103,20 +111,17 @@ function EventSessionPage() {
 
   return (
     <DyteProvider
-      value={dyteMeeting}
+      value={dyteClient}
       fallback={
         <div className="h-screen flex flex-col justify-center items-center">
           <Loading message="Joining the live session..." />
         </div>
       }>
-      <BreakoutManagerContextProvider meeting={dyteMeeting}>
+      <BreakoutManagerContextProvider dyteClient={dyteClient}>
         <EventProvider eventMode="present">
           <EventSessionProvider>
             <div ref={meetingEl}>
-              <EventSessionPageInner
-                roomJoined={isRoomJoined}
-                isBreakoutLoading={isBreakoutLoading}
-              />
+              <EventSessionPageInner />
             </div>
           </EventSessionProvider>
         </EventProvider>

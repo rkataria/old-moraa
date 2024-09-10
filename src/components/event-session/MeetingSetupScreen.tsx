@@ -45,8 +45,8 @@ export function MeetingSetupScreen() {
   const meetingId = useStoreSelector(
     (state) => state.event.currentEvent.meetingState.meeting.data?.id
   )
-  const isMeetingSessionLoading = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState.activeSession.isLoading
+  const meetingSession = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.activeSession
   )
   const { eventId } = useParams({ strict: false })
   const { event } = useEvent({
@@ -91,10 +91,11 @@ export function MeetingSetupScreen() {
 
   useEffect(() => {
     if (!meetingId || isMeetingOwner === null) return
+    if (meetingSession.isSuccess) return
     if (isMeetingOwner) {
       dispatch(getExistingOrCreateNewActiveSessionThunk(meetingId))
-    } else dispatch(getMeetingSessionThunk(meetingId))
-  }, [dispatch, isMeetingOwner, meetingId])
+    } else dispatch(getMeetingSessionThunk({ meetingId }))
+  }, [dispatch, isMeetingOwner, meetingId, meetingSession.isSuccess])
 
   const handleJoinMeeting = async () => {
     meeting.join()
@@ -192,7 +193,7 @@ export function MeetingSetupScreen() {
               size="md"
               className="mt-2"
               color="primary"
-              disabled={isMeetingSessionLoading}
+              disabled={meetingSession.isLoading}
               onClick={handleJoinMeeting}>
               Join Meeting
             </Button>

@@ -28,6 +28,7 @@ import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useFrameReactions } from '@/hooks/useReactions'
 import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { useEventSelector } from '@/stores/hooks/useEventSections'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventContextType } from '@/types/event-context.type'
@@ -59,20 +60,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     eventId: eventId as string,
   })
   const sections = useEventSelector()
-  const currentFrame = useStoreSelector(
-    (store) =>
-      store.event.currentEvent.frameState.frame.data?.find(
-        (frame) =>
-          frame.id ===
-          store.event.currentEvent.liveSessionState.activeSession.data?.data
-            ?.currentFrameId
-      ) || null
-  )
-  const {
-    eventMode,
-    setCurrentFrame,
-    currentFrame: eventContextCurrentFrame,
-  } = useContext(EventContext) as EventContextType
+  const currentFrame = useCurrentFrame()
+  const { eventMode, setCurrentFrame } = useContext(
+    EventContext
+  ) as EventContextType
 
   const { permissions } = useEventPermissions()
 
@@ -109,16 +100,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const eventSessionMode = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.eventSessionMode
   )
-
-  useEffect(() => {
-    if (eventContextCurrentFrame?.id) {
-      dispatch(
-        updateMeetingSessionDataAction({
-          currentFrameId: eventContextCurrentFrame?.id,
-        })
-      )
-    }
-  }, [dispatch, eventContextCurrentFrame?.id])
 
   useEffect(() => {
     const handleParticipantJoined = (newParticipant: DyteParticipant) => {

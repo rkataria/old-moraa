@@ -27,7 +27,6 @@ import { ResizableRightSidebar } from '../event-content/ResizableRightSidebar'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
-import { useParticipantBreakoutFrameSetter } from '@/hooks/useParticipantBreakoutFrameSetter'
 import { useStoreDispatch } from '@/hooks/useRedux'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventContextType } from '@/types/event-context.type'
@@ -63,8 +62,6 @@ export function MeetingScreen() {
     currentFrame,
   } = useEventSession()
   const { isBreakoutActive } = useBreakoutRooms()
-  useParticipantBreakoutFrameSetter()
-
   const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
   const screensharingParticipant = useDyteSelector((m) =>

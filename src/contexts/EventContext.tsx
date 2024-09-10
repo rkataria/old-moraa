@@ -9,6 +9,7 @@ import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { FrameService } from '@/services/frame.service'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import {
   useEventLoadingSelector,
   useEventSelector,
@@ -21,6 +22,7 @@ import {
   setIsPreviewOpenAction,
   setCurrentFrameIdAction,
 } from '@/stores/slices/event/current-event/event.slice'
+import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { reorderSectionsAction } from '@/stores/slices/event/current-event/meeting.slice'
 import {
   handleExpandedSectionsInSessionPlannerAction,
@@ -52,13 +54,7 @@ export const EventContext = createContext<EventContextType | null>(null)
 
 export function EventProvider({ children, eventMode }: EventProviderProps) {
   const { eventId } = useParams({ strict: false })
-  const currentFrame = useStoreSelector(
-    (store) =>
-      store.event.currentEvent.frameState.frame.data?.find(
-        (frame) =>
-          frame.id === store.event.currentEvent.eventState.currentFrameId
-      ) || null
-  )
+  const currentFrame = useCurrentFrame()
   const isOverviewOpen = useStoreSelector(
     (store) => store.event.currentEvent.eventState.isOverviewOpen
   )
@@ -67,6 +63,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   )
   const isOwner = useStoreSelector(
     (store) => store.event.currentEvent.eventState.isCurrentUserOwnerOfEvent
+  )
+  const isMeetingJoined = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.isMeetingJoined
   )
   const dispatch = useStoreDispatch()
   const router = useRouter()
@@ -84,6 +83,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const loading = useEventLoadingSelector()
   const syncing = useStoreSelector(
     (state) => state.event.currentEvent.frameState.updateFrameThunk.isLoading
+  )
+  const storeEventId = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.eventId
   )
   const event = useStoreSelector(
     (state) => state.event.currentEvent.eventState.event.data
@@ -113,11 +115,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   } | null>(null)
 
   useEffect(() => {
-    if (eventId) {
+    if (eventId && eventId !== storeEventId) {
       dispatch(setCurrentEventIdAction(eventId))
-    } else {
+    } else if (!eventId) {
       dispatch(clearCurrentEventIdAction())
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, eventId])
 
   useEffect(() => {
@@ -567,9 +570,17 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         setOpenContentTypePicker,
         setPreview: (preview) => dispatch(setIsPreviewOpenAction(preview)),
         setCurrentFrame: (frame) => {
-          if (frame?.id) dispatch(setCurrentFrameIdAction(frame?.id))
-
-          if (frame) dispatch(setIsOverviewOpenAction(false))
+          if (!isMeetingJoined) {
+            dispatch(setCurrentFrameIdAction(frame?.id || null))
+          } else {
+            dispatch(setCurrentFrameIdAction(frame?.id || null))
+            dispatch(
+              updateMeetingSessionDataAction({
+                currentFrameId: frame?.id,
+              })
+            )
+          }
+          if (frame && isOverviewOpen) dispatch(setIsOverviewOpenAction(false))
         },
         setCurrentSectionId: (sectionId) => {
           dispatch(setCurrentSectionIdAction(sectionId))
@@ -578,7 +589,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           dispatch(setCurrentFrameIdAction(null))
           dispatch(setIsOverviewOpenAction(open))
         },
-
         setInsertAfterSectionId,
         setInsertAfterFrameId,
         setInsertInSectionId,

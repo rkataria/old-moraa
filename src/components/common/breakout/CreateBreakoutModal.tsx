@@ -59,7 +59,7 @@ export function CreateBreakoutModal({
   useEffect(() => {
     if (!realtimeChannel || !breakoutRoomsInstance) return
     realtimeChannel.on('broadcast', { event: 'timer-stop-event' }, () => {
-      breakoutRoomsInstance?.endBreakout()
+      // breakoutRoomsInstance?.endBreakout()
     })
   }, [breakoutRoomsInstance, realtimeChannel])
 

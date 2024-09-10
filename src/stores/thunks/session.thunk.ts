@@ -17,11 +17,18 @@ export const getExistingOrCreateNewActiveSessionThunk = createAsyncThunk<
   }
 )
 
-export const getMeetingSessionThunk = createAsyncThunk<SessionModel, string>(
+export const getMeetingSessionThunk = createAsyncThunk<
+  SessionModel,
+  {
+    meetingId: string
+    connectedDyteMeetingId?: string
+  }
+>(
   'liveSession/getMeetingSession',
-  async (meetingId: string) => {
+  async ({ meetingId, connectedDyteMeetingId }) => {
     const session = await SessionService.getActiveSession({
       meetingId,
+      connectedDyteMeetingId,
       status: 'LIVE',
     })
 

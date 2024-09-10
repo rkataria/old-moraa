@@ -72,8 +72,8 @@ export function FrameGridView({
           setCurrentFrame(frame)
         }}>
         {eventSessionData?.breakoutSlideId === frame?.id ? (
-          <div className="absolute top-0 right-0 p-1 bg-secondary rounded-bl-md rounded-tr-md">
-            <p className="text-xs text-gray-800">In Breakout</p>
+          <div className="absolute top-0 right-0 p-1 bg-primary text-white rounded-bl-md rounded-tr-md">
+            <p className="text-xs">In Breakout</p>
           </div>
         ) : null}
 

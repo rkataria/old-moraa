@@ -13,5 +13,7 @@ export const useBreakoutRooms = () => {
   return {
     isBreakoutActive,
     isCurrentDyteMeetingInABreakoutRoom,
+    currentMeetingId: meeting.meta.meetingId,
+    parentMeetingId,
   }
 }

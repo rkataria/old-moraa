@@ -20,17 +20,17 @@ type StartBreakoutConfig =
 
 export class BreakoutRooms {
   private manager: BreakoutRoomsManager
-  private meeting: DyteClient
+  private dyteClient: DyteClient
 
-  constructor(meeting: DyteClient) {
+  constructor(dyteClient: DyteClient) {
     this.manager = new BreakoutRoomsManager()
-    this.meeting = meeting
+    this.dyteClient = dyteClient
 
-    this.meeting.connectedMeetings.addListener(
+    this.dyteClient.connectedMeetings.addListener(
       'stateUpdate',
       this.updateLocalState
     )
-    this.meeting.connectedMeetings.getConnectedMeetings()
+    this.dyteClient.connectedMeetings.getConnectedMeetings()
   }
 
   // private cleanup() {
@@ -50,7 +50,7 @@ export class BreakoutRooms {
    */
   private async getConnectedMeetings() {
     return new Promise((resolve) => {
-      this.meeting.connectedMeetings.getConnectedMeetings().then(() => {
+      this.dyteClient.connectedMeetings.getConnectedMeetings().then(() => {
         setTimeout(resolve, 400)
       })
     })
@@ -60,13 +60,13 @@ export class BreakoutRooms {
     await this.getConnectedMeetings()
     this.manager.addNewMeetings(3)
     this.manager.assignParticipantsRandomly()
-    await this.manager.applyChanges(this.meeting)
+    await this.manager.applyChanges(this.dyteClient)
   }
 
   async endBreakout() {
     await this.getConnectedMeetings()
     await stopBreakoutRooms({
-      meeting: this.meeting,
+      meeting: this.dyteClient,
       stateManager: this.manager,
     })
     await this.getConnectedMeetings()
@@ -80,7 +80,7 @@ export class BreakoutRooms {
     await createAndAutoAssignBreakoutRooms({
       roomsCount,
       groupSize: participantsPerRoom,
-      meeting: this.meeting,
+      meeting: this.dyteClient,
       stateManager: this.manager,
     })
     await this.getConnectedMeetings()
@@ -89,7 +89,7 @@ export class BreakoutRooms {
   async endBreakoutRooms() {
     await this.getConnectedMeetings()
     await stopBreakoutRooms({
-      meeting: this.meeting,
+      meeting: this.dyteClient,
       stateManager: this.manager,
     })
     await this.getConnectedMeetings()
@@ -98,7 +98,7 @@ export class BreakoutRooms {
   async joinRoom(meetId: string) {
     await this.getConnectedMeetings()
     await moveHostToRoom({
-      meeting: this.meeting,
+      meeting: this.dyteClient,
       stateManager: this.manager,
       destinationMeetingId: meetId,
     })

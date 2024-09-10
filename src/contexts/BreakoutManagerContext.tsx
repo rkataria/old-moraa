@@ -15,17 +15,17 @@ const BreakoutManagerContext = React.createContext<{
 }>({ breakoutRoomsInstance: null })
 
 export function BreakoutManagerContextProvider({
-  meeting,
+  dyteClient,
   children,
-}: PropsWithChildren<{ meeting: DyteClient | undefined }>) {
+}: PropsWithChildren<{ dyteClient: DyteClient | undefined }>) {
   const [breakoutRoomsInstance, setBreakoutRoomsInstance] =
     useState<BreakoutRooms | null>(null)
 
   const initiateBreakoutInstance = useCallback(() => {
-    if (!meeting) return
-    const _breakoutRoomsInstance = new BreakoutRooms(meeting)
+    if (!dyteClient) return
+    const _breakoutRoomsInstance = new BreakoutRooms(dyteClient)
     setBreakoutRoomsInstance(_breakoutRoomsInstance)
-  }, [meeting])
+  }, [dyteClient])
 
   useEffect(() => {
     initiateBreakoutInstance()
