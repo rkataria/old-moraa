@@ -98,6 +98,7 @@ export function Frame() {
     [ContentType.BREAKOUT]: (
       <BreakoutFrameLive frame={currentFrame as BreakoutFrame} />
     ),
+    [ContentType.POWERPOINT]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type]

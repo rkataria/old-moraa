@@ -15,7 +15,6 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
-import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
