@@ -10,7 +10,6 @@ import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { Frame } from './Frame'
 import { FrameControls } from '../common/FrameControls'
-import { FramePreview } from '../common/FramePreview'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -25,13 +24,9 @@ export function ContentContainer() {
   ) as EventSessionContextType
   const { permissions } = useEventPermissions()
 
-  const {
-    eventSessionMode,
-    presentationStatus,
-    previousFrame,
-    nextFrame,
-    isHost,
-  } = useContext(EventSessionContext) as EventSessionContextType
+  const { presentationStatus, previousFrame, nextFrame, isHost } = useContext(
+    EventSessionContext
+  ) as EventSessionContextType
 
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
@@ -42,22 +37,6 @@ export function ContentContainer() {
   )
 
   const recentActivePlugin = activePlugins?.[activePlugins.length - 1]
-
-  if (eventSessionMode === 'Preview' && currentFrame && isHost) {
-    return (
-      <>
-        <FramePreview
-          frame={currentFrame}
-          isInteractive={permissions.canAcessAllSessionControls}
-        />
-        <FrameControls
-          onPrevious={previousFrame}
-          onNext={nextFrame}
-          switchPublishedFrames={!permissions.canAcessAllSessionControls}
-        />
-      </>
-    )
-  }
 
   if (screensharingParticipant) {
     return (

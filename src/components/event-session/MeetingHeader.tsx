@@ -7,7 +7,6 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { ChatsToggle } from './ChatsToggle'
 import { LeaveMeetingToggle } from './LeaveMeetingToggle'
-import { LobbyViewToggle } from './LobbyViewToggle'
 import { MediaSettingsToggle } from './MediaSettingsToggle'
 import { MeetingRecordingButton } from './MeetingRecordingButton'
 import { MicToggle } from './MicToggle'
@@ -45,7 +44,7 @@ export function MeetingHeader({
   const { eventId } = useParams({ strict: false })
   const { event } = useEvent({ id: eventId as string })
   const { meeting } = useDyteMeeting()
-  const { isHost, eventSessionMode } = useEventSession()
+  const { isHost } = useEventSession()
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
 
   useHotkeys('ctrl + ]', () => setRightSidebarVisiblity(null), [])
@@ -96,7 +95,6 @@ export function MeetingHeader({
         {isHost && <PresentationToggle />}
       </div>
       <div className="flex justify-end items-center gap-3">
-        {eventSessionMode === 'Preview' && isHost && <LobbyViewToggle />}
         <MicToggle />
         <VideoToggle />
         {isHost && <ScreenShareToggle />}

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useContext, useRef } from 'react'
+import { useRef } from 'react'
 
 import { Button } from '@nextui-org/button'
 import { IoCheckmarkCircle } from 'react-icons/io5'
@@ -12,12 +12,10 @@ import { frameActions } from '../FrameActions'
 import { RenderIf } from '../RenderIf/RenderIf'
 import { Tooltip } from '../ShortuctTooltip'
 
-import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useOnScreen } from '@/hooks/useOnScreen'
 import { FrameStatus } from '@/types/enums'
-import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
@@ -27,6 +25,7 @@ export function FrameGridView({
   sidebarExpanded,
   frameActive,
   eventSessionData,
+  onClick,
 }: {
   frame: IFrame
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,13 +34,9 @@ export function FrameGridView({
   frameActive: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   eventSessionData: any
+  onClick: (frame: IFrame) => void
 }) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
-  const {
-    eventMode,
-
-    setCurrentFrame,
-  } = useContext(EventContext) as EventContextType
 
   const { permissions } = useEventPermissions()
 
@@ -65,11 +60,7 @@ export function FrameGridView({
           }
         )}
         onClick={() => {
-          if (!permissions.canUpdateFrame && eventMode === 'present') {
-            return
-          }
-
-          setCurrentFrame(frame)
+          onClick(frame)
         }}>
         {eventSessionData?.breakoutSlideId === frame?.id ? (
           <div className="absolute top-0 right-0 p-1 bg-primary text-white rounded-bl-md rounded-tr-md">

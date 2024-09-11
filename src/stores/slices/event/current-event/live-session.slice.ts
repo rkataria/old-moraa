@@ -181,7 +181,9 @@ attachStoreListener({
     ) {
       newEventSessionModeToUpdate = EventSessionMode.PRESENTATION
     } else {
-      newEventSessionModeToUpdate = EventSessionMode.LOBBY
+      newEventSessionModeToUpdate = isCurrentUserOwnerOfEvent
+        ? EventSessionMode.LOBBY
+        : EventSessionMode.LOBBY
     }
 
     if (newFrameIdToUpdate !== currentFrameId) {

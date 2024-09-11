@@ -18,8 +18,14 @@ import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventContextType } from '@/types/event-context.type'
+import {
+  EventSessionMode,
+  PresentationStatuses,
+} from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
@@ -66,6 +72,11 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
 
     actions[action.key]()
   }
+  const dispatch = useStoreDispatch()
+  const isMeetingJoined = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.isMeetingJoined
+  )
+  const { isHost, presentationStatus } = useEventSession()
 
   const handleDelete = async (_frame: IFrame) => {
     if (_frame.type === ContentType.BREAKOUT) {
@@ -74,6 +85,25 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
       deleteFrame(_frame)
     }
     setIsDeleteModalOpen(false)
+  }
+
+  const handleFrameItemClick = (clickedFrame: IFrame) => {
+    if (!permissions.canUpdateFrame && eventMode === 'present') {
+      return
+    }
+
+    // Dispatch an action to update event session mode to 'Preview' if presentation is not started and user is the owner of the event
+    if (
+      isMeetingJoined &&
+      isHost &&
+      presentationStatus !== PresentationStatuses.STARTED
+    ) {
+      dispatch(updateEventSessionModeAction(EventSessionMode.PREVIEW))
+    }
+
+    setInsertAfterFrameId(clickedFrame.id)
+    setInsertInSectionId(clickedFrame.section_id!)
+    setCurrentFrame(clickedFrame)
   }
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
@@ -94,6 +124,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             sidebarExpanded={sidebarExpanded}
             frameActive={frameActive}
             eventSessionData={eventSessionData}
+            onClick={handleFrameItemClick}
           />
         )
       }
@@ -112,12 +143,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             }
           )}
           onClick={() => {
-            if (!permissions.canUpdateFrame && eventMode === 'present') {
-              return
-            }
-            setInsertAfterFrameId(frame.id)
-            setInsertInSectionId(frame.section_id!)
-            setCurrentFrame(frame)
+            handleFrameItemClick(frame)
           }}>
           <div
             className={cn(
@@ -180,7 +206,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             'bg-primary-200': frameActive,
           })}
           onClick={() => {
-            setCurrentFrame(frame)
+            handleFrameItemClick(frame)
           }}>
           <ContentTypeIcon
             frameType={frame.type}

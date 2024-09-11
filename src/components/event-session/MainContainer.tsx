@@ -3,13 +3,17 @@ import { useEffect, useRef, useState } from 'react'
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
+import { FrameOverlayView } from './FrameOverlayView'
 import { ParticipantTiles } from './ParticipantTiles'
 import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
 import { PanelResizer } from '../common/PanelResizer'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
-import { PresentationStatuses } from '@/types/event-session.type'
+import {
+  EventSessionMode,
+  PresentationStatuses,
+} from '@/types/event-session.type'
 
 export function MainContainer() {
   const {
@@ -39,7 +43,9 @@ export function MainContainer() {
     return () => clearInterval(intervalId)
   }, [panelSize])
 
-  const spotlightMode = eventSessionMode === 'Lobby'
+  const spotlightMode =
+    eventSessionMode === EventSessionMode.LOBBY ||
+    (eventSessionMode === EventSessionMode.PREVIEW && isHost)
 
   const currentFrameBgColor =
     presentationStatus === PresentationStatuses.STARTED && !isBreakoutSlide
@@ -90,6 +96,7 @@ export function MainContainer() {
           </Panel>
         </PanelGroup>
       )}
+      <FrameOverlayView />
     </div>
   )
 }

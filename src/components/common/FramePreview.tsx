@@ -38,6 +38,7 @@ interface FrameProps {
   isInteractive?: boolean
   fullWidth?: boolean
   asThumbnail?: boolean
+  className?: string
 }
 
 export function FramePreview({
@@ -45,6 +46,7 @@ export function FramePreview({
   isInteractive = true,
   fullWidth,
   asThumbnail = false,
+  className = '',
 }: FrameProps) {
   useEffect(() => {
     if (!frame) return
@@ -66,7 +68,8 @@ export function FramePreview({
           'overflow-y-scroll scrollbar-none':
             frame.type === ContentType.RICH_TEXT,
           '!p-0': asThumbnail && frame.type === ContentType.MORAA_SLIDE,
-        }
+        },
+        className
       )}>
       <FrameTitleDescriptionPreview
         frame={frame as any}
