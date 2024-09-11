@@ -15,7 +15,7 @@ export function FrameFormContainer({
 }: FrameFormContainerProps) {
   return (
     <div className="relative flex justify-center items-center gap-10 w-full h-full pt-10 rounded-md">
-      <div className="flex flex-col gap-4 max-w-lg">
+      <div className="flex flex-col gap-4 w-full max-w-lg">
         <div className="flex flex-col justify-center items-center gap-4 pb-8 w-full m-auto">
           {headerIcon}
           <h2 className="subheading-1 text-primary">{headerTitle}</h2>

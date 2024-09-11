@@ -15,7 +15,6 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
-import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -78,7 +77,14 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
   const isMeetingJoined = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
-  const { isHost, presentationStatus } = useEventSession()
+  const isHost = useStoreSelector(
+    (store) => store.event.currentEvent.eventState.isCurrentUserOwnerOfEvent
+  )
+  const presentationStatus = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.presentationStatus
+  )
 
   const handleDelete = async (_frame: IFrame) => {
     if (_frame.type === ContentType.BREAKOUT) {

@@ -38,6 +38,7 @@ export function FrameConfiguration() {
     ),
     [ContentType.MORAA_SLIDE]: null,
     [ContentType.BREAKOUT]: <BreakoutConfiguration key={currentFrame.id} />,
+    [ContentType.POWERPOINT]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type]

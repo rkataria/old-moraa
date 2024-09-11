@@ -13,7 +13,7 @@ import {
 import { BsQuestionCircle } from 'react-icons/bs'
 import { IoPeopleOutline } from 'react-icons/io5'
 import { MdOutlineDraw } from 'react-icons/md'
-import { SiMiro } from 'react-icons/si'
+import { SiMicrosoftpowerpoint, SiMiro } from 'react-icons/si'
 import { TbNews } from 'react-icons/tb'
 
 import { ContentTypeCard } from './ContentTypeCard'
@@ -46,6 +46,7 @@ export enum ContentType {
   RICH_TEXT = 'Rich Text',
   MORAA_BOARD = 'Moraa Board',
   BREAKOUT = 'Breakout',
+  POWERPOINT = 'Powerpoint',
 }
 
 export const INTERACTIVE_FRAME_TYPES = [
@@ -166,12 +167,12 @@ export const contentTypes: IContentType[] = [
     description: 'Empower presentations with seamless Google Slides embed',
     contentType: ContentType.GOOGLE_SLIDES,
   },
-  // {
-  //   name: 'Import Google Slides',
-  //   icon: <IconBrandGoogleDrive className="w-full h-full max-w-11 max-h-11" />,
-  //   description: 'Empower presentations with seamless Google Slides import',
-  //   contentType: ContentType.GOOGLE_SLIDES_IMPORT,
-  // },
+  {
+    name: 'Import Powerpoint',
+    icon: <SiMicrosoftpowerpoint className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Upload and integrate your Powerpoint content as a frame!',
+    contentType: ContentType.POWERPOINT,
+  },
   {
     name: 'Import PDF',
     icon: <IconBrandAdobe className="w-full h-full max-w-11 max-h-11" />,
@@ -216,6 +217,7 @@ export function ContentTypePicker({
     getContentType(ContentType.PDF_VIEWER),
     getContentType(ContentType.MIRO_EMBED),
     getContentType(ContentType.VIDEO_EMBED),
+    getContentType(ContentType.POWERPOINT),
   ]
 
   return (

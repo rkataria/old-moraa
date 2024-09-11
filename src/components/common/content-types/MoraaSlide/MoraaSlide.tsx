@@ -112,6 +112,7 @@ export function MoraaSlide({ frame }: MoraaSlideProps) {
       frameId={frame.id}
       frameTemplate={frame.content.defaultTemplate}
       frameCanvasData={canvasData}
+      frameSvgData={frame.content.svg}
       canvasObjects={canvasObjects}
       frameBackgroundColor={frameBackgroundColor}
       saveToStorage={saveToStorage}

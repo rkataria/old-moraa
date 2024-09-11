@@ -39,6 +39,7 @@ export function FrameAppearance() {
     [ContentType.MORAA_BOARD]: null,
     [ContentType.MORAA_SLIDE]: <MoraaSlideAppearance key={currentFrame.id} />,
     [ContentType.BREAKOUT]: null,
+    [ContentType.POWERPOINT]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type]
