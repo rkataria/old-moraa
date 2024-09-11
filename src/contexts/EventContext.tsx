@@ -6,6 +6,7 @@ import { OnDragEndResponder } from 'react-beautiful-dnd'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
+import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { FrameService } from '@/services/frame.service'
@@ -15,7 +16,6 @@ import {
   useEventSelector,
 } from '@/stores/hooks/useEventSections'
 import {
-  clearCurrentEventIdAction,
   setCurrentEventIdAction,
   setCurrentSectionIdAction,
   setIsOverviewOpenAction,
@@ -65,7 +65,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     (store) => store.event.currentEvent.eventState.isCurrentUserOwnerOfEvent
   )
   const isMeetingJoined = useStoreSelector(
-    (store) => store.event.currentEvent.liveSessionState.isMeetingJoined
+    (store) => store.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
   const dispatch = useStoreDispatch()
   const router = useRouter()
@@ -84,9 +84,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const syncing = useStoreSelector(
     (state) => state.event.currentEvent.frameState.updateFrameThunk.isLoading
   )
-  const storeEventId = useStoreSelector(
-    (state) => state.event.currentEvent.eventState.eventId
-  )
+  useSyncValueInRedux({
+    value: eventId || null,
+    reduxStateSelector: (state) => state.event.currentEvent.eventState.eventId,
+    actionFn: setCurrentEventIdAction,
+  })
   const event = useStoreSelector(
     (state) => state.event.currentEvent.eventState.event.data
   )
@@ -113,15 +115,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     frameId: string
     message: string
   } | null>(null)
-
-  useEffect(() => {
-    if (eventId && eventId !== storeEventId) {
-      dispatch(setCurrentEventIdAction(eventId))
-    } else if (!eventId) {
-      dispatch(clearCurrentEventIdAction())
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, eventId])
 
   useEffect(() => {
     if (!event?.owner_id || !currentUser?.id) return

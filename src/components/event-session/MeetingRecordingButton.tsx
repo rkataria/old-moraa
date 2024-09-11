@@ -3,12 +3,14 @@ import { IoMdRadioButtonOn } from 'react-icons/io'
 
 import { ControlButton } from '../common/ControlButton'
 
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { useFlags } from '@/flags/client'
 import { cn } from '@/utils/utils'
 
 export function MeetingRecordingButton() {
   const { meeting } = useDyteMeeting()
   const { flags } = useFlags()
+  const { isHost } = useEventSession()
   const recordingState = useDyteSelector(
     (meet) => meet.recording.recordingState
   )
@@ -22,7 +24,7 @@ export function MeetingRecordingButton() {
     }
   }
 
-  if (flags?.show_recording_button) {
+  if (flags?.show_recording_button || !isHost) {
     return null
   }
 

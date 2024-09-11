@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { RxDotsVertical } from 'react-icons/rx'
 
@@ -14,14 +14,13 @@ import { FrameActions } from '../FrameActions'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { Button } from '@/components/ui/Button'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
-import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionMode,
   PresentationStatuses,
@@ -50,13 +49,16 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     deleteBreakoutFrames,
     setInsertAfterFrameId,
     setInsertInSectionId,
-  } = useContext(EventContext) as EventContextType
+  } = useEventContext()
+  const breakoutFrameId = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.breakoutFrameId
+  )
   const { permissions } = useEventPermissions()
 
   const { listDisplayMode, currentSectionId } = useAgendaPanel()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const { leftSidebarVisiblity } = useStudioLayout()
-  const eventSessionData = useEventSession()
 
   const handleFrameAction = (action: {
     key: FrameActionKey
@@ -74,7 +76,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
   }
   const dispatch = useStoreDispatch()
   const isMeetingJoined = useStoreSelector(
-    (store) => store.event.currentEvent.liveSessionState.isMeetingJoined
+    (store) => store.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
   const isHost = useStoreSelector(
     (store) => store.event.currentEvent.eventState.isCurrentUserOwnerOfEvent
@@ -130,7 +132,6 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             handleFrameAction={handleFrameAction}
             sidebarExpanded={sidebarExpanded}
             frameActive={frameActive}
-            eventSessionData={eventSessionData}
             onClick={handleFrameItemClick}
           />
         )
@@ -145,8 +146,7 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
             {
               'bg-primary-100': frameActive,
               'border-transparent': currentFrame?.id !== frame?.id,
-              'border border-green-700':
-                eventSessionData?.breakoutSlideId === frame?.id,
+              'border border-green-700': breakoutFrameId === frame?.id,
             }
           )}
           onClick={() => {

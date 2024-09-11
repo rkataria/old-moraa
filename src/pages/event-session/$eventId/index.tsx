@@ -10,12 +10,10 @@ import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScree
 import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContext'
 import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
+import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useEnrollment } from '@/hooks/useEnrollment'
-import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import {
-  removeDyteClientAction,
-  setDyteClientAction,
-} from '@/stores/slices/event/current-event/live-session.slice'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { setDyteClientAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { beforeLoad } from '@/utils/before-load'
 
 export const Route = createFileRoute('/event-session/$eventId/')({
@@ -27,10 +25,11 @@ export const Route = createFileRoute('/event-session/$eventId/')({
 
 export function EventSessionPageInner() {
   const isRoomJoined = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState.isMeetingJoined
+    (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
   const isBreakoutLoading = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState.isDyteMeetingLoading
+    (state) =>
+      state.event.currentEvent.liveSessionState.dyte.isDyteMeetingLoading
   )
   if (isBreakoutLoading) {
     return (
@@ -49,21 +48,18 @@ export function EventSessionPageInner() {
 
 function EventSessionPage() {
   const { eventId } = useParams({ strict: false })
-  const dispatch = useStoreDispatch()
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
   const meetingEl = useRef<HTMLDivElement>(null)
   const [dyteClient, initDyteMeeting] = useDyteClient()
 
-  useEffect(() => {
-    if (dyteClient) {
-      dispatch(setDyteClientAction(dyteClient))
-    } else {
-      dispatch(removeDyteClientAction())
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dyteClient])
+  useSyncValueInRedux({
+    value: dyteClient,
+    reduxStateSelector: (state) =>
+      state.event.currentEvent.liveSessionState.dyte.dyteClient,
+    actionFn: setDyteClientAction,
+  })
 
   useEffect(() => {
     if (!enrollment?.meeting_token) return
@@ -117,7 +113,7 @@ function EventSessionPage() {
           <Loading message="Joining the live session..." />
         </div>
       }>
-      <BreakoutManagerContextProvider dyteClient={dyteClient}>
+      <BreakoutManagerContextProvider>
         <EventProvider eventMode="present">
           <EventSessionProvider>
             <div ref={meetingEl}>

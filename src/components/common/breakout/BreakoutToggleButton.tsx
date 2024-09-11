@@ -8,8 +8,13 @@ import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
-import { useStoreSelector } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
+import {
+  setBreakoutFrameIdAction,
+  setIsBreakoutOverviewOpenAction,
+  setIsCreateBreakoutOpenAction,
+} from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
 import { ContentType } from '@/utils/content.util'
@@ -53,20 +58,26 @@ export function BreakoutToggleButton({
 
 export function BreakoutHeaderButton() {
   const dyteMeeting = useDyteMeeting()
-  const {
-    isHost,
-    isBreakoutSlide,
-    currentFrame,
-    setIsBreakoutSlide,
-    isCreateBreakoutOpen,
-    setIsCreateBreakoutOpen,
-    setCurrentFrame,
-    breakoutSlideId,
-    realtimeChannel,
-  } = useEventSession()
+  const isBreakoutOverviewOpen = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isBreakoutOverviewOpen
+  )
+  const isCreateBreakoutOpen = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isCreateBreakoutOpen
+  )
+  const { isHost, currentFrame, setCurrentFrame, realtimeChannel } =
+    useEventSession()
+
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
+  const breakoutFrameId = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.breakoutFrameId
+  )
+  const dispatch = useStoreDispatch()
+
   const { sections } = useEventContext()
 
   const { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom } =
@@ -76,7 +87,7 @@ export function BreakoutHeaderButton() {
   const breakoutFrame = sections
     ?.map((section) => section.frames)
     .flat()
-    .find((frame) => frame?.id === breakoutSlideId)
+    .find((frame) => frame?.id === breakoutFrameId)
 
   const onBreakoutStartOnBreakoutSlide = async () => {
     if (!meetingId) return
@@ -89,6 +100,7 @@ export function BreakoutHeaderButton() {
         roomsCount: currentFrame?.content?.breakoutRooms?.length,
         participantsPerRoom: currentFrame?.config.participantPerGroup,
       })
+      dispatch(setBreakoutFrameIdAction(currentFrame?.id || null))
       if (currentFrame?.config.breakoutTime) {
         setTimeout(() => {
           realtimeChannel?.send({
@@ -154,7 +166,9 @@ export function BreakoutHeaderButton() {
     return (
       <BreakoutToggleButton
         isActive={isCreateBreakoutOpen}
-        onClick={() => setIsCreateBreakoutOpen(!isCreateBreakoutOpen)}
+        onClick={() =>
+          dispatch(setIsCreateBreakoutOpenAction(!isCreateBreakoutOpen))
+        }
       />
     )
   }
@@ -173,19 +187,21 @@ export function BreakoutHeaderButton() {
     )
   }
 
-  if (!breakoutSlideId) {
+  if (!breakoutFrameId) {
     return (
       <BreakoutToggleButton
-        isActive={isBreakoutSlide}
-        onClick={() => setIsBreakoutSlide(!isBreakoutSlide)}
+        isActive={isBreakoutOverviewOpen}
+        onClick={() =>
+          dispatch(setIsBreakoutOverviewOpenAction(!isBreakoutOverviewOpen))
+        }
       />
     )
   }
 
-  if (breakoutSlideId) {
+  if (breakoutFrameId) {
     return (
       <BreakoutToggleButton
-        isActive={currentFrame?.id === breakoutSlideId}
+        isActive={currentFrame?.id === breakoutFrameId}
         onClick={() => setCurrentFrame(breakoutFrame as IFrame)}
       />
     )

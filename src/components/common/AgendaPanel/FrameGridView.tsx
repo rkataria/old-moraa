@@ -15,6 +15,7 @@ import { Tooltip } from '../ShortuctTooltip'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useOnScreen } from '@/hooks/useOnScreen'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { FrameStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
@@ -24,7 +25,6 @@ export function FrameGridView({
   handleFrameAction,
   sidebarExpanded,
   frameActive,
-  eventSessionData,
   onClick,
 }: {
   frame: IFrame
@@ -32,11 +32,13 @@ export function FrameGridView({
   handleFrameAction: (item: any) => void
   sidebarExpanded: boolean
   frameActive: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  eventSessionData: any
   onClick: (frame: IFrame) => void
 }) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
+  const breakoutFrameId = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.breakoutFrameId
+  )
 
   const { permissions } = useEventPermissions()
 
@@ -62,7 +64,7 @@ export function FrameGridView({
         onClick={() => {
           onClick(frame)
         }}>
-        {eventSessionData?.breakoutSlideId === frame?.id ? (
+        {breakoutFrameId === frame?.id ? (
           <div className="absolute top-0 right-0 p-1 bg-primary text-white rounded-bl-md rounded-tr-md">
             <p className="text-xs">In Breakout</p>
           </div>

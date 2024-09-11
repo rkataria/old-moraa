@@ -19,16 +19,18 @@ import { MeetingRightSidebar } from './MeetingRightSidebar'
 import { RightSidebarControls } from './RightSidebarControls'
 import { AgendaPanel } from '../common/AgendaPanel'
 import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
-import { CreateBreakoutModal } from '../common/breakout/CreateBreakoutModal'
-import { BREAKOUT_TYPES } from '../common/BreakoutTypePicker'
+import { CreateUnplannedBreakoutModal } from '../common/breakout/CreateBreakoutModal'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { ResizableRightSidebar } from '../event-content/ResizableRightSidebar'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
-import { useStoreDispatch } from '@/hooks/useRedux'
-import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import {
+  setIsCreateBreakoutOpenAction,
+  updateEventSessionModeAction,
+} from '@/stores/slices/event/current-event/live-session.slice'
 import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionMode,
@@ -51,14 +53,15 @@ export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
   const { preview } = useContext(EventContext) as EventContextType
   const dispatch = useStoreDispatch()
+  const isCreateBreakoutOpen = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isCreateBreakoutOpen
+  )
   const {
     isHost,
     presentationStatus,
     dyteStates,
     setDyteStates,
-    isCreateBreakoutOpen,
-    setIsCreateBreakoutOpen,
-    breakoutSlideId,
     currentFrame,
   } = useEventSession()
   const { isBreakoutActive } = useBreakoutRooms()
@@ -66,6 +69,10 @@ export function MeetingScreen() {
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
   const screensharingParticipant = useDyteSelector((m) =>
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
+  )
+  const breakoutFrameId = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.breakoutFrameId
   )
 
   const isScreensharing = !!screensharingParticipant || selfScreenShared
@@ -115,10 +122,7 @@ export function MeetingScreen() {
   // }, [meeting, eventSessionMode])
 
   const BottomContentElement =
-    isHost &&
-    isBreakoutActive &&
-    breakoutSlideId === currentFrame?.id &&
-    currentFrame.config?.breakoutType !== BREAKOUT_TYPES.ROOMS ? (
+    isHost && isBreakoutActive && breakoutFrameId === currentFrame?.id ? (
       <BreakoutRoomsWithParticipants hideActivityCards />
     ) : null
 
@@ -155,9 +159,9 @@ export function MeetingScreen() {
           }))
         }}
       />
-      <CreateBreakoutModal
+      <CreateUnplannedBreakoutModal
         open={isCreateBreakoutOpen}
-        setOpen={() => setIsCreateBreakoutOpen(false)}
+        setOpen={() => dispatch(setIsCreateBreakoutOpenAction(false))}
       />
       <IdleModeConfirmation />
     </StudioLayout>

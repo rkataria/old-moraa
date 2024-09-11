@@ -33,22 +33,17 @@ export class BreakoutRooms {
     this.dyteClient.connectedMeetings.getConnectedMeetings()
   }
 
-  // private cleanup() {
-  //   this.meeting.connectedMeetings.removeListener(
-  //     'stateUpdate',
-  //     this.updateLocalState
-  //   )
-  // }
-
   private updateLocalState = (payload: any) => {
     this.manager.updateCurrentState(payload)
   }
 
   /**
    * This method can be used to manually trigger the `stateUpdate` event. This help to keep the state of `this.manager` in sync with the dyte's state.
-   * @returns {Promise} This promise is resolved once the connected meetings are fetched wait of 500ms is elapsed as this will trigger the `stateUpdate` event
+   * @returns {Promise} This promise is resolved once the connected meetings are fetched wait of 400ms is elapsed as this will trigger the `stateUpdate` event
    */
-  private async getConnectedMeetings() {
+  private async cleanupBreakoutManagerInstance() {
+    this.manager = new BreakoutRoomsManager()
+
     return new Promise((resolve) => {
       this.dyteClient.connectedMeetings.getConnectedMeetings().then(() => {
         setTimeout(resolve, 400)
@@ -57,51 +52,51 @@ export class BreakoutRooms {
   }
 
   async startBreakoutWithRandomParticipants() {
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
     this.manager.addNewMeetings(3)
     this.manager.assignParticipantsRandomly()
     await this.manager.applyChanges(this.dyteClient)
   }
 
   async endBreakout() {
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
     await stopBreakoutRooms({
       meeting: this.dyteClient,
       stateManager: this.manager,
     })
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
   }
 
   async startBreakoutRooms({
     participantsPerRoom,
     roomsCount,
   }: StartBreakoutConfig) {
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
     await createAndAutoAssignBreakoutRooms({
       roomsCount,
       groupSize: participantsPerRoom,
       meeting: this.dyteClient,
       stateManager: this.manager,
     })
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
   }
 
   async endBreakoutRooms() {
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
     await stopBreakoutRooms({
       meeting: this.dyteClient,
       stateManager: this.manager,
     })
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
   }
 
   async joinRoom(meetId: string) {
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
     await moveHostToRoom({
       meeting: this.dyteClient,
       stateManager: this.manager,
       destinationMeetingId: meetId,
     })
-    await this.getConnectedMeetings()
+    await this.cleanupBreakoutManagerInstance()
   }
 }

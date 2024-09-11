@@ -22,7 +22,6 @@ import type {
   ISection,
 } from '@/types/frame.type'
 
-import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useEnrollment } from '@/hooks/useEnrollment'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useFrameReactions } from '@/hooks/useReactions'
@@ -55,7 +54,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventId } = useParams({ strict: false })
   const { meeting: dyteMeeting } = useDyteMeeting()
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
-  const { isBreakoutActive } = useBreakoutRooms()
   const { enrollment } = useEnrollment({
     eventId: eventId as string,
   })
@@ -85,10 +83,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [participant, setParticipant] = useState<any>(null)
   const { realtimeChannel } = useRealtimeChannel()
-  const [isBreakoutSlide, setIsBreakoutSlide] = useState<boolean>(false)
-  const [isCreateBreakoutOpen, setIsCreateBreakoutOpen] =
-    useState<boolean>(false)
-  const [breakoutSlideId, setBreakoutSlideId] = useState<string | null>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const activeSession = session?.data
@@ -230,15 +224,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [realtimeChannel, currentFrame, eventSessionMode])
-
-  useEffect(() => {
-    if (!isBreakoutActive && breakoutSlideId) {
-      setBreakoutSlideId(null)
-    } else if (isBreakoutActive && !breakoutSlideId) {
-      setBreakoutSlideId(currentFrame?.id || null)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBreakoutActive, currentFrame])
 
   const nextFrame = useCallback(() => {
     if (!isHost || !realtimeChannel) return null
@@ -670,12 +655,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         eventSessionMode,
         dyteStates,
         setDyteStates,
-        isCreateBreakoutOpen,
-        setIsCreateBreakoutOpen,
-        isBreakoutSlide,
-        setIsBreakoutSlide,
-        breakoutSlideId,
-        setBreakoutSlideId,
         startPresentation,
         stopPresentation,
         pausePresentation,

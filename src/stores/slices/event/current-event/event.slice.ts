@@ -44,9 +44,6 @@ export const eventSlice = createSlice({
     ) => {
       state.eventId = action.payload
     },
-    clearCurrentEventId: (state) => {
-      state.eventId = null
-    },
     setIsCurrentUserOwnerOfEvent: (state, action: PayloadAction<boolean>) => {
       state.isCurrentUserOwnerOfEvent = action.payload
     },
@@ -89,7 +86,9 @@ attachStoreListener({
         event?.owner_id === state.user.currentUser.user?.id
       )
     )
-    if (state.event.currentEvent.liveSessionState.currentDyteMeetingId) return
+    if (state.event.currentEvent.liveSessionState.dyte.currentDyteMeetingId) {
+      return
+    }
     dispatch(setCurrentFrameIdAction(null))
     dispatch(setCurrentSectionIdAction(null))
     dispatch(setIsOverviewOpenAction(true))
@@ -110,8 +109,9 @@ attachStoreListener({
 })
 
 attachStoreListener({
-  actionCreator: eventSlice.actions.clearCurrentEventId,
-  effect: (_, { getOriginalState }) => {
+  actionCreator: eventSlice.actions.setCurrentEventId,
+  effect: (action, { getOriginalState }) => {
+    if (action.payload) return
     const { eventId } = getOriginalState().event.currentEvent.eventState
 
     getRealtimeChannelsForEvent(eventId as string).forEach((channels) =>
@@ -123,7 +123,6 @@ attachStoreListener({
 export const {
   setCurrentEventIdAction,
   setIsOverviewOpenAction,
-  clearCurrentEventIdAction,
   setCurrentSectionIdAction,
   setIsPreviewOpenAction,
   setIsCurrentUserOwnerOfEventAction,
