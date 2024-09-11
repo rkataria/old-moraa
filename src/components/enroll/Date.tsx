@@ -3,7 +3,7 @@ import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
 export function Date({ date, timezone }: { date: string; timezone: string }) {
   return (
     <div className="flex items-start gap-2">
-      <div className="rounded-lg border border-slate-300 w-10 h-10 overflow-hidden">
+      <div className="rounded-lg border border-slate-300 w-12 h-12 overflow-hidden">
         <p className="text-[10px] py-[1px] text-center bg-slate-600 text-white">
           {getCurrentTimeInLocalZoneFromTimeZone({
             dateTimeString: date,

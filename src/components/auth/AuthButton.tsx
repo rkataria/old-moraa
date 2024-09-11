@@ -1,33 +1,36 @@
-import { Link } from '@tanstack/react-router'
+import { Button } from '@nextui-org/button'
+import { useRouter } from '@tanstack/react-router'
 
 import { useAuth } from '@/hooks/useAuth'
 
 export function AuthButton() {
+  const router = useRouter()
   const { currentUser } = useAuth()
 
   return currentUser ? (
     <div className="flex flex-col items-center gap-4">
-      <h3>Hey, {currentUser.email}!</h3>
-      <div className="flex gap-4">
-        <Link
-          to="/events"
-          className="py-2 px-4 rounded-md no-underline bg-primary text-white">
-          Dashboard
-        </Link>
-        <form action="/api/auth/sign-out" method="post">
-          <button
-            type="button"
-            className="py-2 px-4 rounded-md no-underline bg-gray-900 text-white">
-            Logout
-          </button>
-        </form>
+      <div className="text-center grid gap-6">
+        <Button
+          size="lg"
+          className="bg-white rounded-lg px-8 font-semibold shadow-xl"
+          onClick={() => router.navigate({ to: '/events' })}>
+          Go to Dashboard
+        </Button>
       </div>
     </div>
   ) : (
-    <Link
-      to="/login"
-      className="py-2 px-3 flex rounded-md no-underline bg-black text-white">
-      Login
-    </Link>
+    <Button
+      size="lg"
+      className="bg-white rounded-lg px-8 font-medium shadow-2xl"
+      onClick={() =>
+        router.navigate({
+          to: '/login',
+          search: {
+            redirectTo: '/events/create',
+          },
+        })
+      }>
+      Create your first event
+    </Button>
   )
 }

@@ -49,7 +49,8 @@ export function BlockEditor({
   classNames,
   onEmptyContent,
   startContent,
-  visibleSideBar,
+  hideSideBar,
+  initialContent,
 }: TiptapProps) {
   const aiState = useAIState()
   const menuContainerRef = useRef(null)
@@ -65,6 +66,7 @@ export function BlockEditor({
       setCollabToken,
       setAiToken,
       onEmptyContent,
+      initialContent,
     })
 
   const displayedUsers = users.slice(0, 3)
@@ -99,7 +101,7 @@ export function BlockEditor({
           className={cn('flex flex-col', {
             'border-r': leftSidebar.isOpen,
           })}>
-          <RenderIf isTrue={!visibleSideBar}>
+          <RenderIf isTrue={!hideSideBar}>
             <div className="flex items-center gap-1">
               <Toolbar.Button
                 tooltip={leftSidebar.isOpen ? 'Close sidebar' : 'Open sidebar'}
@@ -135,9 +137,13 @@ export function BlockEditor({
             id="editor-preview"
             editor={editor}
             ref={editorRef}
-            className={cn('flex-1 overflow-y-auto scrollbar-thin', {
-              'px-[15%]': !leftSidebar.isOpen && !visibleSideBar,
-            })}>
+            className={cn(
+              'flex-1 overflow-y-auto scrollbar-thin',
+              classNames?.editorInPreview,
+              {
+                'px-[15%]': !leftSidebar.isOpen && !hideSideBar,
+              }
+            )}>
             {startContent}
           </EditorContent>
         </div>

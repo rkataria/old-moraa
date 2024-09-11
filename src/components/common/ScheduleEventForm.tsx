@@ -303,7 +303,7 @@ export function ScheduleEventForm<
         </div>
       </div>
 
-      <Controller
+      {/* <Controller
         control={control}
         name="description"
         render={({ field, fieldState }) => (
@@ -320,7 +320,7 @@ export function ScheduleEventForm<
             errorMessage={fieldState.error?.message}
           />
         )}
-      />
+      /> */}
 
       {renderAction?.({ hasNewChanges: participantsForm.formState.isDirty })}
     </div>

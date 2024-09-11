@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import { cn } from '@nextui-org/react'
-import { GoChecklist } from 'react-icons/go'
+import { MdOutlineHomeWork } from 'react-icons/md'
 
 import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
@@ -25,7 +25,7 @@ export function OverviewButton({ label }: { label?: string }) {
       size="sm"
       fullWidth={!isIconOnly}
       isIconOnly={isIconOnly}
-      startContent={<GoChecklist size={18} />}
+      startContent={<MdOutlineHomeWork size={20} />}
       className={cn(
         'font-semibold bg-transparent flex justify-start hover:bg-gray-200',
         {

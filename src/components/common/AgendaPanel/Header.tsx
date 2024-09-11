@@ -24,7 +24,7 @@ export function Header() {
     if (expanded) {
       return (
         <div className="flex items-center justify-between gap-2">
-          <OverviewButton label="Overview" />
+          <OverviewButton label="Home" />
           <div className={cn('flex justify-end items-center gap-2')}>
             <Tooltip
               label={listDisplayMode === 'list' ? 'Grid View' : 'List View'}
