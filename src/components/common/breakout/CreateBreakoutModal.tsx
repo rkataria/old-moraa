@@ -16,9 +16,11 @@ import { TwoWayNumberCounter } from '../content-types/MoraaSlide/FontSizeControl
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { setBreakoutFrameIdAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 
-export type CreateBreakoutModalProps = {
+export type CreateUnplannedBreakoutModalProps = {
   open: boolean
   setOpen: (open: boolean) => void
 }
@@ -29,17 +31,14 @@ function distributeParticipants(participants: number, rooms: number) {
   return Math.floor(participants / rooms)
 }
 
-export function CreateBreakoutModal({
+export function CreateUnplannedBreakoutModal({
   open,
   setOpen,
-}: CreateBreakoutModalProps) {
+}: CreateUnplannedBreakoutModalProps) {
   const { meeting } = useDyteMeeting()
-  const {
-    currentFrame,
-    presentationStatus,
-    setBreakoutSlideId,
-    realtimeChannel,
-  } = useEventSession()
+  const { currentFrame, presentationStatus, realtimeChannel } =
+    useEventSession()
+  const dispatch = useStoreDispatch()
 
   const totalParticipants = meeting.participants.count
 
@@ -67,7 +66,7 @@ export function CreateBreakoutModal({
     try {
       await breakoutRoomsInstance?.startBreakoutRooms({ participantsPerRoom })
       if (presentationStatus === PresentationStatuses.STARTED) {
-        setBreakoutSlideId(currentFrame?.id || null)
+        dispatch(setBreakoutFrameIdAction(currentFrame?.id || null))
       }
       setTimeout(() => {
         realtimeChannel?.send({

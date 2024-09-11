@@ -10,19 +10,19 @@ import { PanelResizer } from '../common/PanelResizer'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
+import { useStoreSelector } from '@/hooks/useRedux'
 import {
   EventSessionMode,
   PresentationStatuses,
 } from '@/types/event-session.type'
 
 export function MainContainer() {
-  const {
-    presentationStatus,
-    currentFrame,
-    eventSessionMode,
-    isBreakoutSlide,
-    isHost,
-  } = useEventSession()
+  const { presentationStatus, currentFrame, eventSessionMode, isHost } =
+    useEventSession()
+  const isBreakoutOverviewOpen = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isBreakoutOverviewOpen
+  )
   const [panelSize, setPanelSize] = useState(18) // Initial default size
 
   const mainContentRef = useRef<HTMLDivElement>(null)
@@ -48,7 +48,8 @@ export function MainContainer() {
     (eventSessionMode === EventSessionMode.PREVIEW && isHost)
 
   const currentFrameBgColor =
-    presentationStatus === PresentationStatuses.STARTED && !isBreakoutSlide
+    presentationStatus === PresentationStatuses.STARTED &&
+    !isBreakoutOverviewOpen
       ? currentFrame?.config?.backgroundColor || '#ffffff'
       : '#ffffff'
 
@@ -61,18 +62,16 @@ export function MainContainer() {
       className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto bg-white"
       ref={mainContentRef}>
       {/* Sportlight View */}
-      {spotlightMode && !isBreakoutSlide ? (
+      {spotlightMode && !isBreakoutOverviewOpen ? (
         <div className="flex flex-col overflow-auto h-full flex-1">
           <ParticipantTiles spotlightMode />
         </div>
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
           <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
-            {isHost && isBreakoutActive && isBreakoutSlide ? (
+            {isHost && isBreakoutActive && isBreakoutOverviewOpen ? (
               <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden">
-                <h2 className="text-xl font-semibold my-4 mx-2">
-                  Breakout Time!
-                </h2>
+                <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
                 <BreakoutRoomsWithParticipants hideActivityCards />
               </div>
             ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (

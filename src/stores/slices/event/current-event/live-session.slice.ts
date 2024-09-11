@@ -33,9 +33,6 @@ import { supabaseClient } from '@/utils/supabase/client'
 export type SessionState = {
   currentFrameId?: string | null
   presentationStatus?: PresentationStatuses
-  slideAssignedToRooms?: {
-    [x: string]: string
-  }
   handsRaised?: string[]
   typingUsers?: Array<{ participantId: string; participantName?: string }>
 }
@@ -46,28 +43,49 @@ type LiveSessionState = {
   participants: ThunkState<DyteParticipants[]>
   eventSessionMode: EventSessionMode
   activeSession: ThunkState<SessionModelWithData>
-  isMeetingJoined: boolean
-  currentDyteMeetingId: string | null
-  isInBreakoutMeeting: boolean
-  isDyteMeetingLoading: boolean
-  dyteClient?: DyteClient | null
+
+  dyte: {
+    isMeetingJoined: boolean
+    currentDyteMeetingId: string | null
+    isDyteMeetingLoading: boolean
+    dyteClient?: DyteClient | null
+  }
+
+  breakout: {
+    isBreakoutActive: boolean
+    isInBreakoutMeeting: boolean
+    breakoutFrameId: string | null
+    isBreakoutOverviewOpen: boolean
+    isCreateBreakoutOpen: boolean
+  }
 }
 
 const initialState: LiveSessionState = {
   eventSessionMode: EventSessionMode.LOBBY,
   participants: buildThunkState([]),
   activeSession: buildThunkState<SessionModelWithData>(),
-  isMeetingJoined: false,
-  isDyteMeetingLoading: false,
-  currentDyteMeetingId: null,
-  isInBreakoutMeeting: false,
-  dyteClient: null,
+  dyte: {
+    isMeetingJoined: false,
+    isDyteMeetingLoading: false,
+    currentDyteMeetingId: null,
+    dyteClient: null,
+  },
+  breakout: {
+    isBreakoutActive: false,
+    isInBreakoutMeeting: false,
+    breakoutFrameId: null,
+    isBreakoutOverviewOpen: false,
+    isCreateBreakoutOpen: false,
+  },
 }
 
 export const liveSessionSlice = createSlice({
   name: 'liveSession',
   initialState,
   reducers: {
+    /**
+     * Meeting session reducers
+     */
     updateMeetingSessionData: (state, action: PayloadAction<SessionState>) => {
       if (state.activeSession.isSuccess !== true) {
         console.error('Session must be fetched before updating it.')
@@ -103,25 +121,45 @@ export const liveSessionSlice = createSlice({
     ) => {
       state.eventSessionMode = action.payload
     },
-    setIsMeetingJoined: (state, action: PayloadAction<boolean>) => {
-      state.isMeetingJoined = action.payload
+
+    /**
+     * Breakout reducers
+     */
+    setIsCreateBreakoutOpen: (state, action: PayloadAction<boolean>) => {
+      state.breakout.isCreateBreakoutOpen = action.payload
     },
-    setCurrentDyteMeetingId: (state, action: PayloadAction<string>) => {
-      state.currentDyteMeetingId = action.payload
+    setIsBreakoutOverviewOpen: (state, action: PayloadAction<boolean>) => {
+      state.breakout.isBreakoutOverviewOpen = action.payload
+    },
+    setBreakoutFrameId: (state, action: PayloadAction<string | null>) => {
+      state.breakout.breakoutFrameId = action.payload
+    },
+    setIsBreakoutActive: (state, action: PayloadAction<boolean>) => {
+      state.breakout.isBreakoutActive = action.payload
     },
     setIsInBreakout: (state, action: PayloadAction<boolean>) => {
-      state.isInBreakoutMeeting = action.payload
+      state.breakout.isInBreakoutMeeting = action.payload
     },
-    setIsDyteMeetingLoading: (state, action: PayloadAction<boolean>) => {
-      state.isDyteMeetingLoading = action.payload
-    },
-    setDyteClient: (state, action: PayloadAction<DyteClient>) => {
+
+    /**
+     * Dyte reducers
+     */
+    setDyteClient: (
+      state,
+      action: PayloadAction<LiveSessionState['dyte']['dyteClient']>
+    ) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      state.dyteClient = action.payload
+      state.dyte.dyteClient = action.payload
     },
-    removeDyteClient: (state) => {
-      state.dyteClient = null
+    setIsMeetingJoined: (state, action: PayloadAction<boolean>) => {
+      state.dyte.isMeetingJoined = action.payload
+    },
+    setCurrentDyteMeetingId: (state, action: PayloadAction<string>) => {
+      state.dyte.currentDyteMeetingId = action.payload
+    },
+    setIsDyteMeetingLoading: (state, action: PayloadAction<boolean>) => {
+      state.dyte.isDyteMeetingLoading = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -200,7 +238,7 @@ attachStoreListener({
   effect: async (action, { dispatch, getState }) => {
     const meetingId =
       getState().event.currentEvent.meetingState.meeting.data?.id
-    const { dyteClient } = getState().event.currentEvent.liveSessionState
+    const { dyteClient } = getState().event.currentEvent.liveSessionState.dyte
 
     const dyteConnectedMeetingId = dyteClient?.meta.meetingId
 
@@ -213,6 +251,8 @@ attachStoreListener({
         })
       )
     } else {
+      dispatch(setBreakoutFrameIdAction(null))
+      dispatch(setIsBreakoutOverviewOpenAction(false))
       dispatch(
         getMeetingSessionThunk({
           meetingId,
@@ -233,10 +273,12 @@ attachStoreListener({
       dyteClient.connectedMeetings?.parentMeeting &&
       dyteClient.meta.meetingId !==
         dyteClient.connectedMeetings?.parentMeeting?.id &&
-      !state.event.currentEvent.liveSessionState.isInBreakoutMeeting
+      !state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
     ) {
       dispatch(setIsInBreakoutAction(true))
-    } else if (state.event.currentEvent.liveSessionState.isInBreakoutMeeting) {
+    } else if (
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+    ) {
       dispatch(setIsInBreakoutAction(false))
     }
     const roomJoinedListener = () => {
@@ -282,7 +324,10 @@ attachStoreListener({
       )
     )
 
-    if (getState().event.currentEvent.liveSessionState.isInBreakoutMeeting) {
+    if (
+      getState().event.currentEvent.liveSessionState.breakout
+        .isInBreakoutMeeting
+    ) {
       getRealtimeChannelsForEvent(`${eventId}-3`).find((channel) =>
         channel.unsubscribe()
       )
@@ -305,7 +350,8 @@ attachStoreListener({
           if (
             payload.eventType === 'INSERT' &&
             meetingId &&
-            !getState().event.currentEvent.liveSessionState.isInBreakoutMeeting
+            !getState().event.currentEvent.liveSessionState.breakout
+              .isInBreakoutMeeting
           ) {
             dispatch(getMeetingSessionThunk({ meetingId }))
 
@@ -333,9 +379,12 @@ export const {
   updateEventSessionModeAction,
   updateMeetingSessionDataAction,
   setIsMeetingJoinedAction,
+  setBreakoutFrameIdAction,
+  setIsBreakoutOverviewOpenAction,
+  setIsCreateBreakoutOpenAction,
+  setIsBreakoutActiveAction,
   setCurrentDyteMeetingIdAction,
   setIsDyteMeetingLoadingAction,
   setIsInBreakoutAction,
   setDyteClientAction,
-  removeDyteClientAction,
 } = renameSliceActions(liveSessionSlice.actions)

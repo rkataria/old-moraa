@@ -52,14 +52,8 @@ export type EventSessionContextType = {
   frameReactions: FrameReaction[]
   realtimeChannel?: RealtimeChannel | null
   eventSessionMode: EventSessionMode
-  isBreakoutSlide: boolean
   dyteStates: DyteStates
   setDyteStates: Dispatch<SetStateAction<DyteStates>>
-  breakoutSlideId: string | null
-  setIsBreakoutSlide: Dispatch<SetStateAction<boolean>>
-  setBreakoutSlideId: Dispatch<SetStateAction<string | null>>
-  isCreateBreakoutOpen: boolean
-  setIsCreateBreakoutOpen: Dispatch<SetStateAction<boolean>>
   startPresentation: (frameId: string) => void
   stopPresentation: () => void
   pausePresentation: () => void

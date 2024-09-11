@@ -13,6 +13,8 @@ import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { setIsBreakoutOverviewOpenAction } from '@/stores/slices/event/current-event/live-session.slice'
 
 // TODO: Remove this component
 export function BreakoutRoomsWithParticipants({
@@ -21,18 +23,13 @@ export function BreakoutRoomsWithParticipants({
   hideActivityCards?: boolean
 }) {
   const { meeting } = useDyteMeeting()
-  const {
-    currentFrame,
-    setIsBreakoutSlide,
-    setBreakoutSlideId,
-    realtimeChannel,
-  } = useEventSession()
+  const { currentFrame, realtimeChannel } = useEventSession()
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
+  const dispatch = useStoreDispatch()
 
   const endBreakoutRooms = () => {
     breakoutRoomsInstance?.endBreakout()
-    setBreakoutSlideId(null)
-    setIsBreakoutSlide(false)
+    dispatch(setIsBreakoutOverviewOpenAction(false))
     realtimeChannel?.send({
       type: 'broadcast',
       event: 'timer-stop-event',
@@ -73,7 +70,7 @@ export function BreakoutRoomsWithParticipants({
                 />
               </CardBody>
               <CardFooter className="p-2 py-0">
-                {meet.id !== meeting.connectedMeetings.currentMeetingId ? (
+                {meet.id !== meeting.connectedMeetings.parentMeeting.id ? (
                   <Button
                     size="sm"
                     variant="ghost"
