@@ -35,6 +35,7 @@ interface MoraaSlideEditorProps {
   frameId: string
   frameTemplate: string
   frameCanvasData: string | null
+  frameSvgData: string | null
   // eslint-disable-next-line react/no-unused-prop-types
   canvasObjects?: fabric.Object[]
   frameBackgroundColor: string | null
@@ -48,6 +49,7 @@ export function MoraaSlideEditor({
   frameId,
   frameTemplate,
   frameCanvasData,
+  frameSvgData,
   frameBackgroundColor,
   saveToStorage,
 }: MoraaSlideEditorProps) {
@@ -84,6 +86,10 @@ export function MoraaSlideEditor({
 
     if (frameCanvasData) {
       canvas.loadFromJSON(frameCanvasData, () => {
+        resizeCanvas({ fabricRef, canvasContainerRef })
+      })
+    } else if (frameSvgData) {
+      fabric.loadSVGFromString(frameSvgData, () => {
         resizeCanvas({ fabricRef, canvasContainerRef })
       })
     } else {

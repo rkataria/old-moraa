@@ -12,6 +12,7 @@ import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
 import { GoogleSlidesEditor } from './GoogleSlidesEditor'
 import { MiroEmbedEditor } from './MiroEmbedEditor'
 import { PDFUploader } from './PDFUploader'
+import { PowerpointImporter } from './PowerpointImporter'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
@@ -75,6 +76,7 @@ export function Frame({ frame }: FrameProps) {
     [ContentType.MORAA_BOARD]: <MoraaBoardEditor frame={frame} />,
     [ContentType.MORAA_SLIDE]: <MoraaSlide frame={frame as any} />,
     [ContentType.BREAKOUT]: <BreakoutFrame frame={frame as any} isEditable />,
+    [ContentType.POWERPOINT]: <PowerpointImporter frame={frame as any} />,
   }
 
   const renderer = renderersByContentType[frame.type]

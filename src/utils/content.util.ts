@@ -256,6 +256,7 @@ export enum ContentType {
   RICH_TEXT = 'Rich Text',
   MORAA_BOARD = 'Moraa Board',
   BREAKOUT = 'Breakout',
+  POWERPOINT = 'Powerpoint',
 }
 
 export interface IContentType {
