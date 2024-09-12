@@ -44,7 +44,7 @@ function ScheduleSessionButton({
         }}>
         <DropdownItem
           key="re-schedule"
-          className="p-2 rounded-md"
+          className="p-2 rounded-md h-8 bg-gray-100 hover:bg-gray-200"
           closeOnSelect>
           Re-schedule event
         </DropdownItem>
