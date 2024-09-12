@@ -1,5 +1,6 @@
-import { Button } from '@nextui-org/button'
 import { useRouter } from '@tanstack/react-router'
+
+import { Button } from '../ui/Button'
 
 import { useAuth } from '@/hooks/useAuth'
 

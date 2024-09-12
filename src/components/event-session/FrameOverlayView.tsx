@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { FramePreview } from '../common/FramePreview'
+import { Button } from '../ui/Button'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -13,6 +14,8 @@ import {
   EventSessionContextType,
   EventSessionMode,
 } from '@/types/event-session.type'
+import { ContentType } from '@/utils/content.util'
+import { cn } from '@/utils/utils'
 
 export function FrameOverlayView() {
   const { currentFrame, isHost } = useContext(
@@ -46,24 +49,29 @@ export function FrameOverlayView() {
       <motion.div
         key={currentFrame.id}
         // ref={overlayRef}
-        className="relative w-[90%] aspect-video rounded-md shadow-2xl"
+        className="relative w-[90%] aspect-video rounded-md shadow-2xl max-w-4xl"
         initial={{
-          x: -50,
+          x: -20,
         }}
         animate={{
           x: 0,
         }}>
-        <button
-          className="absolute right-0 -top-6 bg-transparent text-white hover:text-primary transition-all duration-300 ease-in-out"
+        <Button
+          size="sm"
+          variant="solid"
+          color="primary"
+          className="absolute right-0 -top-10 transition-all duration-300 ease-in-out"
           onClick={() => {
             dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
           }}>
           Back to Lobby
-        </button>
+        </Button>
         <FramePreview
           frame={currentFrame}
           isInteractive={false}
-          className="overflow-hidden p-0 rounded-md"
+          className={cn('overflow-hidden rounded-md', {
+            'p-0': currentFrame.type === ContentType.MORAA_SLIDE,
+          })}
         />
         {/* <FrameControls
           onPrevious={previousFrame}
