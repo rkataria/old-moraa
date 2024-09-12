@@ -89,7 +89,10 @@ export function MoraaSlideEditor({
         resizeCanvas({ fabricRef, canvasContainerRef })
       })
     } else if (frameSvgData) {
-      fabric.loadSVGFromString(frameSvgData, () => {
+      fabric.loadSVGFromString(frameSvgData, (objects, options) => {
+        const group = new fabric.Group(objects, options)
+        group.scaleToWidth(canvas.getWidth())
+        canvas.add(group)
         resizeCanvas({ fabricRef, canvasContainerRef })
       })
     } else {
