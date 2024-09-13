@@ -25,6 +25,7 @@ import { EditableLabel } from '@/components/common/EditableLabel'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch } from '@/hooks/useRedux'
 import { setCurrentFrameIdAction } from '@/stores/slices/event/current-event/event.slice'
 import { FrameStatus } from '@/types/enums'
@@ -53,8 +54,10 @@ export function FrameItem({
   } = useContext(EventContext) as EventContextType
 
   const dispatch = useStoreDispatch()
+  const { permissions } = useEventPermissions()
 
-  const editable = isOwner && !preview && eventMode === 'edit'
+  const editable =
+    permissions.canUpdateFrame && !preview && eventMode === 'edit'
 
   const onFrameTitleChange = (frameId: string, title: string) => {
     if (!editable) return
@@ -212,7 +215,7 @@ export function FrameItem({
             />
           </div>
           <Tags frameId={frame.id} config={frame.config} />
-          <Note frameId={frame.id} notes={frame.notes} />
+          <Note frameId={frame.id} notes={frame.notes} placeholder="" />
           {editable && (
             <div
               className={cn('items-center justify-center scale-75 hidden', {

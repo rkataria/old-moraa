@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { BiSolidImage, BiSolidVideos } from 'react-icons/bi'
 import { FaPhotoVideo, FaUnsplash } from 'react-icons/fa'
 import { SiIcons8 } from 'react-icons/si'
+import { Orientation } from 'unsplash-js'
 
 import { MediaProviderContent, MediaProviderType } from './MediaProviderContent'
 import { SideMenuItem } from './SideMenuItem'
@@ -38,6 +39,7 @@ const MENU_OPTIONS = {
 }
 
 type MediaPickerProps = {
+  ImageOrientation?: Orientation
   trigger?: React.ReactNode
   placement?: 'top' | 'bottom' | 'left' | 'right'
   crop?: boolean
@@ -46,6 +48,7 @@ type MediaPickerProps = {
 }
 
 export function MediaPicker({
+  ImageOrientation,
   trigger,
   placement = 'bottom',
   crop = false,
@@ -154,6 +157,7 @@ export function MediaPicker({
           </div>
           <div className="h-full p-4 flex-auto">
             <MediaProviderContent
+              ImageOrientation={ImageOrientation}
               provider={provider}
               fileType={fileType}
               crop={crop}

@@ -62,7 +62,7 @@ export function FrameControls({
           radius="full"
           className={cn('transition-all duration-200 cursor-pointer ring-0', {
             'bg-black text-white': !!previousFrame,
-            'opacity-20 cursor-not-allowed': !previousFrame,
+            'cursor-not-allowed': !previousFrame,
           })}
           disabled={!previousFrame}
           onClick={handlePrevious}>

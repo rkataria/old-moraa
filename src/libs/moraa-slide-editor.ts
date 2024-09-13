@@ -25,7 +25,9 @@ export const initialSetup = () => {
 
   // eslint-disable-next-line wrap-iife, func-names
   fabric.Textbox.prototype.toObject = function () {
-    if (this.type !== 'TextBox') return this.toObject
+    if (['BulletList', 'NumberList'].includes(this.type!)) {
+      return this.toObject
+    }
 
     // eslint-disable-next-line func-names
     // @ts-expect-error silence!
@@ -47,6 +49,7 @@ export const initialSetup = () => {
   })
   fabric.Object.prototype.set('padding', 10)
   fabric.Image.prototype.strokeWidth = 0
+  fabric.Object.prototype.objectCaching = true
 }
 
 export const initializeFabric = ({
@@ -111,17 +114,29 @@ export const resizeCanvas = ({
 
   const container = canvasContainerRef.current?.getBoundingClientRect()
 
-  const scale = container.width / fabricRef.current.getWidth()
-  const zoom = fabricRef.current.getZoom() * scale
+  fabricRef.current?.setDimensions(
+    {
+      width: `${container?.width || 0}px`,
+      height: `${container?.height || 0}px`,
+    },
+    {
+      cssOnly: true,
+    }
+  )
 
-  fabricRef.current?.setDimensions({
-    width: container?.width || 0,
-    height: container?.height || 0,
-  })
+  fabricRef.current?.renderAll()
 
-  fabricRef.current.setViewportTransform([zoom, 0, 0, zoom, 0, 0])
+  // const scale = container.width / fabricRef.current.getWidth()
+  // const zoom = fabricRef.current.getZoom() * scale
 
-  fabricRef.current.renderAll()
+  // fabricRef.current?.setDimensions({
+  //   width: container?.width || 0,
+  //   height: container?.height || 0,
+  // })
+
+  // fabricRef.current.setViewportTransform([zoom, 0, 0, zoom, 0, 0])
+
+  // fabricRef.current.renderAll()
 }
 
 export const renderCanvas = ({

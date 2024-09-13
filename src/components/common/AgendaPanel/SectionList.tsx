@@ -80,6 +80,20 @@ export function SectionList() {
     return null
   }
 
+  const calculateStartingIndex = (sectionIndex: number) => {
+    if (sectionIndex === 0) {
+      return 1
+    }
+
+    const framesBefore = sectionList
+      .slice(0, sectionIndex)
+      .flatMap((section) => section.frames).length
+
+    return framesBefore + 1
+  }
+
+  const startingSectionIndex = calculateStartingIndex
+
   useEffect(() => {
     updateSectionList([...sections])
   }, [sections])
@@ -118,18 +132,18 @@ export function SectionList() {
                   key={`section-draggable-${section.id}`}
                   index={sectionIndex}
                   draggableId={`section-draggable-sectionId-${section.id}`}
-                  isDragDisabled={!permissions.canUpdateSection}>
+                  isDragDisabled={actionDisabled}>
                   {(sectionDraggableProvided) => (
                     <div
                       className="w-full"
                       ref={sectionDraggableProvided.innerRef}
                       {...sectionDraggableProvided.draggableProps}
                       {...sectionDraggableProvided.dragHandleProps}>
-                      {/* <p>{section?.name}</p> */}
                       <SectionItem
                         key={section.id}
                         section={section}
                         actionDisabled={actionDisabled}
+                        startingIndex={startingSectionIndex(sectionIndex)}
                       />
                     </div>
                   )}

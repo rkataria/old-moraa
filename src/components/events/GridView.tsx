@@ -1,4 +1,8 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+
 import { Avatar, Chip, Image } from '@nextui-org/react'
+import { useRouter } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
 import { GoDot, GoDotFill } from 'react-icons/go'
 
@@ -22,16 +26,22 @@ export function GridView({
   currentUserId: string
   refetch: () => void
 }) {
+  const router = useRouter()
   if (isLoading) {
     return <Loading />
   }
 
+  const handleCardClick = (eventId: string) => {
+    router.navigate({ to: `/events/${eventId}`, search: { action: 'view' } })
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 min-[1920px]:grid-cols-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 min-[1920px]:grid-cols-5">
       {eventRows.map((event) => (
         <div
           key={event.id}
-          className="relative border rounded-lg p-[1.25rem] flex flex-col justify-between shadow-sm">
+          className="relative border rounded-2xl p-[1.25rem] flex flex-col justify-between cursor-pointer"
+          onClick={() => handleCardClick(event.id)}>
           <div>
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-4">
@@ -47,7 +57,7 @@ export function GridView({
                     )
                   }
                   classNames={{
-                    base: 'aspect-square w-20 border h-full rounded-lg',
+                    base: 'aspect-square w-40 border h-full rounded-lg',
                     img: 'h-full object-cover',
                     fallback: 'w-full h-full',
                   }}
@@ -63,7 +73,7 @@ export function GridView({
                     {event.status}
                   </Chip>
 
-                  <div className="relative grid gap-1 before:absolute before:content-[''] before:w-px before:h-[38%] before:-translate-y-2/4 before:border-l-[2px] before:border-l-black/20 before:border-dotted before:left-[9px] before:top-2/4 mt-2">
+                  <div className="relative grid gap-1 before:absolute before:content-[''] before:w-px before:h-[38%] before:-translate-y-2/4 before:border-l-[2px] before:border-l-black/20 before:border-dotted before:left-[9px] before:top-2/4 mt-4">
                     <div className="flex items-center gap-6 justify-between">
                       <p className="text-gray-400 flex items-center gap-1 text-sm min-w-max">
                         <GoDotFill className="text-xl text-green-500" />
@@ -108,16 +118,16 @@ export function GridView({
             </div>
 
             <div className="mt-4">
-              <p className="font-semibold text-black/80 tracking-tight leading-[18px] text-sm">
+              <p className="font-medium text-black/80 tracking-tight leading-[18px] text-lg">
                 {event.name}
               </p>
-              <p className="text-gray-600 text-sm tracking-tight mt-2 break-all">
+              <p className="text-gray-600 text-sm tracking-tight mt-2 break-all line-clamp-4">
                 {event.description}
               </p>
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-8 flex items-center justify-between">
             <p className="text-xs text-black/60">
               {DateTime.fromISO(event.created_at).toLocaleString({
                 year: 'numeric',

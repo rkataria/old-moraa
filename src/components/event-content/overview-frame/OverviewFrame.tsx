@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { ReactNode, useContext, useState } from 'react'
 
 import { Button, Tab, Tabs } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
@@ -10,6 +10,7 @@ import { FrameDetailsView } from './FrameDetailsView'
 import { SessionPlanner } from './SessionPlanner/SessionPlanner'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
+import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -17,6 +18,29 @@ import { useStoreSelector } from '@/hooks/useRedux'
 import { EventType } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
+
+function ContentWrapper({
+  children,
+  permissions,
+  className = '',
+}: {
+  children: ReactNode
+  permissions: { canUpdateFrame: boolean }
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'h-[calc(100vh_-126px)] py-4 overflow-y-auto scrollbar-thin',
+        className,
+        {
+          'flex items-start gap-2': permissions.canUpdateFrame,
+        }
+      )}>
+      {children}
+    </div>
+  )
+}
 
 export function OverviewFrame() {
   const {
@@ -50,12 +74,30 @@ export function OverviewFrame() {
   }
 
   const renderContent = () => {
-    if (selectedTab === 'event-info') {
-      return <EventInfo />
+    if (selectedTab === 'event-info' && preview) {
+      return (
+        <ThemeEffects selectedTheme={event.theme}>
+          <ContentWrapper permissions={permissions}>
+            <EventInfo />
+          </ContentWrapper>
+        </ThemeEffects>
+      )
+    }
+
+    if (selectedTab === 'event-info' && !preview) {
+      return (
+        <ContentWrapper
+          permissions={permissions}
+          className="!h-[calc(100vh_-_148px)]">
+          <EventInfo />
+        </ContentWrapper>
+      )
     }
 
     return (
-      <SessionPlanner className="sticky top-0 h-full overflow-y-scroll scrollbar-none" />
+      <ContentWrapper permissions={permissions}>
+        <SessionPlanner className="sticky top-0 h-full overflow-y-scroll scrollbar-none" />
+      </ContentWrapper>
     )
   }
 
@@ -100,7 +142,7 @@ export function OverviewFrame() {
             title={
               <div className="flex items-center space-x-2">
                 <TbListDetails size={20} />
-                <span>Overview</span>
+                <span>{preview ? 'Overview' : 'Build overview page'}</span>
               </div>
             }
           />
@@ -135,17 +177,8 @@ export function OverviewFrame() {
           </div>
         </RenderIf>
       </div>
-      <div
-        className={cn(
-          'h-[calc(100vh_-126px)] py-4 overflow-y-auto scrollbar-thin',
-          {
-            'flex items-start gap-2': permissions.canUpdateFrame,
-            'bg-gradient-to-b from-white to-[#e9e9d2]':
-              !permissions.canUpdateFrame,
-          }
-        )}>
-        {renderContent()}
-      </div>
+
+      {renderContent()}
     </div>
   )
 }

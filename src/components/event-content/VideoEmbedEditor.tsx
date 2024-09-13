@@ -64,7 +64,7 @@ export function VideoEmbedEditor({
         </div>
         <RenderIf isTrue={!preview}>
           <CiEdit
-            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg border bg-primary text-white cursor-pointer"
+            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg bg-primary text-white cursor-pointer"
             onClick={() => setIsEditMode(true)}
           />
         </RenderIf>
@@ -98,7 +98,7 @@ export function VideoEmbedEditor({
       </Button>
       <RenderIf isTrue={isUpdating}>
         <AiOutlineClose
-          className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg border bg-primary text-white cursor-pointer"
+          className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg bg-primary text-white cursor-pointer"
           onClick={() => {
             setVideoUrl(frame.content.videoUrl)
             setIsEditMode(false)
