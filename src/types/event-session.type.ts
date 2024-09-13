@@ -114,7 +114,6 @@ export type EventSessionContextType = {
     reactionId?: string
     action: string
   }) => void
-  addParticipant?: () => void
   onToggleHandRaised: ({
     handRaise,
     participantId,

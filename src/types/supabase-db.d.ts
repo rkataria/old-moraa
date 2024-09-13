@@ -81,6 +81,7 @@ export type Database = {
           owner_id: string | null
           start_date: string | null
           status: string | null
+          theme: Json | null
           timezone: string | null
           type: string | null
           updated_at: string | null
@@ -95,6 +96,7 @@ export type Database = {
           owner_id?: string | null
           start_date?: string | null
           status?: string | null
+          theme?: Json | null
           timezone?: string | null
           type?: string | null
           updated_at?: string | null
@@ -109,6 +111,7 @@ export type Database = {
           owner_id?: string | null
           start_date?: string | null
           status?: string | null
+          theme?: Json | null
           timezone?: string | null
           type?: string | null
           updated_at?: string | null
@@ -503,6 +506,7 @@ export type Database = {
       }
       session: {
         Row: {
+          connected_dyte_meeting_id: string | null
           created_at: string
           data: Json | null
           id: string
@@ -511,6 +515,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          connected_dyte_meeting_id?: string | null
           created_at?: string
           data?: Json | null
           id?: string
@@ -519,6 +524,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          connected_dyte_meeting_id?: string | null
           created_at?: string
           data?: Json | null
           id?: string
@@ -640,6 +646,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_object_to_frame: {
+        Args: {
+          p_frame_id: string
+          p_object_id: string
+          p_object_value: Json
+        }
+        Returns: undefined
+      }
       add_or_replace_object_in_frame: {
         Args: {
           p_frame_id: string

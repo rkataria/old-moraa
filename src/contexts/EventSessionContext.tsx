@@ -22,7 +22,6 @@ import type {
   ISection,
 } from '@/types/frame.type'
 
-import { useEnrollment } from '@/hooks/useEnrollment'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useFrameReactions } from '@/hooks/useReactions'
 import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
@@ -54,9 +53,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventId } = useParams({ strict: false })
   const { meeting: dyteMeeting } = useDyteMeeting()
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
-  const { enrollment } = useEnrollment({
-    eventId: eventId as string,
-  })
   const sections = useEventSelector()
   const currentFrame = useCurrentFrame()
   const { eventMode, setCurrentFrame } = useContext(
@@ -81,7 +77,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   >(null)
   const [currentFrameLoading, setCurrentFrameLoading] = useState<boolean>(true)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [participant, setParticipant] = useState<any>(null)
+  const participant = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.participant.data
+  )
   const { realtimeChannel } = useRealtimeChannel()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -119,11 +117,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [dyteMeeting])
 
   useEffect(() => {
-    if (!eventId || !realtimeChannel) return
-    // Listen for hand raised events
-    realtimeChannel.on('broadcast', { event: 'hand-raised' }, ({ payload }) => {
-      const { participantId, participantName } = payload
+    if (!eventId || !realtimeChannel || !session?.id) return
 
+    realtimeChannel.on('broadcast', { event: 'hand-raised' }, ({ payload }) => {
+      const { participantId, participantName, sessionId } = payload
+      if (sessionId !== session?.id) return
       if (!participantId) return
 
       const dyteNotificationObject = {
@@ -140,15 +138,15 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       'broadcast',
       { event: 'flying-emoji' },
       ({ payload }) => {
-        const { emoji, name } = payload
-
+        const { emoji, name, sessionId } = payload
+        if (sessionId !== session?.id) return
         if (!emoji) return
         window.dispatchEvent(
           new CustomEvent('reaction_added', { detail: { emoji, name } })
         )
       }
     )
-  }, [realtimeChannel, eventId])
+  }, [realtimeChannel, eventId, session?.id])
 
   useEffect(() => {
     if (!fetchedFrameReactions) return
@@ -308,11 +306,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         .upsert({
           response: { selected_options: selectedOptions, anonymous },
           frame_id: frame.id,
-          participant_id: participant.id,
+          participant_id: participant?.id,
           dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
         .eq('frame_id', frame.id)
-        .eq('participant_id', participant.id)
+        .eq('participant_id', participant?.id)
         .select()
 
       if (frameResponse.error) {
@@ -372,11 +370,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
             anonymous,
           },
           frame_id: frame.id,
-          participant_id: participant.id,
+          participant_id: participant?.id,
           dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
         .eq('frame_id', frame.id)
-        .eq('participant_id', participant.id)
+        .eq('participant_id', participant?.id)
         .select()
 
       if (frameResponse.error) {
@@ -513,41 +511,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const addParticipant = async () => {
-    const { data: existingParticipant, error: existingParticipantError } =
-      await supabase
-        .from('participant')
-        .select()
-        .eq('session_id', session?.id ?? session?.id)
-        .eq('enrollment_id', enrollment?.id)
-        .single()
-
-    if (existingParticipantError || !existingParticipant) {
-      const { data: createdParticipant, error: createdParticipantError } =
-        await supabase
-          .from('participant')
-          .insert([
-            {
-              session_id: session?.id ?? session?.id,
-              enrollment_id: enrollment.id,
-            },
-          ])
-          .select()
-          .single()
-
-      if (createdParticipantError) {
-        console.error('failed to create participant:', createdParticipantError)
-
-        return
-      }
-      setParticipant(createdParticipant)
-
-      return
-    }
-    setParticipant(existingParticipant)
-  }
-
   const onToggleHandRaised = async ({
     handRaise,
     participantId,
@@ -572,6 +535,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         payload: {
           participantId,
           participantName,
+          sessionId: session.id,
         },
       })
     } else {
@@ -629,6 +593,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       payload: {
         emoji,
         name,
+        sessionId: session?.id,
       },
     })
   }
@@ -666,7 +631,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         addReflection,
         updateReflection,
         emoteOnReflection,
-        addParticipant,
         onToggleHandRaised,
         setVideoMiddlewareConfig,
         updateTypingUsers,

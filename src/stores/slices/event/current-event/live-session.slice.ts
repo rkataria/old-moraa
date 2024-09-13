@@ -1,10 +1,10 @@
-import DyteClient, { DyteParticipants } from '@dytesdk/web-core'
+import DyteClient from '@dytesdk/web-core'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 import { RealtimePostgresChangesPayload } from '@supabase/realtime-js'
 
 import { setCurrentFrameIdAction } from './event.slice'
 
-import { getRealtimeChannelsForEvent } from '@/services/realtime/supabase-realtime.service'
+import { getRealtimeChannelForEvent } from '@/services/realtime/supabase-realtime.service'
 import { SessionService } from '@/services/session.service'
 import {
   attachThunkToBuilder,
@@ -13,6 +13,8 @@ import {
   ThunkState,
 } from '@/stores/helpers'
 import { attachStoreListener } from '@/stores/listener'
+import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
+import { getExistingOrCreateNewParticipantThunk } from '@/stores/thunks/participant.thunk'
 import {
   getExistingOrCreateNewActiveSessionThunk,
   getMeetingSessionThunk,
@@ -21,7 +23,7 @@ import {
   EventSessionMode,
   PresentationStatuses,
 } from '@/types/event-session.type'
-import { SessionModel } from '@/types/models'
+import { EnrollmentModel, ParticipantModel, SessionModel } from '@/types/models'
 import { supabaseClient } from '@/utils/supabase/client'
 
 /**
@@ -32,6 +34,7 @@ import { supabaseClient } from '@/utils/supabase/client'
  */
 export type SessionState = {
   currentFrameId?: string | null
+  breakoutFrameId?: string | null
   presentationStatus?: PresentationStatuses
   handsRaised?: string[]
   typingUsers?: Array<{ participantId: string; participantName?: string }>
@@ -40,9 +43,10 @@ export type SessionState = {
 type SessionModelWithData = Omit<SessionModel, 'data'> & { data?: SessionState }
 
 type LiveSessionState = {
-  participants: ThunkState<DyteParticipants[]>
   eventSessionMode: EventSessionMode
   activeSession: ThunkState<SessionModelWithData>
+  participant: ThunkState<ParticipantModel>
+  enrollment: ThunkState<EnrollmentModel>
 
   dyte: {
     isMeetingJoined: boolean
@@ -54,7 +58,6 @@ type LiveSessionState = {
   breakout: {
     isBreakoutActive: boolean
     isInBreakoutMeeting: boolean
-    breakoutFrameId: string | null
     isBreakoutOverviewOpen: boolean
     isCreateBreakoutOpen: boolean
   }
@@ -62,8 +65,10 @@ type LiveSessionState = {
 
 const initialState: LiveSessionState = {
   eventSessionMode: EventSessionMode.LOBBY,
-  participants: buildThunkState([]),
   activeSession: buildThunkState<SessionModelWithData>(),
+  participant: buildThunkState<ParticipantModel>(),
+  enrollment: buildThunkState<EnrollmentModel>(),
+
   dyte: {
     isMeetingJoined: false,
     isDyteMeetingLoading: false,
@@ -73,7 +78,6 @@ const initialState: LiveSessionState = {
   breakout: {
     isBreakoutActive: false,
     isInBreakoutMeeting: false,
-    breakoutFrameId: null,
     isBreakoutOverviewOpen: false,
     isCreateBreakoutOpen: false,
   },
@@ -131,9 +135,6 @@ export const liveSessionSlice = createSlice({
     setIsBreakoutOverviewOpen: (state, action: PayloadAction<boolean>) => {
       state.breakout.isBreakoutOverviewOpen = action.payload
     },
-    setBreakoutFrameId: (state, action: PayloadAction<string | null>) => {
-      state.breakout.breakoutFrameId = action.payload
-    },
     setIsBreakoutActive: (state, action: PayloadAction<boolean>) => {
       state.breakout.isBreakoutActive = action.payload
     },
@@ -167,11 +168,23 @@ export const liveSessionSlice = createSlice({
       builder,
       thunk: getExistingOrCreateNewActiveSessionThunk,
       getThunkState: (state) => state.activeSession,
+      keepDataWhileLoading: true,
     })
     attachThunkToBuilder({
       builder,
       thunk: getMeetingSessionThunk,
       getThunkState: (state) => state.activeSession,
+      keepDataWhileLoading: true,
+    })
+    attachThunkToBuilder({
+      builder,
+      thunk: getExistingOrCreateNewParticipantThunk,
+      getThunkState: (state) => state.participant,
+    })
+    attachThunkToBuilder({
+      builder,
+      thunk: getEnrollmentThunk,
+      getThunkState: (state) => state.enrollment,
     })
   },
 })
@@ -251,11 +264,26 @@ attachStoreListener({
         })
       )
     } else {
-      dispatch(setBreakoutFrameIdAction(null))
       dispatch(setIsBreakoutOverviewOpenAction(false))
       dispatch(
         getMeetingSessionThunk({
           meetingId,
+        })
+      )
+    }
+  },
+})
+
+attachStoreListener({
+  actionCreator: liveSessionSlice.actions.setIsBreakoutActive,
+  effect: (action, { getState, dispatch }) => {
+    if (
+      action.payload === false &&
+      getState().event.currentEvent.eventState.isCurrentUserOwnerOfEvent
+    ) {
+      dispatch(
+        updateMeetingSessionDataAction({
+          breakoutFrameId: null,
         })
       )
     }
@@ -286,17 +314,31 @@ attachStoreListener({
     }
     const roomLeftListener = () => {
       if (dyteClient.connectedMeetings.isActive) {
-        dispatch(setIsDyteMeetingLoadingAction(true))
+        if (
+          !getState().event.currentEvent.liveSessionState.dyte
+            .isDyteMeetingLoading
+        ) {
+          dispatch(setIsDyteMeetingLoadingAction(true))
+        }
 
         return
       }
       dispatch(setIsMeetingJoinedAction(false))
     }
     const changingMeetingListener = () => {
-      dispatch(setIsDyteMeetingLoadingAction(true))
+      if (
+        !getState().event.currentEvent.liveSessionState.dyte
+          .isDyteMeetingLoading
+      ) {
+        dispatch(setIsDyteMeetingLoadingAction(true))
+      }
     }
     const meetingChangedListener = () => {
-      dispatch(setIsDyteMeetingLoadingAction(false))
+      if (
+        getState().event.currentEvent.liveSessionState.dyte.isDyteMeetingLoading
+      ) {
+        dispatch(setIsDyteMeetingLoadingAction(false))
+      }
     }
     dyteClient.self.addListener('roomJoined', roomJoinedListener)
     dyteClient.self.addListener('roomLeft', roomLeftListener)
@@ -316,6 +358,11 @@ attachStoreListener({
         ? getState().event.currentEvent.meetingState.meeting!.data!.id
         : getState().event.currentEvent.liveSessionState.activeSession.data
             ?.meeting_id
+
+    const connectedDyteMeetingId =
+      getState().event.currentEvent.liveSessionState.activeSession.data
+        ?.connected_dyte_meeting_id
+
     const { eventId } = getState().event.currentEvent.eventState
 
     dispatch(
@@ -324,16 +371,7 @@ attachStoreListener({
       )
     )
 
-    if (
-      getState().event.currentEvent.liveSessionState.breakout
-        .isInBreakoutMeeting
-    ) {
-      getRealtimeChannelsForEvent(`${eventId}-3`).find((channel) =>
-        channel.unsubscribe()
-      )
-
-      return
-    }
+    getRealtimeChannelForEvent(`${eventId}-3`)?.unsubscribe()
 
     supabaseClient
       .channel(`event:${eventId}-3`, { config: { broadcast: { self: false } } })
@@ -343,10 +381,18 @@ attachStoreListener({
           event: '*',
           schema: 'public',
           table: 'session',
-          filter: `meeting_id=eq.${meetingId}`,
+          filter: connectedDyteMeetingId
+            ? `connected_dyte_meeting_id=eq.${connectedDyteMeetingId}`
+            : `meeting_id=eq.${meetingId}`,
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (payload: RealtimePostgresChangesPayload<{ data?: SessionState }>) => {
+        (
+          payload: RealtimePostgresChangesPayload<{
+            data?: SessionState
+            connect_dyte_meeting_id?: string
+            id: string
+          }>
+        ) => {
           if (
             payload.eventType === 'INSERT' &&
             meetingId &&
@@ -361,7 +407,13 @@ attachStoreListener({
             return
           }
           if (!payload.new.data) return
-
+          if (
+            payload.new.id !==
+            getState().event.currentEvent.liveSessionState.activeSession.data
+              ?.id
+          ) {
+            return
+          }
           const newSessionData = payload.new.data
 
           dispatch(
@@ -379,7 +431,6 @@ export const {
   updateEventSessionModeAction,
   updateMeetingSessionDataAction,
   setIsMeetingJoinedAction,
-  setBreakoutFrameIdAction,
   setIsBreakoutOverviewOpenAction,
   setIsCreateBreakoutOpenAction,
   setIsBreakoutActiveAction,

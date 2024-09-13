@@ -11,9 +11,9 @@ import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContex
 import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
-import { useEnrollment } from '@/hooks/useEnrollment'
-import { useStoreSelector } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setDyteClientAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
 import { beforeLoad } from '@/utils/before-load'
 
 export const Route = createFileRoute('/event-session/$eventId/')({
@@ -48,11 +48,12 @@ export function EventSessionPageInner() {
 
 function EventSessionPage() {
   const { eventId } = useParams({ strict: false })
-  const { enrollment } = useEnrollment({
-    eventId: eventId as string,
-  })
+  const enrollment = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.enrollment.data
+  )
   const meetingEl = useRef<HTMLDivElement>(null)
   const [dyteClient, initDyteMeeting] = useDyteClient()
+  const dispatch = useStoreDispatch()
 
   useSyncValueInRedux({
     value: dyteClient,
@@ -60,6 +61,16 @@ function EventSessionPage() {
       state.event.currentEvent.liveSessionState.dyte.dyteClient,
     actionFn: setDyteClientAction,
   })
+
+  useEffect(() => {
+    if (!eventId) return
+
+    dispatch(
+      getEnrollmentThunk({
+        eventId,
+      })
+    )
+  }, [dispatch, eventId])
 
   useEffect(() => {
     if (!enrollment?.meeting_token) return

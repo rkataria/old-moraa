@@ -67,6 +67,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const isMeetingJoined = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
+  const isInBreakoutMeeting = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
   const dispatch = useStoreDispatch()
   const router = useRouter()
   const { action: eventViewFromQuery } = router.latestLocation.search as {
@@ -563,17 +567,18 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         setOpenContentTypePicker,
         setPreview: (preview) => dispatch(setIsPreviewOpenAction(preview)),
         setCurrentFrame: (frame) => {
-          if (!isMeetingJoined) {
-            dispatch(setCurrentFrameIdAction(frame?.id || null))
-          } else {
-            dispatch(setCurrentFrameIdAction(frame?.id || null))
+          dispatch(setCurrentFrameIdAction(frame?.id || null))
+          if (frame && isOverviewOpen) dispatch(setIsOverviewOpenAction(false))
+
+          if (!isMeetingJoined) return
+          if (!frame?.content?.breakoutFrameId || isInBreakoutMeeting) {
+            // Do not update session if it's a breakout frame.
             dispatch(
               updateMeetingSessionDataAction({
                 currentFrameId: frame?.id,
               })
             )
           }
-          if (frame && isOverviewOpen) dispatch(setIsOverviewOpenAction(false))
         },
         setCurrentSectionId: (sectionId) => {
           dispatch(setCurrentSectionIdAction(sectionId))

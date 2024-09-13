@@ -43,6 +43,7 @@ type AttachThunkToBuilder<
 > = {
   builder: ActionReducerMapBuilder<State>
   thunk: ThunkFunction
+  keepDataWhileLoading?: boolean
   getThunkState: (state: Draft<State>) => Draft<ThunkState<any>>
   onFulfilled?: CaseReducer<State, ReturnType<ThunkFunction['fulfilled']>>
   onPending?: CaseReducer<State, ReturnType<ThunkFunction['pending']>>
@@ -55,6 +56,7 @@ export const attachThunkToBuilder = <
 >({
   builder,
   thunk,
+  keepDataWhileLoading = false,
   getThunkState,
   onFulfilled,
   onPending,
@@ -66,7 +68,7 @@ export const attachThunkToBuilder = <
       getThunkState(state).isError = false
       getThunkState(state).isSuccess = false
       getThunkState(state).error = null
-      getThunkState(state).data = null
+      if (!keepDataWhileLoading) getThunkState(state).data = null
       onPending?.(state, action as any)
     })
     .addCase(thunk.fulfilled, (state, action) => {
