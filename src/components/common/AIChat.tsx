@@ -38,7 +38,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
 
   const { eventId } = useParams({ strict: false })
   const { event, meeting } = useEvent({ id: eventId! })
-  const { enrollment } = useEnrollment({ eventId: eventId! })
+  const { enrollment } = useEnrollment()
   const [inputVal, setInputVal] = useState<string>('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
@@ -217,7 +217,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
             </div>
 
             {enrollment &&
-              ['Host', 'Moderator'].includes(enrollment.event_role) && (
+              ['Host', 'Moderator'].includes(enrollment?.event_role || '') && (
                 <div className="grid gap-2">
                   <Button
                     variant="bordered"
@@ -269,7 +269,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       <div className="p-1 border-1 border-gray-300 bg-white rounded-md mx-4 mb-2">
         {enrollment &&
           messages.length !== 0 &&
-          ['Host', 'Moderator'].includes(enrollment.event_role) && (
+          ['Host', 'Moderator'].includes(enrollment?.event_role || '') && (
             <div className="flex items-center gap-2 p-2">
               <Button
                 variant="bordered"

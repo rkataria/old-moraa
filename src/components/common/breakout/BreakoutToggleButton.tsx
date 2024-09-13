@@ -11,9 +11,9 @@ import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
 import {
-  setBreakoutFrameIdAction,
   setIsBreakoutOverviewOpenAction,
   setIsCreateBreakoutOpenAction,
+  updateMeetingSessionDataAction,
 } from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
@@ -74,7 +74,8 @@ export function BreakoutHeaderButton() {
   )
   const breakoutFrameId = useStoreSelector(
     (store) =>
-      store.event.currentEvent.liveSessionState.breakout.breakoutFrameId
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutFrameId || null
   )
   const dispatch = useStoreDispatch()
 
@@ -100,7 +101,11 @@ export function BreakoutHeaderButton() {
         roomsCount: currentFrame?.content?.breakoutRooms?.length,
         participantsPerRoom: currentFrame?.config.participantPerGroup,
       })
-      dispatch(setBreakoutFrameIdAction(currentFrame?.id || null))
+      dispatch(
+        updateMeetingSessionDataAction({
+          breakoutFrameId: currentFrame?.id || null,
+        })
+      )
       if (currentFrame?.config.breakoutTime) {
         setTimeout(() => {
           realtimeChannel?.send({

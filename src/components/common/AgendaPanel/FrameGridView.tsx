@@ -37,7 +37,8 @@ export function FrameGridView({
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const breakoutFrameId = useStoreSelector(
     (store) =>
-      store.event.currentEvent.liveSessionState.breakout.breakoutFrameId
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutFrameId
   )
 
   const { permissions } = useEventPermissions()

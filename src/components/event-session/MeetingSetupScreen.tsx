@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   DyteAudioVisualizer,
@@ -21,15 +21,15 @@ import { NamesForm } from '../auth/NamesForm'
 import { Button } from '../ui/Button'
 
 import { Loading } from '@/components/common/Loading'
-import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useEnrollment } from '@/hooks/useEnrollment'
 import { useEvent } from '@/hooks/useEvent'
 import { useProfile } from '@/hooks/useProfile'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { getExistingOrCreateNewParticipantThunk } from '@/stores/thunks/participant.thunk'
 import {
   getExistingOrCreateNewActiveSessionThunk,
   getMeetingSessionThunk,
 } from '@/stores/thunks/session.thunk'
-import { EventSessionContextType } from '@/types/event-session.type'
 
 export function MeetingSetupScreen() {
   const router = useRouter()
@@ -52,13 +52,16 @@ export function MeetingSetupScreen() {
   const { event } = useEvent({
     id: eventId as string,
   })
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
+  const enrollmentQuery = useEnrollment()
   const selfParticipant = useDyteSelector((meeting) => meeting.self)
   const { meeting } = useDyteMeeting()
   const [name, setName] = useState<string>('')
   const [isHost, setIsHost] = useState<boolean>(false)
-  const { addParticipant } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+
   const [states, setStates] = useState({})
 
   useEffect(() => {
@@ -92,14 +95,26 @@ export function MeetingSetupScreen() {
   useEffect(() => {
     if (!meetingId || isMeetingOwner === null) return
     if (meetingSession.isSuccess) return
+    if (isInBreakoutMeeting === true) return
     if (isMeetingOwner) {
       dispatch(getExistingOrCreateNewActiveSessionThunk(meetingId))
     } else dispatch(getMeetingSessionThunk({ meetingId }))
-  }, [dispatch, isMeetingOwner, meetingId, meetingSession.isSuccess])
+  }, [
+    dispatch,
+    isMeetingOwner,
+    meetingId,
+    meetingSession.isSuccess,
+    isInBreakoutMeeting,
+  ])
 
   const handleJoinMeeting = async () => {
+    dispatch(
+      getExistingOrCreateNewParticipantThunk({
+        enrollmentId: enrollmentQuery.enrollment!.id,
+        sessionId: meetingSession.data?.id || '',
+      })
+    )
     meeting.join()
-    addParticipant?.()
   }
 
   selfParticipant?.setName(
@@ -193,7 +208,9 @@ export function MeetingSetupScreen() {
               size="md"
               className="mt-2"
               color="primary"
-              disabled={meetingSession.isLoading}
+              disabled={
+                !(meetingSession.isSuccess && enrollmentQuery.isSuccess)
+              }
               onClick={handleJoinMeeting}>
               Join Meeting
             </Button>

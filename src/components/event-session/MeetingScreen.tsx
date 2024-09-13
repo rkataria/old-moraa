@@ -72,7 +72,8 @@ export function MeetingScreen() {
   )
   const breakoutFrameId = useStoreSelector(
     (store) =>
-      store.event.currentEvent.liveSessionState.breakout.breakoutFrameId
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutFrameId
   )
 
   const isScreensharing = !!screensharingParticipant || selfScreenShared

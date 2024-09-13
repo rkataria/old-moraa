@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabaseClient } from '@/utils/supabase/client'
 
 const getEnrollment = async ({
@@ -7,13 +8,19 @@ const getEnrollment = async ({
   eventId: string
   userId: string
 }) => {
-  const { data } = await supabaseClient
+  const query = supabaseClient
     .from('enrollment')
     .select('*')
     .eq('event_id', eventId)
     .eq('user_id', userId)
+    .single()
 
-  return data?.[0]
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
 }
 
 export const EnrollmentService = {

@@ -1,25 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
+import { useStoreSelector } from './useRedux'
 
-import { useAuth } from './useAuth'
-
-import { EnrollmentService } from '@/services/enrollment.service'
-
-export const useEnrollment = ({ eventId }: { eventId: string }) => {
-  const { currentUser } = useAuth()
-  const enrollmentQuery = useQuery({
-    queryKey: ['enrollment', eventId, currentUser?.id],
-    queryFn: () =>
-      EnrollmentService.getEnrollment({ eventId, userId: currentUser.id }),
-    enabled: !!eventId && !!currentUser,
-    refetchOnWindowFocus: false,
-  })
+export const useEnrollment = () => {
+  const enrollmentQuery = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.enrollment
+  )
 
   return {
     enrollment: enrollmentQuery.data,
+    isSuccess: enrollmentQuery.isSuccess,
     isLoading: enrollmentQuery.isLoading,
-    isFetching: enrollmentQuery.isFetching,
     error: enrollmentQuery.error,
     isError: enrollmentQuery.isError,
-    refetch: enrollmentQuery.refetch,
   }
 }

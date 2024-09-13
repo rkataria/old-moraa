@@ -51,7 +51,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
   } = useEventContext()
   const breakoutFrameId = useStoreSelector(
     (store) =>
-      store.event.currentEvent.liveSessionState.breakout.breakoutFrameId
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutFrameId
   )
   const { permissions } = useEventPermissions()
 

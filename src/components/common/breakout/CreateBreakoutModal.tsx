@@ -16,8 +16,9 @@ import { TwoWayNumberCounter } from '../content-types/MoraaSlide/FontSizeControl
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useStoreDispatch } from '@/hooks/useRedux'
-import { setBreakoutFrameIdAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { SessionService } from '@/services/session.service'
+import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 
 export type CreateUnplannedBreakoutModalProps = {
@@ -35,12 +36,15 @@ export function CreateUnplannedBreakoutModal({
   open,
   setOpen,
 }: CreateUnplannedBreakoutModalProps) {
-  const { meeting } = useDyteMeeting()
   const { currentFrame, presentationStatus, realtimeChannel } =
     useEventSession()
   const dispatch = useStoreDispatch()
+  const dyteMeeting = useDyteMeeting()
+  const meetingId = useStoreSelector(
+    (store) => store.event.currentEvent.meetingState.meeting.data?.id
+  )
 
-  const totalParticipants = meeting.participants.count
+  const totalParticipants = dyteMeeting.meeting.participants.count
 
   const defaultParticipantsPerRoom = distributeParticipants(
     totalParticipants,
@@ -66,7 +70,11 @@ export function CreateUnplannedBreakoutModal({
     try {
       await breakoutRoomsInstance?.startBreakoutRooms({ participantsPerRoom })
       if (presentationStatus === PresentationStatuses.STARTED) {
-        dispatch(setBreakoutFrameIdAction(currentFrame?.id || null))
+        dispatch(
+          updateMeetingSessionDataAction({
+            breakoutFrameId: currentFrame?.id || null,
+          })
+        )
       }
       setTimeout(() => {
         realtimeChannel?.send({
@@ -75,6 +83,27 @@ export function CreateUnplannedBreakoutModal({
           payload: { remainingDuration: breakoutDuration * 60 },
         })
       }, 2000)
+
+      try {
+        await SessionService.deleteAllExistingBreakoutSessions({
+          meetingId: meetingId!,
+        })
+      } catch {
+        /* empty */
+      }
+
+      SessionService.createSessionForBreakouts({
+        dyteMeetings: dyteMeeting.meeting.connectedMeetings.meetings.map(
+          (meet) => ({
+            connected_dyte_meeting_id: meet.id!,
+            data: {
+              currentFrameId: currentFrame!.id,
+              presentationStatus: PresentationStatuses.STARTED,
+            },
+            meeting_id: meetingId!,
+          })
+        ),
+      })
       setOpen(false)
     } catch (err) {
       console.log('🚀 ~ startBreakoutRooms ~ err:', err)
