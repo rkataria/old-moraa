@@ -25,6 +25,8 @@ export const initialSetup = () => {
 
   // eslint-disable-next-line wrap-iife, func-names
   fabric.Textbox.prototype.toObject = function () {
+    if (this.type !== 'TextBox') return this.toObject
+
     // eslint-disable-next-line func-names
     // @ts-expect-error silence!
     return fabric.util.object.extend(this.callSuper('toObject'), {

@@ -14,15 +14,23 @@ export function MoraaLogo({
   const getLogo = () => {
     if (filled) {
       return (
-        <img className="h-8 w-auto" src="/logo-filled.svg" alt="learign site" />
+        <img
+          className="h-6 w-auto"
+          src="/moraa-logo-lowercase.svg"
+          alt="Moraa Logo"
+        />
       )
     }
 
     return (
       <img
-        className="h-8 w-auto"
-        src={color === 'default' ? '/logo.svg' : '/logo-brand-color.svg'}
-        alt="learign site"
+        className="h-6 w-auto"
+        src={
+          color === 'default'
+            ? '/moraa-logo-lowercase-white.svg'
+            : '/moraa-logo-lowercase.svg'
+        }
+        alt="Moraa Logo"
       />
     )
   }

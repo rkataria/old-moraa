@@ -3,7 +3,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { TiptapCollabProvider, WebSocketStatus } from '@hocuspocus/provider'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
-import { Editor, useEditor } from '@tiptap/react'
+import { Content, Editor, useEditor } from '@tiptap/react'
 import Ai from '@tiptap-pro/extension-ai'
 import uniqBy from 'lodash.uniqby'
 
@@ -35,6 +35,7 @@ export const useBlockEditor = ({
   setAiToken,
   setCollabToken,
   onEmptyContent,
+  initialContent,
 }: {
   aiToken: string
   ydoc: YDoc
@@ -44,6 +45,7 @@ export const useBlockEditor = ({
   setAiToken: (t: string) => void
   setCollabToken: (t: string) => void
   onEmptyContent: () => void
+  initialContent?: Content
 }) => {
   const leftSidebar = useSidebar()
   const [collabState, setCollabState] = useState<WebSocketStatus>(
@@ -86,7 +88,9 @@ export const useBlockEditor = ({
       onCreate: ({ editor }) => {
         provider?.on('synced', () => {
           if (editor.isEmpty) {
-            // editor.commands.setContent(initialContent)
+            if (initialContent) {
+              editor.commands.setContent(initialContent)
+            }
             onEmptyContent?.()
           }
         })

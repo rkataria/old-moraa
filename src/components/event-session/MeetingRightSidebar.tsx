@@ -75,7 +75,7 @@ export function MeetingRightSidebar({
           }))
         }}
       />
-      <div className="absolute left-0 top-0 h-12 w-full bg-gray-100 z-[1]">
+      <div className="absolute left-0 top-0 h-11 w-full bg-gray-100 z-[1]">
         {renderHeader()}
       </div>
     </div>

@@ -1,6 +1,9 @@
 import { useContext, useState } from 'react'
 
 import { Button, Tab, Tabs } from '@nextui-org/react'
+import { useParams } from '@tanstack/react-router'
+import { TbListDetails } from 'react-icons/tb'
+import { TfiAgenda } from 'react-icons/tfi'
 
 import { EventInfo } from './EventInfo'
 import { FrameDetailsView } from './FrameDetailsView'
@@ -8,8 +11,10 @@ import { SessionPlanner } from './SessionPlanner/SessionPlanner'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { EventContext } from '@/contexts/EventContext'
+import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreSelector } from '@/hooks/useRedux'
+import { EventType } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
@@ -21,7 +26,10 @@ export function OverviewFrame() {
     setAddedFromSessionPlanner,
     insertInSectionId,
   } = useContext(EventContext) as EventContextType
+  const { eventId } = useParams({ strict: false })
+  const eventData = useEvent({ id: eventId! })
 
+  const { event } = eventData
   const isAddSectionLoading = useStoreSelector(
     (state) =>
       state.event.currentEvent.sectionState.createSectionThunk.isLoading
@@ -51,17 +59,53 @@ export function OverviewFrame() {
     )
   }
 
+  const tabLabelInPreview = {
+    [EventType.COURSE]: 'Agenda',
+    [EventType.WEBINAR]: 'Session Outline',
+    [EventType.WORKSHOP]: 'Activity Guide',
+  }
+
   return (
-    <div className="p-4">
+    <div className="p-4 h-full overflow-hidden">
       <div className="flex items-center justify-between">
         <Tabs
-          className="pl-4"
-          size="sm"
+          aria-label="Options"
+          color="primary"
+          variant="underlined"
           selectedKey={selectedTab}
-          onSelectionChange={(key) => setSelectedTab(key as string)}>
-          <Tab key="agenda-planner" title="Agenda Planner" />
-          <Tab key="event-info" title="Event Info" />
+          onSelectionChange={(key) => setSelectedTab(key as string)}
+          classNames={{
+            tabList:
+              'gap-8 w-full relative rounded-none p-0 border-b border-divider',
+            tab: 'max-w-fit px-0 h-12 font-semibold',
+            cursor: 'w-full h-[3px]',
+            tabContent: 'group-data-[selected=true]:text-primary',
+            base: 'pl-4',
+          }}>
+          <Tab
+            key="agenda-planner"
+            title={
+              <div className="flex items-center space-x-2">
+                <TfiAgenda size={20} />
+                <span>
+                  {preview
+                    ? [tabLabelInPreview[event.type as EventType]]
+                    : `Plan your ${event.type}`}
+                </span>
+              </div>
+            }
+          />
+          <Tab
+            key="event-info"
+            title={
+              <div className="flex items-center space-x-2">
+                <TbListDetails size={20} />
+                <span>Overview</span>
+              </div>
+            }
+          />
         </Tabs>
+
         <RenderIf isTrue={!preview}>
           <div className="flex justify-center gap-2">
             <Button
@@ -93,7 +137,7 @@ export function OverviewFrame() {
       </div>
       <div
         className={cn(
-          'h-[calc(100vh_-_126px)] py-4 overflow-y-auto scrollbar-thin',
+          'h-[calc(100vh_-126px)] py-4 overflow-y-auto scrollbar-thin',
           {
             'flex items-start gap-2': permissions.canUpdateFrame,
             'bg-gradient-to-b from-white to-[#e9e9d2]':

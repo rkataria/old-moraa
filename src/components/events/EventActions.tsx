@@ -1,6 +1,5 @@
 import { Key, useState } from 'react'
 
-import { useDisclosure } from '@nextui-org/react'
 import { IconTrash } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
@@ -9,7 +8,6 @@ import { CiEdit } from 'react-icons/ci'
 import { IoEyeOutline } from 'react-icons/io5'
 import { RxDotsVertical } from 'react-icons/rx'
 
-import { CreateEventButtonWithModal } from '../common/CreateEventButtonWithModal'
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal'
 import { DropdownActions } from '../common/DropdownActions'
 import { Button } from '../ui/Button'
@@ -60,7 +58,6 @@ export function EventActions({
   onDone: () => void
 }) {
   const router = useRouter()
-  const editEventModal = useDisclosure()
 
   const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
     useState(false)
@@ -138,25 +135,6 @@ export function EventActions({
         }
         onClose={() => setDeleteConfirmationVisible(false)}
         onConfirm={() => deleteEventMutation.mutate()}
-      />
-
-      <CreateEventButtonWithModal
-        isEdit
-        disclosure={editEventModal}
-        defaultValues={{
-          name: event.name,
-          description: event?.description,
-          eventType: 'workshop',
-          id: event.id,
-          imageUrl: event.image_url || '',
-        }}
-        buttonProps={{
-          className:
-            'w-auto h-auto flex items-center !gap-2 hover:bg-transparent',
-          variant: 'light',
-          isIconOnly: true,
-        }}
-        onDone={onDone}
       />
     </>
   )

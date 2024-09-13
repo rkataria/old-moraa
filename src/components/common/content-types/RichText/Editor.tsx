@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react'
 
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import 'iframe-resizer/js/iframeResizer.contentWindow'
+import { Content } from '@tiptap/core'
 import { Doc as YDoc } from 'yjs'
 
 import { Loading } from '../../Loading'
@@ -24,7 +25,8 @@ export function RichTextEditor({
   classNames,
   onEmptyContent,
   startContent,
-  visibleSideBar,
+  hideSideBar,
+  initalContent,
 }: {
   editorId: string
   editable?: boolean
@@ -33,7 +35,8 @@ export function RichTextEditor({
   classNames?: any
   onEmptyContent?: () => void
   startContent?: ReactNode
-  visibleSideBar?: boolean
+  hideSideBar?: boolean
+  initalContent?: Content
 }) {
   const [provider, setProvider] = useState<TiptapCollabProvider | null>(null)
   const [collabToken, setCollabToken] = useState<string | null>(null)
@@ -100,7 +103,8 @@ export function RichTextEditor({
         classNames={classNames}
         onEmptyContent={onEmptyContent}
         startContent={startContent}
-        visibleSideBar={visibleSideBar}
+        hideSideBar={hideSideBar}
+        initialContent={initalContent}
       />
     </div>
   )

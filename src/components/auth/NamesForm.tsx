@@ -6,12 +6,13 @@ import {
   ModalHeader,
   ModalBody,
   Input,
-  Button,
 } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+
+import { Button } from '../ui/Button'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
@@ -149,6 +150,7 @@ export function NamesForm({
                 </div>
                 <div className="flex justify-end items-center mt-8 mb-4">
                   <Button
+                    size="sm"
                     type="submit"
                     color="primary"
                     disabled={isLoading}

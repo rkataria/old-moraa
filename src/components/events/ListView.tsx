@@ -66,7 +66,10 @@ export function ListView({
                 },
                 showFallback: event.image_url?.length > 0,
               }}
-              classNames={{ description: 'text-slate-400 ' }}
+              classNames={{
+                description:
+                  'text-slate-400 line-clamp-2 break-word max-w-[400px]',
+              }}
             />
           )
         case 'full_name':

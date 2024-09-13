@@ -35,6 +35,7 @@
     "@headlessui/react": "^2.1.2",
     "@hocuspocus/provider": "^2.13.5",
     "@hookform/resolvers": "^3.9.0",
+    "@hotjar/browser": "^1.0.9",
     "@internationalized/date": "^3.5.4",
     "@nextui-org/button": "^2.0.35",
     "@nextui-org/react": "^2.4.6",

@@ -4,8 +4,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
 } from '@nextui-org/react'
+
+import { Button } from '../ui/Button'
 
 import { IFrame } from '@/types/frame.type'
 
@@ -39,10 +40,17 @@ export function DeleteFrameModal({
               </p>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button
+                size="sm"
+                color="danger"
+                variant="light"
+                onPress={onClose}>
                 Cancel
               </Button>
-              <Button color="primary" onPress={() => handleDelete(frame)}>
+              <Button
+                size="sm"
+                color="primary"
+                onPress={() => handleDelete(frame)}>
                 Delete
               </Button>
             </ModalFooter>
