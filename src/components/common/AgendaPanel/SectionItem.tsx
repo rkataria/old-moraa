@@ -207,7 +207,7 @@ export function SectionItem({
               actionDisabled={actionDisabled}
             />
             <RenderIf
-              isTrue={!sidebarExpanded && sectionExpanded && frames.length > 4}>
+              isTrue={!sidebarExpanded && sectionExpanded && frames.length > 2}>
               <div
                 className={cn(
                   'h-[96%] w-0 absolute border-l-1 border-dashed -top-0.5 left-1.5 border-gray-400  after:absolute after:w-[5px] after:h-[5px] after:rounded-full after:bg-gray-400  after:-left-[3px] after:bottom-0',
