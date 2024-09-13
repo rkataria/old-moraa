@@ -156,11 +156,11 @@ export function SectionItem({
         placement="right"
         showArrow>
         <div
-          className={cn('flex gap-2 items-center py-1')}
+          className={cn('flex gap-1.5 items-center py-1')}
           onClick={handleSectionClick}>
           <IoChevronForward
             className={cn('duration-300 shrink-0 cursor-pointer', {
-              'rotate-90': sectionExpanded,
+              'rotate-90 text-primary': sectionExpanded,
             })}
           />
 
@@ -218,17 +218,17 @@ export function SectionItem({
                 )}
               />
 
-              <span
+              <p
                 style={{ writingMode: 'vertical-lr' }}
                 className={cn(
-                  'absolute -left-0.5 -translate-y-2/4 text-xs font origin-center top-2/4 py-0.5 rotate-180 bg-background min-w-max text-gray-400 line-clamp-1 w-fit',
+                  'absolute -left-0.5 -translate-y-[50%] text-xs py-2 h-max font origin-center top-[45%] rotate-180 bg-background min-w-max text-gray-400 w-fit',
                   {
                     'text-primary font-bold':
                       sectionActive || insertInSectionId === section.id,
                   }
                 )}>
-                {section.name}
-              </span>
+                {section.name.slice(0, section.frames.length * 3)}
+              </p>
             </RenderIf>
           </div>
         )}

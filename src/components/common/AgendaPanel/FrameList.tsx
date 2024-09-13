@@ -2,7 +2,7 @@
 /* eslint-disable array-callback-return */
 import { ReactNode } from 'react'
 
-import { Chip } from '@nextui-org/react'
+import { Badge } from '@nextui-org/react'
 import { Draggable } from 'react-beautiful-dnd'
 
 import { FrameItem } from './FrameItem'
@@ -90,12 +90,12 @@ export function FrameList({
                           duplicateFrame={duplicateFrame}
                           actionDisabled={actionDisabled}
                         />
-                        <Chip
-                          size="sm"
-                          variant="light"
-                          className="absolute -left-[26px] top-[4px] border text-gray-400 scale-[0.8] hidden group-hover/agenda-frame:flex">
-                          {sectionStartingIndex + frameIndex}
-                        </Chip>
+                        <Badge
+                          color="default"
+                          className="absolute !-left-6 !top-[-1.625rem] hidden scale-[0.8] bg-gray-100 !border-gray-300 !w-fit !right-0 !translate-x-0 !translate-y-0 border text-gray-800  group-hover/agenda-frame:flex"
+                          content={sectionStartingIndex + frameIndex}>
+                          {' '}
+                        </Badge>
                         <RenderIf
                           isTrue={
                             (currentFrame?.type === ContentType.BREAKOUT &&
