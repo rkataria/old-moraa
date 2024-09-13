@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react'
 
 import Masonry from 'react-responsive-masonry'
-import { createApi } from 'unsplash-js'
+import { createApi, Orientation } from 'unsplash-js'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
 
 import { SearchInput } from './SearchInput'
@@ -23,8 +23,10 @@ const DEFAULT_SEARCH_TEXT = 'creative'
 const PER_PAGE_COUNT = 12
 
 export function UnsplashContent({
+  orientation = 'landscape',
   onSelect,
 }: {
+  orientation?: Orientation
   onSelect: (imageElment: HTMLImageElement) => void
 }) {
   const [searchText, setSearchText] = useState<string>(DEFAULT_SEARCH_TEXT)
@@ -39,7 +41,8 @@ export function UnsplashContent({
         query: searchText || DEFAULT_SEARCH_TEXT,
         page: currentPage,
         perPage: PER_PAGE_COUNT,
-        // orientation: 'landscape',
+        orientation,
+        orderBy: 'relevant',
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((result) => {
@@ -57,7 +60,7 @@ export function UnsplashContent({
       .catch(() => {
         setError('Something went wrong. Please try again later.')
       })
-  }, [searchText, currentPage])
+  }, [searchText, currentPage, orientation])
 
   const renderContent = () => {
     if (images.length === 0 && !error) {

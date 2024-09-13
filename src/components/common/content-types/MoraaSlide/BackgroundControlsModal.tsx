@@ -101,6 +101,7 @@ export function BackgroundControlsModal({
                   <div className="flex justify-between items-center">
                     <h3>Image</h3>
                     <MediaPicker
+                      ImageOrientation="landscape"
                       placement="left"
                       trigger={
                         <Button variant="bordered" size="sm">
@@ -119,7 +120,7 @@ export function BackgroundControlsModal({
                               left: 0,
                               top: 0,
                             })
-
+                            img.scaleToWidth(canvas.getWidth() * 1.1) // NOTE: Factor of 1.1 is to make it cover the entire canvas
                             canvas.backgroundImage = img
                             canvas.renderAll()
                             canvas.fire('object:modified')

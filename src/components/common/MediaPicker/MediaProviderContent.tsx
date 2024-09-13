@@ -3,6 +3,8 @@
 /* eslint-disable no-unused-expressions */
 import { useState } from 'react'
 
+import { Orientation } from 'unsplash-js'
+
 import { Icon8Content } from './Icon8Content'
 import { ImageCropper } from './ImageCropper'
 import { LibraryContent } from './LibraryContent'
@@ -15,11 +17,13 @@ export enum MediaProviderType {
 }
 
 export function MediaProviderContent({
+  ImageOrientation,
   provider,
   fileType,
   crop,
   onSelectCallback,
 }: {
+  ImageOrientation?: Orientation
   provider: MediaProviderType
   fileType?: 'images' | 'videos'
   crop?: boolean
@@ -59,7 +63,10 @@ export function MediaProviderContent({
   const renderersByMediaProvider: Record<MediaProviderType, React.ReactNode> = {
     [MediaProviderType.LIBRARY]: <LibraryContent />,
     [MediaProviderType.UNSPLASH]: (
-      <UnsplashContent onSelect={handleImageSelect} />
+      <UnsplashContent
+        orientation={ImageOrientation}
+        onSelect={handleImageSelect}
+      />
     ),
     [MediaProviderType.ICON8]: <Icon8Content />,
   }
