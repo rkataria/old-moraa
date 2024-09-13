@@ -215,7 +215,12 @@ export function FrameItem({
             />
           </div>
           <Tags frameId={frame.id} config={frame.config} />
-          <Note frameId={frame.id} notes={frame.notes} placeholder="" />
+
+          <Note
+            frameId={frame.id}
+            notes={frame.notes}
+            placeholder={preview ? '' : 'Click here to add notes'}
+          />
           {editable && (
             <div
               className={cn('items-center justify-center scale-75 hidden', {
