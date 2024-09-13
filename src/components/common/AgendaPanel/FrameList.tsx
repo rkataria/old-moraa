@@ -2,6 +2,7 @@
 /* eslint-disable array-callback-return */
 import { ReactNode } from 'react'
 
+import { Chip } from '@nextui-org/react'
 import { Draggable } from 'react-beautiful-dnd'
 
 import { FrameItem } from './FrameItem'
@@ -20,6 +21,8 @@ type FrameListProps = {
   showList: boolean
   droppablePlaceholder: ReactNode
   duplicateFrame: (frame: IFrame) => void
+  sectionStartingIndex: number
+  actionDisabled: boolean
 }
 
 export function FrameList({
@@ -27,6 +30,8 @@ export function FrameList({
   showList,
   droppablePlaceholder,
   duplicateFrame,
+  sectionStartingIndex,
+  actionDisabled,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
   const { sections, currentFrame, insertAfterFrameId, currentSectionId } =
@@ -56,9 +61,9 @@ export function FrameList({
 
   return (
     <div
-      className={cn('flex flex-col gap-1', {
+      className={cn('relative flex flex-col gap-1', {
         'p-2 pl-6 pr-0': sidebarExpanded,
-        'py-2': !sidebarExpanded,
+        'py-1': !sidebarExpanded,
       })}>
       {showList &&
         frames?.map(
@@ -67,8 +72,9 @@ export function FrameList({
               <RenderIf
                 key={frame.id}
                 isTrue={!frame?.content?.breakoutFrameId}>
-                <div className="flex flex-col">
+                <div className="relative flex flex-col  group/agenda-frame">
                   <Draggable
+                    isDragDisabled={actionDisabled}
                     key={`frame-draggable-${frame?.id}`}
                     draggableId={`frame-draggable-frameId-${frame?.id}`}
                     index={frameIndex}>
@@ -82,7 +88,14 @@ export function FrameList({
                         <FrameItem
                           frame={frame}
                           duplicateFrame={duplicateFrame}
+                          actionDisabled={actionDisabled}
                         />
+                        <Chip
+                          size="sm"
+                          variant="light"
+                          className="absolute -left-[26px] top-[4px] border text-gray-400 scale-[0.8] hidden group-hover/agenda-frame:flex">
+                          {sectionStartingIndex + frameIndex}
+                        </Chip>
                         <RenderIf
                           isTrue={
                             (currentFrame?.type === ContentType.BREAKOUT &&
@@ -103,6 +116,7 @@ export function FrameList({
                                 <FrameItem
                                   frame={f}
                                   duplicateFrame={duplicateFrame}
+                                  actionDisabled={actionDisabled}
                                 />
                               </div>
                             ))}

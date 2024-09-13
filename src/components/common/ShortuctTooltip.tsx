@@ -11,7 +11,7 @@ import { RenderIf } from './RenderIf/RenderIf'
 import { cn } from '@/utils/utils'
 
 export type TooltipComponentProps = {
-  label?: string
+  label?: string | ReactNode
   systemKeys?: KbdKey | KbdKey[]
   actionKey?: string
   content?: ReactNode

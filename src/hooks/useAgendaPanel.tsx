@@ -46,7 +46,9 @@ export function AgendaPanelContextProvider({
 
   const { permissions } = useEventPermissions()
 
-  const [expandedSectionIds, setExpandedSectionIds] = useState<string[]>([])
+  const [expandedSectionIds, setExpandedSectionIds] = useState<string[]>([
+    sections[0].id,
+  ])
   const [listDisplayMode, setListDisplayMode] =
     useState<ListDisplayMode>('list')
   const [expanded, setExpanded] = useState<boolean>(false)

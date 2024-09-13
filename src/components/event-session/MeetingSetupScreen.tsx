@@ -137,7 +137,9 @@ export function MeetingSetupScreen() {
       <div className="mb-12">
         <h1 className="mb-2 text-5xl font-black text-center">{event.name}</h1>
         {event.description && (
-          <p className="text-center text-gray-500">{event.description}</p>
+          <p className="text-center text-gray-500 line-clamp-[2] max-w-[56.25rem]">
+            {event.description}
+          </p>
         )}
       </div>
       <div className="flex justify-center items-center gap-4">

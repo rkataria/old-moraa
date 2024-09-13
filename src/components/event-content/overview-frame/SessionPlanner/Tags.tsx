@@ -10,6 +10,7 @@ import {
 } from '@nextui-org/react'
 import { AiOutlineClose } from 'react-icons/ai'
 
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
@@ -117,52 +118,55 @@ export function Tags({
 
   return (
     <div className="relative p-2 border-x-2 group/frame_tags ">
-      <Popover
-        placement="bottom"
-        isOpen={isOpen}
-        onOpenChange={(open) => setIsOpen(open)}>
-        <PopoverTrigger>
-          <Button
-            isDisabled={preview}
-            isIconOnly={ifFramehasTags}
-            variant="light"
-            className={cn('z-[100] text-primary/80', {
-              'absolute bottom-0 right-0 w-6 h-6 min-w-6 m-1 opacity-0 group-hover/frame_tags:opacity-100 border-1':
-                ifFramehasTags,
-              'w-full h-full': !ifFramehasTags,
-            })}>
-            {ifFramehasTags ? '+' : '+ Add Tags'}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent>
-          <div className="px-1 py-2">
-            <Input
-              value={tag}
-              placeholder="Write a tag"
-              onChange={(e) => setTag(e.target.value)}
-              endContent={
-                <Button
-                  onClick={handleAddTag}
-                  className="-mr-3"
-                  color="primary"
-                  variant="solid">
-                  + Add
-                </Button>
-              }
-              onKeyDown={handleKeyDown}
-              errorMessage={error}
-              isInvalid={!!error}
-            />
-            <div className="flex flex-wrap gap-2 mt-4">
-              {tags.map((addedTag) => (
-                <Chip onClose={() => removeTag(addedTag)} variant="bordered">
-                  {addedTag}
-                </Chip>
-              ))}
+      <RenderIf isTrue={!preview}>
+        <Popover
+          placement="bottom"
+          isOpen={isOpen}
+          onOpenChange={(open) => setIsOpen(open)}>
+          <PopoverTrigger>
+            <Button
+              isDisabled={preview}
+              isIconOnly={ifFramehasTags}
+              variant="light"
+              className={cn('z-[100] text-primary/80', {
+                'absolute bottom-0 right-0 w-6 h-6 min-w-6 m-1 opacity-0 group-hover/frame_tags:opacity-100 border-1':
+                  ifFramehasTags,
+                'w-full h-full': !ifFramehasTags,
+              })}>
+              {ifFramehasTags ? '+' : '+ Add Tags'}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div className="px-1 py-2">
+              <Input
+                value={tag}
+                placeholder="Write a tag"
+                onChange={(e) => setTag(e.target.value)}
+                endContent={
+                  <Button
+                    onClick={handleAddTag}
+                    className="-mr-3"
+                    color="primary"
+                    variant="solid">
+                    + Add
+                  </Button>
+                }
+                onKeyDown={handleKeyDown}
+                errorMessage={error}
+                isInvalid={!!error}
+              />
+              <div className="flex flex-wrap gap-2 mt-4">
+                {tags.map((addedTag) => (
+                  <Chip onClose={() => removeTag(addedTag)} variant="bordered">
+                    {addedTag}
+                  </Chip>
+                ))}
+              </div>
             </div>
-          </div>
-        </PopoverContent>
-      </Popover>
+          </PopoverContent>
+        </Popover>
+      </RenderIf>
+
       <div className="flex gap-1 flex-wrap max-h-[106px] overflow-y-scroll scrollbar-none">
         {frameTags?.map((frameTag) => (
           <Chip

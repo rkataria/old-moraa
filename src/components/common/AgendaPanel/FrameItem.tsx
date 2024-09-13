@@ -12,6 +12,7 @@ import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
 import { RenderIf } from '../RenderIf/RenderIf'
+import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
@@ -30,14 +31,18 @@ import { cn } from '@/utils/utils'
 type FrameItemProps = {
   frame: IFrame
   duplicateFrame: (frame: IFrame) => void
+  actionDisabled: boolean
 }
 
 type FrameActionKey = 'delete' | 'move-up' | 'move-down' | 'duplicate-frame'
 
-export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
+export function FrameItem({
+  frame,
+  duplicateFrame,
+  actionDisabled,
+}: FrameItemProps) {
   const {
     currentFrame,
-    preview,
     overviewOpen,
     eventMode,
     updateFrame,
@@ -116,9 +121,6 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
-  const editable =
-    permissions.canUpdateFrame && !preview && eventMode === 'edit'
-
   const frameActive =
     !overviewOpen && !currentSectionId && currentFrame?.id === frame?.id
 
@@ -169,11 +171,11 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                   classNames="text-gray-800"
                 />
                 <EditableLabel
-                  readOnly={!editable}
+                  readOnly={actionDisabled}
                   label={frame.name}
                   className="text-sm tracking-tight"
                   onUpdate={(value) => {
-                    if (!editable) return
+                    if (actionDisabled) return
                     if (frame.name === value) return
 
                     updateFrame({
@@ -183,7 +185,8 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
                   }}
                 />
               </div>
-              <RenderIf isTrue={editable && !frame?.content?.breakoutFrameId}>
+              <RenderIf
+                isTrue={!actionDisabled && !frame?.content?.breakoutFrameId}>
                 <div className={cn('hidden group-hover/frame-item:block')}>
                   <FrameActions
                     triggerIcon={
@@ -202,25 +205,35 @@ export function FrameItem({ frame, duplicateFrame }: FrameItemProps) {
     }
 
     return (
-      <div
-        data-miniframe-id={frame?.id}
-        className={cn('flex justify-center items-center')}>
-        <Button
-          size="sm"
-          isIconOnly
-          className={cn('m-auto bg-gray-100 hover:bg-gray-200', {
-            'bg-primary-200': frameActive,
-          })}
-          onClick={() => {
-            handleFrameItemClick(frame)
-          }}>
-          <ContentTypeIcon
-            frameType={frame.type}
-            classNames="text-black h-4 w-4"
-            tooltipProps={{ placement: 'right', offset: 12 }}
-          />
-        </Button>
-      </div>
+      <Tooltip label={frame.name} placement="right" showArrow>
+        <div
+          data-miniframe-id={frame?.id}
+          className={cn('relative flex justify-center items-center pl-6')}>
+          <Button
+            variant="light"
+            size="sm"
+            isIconOnly
+            className={cn(
+              'm-auto py-0.5 !min-w-auto w-auto h-auto bg-transparent',
+              {
+                'bg-primary/30': frameActive,
+              }
+            )}
+            onClick={() => {
+              handleFrameItemClick(frame)
+            }}>
+            <ContentTypeIcon
+              frameType={frame.type}
+              classNames={cn('h-[22px] w-[22px] text-gray-400', {
+                'text-primary': frameActive,
+              })}
+              tooltipProps={{
+                isDisabled: true,
+              }}
+            />
+          </Button>
+        </div>
+      </Tooltip>
     )
   }
 

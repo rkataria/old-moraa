@@ -126,7 +126,7 @@ export function ScheduleEventButtonWithModal({
         const render = withoutModal ? renderProps.hasNewChanges : true
 
         return !render ? null : (
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end my-4">
             <Button
               size="sm"
               variant="bordered"
