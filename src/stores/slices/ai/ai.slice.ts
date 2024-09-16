@@ -37,6 +37,16 @@ export const aiChatSlice = createSlice({
     addMessageInBulk(state, action) {
       state.messages = state.messages.concat(action.payload)
     },
+
+    updateMessage(state, action) {
+      state.messages = state.messages.map((message) => {
+        if (message.id === action.payload.id) {
+          return action.payload
+        }
+
+        return message
+      })
+    },
     setMessages(state, action) {
       state.messages = action.payload
     },
@@ -70,5 +80,7 @@ export const {
   setInputAction,
   addMessageAction,
   addMessageInBulkAction,
+  updateMessageAction,
+  addMessageInBulk2Action,
   setMessagesAction,
 } = renameSliceActions(aiChatSlice.actions)

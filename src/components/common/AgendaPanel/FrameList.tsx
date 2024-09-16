@@ -59,6 +59,13 @@ export function FrameList({
     return null
   }
 
+  const previousUnrenderedBreakouts = (frameId: string) => {
+    const currentFrameIndex = frames.findIndex((f) => f.id === frameId)
+    const prevIds = frames.slice(0, currentFrameIndex)
+
+    return prevIds.filter((f) => f?.content?.breakoutFrameId).length
+  }
+
   return (
     <div
       className={cn('relative flex flex-col gap-1', {
@@ -93,7 +100,11 @@ export function FrameList({
                         <Badge
                           color="default"
                           className="absolute !-left-6 !top-[-1.625rem] hidden scale-[0.8] bg-gray-100 !border-gray-300 !w-fit !right-0 !translate-x-0 !translate-y-0 border text-gray-800  group-hover/agenda-frame:flex"
-                          content={sectionStartingIndex + frameIndex}>
+                          content={
+                            sectionStartingIndex +
+                            frameIndex -
+                            previousUnrenderedBreakouts(frame.id)
+                          }>
                           {' '}
                         </Badge>
                         <RenderIf

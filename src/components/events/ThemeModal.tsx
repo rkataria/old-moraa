@@ -19,71 +19,37 @@ import { Button } from '../ui/Button'
 
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
+import { PatternKeys, PatternStyles } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
 const quantumns = [
   {
     label: 'Summer',
-    colors: [
-      '#FFF9C4', // Light Sunshine Yellow
-      '#FF8A80', // Light Coral Pink
-      '#B3E5FC', // Light Sky Blue
-      '#FFEBEE', // Light Pink (new)
-    ],
+    colors: ['#FFF9C4', '#FF8A80', '#B3E5FC', '#FFEBEE'],
   },
   {
     label: 'Melon',
-    colors: [
-      '#FBD5C1', // Light Cantaloupe
-      '#E6F7D2', // Light Honeydew
-      '#FF9AA2', // Light Watermelon Pink
-      '#FCE5CD', // Light Apricot (new)
-    ],
+    colors: ['#FBD5C1', '#E6F7D2', '#FF9AA2', '#FCE5CD'],
   },
   {
     label: 'Barbie',
-    colors: [
-      '#FF80AB', // Lighter Hot Pink
-      '#FFCCCB', // Lighter Bubblegum Pink
-      '#FF66B2', // Lighter Fuchsia
-      '#F3A9B6', // Light Blush Pink (new)
-    ],
+    colors: ['#FF80AB', '#FFCCCB', '#FF66B2', '#F3A9B6'],
   },
   {
     label: 'Sunset',
-    colors: [
-      '#FFB74D', // Lighter Tangerine
-      '#FF8A80', // Lighter Sunset Orange
-      '#F3B8B1', // Lighter Dusky Pink
-      '#FFE0B2', // Light Cream (new)
-    ],
+    colors: ['#FFB74D', '#FF8A80', '#F3B8B1', '#FFE0B2'],
   },
   {
     label: 'Ocean',
-    colors: [
-      '#80E0D0', // Lighter Turquoise
-      '#4CAF50', // Lighter Seafoam Green
-      '#003D79', // Lighter Deep Navy
-      '#B2DFDB', // Light Mint (new)
-    ],
+    colors: ['#80E0D0', '#4CAF50', '#003D79', '#B2DFDB'],
   },
   {
     label: 'Forest',
-    colors: [
-      '#B4B4A6', // Lighter Moss Green
-      '#3B9A8D', // Lighter Pine Green
-      '#6D8F6A', // Lighter Olive Green
-      '#C5E1A5', // Light Lime Green (new)
-    ],
+    colors: ['#B4B4A6', '#3B9A8D', '#6D8F6A', '#C5E1A5'],
   },
   {
     label: 'Lavender',
-    colors: [
-      '#F6E9F1', // Lighter Lavender Blush
-      '#EAE6F0', // Lighter Misty Lavender
-      '#D6C8E0', // Lighter Heather
-      '#F3E5F5', // Light Lilac (new)
-    ],
+    colors: ['#F6E9F1', '#EAE6F0', '#D6C8E0', '#F3E5F5'],
   },
 ]
 
@@ -113,6 +79,7 @@ const Colors = [
   '#FFEBCD',
   '#F0FFF0',
 ]
+const Patterns = ['Cross', 'Plus', 'Polka', 'Waves', 'Zigzag', 'Micobial Mat']
 
 export const Themes = [
   {
@@ -133,12 +100,12 @@ export const Themes = [
     haveColor: true,
     items: Emojis,
   },
-  // {
-  //   label: 'Pattern',
-  //   image: '/images/invite/pattern-template.png',
-  //   items: ['Cross', 'Hypnotic', 'Plus', 'Polkadot', 'Wave', 'Zigzag'],
-  //   haveColor: true,
-  // },
+  {
+    label: 'Pattern',
+    image: '/images/invite/pattern-template.png',
+    items: Patterns,
+    haveColor: true,
+  },
   //   {
   //     label: 'Confetti',
   //     image: '/images/invite/confetti-template.png',
@@ -193,13 +160,19 @@ export function ThemeModal({
 
         break
 
+      case 'Pattern':
+        newTheme.theme = _selectedTheme.label
+        // eslint-disable-next-line prefer-destructuring
+        newTheme.colors = Patterns[0]
+
+        break
+
       default:
         console.log('default')
     }
     setSelectedTheme(newTheme)
     onChange(newTheme)
   }
-  console.log(selectedTheme)
 
   const handleItemchange = (
     selectedItem: string | { label: string; colors: string[] }
@@ -329,7 +302,7 @@ export function ThemeModal({
                           }
 
                           return (
-                            <div className="text-center">
+                            <div className="text-center cursor-pointer">
                               <div
                                 onClick={() => handleItemchange(item)}
                                 style={{
@@ -345,6 +318,28 @@ export function ThemeModal({
                               />
                               <p className="mt-4 text-xs text-gray-400">
                                 {quantum.label}
+                              </p>
+                            </div>
+                          )
+                        }
+                        if (selectedTheme?.theme === 'Pattern') {
+                          return (
+                            <div
+                              className="text-center cursor-pointer"
+                              onClick={() => handleItemchange(item)}>
+                              <div
+                                onClick={() => handleItemchange(item)}
+                                className={cn(
+                                  'border-2 w-10 h-10 rounded-full',
+                                  {
+                                    'border-primary':
+                                      selectedTheme.colors === item,
+                                  },
+                                  PatternStyles[item as PatternKeys]
+                                )}
+                              />
+                              <p className="mt-4 text-xs text-gray-400">
+                                {item as string}
                               </p>
                             </div>
                           )
