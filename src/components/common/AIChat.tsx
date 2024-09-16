@@ -69,12 +69,12 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       content = `${event.name}, ${event.description}`
     }
     const topic = `"${content}"`
-    const aiId = uuidv4()
+    const processingMessageId = uuidv4()
     dispatch(
       addMessageInBulkAction([
         { id: uuidv4(), role: 'user', content: 'Generate Poll for me' },
         {
-          id: aiId,
+          id: processingMessageId,
           role: 'assistant',
           content: 'Generating Poll. Please wait...',
           status: 'processing',
@@ -86,7 +86,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
     if (message) {
       dispatch(
         updateMessageAction({
-          id: aiId,
+          id: processingMessageId,
           content: message,
           status: 'processed',
           role: 'assistant',
@@ -119,12 +119,12 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   }
 
   const handleSummarizeSection = async () => {
-    const aiId = uuidv4()
+    const processingMessageId = uuidv4()
     dispatch(
       addMessageInBulkAction([
         { id: uuidv4(), role: 'user', content: 'Summarize current section' },
         {
-          id: aiId,
+          id: processingMessageId,
           role: 'assistant',
           content: 'Creating a summary frame. Please wait...',
           status: 'processing',
@@ -136,7 +136,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
 
     dispatch(
       updateMessageAction({
-        id: aiId,
+        id: processingMessageId,
         content: message,
         status: 'processed',
         role: 'assistant',
