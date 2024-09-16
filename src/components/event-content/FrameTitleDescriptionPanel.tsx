@@ -13,8 +13,6 @@ export const frameTypesWithTitle = [
   ContentType.VIDEO_EMBED,
   ContentType.VIDEO,
   ContentType.REFLECTION,
-  ContentType.GOOGLE_SLIDES,
-  ContentType.GOOGLE_SLIDES_IMPORT,
   ContentType.PDF_VIEWER,
   ContentType.MORAA_BOARD,
   ContentType.BREAKOUT,
@@ -26,8 +24,6 @@ export const frameTypesWithDescription = [
   ContentType.VIDEO_EMBED,
   ContentType.MIRO_EMBED,
   ContentType.VIDEO,
-  ContentType.GOOGLE_SLIDES,
-  ContentType.GOOGLE_SLIDES_IMPORT,
   ContentType.PDF_VIEWER,
   ContentType.MORAA_BOARD,
   ContentType.BREAKOUT,
@@ -45,19 +41,6 @@ export function FrameTitleDescriptionPanel() {
     currentFrame.type
   )
 
-  // const getTitle = () => {
-  //   if (currentFrame.type === ContentType.REFLECTION) {
-  //     return <FrameText disableEnter type="title" />
-  //   }
-
-  //   return (
-  //     <FrameTextBlock
-  //       blockType="header"
-  //       editableId={editableId}
-  //       onClick={(blockId: string) => setEditableId(blockId)}
-  //     />
-  //   )
-  // }
   const getTitle = () => <FrameText disableEnter type="title" />
   const getDescription = () => (
     <FrameTextBlock
