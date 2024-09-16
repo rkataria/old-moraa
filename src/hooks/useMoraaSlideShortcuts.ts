@@ -65,8 +65,7 @@ export function useMoraaSlideShortcuts() {
     }
   })
 
-  // Paste shortcut
-  useHotkeys('ctrl+v', () => {
+  const pasteContent = () => {
     if (!canvas) return
 
     const activeObject = canvas.getActiveObject()
@@ -138,7 +137,13 @@ export function useMoraaSlideShortcuts() {
         }
       })
     })
-  })
+  }
+
+  // Paste shortcut for mac
+  useHotkeys('cmd+v', pasteContent)
+
+  // Paste shortcut for windows
+  useHotkeys('ctrl+v', pasteContent)
 
   // Undo shortcut
   useHotkeys('ctrl+z', () => {
