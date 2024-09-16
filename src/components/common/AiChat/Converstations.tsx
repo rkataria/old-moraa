@@ -1,19 +1,17 @@
 import { motion } from 'framer-motion'
 import * as marked from 'marked'
 
+import { RenderIf } from '../RenderIf/RenderIf'
+
 import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
 
 export function Converstations() {
   const { messages, loading } = useStoreSelector((state) => state.ai.chat)
 
-  const createMarkup = (content: string) => {
-    if (!content) {
-      return { __html: '' }
-    }
-
-    return { __html: marked.marked(content) }
-  }
+  const createMarkup = (content: string) => ({
+    __html: content ? marked.marked(content) : '',
+  })
 
   const renderLoading = () => {
     if (!loading) return null
@@ -79,7 +77,7 @@ export function Converstations() {
                 message.role !== 'user',
             }
           )}>
-          {message.status === 'processing' ? (
+          <RenderIf isTrue={message.status === 'processing'}>
             <div className="pl-2">
               <svg
                 width="38"
@@ -137,9 +135,8 @@ export function Converstations() {
                 </defs>
               </svg>
             </div>
-          ) : (
-            ''
-          )}
+          </RenderIf>
+
           <div
             className={cn('text-sm px-4 py-3 rounded-md tracking-tight', {
               'text-right self-end': message.role === 'user',

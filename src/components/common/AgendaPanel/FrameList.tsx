@@ -59,7 +59,7 @@ export function FrameList({
     return null
   }
 
-  const previousUnrenderedBreakouts = (frameId: string) => {
+  const previousUnrenderedNestedBreakoutsCount = (frameId: string) => {
     const currentFrameIndex = frames.findIndex((f) => f.id === frameId)
     const prevIds = frames.slice(0, currentFrameIndex)
 
@@ -103,7 +103,7 @@ export function FrameList({
                           content={
                             sectionStartingIndex +
                             frameIndex -
-                            previousUnrenderedBreakouts(frame.id)
+                            previousUnrenderedNestedBreakoutsCount(frame.id)
                           }>
                           {' '}
                         </Badge>

@@ -42,9 +42,12 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
   const { data: userProfile } = useProfile()
-  const { currentFrame, currentSectionId, sections } = useContext(
+  const { currentFrame, currentSectionId, sections, overviewOpen } = useContext(
     EventContext
   ) as EventContextType
+
+  const sectionId =
+    currentSectionId || currentFrame?.section_id || sections[0].id
 
   useEffect(() => {
     if (lastMessagePlaceholderRef.current) {
@@ -96,10 +99,6 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   async function generatePoll(topic: string): Promise<any> {
     try {
       // We need section id to put the poll in
-      const sectionId =
-        currentSectionId ||
-        currentFrame?.section_id ||
-        (sections?.at(-1)?.id as string)
 
       const url = `${import.meta.env.VITE_API_BASE_URL}/generations/generate-poll`
 
@@ -133,8 +132,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       ])
     )
 
-    const sectionId = currentSectionId ?? sections[0].id
-    const message = await summarizeSection(sectionId, meeting.id)
+    const message = await summarizeSection(meeting.id)
 
     dispatch(
       updateMessageAction({
@@ -147,7 +145,6 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   }
 
   async function summarizeSection(
-    sectionId: string,
     meetingId: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
@@ -231,21 +228,22 @@ export function AIChat({ onClose }: { onClose: () => void }) {
             <div className="grid gap-3">
               <Button
                 variant="bordered"
-                className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
+                className="justify-start h-[2.0625rem] px-2 font-medium text-black/80 border-1 border-primary-400 bg-primary-100"
                 onClick={handleGeneratePoll}
                 startContent={
                   <HiOutlineChartBarSquare className="text-[1.5rem] shrink-0" />
                 }>
-                Generate Interactive Polls
+                Generate{' '}
+                {overviewOpen ? 'a poll in 1st section' : 'interactive poll'}
               </Button>
               <Button
                 variant="bordered"
-                className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
+                className="justify-start h-[2.0625rem] px-2 font-medium text-black/80 border-1 border-primary-400 bg-primary-100"
                 onClick={handleSummarizeSection}
                 startContent={
                   <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
                 }>
-                Summarize Section
+                Summarize {overviewOpen ? '1st' : ''} section
               </Button>
             </div>
           </div>
@@ -285,7 +283,8 @@ export function AIChat({ onClose }: { onClose: () => void }) {
               startContent={
                 <HiOutlineChartBarSquare className="text-[1.5rem] shrink-0" />
               }>
-              Generate Polls
+              Generate{' '}
+              {overviewOpen ? 'poll in 1st section' : 'interactive poll'}
             </Button>
             <Button
               variant="bordered"
@@ -294,7 +293,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
               startContent={
                 <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
               }>
-              Summarize Section
+              Summarize {overviewOpen ? '1st' : ''} section
             </Button>
           </div>
         </RenderIf>
