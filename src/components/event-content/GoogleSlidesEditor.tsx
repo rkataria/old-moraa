@@ -5,9 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Checkbox, Chip, Input } from '@nextui-org/react'
 import { Controller, useForm } from 'react-hook-form'
-import { AiOutlineClose } from 'react-icons/ai'
 import { BsExclamationCircleFill } from 'react-icons/bs'
-import { CiEdit } from 'react-icons/ci'
 import { IoCheckmarkCircleSharp } from 'react-icons/io5'
 import { SiGoogleslides } from 'react-icons/si'
 import * as yup from 'yup'
@@ -263,21 +261,6 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
             />
           </div>
         </RenderIf>
-        <RenderIf isTrue={mode === 'display'}>
-          <CiEdit
-            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg bg-primary text-white cursor-pointer"
-            onClick={() => setMode('edit-embed')}
-          />
-        </RenderIf>
-        <RenderIf isTrue={mode === 'edit-embed'}>
-          <AiOutlineClose
-            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg bg-primary text-white cursor-pointer"
-            onClick={() => {
-              setMode('display')
-            }}
-          />
-        </RenderIf>
-
         {getImportStatus()}
       </div>
     )
