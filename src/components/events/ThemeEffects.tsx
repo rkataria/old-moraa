@@ -395,25 +395,39 @@ export function ThemeEffects({
   const { width, height } = useDimensions(ref)
 
   useEffect(() => {
-    if (!selectedTheme) return
+    if (!selectedTheme) {
+      document.documentElement.style.setProperty(
+        '--event-patterns-theme-background',
+        '#fafafa' as string
+      )
+      document.documentElement.style.setProperty(
+        '--event-patterns-theme-color',
+        '0,0,0'
+      )
+
+      return
+    }
 
     const isDark = isColorDark(selectedTheme.color as string)
 
     document.documentElement.style.setProperty(
-      '--wave-color-base',
+      '--event-patterns-theme-background',
       selectedTheme.color as string
     )
 
     if (isDark) {
       document.documentElement.style.setProperty(
-        '--wave-color',
+        '--event-patterns-theme-color',
         '255, 255, 255'
       )
 
       return
     }
 
-    document.documentElement.style.setProperty('--wave-color', '0,0,0')
+    document.documentElement.style.setProperty(
+      '--event-patterns-theme-color',
+      '0,0,0'
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTheme?.color])
 
