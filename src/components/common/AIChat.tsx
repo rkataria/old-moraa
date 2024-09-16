@@ -86,6 +86,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
           id: aiId,
           content: message,
           status: 'processed',
+          role: 'assistant',
         })
       )
     }
@@ -140,6 +141,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
         id: aiId,
         content: message,
         status: 'processed',
+        role: 'assitant',
       })
     )
   }
