@@ -81,6 +81,5 @@ export const {
   addMessageAction,
   addMessageInBulkAction,
   updateMessageAction,
-  addMessageInBulk2Action,
   setMessagesAction,
 } = renameSliceActions(aiChatSlice.actions)
