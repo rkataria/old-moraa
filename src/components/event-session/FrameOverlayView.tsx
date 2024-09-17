@@ -70,14 +70,12 @@ export function FrameOverlayView() {
           frame={currentFrame}
           isInteractive={false}
           className={cn('overflow-hidden rounded-md', {
-            'p-0': currentFrame.type === ContentType.MORAA_SLIDE,
+            'p-0': [
+              ContentType.MORAA_SLIDE,
+              ContentType.GOOGLE_SLIDES,
+            ].includes(currentFrame.type),
           })}
         />
-        {/* <FrameControls
-          onPrevious={previousFrame}
-          onNext={nextFrame}
-          switchPublishedFrames={false}
-        /> */}
       </motion.div>
     </div>
   )

@@ -3,11 +3,9 @@
 import { useContext, useEffect, useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Button, Checkbox, Chip, Input } from '@nextui-org/react'
+import { Checkbox, Chip, Input } from '@nextui-org/react'
 import { Controller, useForm } from 'react-hook-form'
-import { AiOutlineClose } from 'react-icons/ai'
 import { BsExclamationCircleFill } from 'react-icons/bs'
-import { CiEdit } from 'react-icons/ci'
 import { IoCheckmarkCircleSharp } from 'react-icons/io5'
 import { SiGoogleslides } from 'react-icons/si'
 import * as yup from 'yup'
@@ -17,6 +15,7 @@ import { ContentLoading } from '../common/ContentLoading'
 import { GoogleSlideEmbed } from '../common/GoogleSlideEmbed'
 import { Loading } from '../common/Loading'
 import { RenderIf } from '../common/RenderIf/RenderIf'
+import { Button } from '../ui/Button'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
@@ -159,51 +158,6 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
             />
           )}
         />
-        {/* <div className="flex items-center gap-4">
-          <Controller
-            control={googleSlideEmbedForm.control}
-            name="startPosition"
-            render={({ field, fieldState }) => (
-              <Input
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                {...(field as any)}
-                variant="bordered"
-                color="primary"
-                label="Presentation Start Position"
-                type="number"
-                className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
-                placeholder="Enter start position"
-                isInvalid={!!fieldState.error?.message}
-                errorMessage={fieldState.error?.message}
-                classNames={{
-                  inputWrapper: 'shadow-none',
-                }}
-              />
-            )}
-          />
-
-          <Controller
-            control={googleSlideEmbedForm.control}
-            name="endPosition"
-            render={({ field, fieldState }) => (
-              <Input
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                {...(field as any)}
-                variant="bordered"
-                color="primary"
-                label="Presentation End Position"
-                type="number"
-                className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
-                placeholder="Enter end position"
-                isInvalid={!!fieldState.error?.message}
-                errorMessage={fieldState.error?.message}
-                classNames={{
-                  inputWrapper: 'shadow-none',
-                }}
-              />
-            )}
-          />
-        </div> */}
         <Controller
           control={googleSlideEmbedForm.control}
           name="importAsIndividualFrames"
@@ -220,6 +174,7 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
         />
 
         <Button
+          size="md"
           variant="ghost"
           color="primary"
           // disabled={!googleSlideEmbedForm.formState.isValid}
@@ -266,34 +221,46 @@ export function GoogleSlidesEditor({ frame }: GoogleSlidesEditorProps) {
     return (
       <div className="relative w-full h-full">
         <RenderIf isTrue={mode === 'display'}>
-          <GoogleSlideEmbed
-            url={embededUrl}
-            showControls={!frame.content?.individualFrame}
-            startPage={frame.content.startPosition}
-          />
+          <div className="w-full h-full relative">
+            <div className="absolute z-[1] top-2 left-1/2 -translate-x-1/2 p-2 rounded-md bg-primary-100 text-black flex justify-start items-center gap-2">
+              <p>
+                You can also edit the Google Slides directly in your browser.
+              </p>
+              <Button
+                size="sm"
+                className="bg-white"
+                onClick={() => setMode('edit-embed')}>
+                Edit
+              </Button>
+            </div>
+            <GoogleSlideEmbed
+              url={embededUrl}
+              showControls={!frame.content?.individualFrame}
+              startPage={frame.content.startPosition}
+            />
+          </div>
         </RenderIf>
         <RenderIf isTrue={mode === 'edit-embed'}>
-          <iframe
-            src={embededUrl}
-            className="w-full h-full"
-            title="google-slide"
-          />
+          <div className="w-full h-full relative">
+            <div className="absolute z-[1] top-2 left-1/2 -translate-x-1/2 p-2 rounded-md bg-green-500 rounded-br-md rounded-tl-md flex justify-start items-center gap-2">
+              <p className="text-sm text-white">
+                Google Slides is being edited
+              </p>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-white border-white hover:!bg-white hover:text-black transition-all duration-200"
+                onClick={() => setMode('display')}>
+                Done editing
+              </Button>
+            </div>
+            <iframe
+              src={embededUrl}
+              className="absolute top-0 left-0 w-full h-full border-2 border-green-500 rounded-md"
+              title="google-slide"
+            />
+          </div>
         </RenderIf>
-        <RenderIf isTrue={mode === 'display'}>
-          <CiEdit
-            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg bg-primary text-white cursor-pointer"
-            onClick={() => setMode('edit-embed')}
-          />
-        </RenderIf>
-        <RenderIf isTrue={mode === 'edit-embed'}>
-          <AiOutlineClose
-            className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg bg-primary text-white cursor-pointer"
-            onClick={() => {
-              setMode('display')
-            }}
-          />
-        </RenderIf>
-
         {getImportStatus()}
       </div>
     )
