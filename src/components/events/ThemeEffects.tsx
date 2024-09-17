@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react'
+import { ReactNode, useEffect, useRef } from 'react'
 
 import { motion } from 'framer-motion'
 
@@ -6,7 +6,8 @@ import { theme } from './ThemeModal'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 
 import { useDimensions } from '@/hooks/useDimensions'
-import { cn } from '@/utils/utils'
+import { PatternKeys, PatternStyles } from '@/utils/event.util'
+import { cn, isColorDark } from '@/utils/utils'
 
 interface IEffects {
   width: number
@@ -393,11 +394,52 @@ export function ThemeEffects({
   const ref = useRef<HTMLDivElement | null>(null)
   const { width, height } = useDimensions(ref)
 
+  useEffect(() => {
+    if (!selectedTheme) {
+      document.documentElement.style.setProperty(
+        '--event-patterns-theme-background',
+        '#fafafa' as string
+      )
+      document.documentElement.style.setProperty(
+        '--event-patterns-theme-color',
+        '0,0,0'
+      )
+
+      return
+    }
+
+    const isDark = isColorDark(selectedTheme.color as string)
+
+    document.documentElement.style.setProperty(
+      '--event-patterns-theme-background',
+      selectedTheme.color as string
+    )
+
+    if (isDark) {
+      document.documentElement.style.setProperty(
+        '--event-patterns-theme-color',
+        '255, 255, 255'
+      )
+
+      return
+    }
+
+    document.documentElement.style.setProperty(
+      '--event-patterns-theme-color',
+      '0,0,0'
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTheme?.color])
+
   return (
     <div
       ref={ref}
       style={{ backgroundColor: selectedTheme?.color }}
-      className={cn('relative overflow-hidden', className)}>
+      className={cn(
+        'relative overflow-hidden h-screen',
+        className,
+        PatternStyles[selectedTheme?.colors as PatternKeys]
+      )}>
       {children}
 
       <RenderIf isTrue={!!selectedTheme?.theme}>

@@ -78,3 +78,15 @@ export const eventTableColumns = [
   },
   { key: 'actions', label: 'ACTIONS' },
 ]
+
+export const PatternStyles = {
+  Waves: 'waves',
+  'Micobial Mat': 'microbial-mat',
+  Cross: 'cross',
+  Plus: 'plus',
+  Circle12: 'circle12',
+  Zigzag: 'zigzag',
+  Polka: 'polka',
+}
+
+export type PatternKeys = keyof typeof PatternStyles

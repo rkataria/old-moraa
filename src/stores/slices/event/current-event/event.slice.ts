@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // eslint-disable-next-line import/no-cycle
 
+import { setMessagesAction } from '../../ai/ai.slice'
+
 import { getRealtimeChannelsForEvent } from '@/services/realtime/supabase-realtime.service'
 import {
   attachThunkToBuilder,
@@ -92,6 +94,7 @@ attachStoreListener({
     dispatch(setCurrentFrameIdAction(null))
     dispatch(setCurrentSectionIdAction(null))
     dispatch(setIsOverviewOpenAction(true))
+    dispatch(setMessagesAction([]))
   },
 })
 

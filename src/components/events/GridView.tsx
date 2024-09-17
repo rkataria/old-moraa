@@ -36,7 +36,7 @@ export function GridView({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 min-[1920px]:grid-cols-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 min-[1920px]:grid-cols-4">
       {eventRows.map((event) => (
         <div
           key={event.id}

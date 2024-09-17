@@ -1,8 +1,15 @@
 @import './styles/editor.css';
+@import './styles/patterns.css';
+
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --event-patterns-theme-color: 0, 0, 0;
+  --event-patterns-theme-background: #fafafa;
+}
 
 @layer base {
   html,
