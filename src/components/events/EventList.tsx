@@ -123,13 +123,13 @@ export function EventList() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
+          {/* <Button
             onClick={() => navigate({ to: '/events/create' })}
             size="sm"
             color="primary"
             endContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
             Create new
-          </Button>
+          </Button> */}
           <ListToggleButton
             listDisplayMode={listDisplayMode}
             toggleListDisplayMode={() =>
