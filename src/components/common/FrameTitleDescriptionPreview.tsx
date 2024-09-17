@@ -30,7 +30,14 @@ export function FrameTitleDescriptionPreview({
 }) {
   if (!frame) return null
 
-  if ([ContentType.COVER, ContentType.TEXT_IMAGE].includes(frame.type)) {
+  if (
+    [
+      ContentType.COVER,
+      ContentType.TEXT_IMAGE,
+      ContentType.GOOGLE_SLIDES,
+      ContentType.GOOGLE_SLIDES_IMPORT,
+    ].includes(frame.type)
+  ) {
     return null
   }
 
