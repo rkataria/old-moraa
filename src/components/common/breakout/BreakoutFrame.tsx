@@ -181,9 +181,10 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     deleteFrame(_frame)
     let payload = {}
     if (frame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
-      const filteredBreakoutRooms = frame.content?.breakoutRooms?.filter(
-        (_, breakoutRoomIndex) => breakoutRoomIndex !== selectedFrame
-      )
+      const filteredBreakoutRooms =
+        frame.content?.breakoutRooms?.filter(
+          (_, breakoutRoomIndex) => breakoutRoomIndex !== selectedFrame
+        ) || []
       payload = {
         content: {
           ...frame.content,
@@ -191,7 +192,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         },
         config: {
           ...frame.config,
-          breakoutRoomsCount: filteredBreakoutRooms?.length,
+          breakoutRoomsCount: filteredBreakoutRooms.length,
         },
       }
     } else {
