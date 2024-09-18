@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useRef } from 'react'
 
+import { BsTrash } from 'react-icons/bs'
 import { IoAddSharp } from 'react-icons/io5'
 
 // TODO: Fix this.
@@ -12,6 +13,7 @@ import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
 import { Tooltip } from '../ShortuctTooltip'
 
+import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { cn } from '@/utils/utils'
@@ -78,22 +80,27 @@ export function BreakoutRoomActivityCard({
           }}
         />
         <RenderIf isTrue={editable}>
-          <span className="flex gap-2">
-            <IoAddSharp
-              className="border border-dashed border-gray-400 text-gray-400"
+          <span className="flex">
+            <Button
+              isIconOnly
+              variant="light"
               onClick={() => {
                 if (!editable) return
                 onAddNewActivity(idx)
-              }}
-            />
+              }}>
+              <IoAddSharp size={18} className="text-gray-400" />
+            </Button>
+
             <RenderIf isTrue={breakout?.activityId}>
-              <IoAddSharp
-                className="rotate-45"
+              <Button
+                isIconOnly
+                variant="light"
                 onClick={() => {
                   if (!editable) return
                   deleteRoomGroup(idx)
-                }}
-              />
+                }}>
+                <BsTrash className="text-red-400" />
+              </Button>
             </RenderIf>
           </span>
         </RenderIf>

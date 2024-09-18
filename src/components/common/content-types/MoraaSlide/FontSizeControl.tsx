@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button, ButtonGroup } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -33,6 +33,12 @@ export function TwoWayNumberCounter({
 }: FontSizeControlProps) {
   const [count, setCount] = useState<number>(defaultCount)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (defaultCount === count) return
+    setCount(defaultCount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultCount])
 
   // hotkeys
   useHotkeys('-', () => {

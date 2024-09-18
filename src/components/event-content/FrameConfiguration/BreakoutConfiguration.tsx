@@ -27,6 +27,7 @@ export function BreakoutConfiguration() {
       return
     }
     if (count > currentFrame?.config?.breakoutRoomsCount) {
+      console.log('count', count)
       updateFrame({
         framePayload: {
           config: {
@@ -46,6 +47,8 @@ export function BreakoutConfiguration() {
         frameId: currentFrame.id,
       })
     } else {
+      console.log('inside update breakout last block')
+
       handleRoomsActivityDelete(
         currentFrame?.content?.breakoutRooms?.[count]?.activityId || '',
         count
@@ -60,22 +63,28 @@ export function BreakoutConfiguration() {
         )
       )
     }
-    currentFrame?.content?.breakoutRooms?.pop()
+    // currentFrame?.content?.breakoutRooms?.pop()
+    console.log(
+      'inside handleRoomsActivityDelete',
+      (currentFrame?.content?.breakoutRooms?.length || 1) - 1
+    )
     updateFrame({
       framePayload: {
         config: {
           ...currentFrame?.config,
           breakoutRoomsCount:
-            currentFrame?.content?.breakoutRooms?.length || 1 - 1,
+            (currentFrame?.content?.breakoutRooms?.length || 1) - 1,
         },
         content: {
           ...currentFrame?.content,
-          breakoutRooms: currentFrame?.content?.breakoutRooms,
+          breakoutRooms: currentFrame?.content?.breakoutRooms?.slice(0, -1),
         },
       },
       frameId: currentFrame.id,
     })
   }
+
+  console.log('breakout in frame config', currentFrame)
 
   return (
     <>

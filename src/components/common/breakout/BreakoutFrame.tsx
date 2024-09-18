@@ -181,17 +181,17 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     deleteFrame(_frame)
     let payload = {}
     if (frame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
+      const filteredBreakoutRooms = frame.content?.breakoutRooms?.filter(
+        (_, breakoutRoomIndex) => breakoutRoomIndex !== selectedFrame
+      )
       payload = {
         content: {
           ...frame.content,
-          breakoutRooms: [
-            ...(frame.content?.breakoutRooms?.slice(0, selectedFrame) || []),
-            {
-              ...(frame.content?.breakoutRooms?.[selectedFrame] || {}),
-              ...{ activityId: null },
-            },
-            ...(frame.content?.breakoutRooms?.slice(selectedFrame + 1) || []),
-          ],
+          breakoutRooms: filteredBreakoutRooms,
+        },
+        config: {
+          ...frame.config,
+          breakoutRoomsCount: filteredBreakoutRooms?.length,
         },
       }
     } else {
@@ -206,6 +206,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     setSelectedFrame(-1)
     setIsDeleteModalOpen(false)
   }
+  console.log('breakouts', frame)
 
   return (
     <div className="w-full h-full pt-4">
