@@ -14,7 +14,7 @@ export enum PresentationStatuses {
 }
 
 export enum EventSessionMode {
-  PREVIEW = 'Preview',
+  PEEK = 'Peek',
   LOBBY = 'Lobby',
   PRESENTATION = 'Presentation',
 }

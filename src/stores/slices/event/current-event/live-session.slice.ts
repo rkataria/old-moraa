@@ -225,7 +225,7 @@ attachStoreListener({
       newFrameIdToUpdate
     ) {
       newEventSessionModeToUpdate = isCurrentUserOwnerOfEvent
-        ? EventSessionMode.PREVIEW
+        ? EventSessionMode.PEEK
         : EventSessionMode.LOBBY
     } else if (
       newSessionData?.presentationStatus === PresentationStatuses.STARTED
@@ -233,7 +233,7 @@ attachStoreListener({
       newEventSessionModeToUpdate = EventSessionMode.PRESENTATION
     } else {
       newEventSessionModeToUpdate = isCurrentUserOwnerOfEvent
-        ? EventSessionMode.LOBBY
+        ? EventSessionMode.PEEK
         : EventSessionMode.LOBBY
     }
 

@@ -22,12 +22,11 @@ export type PDFViewerFrameType = IFrame & {
 
 interface PDFViewerProps {
   frame: PDFViewerFrameType
-  showControls?: boolean
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 
-export function PDFViewer({ frame, showControls = true }: PDFViewerProps) {
+export function PDFViewer({ frame }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
@@ -94,15 +93,13 @@ export function PDFViewer({ frame, showControls = true }: PDFViewerProps) {
           devicePixelRatio={5}
         />
       </Document>
-      {showControls && (
-        <PageControls
-          currentPage={position}
-          totalPages={totalPages}
-          handleCurrentPageChange={(page) => {
-            handlePositionChange(page <= totalPages ? page : totalPages)
-          }}
-        />
-      )}
+      <PageControls
+        currentPage={position}
+        totalPages={totalPages}
+        handleCurrentPageChange={(page) => {
+          handlePositionChange(page <= totalPages ? page : totalPages)
+        }}
+      />
     </div>
   )
 }

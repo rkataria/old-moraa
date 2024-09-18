@@ -36,6 +36,7 @@ export function FrameTitleDescriptionPreview({
       ContentType.TEXT_IMAGE,
       ContentType.GOOGLE_SLIDES,
       ContentType.GOOGLE_SLIDES_IMPORT,
+      ContentType.PDF_VIEWER,
     ].includes(frame.type)
   ) {
     return null

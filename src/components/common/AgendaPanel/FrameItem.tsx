@@ -106,18 +106,21 @@ export function FrameItem({
       return
     }
 
+    if (isHost && eventMode === 'edit') {
+      setInsertAfterFrameId(clickedFrame.id)
+      setInsertInSectionId(clickedFrame.section_id!)
+    }
+
+    setCurrentFrame(clickedFrame)
+
     // Dispatch an action to update event session mode to 'Preview' if presentation is not started and user is the owner of the event
     if (
       isMeetingJoined &&
       isHost &&
       presentationStatus !== PresentationStatuses.STARTED
     ) {
-      dispatch(updateEventSessionModeAction(EventSessionMode.PREVIEW))
+      dispatch(updateEventSessionModeAction(EventSessionMode.PEEK))
     }
-
-    setInsertAfterFrameId(clickedFrame.id)
-    setInsertInSectionId(clickedFrame.section_id!)
-    setCurrentFrame(clickedFrame)
   }
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
