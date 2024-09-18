@@ -206,7 +206,6 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     setSelectedFrame(-1)
     setIsDeleteModalOpen(false)
   }
-  console.log('breakouts', frame)
 
   return (
     <div className="w-full h-full pt-4">
