@@ -25,7 +25,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { Vote, type IReflectionFrame } from '@/types/frame.type'
 import { checkVoted } from '@/utils/content.util'
-import { getOjectPublicUrl } from '@/utils/utils'
 
 export function Frame() {
   const { currentFrame, currentFrameResponses, currentFrameLoading, isHost } =
@@ -83,7 +82,7 @@ export function Frame() {
     [ContentType.IMAGE_VIEWER]: (
       <ImageViewer
         key={currentFrame.id}
-        src={getOjectPublicUrl(currentFrame.content?.path as string)}
+        src={currentFrame.content?.imageUrl as string}
       />
     ),
     [ContentType.RICH_TEXT]: <RichTextLive frame={currentFrame} />,

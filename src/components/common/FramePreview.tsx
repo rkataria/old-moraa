@@ -31,7 +31,7 @@ import { Cover, CoverFrameType } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { IFrame, PollFrame } from '@/types/frame.type'
-import { cn, getOjectPublicUrl } from '@/utils/utils'
+import { cn } from '@/utils/utils'
 
 interface FrameProps {
   frame: IFrame
@@ -98,7 +98,7 @@ export function FramePreview({
           <GoogleSlides frame={frame as GoogleSlidesType} />
         )}
         {frame.type === ContentType.IMAGE_VIEWER && (
-          <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
+          <ImageViewer src={frame.content?.imageUrl as string} />
         )}
         {frame.type === ContentType.PDF_VIEWER && (
           <PDFViewer frame={frame as PDFViewerFrameType} />

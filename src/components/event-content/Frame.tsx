@@ -26,7 +26,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
-import { cn, getOjectPublicUrl } from '@/utils/utils'
+import { cn } from '@/utils/utils'
 
 interface FrameProps {
   frame: IFrame
@@ -60,7 +60,7 @@ export function Frame({ frame }: FrameProps) {
     [ContentType.VIDEO_EMBED]: <VideoEmbedEditor frame={frame as any} />,
     [ContentType.TEXT_IMAGE]: <TextImageEditor />,
     [ContentType.IMAGE_VIEWER]: (
-      <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
+      <ImageViewer src={frame.content?.imageUrl as string} />
     ),
     [ContentType.RICH_TEXT]: (
       <RichTextEditor
