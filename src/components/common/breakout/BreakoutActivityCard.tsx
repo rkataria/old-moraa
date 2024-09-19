@@ -79,13 +79,16 @@ export function BreakoutRoomActivityCard({
         />
         <RenderIf isTrue={editable}>
           <span className="flex gap-2">
-            <IoAddSharp
-              className="border border-dashed border-gray-400 text-gray-400"
-              onClick={() => {
-                if (!editable) return
-                onAddNewActivity(idx)
-              }}
-            />
+            <RenderIf isTrue={!breakout?.activityId}>
+              <IoAddSharp
+                className="border border-dashed border-gray-400 text-gray-400"
+                onClick={() => {
+                  if (!editable) return
+                  onAddNewActivity(idx)
+                }}
+              />
+            </RenderIf>
+
             <RenderIf isTrue={breakout?.activityId}>
               <IoAddSharp
                 className="rotate-45"
@@ -111,6 +114,7 @@ export function BreakoutRoomActivityCard({
               <FrameThumbnailCard
                 frame={getFrameById(breakout?.activityId)}
                 containerWidth={containerWidth}
+                inViewPort
               />
             </div>
           ) : (

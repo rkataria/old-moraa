@@ -57,8 +57,7 @@ export function BreakoutFrameLive({
 
   return (
     <div>
-      <RenderIf
-        isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS && isHost}>
+      <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
         <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
           {frame.content?.breakoutRooms?.map((breakout, idx) => (
             <BreakoutRoomActivityCard
@@ -74,8 +73,7 @@ export function BreakoutFrameLive({
           ))}
         </div>
       </RenderIf>
-      <RenderIf
-        isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS && isHost}>
+      <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS}>
         <Card key="breakout-group-activity" className="border p-4 w-[65%]">
           <div className="flex justify-between gap-4">
             <span className="text-md font-semibold">Activity</span>
@@ -97,6 +95,7 @@ export function BreakoutFrameLive({
                     frame?.content?.groupActivityId as string
                   )}
                   containerWidth={containerWidth}
+                  inViewPort
                 />
               </div>
             </RenderIf>

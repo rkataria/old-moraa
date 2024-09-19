@@ -144,6 +144,7 @@ export const contentTypes: IContentType[] = [
     description:
       'Ignite insights through thoughtful reflection. Share perspectives, spark growth.',
     contentType: ContentType.REFLECTION,
+    isAvailableForBreakout: true,
   },
   {
     name: 'Moraaboard',
@@ -160,6 +161,7 @@ export const contentTypes: IContentType[] = [
     description:
       'Embed Miro boards to collaborate and brainstorm with your audience',
     contentType: ContentType.MIRO_EMBED,
+    isAvailableForBreakout: true,
   },
   {
     name: 'Google Slides',

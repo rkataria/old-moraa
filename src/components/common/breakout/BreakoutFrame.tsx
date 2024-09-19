@@ -249,6 +249,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
                 <FrameThumbnailCard
                   frame={getFrameById(frame?.content?.groupActivityId || '')}
                   containerWidth={containerWidth}
+                  inViewPort
                 />
               </div>
             </RenderIf>
