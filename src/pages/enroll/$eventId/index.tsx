@@ -1,11 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Button,
   Divider,
   Image,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -13,12 +11,14 @@ import {
   useDisclosure,
 } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, useParams, useRouter } from '@tanstack/react-router'
-import { Controller, useForm } from 'react-hook-form'
+import {
+  createFileRoute,
+  useLocation,
+  useParams,
+  useRouter,
+} from '@tanstack/react-router'
 import toast from 'react-hot-toast'
 import { FaCheckCircle } from 'react-icons/fa'
-import { MdOutlineEmail } from 'react-icons/md'
-import * as yup from 'yup'
 
 import { ParticipantsFormData } from '@/components/common/AddParticipantsForm'
 import { RichTextEditor } from '@/components/common/content-types/RichText/Editor'
@@ -31,13 +31,6 @@ import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event/event-service'
-
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email('Please enter valid email address')
-    .required('Please enter your email address'),
-})
 
 function Participantslist({
   participants = [],
@@ -105,7 +98,11 @@ export const Route = createFileRoute('/enroll/$eventId/')({
 
 export function Visit() {
   const router = useRouter()
+  const location = useLocation()
   const { eventId } = useParams({ strict: false })
+  const { autoEnroll } = location.search as {
+    autoEnroll: string
+  }
   const user = useAuth()
 
   const descriptionModalDisclosure = useDisclosure()
@@ -115,7 +112,7 @@ export function Visit() {
     id: eventId as string,
     validateWithUser: false,
   })
-  const eventPageUrl = `${window.location.origin}/events/${eventId}`
+  const eventPageUrl = `/events/${eventId}`
 
   const { event } = useEventData
   const { profile } = useEventData
@@ -127,15 +124,10 @@ export function Visit() {
     })) || []
 
   const isLoggedIn = user?.currentUser?.id
-  const isEnrolled = useEventData.participants?.find(
+  const isEnrolled = !!useEventData.participants?.find(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (p: any) => p.email === user?.currentUser?.email
   )
-
-  const { control, handleSubmit } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: { email: '' },
-  })
 
   const addParticipantsMutation = useMutation({
     mutationFn: async ({
@@ -149,12 +141,14 @@ export function Visit() {
 
         if (JSON.parse(addResponse?.data || '')?.success) {
           if (isLoggedIn) {
-            router.history.push(eventPageUrl)
+            router.navigate({
+              to: eventPageUrl,
+            })
 
             return
           }
 
-          router.history.push(`/login?redirectTo=/events/${eventId}`)
+          router.navigate({ to: `/login?redirectTo=/events/${eventId}` })
         }
 
         toast.success('Enrolled successfully.')
@@ -165,20 +159,29 @@ export function Visit() {
     },
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleEnrollClick = (data: any) => {
+  useEffect(() => {
+    if (autoEnroll && !isEnrolled && !useEventData.isFetching) {
+      addParticipantsMutation.mutate({
+        participants: [
+          ...participants,
+          { email: user.currentUser.email, role: 'Participant' },
+        ],
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoEnroll, isEnrolled, useEventData.isFetching])
+
+  const handleEnrollClick = () => {
     if (isEnrolled) {
       router.navigate({ to: `/events/${eventId}` })
 
       return
     }
 
-    if (isLoggedIn) {
-      addParticipantsMutation.mutate({
-        participants: [
-          ...participants,
-          { email: user.currentUser.email, role: 'Participant' },
-        ],
+    if (!isLoggedIn) {
+      router.navigate({
+        to: '/login',
+        search: { redirectTo: `/enroll/${event.id}?autoEnroll=true` },
       })
 
       return
@@ -187,7 +190,7 @@ export function Visit() {
     addParticipantsMutation.mutate({
       participants: [
         ...participants,
-        { email: data.email, role: 'Participant' },
+        { email: user.currentUser.email, role: 'Participant' },
       ],
     })
   }
@@ -195,6 +198,7 @@ export function Visit() {
   if (useEventData.isLoading) {
     return <ContentLoading fullPage />
   }
+
   if (!event) return null
 
   return (
@@ -238,43 +242,16 @@ export function Visit() {
                 </div>
               )}
               <div className="mt-10 flex items-center gap-2">
-                {!isLoggedIn && (
-                  <Controller
-                    name="email"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <div className="relative w-full">
-                        <Input
-                          type="email"
-                          {...field}
-                          placeholder="you@example.com"
-                          labelPlacement="outside"
-                          variant="bordered"
-                          startContent={
-                            <MdOutlineEmail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                          }
-                          isInvalid={!!fieldState.error}
-                          errorMessage={fieldState.error?.message}
-                          classNames={{
-                            inputWrapper: 'shadow-none',
-                            helperWrapper: 'py-0 absolute -bottom-5',
-                          }}
-                        />
-                      </div>
-                    )}
-                  />
-                )}
-
                 <Button
                   type="submit"
                   className="w-full bg-black text-white shadow-xl"
                   isLoading={addParticipantsMutation.isPending}
-                  onClick={
-                    isLoggedIn
-                      ? handleEnrollClick
-                      : handleSubmit(handleEnrollClick)
-                  }>
-                  {isEnrolled ? 'Go to event' : 'Enroll'}
+                  onClick={handleEnrollClick}>
+                  {isEnrolled
+                    ? 'Go to event'
+                    : addParticipantsMutation.isPending
+                      ? 'Enrolling'
+                      : 'Enroll'}
                 </Button>
               </div>
             </div>
