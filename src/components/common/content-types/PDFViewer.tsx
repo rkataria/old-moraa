@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import { pdfjs, Document, Page } from 'react-pdf'
 
+import { ContentLoading } from '../ContentLoading'
 import { EmptyPlaceholder } from '../EmptyPlaceholder'
 
 import { PageControls } from '@/components/common/PageControls'
@@ -21,12 +22,11 @@ export type PDFViewerFrameType = IFrame & {
 
 interface PDFViewerProps {
   frame: PDFViewerFrameType
-  showControls?: boolean
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 
-export function PDFViewer({ frame, showControls = true }: PDFViewerProps) {
+export function PDFViewer({ frame }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
@@ -85,22 +85,21 @@ export function PDFViewer({ frame, showControls = true }: PDFViewerProps) {
         className="absolute left-0 top-0 h-full w-full m-0 overflow-y-auto scrollbar-thin"
         loading="Please wait! Loading the PDF.">
         <Page
-          loading={' '}
+          loading={<ContentLoading />}
           pageNumber={position}
-          renderAnnotationLayer={false}
-          renderTextLayer={false}
+          renderAnnotationLayer
+          renderTextLayer
           className="w-full"
+          devicePixelRatio={5}
         />
       </Document>
-      {showControls && (
-        <PageControls
-          currentPage={position}
-          totalPages={totalPages}
-          handleCurrentPageChange={(page) => {
-            handlePositionChange(page <= totalPages ? page : totalPages)
-          }}
-        />
-      )}
+      <PageControls
+        currentPage={position}
+        totalPages={totalPages}
+        handleCurrentPageChange={(page) => {
+          handlePositionChange(page <= totalPages ? page : totalPages)
+        }}
+      />
     </div>
   )
 }
