@@ -1,27 +1,29 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Key, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { SortDescriptor, Pagination } from '@nextui-org/react'
+import { SortDescriptor, Pagination, Tabs, Tab } from '@nextui-org/react'
 import { Link, useRouter } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { BsGrid, BsList } from 'react-icons/bs'
 import { IoCalendarClear } from 'react-icons/io5'
 import { MdOutlineAddBox } from 'react-icons/md'
 
 import { GridView } from './GridView'
 import { ListView } from './ListView'
-import { ListToggleButton } from '../common/AgendaPanel/ListToggleButton'
 import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
+import { getProfileName } from '../common/UserAvatar'
 import { Button } from '../ui/Button'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useEvents } from '@/hooks/useEvents'
+import { useProfile } from '@/hooks/useProfile'
 
 const rowsPerPage = 10
 
 export function EventList() {
   const { navigate } = useRouter()
-
+  const { data: profile } = useProfile()
   const { currentUser } = useAuth()
-  const [listDisplayMode, toggleListDisplayMode] = useState('list')
+  const [listDisplayMode, toggleListDisplayMode] = useState('grid' as Key)
   const [currentPage, setCurrentPage] = useState(1)
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>()
   const { events, count, isLoading, refetch } = useEvents({
@@ -117,27 +119,26 @@ export function EventList() {
     return (
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-2xl font-semibold">Calendar of Happenings</p>
+          <p className="text-2xl font-semibold">
+            Welcome back , {getProfileName(profile)}
+          </p>
           <p className="text-sm mt-1 text-gray-500">
             Life is about moments: don&apos;t wait for them, create them.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            onClick={() => navigate({ to: '/events/create' })}
+          <Tabs
+            onSelectionChange={toggleListDisplayMode}
             size="sm"
-            color="primary"
-            endContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
-            Create new
-          </Button>
-          <ListToggleButton
-            listDisplayMode={listDisplayMode}
-            toggleListDisplayMode={() =>
-              toggleListDisplayMode(
-                listDisplayMode === 'list' ? 'grid' : 'list'
-              )
-            }
-          />
+            classNames={{
+              tabList: 'p-0 border gap-0 bg-white',
+              cursor: 'w-full bg-primary-100 rounded-none',
+              tabContent: 'group-data-[selected=true]:text-primary',
+              tab: 'p-2.5',
+            }}>
+            <Tab key="grid" title={<BsGrid size={16} />} />
+            <Tab key="list" title={<BsList size={16} />} />
+          </Tabs>
         </div>
       </div>
     )
@@ -168,9 +169,9 @@ export function EventList() {
   }
 
   return (
-    <div className="w-full">
+    <div className="flex flex-col gap-4 w-full h-full">
       {renderHeader()}
-      <div className="mt-10">
+      <div className="flex flex-col h-full">
         {getView()}
         {getPagination()}
       </div>

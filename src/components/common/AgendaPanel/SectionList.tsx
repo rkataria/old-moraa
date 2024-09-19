@@ -87,7 +87,8 @@ export function SectionList() {
 
     const framesBefore = sectionList
       .slice(0, sectionIndex)
-      .flatMap((section) => section.frames).length
+      .flatMap((section) => section.frames)
+      .filter((f) => !f?.content?.breakoutFrameId).length
 
     return framesBefore + 1
   }

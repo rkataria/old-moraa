@@ -106,18 +106,21 @@ export function FrameItem({
       return
     }
 
+    if (isHost && eventMode === 'edit') {
+      setInsertAfterFrameId(clickedFrame.id)
+      setInsertInSectionId(clickedFrame.section_id!)
+    }
+
+    setCurrentFrame(clickedFrame)
+
     // Dispatch an action to update event session mode to 'Preview' if presentation is not started and user is the owner of the event
     if (
       isMeetingJoined &&
       isHost &&
       presentationStatus !== PresentationStatuses.STARTED
     ) {
-      dispatch(updateEventSessionModeAction(EventSessionMode.PREVIEW))
+      dispatch(updateEventSessionModeAction(EventSessionMode.PEEK))
     }
-
-    setInsertAfterFrameId(clickedFrame.id)
-    setInsertInSectionId(clickedFrame.section_id!)
-    setCurrentFrame(clickedFrame)
   }
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
@@ -209,13 +212,18 @@ export function FrameItem({
       <Tooltip label={frame.name} placement="right" showArrow>
         <div
           data-miniframe-id={frame?.id}
-          className={cn('relative flex justify-center items-center pl-6')}>
+          className={cn(
+            'relative flex justify-center items-center pl-[1.375rem]',
+            {
+              '!pl-1': frame?.content?.breakoutFrameId,
+            }
+          )}>
           <Button
             variant="light"
             size="sm"
             isIconOnly
             className={cn(
-              'm-auto py-0.5 !min-w-auto w-auto h-auto bg-transparent',
+              'm-auto py-1 !min-w-auto w-auto h-auto bg-transparent',
               {
                 'bg-primary/30': frameActive,
               }
@@ -225,7 +233,7 @@ export function FrameItem({
             }}>
             <ContentTypeIcon
               frameType={frame.type}
-              classNames={cn('h-[22px] w-[22px] text-gray-400', {
+              classNames={cn('h-[1.375rem] w-[1.375rem] text-gray-500', {
                 'text-primary': frameActive,
               })}
               tooltipProps={{
@@ -239,7 +247,10 @@ export function FrameItem({
   }
 
   return (
-    <div className="relative w-full">
+    <div
+      className={cn('relative w-full', {
+        'w-fit': !sidebarExpanded,
+      })}>
       {renderFrameContent()}
       {sidebarExpanded && (
         <RenderIf isTrue={sidebarExpanded && !frame?.content?.breakoutFrameId}>

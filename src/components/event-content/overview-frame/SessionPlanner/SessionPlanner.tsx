@@ -275,7 +275,7 @@ export function SessionPlanner({
                               <div style={{ flex: 2 }}>
                                 <EditableLabel
                                   showTooltip={false}
-                                  className="text-sm font-bold tracking-tight text-primary/80"
+                                  className="text-sm font-bold tracking-tight text-primary/80 max-w-[31.25rem]"
                                   label={section.name}
                                   readOnly={preview}
                                   onUpdate={(value: string) => {

@@ -94,6 +94,7 @@ export function MeetingSetupScreen() {
 
   useEffect(() => {
     if (!meetingId || isMeetingOwner === null) return
+    if (meetingSession.isLoading) return
     if (meetingSession.isSuccess) return
     if (isInBreakoutMeeting === true) return
     if (isMeetingOwner) {
@@ -103,6 +104,7 @@ export function MeetingSetupScreen() {
     dispatch,
     isMeetingOwner,
     meetingId,
+    meetingSession.isLoading,
     meetingSession.isSuccess,
     isInBreakoutMeeting,
   ])

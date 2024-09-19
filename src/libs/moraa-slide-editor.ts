@@ -24,17 +24,18 @@ export const initialSetup = () => {
   loadCustomFabricObjects()
 
   // eslint-disable-next-line wrap-iife, func-names
-  fabric.Textbox.prototype.toObject = function () {
-    if (['BulletList', 'NumberList'].includes(this.type!)) {
-      return this.toObject
-    }
+  // fabric.Textbox.prototype.toObject = function () {
+  //   console.log('toObject', this.type, this.text)
+  //   // if (['BulletList', 'NumberList'].includes(this.type!)) {
+  //   //   return this.toObject
+  //   // }
 
-    // eslint-disable-next-line func-names
-    // @ts-expect-error silence!
-    return fabric.util.object.extend(this.callSuper('toObject'), {
-      name: this.name,
-    })
-  }
+  //   // eslint-disable-next-line func-names
+  //   // @ts-expect-error silence!
+  //   return fabric.util.object.extend(this.callSuper('toObject'), {
+  //     name: this.name,
+  //   })
+  // }
 
   fabric.Object.prototype.transparentCorners = false
   fabric.Object.prototype.cornerColor = '#7C3AED'
@@ -440,6 +441,8 @@ export const setObjectControlsVisibility = (canvas: fabric.Canvas) => {
   if (!activeObject) return
 
   switch (activeObject?.type) {
+    case 'BulletList':
+    case 'NumberList':
     case 'textbox':
       activeObject.setControlsVisibility({
         tl: false,

@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import { pdfjs, Document, Page } from 'react-pdf'
 
+import { ContentLoading } from '@/components/common/ContentLoading'
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
 import { PageControls } from '@/components/common/PageControls'
 import { EventContext } from '@/contexts/EventContext'
@@ -117,11 +118,12 @@ export function PDFViewer({ frame }: PDFViewerProps) {
         className="absolute left-0 top-0 h-full w-full m-0 overflow-y-auto scrollbar-thin"
         loading="Please wait! Loading the PDF.">
         <Page
-          loading={' '}
+          loading={<ContentLoading />}
           pageNumber={position}
-          renderAnnotationLayer={false}
-          renderTextLayer={false}
+          renderAnnotationLayer
+          renderTextLayer
           className="w-full"
+          devicePixelRatio={5}
         />
       </Document>
       {isHost && (

@@ -5,7 +5,6 @@ import { Modal, ModalContent, ModalBody, Button } from '@nextui-org/react'
 import {
   IconCards,
   IconAlignCenter,
-  IconBrandGoogleDrive,
   IconBrandAdobe,
   IconChartBar,
   IconVideo,
@@ -13,7 +12,7 @@ import {
 import { BsQuestionCircle } from 'react-icons/bs'
 import { IoPeopleOutline } from 'react-icons/io5'
 import { MdOutlineDraw } from 'react-icons/md'
-import { SiMicrosoftpowerpoint, SiMiro } from 'react-icons/si'
+import { SiGoogleslides, SiMicrosoftpowerpoint, SiMiro } from 'react-icons/si'
 import { TbNews } from 'react-icons/tb'
 
 import { ContentTypeCard } from './ContentTypeCard'
@@ -109,6 +108,7 @@ export const contentTypes: IContentType[] = [
     icon: <TbNews className="w-full h-full max-w-11 max-h-11" />,
     description: 'Create a rich text editor',
     contentType: ContentType.RICH_TEXT,
+    isAvailableForBreakout: true,
   },
   // {
   //   name: 'Image',
@@ -165,7 +165,7 @@ export const contentTypes: IContentType[] = [
   },
   {
     name: 'Google Slides',
-    icon: <IconBrandGoogleDrive className="w-full h-full max-w-11 max-h-11" />,
+    icon: <SiGoogleslides className="w-full h-full max-w-11 max-h-11" />,
     description: 'Empower presentations with seamless Google Slides embed',
     contentType: ContentType.GOOGLE_SLIDES,
   },

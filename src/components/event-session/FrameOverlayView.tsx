@@ -40,7 +40,7 @@ export function FrameOverlayView() {
 
   if (!isHost) return null
 
-  if (eventSessionMode !== EventSessionMode.PREVIEW) return null
+  if (eventSessionMode !== EventSessionMode.PEEK) return null
 
   return (
     <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center px-4">
@@ -70,14 +70,13 @@ export function FrameOverlayView() {
           frame={currentFrame}
           isInteractive={false}
           className={cn('overflow-hidden rounded-md', {
-            'p-0': currentFrame.type === ContentType.MORAA_SLIDE,
+            'p-0': [
+              ContentType.MORAA_SLIDE,
+              ContentType.GOOGLE_SLIDES,
+              ContentType.PDF_VIEWER,
+            ].includes(currentFrame.type),
           })}
         />
-        {/* <FrameControls
-          onPrevious={previousFrame}
-          onNext={nextFrame}
-          switchPublishedFrames={false}
-        /> */}
       </motion.div>
     </div>
   )

@@ -4,7 +4,7 @@ import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
 
 export const LEFT_SIDEBAR_WIDTH = 224
-export const LEFT_SIDEBAR_MIN_WIDTH = 78
+export const LEFT_SIDEBAR_MIN_WIDTH = 84
 
 export function LeftSidebar({ children }: { children: React.ReactNode }) {
   const { leftSidebarVisiblity } = useStudioLayout()

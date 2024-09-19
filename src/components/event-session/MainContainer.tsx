@@ -45,7 +45,7 @@ export function MainContainer() {
 
   const spotlightMode =
     eventSessionMode === EventSessionMode.LOBBY ||
-    (eventSessionMode === EventSessionMode.PREVIEW && isHost)
+    (eventSessionMode === EventSessionMode.PEEK && isHost)
 
   const currentFrameBgColor =
     presentationStatus === PresentationStatuses.STARTED &&

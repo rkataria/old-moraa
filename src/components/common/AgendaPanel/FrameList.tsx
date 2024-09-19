@@ -2,7 +2,7 @@
 /* eslint-disable array-callback-return */
 import { ReactNode } from 'react'
 
-import { Chip } from '@nextui-org/react'
+import { Badge } from '@nextui-org/react'
 import { Draggable } from 'react-beautiful-dnd'
 
 import { FrameItem } from './FrameItem'
@@ -59,6 +59,13 @@ export function FrameList({
     return null
   }
 
+  const previousUnrenderedNestedBreakoutsCount = (frameId: string) => {
+    const currentFrameIndex = frames.findIndex((f) => f.id === frameId)
+    const prevIds = frames.slice(0, currentFrameIndex)
+
+    return prevIds.filter((f) => f?.content?.breakoutFrameId).length
+  }
+
   return (
     <div
       className={cn('relative flex flex-col gap-1', {
@@ -90,12 +97,16 @@ export function FrameList({
                           duplicateFrame={duplicateFrame}
                           actionDisabled={actionDisabled}
                         />
-                        <Chip
-                          size="sm"
-                          variant="light"
-                          className="absolute -left-[26px] top-[4px] border text-gray-400 scale-[0.8] hidden group-hover/agenda-frame:flex">
-                          {sectionStartingIndex + frameIndex}
-                        </Chip>
+                        <Badge
+                          color="default"
+                          className="absolute !-left-6 !top-[-1.625rem] hidden scale-[0.8] bg-gray-100 !border-gray-300 !w-fit !right-0 !translate-x-0 !translate-y-0 border text-gray-800  group-hover/agenda-frame:flex"
+                          content={
+                            sectionStartingIndex +
+                            frameIndex -
+                            previousUnrenderedNestedBreakoutsCount(frame.id)
+                          }>
+                          {' '}
+                        </Badge>
                         <RenderIf
                           isTrue={
                             (currentFrame?.type === ContentType.BREAKOUT &&

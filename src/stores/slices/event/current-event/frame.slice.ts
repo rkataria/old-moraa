@@ -15,10 +15,14 @@ import { attachStoreListener } from '@/stores/listener'
 import {
   bulkUpdateFrameStatusThunk,
   createFrameThunk,
+  deleteFrameThunk,
   getFramesThunk,
   updateFrameThunk,
 } from '@/stores/thunks/frame.thunks'
-import { updateSectionsFramesListThunk } from '@/stores/thunks/section.thunks'
+import {
+  updateSectionsFramesListThunk,
+  updateSectionThunk,
+} from '@/stores/thunks/section.thunks'
 import { FrameModel } from '@/types/models'
 
 type FrameState = {
@@ -133,6 +137,41 @@ attachStoreListener({
     )
     dispatch(setCurrentFrameIdAction(frameId))
     dispatch(setCurrentSectionIdAction(null))
+  },
+})
+
+attachStoreListener({
+  actionCreator: deleteFrameThunk.fulfilled,
+  effect: (action, { dispatch, getState }) => {
+    const deletedFrameId = action.meta.arg.frameId
+
+    if (!deletedFrameId) return
+
+    const deletedFrame =
+      getState().event.currentEvent.frameState.frame.data?.find(
+        (frame) => frame.id === deletedFrameId
+      )
+
+    if (!deletedFrame) return
+
+    const section =
+      getState().event.currentEvent.sectionState.section.data?.find(
+        (_section) => _section.id === deletedFrame?.section_id
+      )
+
+    if (!section) return
+
+    dispatch(
+      updateSectionThunk({
+        sectionId: section.id,
+        data: {
+          frames:
+            section.frames?.filter((frameId) => frameId !== deletedFrameId) ||
+            [],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any,
+      })
+    )
   },
 })
 
