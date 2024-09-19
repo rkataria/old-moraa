@@ -10,8 +10,8 @@ type PopulatedSectionSelector = Array<
   }
 >
 
-export const useEventSelector = () =>
-  useSelector<RootState, PopulatedSectionSelector>((state) =>
+export const useEventSelector = () => {
+  const sections = useSelector<RootState, PopulatedSectionSelector>((state) =>
     state.event.currentEvent.meetingState.meeting.isSuccess &&
     state.event.currentEvent.sectionState.section.isSuccess &&
     state.event.currentEvent.frameState.frame.isSuccess
@@ -39,6 +39,11 @@ export const useEventSelector = () =>
           .filter(Boolean) || []
       : []
   )
+
+  return {
+    sections: sections?.filter((s) => s.id), // Adding this logic to filter recently deleted section
+  }
+}
 
 export const useEventLoadingSelector = () =>
   useSelector<RootState, boolean>(

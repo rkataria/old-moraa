@@ -27,12 +27,14 @@ type SectionItemProps = {
   section: ISection
   actionDisabled: boolean
   startingIndex: number
+  sectionCount: number
 }
 
 export function SectionItem({
   section,
   actionDisabled,
   startingIndex,
+  sectionCount,
 }: SectionItemProps) {
   const {
     setInsertAfterFrameId,
@@ -132,12 +134,14 @@ export function SectionItem({
               }}
             />
           </div>
-          <div className={cn('hidden group-hover/section-item:block')}>
-            <SectionDropdownActions
-              section={section}
-              onDelete={() => setIsDeleteModalOpen(true)}
-            />
-          </div>
+          <RenderIf isTrue={sectionCount > 1}>
+            <div className={cn('hidden group-hover/section-item:block')}>
+              <SectionDropdownActions
+                section={section}
+                onDelete={() => setIsDeleteModalOpen(true)}
+              />
+            </div>
+          </RenderIf>
         </div>
       )
     }
