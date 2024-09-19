@@ -210,38 +210,29 @@ attachStoreListener({
     liveSessionSlice.actions.silentUpdateMeetingSessionData
   ),
   effect: (_, { getState, getOriginalState, dispatch }) => {
-    const { isCurrentUserOwnerOfEvent, currentFrameId } =
-      getState().event.currentEvent.eventState
+    const oldSessionData =
+      getOriginalState().event.currentEvent.liveSessionState.activeSession.data
+        ?.data
     const newSessionData =
       getState().event.currentEvent.liveSessionState.activeSession.data?.data
-    const oldEventSessionMode =
-      getOriginalState().event.currentEvent.liveSessionState.eventSessionMode
 
-    const newFrameIdToUpdate = newSessionData?.currentFrameId
-    let newEventSessionModeToUpdate = null
+    // If presentation status is changed
+    if (
+      oldSessionData?.presentationStatus === PresentationStatuses.STARTED &&
+      newSessionData?.presentationStatus === PresentationStatuses.STOPPED
+    ) {
+      dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
+    }
 
     if (
-      newSessionData?.presentationStatus === PresentationStatuses.STOPPED &&
-      newFrameIdToUpdate
-    ) {
-      newEventSessionModeToUpdate = isCurrentUserOwnerOfEvent
-        ? EventSessionMode.PREVIEW
-        : EventSessionMode.LOBBY
-    } else if (
+      oldSessionData?.presentationStatus === PresentationStatuses.STOPPED &&
       newSessionData?.presentationStatus === PresentationStatuses.STARTED
     ) {
-      newEventSessionModeToUpdate = EventSessionMode.PRESENTATION
-    } else {
-      newEventSessionModeToUpdate = isCurrentUserOwnerOfEvent
-        ? EventSessionMode.LOBBY
-        : EventSessionMode.LOBBY
+      dispatch(updateEventSessionModeAction(EventSessionMode.PRESENTATION))
     }
 
-    if (newFrameIdToUpdate !== currentFrameId) {
-      dispatch(setCurrentFrameIdAction(newFrameIdToUpdate || null))
-    }
-    if (oldEventSessionMode !== newEventSessionModeToUpdate) {
-      dispatch(updateEventSessionModeAction(newEventSessionModeToUpdate))
+    if (newSessionData?.currentFrameId !== oldSessionData?.currentFrameId) {
+      dispatch(setCurrentFrameIdAction(newSessionData?.currentFrameId || null))
     }
   },
 })

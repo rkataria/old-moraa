@@ -101,10 +101,7 @@ export function FramePreview({
           <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
         )}
         {frame.type === ContentType.PDF_VIEWER && (
-          <PDFViewer
-            frame={frame as PDFViewerFrameType}
-            showControls={isInteractive}
-          />
+          <PDFViewer frame={frame as PDFViewerFrameType} />
         )}
         {frame.type === ContentType.POLL && (
           <PollPreview

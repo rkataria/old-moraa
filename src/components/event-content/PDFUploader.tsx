@@ -169,9 +169,10 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
               }>
               <Page
                 pageNumber={selectedPage}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
+                renderAnnotationLayer
+                renderTextLayer
                 className="w-full"
+                devicePixelRatio={5}
               />
             </Document>
             <PageControls

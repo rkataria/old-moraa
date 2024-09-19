@@ -11,9 +11,9 @@ function DashboardLayout() {
   return (
     <div className="flex">
       <SidebarComponent />
-      <div className="w-full">
+      <div className="w-full flex flex-col">
         <HeaderComponent />
-        <main className="flex-grow p-6 bg-white">
+        <main className="flex-grow p-6 bg-white rounded-2xl">
           <Outlet />
         </main>
       </div>
