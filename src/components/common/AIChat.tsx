@@ -228,7 +228,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
             <div className="grid gap-3">
               <Button
                 variant="bordered"
-                className="justify-start h-[2.0625rem] px-2 font-medium text-black/80 border-1 border-primary-400 bg-primary-100"
+                className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
                 onClick={handleGeneratePoll}
                 startContent={
                   <HiOutlineChartBarSquare className="text-[1.5rem] shrink-0" />
@@ -238,7 +238,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
               </Button>
               <Button
                 variant="bordered"
-                className="justify-start h-[2.0625rem] px-2 font-medium text-black/80 border-1 border-primary-400 bg-primary-100"
+                className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
                 onClick={handleSummarizeSection}
                 startContent={
                   <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />

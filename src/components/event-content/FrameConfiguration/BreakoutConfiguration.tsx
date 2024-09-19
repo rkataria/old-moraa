@@ -60,17 +60,18 @@ export function BreakoutConfiguration() {
         )
       )
     }
-    currentFrame?.content?.breakoutRooms?.pop()
+    // currentFrame?.content?.breakoutRooms?.pop()
+
     updateFrame({
       framePayload: {
         config: {
           ...currentFrame?.config,
           breakoutRoomsCount:
-            currentFrame?.content?.breakoutRooms?.length || 1 - 1,
+            (currentFrame?.content?.breakoutRooms?.length || 1) - 1,
         },
         content: {
           ...currentFrame?.content,
-          breakoutRooms: currentFrame?.content?.breakoutRooms,
+          breakoutRooms: currentFrame?.content?.breakoutRooms?.slice(0, -1),
         },
       },
       frameId: currentFrame.id,
