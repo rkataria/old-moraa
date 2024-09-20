@@ -145,6 +145,7 @@ export function SectionList() {
                         section={section}
                         actionDisabled={actionDisabled}
                         startingIndex={startingSectionIndex(sectionIndex)}
+                        sectionCount={sectionList.length}
                       />
                     </div>
                   )}

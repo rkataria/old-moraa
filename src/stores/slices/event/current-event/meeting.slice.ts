@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { setCurrentSectionIdAction } from './event.slice'
+
 import {
   attachThunkToBuilder,
   buildThunkState,
@@ -13,7 +15,7 @@ import {
   updateMeetingThunk,
 } from '@/stores/thunks/meeting.thunks'
 import {
-  deleteSectionsThunk,
+  deleteSectionThunk,
   getSectionsThunk,
 } from '@/stores/thunks/section.thunks'
 import { MeetingModel } from '@/types/models'
@@ -97,22 +99,38 @@ attachStoreListener({
 })
 
 attachStoreListener({
-  actionCreator: deleteSectionsThunk.fulfilled,
-  effect: (action, { dispatch, getState }) => {
+  actionCreator: deleteSectionThunk.fulfilled,
+  effect: async (action, { dispatch, getState }) => {
     const state = getState()
+
     if (!state.event.currentEvent.meetingState.meeting.data) return
 
-    dispatch(
+    const { sections } = state.event.currentEvent.meetingState.meeting.data
+
+    if (!sections) return
+
+    const deletedSectionIndex = sections.indexOf(action.payload.sectionId)
+
+    const response = await dispatch(
       updateMeetingThunk({
         meetingId: state.event.currentEvent.meetingState.meeting.data?.id,
         data: {
-          sections:
-            state.event.currentEvent.meetingState.meeting.data.sections!.filter(
-              (section) => section !== action.payload.sectionId
-            ),
+          sections: sections.filter(
+            (section) => section !== action.payload.sectionId
+          ),
         },
       })
     )
+
+    if (response.type === 'event/updateMeeting/fulfilled') {
+      if (deletedSectionIndex < 0) return
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const nextSectionId = response.payload.sections[deletedSectionIndex]
+
+      dispatch(setCurrentSectionIdAction(nextSectionId))
+    }
   },
 })
 

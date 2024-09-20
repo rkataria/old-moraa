@@ -21,7 +21,7 @@ import { attachStoreListener } from '@/stores/listener'
 import { updateMeetingThunk } from '@/stores/thunks/meeting.thunks'
 import {
   createSectionThunk,
-  deleteSectionsThunk,
+  deleteSectionThunk,
   getSectionsThunk,
   updateSectionsFramesListThunk,
 } from '@/stores/thunks/section.thunks'
@@ -123,7 +123,7 @@ export const sectionSlice = createSlice({
       thunk: createSectionThunk,
       getThunkState: (state) => state.createSectionThunk,
     })
-    builder.addCase(deleteSectionsThunk.fulfilled, (state, action) => {
+    builder.addCase(deleteSectionThunk.fulfilled, (state, action) => {
       state.section.data =
         state.section.data?.filter(
           (section) => section.id !== action.payload.sectionId

@@ -115,11 +115,11 @@ export const updateSectionsFramesListThunk = createAsyncThunk<
 type DeleteSectionsThunkParams = {
   sectionId: string
 }
-export const deleteSectionsThunk = createAsyncThunk<
+export const deleteSectionThunk = createAsyncThunk<
   DeleteSectionsThunkParams,
   DeleteSectionsThunkParams
 >(
-  'event/deleteSectionsThunk',
+  'event/deleteSectionThunk',
   async ({ sectionId }: DeleteSectionsThunkParams) => {
     await SectionService.deleteSection({ sectionId })
 

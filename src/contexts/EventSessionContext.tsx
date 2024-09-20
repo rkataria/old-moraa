@@ -53,7 +53,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventId } = useParams({ strict: false })
   const { meeting: dyteMeeting } = useDyteMeeting()
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
-  const sections = useEventSelector()
+  const { sections } = useEventSelector()
   const currentFrame = useCurrentFrame()
   const { eventMode, setCurrentFrame } = useContext(
     EventContext
