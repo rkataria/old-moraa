@@ -100,7 +100,7 @@ export function BreakoutRoomActivityCard({
           <RenderIf isTrue={breakout?.activityId}>
             <div
               ref={thumbnailContainerRef}
-              className="relative w-full h-full"
+              className="relative w-full h-full cursor-pointer"
               onClick={() => {
                 if (!editable) return
                 setCurrentFrame(getFrameById(breakout?.activityId))
