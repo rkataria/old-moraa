@@ -35,7 +35,7 @@ import {
 } from '@/stores/thunks/frame.thunks'
 import {
   createSectionThunk,
-  deleteSectionsThunk,
+  deleteSectionThunk,
   updateSectionThunk,
 } from '@/stores/thunks/section.thunks'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
@@ -67,10 +67,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const isMeetingJoined = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
-  const isInBreakoutMeeting = useStoreSelector(
-    (store) =>
-      store.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
-  )
   const dispatch = useStoreDispatch()
   const router = useRouter()
   const { action: eventViewFromQuery } = router.latestLocation.search as {
@@ -80,7 +76,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const currentUser = useStoreSelector((state) => state.user.currentUser.user)
   const { permissions } = useEventPermissions()
 
-  const sections = useEventSelector()
+  const { sections } = useEventSelector()
 
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
@@ -119,6 +115,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     frameId: string
     message: string
   } | null>(null)
+
+  console.log(currentFrame)
 
   useEffect(() => {
     if (!event?.owner_id || !currentUser?.id) return
@@ -222,7 +220,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const deleteSection = async ({ sectionId }: { sectionId: string }) => {
-    dispatch(deleteSectionsThunk({ sectionId }))
+    dispatch(deleteSectionThunk({ sectionId }))
 
     return true
   }
@@ -571,14 +569,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           if (frame && isOverviewOpen) dispatch(setIsOverviewOpenAction(false))
 
           if (!isMeetingJoined) return
-          if (!frame?.content?.breakoutFrameId || isInBreakoutMeeting) {
-            // Do not update session if it's a breakout frame.
-            dispatch(
-              updateMeetingSessionDataAction({
-                currentFrameId: frame?.id,
-              })
-            )
-          }
+          dispatch(
+            updateMeetingSessionDataAction({
+              currentFrameId: frame?.id,
+            })
+          )
         },
         setCurrentSectionId: (sectionId) => {
           dispatch(setCurrentSectionIdAction(sectionId))

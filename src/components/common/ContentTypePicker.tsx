@@ -255,32 +255,28 @@ export function ContentTypePicker({
                 </RenderIf>
               ))}
             </div>
-            <RenderIf isTrue={!isBreakoutActivity}>
-              <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
-                Create presentation content
-                <Tooltip content="Creating compelling presentation content that captivates audiences and delivers impactful messages">
-                  <Button
-                    isIconOnly
-                    variant="light"
-                    className="w-auto h-auto min-w-auto">
-                    <BsQuestionCircle className="text-black/50" />
-                  </Button>
-                </Tooltip>
-              </p>
+            <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
+              Create presentation content
+              <Tooltip content="Creating compelling presentation content that captivates audiences and delivers impactful messages">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  className="w-auto h-auto min-w-auto">
+                  <BsQuestionCircle className="text-black/50" />
+                </Button>
+              </Tooltip>
+            </p>
 
-              <div className="grid grid-cols-2 gap-2">
-                {presentationContent.map((activity) => (
-                  <RenderIf
-                    isTrue={Boolean(
-                      isBreakoutActivity
-                        ? activity?.isAvailableForBreakout
-                        : true
-                    )}>
-                    <ContentTypeCard card={activity} onClick={onChoose} />
-                  </RenderIf>
-                ))}
-              </div>
-            </RenderIf>
+            <div className="grid grid-cols-2 gap-2">
+              {presentationContent.map((activity) => (
+                <RenderIf
+                  isTrue={Boolean(
+                    isBreakoutActivity ? activity?.isAvailableForBreakout : true
+                  )}>
+                  <ContentTypeCard card={activity} onClick={onChoose} />
+                </RenderIf>
+              ))}
+            </div>
             <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
               Bring your goodies
               <Tooltip content="Seamless integration of Google Slides, PDFs and other tools to enhance presentation">

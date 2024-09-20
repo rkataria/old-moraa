@@ -26,14 +26,14 @@ export function SectionOverview() {
     updateSection,
   } = useContext(EventContext) as EventContextType
 
-  const filteredSections = sections.filter((s) => s.id === currentSectionId)
+  const currentSection = sections.find((s) => s.id === currentSectionId)
 
-  const section = filteredSections[0]
+  if (!currentSection) return null
 
   const editable = isOwner && !preview && eventMode === 'edit'
 
-  const filteredFrames = getFilteredFramesByStatus({
-    frames: filteredSections[0].frames,
+  const currentSectionFrames = getFilteredFramesByStatus({
+    frames: currentSection.frames,
     status: editable ? null : FrameStatus.PUBLISHED,
   })
 
@@ -42,7 +42,7 @@ export function SectionOverview() {
     let goodies = 0
     let presentation = 0
     let tags: string[] = []
-    filteredFrames.forEach((frame) => {
+    currentSectionFrames.forEach((frame) => {
       const isCollaborative = collaborativeTypes.includes(frame.type)
       const isPresentationType = presentationTypes.includes(frame.type)
       const isGoodiesType = goodiesTypes.includes(frame.type)
@@ -75,12 +75,12 @@ export function SectionOverview() {
             showTooltip={false}
             wrapperClass="text-center"
             readOnly={!editable}
-            label={section.name}
+            label={currentSection.name}
             className="text-4xl font-semibold tracking-tight cursor-pointer 2xl:text-5xl line-clamp-none"
             onUpdate={(value: string) => {
               updateSection({
                 sectionPayload: { name: value },
-                sectionId: section.id,
+                sectionId: currentSection.id,
               })
             }}
           />

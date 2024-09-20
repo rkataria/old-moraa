@@ -129,8 +129,10 @@ export function BreakoutHeaderButton() {
           (meet, index) => ({
             connected_dyte_meeting_id: meet.id!,
             data: {
-              currentFrameId:
-                currentFrame?.content!.breakoutRooms?.[index].activityId,
+              currentFrameId: currentFrame?.content!.breakoutRooms?.[index]
+                .activityId
+                ? currentFrame?.content!.breakoutRooms?.[index].activityId
+                : currentFrame?.content!.groupActivityId,
               presentationStatus: PresentationStatuses.STARTED,
             },
             meeting_id: meetingId,
