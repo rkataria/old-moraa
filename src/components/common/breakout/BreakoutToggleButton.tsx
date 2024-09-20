@@ -74,7 +74,7 @@ export function BreakoutHeaderButton() {
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
-  const breakoutFrameId = useStoreSelector(
+  const sessionBreakoutFrameId = useStoreSelector(
     (store) =>
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutFrameId || null
@@ -90,7 +90,7 @@ export function BreakoutHeaderButton() {
   const sessionBreakoutFrame = sections
     ?.map((section) => section.frames)
     .flat()
-    .find((frame) => frame?.id === breakoutFrameId)
+    .find((frame) => frame?.id === sessionBreakoutFrameId)
 
   const onBreakoutStartOnBreakoutSlide = async (breakoutFrame: IFrame) => {
     if (!meetingId) return
@@ -192,7 +192,11 @@ export function BreakoutHeaderButton() {
     )
   }
 
-  if (currentFrame?.type === ContentType.BREAKOUT) {
+  if (
+    (currentFrame?.content?.breakoutFrameId &&
+      currentFrame?.type === ContentType.BREAKOUT) ||
+    currentFrame?.content?.breakoutFrameId === sessionBreakoutFrameId
+  ) {
     return (
       <Button
         color="danger"
@@ -206,7 +210,7 @@ export function BreakoutHeaderButton() {
     )
   }
 
-  if (!breakoutFrameId) {
+  if (!sessionBreakoutFrameId) {
     return (
       <BreakoutToggleButton
         isActive={isBreakoutOverviewOpen}
@@ -217,10 +221,10 @@ export function BreakoutHeaderButton() {
     )
   }
 
-  if (breakoutFrameId) {
+  if (sessionBreakoutFrameId) {
     return (
       <BreakoutToggleButton
-        isActive={currentFrame?.id === breakoutFrameId}
+        isActive={currentFrame?.id === sessionBreakoutFrameId}
         onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}
       />
     )

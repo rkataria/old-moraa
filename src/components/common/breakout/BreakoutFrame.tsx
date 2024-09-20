@@ -87,9 +87,13 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
 
     const insertInSection = currentSection || sections[0]
 
-    const frameConfig = {
+    const frameConfig: IFrame['config'] = {
       textColor: '#000',
       allowVoteOnMultipleOptions: false,
+    }
+
+    if (contentType === ContentType.RICH_TEXT) {
+      frameConfig.allowToCollaborate = true
     }
 
     const newFrame: IFrame = {
