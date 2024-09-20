@@ -6,7 +6,7 @@ import { useRef } from 'react'
 import { IconTrash } from '@tabler/icons-react'
 import { IoEllipsisVerticalOutline } from 'react-icons/io5'
 import { PiNoteBlankLight } from 'react-icons/pi'
-import { TbAppsFilled } from 'react-icons/tb'
+import { TbApps, TbAppsFilled } from 'react-icons/tb'
 import { TiDocumentDelete } from 'react-icons/ti'
 
 // TODO: Fix this.
@@ -42,12 +42,17 @@ type BreakoutRoomActivityCardProps = {
 export const roomActions = [
   {
     key: 'delete-room',
-    label: 'Delete Room',
+    label: 'Delete room',
     icon: <IconTrash className="text-slate-500" size={20} />,
   },
   {
+    key: 'add-activity',
+    label: 'Add activity in room',
+    icon: <TbApps className="text-slate-500" size={20} />,
+  },
+  {
     key: 'delete-room-activity',
-    label: 'Remove Room Activity',
+    label: 'Remove activity from room',
     icon: <TiDocumentDelete className="text-slate-500" size={20} />,
   },
 ]
@@ -80,6 +85,9 @@ export function BreakoutRoomActivityCard({
     }
 
     if (breakout?.activityId) {
+      actions.push(roomActions[2])
+    }
+    if (!breakout?.activityId) {
       actions.push(roomActions[1])
     }
 
@@ -133,9 +141,9 @@ export function BreakoutRoomActivityCard({
                 <p className="text-xs text-center">
                   {editable ? (
                     <>
-                      Click to Select a Collaborative
+                      Click to select a collaborative
                       <br />
-                      Activity!
+                      activity!
                     </>
                   ) : (
                     'No activity!'
@@ -200,6 +208,10 @@ export function BreakoutRoomActivityCard({
 
               if (actionKey === 'delete-room-activity') {
                 deleteActivityFrame?.(idx)
+              }
+
+              if (actionKey === 'add-activity') {
+                onAddNewActivity?.(idx)
               }
             }}
           />
