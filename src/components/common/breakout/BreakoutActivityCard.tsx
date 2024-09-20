@@ -5,6 +5,7 @@ import { useRef } from 'react'
 
 import { IconTrash } from '@tabler/icons-react'
 import { IoEllipsisVerticalOutline } from 'react-icons/io5'
+import { PiNoteBlankLight } from 'react-icons/pi'
 import { TbAppsFilled } from 'react-icons/tb'
 import { TiDocumentDelete } from 'react-icons/ti'
 
@@ -119,8 +120,16 @@ export function BreakoutRoomActivityCard({
                 if (!editable) return
                 onAddNewActivity?.(idx)
               }}>
-              <div className="grid place-items-center gap-4">
-                <TbAppsFilled size={48} className="text-primary-300" />
+              <div
+                className={cn('grid place-items-center gap-4', {
+                  'gap-2': !editable,
+                })}>
+                {editable ? (
+                  <TbAppsFilled size={48} className="text-primary-300" />
+                ) : (
+                  <PiNoteBlankLight size={48} className="text-gray-200" />
+                )}
+
                 <p className="text-xs text-center">
                   {editable ? (
                     <>

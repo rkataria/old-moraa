@@ -58,7 +58,7 @@ export function BreakoutFrameLive({
   return (
     <div>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
-        <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
+        <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
           {frame.content?.breakoutRooms?.map((breakout, idx) => (
             <BreakoutRoomActivityCard
               idx={idx}
