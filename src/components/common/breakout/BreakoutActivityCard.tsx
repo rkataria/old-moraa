@@ -27,22 +27,13 @@ type BreakoutRoomActivityCardProps = {
     displayName?: string
     displayPictureUrl?: string
   }[]
-  deleteActivityFrame?: (idx: number) => void
   editable: boolean
-} & (
-  | {
-      editable: boolean
-      updateBreakoutRoomName: (value: string, idx: number) => void
-      deleteRoomGroup: (idx: number) => void
-      onAddNewActivity: (index: number) => void
-    }
-  | {
-      editable: false
-      updateBreakoutRoomName?: never
-      deleteRoomGroup?: never
-      onAddNewActivity?: never
-    }
-)
+  deleteActivityFrame?: (idx: number) => void
+  updateBreakoutRoomName?: (value: string, idx: number) => void
+  deleteRoomGroup?: (idx: number) => void
+  onAddNewActivity?: (index: number) => void
+  hideRoomDelete?: boolean
+}
 
 export function BreakoutRoomActivityCard({
   breakout,
@@ -53,6 +44,7 @@ export function BreakoutRoomActivityCard({
   deleteRoomGroup,
   deleteActivityFrame,
   onAddNewActivity,
+  hideRoomDelete,
   participants,
 }: BreakoutRoomActivityCardProps) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
@@ -78,7 +70,7 @@ export function BreakoutRoomActivityCard({
             if (!editable) return
             // if (frame.content.breakout === value) return
 
-            updateBreakoutRoomName(value, idx)
+            updateBreakoutRoomName?.(value, idx)
           }}
         />
         <RenderIf isTrue={editable}>
@@ -89,19 +81,19 @@ export function BreakoutRoomActivityCard({
                 variant="light"
                 onClick={() => {
                   if (!editable) return
-                  onAddNewActivity(idx)
+                  onAddNewActivity?.(idx)
                 }}>
                 <IoAddSharp size={18} className="text-gray-400" />
               </Button>
             </RenderIf>
 
-            <RenderIf isTrue={breakout?.activityId}>
+            <RenderIf isTrue={!hideRoomDelete}>
               <Button
                 isIconOnly
                 variant="light"
                 onClick={() => {
                   if (!editable) return
-                  deleteRoomGroup(idx)
+                  deleteRoomGroup?.(idx)
                 }}>
                 <BsTrash className="text-red-400" />
               </Button>
@@ -131,16 +123,16 @@ export function BreakoutRoomActivityCard({
               </div>
             ) : (
               <div
-                className="flex justify-center items-center p-2 text-center"
+                className="flex justify-center h-full w-full items-center p-2 text-center cursor-pointer"
                 onClick={() => {
                   if (!editable) return
-                  onAddNewActivity(idx)
+                  onAddNewActivity?.(idx)
                 }}>
                 Add new slide which will be added under the Breakout section
               </div>
             )}
           </div>
-          {deleteActivityFrame && (
+          <RenderIf isTrue={breakout?.activityId && deleteActivityFrame}>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-10 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
               <Button
                 isIconOnly
@@ -155,7 +147,7 @@ export function BreakoutRoomActivityCard({
                 <BsTrash />
               </Button>
             </div>
-          )}
+          </RenderIf>
         </div>
       </RenderIf>
       {!!participants && (

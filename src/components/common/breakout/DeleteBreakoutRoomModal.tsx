@@ -28,12 +28,22 @@ export function DeleteBreakoutRoomModal({
         {() => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Delete breakout activity
+              Delete breakout room
             </ModalHeader>
             <ModalBody>
               <p>
-                Are you sure to delete breakout room with
-                <span className="font-bold ml-1">{frame?.name}</span> frame?
+                Are you sure to delete breakout room
+                {frame ? (
+                  <>
+                    {' '}
+                    with
+                    <span className="font-bold ml-1">{frame?.name}</span>{' '}
+                    activity
+                  </>
+                ) : (
+                  ''
+                )}
+                ?
               </p>
             </ModalBody>
             <ModalFooter>

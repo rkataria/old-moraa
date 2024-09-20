@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
-import { DeleteBreakoutRoomModal } from './DeleteBreakoutActivityModal'
+import { DeleteBreakoutRoomModal } from './DeleteBreakoutRoomModal'
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { ContentType, ContentTypePicker } from '../ContentTypePicker'
@@ -156,12 +156,15 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       }
     }
 
-    updateFrame({ framePayload: payload, frameId: frame.id })
     addFrameToSection({
       frame: newFrame,
       section: insertInSection,
       afterFrameId: _insertAfterFrameId!,
     })
+    setTimeout(
+      () => updateFrame({ framePayload: payload, frameId: frame.id }),
+      1000
+    )
     setOpenContentTypePicker(false)
   }
 
@@ -188,7 +191,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
           ...frame.content,
           breakoutRooms:
             frame.content?.breakoutRooms?.map((activity, breakoutRoomIndex) =>
-              breakoutRoomIndex === deletingRoomIndex
+              breakoutRoomIndex === deletingActivityFrameIndex
                 ? { ...activity, activityId: null }
                 : activity
             ) || [],
@@ -211,9 +214,9 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
   }
 
   const handleBreakoutRoomDelete = (_frame: IFrame | null) => {
-    if (!_frame) return
-
-    deleteFrame(_frame)
+    if (_frame) {
+      deleteFrame(_frame)
+    }
     let payload = {}
     if (frame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
       const filteredBreakoutRooms =
@@ -252,6 +255,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
               deleteRoomGroup={(deletingIdx) =>
                 setDeletingRoomIndex(deletingIdx)
               }
+              hideRoomDelete={(frame.content?.breakoutRooms?.length || 0) <= 2}
               idx={idx}
               editable={editable}
               onAddNewActivity={() => {
