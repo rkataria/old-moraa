@@ -293,7 +293,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
               }
             />
           ))}
-          <RenderIf isTrue>
+          <RenderIf isTrue={!preview}>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="relative grid place-items-center h-full w-full cursor-pointer border rounded-xl hover:bg-primary group/new-room duration-300 min-h-[200px]"

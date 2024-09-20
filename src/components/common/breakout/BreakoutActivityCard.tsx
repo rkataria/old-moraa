@@ -122,8 +122,15 @@ export function BreakoutRoomActivityCard({
               <div className="grid place-items-center gap-4">
                 <TbAppsFilled size={48} className="text-primary-300" />
                 <p className="text-xs text-center">
-                  Click to Select a Collaborative
-                  <br /> Activity!
+                  {editable ? (
+                    <>
+                      Click to Select a Collaborative
+                      <br />
+                      Activity!
+                    </>
+                  ) : (
+                    'No activity!'
+                  )}
                 </p>
               </div>
             </div>
@@ -157,11 +164,11 @@ export function BreakoutRoomActivityCard({
           ))}
         </div>
       )}
-      <div className="flex justify-between gap-4 px-3 py-1 pb-1.5">
+      <div className="flex justify-between items-center gap-4 px-3 h-10">
         <EditableLabel
           readOnly={!editable}
           label={breakout?.name || ''}
-          className="text-sm"
+          className="text-sm line-clamp-1"
           onUpdate={(value) => {
             if (!editable) return
             // if (frame.content.breakout === value) return
