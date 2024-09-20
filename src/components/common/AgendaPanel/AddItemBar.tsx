@@ -98,14 +98,4 @@ export function AddItemBar({
       }}
     />
   )
-
-  return (
-    <div className="absolute left-0 -bottom-2 w-full h-2 bg-transparent z-[1] py-[2px] group/add-item-bar cursor-pointer">
-      <div className="relative left-0 top-0 w-full h-full flex justify-end items-center bg-transparent group-hover/add-item-bar:bg-black">
-        <div className="w-5 h-5 rounded-full bg-transparent text-transparent flex justify-center items-center group-hover/add-item-bar:bg-black group-hover/add-item-bar:text-white">
-          <BsPlus size={18} />
-        </div>
-      </div>
-    </div>
-  )
 }

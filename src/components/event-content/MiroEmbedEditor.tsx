@@ -21,11 +21,13 @@ export type MiroEmbedFrameType = IFrame & {
 interface MiroEmbedEditorProps {
   frame: MiroEmbedFrameType
   viewOnly?: boolean
+  asThumbnail?: boolean
 }
 
 export function MiroEmbedEditor({
   frame,
   viewOnly = false,
+  asThumbnail = false,
 }: MiroEmbedEditorProps) {
   const [boardIdentifier, setBoardIdentifier] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
@@ -90,7 +92,7 @@ export function MiroEmbedEditor({
     return (
       <div className="relative w-full h-full">
         <MiroEmbed frame={frame} />
-        <RenderIf isTrue={!preview}>
+        <RenderIf isTrue={!preview && !asThumbnail}>
           <CiEdit
             className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg bg-primary text-white cursor-pointer"
             onClick={() => setIsEditMode(true)}

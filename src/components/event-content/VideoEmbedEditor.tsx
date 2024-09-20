@@ -23,12 +23,14 @@ interface VideoEmbedEditorProps {
   frame: VideoEmbedFrameType
   showControls?: boolean
   fullWidth?: boolean
+  asThumbnail?: boolean
 }
 
 export function VideoEmbedEditor({
   frame,
   showControls = true,
   fullWidth,
+  asThumbnail,
 }: VideoEmbedEditorProps) {
   const [videoUrl, setVideoUrl] = useState(frame.content.videoUrl || '')
   const [isEditMode, setIsEditMode] = useState(!frame.content.videoUrl)
@@ -62,7 +64,7 @@ export function VideoEmbedEditor({
           )}>
           <ResponsiveVideoPlayer url={videoUrl} showControls={showControls} />
         </div>
-        <RenderIf isTrue={!preview}>
+        <RenderIf isTrue={!preview && !asThumbnail}>
           <CiEdit
             className="absolute right-[-8px] bottom-[81px] z-[10] w-10 h-10 rounded-full p-2 shadow-lg bg-primary text-white cursor-pointer"
             onClick={() => setIsEditMode(true)}

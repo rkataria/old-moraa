@@ -3,12 +3,15 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useRef } from 'react'
 
-import { BsTrash } from 'react-icons/bs'
-import { IoAddSharp } from 'react-icons/io5'
+import { IconTrash } from '@tabler/icons-react'
+import { IoEllipsisVerticalOutline } from 'react-icons/io5'
+import { TbAppsFilled } from 'react-icons/tb'
+import { TiDocumentDelete } from 'react-icons/ti'
 
 // TODO: Fix this.
 // eslint-disable-next-line import/no-cycle
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
+import { DropdownActions } from '../DropdownActions'
 import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
 import { Tooltip } from '../ShortuctTooltip'
@@ -35,6 +38,19 @@ type BreakoutRoomActivityCardProps = {
   hideRoomDelete?: boolean
 }
 
+export const roomActions = [
+  {
+    key: 'delete-room',
+    label: 'Delete Room',
+    icon: <IconTrash className="text-slate-500" size={20} />,
+  },
+  {
+    key: 'delete-room-activity',
+    label: 'Remove Room Activity',
+    icon: <TiDocumentDelete className="text-slate-500" size={20} />,
+  },
+]
+
 export function BreakoutRoomActivityCard({
   breakout,
   editable,
@@ -55,98 +71,61 @@ export function BreakoutRoomActivityCard({
   )
   const { setCurrentFrame, getFrameById } = useEventContext()
 
+  const getActions = () => {
+    const actions = []
+
+    if (!hideRoomDelete) {
+      actions.push(roomActions[0])
+    }
+
+    if (breakout?.activityId) {
+      actions.push(roomActions[1])
+    }
+
+    return actions
+  }
+
   return (
     <div
-      className={cn('border rounded p-2', {
-        // 'min-h-[120px]': !hideActivityCard,
-      })}
+      style={{
+        background: 'linear-gradient(123deg, #EBDFFF 0.31%, #F8F4FF 69.5%)',
+      }}
+      className="border rounded-xl"
       key={breakout?.name}>
-      <div className="flex justify-between gap-4">
-        <EditableLabel
-          readOnly={!editable}
-          label={breakout?.name || ''}
-          className="text-sm"
-          onUpdate={(value) => {
-            if (!editable) return
-            // if (frame.content.breakout === value) return
-
-            updateBreakoutRoomName?.(value, idx)
-          }}
-        />
-        <RenderIf isTrue={editable}>
-          <span className="flex">
-            <RenderIf isTrue={!breakout?.activityId}>
-              <Button
-                isIconOnly
-                variant="light"
-                onClick={() => {
-                  if (!editable) return
-                  onAddNewActivity?.(idx)
-                }}>
-                <IoAddSharp size={18} className="text-gray-400" />
-              </Button>
-            </RenderIf>
-
-            <RenderIf isTrue={!hideRoomDelete}>
-              <Button
-                isIconOnly
-                variant="light"
-                onClick={() => {
-                  if (!editable) return
-                  deleteRoomGroup?.(idx)
-                }}>
-                <BsTrash className="text-red-400" />
-              </Button>
-            </RenderIf>
-          </span>
-        </RenderIf>
-      </div>
       <RenderIf isTrue={!hideActivityCard}>
-        <div className="relative ">
-          <div
-            className={cn(
-              'border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48'
-            )}>
-            {breakout?.activityId ? (
-              <div
-                ref={thumbnailContainerRef}
-                className="relative w-full h-full"
-                onClick={() => {
-                  if (!editable) return
-                  setCurrentFrame(getFrameById(breakout?.activityId))
-                }}>
-                <FrameThumbnailCard
-                  frame={getFrameById(breakout?.activityId)}
-                  containerWidth={containerWidth}
-                  inViewPort
-                />
+        <div
+          className={cn(
+            'border border-gray-100 text-gray-400 m-1 bg-white rounded-xl aspect-video'
+          )}>
+          <RenderIf isTrue={breakout?.activityId}>
+            <div
+              ref={thumbnailContainerRef}
+              className="relative w-full h-full"
+              onClick={() => {
+                if (!editable) return
+                setCurrentFrame(getFrameById(breakout?.activityId))
+              }}>
+              <FrameThumbnailCard
+                frame={getFrameById(breakout?.activityId)}
+                containerWidth={containerWidth}
+                inViewPort
+              />
+            </div>
+          </RenderIf>
+          <RenderIf isTrue={!breakout?.activityId}>
+            <div
+              className="grid place-items-center h-full w-full cursor-pointer aspect-video"
+              onClick={() => {
+                if (!editable) return
+                onAddNewActivity?.(idx)
+              }}>
+              <div className="grid place-items-center gap-4">
+                <TbAppsFilled size={48} className="text-primary-300" />
+                <p className="text-xs text-center">
+                  Click to Select a Collaborative
+                  <br /> Activity!
+                </p>
               </div>
-            ) : (
-              <div
-                className="flex justify-center h-full w-full items-center p-2 text-center cursor-pointer"
-                onClick={() => {
-                  if (!editable) return
-                  onAddNewActivity?.(idx)
-                }}>
-                Add new slide which will be added under the Breakout section
-              </div>
-            )}
-          </div>
-          <RenderIf
-            isTrue={breakout?.activityId && deleteActivityFrame && editable}>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-10 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
-              <Button
-                isIconOnly
-                radius="full"
-                variant="solid"
-                color="danger"
-                size="sm"
-                onClick={() => {
-                  if (!editable) return
-                  deleteActivityFrame?.(idx)
-                }}>
-                <BsTrash />
-              </Button>
             </div>
           </RenderIf>
         </div>
@@ -178,6 +157,38 @@ export function BreakoutRoomActivityCard({
           ))}
         </div>
       )}
+      <div className="flex justify-between gap-4 px-3 py-1 pb-1.5">
+        <EditableLabel
+          readOnly={!editable}
+          label={breakout?.name || ''}
+          className="text-sm"
+          onUpdate={(value) => {
+            if (!editable) return
+            // if (frame.content.breakout === value) return
+
+            updateBreakoutRoomName?.(value, idx)
+          }}
+        />
+        <RenderIf isTrue={editable}>
+          <DropdownActions
+            triggerIcon={
+              <Button isIconOnly variant="light" className="-mr-2.5">
+                <IoEllipsisVerticalOutline size={20} />
+              </Button>
+            }
+            actions={getActions()}
+            onAction={(actionKey) => {
+              if (actionKey === 'delete-room') {
+                deleteRoomGroup?.(idx)
+              }
+
+              if (actionKey === 'delete-room-activity') {
+                deleteActivityFrame?.(idx)
+              }
+            }}
+          />
+        </RenderIf>
+      </div>
     </div>
   )
 }
