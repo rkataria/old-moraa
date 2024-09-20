@@ -132,7 +132,8 @@ export function BreakoutRoomActivityCard({
               </div>
             )}
           </div>
-          <RenderIf isTrue={breakout?.activityId && deleteActivityFrame}>
+          <RenderIf
+            isTrue={breakout?.activityId && deleteActivityFrame && editable}>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-10 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
               <Button
                 isIconOnly
