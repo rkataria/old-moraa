@@ -27,6 +27,7 @@ type BreakoutRoomActivityCardProps = {
     displayName?: string
     displayPictureUrl?: string
   }[]
+  deleteActivityFrame?: (idx: number) => void
   editable: boolean
 } & (
   | {
@@ -50,6 +51,7 @@ export function BreakoutRoomActivityCard({
   hideActivityCard = false,
   updateBreakoutRoomName,
   deleteRoomGroup,
+  deleteActivityFrame,
   onAddNewActivity,
   participants,
 }: BreakoutRoomActivityCardProps) {
@@ -108,29 +110,50 @@ export function BreakoutRoomActivityCard({
         </RenderIf>
       </div>
       <RenderIf isTrue={!hideActivityCard}>
-        <div className="border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48">
-          {breakout?.activityId ? (
-            <div
-              ref={thumbnailContainerRef}
-              className="relative w-full h-full"
-              onClick={() => {
-                if (!editable) return
-                setCurrentFrame(getFrameById(breakout?.activityId))
-              }}>
-              <FrameThumbnailCard
-                frame={getFrameById(breakout?.activityId)}
-                containerWidth={containerWidth}
-                inViewPort
-              />
-            </div>
-          ) : (
-            <div
-              className="flex justify-center items-center p-2 text-center"
-              onClick={() => {
-                if (!editable) return
-                onAddNewActivity(idx)
-              }}>
-              Add new slide which will be added under the Breakout section
+        <div className="relative ">
+          <div
+            className={cn(
+              'border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48'
+            )}>
+            {breakout?.activityId ? (
+              <div
+                ref={thumbnailContainerRef}
+                className="relative w-full h-full"
+                onClick={() => {
+                  if (!editable) return
+                  setCurrentFrame(getFrameById(breakout?.activityId))
+                }}>
+                <FrameThumbnailCard
+                  frame={getFrameById(breakout?.activityId)}
+                  containerWidth={containerWidth}
+                  inViewPort
+                />
+              </div>
+            ) : (
+              <div
+                className="flex justify-center items-center p-2 text-center"
+                onClick={() => {
+                  if (!editable) return
+                  onAddNewActivity(idx)
+                }}>
+                Add new slide which will be added under the Breakout section
+              </div>
+            )}
+          </div>
+          {deleteActivityFrame && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-10 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
+              <Button
+                isIconOnly
+                radius="full"
+                variant="solid"
+                color="danger"
+                size="sm"
+                onClick={() => {
+                  if (!editable) return
+                  deleteActivityFrame?.(idx)
+                }}>
+                <BsTrash />
+              </Button>
             </div>
           )}
         </div>
