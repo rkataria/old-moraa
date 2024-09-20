@@ -35,7 +35,7 @@ import {
 } from '@/stores/thunks/frame.thunks'
 import {
   createSectionThunk,
-  deleteSectionsThunk,
+  deleteSectionThunk,
   updateSectionThunk,
 } from '@/stores/thunks/section.thunks'
 import { EventContextType, EventModeType } from '@/types/event-context.type'
@@ -76,7 +76,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const currentUser = useStoreSelector((state) => state.user.currentUser.user)
   const { permissions } = useEventPermissions()
 
-  const sections = useEventSelector()
+  const { sections } = useEventSelector()
 
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
@@ -220,7 +220,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const deleteSection = async ({ sectionId }: { sectionId: string }) => {
-    dispatch(deleteSectionsThunk({ sectionId }))
+    dispatch(deleteSectionThunk({ sectionId }))
 
     return true
   }
