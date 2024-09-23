@@ -69,10 +69,12 @@ export function BreakoutHeaderButton() {
   const { isHost, currentFrame, setCurrentFrame, realtimeChannel } =
     useEventSession()
 
+  const { getFrameById } = useEventContext()
+
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
-  const breakoutFrameId = useStoreSelector(
+  const sessionBreakoutFrameId = useStoreSelector(
     (store) =>
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutFrameId || null
@@ -85,12 +87,12 @@ export function BreakoutHeaderButton() {
     useBreakoutRooms()
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
-  const breakoutFrame = sections
+  const sessionBreakoutFrame = sections
     ?.map((section) => section.frames)
     .flat()
-    .find((frame) => frame?.id === breakoutFrameId)
+    .find((frame) => frame?.id === sessionBreakoutFrameId)
 
-  const onBreakoutStartOnBreakoutSlide = async () => {
+  const onBreakoutStartOnBreakoutSlide = async (breakoutFrame: IFrame) => {
     if (!meetingId) return
     try {
       await breakoutRoomsInstance?.startBreakoutRooms({
@@ -98,22 +100,22 @@ export function BreakoutHeaderButton() {
          * Because the breakoutRooms array only exist on breakout room type so it won't get sent for a breakout group type
          * And the `participantPerGroup` only exist on breakout group type so it won't get sent for a breakout room type
          */
-        roomsCount: currentFrame?.content?.breakoutRooms?.length,
-        participantsPerRoom: currentFrame?.config.participantPerGroup,
+        roomsCount: breakoutFrame?.content?.breakoutRooms?.length,
+        participantsPerRoom: breakoutFrame?.config.participantPerGroup,
       })
       dispatch(
         updateMeetingSessionDataAction({
-          breakoutFrameId: currentFrame?.id || null,
+          breakoutFrameId: breakoutFrame?.id || null,
         })
       )
-      if (currentFrame?.config.breakoutTime) {
+      if (breakoutFrame?.config.breakoutTime) {
         setTimeout(() => {
           realtimeChannel?.send({
             type: 'broadcast',
             event: 'timer-start-event',
             payload: {
               remainingDuration:
-                (currentFrame?.config?.breakoutTime as number) * 60,
+                (breakoutFrame?.config?.breakoutTime as number) * 60,
             },
           })
         }, 500)
@@ -129,8 +131,10 @@ export function BreakoutHeaderButton() {
           (meet, index) => ({
             connected_dyte_meeting_id: meet.id!,
             data: {
-              currentFrameId:
-                currentFrame?.content!.breakoutRooms?.[index].activityId,
+              currentFrameId: breakoutFrame?.content!.breakoutRooms?.[index]
+                .activityId
+                ? breakoutFrame?.content!.breakoutRooms?.[index].activityId
+                : breakoutFrame?.content!.groupActivityId,
               presentationStatus: PresentationStatuses.STARTED,
             },
             meeting_id: meetingId,
@@ -154,14 +158,24 @@ export function BreakoutHeaderButton() {
   if (!isHost) return null
   if (isCurrentDyteMeetingInABreakoutRoom) return null
 
-  if (!isBreakoutActive && currentFrame?.type === ContentType.BREAKOUT) {
+  if (
+    !isBreakoutActive &&
+    (currentFrame?.type === ContentType.BREAKOUT ||
+      currentFrame?.content?.breakoutFrameId)
+  ) {
     return (
       <Button
         variant="solid"
         size="sm"
         radius="md"
         className="bg-green-500 text-white"
-        onClick={onBreakoutStartOnBreakoutSlide}>
+        onClick={() =>
+          onBreakoutStartOnBreakoutSlide(
+            currentFrame?.content?.breakoutFrameId
+              ? getFrameById(currentFrame?.content?.breakoutFrameId as string)
+              : currentFrame
+          )
+        }>
         Start Breakout
       </Button>
     )
@@ -178,7 +192,11 @@ export function BreakoutHeaderButton() {
     )
   }
 
-  if (currentFrame?.type === ContentType.BREAKOUT) {
+  if (
+    (currentFrame?.content?.breakoutFrameId &&
+      currentFrame?.type === ContentType.BREAKOUT) ||
+    currentFrame?.content?.breakoutFrameId === sessionBreakoutFrameId
+  ) {
     return (
       <Button
         color="danger"
@@ -192,7 +210,7 @@ export function BreakoutHeaderButton() {
     )
   }
 
-  if (!breakoutFrameId) {
+  if (!sessionBreakoutFrameId) {
     return (
       <BreakoutToggleButton
         isActive={isBreakoutOverviewOpen}
@@ -203,11 +221,11 @@ export function BreakoutHeaderButton() {
     )
   }
 
-  if (breakoutFrameId) {
+  if (sessionBreakoutFrameId) {
     return (
       <BreakoutToggleButton
-        isActive={currentFrame?.id === breakoutFrameId}
-        onClick={() => setCurrentFrame(breakoutFrame as IFrame)}
+        isActive={currentFrame?.id === sessionBreakoutFrameId}
+        onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}
       />
     )
   }

@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useRef } from 'react'
 
+import { BsTrash } from 'react-icons/bs'
 import { IoAddSharp } from 'react-icons/io5'
 
 // TODO: Fix this.
@@ -12,6 +13,7 @@ import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
 import { Tooltip } from '../ShortuctTooltip'
 
+import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { cn } from '@/utils/utils'
@@ -26,20 +28,12 @@ type BreakoutRoomActivityCardProps = {
     displayPictureUrl?: string
   }[]
   editable: boolean
-} & (
-  | {
-      editable: boolean
-      updateBreakoutRoomName: (value: string, idx: number) => void
-      deleteRoomGroup: (idx: number) => void
-      onAddNewActivity: (index: number) => void
-    }
-  | {
-      editable: false
-      updateBreakoutRoomName?: never
-      deleteRoomGroup?: never
-      onAddNewActivity?: never
-    }
-)
+  deleteActivityFrame?: (idx: number) => void
+  updateBreakoutRoomName?: (value: string, idx: number) => void
+  deleteRoomGroup?: (idx: number) => void
+  onAddNewActivity?: (index: number) => void
+  hideRoomDelete?: boolean
+}
 
 export function BreakoutRoomActivityCard({
   breakout,
@@ -48,7 +42,9 @@ export function BreakoutRoomActivityCard({
   hideActivityCard = false,
   updateBreakoutRoomName,
   deleteRoomGroup,
+  deleteActivityFrame,
   onAddNewActivity,
+  hideRoomDelete,
   participants,
 }: BreakoutRoomActivityCardProps) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
@@ -74,55 +70,85 @@ export function BreakoutRoomActivityCard({
             if (!editable) return
             // if (frame.content.breakout === value) return
 
-            updateBreakoutRoomName(value, idx)
+            updateBreakoutRoomName?.(value, idx)
           }}
         />
         <RenderIf isTrue={editable}>
-          <span className="flex gap-2">
-            <IoAddSharp
-              className="border border-dashed border-gray-400 text-gray-400"
-              onClick={() => {
-                if (!editable) return
-                onAddNewActivity(idx)
-              }}
-            />
-            <RenderIf isTrue={breakout?.activityId}>
-              <IoAddSharp
-                className="rotate-45"
+          <span className="flex">
+            <RenderIf isTrue={!breakout?.activityId}>
+              <Button
+                isIconOnly
+                variant="light"
                 onClick={() => {
                   if (!editable) return
-                  deleteRoomGroup(idx)
-                }}
-              />
+                  onAddNewActivity?.(idx)
+                }}>
+                <IoAddSharp size={18} className="text-gray-400" />
+              </Button>
+            </RenderIf>
+
+            <RenderIf isTrue={!hideRoomDelete}>
+              <Button
+                isIconOnly
+                variant="light"
+                onClick={() => {
+                  if (!editable) return
+                  deleteRoomGroup?.(idx)
+                }}>
+                <BsTrash className="text-red-400" />
+              </Button>
             </RenderIf>
           </span>
         </RenderIf>
       </div>
       <RenderIf isTrue={!hideActivityCard}>
-        <div className="border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48">
-          {breakout?.activityId ? (
-            <div
-              ref={thumbnailContainerRef}
-              className="relative w-full h-full"
-              onClick={() => {
-                if (!editable) return
-                setCurrentFrame(getFrameById(breakout?.activityId))
-              }}>
-              <FrameThumbnailCard
-                frame={getFrameById(breakout?.activityId)}
-                containerWidth={containerWidth}
-              />
+        <div className="relative ">
+          <div
+            className={cn(
+              'border border-dashed border-gray-200 text-gray-400 mt-4 h-40 min-w-48'
+            )}>
+            {breakout?.activityId ? (
+              <div
+                ref={thumbnailContainerRef}
+                className="relative w-full h-full"
+                onClick={() => {
+                  if (!editable) return
+                  setCurrentFrame(getFrameById(breakout?.activityId))
+                }}>
+                <FrameThumbnailCard
+                  frame={getFrameById(breakout?.activityId)}
+                  containerWidth={containerWidth}
+                  inViewPort
+                />
+              </div>
+            ) : (
+              <div
+                className="flex justify-center h-full w-full items-center p-2 text-center cursor-pointer"
+                onClick={() => {
+                  if (!editable) return
+                  onAddNewActivity?.(idx)
+                }}>
+                Add new slide which will be added under the Breakout section
+              </div>
+            )}
+          </div>
+          <RenderIf
+            isTrue={breakout?.activityId && deleteActivityFrame && editable}>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-10 flex items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100">
+              <Button
+                isIconOnly
+                radius="full"
+                variant="solid"
+                color="danger"
+                size="sm"
+                onClick={() => {
+                  if (!editable) return
+                  deleteActivityFrame?.(idx)
+                }}>
+                <BsTrash />
+              </Button>
             </div>
-          ) : (
-            <div
-              className="flex justify-center items-center p-2 text-center"
-              onClick={() => {
-                if (!editable) return
-                onAddNewActivity(idx)
-              }}>
-              Add new slide which will be added under the Breakout section
-            </div>
-          )}
+          </RenderIf>
         </div>
       </RenderIf>
       {!!participants && (

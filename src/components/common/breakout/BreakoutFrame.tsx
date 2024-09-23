@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
+import { DeleteBreakoutRoomModal } from './DeleteBreakoutRoomModal'
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { ContentType, ContentTypePicker } from '../ContentTypePicker'
@@ -63,11 +64,13 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     'maximized'
   )
 
-  const [selectedBreakoutIndex, setSelectedBreakoutIndex] = useState<number>(0)
+  const [deletingRoomIndex, setDeletingRoomIndex] = useState(-1)
+  const [deletingActivityFrameIndex, setDeletingActivityFrameIndex] =
+    useState(-1)
+  const [addingActivityRoomIndex, setAddingActivityRoomIndex] =
+    useState<number>(0)
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
-  const [selectedFrame, setSelectedFrame] = useState<number>(-1)
 
   const handleAddNewFrame = (
     contentType: ContentType,
@@ -84,9 +87,13 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
 
     const insertInSection = currentSection || sections[0]
 
-    const frameConfig = {
+    const frameConfig: IFrame['config'] = {
       textColor: '#000',
       allowVoteOnMultipleOptions: false,
+    }
+
+    if (contentType === ContentType.RICH_TEXT) {
+      frameConfig.allowToCollaborate = true
     }
 
     const newFrame: IFrame = {
@@ -110,11 +117,13 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
 
     let payload = {}
     if (frame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
-      if (frame?.content?.breakoutRooms?.[selectedBreakoutIndex]?.activityId) {
+      if (
+        frame?.content?.breakoutRooms?.[addingActivityRoomIndex]?.activityId
+      ) {
         deleteFrame(
           getFrameById(
-            frame.content?.breakoutRooms?.[selectedBreakoutIndex]?.activityId ||
-              ''
+            frame.content?.breakoutRooms?.[addingActivityRoomIndex]
+              ?.activityId || ''
           )
         )
       }
@@ -122,16 +131,18 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         content: {
           ...frame.content,
           breakoutRooms: [
-            ...(frame.content?.breakoutRooms?.slice(0, selectedBreakoutIndex) ||
-              []),
+            ...(frame.content?.breakoutRooms?.slice(
+              0,
+              addingActivityRoomIndex
+            ) || []),
             {
-              ...frame.content?.breakoutRooms?.[selectedBreakoutIndex],
+              ...frame.content?.breakoutRooms?.[addingActivityRoomIndex],
               ...{
                 activityId: newFrame.id,
               },
             },
             ...(frame.content?.breakoutRooms?.slice(
-              selectedBreakoutIndex + 1
+              addingActivityRoomIndex + 1
             ) || []),
           ],
         },
@@ -149,12 +160,15 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       }
     }
 
-    updateFrame({ framePayload: payload, frameId: frame.id })
     addFrameToSection({
       frame: newFrame,
       section: insertInSection,
       afterFrameId: _insertAfterFrameId!,
     })
+    setTimeout(
+      () => updateFrame({ framePayload: payload, frameId: frame.id }),
+      1000
+    )
     setOpenContentTypePicker(false)
   }
 
@@ -172,26 +186,22 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     updateFrame({ framePayload: payload, frameId: frame.id })
   }
 
-  const deleteRoomActivity = (idx: number): void => {
-    setIsDeleteModalOpen(true)
-    setSelectedFrame(idx)
-  }
-
-  const handleDelete = (_frame: IFrame) => {
-    deleteFrame(_frame)
+  const handleBreakoutActivityFrameDelete = (_frame: IFrame | null) => {
+    if (!_frame) return
     let payload = {}
     if (frame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
       payload = {
         content: {
           ...frame.content,
-          breakoutRooms: [
-            ...(frame.content?.breakoutRooms?.slice(0, selectedFrame) || []),
-            {
-              ...(frame.content?.breakoutRooms?.[selectedFrame] || {}),
-              ...{ activityId: null },
-            },
-            ...(frame.content?.breakoutRooms?.slice(selectedFrame + 1) || []),
-          ],
+          breakoutRooms:
+            frame.content?.breakoutRooms?.map((activity, breakoutRoomIndex) =>
+              breakoutRoomIndex === deletingActivityFrameIndex
+                ? { ...activity, activityId: null }
+                : activity
+            ) || [],
+        },
+        config: {
+          ...frame.config,
         },
       }
     } else {
@@ -203,8 +213,40 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       }
     }
     updateFrame({ framePayload: payload, frameId: frame.id })
-    setSelectedFrame(-1)
-    setIsDeleteModalOpen(false)
+    setTimeout(() => deleteFrame(_frame), 1000)
+    setDeletingActivityFrameIndex(-1)
+  }
+
+  const handleBreakoutRoomDelete = (_frame: IFrame | null) => {
+    if (_frame) {
+      deleteFrame(_frame)
+    }
+    let payload = {}
+    if (frame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
+      const filteredBreakoutRooms =
+        frame.content?.breakoutRooms?.filter(
+          (_, breakoutRoomIndex) => breakoutRoomIndex !== deletingRoomIndex
+        ) || []
+      payload = {
+        content: {
+          ...frame.content,
+          breakoutRooms: filteredBreakoutRooms,
+        },
+        config: {
+          ...frame.config,
+          breakoutRoomsCount: filteredBreakoutRooms.length,
+        },
+      }
+    } else {
+      payload = {
+        content: {
+          ...frame.content,
+          groupActivityId: null,
+        },
+      }
+    }
+    updateFrame({ framePayload: payload, frameId: frame.id })
+    setDeletingRoomIndex(-1)
   }
 
   return (
@@ -214,14 +256,20 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
           {frame.content?.breakoutRooms?.map((breakout, idx) => (
             <BreakoutRoomActivityCard
               breakout={breakout}
-              deleteRoomGroup={deleteRoomActivity}
+              deleteRoomGroup={(deletingIdx) =>
+                setDeletingRoomIndex(deletingIdx)
+              }
+              hideRoomDelete={(frame.content?.breakoutRooms?.length || 0) <= 2}
               idx={idx}
               editable={editable}
               onAddNewActivity={() => {
                 setOpenContentTypePicker(true)
-                setSelectedBreakoutIndex(idx)
+                setAddingActivityRoomIndex(idx)
               }}
               updateBreakoutRoomName={updateBreakoutRoomName}
+              deleteActivityFrame={(deletingIdx) =>
+                setDeletingActivityFrameIndex(deletingIdx)
+              }
             />
           ))}
         </div>
@@ -249,6 +297,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
                 <FrameThumbnailCard
                   frame={getFrameById(frame?.content?.groupActivityId || '')}
                   containerWidth={containerWidth}
+                  inViewPort
                 />
               </div>
             </RenderIf>
@@ -283,14 +332,21 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         isBreakoutActivity
       />
       <DeleteFrameModal
-        isModalOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false)
-          setSelectedFrame(-1)
-        }}
-        handleDelete={handleDelete}
+        isModalOpen={deletingActivityFrameIndex !== -1}
+        onClose={() => setDeletingActivityFrameIndex(-1)}
+        handleDelete={handleBreakoutActivityFrameDelete}
         frame={getFrameById(
-          frame.content?.breakoutRooms?.[selectedFrame]?.activityId as string
+          frame.content?.breakoutRooms?.[deletingActivityFrameIndex]
+            ?.activityId as string
+        )}
+      />
+      <DeleteBreakoutRoomModal
+        isModalOpen={deletingRoomIndex !== -1}
+        onClose={() => setDeletingRoomIndex(-1)}
+        handleDelete={handleBreakoutRoomDelete}
+        frame={getFrameById(
+          frame.content?.breakoutRooms?.[deletingRoomIndex]
+            ?.activityId as string
         )}
       />
     </div>

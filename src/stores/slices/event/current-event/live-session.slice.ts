@@ -215,6 +215,7 @@ attachStoreListener({
         ?.data
     const newSessionData =
       getState().event.currentEvent.liveSessionState.activeSession.data?.data
+    const { currentFrameId } = getState().event.currentEvent.eventState
 
     // If presentation status is changed
     if (
@@ -231,7 +232,7 @@ attachStoreListener({
       dispatch(updateEventSessionModeAction(EventSessionMode.PRESENTATION))
     }
 
-    if (newSessionData?.currentFrameId !== oldSessionData?.currentFrameId) {
+    if (newSessionData?.currentFrameId !== currentFrameId) {
       dispatch(setCurrentFrameIdAction(newSessionData?.currentFrameId || null))
     }
   },

@@ -108,6 +108,7 @@ export const contentTypes: IContentType[] = [
     icon: <TbNews className="w-full h-full max-w-11 max-h-11" />,
     description: 'Create a rich text editor',
     contentType: ContentType.RICH_TEXT,
+    isAvailableForBreakout: true,
   },
   // {
   //   name: 'Image',
@@ -143,6 +144,7 @@ export const contentTypes: IContentType[] = [
     description:
       'Ignite insights through thoughtful reflection. Share perspectives, spark growth.',
     contentType: ContentType.REFLECTION,
+    isAvailableForBreakout: true,
   },
   {
     name: 'Moraaboard',
@@ -159,6 +161,7 @@ export const contentTypes: IContentType[] = [
     description:
       'Embed Miro boards to collaborate and brainstorm with your audience',
     contentType: ContentType.MIRO_EMBED,
+    isAvailableForBreakout: true,
   },
   {
     name: 'Google Slides',
@@ -252,32 +255,28 @@ export function ContentTypePicker({
                 </RenderIf>
               ))}
             </div>
-            <RenderIf isTrue={!isBreakoutActivity}>
-              <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
-                Create presentation content
-                <Tooltip content="Creating compelling presentation content that captivates audiences and delivers impactful messages">
-                  <Button
-                    isIconOnly
-                    variant="light"
-                    className="w-auto h-auto min-w-auto">
-                    <BsQuestionCircle className="text-black/50" />
-                  </Button>
-                </Tooltip>
-              </p>
+            <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
+              Create presentation content
+              <Tooltip content="Creating compelling presentation content that captivates audiences and delivers impactful messages">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  className="w-auto h-auto min-w-auto">
+                  <BsQuestionCircle className="text-black/50" />
+                </Button>
+              </Tooltip>
+            </p>
 
-              <div className="grid grid-cols-2 gap-2">
-                {presentationContent.map((activity) => (
-                  <RenderIf
-                    isTrue={Boolean(
-                      isBreakoutActivity
-                        ? activity?.isAvailableForBreakout
-                        : true
-                    )}>
-                    <ContentTypeCard card={activity} onClick={onChoose} />
-                  </RenderIf>
-                ))}
-              </div>
-            </RenderIf>
+            <div className="grid grid-cols-2 gap-2">
+              {presentationContent.map((activity) => (
+                <RenderIf
+                  isTrue={Boolean(
+                    isBreakoutActivity ? activity?.isAvailableForBreakout : true
+                  )}>
+                  <ContentTypeCard card={activity} onClick={onChoose} />
+                </RenderIf>
+              ))}
+            </div>
             <p className="flex items-center gap-2 text-black/50 text-sm tracking-tight mt-4">
               Bring your goodies
               <Tooltip content="Seamless integration of Google Slides, PDFs and other tools to enhance presentation">
