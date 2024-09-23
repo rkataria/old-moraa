@@ -8,6 +8,7 @@ import { FrameFormContainer } from './FrameFormContainer'
 import { ContentLoading } from '../common/ContentLoading'
 import { FilePickerDropzone } from '../common/FilePickerDropzone'
 
+import { useFlags } from '@/flags/client'
 import { FileConvertService } from '@/services/backend/file-convert-service'
 import { IFrame } from '@/types/frame.type'
 
@@ -16,16 +17,22 @@ interface PowerpointImporterProps {
 }
 
 export function PowerpointImporter({ frame }: PowerpointImporterProps) {
+  const { flags } = useFlags()
+
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('frameId', frame.id)
 
+      if (!frame.section_id || !frame.meeting_id || !frame.id) return
+
       await FileConvertService.importPowerpoint({
         file,
         sectionId: frame.section_id!,
         meetingId: frame.meeting_id!,
+        uploaderFrameId: frame.id,
+        outputType: flags?.import_ppt_output === 'svg' ? 'svg' : 'png',
       })
     },
     onSuccess: () => toast.success('Powerpoint uploaded successfully.'),
@@ -61,8 +68,12 @@ export function PowerpointImporter({ frame }: PowerpointImporterProps) {
     <FrameFormContainer
       headerIcon={<SiMicrosoftpowerpoint size={72} className="text-primary" />}
       headerTitle="Import Powerpoint"
-      headerDescription="Upload your Powerpoint file and get started."
-      footerNote="This will take some time, depending on the size of the file.">
+      headerDescription="Upload your Powerpoint file and get started. This will take some time, depending on the size of the file."
+      footerNote={
+        flags?.import_ppt_output === 'svg'
+          ? 'You will be able to edit your Powerpoint in SVG format.'
+          : 'You won’t be able to edit your Powerpoint as it will be imported in PNG format.'
+      }>
       <div className="w-full">
         <FilePickerDropzone
           fullWidth

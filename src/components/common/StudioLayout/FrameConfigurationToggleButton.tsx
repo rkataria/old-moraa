@@ -1,8 +1,8 @@
-import { Button } from '@nextui-org/react'
 import { BsSliders } from 'react-icons/bs'
 
 import { Tooltip } from '../ShortuctTooltip'
 
+import { Button } from '@/components/ui/Button'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn } from '@/utils/utils'
 
@@ -22,8 +22,7 @@ export function FrameConfigurationToggleButton() {
       <Button
         size="sm"
         isIconOnly
-        variant="light"
-        className={cn('bg-gray-100 hover:bg-gray-200', {
+        className={cn({
           'bg-primary-100': rightSidebarVisiblity === 'frame-configuration',
         })}
         onClick={toggleSidebar}>

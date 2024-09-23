@@ -8,7 +8,6 @@ import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
 export const frameTypesWithTitle = [
-  ContentType.IMAGE_VIEWER,
   ContentType.MIRO_EMBED,
   ContentType.VIDEO_EMBED,
   ContentType.VIDEO,
@@ -20,10 +19,10 @@ export const frameTypesWithTitle = [
 ]
 
 export const frameTypesWithDescription = [
-  ContentType.REFLECTION,
-  ContentType.VIDEO_EMBED,
   ContentType.MIRO_EMBED,
+  ContentType.VIDEO_EMBED,
   ContentType.VIDEO,
+  ContentType.REFLECTION,
   ContentType.PDF_VIEWER,
   ContentType.MORAA_BOARD,
   ContentType.BREAKOUT,

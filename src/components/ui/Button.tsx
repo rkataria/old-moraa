@@ -8,6 +8,7 @@ export const Button = extendVariants(NextUIButton, {
   variants: {
     color: {
       brand: 'text-white bg-primary',
+      default: 'bg-gray-100 hover:bg-gray-200',
     },
     size: {
       sm: 'rounded-md text-md h-8',
@@ -17,6 +18,7 @@ export const Button = extendVariants(NextUIButton, {
   },
   defaultVariants: {
     size: 'sm',
+    color: 'default',
   },
 }) as React.FC<ButtonProps & { preventFocusOnPress?: boolean }>
 

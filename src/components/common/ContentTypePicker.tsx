@@ -8,6 +8,7 @@ import {
   IconBrandAdobe,
   IconChartBar,
   IconVideo,
+  IconPhoto,
 } from '@tabler/icons-react'
 import { BsQuestionCircle } from 'react-icons/bs'
 import { IoPeopleOutline } from 'react-icons/io5'
@@ -18,6 +19,8 @@ import { TbNews } from 'react-icons/tb'
 import { ContentTypeCard } from './ContentTypeCard'
 import { RenderIf } from './RenderIf/RenderIf'
 import { Tooltip } from './ShortuctTooltip'
+
+import { useFlags } from '@/flags/client'
 
 export interface IContentType {
   name: string
@@ -110,13 +113,13 @@ export const contentTypes: IContentType[] = [
     contentType: ContentType.RICH_TEXT,
     isAvailableForBreakout: true,
   },
-  // {
-  //   name: 'Image',
-  //   icon: <IconPhoto className="w-full h-full max-w-11 max-h-11" />,
-  //   description: 'Upload and display images on your frames',
-  //   contentType: ContentType.IMAGE_VIEWER,
-  //   disabled: true, // TODO: Enable this frame when Image Viewer Frame is implemented
-  // },
+  {
+    name: 'Image',
+    icon: <IconPhoto className="w-full h-full max-w-11 max-h-11" />,
+    description: 'Upload and display images on your frames',
+    contentType: ContentType.IMAGE_VIEWER,
+    disabled: true, // TODO: Enable this frame when Image Viewer Frame is implemented
+  },
   {
     name: 'Breakout',
     icon: <IoPeopleOutline className="w-full h-full max-w-11 max-h-11" />,
@@ -196,6 +199,8 @@ export function ContentTypePicker({
   onChoose,
   isBreakoutActivity = false,
 }: ChooseContentTypeProps) {
+  const { flags } = useFlags()
+
   const collaborativeActivities = [
     getContentType(ContentType.POLL),
     getContentType(ContentType.REFLECTION),
@@ -219,8 +224,12 @@ export function ContentTypePicker({
     getContentType(ContentType.PDF_VIEWER),
     getContentType(ContentType.MIRO_EMBED),
     getContentType(ContentType.VIDEO_EMBED),
-    getContentType(ContentType.POWERPOINT),
   ]
+
+  // Feature flags
+  if (flags?.enable_ppt_import) {
+    goodies.push(getContentType(ContentType.POWERPOINT))
+  }
 
   return (
     <Modal

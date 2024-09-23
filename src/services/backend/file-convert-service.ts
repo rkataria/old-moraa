@@ -6,10 +6,14 @@ export class FileConvertService {
     file,
     sectionId,
     meetingId,
+    uploaderFrameId,
+    outputType = 'png',
   }: {
     file: File
     sectionId: string
     meetingId: string
+    uploaderFrameId: string
+    outputType?: 'png' | 'svg'
   }) {
     // TODO: This needs to be fixed
     const query = axios
@@ -17,10 +21,11 @@ export class FileConvertService {
         baseURL: import.meta.env.VITE_BACKEND_URL,
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      .post('/file/convert', {
+      .post(outputType === 'png' ? '/convert/ppt-png' : '/convert/ppt-svg', {
         file,
         sectionId,
         meetingId,
+        uploaderFrameId,
       })
 
     return query.then(

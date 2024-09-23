@@ -5,6 +5,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { FrameAppearanceToggleButton } from '../common/StudioLayout/FrameAppearanceToggleButton'
 import { FrameConfigurationToggleButton } from '../common/StudioLayout/FrameConfigurationToggleButton'
 import { FrameNoteToggleButton } from '../common/StudioLayout/FrameNoteToggleButton'
+import { FrameStatusToggleButton } from '../common/StudioLayout/FrameStatusToggleButton'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -41,6 +42,7 @@ export function RightSidebarControls() {
       <FrameConfigurationToggleButton />
       <FrameAppearanceToggleButton />
       <FrameNoteToggleButton />
+      <FrameStatusToggleButton />
     </RightSidebarControlsWrapper>
   )
 }
@@ -51,8 +53,10 @@ function RightSidebarControlsWrapper({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex-none w-14 h-full flex flex-col justify-start items-center gap-2 overflow-y-auto scrollbar-none scroll-smooth">
-      {children}
+    <div className="flex-none w-14 h-full flex flex-col justify-start items-center gap-2 overflow-y-auto scrollbar-none scroll-smooth px-2">
+      <div className="border-1 border-gray-200 p-1 rounded-md bg-white flex flex-col gap-1">
+        {children}
+      </div>
     </div>
   )
 }

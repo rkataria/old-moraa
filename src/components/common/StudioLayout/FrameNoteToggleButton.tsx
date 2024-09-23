@@ -1,11 +1,11 @@
 import { useContext } from 'react'
 
-import { Button } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { LuClipboardEdit } from 'react-icons/lu'
 
 import { Tooltip } from '../ShortuctTooltip'
 
+import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -40,8 +40,7 @@ export function FrameNoteToggleButton() {
       <Button
         size="sm"
         isIconOnly
-        variant="light"
-        className={cn('bg-gray-100 hover:bg-gray-200', {
+        className={cn({
           'bg-primary-100': rightSidebarVisiblity === 'frame-notes',
         })}
         onClick={toggleSidebar}>
