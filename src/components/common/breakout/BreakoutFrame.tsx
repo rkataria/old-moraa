@@ -21,6 +21,7 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
@@ -55,6 +56,9 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     deleteFrame,
     getFrameById,
   } = useContext(EventContext) as EventContextType
+  const isMeetingJoined = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
+  )
 
   const editable = isOwner && !preview && isEditable
 
@@ -297,7 +301,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
               }
             />
           ))}
-          <RenderIf isTrue={!preview}>
+          <RenderIf isTrue={!isMeetingJoined}>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="relative grid place-items-center h-full w-full cursor-pointer border rounded-xl hover:bg-primary group/new-room duration-300 min-h-[200px]"

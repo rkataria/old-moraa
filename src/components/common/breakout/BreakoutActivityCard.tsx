@@ -37,6 +37,7 @@ type BreakoutRoomActivityCardProps = {
   deleteRoomGroup?: (idx: number) => void
   onAddNewActivity?: (index: number) => void
   hideRoomDelete?: boolean
+  JoinRoomButton?: React.ReactElement
 }
 
 export const roomActions = [
@@ -68,6 +69,7 @@ export function BreakoutRoomActivityCard({
   onAddNewActivity,
   hideRoomDelete,
   participants,
+  JoinRoomButton,
 }: BreakoutRoomActivityCardProps) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
 
@@ -94,6 +96,8 @@ export function BreakoutRoomActivityCard({
     return actions
   }
 
+  console.log(breakout)
+
   return (
     <div
       style={{
@@ -101,6 +105,42 @@ export function BreakoutRoomActivityCard({
       }}
       className="border rounded-xl"
       key={breakout?.name}>
+      <div className="flex justify-between items-center gap-4 px-3">
+        <EditableLabel
+          readOnly={!editable}
+          label={breakout?.name || ''}
+          className="text-sm line-clamp-1 my-2"
+          onUpdate={(value) => {
+            if (!editable) return
+            // if (frame.content.breakout === value) return
+
+            updateBreakoutRoomName?.(value, idx)
+          }}
+        />
+        <RenderIf isTrue={editable}>
+          <DropdownActions
+            triggerIcon={
+              <Button isIconOnly variant="light" className="-mr-2.5">
+                <IoEllipsisVerticalOutline size={20} />
+              </Button>
+            }
+            actions={getActions()}
+            onAction={(actionKey) => {
+              if (actionKey === 'delete-room') {
+                deleteRoomGroup?.(idx)
+              }
+
+              if (actionKey === 'delete-room-activity') {
+                deleteActivityFrame?.(idx)
+              }
+
+              if (actionKey === 'add-activity') {
+                onAddNewActivity?.(idx)
+              }
+            }}
+          />
+        </RenderIf>
+      </div>
       <RenderIf isTrue={!hideActivityCard}>
         <div
           className={cn(
@@ -155,7 +195,7 @@ export function BreakoutRoomActivityCard({
         </div>
       </RenderIf>
       {!!participants && (
-        <div className="flex items-center mt-2">
+        <div className="flex items-center m-2 pl-2">
           {participants?.length === 0 ? (
             <p className="text-sm text-gray-400">No participants</p>
           ) : null}
@@ -181,42 +221,7 @@ export function BreakoutRoomActivityCard({
           ))}
         </div>
       )}
-      <div className="flex justify-between items-center gap-4 px-3 h-10">
-        <EditableLabel
-          readOnly={!editable}
-          label={breakout?.name || ''}
-          className="text-sm line-clamp-1"
-          onUpdate={(value) => {
-            if (!editable) return
-            // if (frame.content.breakout === value) return
-
-            updateBreakoutRoomName?.(value, idx)
-          }}
-        />
-        <RenderIf isTrue={editable}>
-          <DropdownActions
-            triggerIcon={
-              <Button isIconOnly variant="light" className="-mr-2.5">
-                <IoEllipsisVerticalOutline size={20} />
-              </Button>
-            }
-            actions={getActions()}
-            onAction={(actionKey) => {
-              if (actionKey === 'delete-room') {
-                deleteRoomGroup?.(idx)
-              }
-
-              if (actionKey === 'delete-room-activity') {
-                deleteActivityFrame?.(idx)
-              }
-
-              if (actionKey === 'add-activity') {
-                onAddNewActivity?.(idx)
-              }
-            }}
-          />
-        </RenderIf>
-      </div>
+      {JoinRoomButton}
     </div>
   )
 }
