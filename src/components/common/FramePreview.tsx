@@ -128,10 +128,15 @@ export function FramePreview({
             showControls={isInteractive}
             fullWidth={fullWidth}
             key={(frame as VideoEmbedFrameType).content.videoUrl}
+            asThumbnail={asThumbnail}
           />
         )}
         {frame.type === ContentType.MIRO_EMBED && (
-          <MiroEmbedEditor viewOnly frame={frame as MiroEmbedFrameType} />
+          <MiroEmbedEditor
+            viewOnly
+            frame={frame as MiroEmbedFrameType}
+            asThumbnail={asThumbnail}
+          />
         )}
         {frame.type === ContentType.RICH_TEXT && (
           <RichTextPreview

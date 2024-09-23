@@ -7,6 +7,7 @@ import 'tldraw/tldraw.css'
 import { useContext, useRef, useState } from 'react'
 
 import { Button, Card } from '@nextui-org/react'
+import { HiOutlinePlus } from 'react-icons/hi2'
 import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line import/no-cycle
@@ -20,6 +21,7 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
@@ -54,6 +56,9 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     deleteFrame,
     getFrameById,
   } = useContext(EventContext) as EventContextType
+  const isMeetingJoined = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
+  )
 
   const editable = isOwner && !preview && isEditable
 
@@ -249,10 +254,34 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     setDeletingRoomIndex(-1)
   }
 
+  const addNewRoom = () => {
+    if (!currentFrame) return
+    const nextRoomCount =
+      (currentFrame?.content?.breakoutRooms?.length || 0) + 1
+    updateFrame({
+      framePayload: {
+        config: {
+          ...currentFrame?.config,
+          breakoutRoomsCount: nextRoomCount,
+        },
+        content: {
+          ...currentFrame?.content,
+          breakoutRooms: [
+            ...(currentFrame?.content?.breakoutRooms || []),
+            {
+              name: `Room - ${nextRoomCount}`,
+            },
+          ],
+        },
+      },
+      frameId: currentFrame.id,
+    })
+  }
+
   return (
     <div className="w-full h-full pt-4">
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
-        <div className="grid grid-cols-4 gap-2 h-auto overflow-y-auto min-h-[280px]">
+        <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3">
           {frame.content?.breakoutRooms?.map((breakout, idx) => (
             <BreakoutRoomActivityCard
               breakout={breakout}
@@ -272,6 +301,20 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
               }
             />
           ))}
+          <RenderIf isTrue={!isMeetingJoined}>
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+            <div
+              className="relative grid place-items-center h-full w-full cursor-pointer border rounded-xl hover:bg-primary group/new-room duration-300 min-h-[200px]"
+              onClick={addNewRoom}>
+              <HiOutlinePlus
+                size={60}
+                className="text-primary -mt-5 group-hover/new-room:text-white"
+              />
+              <p className="text-primary absolute bottom-4 w-full left-0 text-center group-hover/new-room:text-white">
+                New Room
+              </p>
+            </div>
+          </RenderIf>
         </div>
       </RenderIf>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS}>

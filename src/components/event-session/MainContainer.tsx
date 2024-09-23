@@ -5,11 +5,9 @@ import { Panel, PanelGroup } from 'react-resizable-panels'
 import { ContentContainer } from './ContentContainer'
 import { FrameOverlayView } from './FrameOverlayView'
 import { ParticipantTiles } from './ParticipantTiles'
-import { BreakoutRoomsWithParticipants } from '../common/breakout/BreakoutRoomsFrame'
 import { PanelResizer } from '../common/PanelResizer'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import {
   EventSessionMode,
@@ -27,7 +25,6 @@ export function MainContainer() {
 
   const mainContentRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef(null)
-  const { isBreakoutActive } = useBreakoutRooms()
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -69,12 +66,7 @@ export function MainContainer() {
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
           <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
-            {isHost && isBreakoutActive && isBreakoutOverviewOpen ? (
-              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden">
-                <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
-                <BreakoutRoomsWithParticipants hideActivityCards />
-              </div>
-            ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
+            {['Preview', 'Presentation'].includes(eventSessionMode) ? (
               <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto scrollbar-none">
                 <ContentContainer />
               </div>

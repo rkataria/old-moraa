@@ -123,7 +123,10 @@ export function MeetingScreen() {
   // }, [meeting, eventSessionMode])
 
   const BottomContentElement =
-    isHost && isBreakoutActive && breakoutFrameId === currentFrame?.id ? (
+    isHost &&
+    isBreakoutActive &&
+    breakoutFrameId !== currentFrame?.id &&
+    breakoutFrameId !== currentFrame?.config.breakoutFrameId ? (
       <BreakoutRoomsWithParticipants hideActivityCards />
     ) : null
 

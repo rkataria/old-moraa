@@ -1,91 +1,73 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-} from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
+import { EndBreakoutButton } from './EndBreakoutButton'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
-import { useEventSession } from '@/contexts/EventSessionContext'
-import { useStoreDispatch } from '@/hooks/useRedux'
-import { setIsBreakoutOverviewOpenAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { useEventContext } from '@/contexts/EventContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 
-// TODO: Remove this component
 export function BreakoutRoomsWithParticipants({
   hideActivityCards,
 }: {
   hideActivityCards?: boolean
 }) {
+  const { getFrameById } = useEventContext()
   const { meeting } = useDyteMeeting()
-  const { currentFrame, realtimeChannel } = useEventSession()
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
-  const dispatch = useStoreDispatch()
-
-  const endBreakoutRooms = () => {
-    breakoutRoomsInstance?.endBreakout()
-    dispatch(setIsBreakoutOverviewOpenAction(false))
-    realtimeChannel?.send({
-      type: 'broadcast',
-      event: 'timer-stop-event',
-      payload: { remainingDuration: 0 },
-    })
-  }
+  const breakoutFrameId = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutFrameId
+  )
 
   const joinRoom = (meetId: string) => {
     breakoutRoomsInstance?.joinRoom(meetId)
   }
 
+  const breakoutFrame = getFrameById(breakoutFrameId!)
+
   return (
     <div className="w-full flex-1">
-      <div className="flex flex-wrap">
+      <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
         {meeting.connectedMeetings.meetings.map((meet, index) => (
-          <div key={meet.id} className="mr-4 mb-4">
-            <Card
-              className="overflow-y-auto p-2"
-              style={{
-                minWidth: '15rem',
-                minHeight: '12rem',
-                maxHeight: '30rem',
-              }}>
-              <CardHeader>
-                <p className="text-md font-semibold">{meet.title}</p>
-              </CardHeader>
-              <CardBody className="p-2 py-0">
-                <BreakoutRoomActivityCard
-                  idx={index}
-                  breakout={currentFrame?.content?.breakoutRooms?.[index]}
-                  editable={false}
-                  hideActivityCard={hideActivityCards}
-                  participants={meet.participants?.map((p) => ({
-                    displayName: p?.displayName || '',
-                    id: p?.id || '',
-                    displayPictureUrl: p?.displayPictureUrl || '',
-                  }))}
-                />
-              </CardBody>
-              <CardFooter className="p-2 py-0">
-                {meet.id !== meeting.connectedMeetings.parentMeeting.id ? (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => joinRoom(meet.id || '')}>
-                    Join {meet.title}
-                  </Button>
-                ) : null}
-              </CardFooter>
-            </Card>
-          </div>
+          <BreakoutRoomActivityCard
+            idx={index}
+            breakout={{
+              activityId:
+                breakoutFrame?.content?.activityId ||
+                breakoutFrame?.content?.groupActivityId,
+              name: breakoutFrame?.content?.groupActivityId
+                ? ''
+                : breakoutFrame?.content?.title,
+            }}
+            editable={false}
+            hideActivityCard={hideActivityCards}
+            participants={meet.participants?.map((p) => ({
+              displayName: p?.displayName || '',
+              id: p?.id || '',
+              displayPictureUrl: p?.displayPictureUrl || '',
+            }))}
+            JoinRoomButton={
+              meet.id !== meeting.connectedMeetings.parentMeeting.id ? (
+                <Button
+                  className="m-2 border-1"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => joinRoom(meet.id || '')}>
+                  Join {meet.title}
+                </Button>
+              ) : undefined
+            }
+          />
         ))}
       </div>
-      <Button onClick={endBreakoutRooms} size="sm" color="danger">
-        End Breakout
-      </Button>
+      <div className="my-4">
+        <EndBreakoutButton />
+      </div>
     </div>
   )
 }
