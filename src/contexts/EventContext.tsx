@@ -116,8 +116,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     message: string
   } | null>(null)
 
-  console.log(currentFrame)
-
   useEffect(() => {
     if (!event?.owner_id || !currentUser?.id) return
 

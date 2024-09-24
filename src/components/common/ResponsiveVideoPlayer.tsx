@@ -24,8 +24,8 @@ export type ResponsiveVideoPlayerState = {
   muted: boolean
   playbackRate: number
   played: number
-  seeking: boolean
   playedSeconds?: number
+  broadcastedPlayedValue?: number
 }
 
 type ResponsiveVideoPlayerProps = {
@@ -34,7 +34,10 @@ type ResponsiveVideoPlayerProps = {
   showControls?: boolean
   light?: boolean
   playerState?: ResponsiveVideoPlayerState
-  onPlayerStateChange?: (state: ResponsiveVideoPlayerState) => void
+  onPlayerStateChange?: React.Dispatch<
+    React.SetStateAction<ResponsiveVideoPlayerState>
+  >
+  onPlayerStateUpdate?: (newState: ResponsiveVideoPlayerState) => void
 }
 
 export function ResponsiveVideoPlayer({
@@ -43,6 +46,7 @@ export function ResponsiveVideoPlayer({
   showControls = true,
   light = false,
   playerState,
+  onPlayerStateUpdate,
   onPlayerStateChange,
 }: ResponsiveVideoPlayerProps) {
   const [hideControls, setHideControls] = useState(true)
@@ -53,33 +57,30 @@ export function ResponsiveVideoPlayer({
   const playerRef = useRef<ReactPlayer>(null)
   const hovered = useDebounce(hoveringOnContainer, 3000)
 
+  const localPlayerState = useState<ResponsiveVideoPlayerState>({
+    playing: false,
+    loop: false,
+    volume: 0.8,
+    muted: false,
+    playbackRate: 1,
+    played: 0,
+    playedSeconds: 0,
+  })
+  const [isSeeking, setIsSeeking] = useState(false)
+
   const [currentPlayerState, setCurrentPlayerState] =
-    useState<ResponsiveVideoPlayerState>({
-      playing: false,
-      loop: false,
-      volume: 0.8,
-      muted: false,
-      playbackRate: 1,
-      played: 0,
-      seeking: false,
-    })
+    playerState && onPlayerStateChange
+      ? [playerState, onPlayerStateChange]
+      : localPlayerState
 
   useEffect(() => {
-    onPlayerStateChange?.(currentPlayerState)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPlayerState])
-
-  useEffect(() => {
-    if (playerState) {
-      setCurrentPlayerState((prevState) => ({ ...prevState, ...playerState }))
-
+    if (playerState?.broadcastedPlayedValue) {
       // If the played value is updated by the host, then update the player
-      if (playerState.played !== currentPlayerState.played) {
-        playerRef.current?.seekTo(playerState.played)
-      }
+
+      playerRef.current?.seekTo(playerState.broadcastedPlayedValue)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playerState])
+  }, [playerState?.broadcastedPlayedValue])
 
   useEffect(() => {
     if (!hovered) return
@@ -90,51 +91,78 @@ export function ResponsiveVideoPlayer({
 
   const handlePlay = () => {
     if (!showControls) return
-    setCurrentPlayerState((prevState) => ({ ...prevState, playing: true }))
+    setCurrentPlayerState((prevState) => {
+      const newState = { ...prevState, playing: true }
+      onPlayerStateUpdate?.(newState)
+
+      return newState
+    })
   }
 
   const handlePause = () => {
     if (!showControls) return
-    setCurrentPlayerState((prevState) => ({ ...prevState, playing: false }))
+    setCurrentPlayerState((prevState) => {
+      const newState = { ...prevState, playing: false }
+      onPlayerStateUpdate?.(newState)
+
+      return newState
+    })
   }
 
   const handleEnded = () => {
     if (!showControls) return
-    setCurrentPlayerState((prevState) => ({ ...prevState, playing: false }))
+    setCurrentPlayerState((prevState) => {
+      const newState = { ...prevState, playing: false }
+      onPlayerStateUpdate?.(newState)
+
+      return newState
+    })
   }
 
   const handleOnPlaybackRateChange = (playbackRate: number) => {
     if (!showControls) return
-    setCurrentPlayerState((prevState) => ({ ...prevState, playbackRate }))
+    setCurrentPlayerState((prevState) => {
+      const newState = { ...prevState, playbackRate }
+      onPlayerStateUpdate?.(newState)
+
+      return newState
+    })
   }
 
   const handleMuteToggle = () => {
     if (!showControls) return
-    setCurrentPlayerState((prevState) => ({
-      ...prevState,
-      muted: !prevState.muted,
-      volume: prevState.muted ? 0.8 : 0,
-    }))
+    setCurrentPlayerState((prevState) => {
+      const newState = {
+        ...prevState,
+        muted: !prevState.muted,
+        volume: prevState.muted ? 0.8 : 0,
+      }
+      onPlayerStateUpdate?.(newState)
+
+      return newState
+    })
   }
 
   const handleSeekMouseDown = () => {
     if (!showControls) return
-    setCurrentPlayerState((prevState) => ({ ...prevState, seeking: true }))
+    setIsSeeking(true)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSeekChange = (e: any) => {
     if (!showControls) return
-    setCurrentPlayerState((prevState) => ({
-      ...prevState,
-      played: parseFloat(e.target.value),
-    }))
+    setCurrentPlayerState((prevState) => {
+      const newState = { ...prevState, played: parseFloat(e.target.value) }
+      onPlayerStateUpdate?.(newState)
+
+      return newState
+    })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSeekMouseUp = (e: any) => {
     if (!showControls) return
-    setCurrentPlayerState((prevState) => ({ ...prevState, seeking: false }))
+    setIsSeeking(false)
     playerRef.current?.seekTo(parseFloat(e.target.value))
   }
 
@@ -169,7 +197,7 @@ export function ResponsiveVideoPlayer({
         onEnded={handleEnded}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onProgress={(progress: any) => {
-          if (!currentPlayerState.seeking) {
+          if (!isSeeking) {
             setCurrentPlayerState((prevState) => ({
               ...prevState,
               played: progress.played,

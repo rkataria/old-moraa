@@ -7,6 +7,7 @@ import {
   ResponsiveVideoPlayerState,
 } from '@/components/common/ResponsiveVideoPlayer'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
 
@@ -26,8 +27,19 @@ export function VideoEmbed({ frame }: VideoEmbedProps) {
     content: { videoUrl },
   } = frame
   const { meeting } = useDyteMeeting()
-  const [playerState, setPlayerState] = useState<ResponsiveVideoPlayerState>()
+  const [playerState, setPlayerState] = useState<ResponsiveVideoPlayerState>({
+    playing: false,
+    loop: false,
+    volume: 0.8,
+    muted: false,
+    playbackRate: 1,
+    played: 0,
+  })
   const { isHost } = useContext(EventSessionContext) as EventSessionContextType
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
 
   useEffect(() => {
     const handleBroadcastedMessage = ({
@@ -40,10 +52,13 @@ export function VideoEmbed({ frame }: VideoEmbedProps) {
     }) => {
       switch (type) {
         case playerStateChangeEvent: {
-          if (isHost) return
           const { playerState: _playerState } = payload
+          if (isHost) return
           if (_playerState) {
-            setPlayerState(_playerState)
+            setPlayerState({
+              ..._playerState,
+              broadcastedPlayedValue: _playerState.played,
+            })
           }
           break
         }
@@ -67,14 +82,15 @@ export function VideoEmbed({ frame }: VideoEmbedProps) {
 
   const handlePlayerStateChange = useCallback(
     (state: ResponsiveVideoPlayerState) => {
-      if (isHost) {
+      if (isHost || isInBreakoutMeeting) {
         meeting.participants.broadcastMessage(playerStateChangeEvent, {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           playerState: state as any,
         })
       }
     },
-    [isHost, meeting.participants]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   )
 
   return (
@@ -82,9 +98,10 @@ export function VideoEmbed({ frame }: VideoEmbedProps) {
       <div className="max-w-[90%] h-full aspect-video w-max overflow-hidden rounded-md">
         <ResponsiveVideoPlayer
           url={videoUrl}
-          showControls={isHost}
+          showControls={isHost || isInBreakoutMeeting}
           playerState={playerState}
-          onPlayerStateChange={handlePlayerStateChange}
+          onPlayerStateChange={setPlayerState}
+          onPlayerStateUpdate={handlePlayerStateChange}
         />
       </div>
     </div>
