@@ -58,9 +58,33 @@ export function PowerpointImporter({ frame }: PowerpointImporterProps) {
 
   if (uploadMutation.isPending) {
     return (
-      <div>
-        <ContentLoading />
-      </div>
+      <FrameFormContainer
+        headerIcon={
+          <SiMicrosoftpowerpoint size={72} className="text-primary" />
+        }
+        headerTitle="Uploading Powerpoint"
+        headerDescription="Your Powerpoint is being uploaded. This will take some time, depending on the size of the file."
+        footerNote="You can add/update other frames in the meantime.">
+        <div className="w-full">
+          <ContentLoading />
+        </div>
+      </FrameFormContainer>
+    )
+  }
+
+  if (frame.content?.processing || uploadMutation.isSuccess) {
+    return (
+      <FrameFormContainer
+        headerIcon={
+          <SiMicrosoftpowerpoint size={72} className="text-primary" />
+        }
+        headerTitle="Processing Powerpoint"
+        headerDescription="Your Powerpoint is being processed. This will take some time, depending on the size of the file."
+        footerNote="You can add/update other frames in the meantime.">
+        <div className="w-full">
+          <ContentLoading />
+        </div>
+      </FrameFormContainer>
     )
   }
 

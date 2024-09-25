@@ -190,7 +190,11 @@ export function FrameItem({
                 />
               </div>
               <RenderIf
-                isTrue={!actionDisabled && !frame?.content?.breakoutFrameId}>
+                isTrue={
+                  !actionDisabled &&
+                  !frame?.content?.breakoutFrameId &&
+                  !frame?.content?.processing
+                }>
                 <div className={cn('hidden group-hover/frame-item:block')}>
                   <FrameActions
                     triggerIcon={
