@@ -8,6 +8,7 @@ import { Tooltip } from './ShortuctTooltip'
 import { cn } from '@/utils/utils'
 
 export function EditableLabel({
+  autoFocus = false,
   readOnly = true,
   label,
   className = '',
@@ -16,12 +17,13 @@ export function EditableLabel({
   onClick,
   onUpdate,
 }: {
+  autoFocus?: boolean
   readOnly?: boolean
   label: string
   className?: string
   wrapperClass?: string
   showTooltip?: boolean
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
   onUpdate: (value: string) => void
 }) {
   const contentEditableRef = useRef<HTMLDivElement>(null)
@@ -30,6 +32,20 @@ export function EditableLabel({
   useEffect(() => {
     setValue(label)
   }, [label])
+
+  useEffect(() => {
+    if (!autoFocus || !contentEditableRef.current) return
+
+    contentEditableRef.current.contentEditable = 'true'
+    contentEditableRef.current.focus()
+
+    const range = document.createRange()
+    range.selectNodeContents(contentEditableRef.current)
+
+    const selection = window.getSelection()
+    selection?.removeAllRanges()
+    selection?.addRange(range)
+  }, [autoFocus, contentEditableRef])
 
   return (
     <div
@@ -55,9 +71,9 @@ export function EditableLabel({
             if (readOnly) return
             setValue(label)
           }}
-          onClick={() => {
+          onClick={(e) => {
             if (readOnly) return
-            onClick?.()
+            onClick?.(e)
           }}
           onDoubleClick={() => {
             if (readOnly) return

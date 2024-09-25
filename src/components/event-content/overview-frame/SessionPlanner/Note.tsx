@@ -16,12 +16,14 @@ export function Note({
   editable,
   placeholder = 'Click to add notes',
   wrapOnblur,
+  autoFocus = false,
 }: {
   frameId: string
   notes: string
   editable?: boolean
   placeholder?: string
   wrapOnblur?: boolean
+  autoFocus?: boolean
 }) {
   const { updateFrame, preview } = useContext(EventContext) as EventContextType
 
@@ -70,13 +72,13 @@ export function Note({
         }}
         variant="bordered"
         minRows={1}
-        autoFocus
+        autoFocus={autoFocus}
         isReadOnly={preview}
         defaultValue={notes}
         onChange={handleBlockChange}
         placeholder={placeholder}
         classNames={{
-          input: 'text-primary-800 scrollbar-none',
+          input: 'scrollbar-none',
           inputWrapper: 'border-none p-0 shadow-none',
         }}
       />
@@ -84,7 +86,9 @@ export function Note({
   }
 
   return (
-    <div style={{ wordBreak: 'break-all' }} className="h-full p-2 border-r-2">
+    <div
+      style={{ wordBreak: 'break-all' }}
+      className="h-full p-2 pl-4 border-x-2">
       {renderContent()}
     </div>
   )

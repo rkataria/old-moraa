@@ -10,9 +10,11 @@ import { cn } from '@/utils/utils'
 export function FramesList({
   section,
   plannerWidth,
+  frameIdToBeFocus,
 }: {
   section: ISection
   plannerWidth: number
+  frameIdToBeFocus: string
 }) {
   return (
     <div>
@@ -30,7 +32,7 @@ export function FramesList({
             <div className="w-full relative">
               <div className="w-full">
                 <div>
-                  <div className="flex flex-col justify-start items-start gap-[4px] pt-2 w-full bg-primary/5 transition-all">
+                  <div className="flex flex-col justify-start items-start w-full transition-all">
                     {section.frames.map((frame, frameIndex) => (
                       <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
                         <Fragment key={frame.id}>
@@ -39,6 +41,7 @@ export function FramesList({
                             frame={frame}
                             frameIndex={frameIndex}
                             plannerWidth={plannerWidth}
+                            frameIdToBeFocus={frameIdToBeFocus}
                           />
                         </Fragment>
                       </RenderIf>

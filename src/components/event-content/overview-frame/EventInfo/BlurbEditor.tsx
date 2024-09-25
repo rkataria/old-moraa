@@ -47,7 +47,8 @@ export function BlurbEditor({ editable = true }: { editable?: boolean }) {
         hideSideBar
         initalContent={getInitialContent()}
         classNames={{
-          container: 'border-none bg-default/30 pt-6 !rounded-lg',
+          container:
+            'border-none bg-default/30 backdrop-blur-2xl pt-6 !rounded-lg',
           menu: ' -mr-4',
           editor: 'overflow-visible p-0 h-auto',
           wrapper: 'h-auto',

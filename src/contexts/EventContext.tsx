@@ -25,8 +25,8 @@ import {
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { reorderSectionsAction } from '@/stores/slices/event/current-event/meeting.slice'
 import {
-  handleExpandedSectionsInSessionPlannerAction,
   reorderFrameAction,
+  toggleSectionExpansionInPlannerAction,
 } from '@/stores/slices/event/current-event/section.slice'
 import {
   createFrameThunk,
@@ -148,7 +148,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const handleSectionExpansionInSessionPlanner = (sectionId: string) => {
     if (isOverviewOpen) {
       dispatch(
-        handleExpandedSectionsInSessionPlannerAction({
+        toggleSectionExpansionInPlannerAction({
           id: sectionId,
           keepExpanded: true,
         })

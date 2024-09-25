@@ -16,16 +16,19 @@ import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
+import { cn } from '@/utils/utils'
 
 export function SectionTime({
   sectionId,
   frames,
   config,
+  editable = true,
 }: {
   sectionId: string
   frames: IFrame[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any
+  editable?: boolean
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -150,10 +153,13 @@ export function SectionTime({
       </RenderIf>
       <Popover
         placement="bottom"
-        isOpen={isOpen}
+        isOpen={isOpen && editable}
         onOpenChange={(open) => setIsOpen(open)}>
         <PopoverTrigger>
-          <p className="text-xs font-semibold cursor-pointer text-primary-300">
+          <p
+            className={cn('text-xs font-semibold text-gray-400', {
+              'cursor-pointer': editable,
+            })}>
             {`${sectionTime.hours}h ${sectionTime.minutes}m`}
           </p>
         </PopoverTrigger>

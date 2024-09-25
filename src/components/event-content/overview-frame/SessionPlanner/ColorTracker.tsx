@@ -16,7 +16,10 @@ export function ColorTracker({
 }) {
   return (
     <div
-      className={cn('flex items-center w-[100px] h-2 rounded-lg', className)}>
+      className={cn(
+        'flex items-center w-[100px] h-2 rounded-xl overflow-hidden',
+        className
+      )}>
       {tracks.map((track) => (
         <Tooltip
           content={`${track.label} ${track.value}%`}
@@ -25,7 +28,7 @@ export function ColorTracker({
           radius="sm"
           color="primary">
           <div
-            style={{ width: `${track.value}%`, background: track.color }}
+            style={{ flex: `${track.value}`, background: track.color }}
             className="h-full duration-300 bg-red-300 hover:scale-125"
           />
         </Tooltip>
@@ -73,5 +76,12 @@ export function SessionColorTracker({
 
   const tracks = calculateTimePercentages(colorCodes)
 
-  return <ColorTracker tracks={tracks} className={className} />
+  const sortedTracks = tracks.sort((a, b) => {
+    if (a.label === 'none') return 1
+    if (b.label === 'none') return -1
+
+    return 0
+  })
+
+  return <ColorTracker tracks={sortedTracks} className={className} />
 }

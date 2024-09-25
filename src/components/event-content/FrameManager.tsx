@@ -26,6 +26,7 @@ import {
 } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
@@ -56,7 +57,11 @@ export function FrameManager() {
     insertAfterFrameId,
     insertInSectionId,
     addFrameToSection,
+    eventMode,
+    overviewOpen,
   } = useContext(EventContext) as EventContextType
+
+  const { permissions } = useEventPermissions()
 
   useHotkeys('f', () => !preview && setOpenContentTypePicker(true), [preview])
   const handleAddNewFrame = (
@@ -137,11 +142,19 @@ export function FrameManager() {
     )
   }
 
+  const leftSidebarContent = () => {
+    if (permissions.canUpdateFrame && overviewOpen && eventMode === 'edit') {
+      return null
+    }
+
+    return <AgendaPanel />
+  }
+
   return (
     <>
       <StudioLayout
         header={<Header event={event} />}
-        leftSidebar={<AgendaPanel />}
+        leftSidebar={leftSidebarContent()}
         resizableRightSidebar={<ResizableRightSidebar />}
         rightSidebar={<RightSidebar />}
         rightSidebarControls={<RightSidebarControls />}>

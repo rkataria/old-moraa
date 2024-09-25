@@ -92,24 +92,32 @@ export const sectionSlice = createSlice({
       })
     },
 
-    handleExpandedSectionsInSessionPlanner: (
+    toggleSectionExpansionInPlanner: (
       state,
-      action: PayloadAction<{ id: string; keepExpanded?: boolean }>
+      action: PayloadAction<{
+        id: string
+        keepExpanded?: boolean
+      }>
     ) => {
       const { id, keepExpanded = false } = action.payload
       const expandedSections = state.expandedSectionsInSessionPlanner
 
       if (!expandedSections.includes(id)) {
         state.expandedSectionsInSessionPlanner = [...expandedSections, id]
-
-        return
+      } else if (!keepExpanded) {
+        state.expandedSectionsInSessionPlanner = expandedSections.filter(
+          (sectionId) => sectionId !== id
+        )
       }
+    },
 
-      if (keepExpanded) return
+    setExpandedSectionsInPlanner: (
+      state,
+      action: PayloadAction<{ ids: string[] }>
+    ) => {
+      const { ids } = action.payload
 
-      state.expandedSectionsInSessionPlanner = expandedSections.filter(
-        (s) => s !== id
-      )
+      state.expandedSectionsInSessionPlanner = [...ids]
     },
   },
   extraReducers: (builder) => {
@@ -191,9 +199,11 @@ attachStoreListener({
       getState().event.currentEvent.meetingState.meeting.data?.id
 
     dispatch(
-      handleExpandedSectionsInSessionPlannerAction({
-        id: getState().event.currentEvent.sectionState.section.data?.[0]
-          ?.id as string,
+      setExpandedSectionsInPlannerAction({
+        ids:
+          getState().event.currentEvent.sectionState.section.data?.map(
+            (section) => section.id
+          ) || [],
       })
     )
     supabaseClient
@@ -324,5 +334,6 @@ export const {
   updateSectionAction,
   insertSectionAction,
   reorderFrameAction,
-  handleExpandedSectionsInSessionPlannerAction,
+  setExpandedSectionsInPlannerAction,
+  toggleSectionExpansionInPlannerAction,
 } = renameSliceActions(sectionSlice.actions)

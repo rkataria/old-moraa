@@ -5,6 +5,7 @@ import { Key, useContext, useRef } from 'react'
 import { HiOutlinePaintBrush } from 'react-icons/hi2'
 
 import { DropdownActions } from '@/components/common/DropdownActions'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
@@ -13,10 +14,12 @@ import { cn, FrameColorCodes, isColorDark } from '@/utils/utils'
 export function FrameColorCode({
   frameId,
   config,
+  editable = true,
 }: {
   frameId: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any
+  editable?: boolean
 }) {
   const ref = useRef<HTMLDivElement | null>(null)
   const { updateFrame, preview } = useContext(EventContext) as EventContextType
@@ -47,7 +50,7 @@ export function FrameColorCode({
         }
         color="primary"
         showArrow
-        placement="left"
+        placement="right"
         radius="sm">
         <div
           style={{
@@ -63,12 +66,14 @@ export function FrameColorCode({
               'hover:scale-125 duration-300': !preview,
             }
           )}>
-          <HiOutlinePaintBrush
-            className={cn('text-sm opacity-0 group-hover/frame:opacity-100', {
-              'text-white':
-                selectedColor?.color && isColorDark(selectedColor.color),
-            })}
-          />
+          <RenderIf isTrue={editable}>
+            <HiOutlinePaintBrush
+              className={cn('text-sm opacity-0 group-hover/frame:opacity-100', {
+                'text-white':
+                  selectedColor?.color && isColorDark(selectedColor.color),
+              })}
+            />
+          </RenderIf>
         </div>
       </Tooltip>
       <DropdownActions

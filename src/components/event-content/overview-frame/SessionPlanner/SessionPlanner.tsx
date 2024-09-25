@@ -13,9 +13,12 @@ import {
 } from 'react'
 
 import { Button, Switch } from '@nextui-org/react'
+import differenceby from 'lodash.differenceby'
+import isEqual from 'lodash.isequal'
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
+import { BsTrash } from 'react-icons/bs'
+import { FaCaretDown } from 'react-icons/fa'
 import { IoIosArrowRoundUp } from 'react-icons/io'
-import { IoChevronForward } from 'react-icons/io5'
 import { MdDragIndicator } from 'react-icons/md'
 import { RxReset } from 'react-icons/rx'
 
@@ -33,11 +36,11 @@ import { EventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { handleExpandedSectionsInSessionPlannerAction } from '@/stores/slices/event/current-event/section.slice'
+import { toggleSectionExpansionInPlannerAction } from '@/stores/slices/event/current-event/section.slice'
 import { bulkUpdateFrameStatusThunk } from '@/stores/thunks/frame.thunks'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
-import { ISection } from '@/types/frame.type'
+import { IFrame, ISection } from '@/types/frame.type'
 import { cn, sortByStatus } from '@/utils/utils'
 
 export function SessionPlanner({
@@ -61,6 +64,7 @@ export function SessionPlanner({
     setAddedFromSessionPlanner,
     insertInSectionId,
     setInsertInSectionId,
+    deleteSection,
     setInsertAfterFrameId,
   } = useContext(EventContext) as EventContextType
 
@@ -68,15 +72,45 @@ export function SessionPlanner({
 
   const [filteredSections, setFilteredSections] = useState(sections)
   const { permissions } = useEventPermissions()
-
+  const [itemIdToBeFocus, setItemIdToBeFocus] = useState('')
   const expandedSections = useStoreSelector(
     (state) =>
       state.event.currentEvent.sectionState.expandedSectionsInSessionPlanner
   )
 
+  const getNewlyAddedIds = (
+    updatedSections: ISection[],
+    previousSections: ISection[]
+  ) => {
+    const newSections: ISection[] = differenceby(
+      updatedSections,
+      previousSections,
+      'id'
+    )
+    if (newSections.length > 0) {
+      return newSections.map((section) => section.id)
+    }
+
+    return sections.flatMap((section) => {
+      const filteredSection: ISection | undefined = previousSections.find(
+        (s) => s.id === section.id
+      )
+      const frames: IFrame[] = filteredSection
+        ? differenceby(section.frames, filteredSection.frames, 'id')
+        : section.frames
+
+      return frames.map((frame) => frame.id)
+    })
+  }
+
   useEffect(() => {
+    if (isEqual(sections, filteredSections)) return
+
+    setItemIdToBeFocus(getNewlyAddedIds(sections, filteredSections)?.[0])
+
     setFilteredSections(sections.filter((f) => f.id.length > 0))
-  }, [sections])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sections, filteredSections])
 
   const changeSectionStatus = (
     section: ISection,
@@ -92,7 +126,16 @@ export function SessionPlanner({
     )
   }
 
-  const handleSectionSorting = (sectionId: string, criteria: Key) => {
+  const handleSectionDropdownActions = (sectionId: string, key: Key) => {
+    if (key === 'delete') {
+      deleteSection({ sectionId })
+
+      return
+    }
+    handleFramesSort(sectionId, key)
+  }
+
+  const handleFramesSort = (sectionId: string, criteria: Key) => {
     const updatedSections = sections.map((section) => ({
       ...section,
       frames: [...section.frames],
@@ -171,7 +214,7 @@ export function SessionPlanner({
                     index={sectionIndex}>
                     {(sectionDraggableProvided) => (
                       <div
-                        className={cn('w-full bg-gray-100 rounded-lg border ', {
+                        className={cn('w-full rounded-lg border ', {
                           'border-l-8 border-r-8 border-b-8 shadow-sm':
                             expandedSections.includes(section.id),
                           'border-primary-100':
@@ -213,26 +256,42 @@ export function SessionPlanner({
                                       }
                                       actions={[
                                         {
+                                          key: 'delete',
+                                          label: 'Delete section',
+                                          icon: (
+                                            <BsTrash
+                                              className="text-red-500"
+                                              size={16}
+                                            />
+                                          ),
+                                        },
+                                        {
                                           key: 'published',
                                           label: 'Move published frames at top',
-                                          icon: <IoIosArrowRoundUp />,
+                                          icon: <IoIosArrowRoundUp size={18} />,
                                         },
                                         {
                                           key: 'unpublished',
                                           label:
                                             'Move Unpublished frames at top',
                                           icon: (
-                                            <IoIosArrowRoundUp className="rotate-180" />
+                                            <IoIosArrowRoundUp
+                                              className="rotate-180"
+                                              size={18}
+                                            />
                                           ),
                                         },
                                         {
                                           key: 'reset',
-                                          label: 'Reset',
-                                          icon: <RxReset />,
+                                          label: 'Reset ordering of frames',
+                                          icon: <RxReset size={16} />,
                                         },
                                       ]}
                                       onAction={(key) =>
-                                        handleSectionSorting(section.id, key)
+                                        handleSectionDropdownActions(
+                                          section.id,
+                                          key
+                                        )
                                       }
                                     />
                                   </div>
@@ -255,42 +314,51 @@ export function SessionPlanner({
                                   }
                                 />
                               </div>
-                              <IoChevronForward
-                                className={cn(
-                                  'text-xl duration-300 cursor-pointer text-gray-400',
-                                  {
-                                    'rotate-90': expandedSections.includes(
-                                      section.id
-                                    ),
-                                  }
-                                )}
-                                onClick={() =>
-                                  dispatch(
-                                    handleExpandedSectionsInSessionPlannerAction(
-                                      { id: section.id }
-                                    )
-                                  )
-                                }
-                              />
-                              <div style={{ flex: 2 }}>
-                                <EditableLabel
-                                  showTooltip={false}
-                                  className="text-sm font-bold tracking-tight text-primary/80 max-w-[31.25rem]"
-                                  label={section.name}
-                                  readOnly={preview}
-                                  onUpdate={(value: string) => {
-                                    updateSection({
-                                      sectionPayload: { name: value },
-                                      sectionId: section.id,
-                                    })
-                                  }}
-                                />
 
-                                <SectionTime
-                                  sectionId={section.id}
-                                  frames={section.frames}
-                                  config={section.config}
+                              <div
+                                style={{ flex: 2 }}
+                                className="flex items-start gap-2">
+                                <FaCaretDown
+                                  className={cn(
+                                    'text-xl duration-300 cursor-pointer text-black/50 -rotate-90 mt-1',
+                                    {
+                                      'rotate-0': expandedSections.includes(
+                                        section.id
+                                      ),
+                                    }
+                                  )}
+                                  onClick={() =>
+                                    dispatch(
+                                      toggleSectionExpansionInPlannerAction({
+                                        id: section.id,
+                                      })
+                                    )
+                                  }
                                 />
+                                <div>
+                                  <EditableLabel
+                                    autoFocus={
+                                      editable && itemIdToBeFocus === section.id
+                                    }
+                                    showTooltip={false}
+                                    className="text-sm font-semibold tracking-tight max-w-[31.25rem] text-black/70"
+                                    label={section.name}
+                                    readOnly={preview}
+                                    onUpdate={(value: string) => {
+                                      updateSection({
+                                        sectionPayload: { name: value },
+                                        sectionId: section.id,
+                                      })
+                                    }}
+                                  />
+
+                                  <SectionTime
+                                    sectionId={section.id}
+                                    frames={section.frames}
+                                    config={section.config}
+                                    editable={editable}
+                                  />
+                                </div>
                               </div>
 
                               <div
@@ -305,7 +373,7 @@ export function SessionPlanner({
                                     colorCode: frame?.config?.colorCode,
                                     timeSpan: frame?.config?.time,
                                   }))}
-                                  className="h-4 w-[18.75rem]"
+                                  className="h-3 w-full"
                                 />
                                 <RenderIf isTrue={editable}>
                                   <div
@@ -369,6 +437,7 @@ export function SessionPlanner({
                               <FramesList
                                 section={section}
                                 plannerWidth={plannerWidth}
+                                frameIdToBeFocus={itemIdToBeFocus}
                               />
                             </RenderIf>
                           </div>

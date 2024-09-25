@@ -2,32 +2,38 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
-import { useContext } from 'react'
+import { Key, useContext } from 'react'
 
-import { Switch } from '@nextui-org/react'
+import { Button, Checkbox, Chip } from '@nextui-org/react'
 import { Draggable } from 'react-beautiful-dnd'
+import { BsArrowsAngleExpand, BsTrash } from 'react-icons/bs'
+import { IoCheckmarkCircle } from 'react-icons/io5'
 import {
   MdCheckCircle,
-  MdOutlineDragIndicator,
+  MdDragIndicator,
   MdOutlinePublish,
+  MdUnpublished,
 } from 'react-icons/md'
 
 import { FrameColorCode } from './FrameColorCode'
 import { Minutes } from './Minutes'
 import { Note } from './Note'
-import { Tags } from './Tags'
 
 import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { DropdownActions } from '@/components/common/DropdownActions'
 import { EditableLabel } from '@/components/common/EditableLabel'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch } from '@/hooks/useRedux'
-import { setCurrentFrameIdAction } from '@/stores/slices/event/current-event/event.slice'
+import {
+  setCurrentFrameIdAction,
+  setIsOverviewOpenAction,
+} from '@/stores/slices/event/current-event/event.slice'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
@@ -38,11 +44,13 @@ export function FrameItem({
   frame,
   frameIndex,
   plannerWidth,
+  frameIdToBeFocus,
 }: {
   section: ISection
   frame: IFrame
   frameIndex: number
   plannerWidth: number
+  frameIdToBeFocus: string
 }) {
   const {
     isOwner,
@@ -51,6 +59,7 @@ export function FrameItem({
     updateFrame,
     setAddedFromSessionPlanner,
     insertAfterFrameId,
+    deleteFrame,
   } = useContext(EventContext) as EventContextType
 
   const dispatch = useStoreDispatch()
@@ -128,6 +137,12 @@ export function FrameItem({
     })
   }
 
+  const handleFrameDropdownActions = (key: Key) => {
+    if (key === 'delete') {
+      deleteFrame(frame)
+    }
+  }
+
   const showToggle = plannerWidth > 766
 
   return (
@@ -143,21 +158,35 @@ export function FrameItem({
           ref={_provided.innerRef}
           {..._provided.draggableProps}
           className={cn(
-            'relative w-full bg-white group/frame grid grid-cols-[100px_12px_1fr_1fr_1fr] hover:bg-gray-50',
+            'relative w-full bg-white min-h-[3.125rem] group/frame grid grid-cols-[100px_12px_1fr_1fr_1fr] hover:bg-gray-50 border-b  rounded-lg hover:shadow-sm duration-300',
             {
-              'grid-cols-[100px_12px_1fr_1fr_1fr_0.2fr]': showToggle,
-              'grid-cols-[100px_12px_1fr_1fr_1fr]': preview,
+              'grid-cols-[100px_12px_1fr_1fr_0.1fr]': showToggle,
+              'grid-cols-[100px_12px_1fr_1fr_130px]': preview,
               'before:absolute before:w-2 before:bg-primary-300 before:h-[108%] before:-top-0.5 before:-left-2 ':
                 insertAfterFrameId === frame.id && !preview,
             }
           )}>
           <div className="absolute flex flex-col items-center justify-center -ml-[43px] -mr-4 opacity-0 w-[50px] group-hover/frame:opacity-100">
             <RenderIf isTrue={!preview}>
-              <div {..._provided.dragHandleProps}>
-                <MdOutlineDragIndicator
-                  height={40}
-                  width={30}
-                  className="text-gray-400"
+              <div>
+                <DropdownActions
+                  triggerIcon={
+                    <Button
+                      isIconOnly
+                      variant="light"
+                      className="w-auto h-auto min-w-1"
+                      {..._provided.dragHandleProps}>
+                      <MdDragIndicator className="text-gray-400" />
+                    </Button>
+                  }
+                  actions={[
+                    {
+                      key: 'delete',
+                      label: 'Delete frame',
+                      icon: <BsTrash className="text-red-500" size={16} />,
+                    },
+                  ]}
+                  onAction={(key) => handleFrameDropdownActions(key)}
                 />
               </div>
             </RenderIf>
@@ -193,51 +222,80 @@ export function FrameItem({
             </RenderIf>
           </div>
 
-          <Minutes
-            minutes={frame.config?.time || 0}
-            onChange={updateTime}
-            className="grid p-2 place-items-center"
+          <RenderIf isTrue={preview}>
+            <div className="grid place-items-center">
+              {frame.config.time || 0} min
+            </div>
+          </RenderIf>
+          <RenderIf isTrue={editable}>
+            <Minutes
+              minutes={frame.config?.time || 0}
+              onChange={updateTime}
+              className="grid p-2 place-items-center"
+            />
+          </RenderIf>
+
+          <FrameColorCode
+            frameId={frame.id}
+            config={frame.config}
+            editable={editable}
           />
 
-          <FrameColorCode frameId={frame.id} config={frame.config} />
-
           <div
-            className="rounded-md flex items-center gap-1 group/color_code p-2 min-w-[100px]"
-            style={{ flex: 3 }}>
+            className="relative rounded-md flex items-center gap-1 group/color_code p-2 pl-6 min-w-[100px] group/frame-name cursor-pointer"
+            style={{ flex: 3 }}
+            onClick={() => {
+              dispatch(setCurrentFrameIdAction(frame.id))
+              dispatch(setIsOverviewOpenAction(false))
+            }}>
             <ContentTypeIcon frameType={frame.type} />
 
             <EditableLabel
+              autoFocus={editable && frameIdToBeFocus === frame.id}
+              wrapperClass="min-w-[40%] max-w-[70%]"
               showTooltip={false}
-              className="text-sm"
+              className={cn('text-sm max-w-fit rounded-sm', {
+                'cursor-text border border-transparent hover:border-gray-300 min-w-full':
+                  editable,
+              })}
               readOnly={!editable}
               label={frame.name}
               onUpdate={(value) => onFrameTitleChange(frame.id, value)}
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
             />
+            <p className="gap-2 items-center text-gray-600 absolute right-4 top-[50%] -translate-y-[50%] hidden group-hover/frame-name:flex cursor-pointer">
+              <BsArrowsAngleExpand className=" text-gray-400" size={16} />
+              Open
+            </p>
           </div>
-          <Tags frameId={frame.id} config={frame.config} />
+          {/* <Tags frameId={frame.id} config={frame.config} /> */}
 
           <Note
             frameId={frame.id}
             notes={frame.notes}
-            placeholder={preview ? '' : 'Click here to add notes'}
+            placeholder={preview ? 'No notes added' : 'Click here to add notes'}
+            wrapOnblur
+            autoFocus
           />
-          {editable && (
+          <RenderIf isTrue={editable}>
             <div
               className={cn('items-center justify-center scale-75 hidden', {
                 grid: showToggle,
               })}>
               <Tooltip
-                content="Share with participants"
+                content="Publish slide to make it visible to participants"
                 offset={20}
                 color="primary"
                 showArrow
                 radius="sm">
-                <Switch
-                  size="sm"
+                <Checkbox
+                  size="lg"
                   isSelected={frame.status === FrameStatus.PUBLISHED}
                   onChange={() => changeFrameStatus(frame)}
                   disabled={!isOwner}
-                  classNames={{ wrapper: 'mr-0' }}
+                  classNames={{ wrapper: 'mr-0', icon: 'text-white' }}
                   color={
                     frame.status === FrameStatus.PUBLISHED
                       ? 'success'
@@ -246,7 +304,32 @@ export function FrameItem({
                 />
               </Tooltip>
             </div>
-          )}
+          </RenderIf>
+          <RenderIf isTrue={!editable}>
+            <div className="grid place-items-center">
+              <Chip
+                variant="light"
+                size="sm"
+                color="default"
+                startContent={
+                  frame.status === FrameStatus.PUBLISHED ? (
+                    <IoCheckmarkCircle
+                      className=" rounded-full text-green-500 shadow-[0_0_10px_-4px] bg-white"
+                      size={18}
+                    />
+                  ) : (
+                    <MdUnpublished
+                      className=" rounded-full text-gray-500 shadow-[0_0_10px_-4px] bg-white"
+                      size={18}
+                    />
+                  )
+                }>
+                {frame.status === FrameStatus.PUBLISHED
+                  ? 'Published'
+                  : 'Unpublished'}
+              </Chip>
+            </div>
+          </RenderIf>
         </div>
       )}
     </Draggable>

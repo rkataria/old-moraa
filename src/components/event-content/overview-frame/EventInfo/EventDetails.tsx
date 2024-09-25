@@ -94,7 +94,7 @@ export function EventDetails() {
     <div className="h-fit relative z-[50]">
       <form onSubmit={createEventForm.handleSubmit(onSubmit)}>
         <div className="py-4">
-          <div className="grid grid-cols-2 items-start gap-8">
+          <div className="grid grid-cols-[45%_55%] items-start gap-8">
             <div className="relative aspect-square">
               <Controller
                 control={createEventForm.control}
@@ -181,7 +181,7 @@ export function EventDetails() {
                 />
                 <RenderIf isTrue={!preview}>
                   <div
-                    className="p-3 bg-default/20 backdrop-blur-xs rounded-lg cursor-pointer"
+                    className="p-3 bg-default/20 backdrop-blur-2xl rounded-lg cursor-pointer"
                     onClick={descriptionModalDisclosure.onOpen}>
                     <div className="flex items-center gap-2 text-gray-400">
                       <TbFileDescription size={20} />

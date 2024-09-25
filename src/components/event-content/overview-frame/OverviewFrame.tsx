@@ -74,28 +74,22 @@ export function OverviewFrame() {
   }
 
   const renderContent = () => {
-    if (selectedTab === 'event-info' && preview) {
+    if (selectedTab === 'event-info') {
       return (
         <ThemeEffects selectedTheme={event.theme}>
-          <ContentWrapper permissions={permissions}>
+          <ContentWrapper
+            permissions={permissions}
+            className={cn('px-[10%]', {
+              '!h-[calc(100vh_-_148px)]': !preview,
+            })}>
             <EventInfo />
           </ContentWrapper>
         </ThemeEffects>
       )
     }
 
-    if (selectedTab === 'event-info' && !preview) {
-      return (
-        <ContentWrapper
-          permissions={permissions}
-          className="!h-[calc(100vh_-_148px)]">
-          <EventInfo />
-        </ContentWrapper>
-      )
-    }
-
     return (
-      <ContentWrapper permissions={permissions}>
+      <ContentWrapper permissions={permissions} className="px-[10%]">
         <SessionPlanner className="sticky top-0 h-full overflow-y-scroll scrollbar-none" />
       </ContentWrapper>
     )
@@ -109,7 +103,7 @@ export function OverviewFrame() {
 
   return (
     <div className="p-4 h-full overflow-hidden">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-[10%]">
         <Tabs
           aria-label="Options"
           color="primary"
@@ -148,7 +142,7 @@ export function OverviewFrame() {
           />
         </Tabs>
 
-        <RenderIf isTrue={!preview}>
+        <RenderIf isTrue={!preview && selectedTab !== 'event-info'}>
           <div className="flex justify-center gap-2">
             <Button
               size="sm"
