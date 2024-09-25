@@ -1,6 +1,5 @@
 import { RichTextEditor } from '../../common/content-types/RichText/Editor'
 
-import { FrameTitleDescription } from '@/components/common/FrameTitleDescriptionPreview'
 import { IFrame } from '@/types/frame.type'
 
 export function RichTextLive({ frame }: { frame: IFrame }) {
@@ -17,7 +16,7 @@ export function RichTextLive({ frame }: { frame: IFrame }) {
       editorId={frame.id}
       editable={canEditInLive()}
       classNames={{ wrapper: 'overflow-hidden' }}
-      startContent={!canEditInLive() && <FrameTitleDescription frame={frame} />}
+      startContent={!canEditInLive()}
     />
   )
 }

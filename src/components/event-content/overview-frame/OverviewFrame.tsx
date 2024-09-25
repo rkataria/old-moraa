@@ -116,7 +116,7 @@ export function OverviewFrame() {
             tab: 'max-w-fit px-0 h-12 font-semibold',
             cursor: 'w-full h-[3px]',
             tabContent: 'group-data-[selected=true]:text-primary',
-            base: 'pl-4',
+            base: '',
           }}>
           <Tab
             key="agenda-planner"

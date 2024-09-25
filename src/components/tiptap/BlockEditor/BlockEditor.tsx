@@ -153,7 +153,7 @@ export function BlockEditor({
 
   return (
     <EditorContext.Provider value={providerValue}>
-      <div className="flex w-full h-full" ref={menuContainerRef}>
+      <div className="flex w-full h-full gap-2" ref={menuContainerRef}>
         <RenderIf isTrue={showHeader}>
           <Sidebar
             isOpen={leftSidebar.isOpen}
@@ -165,7 +165,7 @@ export function BlockEditor({
 
         <div
           className={cn(
-            'relative w-full h-full border bg-[#FEFEFE] rounded-3xl px-[0.5625rem] flex flex-col',
+            'relative w-full h-full border bg-[#FEFEFE] rounded-md p-0 flex flex-col',
             classNames?.container
           )}>
           <RenderIf isTrue={showHeader}>
@@ -184,7 +184,7 @@ export function BlockEditor({
             editor={editor}
             ref={editorRef}
             className={cn(
-              'overflow-y-scroll w-full pl-[3.625rem] scrollbar-thin pt-6 pb-[5rem] h-full',
+              'overflow-y-auto w-full pl-[3.625rem] scrollbar-thin pt-6 pb-[5rem] h-full',
               classNames?.editor
             )}
           />

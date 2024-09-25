@@ -8,25 +8,13 @@ import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
 export const frameTypesWithTitle = [
-  ContentType.MIRO_EMBED,
-  ContentType.VIDEO_EMBED,
-  ContentType.VIDEO,
   ContentType.REFLECTION,
-  ContentType.PDF_VIEWER,
-  ContentType.MORAA_BOARD,
   ContentType.BREAKOUT,
-  ContentType.RICH_TEXT,
 ]
 
 export const frameTypesWithDescription = [
-  ContentType.MIRO_EMBED,
-  ContentType.VIDEO_EMBED,
-  ContentType.VIDEO,
   ContentType.REFLECTION,
-  ContentType.PDF_VIEWER,
-  ContentType.MORAA_BOARD,
   ContentType.BREAKOUT,
-  ContentType.RICH_TEXT,
 ]
 
 export function FrameTitleDescriptionPanel() {

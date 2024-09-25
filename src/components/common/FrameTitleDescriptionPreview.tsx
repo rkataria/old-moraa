@@ -38,6 +38,12 @@ export function FrameTitleDescriptionPreview({
       ContentType.GOOGLE_SLIDES_IMPORT,
       ContentType.PDF_VIEWER,
       ContentType.IMAGE_VIEWER,
+      ContentType.MIRO_EMBED,
+      ContentType.RICH_TEXT,
+      ContentType.MORAA_BOARD,
+      ContentType.PDF_VIEWER,
+      ContentType.VIDEO_EMBED,
+      ContentType.VIDEO,
     ].includes(frame.type)
   ) {
     return null

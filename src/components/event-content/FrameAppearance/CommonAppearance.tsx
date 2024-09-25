@@ -1,8 +1,5 @@
 import { useContext } from 'react'
 
-import { FontFamilyControl } from './FontFamilyControl'
-import { FrameBackgroundControl } from './FrameBackgroundControl'
-
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { ContentType } from '@/utils/content.util'
@@ -16,10 +13,5 @@ export function CommonAppearance() {
     return null
   }
 
-  return (
-    <>
-      <FrameBackgroundControl />
-      <FontFamilyControl />
-    </>
-  )
+  return null
 }

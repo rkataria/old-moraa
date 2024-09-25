@@ -44,25 +44,11 @@ export function FrameAppearance() {
 
   const renderer = renderersByContentType[currentFrame.type]
 
-  if (activeObject) {
-    return (
-      <div>
-        <RightSidebarHeader
-          icon={<IoColorPaletteOutline size={18} />}
-          title={activeObject.type!}
-        />
-        <div className="p-4 flex flex-col gap-4">
-          <MoraaSlideAppearance key={currentFrame.id} />
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div>
       <RightSidebarHeader
         icon={<IoColorPaletteOutline size={18} />}
-        title="Appearance"
+        title={activeObject?.type ? activeObject.type : 'Appearance'}
       />
       <div className="p-4 flex flex-col gap-4">
         <CommonAppearance />

@@ -51,24 +51,27 @@ export const TableOfContents = memo(
       onItemClick?.()
     }
 
-    return data && data.content.length > 0 ? (
-      <div className="overflow-y-auto scrollbar-thin w-[315px] pt-4">
-        {data.content.map((item) => (
-          // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-          <div
-            key={item.id}
-            style={{ paddingLeft: `${1 * item.level - 1}rem` }}
-            onClick={() => scrollToElementById(item.id)}
-            className={cn(
-              'w-[93%] outline-none line-clamp-1 text-sm tracking-tight break-all font-medium text-gray-500 cursor-pointer mb-4'
-            )}>
-            {item.itemIndex}. &nbsp;{item.textContent}
+    return (
+      <div className="overflow-y-auto scrollbar-thin w-[315px] p-2 border-1 border-gray-200 rounded-md">
+        <h2 className="p-1 font-bold">Table of Contents</h2>
+        {data && data.content.length > 0 ? (
+          data.content.map((item) => (
+            // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+            <div
+              key={item.id}
+              style={{ paddingLeft: `${1 * item.level}rem` }}
+              onClick={() => scrollToElementById(item.id)}
+              className={cn(
+                'w-full outline-none line-clamp-1 text-sm tracking-tight break-all font-medium text-gray-500 cursor-pointer mb-2 px-1'
+              )}>
+              {item.itemIndex}. &nbsp;{item.textContent}
+            </div>
+          ))
+        ) : (
+          <div className="text-sm text-neutral-500 p-1">
+            Start adding headlines to your document …
           </div>
-        ))}
-      </div>
-    ) : (
-      <div className="text-sm text-neutral-500">
-        Start adding headlines to your document …
+        )}
       </div>
     )
   }
