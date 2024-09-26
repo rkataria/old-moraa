@@ -43,8 +43,8 @@ export function FrameOverlayView() {
   if (eventSessionMode !== EventSessionMode.PEEK) return null
 
   return (
-    <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center px-4">
-      <div className="absolute left-0 top-0 w-full h-full bg-primary/20 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md" />
+    <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center px-4 bg-black bg-opacity-60 rounded-md backdrop-blur-3xl">
+      <div className="absolute left-0 top-0 w-full h-full rounded-md" />
 
       <motion.div
         key={currentFrame.id}

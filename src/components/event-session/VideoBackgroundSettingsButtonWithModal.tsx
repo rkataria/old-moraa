@@ -24,12 +24,14 @@ import { cn } from '@/utils/utils'
 
 type VideoBackgroundSettingsButtonWithModalProps = {
   buttonProps?: ButtonProps
+  label?: string
 }
 
 type VideoMiddlewareType = 'blur' | 'background'
 
 export function VideoBackgroundSettingsButtonWithModal({
   buttonProps = {},
+  label,
 }: VideoBackgroundSettingsButtonWithModalProps) {
   const { meeting } = useDyteMeeting()
 
@@ -143,16 +145,15 @@ export function VideoBackgroundSettingsButtonWithModal({
     <>
       <Tooltip label="Video Settings">
         <Button
-          isIconOnly
+          isIconOnly={!label}
           size="sm"
           radius="full"
           color="primary"
-          className={cn(
-            'flex justify-center items-center shrink-0 rounded-full text-white'
-          )}
+          className={cn('flex justify-center items-center shrink-0')}
           {...buttonProps}
           onClick={() => setOpen(true)}>
           <RiSparkling2Fill size={20} />
+          {label}
         </Button>
       </Tooltip>
 

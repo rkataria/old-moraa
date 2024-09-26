@@ -26,11 +26,7 @@ export function PollPreview({
   const verticalPreview = frame.config.visualization === 'vertical'
 
   return (
-    <div
-      className="w-full h-full pt-4"
-      style={{
-        backgroundColor: frame.config.backgroundColor,
-      }}>
+    <div className="w-full h-full pt-4">
       {verticalPreview ? (
         <VerticalPreview
           options={polls}

@@ -52,7 +52,7 @@ export function ParticipantsGridView({
       ref={gridRef}
       key={participantsToShow.length}
       className={cn(
-        'relative w-full h-full grid gap-4 m-auto p-4 justify-center items-center place-content-center',
+        'relative w-full h-full grid gap-4 m-auto justify-center items-center place-content-center',
         gridStyles
       )}>
       {participantsToShow.map((participant) => (

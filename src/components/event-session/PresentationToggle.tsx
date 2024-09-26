@@ -1,6 +1,5 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { FaRegStopCircle } from 'react-icons/fa'
-import { IoPlay } from 'react-icons/io5'
+import { IoPlay, IoStop } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -41,25 +40,19 @@ export function PresentationToggle() {
   return (
     <ControlButton
       buttonProps={{
-        radius: 'md',
-        variant: 'flat',
+        isIconOnly: true,
         size: 'sm',
-        className: cn('transition-all duration-300', {
-          'bg-green-500 text-white': !presentationStarted,
-          'bg-red-500 text-white': presentationStarted,
+        className: cn('text-white', {
+          'bg-green-500': !presentationStarted,
+          'bg-red-500': presentationStarted,
         }),
-        startContent: presentationStarted ? (
-          <FaRegStopCircle size={16} />
-        ) : (
-          <IoPlay size={16} />
-        ),
       }}
       tooltipProps={{
         label: KeyboardShortcuts.Live.startAndStopPresentation.label,
         actionKey: KeyboardShortcuts.Live.startAndStopPresentation.key,
       }}
       onClick={handlePresentationToggle}>
-      {presentationStarted ? 'Stop' : 'Start'}
+      {presentationStarted ? <IoStop size={18} /> : <IoPlay size={18} />}
     </ControlButton>
   )
 }

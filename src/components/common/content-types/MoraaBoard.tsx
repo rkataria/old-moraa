@@ -36,9 +36,7 @@ export function MoraaBoard({ frame, isInteractive = true }: MoraaBoardProps) {
     (!isInteractive && eventMode !== 'present')
 
   return (
-    <div
-      style={{ backgroundColor: frame.config.backgroundColor }}
-      className="relative w-full flex-auto flex flex-col justify-center items-center py-4 z-[0] h-full">
+    <div className="relative w-full flex-auto flex flex-col justify-center items-center z-[0] h-full bg-white rounded-md overflow-hidden">
       {store.status !== 'synced-remote' ? (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <ContentLoading />
@@ -74,7 +72,7 @@ const NameEditor = track(() => {
   const { color } = editor.user.getUserPreferences()
 
   return (
-    <div className="flex justify-end items-center gap-1 pointer-events-auto">
+    <div className="flex justify-end items-center gap-1 pointer-events-auto h-10 px-2 bg-[var(--color-low)] rounded-bl-[11px]">
       <input
         type="color"
         className="w-12 cursor-pointer"

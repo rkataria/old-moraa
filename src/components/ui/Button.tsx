@@ -8,7 +8,7 @@ export const Button = extendVariants(NextUIButton, {
   variants: {
     color: {
       brand: 'text-white bg-primary',
-      default: 'bg-gray-100 hover:bg-gray-200',
+      default: 'bg-gray-100 hover:bg-opacity-90',
     },
     size: {
       sm: 'rounded-md text-md h-8',

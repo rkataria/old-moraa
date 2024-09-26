@@ -1,33 +1,31 @@
-import { IoEllipsisVertical } from 'react-icons/io5'
+import { ButtonProps } from '@nextui-org/button'
+import { MdVideoSettings } from 'react-icons/md'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn } from '@/utils/utils'
-
-export function MediaSettingsToggle({
-  className = '',
-  onClick,
-}: {
-  className?: string
+type MediaSettingsToggleProps = {
+  label?: string
+  buttonProps?: ButtonProps
   onClick: () => void
-}) {
+}
+export function MediaSettingsToggle({
+  label,
+  buttonProps = {},
+  onClick,
+}: MediaSettingsToggleProps) {
   return (
     <ControlButton
       buttonProps={{
-        isIconOnly: true,
-        radius: 'md',
+        isIconOnly: !label,
         size: 'sm',
-        variant: 'flat',
-        className: cn(
-          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
-          className
-        ),
+        ...buttonProps,
       }}
       tooltipProps={{
-        label: 'Media Setting',
+        label: 'Setting',
       }}
       onClick={onClick}>
-      <IoEllipsisVertical size={20} />
+      <MdVideoSettings size={20} />
+      {label}
     </ControlButton>
   )
 }

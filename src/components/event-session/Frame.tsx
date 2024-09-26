@@ -1,6 +1,6 @@
 // TODO: fix any types
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 
 import { GoogleSlides } from './content-types/GoogleSlides'
 import { PDFViewer } from './content-types/PDFViewer'
@@ -23,7 +23,7 @@ import { TextImage } from '@/components/event-session/content-types/TextImage'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { Vote, type IReflectionFrame } from '@/types/frame.type'
+import { Vote } from '@/types/frame.type'
 import { checkVoted } from '@/utils/content.util'
 import { getOjectPublicUrl } from '@/utils/utils'
 
@@ -31,17 +31,6 @@ export function Frame() {
   const { currentFrame, currentFrameResponses, currentFrameLoading, isHost } =
     useContext(EventSessionContext) as EventSessionContextType
   const { currentUser } = useAuth()
-
-  useEffect(() => {
-    if (!currentFrame) return
-
-    const DEFAULT_FRAME_BG_COLOR = 'rgb(17 24 39)'
-
-    document.documentElement.style.setProperty(
-      '--frame-bg-color',
-      currentFrame?.config.backgroundColor || DEFAULT_FRAME_BG_COLOR
-    )
-  }, [currentFrame])
 
   if (!currentFrame) return null
 
@@ -68,12 +57,7 @@ export function Frame() {
     [ContentType.PDF_VIEWER]: (
       <PDFViewer key={currentFrame.id} frame={currentFrame as any} />
     ),
-    [ContentType.REFLECTION]: (
-      <Reflection
-        key={currentFrame.id}
-        frame={currentFrame as IReflectionFrame}
-      />
-    ),
+    [ContentType.REFLECTION]: <Reflection key={currentFrame.id} />,
     [ContentType.VIDEO_EMBED]: (
       <VideoEmbed key={currentFrame.id} frame={currentFrame as any} />
     ),
@@ -104,7 +88,7 @@ export function Frame() {
   const renderer = renderersByContentType[currentFrame.type]
 
   return (
-    <div className="relative h-full w-full flex flex-col gap-2 p-4">
+    <div className="relative h-full w-full flex flex-col gap-2">
       <FrameTitleDescriptionPreview frame={currentFrame as any} />
       {renderer}
     </div>

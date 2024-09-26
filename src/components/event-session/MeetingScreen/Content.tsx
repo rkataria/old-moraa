@@ -2,16 +2,18 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
-import { ContentContainer } from './ContentContainer'
-import { FrameOverlayView } from './FrameOverlayView'
-import { ParticipantTiles } from './ParticipantTiles'
-import { PanelResizer } from '../common/PanelResizer'
+import { ContentContainer } from '../ContentContainer'
+import { FrameOverlayView } from '../FrameOverlayView'
+import { ParticipantTiles } from '../ParticipantTiles'
 
+import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsFrame'
+import { PanelResizer } from '@/components/common/PanelResizer'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { EventSessionMode } from '@/types/event-session.type'
 
-export function MainContainer() {
+export function Content() {
   const { eventSessionMode, isHost } = useEventSession()
   const isBreakoutOverviewOpen = useStoreSelector(
     (state) =>
@@ -21,6 +23,7 @@ export function MainContainer() {
 
   const mainContentRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef(null)
+  const { isBreakoutActive } = useBreakoutRooms()
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -52,8 +55,13 @@ export function MainContainer() {
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
           <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
-            {['Preview', 'Presentation'].includes(eventSessionMode) ? (
-              <div className="relative flex-1 w-full h-full p-2 rounded-md overflow-hidden overflow-y-auto scrollbar-none">
+            {isHost && isBreakoutActive && isBreakoutOverviewOpen ? (
+              <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
+                <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
+                <BreakoutRoomsWithParticipants hideActivityCards />
+              </div>
+            ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
+              <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2">
                 <ContentContainer />
               </div>
             ) : null}

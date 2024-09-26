@@ -1,11 +1,15 @@
-import { useDisclosure } from '@nextui-org/react'
+import { ButtonProps, useDisclosure } from '@nextui-org/react'
 import { IoIosHelpCircleOutline } from 'react-icons/io'
 
 import { KeyboardShortcutsModal } from './KeyboardShortcutsModal'
 import { Tooltip } from './ShortuctTooltip'
 import { Button } from '../ui/Button'
 
-export function HelpButton() {
+export function HelpButton({
+  buttonProps = {},
+}: {
+  buttonProps?: ButtonProps
+}) {
   const keyboardShortcutsDisClosure = useDisclosure()
 
   return (
@@ -15,9 +19,10 @@ export function HelpButton() {
           size="sm"
           isIconOnly
           variant="light"
-          onClick={() => keyboardShortcutsDisClosure.onOpen()}
-          className="shrink-0">
-          <IoIosHelpCircleOutline size={24} className="text-[#52525B]" />
+          className="shrink-0"
+          {...buttonProps}
+          onClick={() => keyboardShortcutsDisClosure.onOpen()}>
+          <IoIosHelpCircleOutline size={24} />
         </Button>
       </Tooltip>
       <KeyboardShortcutsModal disclosure={keyboardShortcutsDisClosure} />

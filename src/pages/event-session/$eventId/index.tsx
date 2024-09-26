@@ -5,8 +5,8 @@ import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 
 import { Loading } from '@/components/common/Loading'
-import { MeetingScreen } from '@/components/event-session/MeetingScreen'
-import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScreen'
+import { MeetingScreen } from '@/components/event-session/MeetingScreen/MeetingScreen'
+import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScreen/MeetingSetupScreen'
 import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContext'
 import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
@@ -78,8 +78,8 @@ function EventSessionPage() {
     initDyteMeeting({
       authToken: enrollment.meeting_token,
       defaults: {
-        audio: true,
-        video: true,
+        audio: false,
+        video: false,
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

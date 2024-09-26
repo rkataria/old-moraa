@@ -48,11 +48,9 @@ export function ChatsToggle({
       <ControlButton
         buttonProps={{
           isIconOnly: true,
-          radius: 'md',
           size: 'sm',
-          variant: 'light',
-          className: cn('transition-all duration-300 text-[#444444]', {
-            'bg-black text-white hover:bg-black': isChatsSidebarOpen,
+          className: cn('bg-gray-100 hover:bg-gray-200', {
+            'bg-primary-100': isChatsSidebarOpen,
           }),
         }}
         tooltipProps={{

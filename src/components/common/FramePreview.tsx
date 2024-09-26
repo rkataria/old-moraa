@@ -59,9 +59,6 @@ export function FramePreview({
 
   return (
     <div
-      style={{
-        backgroundColor: frame.config.backgroundColor,
-      }}
       className={cn(
         'relative group w-full h-full bg-white flex flex-col gap-2 p-4',
         {
@@ -111,8 +108,8 @@ export function FramePreview({
           />
         )}
         {frame.type === ContentType.GOOGLE_SLIDES_IMPORT && (
-          <div className="w-full h-full flex justify-center items-center">
-            <p>
+          <div className="w-full h-full flex justify-center items-center bg-white text-black">
+            <p className="text-center">
               This frame will be replaced with the imported Google Slides once
               the import is completed.
             </p>

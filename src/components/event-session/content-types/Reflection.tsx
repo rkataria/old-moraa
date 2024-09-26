@@ -7,16 +7,12 @@ import { ReflectionCard } from './reflection/ReflectionCard'
 import { SelfReflectionCard } from './reflection/SelfReflectionCard'
 import { TypingUsers } from './reflection/TypingUsers'
 
-import type { IReflectionFrame, IReflectionResponse } from '@/types/frame.type'
+import type { IReflectionResponse } from '@/types/frame.type'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useProfile } from '@/hooks/useProfile'
-
-interface ReflectionProps {
-  frame: IReflectionFrame
-}
 
 const useParticipantName = () => {
   const { data: profile } = useProfile()
@@ -123,15 +119,11 @@ function ParticipantView() {
   )
 }
 
-export function Reflection({ frame }: ReflectionProps) {
+export function Reflection() {
   const { isHost } = useEventSession()
 
   return (
-    <div
-      className="w-full flex justify-start items-start mt-4"
-      style={{
-        backgroundColor: frame.content.backgroundColor,
-      }}>
+    <div className="w-full h-full flex justify-start items-start bg-white p-2 rounded-md">
       <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-2">
         {isHost ? <HostView /> : <ParticipantView />}
       </div>

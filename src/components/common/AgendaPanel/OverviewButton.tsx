@@ -8,15 +8,13 @@ import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
 export function OverviewButton({ label }: { label?: string }) {
-  const { overviewOpen, eventMode, setOverviewOpen } = useContext(
+  const { overviewOpen, setOverviewOpen } = useContext(
     EventContext
   ) as EventContextType
 
   const handleOverviewClick = () => {
     setOverviewOpen(true)
   }
-
-  if (eventMode === 'present') return <div />
 
   const isIconOnly = !label
 

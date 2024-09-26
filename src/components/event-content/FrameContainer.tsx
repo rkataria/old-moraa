@@ -41,12 +41,7 @@ export function FrameContainer() {
 
   // Render the current frame and frame controls
   return (
-    <div
-      key={currentFrame.id}
-      className="relative w-full h-full"
-      style={{
-        backgroundColor: currentFrame.config?.backgroundColor || '#ffffff',
-      }}>
+    <div key={currentFrame.id} className="relative w-full h-full">
       <Frame frame={currentFrame} />
       <FrameControls switchPublishedFrames={!permissions.canUpdateFrame} />
     </div>

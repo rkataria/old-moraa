@@ -47,9 +47,7 @@ export function TextImage({ frame }: TextImageProps) {
   ) as ImageBlock
 
   return (
-    <div
-      style={{ backgroundColor: frame.config.backgroundColor }}
-      className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-start">
+    <div className="tiptap ProseMirror w-full h-full flex flex-col justify-center items-start">
       <PanelGroup ref={panelGroupRef} direction="horizontal">
         <Panel minSize={30}>
           <div className="h-full flex flex-col justify-center items-start">

@@ -4,6 +4,7 @@ import { initializeStoreAction } from './actions/init'
 import { listenerMiddleware } from './listener'
 import { combinedAiReducer } from './slices/ai'
 import { combinedEventReducer } from './slices/event'
+import { combinedLayoutReducer } from './slices/layout'
 import { combinedUserReducer } from './slices/user'
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     event: combinedEventReducer,
     user: combinedUserReducer,
     ai: combinedAiReducer,
+    layout: combinedLayoutReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

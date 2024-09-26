@@ -3,7 +3,13 @@
 
 import { useContext, useState } from 'react'
 
-import { ModalBody, ModalContent, ModalHeader, Modal } from '@nextui-org/react'
+import {
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  Modal,
+  ButtonProps,
+} from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
@@ -27,7 +33,13 @@ type addParticipant = ParticipantsFormData & {
   closeonSave?: boolean
 }
 
-export function ButtonWithModal({ eventId }: { eventId: string }) {
+export function ButtonWithModal({
+  eventId,
+  buttonProps = {},
+}: {
+  eventId: string
+  buttonProps?: ButtonProps
+}) {
   const [open, setOpen] = useState<boolean>(false)
   const { participants, refetch } = useEvent({
     id: eventId,
@@ -74,8 +86,9 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
           size="sm"
           isIconOnly
           variant="light"
+          {...buttonProps}
           onClick={() => setOpen(true)}>
-          <LuUserPlus size={20} className="text-[#52525B]" />
+          <LuUserPlus size={20} />
         </Button>
       </Tooltip>
 
@@ -156,8 +169,10 @@ export function ButtonWithModal({ eventId }: { eventId: string }) {
 
 export function AddParticipantsButtonWithModal({
   eventId,
+  triggerButtonProps,
 }: {
   eventId: string
+  triggerButtonProps?: ButtonProps
 }) {
   const { preview, eventMode } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
@@ -168,5 +183,5 @@ export function AddParticipantsButtonWithModal({
 
   if (!preview && eventMode === 'edit') return null
 
-  return <ButtonWithModal eventId={eventId} />
+  return <ButtonWithModal eventId={eventId} buttonProps={triggerButtonProps} />
 }

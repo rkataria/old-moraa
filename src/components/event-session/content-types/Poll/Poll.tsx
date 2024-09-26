@@ -76,10 +76,7 @@ export function Poll({ frame, votes = [], voted, canVote = true }: PollProps) {
 
         'mt-16':
           !showAnonymousToggle && frame.config.visualization === 'vertical',
-      })}
-      style={{
-        backgroundColor: frame.config.backgroundColor,
-      }}>
+      })}>
       <RenderIf isTrue={showAnonymousToggle}>
         <AnonymousToggle
           votes={votes}

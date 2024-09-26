@@ -27,7 +27,7 @@ export function StudioLayout({
     <StudioLayoutContextProvider>
       <div className="flex flex-col justify-start items-start h-screen overflow-hidden">
         <Header>{header}</Header>
-        <div className="flex-auto flex justify-start items-start w-full overflow-hidden z-0">
+        <div className="flex-auto flex justify-start items-start w-full overflow-hidden z-0 gap-2">
           {/* Left Sidebar */}
           {leftSidebar ? <LeftSidebar>{leftSidebar}</LeftSidebar> : null}
           <MainContentWithRightSidebar

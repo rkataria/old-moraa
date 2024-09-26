@@ -44,11 +44,9 @@ export function WhiteBoardToggle() {
     <ControlButton
       buttonProps={{
         isIconOnly: true,
-        radius: 'md',
         size: 'sm',
-        variant: 'flat',
-        className: cn('bg-[#F3F4F6] text-[#444444]', {
-          'bg-black text-white': isWhiteboardActive,
+        className: cn({
+          'bg-primary-100': isWhiteboardActive,
         }),
       }}
       tooltipProps={{
