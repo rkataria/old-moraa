@@ -3,7 +3,6 @@ import { useContext } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { FrameAppearanceToggleButton } from '../common/StudioLayout/FrameAppearanceToggleButton'
-import { FrameConfigurationToggleButton } from '../common/StudioLayout/FrameConfigurationToggleButton'
 import { FrameNoteToggleButton } from '../common/StudioLayout/FrameNoteToggleButton'
 import { FrameStatusToggleButton } from '../common/StudioLayout/FrameStatusToggleButton'
 
@@ -39,7 +38,6 @@ export function RightSidebarControls() {
 
   return (
     <RightSidebarControlsWrapper>
-      <FrameConfigurationToggleButton />
       <FrameAppearanceToggleButton />
       <FrameNoteToggleButton />
       <FrameStatusToggleButton />

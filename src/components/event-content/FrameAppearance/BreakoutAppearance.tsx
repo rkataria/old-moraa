@@ -6,7 +6,7 @@ import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlid
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
-export function BreakoutConfiguration() {
+export function BreakoutAppearance() {
   const { currentFrame, updateFrame, getFrameById, deleteFrame } = useContext(
     EventContext
   ) as EventContextType

@@ -9,9 +9,7 @@ import {
 
 export type LeftSidebarVisiblity = 'minimized' | 'maximized'
 export type RightSidebarType =
-  | 'frame-configuration'
   | 'frame-appearance'
-  | 'event-settings'
   | 'frame-notes'
   | 'chat'
   | 'participants'

@@ -1,10 +1,15 @@
 import { useContext } from 'react'
 
-import { IoColorPaletteOutline } from 'react-icons/io5'
+import { MdOutlineDesignServices } from 'react-icons/md'
 
+import { BreakoutAppearance } from './BreakoutAppearance'
 import { CommonAppearance } from './CommonAppearance'
+import { MoraaBoardAppearance } from './MoraaBoardAppearance'
 import { MoraaSlideAppearance } from './MoraaSlideAppearance'
+import { PdfAppearance } from './PdfAppearance'
 import { PollAppearance } from './PollAppearance'
+import { ReflectionAppearance } from './ReflectionAppearance'
+import { RichTextAppearance } from './RichTextAppearance'
 import { TextImageAppearance } from './TextImageAppearance'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
@@ -29,16 +34,16 @@ export function FrameAppearance() {
     [ContentType.COVER]: null,
     [ContentType.POLL]: <PollAppearance />,
     [ContentType.GOOGLE_SLIDES]: null,
-    [ContentType.PDF_VIEWER]: null,
-    [ContentType.REFLECTION]: null,
+    [ContentType.PDF_VIEWER]: <PdfAppearance key={currentFrame.id} />,
+    [ContentType.REFLECTION]: <ReflectionAppearance key={currentFrame.id} />,
     [ContentType.VIDEO_EMBED]: null,
     [ContentType.TEXT_IMAGE]: <TextImageAppearance key={currentFrame.id} />,
     [ContentType.IMAGE_VIEWER]: null,
-    [ContentType.RICH_TEXT]: null,
+    [ContentType.RICH_TEXT]: <RichTextAppearance key={currentFrame.id} />,
     [ContentType.MIRO_EMBED]: null,
-    [ContentType.MORAA_BOARD]: null,
+    [ContentType.MORAA_BOARD]: <MoraaBoardAppearance key={currentFrame.id} />,
     [ContentType.MORAA_SLIDE]: <MoraaSlideAppearance key={currentFrame.id} />,
-    [ContentType.BREAKOUT]: null,
+    [ContentType.BREAKOUT]: <BreakoutAppearance key={currentFrame.id} />,
     [ContentType.POWERPOINT]: null,
   }
 
@@ -47,8 +52,8 @@ export function FrameAppearance() {
   return (
     <div>
       <RightSidebarHeader
-        icon={<IoColorPaletteOutline size={18} />}
-        title={activeObject?.type ? activeObject.type : 'Appearance'}
+        icon={<MdOutlineDesignServices size={18} />}
+        title={activeObject?.type ? activeObject.type : currentFrame.type}
       />
       <div className="p-4 flex flex-col gap-4">
         <CommonAppearance />

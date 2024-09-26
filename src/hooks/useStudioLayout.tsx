@@ -8,13 +8,7 @@ import {
 } from 'react'
 
 type LeftSidebarVisiblity = 'minimized' | 'maximized'
-type RightSidebarType =
-  | 'frame-configuration'
-  | 'frame-appearance'
-  | 'event-settings'
-  | 'frame-notes'
-  | 'chat'
-  | 'participants'
+type RightSidebarType = 'frame-appearance' | 'frame-notes'
 type ResizableRightSidebarType = 'ai-chat'
 type RightSidebarVisiblity = RightSidebarType | null
 type ResizableRightSidebarVisiblity = ResizableRightSidebarType | null

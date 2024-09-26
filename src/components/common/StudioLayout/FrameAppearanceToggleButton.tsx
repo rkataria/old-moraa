@@ -1,4 +1,4 @@
-import { IoColorPaletteOutline } from 'react-icons/io5'
+import { MdOutlineDesignServices } from 'react-icons/md'
 
 import { Tooltip } from '../ShortuctTooltip'
 
@@ -24,7 +24,7 @@ export function FrameAppearanceToggleButton() {
           'bg-primary-100': rightSidebarVisiblity === 'frame-appearance',
         })}
         onClick={toggleSidebar}>
-        <IoColorPaletteOutline size={18} strokeWidth={1.7} />
+        <MdOutlineDesignServices size={18} />
       </Button>
     </Tooltip>
   )

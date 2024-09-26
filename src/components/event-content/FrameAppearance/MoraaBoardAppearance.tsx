@@ -5,7 +5,7 @@ import { EventContext } from '@/contexts/EventContext'
 import { useFlags } from '@/flags/client'
 import { EventContextType } from '@/types/event-context.type'
 
-export function MoraaBoardConfiguration() {
+export function MoraaBoardAppearance() {
   const { flags } = useFlags()
 
   const { currentFrame, updateFrame } = useContext(

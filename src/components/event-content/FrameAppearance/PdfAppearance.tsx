@@ -5,7 +5,7 @@ import { NumberInput } from '@/components/common/NumberInput'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
-export function PdfConfiguration() {
+export function PdfAppearance() {
   const { currentFrame, updateFrame } = useContext(
     EventContext
   ) as EventContextType
