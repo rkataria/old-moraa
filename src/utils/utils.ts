@@ -127,15 +127,15 @@ export function scrollParentToChild({
   if (!isViewable) {
     // Should we scroll using top or bottom? Find the smaller ABS adjustment
     const scrollTop = childRect.top - parentRect.top
-    const scrollBot = childRect.bottom - parentRect.bottom
-    if (Math.abs(scrollTop) < Math.abs(scrollBot)) {
+    const scrollBottom = childRect.bottom - parentRect.bottom
+    if (Math.abs(scrollTop) < Math.abs(scrollBottom)) {
       // we're near the top of the list
       // eslint-disable-next-line no-param-reassign
       parent.scrollTop += scrollTop - topOffset
     } else {
       // we're near the bottom of the list
       // eslint-disable-next-line no-param-reassign
-      parent.scrollTop += scrollBot + bottomOffset
+      parent.scrollTop += scrollBottom + bottomOffset
     }
   }
 }

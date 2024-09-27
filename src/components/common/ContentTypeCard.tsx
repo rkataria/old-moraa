@@ -12,7 +12,7 @@ export function ContentTypeCard({ card, onClick }: IContentCard) {
 
   return (
     <Card
-      shadow="sm"
+      shadow="none"
       key={card.contentType}
       isPressable
       onPress={() => {
@@ -20,18 +20,13 @@ export function ContentTypeCard({ card, onClick }: IContentCard) {
           onClick(card.contentType, card.templateKey)
         }
       }}
-      className="hover:bg-gray-300 flex-col items-start bg-[#E9D8FD] shadow-none hover:shadow-sm duration-300">
-      <CardBody className="p-2.5 flex flex-col items-start w-full">
-        <div className="flex items-center gap-2 w-max">
-          <div className="w-8 h-8 text-[#7C3AED]">{card.icon}</div>
-          <h3 className="font-semibold text-sm w-full text-left tracking-tight">
-            {card.name}
-          </h3>
-        </div>
-
-        <p className="text-xs mt-1 w-full text-left tracking-tight">
-          {card.description}
-        </p>
+      className="aspect-video border-2 border-transparent bg-gray-100 hover:border-primary hover:shadow-md">
+      <CardBody className="flex flex-col justify-center items-center gap-1">
+        <div className="text-primary-100">{card.iconLarge}</div>
+        <h3 className="font-semibold text-center text-lg text-primary-400">
+          {card.name}
+        </h3>
+        <p className="text-sm text-center text-gray-500">{card.description}</p>
       </CardBody>
     </Card>
   )

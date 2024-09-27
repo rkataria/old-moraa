@@ -262,6 +262,7 @@ export enum ContentType {
 export interface IContentType {
   name: string
   icon: React.ReactNode
+  iconLarge?: React.ReactNode
   description: string
   contentType: ContentType
   disabled?: boolean
