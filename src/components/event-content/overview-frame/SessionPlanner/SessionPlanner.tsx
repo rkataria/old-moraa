@@ -17,8 +17,8 @@ import differenceby from 'lodash.differenceby'
 import isEqual from 'lodash.isequal'
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 import { BsTrash } from 'react-icons/bs'
-import { FaCaretDown } from 'react-icons/fa'
 import { IoIosArrowRoundUp } from 'react-icons/io'
+import { IoChevronDown } from 'react-icons/io5'
 import { MdDragIndicator } from 'react-icons/md'
 import { RxReset } from 'react-icons/rx'
 
@@ -33,7 +33,6 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
-import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { toggleSectionExpansionInPlannerAction } from '@/stores/slices/event/current-event/section.slice'
@@ -52,17 +51,15 @@ export function SessionPlanner({
 }) {
   const plannerRef = useRef<HTMLDivElement | null>(null)
 
-  const { width: plannerWidth } = useDimensions(plannerRef)
-
   const {
     sections,
     preview,
     eventMode,
+    insertInSectionId,
     reorderSection,
     reorderFrame,
     updateSection,
     setAddedFromSessionPlanner,
-    insertInSectionId,
     setInsertInSectionId,
     deleteSection,
     setInsertAfterFrameId,
@@ -73,6 +70,7 @@ export function SessionPlanner({
   const [filteredSections, setFilteredSections] = useState(sections)
   const { permissions } = useEventPermissions()
   const [itemIdToBeFocus, setItemIdToBeFocus] = useState('')
+
   const expandedSections = useStoreSelector(
     (state) =>
       state.event.currentEvent.sectionState.expandedSectionsInSessionPlanner
@@ -188,7 +186,10 @@ export function SessionPlanner({
   return (
     <div
       ref={plannerRef}
-      className={cn('flex flex-col flex-1 bg-white pl-4 pb-8', className)}>
+      className={cn(
+        'flex flex-col flex-1 bg-white pb-8 pl-4 -ml-4',
+        className
+      )}>
       {header}
       <div className="scrollbar-none">
         <DragDropContext
@@ -202,7 +203,7 @@ export function SessionPlanner({
             {(sectionDroppableProvided) => (
               <div
                 className={cn(
-                  'flex flex-col justify-start items-center gap-[6px] w-full flex-nowrap '
+                  'flex flex-col justify-start items-center gap-4 w-full flex-nowrap'
                 )}
                 ref={sectionDroppableProvided.innerRef}
                 {...sectionDroppableProvided.droppableProps}>
@@ -214,12 +215,7 @@ export function SessionPlanner({
                     index={sectionIndex}>
                     {(sectionDraggableProvided) => (
                       <div
-                        className={cn('w-full rounded-lg border ', {
-                          'border-l-8 border-r-8 border-b-8 shadow-sm':
-                            expandedSections.includes(section.id),
-                          'border-primary-100':
-                            insertInSectionId === section.id && !preview,
-                        })}
+                        className="w-full rounded-lg"
                         ref={sectionDraggableProvided.innerRef}
                         onClick={(e) => handleSectionClick(e, section.id)}
                         {...sectionDraggableProvided.draggableProps}>
@@ -227,16 +223,15 @@ export function SessionPlanner({
                           <div>
                             <div
                               className={cn(
-                                'flex w-full items-center bg-white gap-2 p-2 border-b group/section',
+                                'flex w-full items-center bg-white gap-2 p-2 group/section',
                                 {
-                                  'rounded-lg': !expandedSections.includes(
-                                    section.id
-                                  ),
+                                  'rounded-lg border':
+                                    !expandedSections.includes(section.id),
                                 }
                               )}>
                               <div
                                 className={cn(
-                                  'flex flex-col items-center justify-center -ml-[45px] -mr-[2px] w-[2.5rem] opacity-0 group-hover/section:opacity-100',
+                                  'flex flex-col items-center justify-center -ml-[38px] -mr-[12px] w-[2.5rem] opacity-0 group-hover/section:opacity-100',
                                   {
                                     '-ml-[39px] -mr-2':
                                       !expandedSections.includes(section.id),
@@ -318,7 +313,7 @@ export function SessionPlanner({
                               <div
                                 style={{ flex: 2 }}
                                 className="flex items-start gap-2">
-                                <FaCaretDown
+                                <IoChevronDown
                                   className={cn(
                                     'text-xl duration-300 cursor-pointer text-black/50 -rotate-90 mt-1',
                                     {
@@ -341,7 +336,13 @@ export function SessionPlanner({
                                       editable && itemIdToBeFocus === section.id
                                     }
                                     showTooltip={false}
-                                    className="text-sm font-semibold tracking-tight max-w-[31.25rem] text-black/70"
+                                    className={cn(
+                                      'text-lg font-semibold tracking-tight max-w-[31.25rem] text-black/70',
+                                      {
+                                        'border border-transparent hover:border-default':
+                                          editable,
+                                      }
+                                    )}
                                     label={section.name}
                                     readOnly={preview}
                                     onUpdate={(value: string) => {
@@ -360,12 +361,17 @@ export function SessionPlanner({
                                   />
                                 </div>
                               </div>
-
+                              <RenderIf
+                                isTrue={!expandedSections.includes(section.id)}>
+                                <p className="w-24">
+                                  {section.frames.length} Frames
+                                </p>
+                              </RenderIf>
                               <div
                                 className={cn(
-                                  'flex justify-between items-center gap-2 w-[18.75rem]',
+                                  'flex justify-between items-center gap-4 w-[18.75rem]',
                                   {
-                                    'justify-end': !editable,
+                                    'justify-end w-[16rem]': !editable,
                                   }
                                 )}>
                                 <SessionColorTracker
@@ -373,7 +379,7 @@ export function SessionPlanner({
                                     colorCode: frame?.config?.colorCode,
                                     timeSpan: frame?.config?.time,
                                   }))}
-                                  className="h-3 w-full"
+                                  className="h-5 w-full"
                                 />
                                 <RenderIf isTrue={editable}>
                                   <div
@@ -436,7 +442,6 @@ export function SessionPlanner({
                               isTrue={expandedSections.includes(section.id)}>
                               <FramesList
                                 section={section}
-                                plannerWidth={plannerWidth}
                                 frameIdToBeFocus={itemIdToBeFocus}
                               />
                             </RenderIf>

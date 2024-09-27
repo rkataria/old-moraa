@@ -173,6 +173,7 @@ export function TextBlockEditor({
   fillAvailableHeight = false,
   className = '',
   placeholder = '',
+  autoFocus,
   onChange,
 }: {
   block: TextBlock
@@ -181,6 +182,7 @@ export function TextBlockEditor({
   fillAvailableHeight?: boolean
   className?: string
   placeholder?: string
+  autoFocus?: boolean
   onChange?: (block: TextBlock) => void
 }) {
   const editor = useEditor(
@@ -206,10 +208,14 @@ export function TextBlockEditor({
       // editor.commands.focus('start')
     }
 
+    if (editor && autoFocus) {
+      editor.commands.focus('end')
+    }
+
     return () => {
       editor?.destroy()
     }
-  }, [block.type, editor])
+  }, [block.type, editor, autoFocus])
 
   if (!editor) return null
 

@@ -30,6 +30,7 @@ import {
 } from '@/stores/slices/event/current-event/section.slice'
 import {
   createFrameThunk,
+  deleteFramesThunk,
   deleteFrameThunk,
   updateFrameThunk,
 } from '@/stores/thunks/frame.thunks'
@@ -332,6 +333,18 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return null
   }
 
+  const deleteFrames = async ({
+    frameIds,
+    sectionId,
+  }: {
+    frameIds: string[]
+    sectionId: string
+  }) => {
+    dispatch(deleteFramesThunk({ frameIds, sectionId }))
+
+    return null
+  }
+
   const deleteBreakoutFrames = async (frame: IFrame) => {
     const breakoutIds = [frame.id]
     _deleteFrame(frame.id)
@@ -492,6 +505,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const actions = {
     updateFrame: withPermissionCheck(updateFrame, permissions.canUpdateFrame),
     deleteFrame: withPermissionCheck(deleteFrame, permissions.canDeleteFrame),
+    deleteFrames: withPermissionCheck(deleteFrames, permissions.canDeleteFrame),
+
     moveUpFrame: withPermissionCheck(moveUpFrame, permissions.canUpdateFrame),
     moveDownFrame: withPermissionCheck(
       moveDownFrame,

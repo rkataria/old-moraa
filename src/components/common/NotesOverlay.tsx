@@ -5,7 +5,7 @@ import { useContext, useEffect } from 'react'
 import { Button } from '@nextui-org/react'
 import { RxCross1 } from 'react-icons/rx'
 
-import { Note } from '../event-content/overview-frame/SessionPlanner/Note'
+import { Note } from './Note'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
@@ -49,13 +49,13 @@ export function NoteOverlay({ editable = true }: { editable?: boolean }) {
 
   return (
     <NoteOverlaySidebarWrapper
-      contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)]"
+      contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)] p-4"
       onClose={() => setRightSidebarVisiblity(null)}>
       <Note
         frameId={currentFrame.id}
-        notes={currentFrame.notes}
+        note={currentFrame.notes}
         editable={isEditable}
-        placeholder={isEditable ? 'Add some notes..' : 'No notes found'}
+        placeholder={isEditable ? 'Click to add notes' : 'No notes found'}
       />
     </NoteOverlaySidebarWrapper>
   )

@@ -198,8 +198,8 @@ export const FrameColorCodes = {
   none: {
     key: 'none',
     label: 'None',
-    icon: IoIosSquare({ color: '#F3F4F6', size: 24 }),
-    color: '#F3F4F6',
+    icon: IoIosSquare({ color: '#C4C4C4', size: 24 }),
+    color: '#C4C4C4',
   },
 }
 
@@ -305,4 +305,37 @@ export async function loadFont(
 
     return false
   }
+}
+export function truncateHTMLWithTags(htmlString: string, maxLength: number) {
+  const div = document.createElement('div')
+  div.innerHTML = htmlString
+
+  let truncatedHTML = ''
+  let charCount = 0
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function traverseNodes(node: any) {
+    if (charCount >= maxLength) return
+
+    if (node.nodeType === Node.TEXT_NODE) {
+      const remainingChars = maxLength - charCount
+      truncatedHTML += node.textContent.slice(0, remainingChars)
+      charCount += node.textContent.length
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const tagName = node.nodeName.toLowerCase()
+      truncatedHTML += `<${tagName}>`
+
+      node.childNodes.forEach(traverseNodes)
+
+      truncatedHTML += `</${tagName}>`
+    }
+  }
+
+  div.childNodes.forEach(traverseNodes)
+
+  if (charCount > maxLength) {
+    truncatedHTML += '...' // Add ellipsis if truncated
+  }
+
+  return truncatedHTML
 }

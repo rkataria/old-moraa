@@ -157,7 +157,7 @@ export function FrameManager() {
         leftSidebar={leftSidebarContent()}
         resizableRightSidebar={<ResizableRightSidebar />}
         rightSidebar={<RightSidebar />}
-        rightSidebarControls={<RightSidebarControls />}>
+        rightSidebarControls={!overviewOpen ? <RightSidebarControls /> : null}>
         <FrameContainer />
       </StudioLayout>
       <ContentTypePicker

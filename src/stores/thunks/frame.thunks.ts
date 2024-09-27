@@ -56,6 +56,12 @@ export const updateFrameThunk = createAsyncThunk<
 type DeleteFrameThunkParams = {
   frameId: string
 }
+
+type DeleteFramesThunkParams = {
+  frameIds: string[]
+  sectionId: string
+}
+
 export const deleteFrameThunk = createAsyncThunk<void, DeleteFrameThunkParams>(
   'event/deleteFrame',
   async ({ frameId }) => {
@@ -64,6 +70,15 @@ export const deleteFrameThunk = createAsyncThunk<void, DeleteFrameThunkParams>(
     return response.data
   }
 )
+
+export const deleteFramesThunk = createAsyncThunk<
+  void,
+  DeleteFramesThunkParams
+>('event/deleteFrame', async ({ frameIds, sectionId }) => {
+  const response = await FrameService.deleteFrames({ frameIds, sectionId })
+
+  return response.data
+})
 
 type BulkUpdateFrameStatus = {
   frameIds: Array<FrameModel['id']>

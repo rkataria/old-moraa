@@ -1,7 +1,6 @@
 @import './styles/editor.css';
 @import './styles/patterns.css';
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -437,4 +436,14 @@ input[type='number']::-webkit-outer-spin-button {
 /* Using this one to hide scrollbars for thumbnails */
 .hide-scrollbars div {
   overflow: hidden; /* Hide scrollbars for all divs inside */
+}
+
+#note-editor p {
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+  font-size: 14px !important;
+}
+
+#note-editor ul {
+  margin: 0 !important;
 }

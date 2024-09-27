@@ -54,6 +54,14 @@ export type EventContextType = {
     allowParticipantToUpdate?: boolean
   }) => void
   deleteFrame: (frame: IFrame) => void
+  deleteFrames: ({
+    frameIds,
+    sectionId,
+  }: {
+    frameIds: string[]
+    sectionId: string
+  }) => void
+
   importGoogleSlides: (data: {
     frame: IFrame
     googleSlideUrl: string

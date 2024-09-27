@@ -2,22 +2,16 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
-import { Key, useContext } from 'react'
+import { Dispatch, Key, SetStateAction, useContext } from 'react'
 
 import { Button, Checkbox, Chip } from '@nextui-org/react'
 import { Draggable } from 'react-beautiful-dnd'
 import { BsArrowsAngleExpand, BsTrash } from 'react-icons/bs'
 import { IoCheckmarkCircle } from 'react-icons/io5'
-import {
-  MdCheckCircle,
-  MdDragIndicator,
-  MdOutlinePublish,
-  MdUnpublished,
-} from 'react-icons/md'
+import { MdDragIndicator, MdUnpublished } from 'react-icons/md'
 
 import { FrameColorCode } from './FrameColorCode'
 import { Minutes } from './Minutes'
-import { Note } from './Note'
 
 import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
@@ -25,6 +19,7 @@ import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { DropdownActions } from '@/components/common/DropdownActions'
 import { EditableLabel } from '@/components/common/EditableLabel'
+import { Note } from '@/components/common/Note'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
@@ -43,22 +38,24 @@ export function FrameItem({
   section,
   frame,
   frameIndex,
-  plannerWidth,
   frameIdToBeFocus,
+  selectedFrameIds,
+  setSelectedFrameIds,
 }: {
   section: ISection
   frame: IFrame
   frameIndex: number
-  plannerWidth: number
   frameIdToBeFocus: string
+  selectedFrameIds: string[]
+  setSelectedFrameIds: Dispatch<SetStateAction<string[]>>
 }) {
   const {
     isOwner,
     preview,
     eventMode,
+    insertAfterFrameId,
     updateFrame,
     setAddedFromSessionPlanner,
-    insertAfterFrameId,
     deleteFrame,
   } = useContext(EventContext) as EventContextType
 
@@ -143,7 +140,14 @@ export function FrameItem({
     }
   }
 
-  const showToggle = plannerWidth > 766
+  const onChangeSelect = (checked: boolean) => {
+    if (checked) {
+      setSelectedFrameIds([...selectedFrameIds, frame.id])
+
+      return
+    }
+    setSelectedFrameIds(selectedFrameIds.filter((id) => id !== frame.id))
+  }
 
   return (
     <Draggable
@@ -158,15 +162,17 @@ export function FrameItem({
           ref={_provided.innerRef}
           {..._provided.draggableProps}
           className={cn(
-            'relative w-full bg-white min-h-[3.125rem] group/frame grid grid-cols-[100px_12px_1fr_1fr_1fr] hover:bg-gray-50 border-b  rounded-lg hover:shadow-sm duration-300',
+            'relative w-full bg-white min-h-[3.125rem] group/frame grid grid-cols-[40px_100px_12px_1fr_1fr_70px] hover:bg-gray-50 border-b last:border-none last:rounded-b-xl hover:shadow-sm duration-300',
             {
-              'grid-cols-[100px_12px_1fr_1fr_0.1fr]': showToggle,
               'grid-cols-[100px_12px_1fr_1fr_130px]': preview,
-              'before:absolute before:w-2 before:bg-primary-300 before:h-[108%] before:-top-0.5 before:-left-2 ':
+              'before:absolute before:w-1.5 before:bg-primary-300 before:h-full before:top-0 before:-left-1.5 last:before:h-[88%]':
                 insertAfterFrameId === frame.id && !preview,
+              '!bg-primary-50':
+                frameIdToBeFocus === frame.id ||
+                selectedFrameIds.includes(frame.id),
             }
           )}>
-          <div className="absolute flex flex-col items-center justify-center -ml-[43px] -mr-4 opacity-0 w-[50px] group-hover/frame:opacity-100">
+          <div className="absolute flex flex-col items-center justify-center -ml-[38px] -mr-4 opacity-0 w-[50px] group-hover/frame:opacity-100">
             <RenderIf isTrue={!preview}>
               <div>
                 <DropdownActions
@@ -205,22 +211,21 @@ export function FrameItem({
                 </p>
               }
             />
-
-            <RenderIf
-              isTrue={frame.status !== FrameStatus.PUBLISHED && !showToggle}>
-              <MdOutlinePublish
-                className="text-xl text-gray-400 cursor-pointer 2xl:hidden"
-                onClick={() => changeFrameStatus(frame)}
-              />
-            </RenderIf>
-            <RenderIf
-              isTrue={frame.status === FrameStatus.PUBLISHED && !showToggle}>
-              <MdCheckCircle
-                className="text-green-600 cursor-pointer 2xl:hidden"
-                onClick={() => changeFrameStatus(frame)}
-              />
-            </RenderIf>
           </div>
+          <RenderIf isTrue={editable}>
+            <div className="grid place-items-center border-r">
+              <Checkbox
+                size="md"
+                isSelected={selectedFrameIds.includes(frame.id)}
+                onValueChange={onChangeSelect}
+                disabled={!isOwner}
+                classNames={{
+                  wrapper: 'mr-0 grid',
+                  icon: 'text-white',
+                }}
+              />
+            </div>
+          </RenderIf>
 
           <RenderIf isTrue={preview}>
             <div className="grid place-items-center">
@@ -270,20 +275,20 @@ export function FrameItem({
               Open
             </p>
           </div>
+
           {/* <Tags frameId={frame.id} config={frame.config} /> */}
 
           <Note
             frameId={frame.id}
-            notes={frame.notes}
-            placeholder={preview ? 'No notes added' : 'Click here to add notes'}
-            wrapOnblur
-            autoFocus
+            note={frame.notes}
+            placeholder={preview ? 'No notes added' : 'Click to add notes'}
+            editable={editable}
+            className="border-x-1 p-4"
+            wrapOnBlur
           />
+
           <RenderIf isTrue={editable}>
-            <div
-              className={cn('items-center justify-center scale-75 hidden', {
-                grid: showToggle,
-              })}>
+            <div className="grid items-center justify-center scale-75">
               <Tooltip
                 content="Publish slide to make it visible to participants"
                 offset={20}
@@ -314,12 +319,12 @@ export function FrameItem({
                 startContent={
                   frame.status === FrameStatus.PUBLISHED ? (
                     <IoCheckmarkCircle
-                      className=" rounded-full text-green-500 shadow-[0_0_10px_-4px] bg-white"
+                      className=" rounded-full text-green-500"
                       size={18}
                     />
                   ) : (
                     <MdUnpublished
-                      className=" rounded-full text-gray-500 shadow-[0_0_10px_-4px] bg-white"
+                      className=" rounded-full text-gray-500"
                       size={18}
                     />
                   )

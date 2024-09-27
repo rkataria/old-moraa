@@ -45,12 +45,7 @@ export function RightSidebar() {
         return <FrameAppearance />
 
       case 'frame-notes':
-        return (
-          <NoteOverlay
-            editable={permissions.canUpdateNotes}
-            key={currentFrame?.notes}
-          />
-        )
+        return <NoteOverlay editable={permissions.canUpdateNotes} />
       default:
         break
     }

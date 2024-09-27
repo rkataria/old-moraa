@@ -15,6 +15,7 @@ import { attachStoreListener } from '@/stores/listener'
 import {
   bulkUpdateFrameStatusThunk,
   createFrameThunk,
+  deleteFramesThunk,
   deleteFrameThunk,
   getFramesThunk,
   updateFrameThunk,
@@ -29,12 +30,14 @@ type FrameState = {
   frame: ThunkState<Array<FrameModel>>
   addFrameThunk: ThunkState<FrameModel>
   updateFrameThunk: ThunkState<FrameModel>
+  deleteFramesThunk: ThunkState<FrameModel>
 }
 
 const initialState: FrameState = {
   frame: buildThunkState<Array<FrameModel>>([]),
   addFrameThunk: buildThunkState<FrameModel>(),
   updateFrameThunk: buildThunkState<FrameModel>(),
+  deleteFramesThunk: buildThunkState<FrameModel>(),
 }
 
 export const frameSlice = createSlice({
@@ -67,6 +70,11 @@ export const frameSlice = createSlice({
       builder,
       thunk: createFrameThunk,
       getThunkState: (state) => state.addFrameThunk,
+    })
+    attachThunkToBuilder({
+      builder,
+      thunk: deleteFramesThunk,
+      getThunkState: (state) => state.deleteFramesThunk,
     })
     attachThunkToBuilder({
       builder,
@@ -174,6 +182,32 @@ attachStoreListener({
     )
   },
 })
+attachStoreListener({
+  actionCreator: deleteFramesThunk.fulfilled,
+  effect: (action, { dispatch, getState }) => {
+    const deletedFrameIds = action.meta.arg.frameIds
+    const _sectionId = action.meta.arg.sectionId
 
+    const section =
+      getState().event.currentEvent.sectionState.section.data?.find(
+        (_section) => _section.id === _sectionId
+      )
+
+    if (!section) return
+
+    dispatch(
+      updateSectionThunk({
+        sectionId: section.id,
+        data: {
+          frames:
+            section.frames?.filter(
+              (frameId) => !deletedFrameIds.includes(frameId)
+            ) || [],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any,
+      })
+    )
+  },
+})
 export const { updateFrameAction, insertFrameAction, deleteFrameAction } =
   renameSliceActions(frameSlice.actions)

@@ -61,7 +61,7 @@ export function FrameColorCode({
             ref?.current?.click()
           }}
           className={cn(
-            'relative bg-gray-100 w-3 h-full right-0 top-0 grid place-items-center cursor-pointer group/color_code_2',
+            'relative bg-[#C4C4C4] w-3 h-full right-0 top-0 grid place-items-center cursor-pointer group/color_code_2',
             {
               'hover:scale-125 duration-300': !preview,
             }
