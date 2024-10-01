@@ -16,6 +16,7 @@ import { ContentType } from '@/components/common/ContentTypePicker'
 import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { EventContext } from '@/contexts/EventContext'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { RoomProvider } from '@/contexts/RoomProvider'
 import { EventContextType } from '@/types/event-context.type'
 
 export function FrameAppearance() {
@@ -41,7 +42,11 @@ export function FrameAppearance() {
     [ContentType.IMAGE_VIEWER]: null,
     [ContentType.RICH_TEXT]: <RichTextAppearance key={currentFrame.id} />,
     [ContentType.MIRO_EMBED]: null,
-    [ContentType.MORAA_BOARD]: <MoraaBoardAppearance key={currentFrame.id} />,
+    [ContentType.MORAA_BOARD]: (
+      <RoomProvider>
+        <MoraaBoardAppearance key={currentFrame.id} />
+      </RoomProvider>
+    ),
     [ContentType.MORAA_SLIDE]: <MoraaSlideAppearance key={currentFrame.id} />,
     [ContentType.BREAKOUT]: <BreakoutAppearance key={currentFrame.id} />,
     [ContentType.POWERPOINT]: null,

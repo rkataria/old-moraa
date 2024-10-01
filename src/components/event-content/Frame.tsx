@@ -23,6 +23,7 @@ import { FramePreview } from '../common/FramePreview'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
+import { RoomProvider } from '@/contexts/RoomProvider'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
@@ -73,7 +74,11 @@ export function Frame({ frame }: FrameProps) {
     ),
 
     [ContentType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
-    [ContentType.MORAA_BOARD]: <MoraaBoardEditor />,
+    [ContentType.MORAA_BOARD]: (
+      <RoomProvider>
+        <MoraaBoardEditor />
+      </RoomProvider>
+    ),
     [ContentType.MORAA_SLIDE]: <MoraaSlide frame={frame as any} />,
     [ContentType.BREAKOUT]: <BreakoutFrame frame={frame as any} isEditable />,
     [ContentType.POWERPOINT]: <PowerpointImporter frame={frame as any} />,

@@ -21,6 +21,7 @@ import { ContentType } from '@/components/common/ContentTypePicker'
 import { Poll } from '@/components/event-session/content-types/Poll/Poll'
 import { TextImage } from '@/components/event-session/content-types/TextImage'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { RoomProvider } from '@/contexts/RoomProvider'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { Vote } from '@/types/frame.type'
@@ -72,7 +73,11 @@ export function Frame() {
     ),
     [ContentType.RICH_TEXT]: <RichTextLive frame={currentFrame} />,
     [ContentType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
-    [ContentType.MORAA_BOARD]: <MoraaBoard frame={currentFrame as any} />,
+    [ContentType.MORAA_BOARD]: (
+      <RoomProvider>
+        <MoraaBoard frame={currentFrame as any} />
+      </RoomProvider>
+    ),
     [ContentType.MORAA_SLIDE]: (
       <MoraaSlidePreview
         key={currentFrame.id}

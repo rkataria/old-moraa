@@ -30,6 +30,7 @@ import { TextImage } from '../event-session/content-types/TextImage'
 import { Cover, CoverFrameType } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { ContentType } from '@/components/common/ContentTypePicker'
+import { RoomProvider } from '@/contexts/RoomProvider'
 import { IFrame, PollFrame } from '@/types/frame.type'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
@@ -144,7 +145,12 @@ export function FramePreview({
           />
         )}
         {frame.type === ContentType.MORAA_BOARD && (
-          <MoraaBoard frame={frame as MoraaBoardFrame} isInteractive={false} />
+          <RoomProvider>
+            <MoraaBoard
+              frame={frame as MoraaBoardFrame}
+              isInteractive={false}
+            />
+          </RoomProvider>
         )}
         {frame.type === ContentType.BREAKOUT && (
           <BreakoutFrame frame={frame as BreakoutFrame} />
