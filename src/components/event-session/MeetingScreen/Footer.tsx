@@ -129,7 +129,7 @@ export function Footer() {
               {getProgressText()}
             </div>
           )}
-          <PresentationToggle />
+          {isHost && <PresentationToggle />}
         </div>
       </div>
       <div className="flex justify-center items-center gap-2">
