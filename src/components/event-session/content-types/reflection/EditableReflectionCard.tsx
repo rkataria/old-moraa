@@ -16,6 +16,7 @@ import { useDebounce } from '@uidotdev/usehooks'
 import type { IFrame, IReflectionResponse } from '@/types/frame.type'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useTypingUsers } from '@/hooks/useTypingUsers'
 import { cn, getAvatarForName } from '@/utils/utils'
 
 type EditableReflectionCardProps = {
@@ -29,8 +30,6 @@ type EditableReflectionCardProps = {
 }
 
 type ReflectionState = {
-  typedValue: null | string
-  isTyping: boolean
   value: string
 }
 
@@ -44,22 +43,16 @@ export function EditableReflectionCard({
   const defaultAnonymous = selfResponse?.response.anonymous ?? false
   const defaultReflectionValue = selfResponse?.response?.reflection ?? ''
 
-  const { updateTypingUsers, addReflection, updateReflection, currentFrame } =
-    useEventSession()
+  const { addReflection, updateReflection, currentFrame } = useEventSession()
+  const { typingUsers, updateTypingUsers } = useTypingUsers()
   const selfParticipant = useDyteSelector((m) => m.self)
   const [anonymous, setAnonymous] = useState(defaultAnonymous)
   const [reflection, setReflection] = useState<ReflectionState>({
-    typedValue: null,
     value: defaultReflectionValue,
-    isTyping: false,
   })
-  const debouncedReflection = useDebounce(reflection.typedValue, 15000)
+  const debouncedReflection = useDebounce(reflection.value, 1000)
 
   const removeTyping = () => {
-    setReflection((prev) => ({
-      ...prev,
-      isTyping: false,
-    }))
     updateTypingUsers({
       isTyping: false,
       participantId: selfParticipant.id,
@@ -67,7 +60,13 @@ export function EditableReflectionCard({
   }
 
   useEffect(() => {
-    if (debouncedReflection !== null) {
+    if (debouncedReflection) {
+      updateTypingUsers({
+        isTyping: true,
+        participantId: selfParticipant.id,
+        participantName: selfParticipant.name,
+      })
+    } else {
       removeTyping()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +75,10 @@ export function EditableReflectionCard({
   const frame = currentFrame as IFrame
 
   const onChangeReflection = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!reflection.isTyping) {
+    if (
+      event.target.value &&
+      !typingUsers.some((user) => user.participantId === selfParticipant.id)
+    ) {
       updateTypingUsers({
         isTyping: true,
         participantId: selfParticipant.id,
@@ -84,8 +86,6 @@ export function EditableReflectionCard({
       })
     }
     setReflection({
-      typedValue: event.target.value,
-      isTyping: true,
       value: event.target.value,
     })
   }

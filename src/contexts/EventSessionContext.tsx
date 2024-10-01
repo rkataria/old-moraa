@@ -11,7 +11,6 @@ import { sendNotification } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
 import { useParams } from '@tanstack/react-router'
-import uniqBy from 'lodash.uniqby'
 
 import { EventContext } from './EventContext'
 
@@ -206,7 +205,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           event: '*',
           schema: 'public',
           table: 'frame_response',
-          filter: `dyte_meeting_id=eq.${dyteMeeting.meta.meetingId}`,
+          filter: `frame_id=eq.${currentFrame.id}`,
         },
         (payload) => {
           if (['INSERT', 'UPDATE'].includes(payload.eventType)) {
@@ -551,41 +550,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     )
   }
 
-  const updateTypingUsers = async ({
-    isTyping,
-    participantId,
-    participantName,
-  }: {
-    isTyping: boolean
-    participantId: string
-    participantName?: string
-  }) => {
-    if (!activeSession) return
-
-    const prevSessionUserTypings = activeSession?.typingUsers || []
-
-    let updatedUserTypings = prevSessionUserTypings
-
-    if (isTyping) {
-      updatedUserTypings = uniqBy(
-        [...updatedUserTypings, { participantId, participantName }],
-        (user: { participantId: string; participantName?: string }) =>
-          user.participantId
-      )
-    } else {
-      updatedUserTypings = prevSessionUserTypings.filter(
-        (user: { participantId: string; participantName?: string }) =>
-          user.participantId !== participantId
-      )
-    }
-
-    dispatch(
-      updateMeetingSessionDataAction({
-        typingUsers: updatedUserTypings,
-      })
-    )
-  }
-
   const flyEmoji = ({ emoji, name }: { emoji: string; name: string }) => {
     realtimeChannel?.send({
       type: 'broadcast',
@@ -633,7 +597,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         emoteOnReflection,
         onToggleHandRaised,
         setVideoMiddlewareConfig,
-        updateTypingUsers,
         flyEmoji,
         updateActiveSession,
       }}>

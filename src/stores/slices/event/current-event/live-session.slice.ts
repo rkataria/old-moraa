@@ -37,7 +37,6 @@ export type SessionState = {
   breakoutFrameId?: string | null
   presentationStatus?: PresentationStatuses
   handsRaised?: string[]
-  typingUsers?: Array<{ participantId: string; participantName?: string }>
 }
 
 type SessionModelWithData = Omit<SessionModel, 'data'> & { data?: SessionState }

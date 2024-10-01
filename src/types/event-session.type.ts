@@ -124,15 +124,6 @@ export type EventSessionContextType = {
     participantName: string
   }) => void
   setVideoMiddlewareConfig: (config: VideoMiddlewareConfig) => void
-  updateTypingUsers: ({
-    isTyping,
-    participantId,
-    participantName,
-  }: {
-    isTyping: boolean
-    participantId: string
-    participantName?: string
-  }) => void
   flyEmoji: ({ emoji, name }: { emoji: string; name: string }) => void
   updateActiveSession: (data: any) => void
 }

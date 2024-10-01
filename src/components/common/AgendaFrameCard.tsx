@@ -7,7 +7,7 @@ import { Tooltip } from '@nextui-org/react'
 import { IconDots } from '@tabler/icons-react'
 
 import { ContentTypeIcon } from './ContentTypeIcon'
-import { ContentType, getContentType } from './ContentTypePicker'
+import { getContentType } from './ContentTypePicker'
 import { DeleteFrameModal } from './DeleteFrameModal'
 import { EditableLabel } from './EditableLabel'
 import { FrameActions } from './FrameActions'
@@ -65,8 +65,6 @@ export type AgendaFrameCardProps = {
   draggableProps: any
   displayType: AgendaFrameDisplayType
   isDragging: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateActiveSession?: (data: any) => void
 }
 
 type IsDraggableArgs = {
@@ -292,7 +290,6 @@ export function AgendaFrameCard({
   draggableProps,
   displayType,
   isDragging,
-  updateActiveSession,
 }: AgendaFrameCardProps) {
   const {
     deleteFrame,
@@ -302,7 +299,6 @@ export function AgendaFrameCard({
     setSelectedSectionId,
     eventMode,
     isOwner,
-    currentFrame,
   } = useContext(EventContext) as EventContextType
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
@@ -333,14 +329,6 @@ export function AgendaFrameCard({
 
     setCurrentFrame(s)
     setSelectedSectionId?.(null)
-
-    if (!currentFrame || !updateActiveSession) return
-
-    if (s.type === ContentType.REFLECTION && currentFrame.id !== s.id) {
-      updateActiveSession({
-        typingUsers: [],
-      })
-    }
   }
 
   if (displayType === 'thumbnail') {
