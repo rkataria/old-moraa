@@ -96,8 +96,6 @@ export function BreakoutRoomActivityCard({
     return actions
   }
 
-  console.log(breakout)
-
   return (
     <div
       style={{

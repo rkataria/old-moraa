@@ -1,20 +1,18 @@
 import { useContext } from 'react'
 
+import { useSelf } from '@liveblocks/react/suspense'
 import { Tldraw } from 'tldraw'
 
 import { EventContext } from '@/contexts/EventContext'
-import { useYjsStore } from '@/hooks/useYjsStore'
+import { useStorageStore } from '@/hooks/useStorageStore'
 import { EventContextType } from '@/types/event-context.type'
-import { IFrame } from '@/types/frame.type'
 
-type MoraaBoardFrame = IFrame
-
-export function MoraaBoardEditor({ frame }: { frame: MoraaBoardFrame }) {
+export function MoraaBoardEditor() {
   const { preview } = useContext(EventContext) as EventContextType
-  // const store = useLiveblocksStore()
-  const store = useYjsStore({
-    roomId: frame.id,
-    hostUrl: import.meta.env.VITE_PARTYKIT_HOST_URL,
+  const id = useSelf((me) => me.id)
+  const info = useSelf((me) => me.info)
+  const store = useStorageStore({
+    user: { id, color: info?.color, name: info?.name },
   })
 
   return (

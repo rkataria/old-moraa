@@ -6,8 +6,10 @@ import { FrameControls } from '../common/FrameControls'
 import { SectionOverview } from '../common/SectionOverview'
 
 import { EventContext } from '@/contexts/EventContext'
+import { RoomProvider } from '@/contexts/RoomProvider'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
+import { ContentType } from '@/utils/content.util'
 import { getFrameCount } from '@/utils/utils'
 
 export function FrameContainer() {
@@ -42,7 +44,13 @@ export function FrameContainer() {
   // Render the current frame and frame controls
   return (
     <div key={currentFrame.id} className="relative w-full h-full">
-      <Frame frame={currentFrame} />
+      {currentFrame?.type === ContentType.MORAA_BOARD ? (
+        <RoomProvider>
+          <Frame frame={currentFrame} />
+        </RoomProvider>
+      ) : (
+        <Frame frame={currentFrame} />
+      )}
       <FrameControls switchPublishedFrames={!permissions.canUpdateFrame} />
     </div>
   )

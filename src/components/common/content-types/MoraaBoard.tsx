@@ -1,12 +1,13 @@
 import { useContext, useEffect } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useSelf } from '@liveblocks/react/suspense'
 import { Tldraw, track, useEditor } from 'tldraw'
 
 import { ContentLoading } from '../ContentLoading'
 
 import { EventContext } from '@/contexts/EventContext'
-import { useYjsStore } from '@/hooks/useYjsStore'
+import { useStorageStore } from '@/hooks/useStorageStore'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 
@@ -25,9 +26,10 @@ interface MoraaBoardProps {
 
 export function MoraaBoard({ frame, isInteractive = true }: MoraaBoardProps) {
   const { preview, eventMode } = useContext(EventContext) as EventContextType
-  const store = useYjsStore({
-    roomId: frame.id,
-    hostUrl: import.meta.env.VITE_PARTYKIT_HOST_URL,
+  const id = useSelf((me) => me.id)
+  const info = useSelf((me) => me.info)
+  const store = useStorageStore({
+    user: { id, color: info?.color, name: info?.name },
   })
 
   const readOnly =

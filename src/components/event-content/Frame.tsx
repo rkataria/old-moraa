@@ -73,7 +73,7 @@ export function Frame({ frame }: FrameProps) {
     ),
 
     [ContentType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
-    [ContentType.MORAA_BOARD]: <MoraaBoardEditor frame={frame} />,
+    [ContentType.MORAA_BOARD]: <MoraaBoardEditor />,
     [ContentType.MORAA_SLIDE]: <MoraaSlide frame={frame as any} />,
     [ContentType.BREAKOUT]: <BreakoutFrame frame={frame as any} isEditable />,
     [ContentType.POWERPOINT]: <PowerpointImporter frame={frame as any} />,

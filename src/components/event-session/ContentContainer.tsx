@@ -12,11 +12,13 @@ import { Frame } from './Frame'
 import { FrameControls } from '../common/FrameControls'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { RoomProvider } from '@/contexts/RoomProvider'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import {
   EventSessionContextType,
   PresentationStatuses,
 } from '@/types/event-session.type'
+import { ContentType } from '@/utils/content.util'
 
 export function ContentContainer() {
   const { currentFrame } = useContext(
@@ -84,7 +86,13 @@ export function ContentContainer() {
 
   return (
     <div className="relative h-full flex flex-col">
-      <Frame key={`frame-${currentFrame.id}`} />
+      {currentFrame?.type === ContentType.MORAA_BOARD ? (
+        <RoomProvider key={`frame-${currentFrame.id}`}>
+          <Frame />
+        </RoomProvider>
+      ) : (
+        <Frame key={`frame-${currentFrame.id}`} />
+      )}
       {isHost && (
         <FrameControls
           onPrevious={previousFrame}
