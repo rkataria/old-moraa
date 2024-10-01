@@ -111,13 +111,10 @@ export const moveHostToRoom = async ({
   stateManager,
   destinationMeetingId,
 }: StopBreakoutRoomsArgs & { destinationMeetingId: string }) => {
-  console.log('1', stateManager, meeting, destinationMeetingId)
   stateManager.assignParticipantsToMeeting(
     [participantIdentifier(meeting.self)],
     destinationMeetingId
   )
-
-  console.log('2', stateManager)
 
   return stateManager.applyChanges(meeting)
 }

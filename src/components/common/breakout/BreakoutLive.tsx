@@ -9,9 +9,12 @@ import 'tldraw/tldraw.css'
 import { useRef } from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
+// eslint-disable-next-line import/order
 import { Button, Card } from '@nextui-org/react'
 
 // eslint-disable-next-line import/no-cycle
+import { DragDropContext } from 'react-beautiful-dnd'
+
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 import { BreakoutRoomsWithParticipants } from './BreakoutRoomsFrame'
 import { EndBreakoutButton } from './EndBreakoutButton'
@@ -75,40 +78,54 @@ export function BreakoutFrameLive({
     <div>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
         <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
-          {frame.content?.breakoutRooms?.map((breakout, idx) => (
-            <BreakoutRoomActivityCard
-              idx={idx}
-              editable={false}
-              breakout={breakout}
-              participants={
-                isHost &&
-                isBreakoutActive &&
-                breakoutFrameId === currentFrame?.id
-                  ? meeting.connectedMeetings.meetings?.[idx]?.participants
-                  : undefined
-              }
-              JoinRoomButton={
-                isHost &&
-                !isInBreakoutMeeting &&
-                breakoutFrameId === currentFrame?.id &&
-                meeting.connectedMeetings.meetings?.[idx] &&
-                meeting.connectedMeetings.meetings?.[idx].id !==
-                  meeting.connectedMeetings.currentMeetingId ? (
-                  <Button
-                    className="m-2 border-1"
-                    size="sm"
-                    variant="ghost"
-                    onClick={() =>
-                      breakoutRoomsInstance?.joinRoom(
-                        meeting.connectedMeetings.meetings?.[idx]?.id || ''
-                      )
-                    }>
-                    Join {meeting.connectedMeetings.meetings?.[idx].title}
-                  </Button>
-                ) : undefined
-              }
-            />
-          ))}
+          <DragDropContext
+            onDragEnd={(result) => {
+              const participantId = result.draggableId.split('_')[1] as string
+              const destinationRoomId = result.destination?.droppableId.split(
+                '_'
+              )[1] as string
+
+              breakoutRoomsInstance?.moveParticipantToAnotherRoom(
+                participantId,
+                destinationRoomId
+              )
+            }}>
+            {frame.content?.breakoutRooms?.map((breakout, idx) => (
+              <BreakoutRoomActivityCard
+                idx={idx}
+                editable={false}
+                breakout={breakout}
+                participants={
+                  isHost &&
+                  isBreakoutActive &&
+                  breakoutFrameId === currentFrame?.id
+                    ? meeting.connectedMeetings.meetings?.[idx]?.participants
+                    : undefined
+                }
+                roomId={meeting.connectedMeetings.meetings?.[idx]?.id}
+                JoinRoomButton={
+                  isHost &&
+                  !isInBreakoutMeeting &&
+                  breakoutFrameId === currentFrame?.id &&
+                  meeting.connectedMeetings.meetings?.[idx] &&
+                  meeting.connectedMeetings.meetings?.[idx].id !==
+                    meeting.connectedMeetings.currentMeetingId ? (
+                    <Button
+                      className="m-2 border-1"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() =>
+                        breakoutRoomsInstance?.joinRoom(
+                          meeting.connectedMeetings.meetings?.[idx]?.id || ''
+                        )
+                      }>
+                      Join {meeting.connectedMeetings.meetings?.[idx].title}
+                    </Button>
+                  ) : undefined
+                }
+              />
+            ))}
+          </DragDropContext>
         </div>
         <div className="mt-4">
           {isHost &&

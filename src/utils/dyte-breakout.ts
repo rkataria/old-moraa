@@ -67,6 +67,20 @@ export class BreakoutRooms {
     await this.cleanupBreakoutManagerInstance()
   }
 
+  async moveParticipantToAnotherRoom(
+    participantId: string,
+    destinationMeetingId: string
+  ) {
+    await this.cleanupBreakoutManagerInstance()
+    this.manager.assignParticipantsToMeeting(
+      [participantId],
+      destinationMeetingId || ''
+    )
+    await this.manager.applyChanges(this.dyteClient)
+
+    return this.cleanupBreakoutManagerInstance()
+  }
+
   async startBreakoutRooms({
     participantsPerRoom,
     roomsCount,

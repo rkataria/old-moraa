@@ -4,6 +4,7 @@
 import { useRef } from 'react'
 
 import { IconTrash } from '@tabler/icons-react'
+import { Draggable } from 'react-beautiful-dnd'
 import { IoEllipsisVerticalOutline } from 'react-icons/io5'
 import { PiNoteBlankLight } from 'react-icons/pi'
 import { TbApps, TbAppsFilled } from 'react-icons/tb'
@@ -16,6 +17,7 @@ import { DropdownActions } from '../DropdownActions'
 import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
 import { Tooltip } from '../ShortuctTooltip'
+import { StrictModeDroppable } from '../StrictModeDroppable'
 
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
@@ -30,6 +32,7 @@ type BreakoutRoomActivityCardProps = {
     id?: string
     displayName?: string
     displayPictureUrl?: string
+    customParticipantId?: string
   }[]
   editable: boolean
   deleteActivityFrame?: (idx: number) => void
@@ -38,6 +41,7 @@ type BreakoutRoomActivityCardProps = {
   onAddNewActivity?: (index: number) => void
   hideRoomDelete?: boolean
   JoinRoomButton?: React.ReactElement
+  roomId?: string
 }
 
 export const roomActions = [
@@ -70,6 +74,7 @@ export function BreakoutRoomActivityCard({
   hideRoomDelete,
   participants,
   JoinRoomButton,
+  roomId,
 }: BreakoutRoomActivityCardProps) {
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
 
@@ -193,31 +198,59 @@ export function BreakoutRoomActivityCard({
         </div>
       </RenderIf>
       {!!participants && (
-        <div className="flex items-center m-2 pl-2">
-          {participants?.length === 0 ? (
-            <p className="text-sm text-gray-400">No participants</p>
-          ) : null}
-          {participants?.map((participant) => (
-            <div className="mb-2 items-center mr-2">
-              <Tooltip content={participant?.displayName || ''}>
-                {participant?.displayPictureUrl ? (
-                  <img
-                    className="w-8 h-8 rounded-full"
-                    src={participant?.displayPictureUrl || ''}
-                    alt={participant?.id}
-                  />
-                ) : (
-                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300">
-                    <p className="text-sm">
-                      {participant?.displayName?.split(' ')[0]?.[0]}
-                      {participant?.displayName?.split(' ')[1]?.[0]}
-                    </p>
-                  </div>
-                )}
-              </Tooltip>
+        <StrictModeDroppable
+          droppableId={`participant-droppable_${roomId}`}
+          type="participant">
+          {(participantDroppableProvided, snapshot) => (
+            <div
+              key={`participant-draggable_${roomId}`}
+              ref={participantDroppableProvided.innerRef}
+              className={cn(
+                'flex items-center m-2 pl-2 relative rounded-sm transition-all',
+                {
+                  'bg-gray-500': snapshot.isDraggingOver,
+                }
+              )}
+              {...participantDroppableProvided.droppableProps}>
+              {participants?.length === 0 ? (
+                <p className="text-sm text-gray-400">No participants</p>
+              ) : null}
+
+              {participants?.map((participant, index) => (
+                <Draggable
+                  key={`participant-draggable_${participant.customParticipantId}`}
+                  index={index}
+                  draggableId={`participant-draggable_${participant.customParticipantId}`}>
+                  {(sectionDraggableProvided) => (
+                    <div
+                      className="mb-2 items-center mr-2"
+                      ref={sectionDraggableProvided.innerRef}
+                      {...sectionDraggableProvided.draggableProps}
+                      {...sectionDraggableProvided.dragHandleProps}>
+                      <Tooltip content={participant?.displayName || ''}>
+                        {participant?.displayPictureUrl ? (
+                          <img
+                            className="w-8 h-8 rounded-full"
+                            src={participant?.displayPictureUrl || ''}
+                            alt={participant?.id}
+                          />
+                        ) : (
+                          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300">
+                            <p className="text-sm">
+                              {participant?.displayName?.split(' ')[0]?.[0]}
+                              {participant?.displayName?.split(' ')[1]?.[0]}
+                            </p>
+                          </div>
+                        )}
+                      </Tooltip>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {participantDroppableProvided.placeholder}
             </div>
-          ))}
-        </div>
+          )}
+        </StrictModeDroppable>
       )}
       {JoinRoomButton}
     </div>
