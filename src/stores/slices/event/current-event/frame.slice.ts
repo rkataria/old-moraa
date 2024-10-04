@@ -14,6 +14,7 @@ import {
 import { attachStoreListener } from '@/stores/listener'
 import {
   bulkUpdateFrameStatusThunk,
+  createFramesThunk,
   createFrameThunk,
   deleteFramesThunk,
   deleteFrameThunk,
@@ -144,6 +145,50 @@ attachStoreListener({
       })
     )
     dispatch(setCurrentFrameIdAction(frameId))
+    dispatch(setCurrentSectionIdAction(null))
+  },
+})
+
+attachStoreListener({
+  actionCreator: createFramesThunk.fulfilled,
+  effect: (action, { dispatch, getState }) => {
+    const { sectionId, frames, insertAfterFrameId } = action.meta.arg
+    const section =
+      getState().event.currentEvent.sectionState.section.data?.find(
+        (_section) => _section.id === sectionId
+      )
+
+    if (!section) return
+
+    const newFrameIds = frames.map((f: { id: string }) => f!.id)
+    const prevFrameIds = section.frames || []
+    let newSequence = []
+
+    const indexOfInsertAfterFrameId = insertAfterFrameId
+      ? section.frames?.indexOf(insertAfterFrameId)
+      : -1
+
+    if (indexOfInsertAfterFrameId !== -1) {
+      newSequence = [
+        ...prevFrameIds.slice(0, indexOfInsertAfterFrameId! + 1), // Frames before and including insertAfterFrameId
+        ...newFrameIds, // The new frames to insert
+        ...prevFrameIds.slice(indexOfInsertAfterFrameId! + 1), // Frames after insertAfterFrameId
+      ]
+    } else {
+      // If the frame ID is not found, add newFrames to the end
+      newSequence = [...prevFrameIds, ...newFrameIds]
+    }
+
+    dispatch(
+      updateSectionsFramesListThunk({
+        data: [
+          {
+            id: section.id,
+            frames: newSequence,
+          },
+        ],
+      })
+    )
     dispatch(setCurrentSectionIdAction(null))
   },
 })

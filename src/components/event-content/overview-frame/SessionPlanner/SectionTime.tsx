@@ -2,11 +2,13 @@ import { useContext, useState } from 'react'
 
 import {
   Button,
+  Chip,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@nextui-org/react'
 import { Duration, DurationObjectUnits } from 'luxon'
+import { BiExpandAlt } from 'react-icons/bi'
 import { IoCloseCircle, IoTimeOutline } from 'react-icons/io5'
 
 import { Minutes } from './Minutes'
@@ -23,12 +25,14 @@ export function SectionTime({
   frames,
   config,
   editable = true,
+  className = '',
 }: {
   sectionId: string
   frames: IFrame[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any
   editable?: boolean
+  className?: string
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -119,11 +123,49 @@ export function SectionTime({
   const timeDifference = getTimeDifference(sectionTime, timeofAllFrames)
 
   return (
-    <div className="flex items-center mt-0.5 gap-2">
+    <div className={cn('flex items-center gap-2', className)}>
+      <Popover
+        placement="bottom"
+        isOpen={isOpen && editable}
+        onOpenChange={(open) => setIsOpen(open)}>
+        <PopoverTrigger>
+          <Chip
+            size="sm"
+            radius="sm"
+            className="bg-gray-100 text-xs cursor-pointer gap-1"
+            startContent={
+              editable ? <BiExpandAlt className="rotate-[-45deg]" /> : null
+            }>
+            Planned{' '}
+            <span className="font-semibold ml-2 text-xs">
+              {' '}
+              {`${sectionTime.hours}h ${sectionTime.minutes}m`}
+            </span>
+          </Chip>
+        </PopoverTrigger>
+        <PopoverContent>
+          <div className="px-1 py-2">
+            <Minutes
+              minutes={config?.time || 0}
+              onChange={updateSectionTime}
+              inputProps={{ autoFocus: true }}
+            />
+          </div>
+        </PopoverContent>
+      </Popover>
+
+      <Chip
+        size="sm"
+        radius="sm"
+        variant="bordered"
+        className="border-1 border-gray-200">
+        Calculated{' '}
+        <span className="font-semibold ml-2">{`${timeofAllFrames.hours}h ${timeofAllFrames.minutes}m`}</span>
+      </Chip>
       <RenderIf isTrue={timeDifference.isFirstGreater && config?.time}>
         <Tooltip
           color="warning"
-          content={`Actual time is less than planned time by ${timeDifference.hours}h ${timeDifference.minutes}m.`}
+          content={`Calculated time is less than planned time by ${timeDifference.hours}h ${timeDifference.minutes}m.`}
           radius="sm">
           <Button
             isIconOnly
@@ -141,7 +183,7 @@ export function SectionTime({
         }>
         <Tooltip
           color="danger"
-          content={`Actual time is exceeding planned time by ${timeDifference.hours}h ${timeDifference.minutes}m. Please align the times correctly.`}
+          content={`Calculated time is exceeding planned time by ${timeDifference.hours}h ${timeDifference.minutes}m. Please align the times correctly.`}
           radius="sm">
           <Button
             isIconOnly
@@ -151,26 +193,6 @@ export function SectionTime({
           </Button>
         </Tooltip>
       </RenderIf>
-      <Popover
-        placement="bottom"
-        isOpen={isOpen && editable}
-        onOpenChange={(open) => setIsOpen(open)}>
-        <PopoverTrigger>
-          <p
-            className={cn('text-xs font-semibold text-gray-400', {
-              'cursor-pointer': editable,
-            })}>
-            {`${sectionTime.hours}h ${sectionTime.minutes}m`}
-          </p>
-        </PopoverTrigger>
-        <PopoverContent>
-          <div className="px-1 py-2">
-            <Minutes minutes={config?.time || 0} onChange={updateSectionTime} />
-          </div>
-        </PopoverContent>
-      </Popover>
-      /
-      <p className="text-xs font-normal text-gray-400">{`(${timeofAllFrames.hours}h ${timeofAllFrames.minutes}m)`}</p>
     </div>
   )
 }

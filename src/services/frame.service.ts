@@ -45,6 +45,24 @@ const createFrame = async (framePayload: {
   )
 }
 
+const createFrames = async (
+  framesPayload: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any
+    meeting_id: string
+    section_id: string
+  }[]
+) => {
+  const query = supabaseClient.from('frame').insert([...framesPayload])
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
 const updateFrame = async ({
   framePayload,
   frameId,
@@ -136,6 +154,7 @@ const deleteFrames = async ({
 export const FrameService = {
   getFrames,
   createFrame,
+  createFrames,
   updateFrame,
   updateFrames,
   deleteFrame,

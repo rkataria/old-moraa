@@ -1,4 +1,26 @@
 import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
+import { cn } from '@/utils/utils'
+
+export function Dates({
+  startDate,
+  endDate,
+  timeZone,
+  className = '',
+}: {
+  startDate: string | undefined
+  endDate: string | undefined
+  timeZone: string | undefined
+  className?: string
+}) {
+  if (!startDate || !endDate || !timeZone) return null
+
+  return (
+    <div className={cn('flex items-center gap-10', className)}>
+      <Date date={startDate} timezone={timeZone} />
+      <Date date={endDate} timezone={timeZone} />
+    </div>
+  )
+}
 
 export function Date({ date, timezone }: { date: string; timezone: string }) {
   return (

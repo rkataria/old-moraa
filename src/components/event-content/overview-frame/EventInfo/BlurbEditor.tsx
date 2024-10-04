@@ -15,7 +15,13 @@ import { EventType } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
-export function BlurbEditor({ editable = true }: { editable?: boolean }) {
+export function BlurbEditor({
+  editable = true,
+  className = '',
+}: {
+  editable?: boolean
+  className?: string
+}) {
   const { preview } = useContext(EventContext) as EventContextType
   const { eventId } = useParams({ strict: false })
 
@@ -34,9 +40,8 @@ export function BlurbEditor({ editable = true }: { editable?: boolean }) {
 
   return (
     <div
-      className={cn('relative group/blurb', {
-        'p-4 px-6 bg-default/30 shadow-sm backdrop-blur-2xl rounded-lg':
-          preview,
+      className={cn('relative group/blurb', className, {
+        'shadow-sm backdrop-blur-2xl rounded-lg': preview,
         'min-h-[300px]': !preview,
       })}>
       <RichTextEditor
@@ -48,7 +53,7 @@ export function BlurbEditor({ editable = true }: { editable?: boolean }) {
         initalContent={getInitialContent()}
         classNames={{
           container:
-            'border-none bg-default/30 backdrop-blur-2xl pt-6 !rounded-lg',
+            'border-none hover:bg-default/10 backdrop-blur-2xl pt-6 !rounded-lg',
           menu: ' -mr-4',
           editor: 'overflow-visible p-0 h-auto',
           wrapper: 'h-auto',

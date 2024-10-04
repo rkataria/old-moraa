@@ -1,7 +1,7 @@
 /* eslint-disable radix */
 import { useContext, useEffect, useState } from 'react'
 
-import { Button, Input } from '@nextui-org/react'
+import { Button, Input, InputProps } from '@nextui-org/react'
 import { useDebounce } from '@uidotdev/usehooks'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -11,10 +11,12 @@ export function Minutes({
   minutes,
   className,
   onChange,
+  inputProps,
 }: {
   minutes: number
   className?: string
   onChange: (min: number) => void
+  inputProps?: InputProps
 }) {
   const { preview } = useContext(EventContext) as EventContextType
   const [updatedMinutes, setUpdatedMinutes] = useState(minutes || 0)
@@ -63,6 +65,7 @@ export function Minutes({
           </Button>
         }
         onChange={(e) => setUpdatedMinutes(parseInt(e.target.value))}
+        {...inputProps}
       />
     </div>
   )

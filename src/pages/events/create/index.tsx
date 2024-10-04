@@ -16,8 +16,6 @@ import { motion } from 'framer-motion'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { AiOutlineClose } from 'react-icons/ai'
-import { BsInfoCircle } from 'react-icons/bs'
-import { HiOutlinePaintBrush } from 'react-icons/hi2'
 import { TbFileDescription } from 'react-icons/tb'
 import * as yup from 'yup'
 
@@ -25,7 +23,6 @@ import { ContentLoading } from '@/components/common/ContentLoading'
 import { LocalFilePicker } from '@/components/common/LocalFilePicker'
 import { Logo } from '@/components/common/Logo'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { theme, ThemeModal, Themes } from '@/components/events/ThemeModal'
 import { Button } from '@/components/ui/Button'
@@ -35,7 +32,6 @@ import { EventService } from '@/services/event.service'
 import { MeetingService } from '@/services/meeting.service'
 import { SectionService } from '@/services/section.service'
 import { ICreateEventPayload } from '@/types/event.type'
-import { eventTypes } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
 
 export type CreateEventFormData = yup.InferType<
@@ -152,25 +148,23 @@ export function EventsCreatePage() {
 
   return (
     <ThemeEffects
-      className="w-screen min-h-screen"
+      className="w-screen min-h-screen grid place-items-center "
       selectedTheme={selectedTheme}>
-      <div className="flex items-center gap-10 p-6">
-        <Logo
-          onClick={() => router.navigate({ to: '/events' })}
-          className="cursor-pointer"
-        />
-      </div>
+      <Logo
+        onClick={() => router.navigate({ to: '/events' })}
+        className="fixed left-0 top-0 m-4 cursor-pointer"
+      />
       <motion.form
         className="relative z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 100 }}
+        initial={{ x: 30 }}
+        animate={{ x: 0 }}
         transition={{ duration: 0.3 }}
         onSubmit={createEventForm.handleSubmit(onSubmit)}
         aria-label="new-event">
         <div className="max-w-[990px] mx-auto py-4 pt-8">
-          <div className="grid grid-cols-[40%_60%] items-start gap-12">
+          <div className="grid grid-cols-[40%_60%] items-start gap-8">
             <div>
-              <div className="relative aspect-square rounded-[20px] border overflow-hidden">
+              <div className="relative aspect-square rounded-lg border overflow-hidden min-w-[24.625rem]">
                 <Controller
                   control={createEventForm.control}
                   name="imageUrl"
@@ -230,35 +224,99 @@ export function EventsCreatePage() {
                   onProgressChange={setImageUploadProgress}
                 />
               </div>
+            </div>
+
+            <div className="h-full flex flex-col justify-between gap-4">
+              <Controller
+                control={createEventForm.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <Textarea
+                    autoFocus
+                    {...field}
+                    variant="bordered"
+                    placeholder="Awesome event name here"
+                    isInvalid={!!fieldState.error?.message}
+                    errorMessage={fieldState.error?.message}
+                    minRows={1}
+                    classNames={{
+                      input:
+                        'text-[48px] font-semibold tracking-tight text-black/80 leading-[50px] placeholder:text-black/36',
+                      inputWrapper: 'border-none p-0 shadow-none',
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                      }
+                    }}
+                  />
+                )}
+              />
+              {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+              <div
+                className="p-3 bg-default/30 backdrop-blur-xl rounded-lg cursor-pointer !h-full"
+                // onClick={descriptionModalDisclosure.onOpen}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <TbFileDescription size={20} />
+                    <p className="text-base">Description</p>
+                  </div>
+                  {/* <BiExpandAlt
+                    className="text-gray-400"
+                    size={16}
+                    onClick={descriptionModalDisclosure.onOpen}
+                  /> */}
+                </div>
+
+                {/* <RenderIf
+                  isTrue={createEventForm.getValues('description')!.length > 0}>
+                  <p className="line-clamp-[7] break-all ml-1 mt-2">
+                    {createEventForm.getValues('description')}
+                  </p>
+                </RenderIf> */}
+                <Controller
+                  control={createEventForm.control}
+                  name="description"
+                  render={({ field, fieldState }) => (
+                    <Textarea
+                      {...field}
+                      variant="bordered"
+                      size="sm"
+                      minRows={1}
+                      maxRows={5}
+                      placeholder="This is what your learners would see. You could include high-level learning objectives or brief course overview here"
+                      classNames={{
+                        input: 'tracking-tight text-lighter scrollbar-none',
+                        inputWrapper: 'border-none p-0 shadow-none mt-4 pl-1',
+                      }}
+                      isInvalid={!!fieldState.error?.message}
+                      errorMessage={fieldState.error?.message}
+                    />
+                  )}
+                />
+              </div>
               {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
               <div
-                className="p-3 bg-default/30 backdrop-blur-xl rounded-lg cursor-pointer mt-4 flex items-center justify-between"
+                className="p-3 bg-default/30 backdrop-blur-xl rounded-lg cursor-pointer flex items-center justify-between"
                 onClick={themeModalDisclosure.onOpen}>
                 <div className="flex items-start gap-4 text-gray-400">
-                  <RenderIf isTrue={!selectedTheme}>
-                    <HiOutlinePaintBrush size={20} />
-                  </RenderIf>
-
-                  <RenderIf isTrue={!!selectedTheme?.theme}>
-                    <Image
-                      width={60}
-                      src={
-                        Themes.find(
-                          (_theme) => _theme.label === selectedTheme?.theme
-                        )?.image
-                      }
-                      classNames={{ img: 'rounded-sm' }}
-                    />
-                  </RenderIf>
+                  <Image
+                    width={60}
+                    src={
+                      Themes.find(
+                        (_theme) => _theme.label === selectedTheme?.theme
+                      )?.image || '/images/invite/none-theme.png'
+                    }
+                    classNames={{ img: 'rounded-sm' }}
+                  />
                   <div className="">
                     <p className={cn('text-gray-600 font-medium')}>
-                      Event Theme
+                      Page Theme
                     </p>
-                    <RenderIf isTrue={!!selectedTheme}>
-                      <p className={cn('text-sm text-gray-600 mt-1')}>
-                        {selectedTheme?.theme}
-                      </p>
-                    </RenderIf>
+                    <p className={cn('text-sm text-gray-600 mt-1')}>
+                      {selectedTheme?.theme || 'None'}
+                    </p>
                   </div>
                 </div>
                 <RenderIf isTrue={!!selectedTheme?.theme}>
@@ -272,50 +330,8 @@ export function EventsCreatePage() {
                   />
                 </RenderIf>
               </div>
-            </div>
 
-            <div className="h-full flex flex-col justify-between gap-6">
-              <Controller
-                control={createEventForm.control}
-                name="name"
-                render={({ field, fieldState }) => (
-                  <Textarea
-                    {...field}
-                    variant="bordered"
-                    placeholder="Awesome event name here"
-                    isInvalid={!!fieldState.error?.message}
-                    errorMessage={fieldState.error?.message}
-                    minRows={1}
-                    classNames={{
-                      input:
-                        'text-[40px] font-semibold tracking-tight text-black/80 leading-[50px] placeholder:text-black/36',
-                      inputWrapper: 'border-none p-0 shadow-none',
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                      }
-                    }}
-                  />
-                )}
-              />
-              {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-              <div
-                className="p-3 bg-default/30 backdrop-blur-xl rounded-lg cursor-pointer"
-                onClick={descriptionModalDisclosure.onOpen}>
-                <div className="flex items-center gap-2 text-gray-400">
-                  <TbFileDescription size={20} />
-                  <p className="text-base">Add Description</p>
-                </div>
-                <RenderIf
-                  isTrue={createEventForm.getValues('description')!.length > 0}>
-                  <p className="line-clamp-2 break-all ml-1 mt-2">
-                    {createEventForm.getValues('description')}
-                  </p>
-                </RenderIf>
-              </div>
-
-              <div>
+              {/* <div>
                 <div className="flex items-center gap-2">
                   <p className="text-gray-600">Type of event </p>
                   <Tooltip label="Your choice will help us recommended the right templates for you">
@@ -374,7 +390,7 @@ export function EventsCreatePage() {
                     </label>
                   ))}
                 </div>
-              </div>
+              </div> */}
               <Modal
                 size="xl"
                 isOpen={descriptionModalDisclosure?.isOpen}
@@ -383,9 +399,7 @@ export function EventsCreatePage() {
                   {() => (
                     <>
                       <ModalHeader className="flex flex-col gap-1 bg-primary text-white p-6">
-                        <h2 className="font-md font-semibold">
-                          Add description
-                        </h2>
+                        <h2 className="font-md font-semibold">Description</h2>
                       </ModalHeader>
                       <ModalBody className="mt-4 mb-4">
                         <Controller
@@ -418,9 +432,15 @@ export function EventsCreatePage() {
                 onChange={handleThemeChange}
               />
               <Button
+                style={{
+                  background:
+                    createEventForm.watch('name').length !== 0
+                      ? 'linear-gradient(107.56deg, rgb(181, 10, 193) 0%, rgb(137, 47, 255) 100%)'
+                      : '',
+                }}
                 size="lg"
                 type="submit"
-                className="w-full bg-primary text-white shadow-xl font-medium"
+                className="w-full bg-primary text-white shadow-xl font-medium shrink-0"
                 isLoading={eventMutation.isPending}
                 isDisabled={createEventForm.watch('name').length === 0}>
                 Create
@@ -429,6 +449,20 @@ export function EventsCreatePage() {
           </div>
         </div>
       </motion.form>
+      <p className="fixed bottom-12 w-full text-center left-0 text-gray-600 z-[10]">
+        Note: Once your event is created, you can manage everything in the
+        <span
+          style={{
+            background:
+              'linear-gradient(107.56deg, rgb(181, 10, 193) 0%, rgb(137, 47, 255) 100%)',
+            backgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+          className="font-semibold">
+          {' '}
+          Course Creation tab.
+        </span>
+      </p>
     </ThemeEffects>
   )
 }

@@ -25,72 +25,15 @@ import { RichTextEditor } from '@/components/common/content-types/RichText/Edito
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { LogoWithName } from '@/components/common/Logo'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { IUserProfile, UserAvatar } from '@/components/common/UserAvatar'
-import { Date } from '@/components/enroll/Date'
+import { UserAvatar } from '@/components/common/UserAvatar'
+import { Dates } from '@/components/enroll/Date'
+import { Participantslist } from '@/components/enroll/ParticipantList'
 import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event/event-service'
-
-function Participantslist({
-  participants = [],
-}: {
-  participants:
-    | {
-        id: string
-        email: string
-        event_role: string
-        profile: IUserProfile | IUserProfile[]
-      }[]
-    | null
-    | undefined
-}) {
-  if (!participants) return null
-  const participantsWithoutHost = participants.filter(
-    (p) => p.event_role !== 'Host'
-  )
-
-  if (participantsWithoutHost.length === 0) {
-    return null
-  }
-
-  return (
-    <div>
-      <p className="mt-3 text-sm font-medium text-slate-500">
-        {participantsWithoutHost.length} Going
-      </p>
-      <Divider className="mt-2 mb-3" />
-      <div className="flex flex-wrap gap-8">
-        {participantsWithoutHost.map((participant) => (
-          <UserAvatar
-            profile={participant.profile as IUserProfile}
-            withName
-            nameClass="font-medium"
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function Dates({
-  startDate,
-  endDate,
-  timeZone,
-}: {
-  startDate: string | undefined
-  endDate: string | undefined
-  timeZone: string | undefined
-}) {
-  if (!startDate || !endDate || !timeZone) return null
-
-  return (
-    <div className="flex items-center gap-10 mt-6">
-      <Date date={startDate} timezone={timeZone} />
-      <Date date={endDate} timezone={timeZone} />
-    </div>
-  )
-}
+import { EventStatus } from '@/types/enums'
+import { cn } from '@/utils/utils'
 
 export const Route = createFileRoute('/enroll/$eventId/')({
   component: Visit,
@@ -201,66 +144,140 @@ export function Visit() {
 
   if (!event) return null
 
+  const visibleUserNote = () => {
+    // For owner don't show label
+    if (!isLoggedIn) return false
+    if (user.currentUser.id === event.owner_id) return false
+    // For learner show label when event is not published
+    if (isEnrolled && event.status !== EventStatus.ACTIVE) return true
+
+    return false
+  }
+
+  const visibleEnrollButton = () => {
+    if (!isLoggedIn) return true
+    if (user.currentUser.id === event.owner_id) return false
+    if (!isEnrolled) return true
+
+    return false
+  }
+
+  const visibleEventButton = () => {
+    if (!isLoggedIn) return false
+
+    if (user.currentUser.id === event.owner_id) return true
+
+    if (isEnrolled && event.status === EventStatus.ACTIVE) return true
+
+    return false
+  }
+
   return (
     <ThemeEffects selectedTheme={event.theme} className="h-screen">
       <LogoWithName primary className="m-4" />
       <div className="overflow-y-scroll h-full relative z-[50] pb-40">
-        <div className="max-w-[990px] mx-auto py-4 pt-8">
-          <div className="grid grid-cols-[40%_60%] items-start gap-12">
-            <Image
-              src={
-                event?.image_url ||
-                'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
-              }
-              classNames={{
-                wrapper: 'w-full h-full',
-                img: 'w-full object-cover rounded-3xl shadow-xl aspect-square',
-              }}
-            />
-            <div className="h-full flex flex-col justify-between">
-              <div>
-                <p className="text-5xl font-bold mb-4">{event.name}</p>
-                <p className="text-sm line-clamp-[8]">{event.description}</p>
-                <RenderIf isTrue={event?.description?.length > 400}>
-                  <Button
-                    variant="faded"
-                    className="text-xs text-gray-400 cursor-pointer w-fit p-1 h-6 border-1 my-4"
-                    onClick={() => descriptionModalDisclosure.onOpen()}>
-                    Read More
-                  </Button>
-                </RenderIf>
-                <Dates
-                  startDate={event?.start_date}
-                  endDate={event?.end_date}
-                  timeZone={event?.timezone}
-                />
-              </div>
-              {isEnrolled && (
-                <div className="flex items-center gap-2 mt-6">
-                  <FaCheckCircle className="text-green-600 text-2xl" />
-                  <p className="text-sm text-slate-500">You are enrolled!</p>
+        <div className="max-w-[76.25rem] mx-auto py-4 pt-8">
+          <div className="grid grid-cols-[60%_30%] items-start gap-6">
+            <div className="h-full flex flex-col gap-5">
+              <p className="text-5xl font-bold">{event.name}</p>
+
+              <p className="text-gray-600 border-b pb-3 text-md">
+                About the event
+              </p>
+              <RenderIf isTrue={!!event.description}>
+                <div
+                  className={cn('text-sm rounded-xl backdrop-blur-3xl', {
+                    'p-4 pb-1 bg-default/20': event?.theme?.theme === 'Emoji',
+                  })}>
+                  <p className={cn('line-clamp-[7]', {})}>
+                    {event.description}
+                  </p>
+                  <RenderIf isTrue={event?.description?.length > 400}>
+                    <Button
+                      variant="faded"
+                      className="text-xs text-gray-400 cursor-pointer w-fit p-1 h-6 border-1 my-2"
+                      onClick={() => descriptionModalDisclosure.onOpen()}>
+                      Read More
+                    </Button>
+                  </RenderIf>
                 </div>
-              )}
-              <div className="mt-10 flex items-center gap-2">
+              </RenderIf>
+              <RenderIf isTrue={!!showEditor}>
+                <div
+                  className={cn('shadow-sm backdrop-blur-3xl rounded-xl', {
+                    'p-4 bg-default/20': event?.theme?.theme === 'Emoji',
+                  })}>
+                  <RichTextEditor
+                    editorId={eventId!}
+                    showHeader={false}
+                    editable={false}
+                    hideSideBar
+                    classNames={{ editorInPreview: 'overflow-y-visible' }}
+                    onEmptyContent={() => setShowEditor(false)}
+                  />
+                </div>
+              </RenderIf>
+            </div>
+            <div className="flex flex-col gap-6">
+              <Image
+                src={
+                  event?.image_url ||
+                  'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
+                }
+                classNames={{
+                  wrapper: 'w-full h-full',
+                  img: 'w-full object-cover rounded-3xl shadow-xl aspect-square',
+                }}
+              />
+              <RenderIf isTrue={visibleUserNote()}>
+                <div className="flex items-center gap-2 bg-green-100 p-4 rounded-sm border-green-200 border">
+                  <FaCheckCircle className="text-green-600 text-2xl shrink-0" />
+                  <p className="text-sm text-slate-500">
+                    You&apos;re enrolled! You’ll gain access to the event once
+                    it’s officially published by the host.
+                  </p>
+                </div>
+              </RenderIf>
+              <RenderIf isTrue={visibleEnrollButton()}>
                 <Button
                   type="submit"
                   className="w-full bg-black text-white shadow-xl"
                   isLoading={addParticipantsMutation.isPending}
                   onClick={handleEnrollClick}>
-                  {isEnrolled
-                    ? 'Go to event'
-                    : addParticipantsMutation.isPending
-                      ? 'Enrolling'
-                      : 'Enroll'}
+                  {addParticipantsMutation.isPending ? 'Enrolling' : 'Enroll'}
                 </Button>
+              </RenderIf>
+              <Dates
+                startDate={event?.start_date}
+                endDate={event?.end_date}
+                timeZone={event?.timezone}
+              />
+              <RenderIf isTrue={visibleEventButton()}>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="submit"
+                    className="w-full bg-black text-white shadow-xl"
+                    isLoading={addParticipantsMutation.isPending}
+                    onClick={handleEnrollClick}>
+                    Go to event
+                  </Button>
+                </div>
+              </RenderIf>
+
+              <div>
+                <p className="text-sm font-medium text-slate-500">Hosted by</p>
+                <Divider className="mt-2 mb-3" />
+                <UserAvatar
+                  profile={profile}
+                  withName
+                  nameClass="font-medium"
+                />
               </div>
+
+              <Participantslist participants={useEventData.participants} />
             </div>
           </div>
-          <p className="mt-8 text-sm font-medium text-slate-500">Hosted by</p>
-          <Divider className="mt-2 mb-3" />
-          <UserAvatar profile={profile} withName nameClass="font-medium" />
 
-          <Participantslist participants={useEventData.participants} />
           <Modal
             size="xl"
             isOpen={descriptionModalDisclosure?.isOpen}
@@ -278,18 +295,6 @@ export function Visit() {
               )}
             </ModalContent>
           </Modal>
-          <RenderIf isTrue={!!showEditor}>
-            <div className="mt-10 bg-default/30 shadow-sm backdrop-blur-2xl p-6 rounded-xl">
-              <RichTextEditor
-                editorId={eventId!}
-                showHeader={false}
-                editable={false}
-                hideSideBar
-                classNames={{ editorInPreview: 'overflow-y-visible' }}
-                onEmptyContent={() => setShowEditor(false)}
-              />
-            </div>
-          </RenderIf>
         </div>
       </div>
     </ThemeEffects>

@@ -1,5 +1,6 @@
 import { ProfileService } from './profile.service'
 
+import { EventStatus } from '@/types/enums'
 import { ICreateEventPayload } from '@/types/event.type'
 import { supabaseClient } from '@/utils/supabase/client'
 
@@ -153,8 +154,9 @@ const createEvent = async (event: ICreateEventPayload) => {
 const updateEvent = async (payload: {
   eventId: string
   data: {
-    name: string
-    description: string
+    name?: string
+    description?: string
+    status?: EventStatus
   }
 }) => {
   const { data, error } = await supabaseClient

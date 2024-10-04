@@ -281,9 +281,9 @@ export function FrameItem({
           <Note
             frameId={frame.id}
             note={frame.notes}
-            placeholder={preview ? 'No notes added' : 'Click to add notes'}
+            placeholder={preview ? '' : 'Type your note here'}
             editable={editable}
-            className="border-x-1 p-4"
+            className="border-x-1 p-4 cursor-text"
             wrapOnBlur
           />
 
@@ -330,8 +330,8 @@ export function FrameItem({
                   )
                 }>
                 {frame.status === FrameStatus.PUBLISHED
-                  ? 'Published'
-                  : 'Unpublished'}
+                  ? 'Shared'
+                  : 'Not Shared'}
               </Chip>
             </div>
           </RenderIf>

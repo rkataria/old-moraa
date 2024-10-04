@@ -49,6 +49,8 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   const sectionId =
     currentSectionId || currentFrame?.section_id || sections[0].id
 
+  const sectionFrames = sections.find((s) => s.id === sectionId)?.frames
+
   useEffect(() => {
     if (lastMessagePlaceholderRef.current) {
       lastMessagePlaceholderRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -236,15 +238,17 @@ export function AIChat({ onClose }: { onClose: () => void }) {
                 Generate{' '}
                 {overviewOpen ? 'a poll in 1st section' : 'interactive poll'}
               </Button>
-              <Button
-                variant="bordered"
-                className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
-                onClick={handleSummarizeSection}
-                startContent={
-                  <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
-                }>
-                Summarize {overviewOpen ? '1st' : ''} section
-              </Button>
+              <RenderIf isTrue={sectionFrames?.length !== 0}>
+                <Button
+                  variant="bordered"
+                  className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
+                  onClick={handleSummarizeSection}
+                  startContent={
+                    <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
+                  }>
+                  Summarize {overviewOpen ? '1st' : ''} section
+                </Button>
+              </RenderIf>
             </div>
           </div>
         </div>
@@ -286,15 +290,17 @@ export function AIChat({ onClose }: { onClose: () => void }) {
               Generate{' '}
               {overviewOpen ? 'poll in 1st section' : 'interactive poll'}
             </Button>
-            <Button
-              variant="bordered"
-              className="justify-start text-xs h-[2.0625rem] px-2 border-1 border-primary-400"
-              onClick={handleSummarizeSection}
-              startContent={
-                <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
-              }>
-              Summarize {overviewOpen ? '1st' : ''} section
-            </Button>
+            <RenderIf isTrue={sectionFrames?.length !== 0}>
+              <Button
+                variant="bordered"
+                className="justify-start text-xs h-[2.0625rem] px-2 border-1 border-primary-400"
+                onClick={handleSummarizeSection}
+                startContent={
+                  <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
+                }>
+                Summarize {overviewOpen ? '1st' : ''} section
+              </Button>
+            </RenderIf>
           </div>
         </RenderIf>
 

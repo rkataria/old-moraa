@@ -14,8 +14,9 @@ export enum EventType {
 }
 
 export enum EventStatus {
-  NEW = 'NEW',
+  DRAFT = 'DRAFT',
   SCHEDULED = 'SCHEDULED',
+  ACTIVE = 'ACTIVE',
   COMPLETED = 'COMPLETED',
 }
 

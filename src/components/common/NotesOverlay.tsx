@@ -55,7 +55,8 @@ export function NoteOverlay({ editable = true }: { editable?: boolean }) {
         frameId={currentFrame.id}
         note={currentFrame.notes}
         editable={isEditable}
-        placeholder={isEditable ? 'Click to add notes' : 'No notes found'}
+        placeholder={isEditable ? 'Type your note here' : 'No notes found'}
+        className="cursor-text"
       />
     </NoteOverlaySidebarWrapper>
   )

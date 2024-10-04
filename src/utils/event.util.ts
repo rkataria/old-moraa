@@ -43,7 +43,11 @@ export const eventTypes = [
 
 export const getStatusColor = (status: string) => {
   switch (status) {
+    case 'ACTIVE':
+      return 'success'
     case 'SCHEDULED':
+      return 'warning'
+    case 'PUBLISHED':
       return 'success'
     default:
       return 'default'

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import {
   ModalBody,
@@ -23,11 +23,9 @@ import {
 import { Tooltip } from './ShortuctTooltip'
 import { Button } from '../ui/Button'
 
-import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventService } from '@/services/event/event-service'
-import { EventContextType } from '@/types/event-context.type'
 
 type addParticipant = ParticipantsFormData & {
   closeonSave?: boolean
@@ -174,14 +172,11 @@ export function AddParticipantsButtonWithModal({
   eventId: string
   triggerButtonProps?: ButtonProps
 }) {
-  const { preview, eventMode } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
 
   if (!permissions.canManageEnrollment) {
     return null
   }
-
-  if (!preview && eventMode === 'edit') return null
 
   return <ButtonWithModal eventId={eventId} buttonProps={triggerButtonProps} />
 }

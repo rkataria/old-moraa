@@ -12,15 +12,13 @@ import {
   useEffect,
 } from 'react'
 
-import { Button, Switch } from '@nextui-org/react'
+import { Button, Image } from '@nextui-org/react'
 import differenceby from 'lodash.differenceby'
 import isEqual from 'lodash.isequal'
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 import { BsTrash } from 'react-icons/bs'
-import { IoIosArrowRoundUp } from 'react-icons/io'
 import { IoChevronDown } from 'react-icons/io5'
 import { MdDragIndicator } from 'react-icons/md'
-import { RxReset } from 'react-icons/rx'
 
 import { SessionColorTracker } from './ColorTracker'
 import { FramesList } from './FramesList'
@@ -29,15 +27,13 @@ import { SectionTime } from './SectionTime'
 import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
 import { DropdownActions } from '@/components/common/DropdownActions'
 import { EditableLabel } from '@/components/common/EditableLabel'
+import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { toggleSectionExpansionInPlannerAction } from '@/stores/slices/event/current-event/section.slice'
-import { bulkUpdateFrameStatusThunk } from '@/stores/thunks/frame.thunks'
-import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
 import { cn, sortByStatus } from '@/utils/utils'
@@ -109,20 +105,6 @@ export function SessionPlanner({
     setFilteredSections(sections.filter((f) => f.id.length > 0))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sections, filteredSections])
-
-  const changeSectionStatus = (
-    section: ISection,
-    newState: FrameStatus.DRAFT | FrameStatus.PUBLISHED
-  ) => {
-    if (!permissions.canUpdateFrame) return
-
-    dispatch(
-      bulkUpdateFrameStatusThunk({
-        frameIds: section.frames.map((frame) => frame.id),
-        status: newState,
-      })
-    )
-  }
 
   const handleSectionDropdownActions = (sectionId: string, key: Key) => {
     if (key === 'delete') {
@@ -203,7 +185,7 @@ export function SessionPlanner({
             {(sectionDroppableProvided) => (
               <div
                 className={cn(
-                  'flex flex-col justify-start items-center gap-4 w-full flex-nowrap'
+                  'flex flex-col justify-start items-center gap-5 w-full flex-nowrap'
                 )}
                 ref={sectionDroppableProvided.innerRef}
                 {...sectionDroppableProvided.droppableProps}>
@@ -227,6 +209,7 @@ export function SessionPlanner({
                                 {
                                   'rounded-lg border':
                                     !expandedSections.includes(section.id),
+                                  'pb-0': editable,
                                 }
                               )}>
                               <div
@@ -260,27 +243,27 @@ export function SessionPlanner({
                                             />
                                           ),
                                         },
-                                        {
-                                          key: 'published',
-                                          label: 'Move published frames at top',
-                                          icon: <IoIosArrowRoundUp size={18} />,
-                                        },
-                                        {
-                                          key: 'unpublished',
-                                          label:
-                                            'Move Unpublished frames at top',
-                                          icon: (
-                                            <IoIosArrowRoundUp
-                                              className="rotate-180"
-                                              size={18}
-                                            />
-                                          ),
-                                        },
-                                        {
-                                          key: 'reset',
-                                          label: 'Reset ordering of frames',
-                                          icon: <RxReset size={16} />,
-                                        },
+                                        // {
+                                        //   key: 'published',
+                                        //   label: 'Move published frames at top',
+                                        //   icon: <IoIosArrowRoundUp size={18} />,
+                                        // },
+                                        // {
+                                        //   key: 'unpublished',
+                                        //   label:
+                                        //     'Move Unpublished frames at top',
+                                        //   icon: (
+                                        //     <IoIosArrowRoundUp
+                                        //       className="rotate-180"
+                                        //       size={18}
+                                        //     />
+                                        //   ),
+                                        // },
+                                        // {
+                                        //   key: 'reset',
+                                        //   label: 'Reset ordering of frames',
+                                        //   icon: <RxReset size={16} />,
+                                        // },
                                       ]}
                                       onAction={(key) =>
                                         handleSectionDropdownActions(
@@ -352,13 +335,18 @@ export function SessionPlanner({
                                       })
                                     }}
                                   />
-
-                                  <SectionTime
-                                    sectionId={section.id}
-                                    frames={section.frames}
-                                    config={section.config}
-                                    editable={editable}
-                                  />
+                                  <RenderIf
+                                    isTrue={
+                                      !expandedSections.includes(section.id)
+                                    }>
+                                    <SectionTime
+                                      sectionId={section.id}
+                                      frames={section.frames}
+                                      config={section.config}
+                                      editable={editable}
+                                      className="mt-1 mb-2"
+                                    />
+                                  </RenderIf>
                                 </div>
                               </div>
                               <RenderIf
@@ -381,7 +369,7 @@ export function SessionPlanner({
                                   }))}
                                   className="h-5 w-full"
                                 />
-                                <RenderIf isTrue={editable}>
+                                {/* <RenderIf isTrue={editable}>
                                   <div
                                     className={cn(
                                       'flex items-center justify-center',
@@ -435,11 +423,48 @@ export function SessionPlanner({
                                       </div>
                                     </Tooltip>
                                   </div>
-                                </RenderIf>
+                                </RenderIf> */}
                               </div>
                             </div>
+
                             <RenderIf
                               isTrue={expandedSections.includes(section.id)}>
+                              <SectionTime
+                                sectionId={section.id}
+                                frames={section.frames}
+                                config={section.config}
+                                editable={editable}
+                                className="mb-3 pl-2"
+                              />
+                            </RenderIf>
+
+                            <RenderIf
+                              isTrue={
+                                sections.length === 1 &&
+                                section.frames.length === 0
+                              }>
+                              <div className="mt-16">
+                                <EmptyPlaceholder
+                                  icon={
+                                    <Image
+                                      src="/images/empty-section.svg"
+                                      width={400}
+                                    />
+                                  }
+                                  title="Get Started with Frames"
+                                  description="Your space is blank right now. Add some frames to visualize your event and take the first step in your planning journey"
+                                />
+                              </div>
+                            </RenderIf>
+
+                            <RenderIf
+                              isTrue={
+                                expandedSections.includes(section.id) &&
+                                !(
+                                  sections.length === 1 &&
+                                  section.frames.length === 0
+                                )
+                              }>
                               <FramesList
                                 section={section}
                                 frameIdToBeFocus={itemIdToBeFocus}

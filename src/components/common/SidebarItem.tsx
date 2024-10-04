@@ -1,6 +1,7 @@
 import { useLocation, useRouter } from '@tanstack/react-router'
 import { IconType } from 'react-icons'
-import { LuHelpCircle, LuHome } from 'react-icons/lu'
+import { GoHome, GoHomeFill } from 'react-icons/go'
+import { IoHelpCircleOutline, IoHelpCircleSharp } from 'react-icons/io5'
 
 import { Button } from '../ui/Button'
 
@@ -10,13 +11,15 @@ type TNavigation = {
   name: string
   href: string
   icon: IconType
+  filled: IconType
 }
 
 const navigation: TNavigation[] = [
   {
     name: 'Home',
     href: '/events',
-    icon: LuHome,
+    icon: GoHome,
+    filled: GoHomeFill,
   },
   // {
   //   name: 'My workshops',
@@ -36,7 +39,8 @@ const navigation: TNavigation[] = [
   {
     name: 'Help & Support',
     href: '/help',
-    icon: LuHelpCircle,
+    icon: IoHelpCircleOutline,
+    filled: IoHelpCircleSharp,
   },
 ]
 
@@ -49,18 +53,23 @@ export function SidebarItem() {
       {navigation.map((item) => (
         <Button
           key={item.name}
-          size="sm"
+          size="md"
           fullWidth
           className={cn(
-            'flex justify-start items-center gap-2 bg-transparent hover:bg-gray-200',
+            'flex justify-start items-center gap-3 bg-transparent hover:bg-gray-200 py-5',
             {
-              'bg-primary-100': item.href === location.pathname,
+              'bg-primary/15 text-primary font-medium':
+                item.href === location.pathname,
             }
           )}
           onClick={() => {
             history.push(item.href)
           }}>
-          <item.icon className="shrink-0" aria-hidden="true" size={18} />
+          {item.href === location.pathname ? (
+            <item.filled className="shrink-0" aria-hidden="true" size={22} />
+          ) : (
+            <item.icon className="shrink-0" aria-hidden="true" size={22} />
+          )}
           {item.name}
         </Button>
       ))}

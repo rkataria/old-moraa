@@ -1,6 +1,12 @@
 import { useState } from 'react'
 
-import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
+import {
+  ButtonProps,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+} from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
@@ -22,12 +28,14 @@ export function ScheduleEventButtonWithModal({
   actionButtonLabel = 'Schedule Event',
   showLabel = true,
   disclosure,
+  buttonProps,
 }: {
   id?: string
   withoutModal?: boolean
   actionButtonLabel?: string
   showLabel?: boolean
   disclosure?: UseDisclosureReturn
+  buttonProps?: ButtonProps
 }) {
   const { eventId }: { eventId: string } = useParams({ strict: false })
   const event = useEvent({ id: eventId })
@@ -161,7 +169,8 @@ export function ScheduleEventButtonWithModal({
           variant="solid"
           color="primary"
           fullWidth
-          onClick={() => setOpen(true)}>
+          onClick={() => setOpen(true)}
+          {...buttonProps}>
           {actionButtonLabel}
         </Button>
       </RenderIf>

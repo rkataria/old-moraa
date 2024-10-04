@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback } from 'react'
+import { Dispatch, Key, SetStateAction, useCallback } from 'react'
 
 import {
   Chip,
@@ -18,6 +18,7 @@ import { EventActions } from './EventActions'
 import { Loading } from '../common/Loading'
 
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
+import { EventStatus } from '@/types/enums'
 import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
 import { eventTableColumns, getStatusColor } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
@@ -155,6 +156,19 @@ export function ListView({
     [currentUserId, refetch]
   )
 
+  const handleRowClick = (eventId: Key) => {
+    const event = eventRows.find((_event) => _event.id === eventId)
+    if (
+      event.owner_id !== currentUserId &&
+      event.status !== EventStatus.ACTIVE
+    ) {
+      router.navigate({ to: `/enroll/${event.id}` })
+
+      return
+    }
+    router.navigate({ to: `/events/${event.id}`, search: { action: 'view' } })
+  }
+
   return (
     <Table
       sortDescriptor={sortDescriptor}
@@ -165,9 +179,7 @@ export function ListView({
       classNames={{
         table: isLoading && 'min-h-[25rem]',
       }}
-      onRowAction={(key) =>
-        router.navigate({ to: `/events/${key}`, search: { action: 'view' } })
-      }>
+      onRowAction={(eventId) => handleRowClick(eventId)}>
       <TableHeader columns={eventTableColumns}>
         {(column) => (
           <TableColumn key={column.key} allowsSorting={column.sortable}>

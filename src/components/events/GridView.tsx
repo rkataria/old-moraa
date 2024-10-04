@@ -12,6 +12,7 @@ import { Tooltip } from '../common/ShortuctTooltip'
 import { UserAvatar } from '../common/UserAvatar'
 
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
+import { EventStatus } from '@/types/enums'
 import { getCurrentTimeInLocalZoneFromTimeZone } from '@/utils/date'
 import { getStatusColor } from '@/utils/event.util'
 
@@ -32,18 +33,27 @@ export function GridView({
     return <Loading />
   }
 
-  const handleCardClick = (eventId: string) => {
-    router.navigate({ to: `/events/${eventId}`, search: { action: 'view' } })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleCardClick = (event: any) => {
+    if (
+      event.owner_id !== currentUserId &&
+      event.status !== EventStatus.ACTIVE
+    ) {
+      router.navigate({ to: `/enroll/${event.id}` })
+
+      return
+    }
+    router.navigate({ to: `/events/${event.id}`, search: { action: 'view' } })
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 gap-4 min-[1920px]:grid-cols-5">
       {eventRows.map((event) => (
         <Card
-          className="border-none bg-background/60 dark:bg-default-100/50 cursor-pointer hover:shadow-xl"
-          shadow="sm"
+          className="cursor-pointer hover:shadow-xl border border-gray-200"
+          shadow="none"
           isPressable
-          onPress={() => handleCardClick(event.id)}>
+          onPress={() => handleCardClick(event)}>
           <CardBody>
             <Avatar
               name={event.name}
@@ -61,7 +71,7 @@ export function GridView({
               showFallback={event.image_url}
             />
 
-            <div className="flex items-center justify-between w-full mt-5">
+            <div className="flex items-center justify-between w-full mt-2">
               <Chip
                 variant="flat"
                 size="sm"
@@ -79,8 +89,13 @@ export function GridView({
               />
             </div>
 
+            <p className="text-xl font-semibold text-black/80 mt-1 line-clamp-2">
+              {event.name}
+            </p>
+
             <RenderIf isTrue={event.start_date && event.end_date}>
               <Tooltip
+                placement="bottom"
                 label={
                   <div className="flex items-center gap-4">
                     <p>
@@ -100,8 +115,8 @@ export function GridView({
                     </p>
                   </div>
                 }>
-                <div className="flex gap-4 items-center mt-3">
-                  <p className="text-gray-600 text-xs">
+                <div className="flex gap-4 items-center mt-2">
+                  <p className="text-gray-600 text-xs font-medium">
                     {getCurrentTimeInLocalZoneFromTimeZone({
                       dateTimeString: event.start_date,
                       utcTimeZone: event.timezone,
@@ -115,7 +130,7 @@ export function GridView({
                     }) || 'NA'}
                   </p>
                   -
-                  <p className="text-gray-600 text-xs">
+                  <p className="text-gray-600 text-xs font-medium">
                     {getCurrentTimeInLocalZoneFromTimeZone({
                       dateTimeString: event.end_date,
                       utcTimeZone: event.timezone,
@@ -132,30 +147,33 @@ export function GridView({
               </Tooltip>
             </RenderIf>
 
-            <p className="text-lg font-medium mt-3 line-clamp-2">
-              {event.name}
-            </p>
-
-            <p className="mt-1 text-xs line-clamp-3 mb-14">
+            <p className="mt-1 text-xs line-clamp-2 mb-10">
               {event.description}
             </p>
 
             <div className="w-full absolute bottom-0 left-0 flex items-center justify-between p-4">
-              <p className="text-xs text-black/60">
+              <p className="text-xs text-black/60 ">
+                <RenderIf isTrue={event.owner_id === currentUserId}>
+                  Created by you on{' '}
+                </RenderIf>
                 {DateTime.fromISO(event.created_at).toLocaleString({
                   year: 'numeric',
                   month: 'short',
                   day: '2-digit',
                 })}
               </p>
-              <UserAvatar
-                profile={event.profile}
-                withName
-                avatarProps={{
-                  classNames: { base: 'w-6 h-6 min-w-6' },
-                }}
-                nameClass="font-medium text-xs text-black/60"
-              />
+
+              <RenderIf isTrue={event.owner_id !== currentUserId}>
+                <UserAvatar
+                  profile={event.profile}
+                  withName
+                  avatarProps={{
+                    size: 'lg',
+                    classNames: { base: 'w-6 h-6 min-w-6' },
+                  }}
+                  nameClass="font-medium text-xs text-black/60"
+                />
+              </RenderIf>
             </div>
           </CardBody>
         </Card>

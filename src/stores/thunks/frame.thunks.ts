@@ -24,6 +24,14 @@ type CreateFrameThunkParams = {
    */
   insertAfterFrameId?: string
 }
+
+type CreateFramesThunkParams = {
+  sectionId: string
+  // TODO: Fix any type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  frames: any
+  insertAfterFrameId?: string
+}
 export const createFrameThunk = createAsyncThunk<
   FrameModel,
   CreateFrameThunkParams
@@ -33,6 +41,15 @@ export const createFrameThunk = createAsyncThunk<
     meeting_id: meetingId,
     section_id: sectionId,
   })
+
+  return response.data
+})
+
+export const createFramesThunk = createAsyncThunk<
+  FrameModel[],
+  CreateFramesThunkParams
+>('event/createFrames', async (payload) => {
+  const response = await FrameService.createFrames(payload.frames)
 
   return response.data
 })
@@ -74,7 +91,7 @@ export const deleteFrameThunk = createAsyncThunk<void, DeleteFrameThunkParams>(
 export const deleteFramesThunk = createAsyncThunk<
   void,
   DeleteFramesThunkParams
->('event/deleteFrame', async ({ frameIds, sectionId }) => {
+>('event/deleteFrames', async ({ frameIds, sectionId }) => {
   const response = await FrameService.deleteFrames({ frameIds, sectionId })
 
   return response.data

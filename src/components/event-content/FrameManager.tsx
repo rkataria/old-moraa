@@ -3,6 +3,7 @@ import { useContext, useState } from 'react'
 
 import { useParams } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { FaTableCellsRowLock } from 'react-icons/fa6'
 import { v4 as uuidv4 } from 'uuid'
 
 import { FrameContainer } from './FrameContainer'
@@ -15,6 +16,7 @@ import {
   BREAKOUT_TYPES,
   BreakoutTypePicker,
 } from '../common/BreakoutTypePicker'
+import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
 import { Loading } from '../common/Loading'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { StudioLayout } from '../common/StudioLayout/Index'
@@ -27,7 +29,7 @@ import {
 import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { FrameStatus } from '@/types/enums'
+import { EventStatus, FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
@@ -35,7 +37,11 @@ import { getDefaultContent } from '@/utils/content.util'
 export function FrameManager() {
   const { eventId } = useParams({ strict: false })
 
-  const { event, isLoading: eventLoading } = useEvent({ id: eventId as string })
+  const {
+    event,
+    isLoading: eventLoading,
+    refetch: refetchEvent,
+  } = useEvent({ id: eventId as string })
   const [selectedContentType, setContentType] = useState<ContentType | null>(
     null
   )
@@ -141,6 +147,17 @@ export function FrameManager() {
       </div>
     )
   }
+  if (!permissions.canUpdateFrame && event.status !== EventStatus.ACTIVE) {
+    return (
+      <div className="w-screen h-screen grid place-items-center bg-primary-50">
+        <EmptyPlaceholder
+          icon={<FaTableCellsRowLock className="text-primary-300" size={200} />}
+          description=" Keep an eye out for updates."
+          title="You’ll gain access to the event once it’s officially published by the host."
+        />
+      </div>
+    )
+  }
 
   const leftSidebarContent = () => {
     if (permissions.canUpdateFrame && overviewOpen && eventMode === 'edit') {
@@ -153,7 +170,7 @@ export function FrameManager() {
   return (
     <>
       <StudioLayout
-        header={<Header event={event} />}
+        header={<Header event={event} refetchEvent={refetchEvent} />}
         leftSidebar={leftSidebarContent()}
         resizableRightSidebar={<ResizableRightSidebar />}
         rightSidebar={<RightSidebar />}

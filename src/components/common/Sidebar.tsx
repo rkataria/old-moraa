@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { MdOutlineAddBox } from 'react-icons/md'
+import { MdAdd } from 'react-icons/md'
 
 import { MoraaLogo } from './MoraaLogo'
 import { SidebarItem } from './SidebarItem'
@@ -15,9 +15,15 @@ export function SidebarComponent() {
           <MoraaLogo color="primary" filled />
         </div>
         <Button
+          style={{
+            background:
+              'linear-gradient(107.56deg, rgb(181, 10, 193) 0%, rgb(137, 47, 255) 100%)',
+          }}
+          size="md"
           onClick={() => navigate({ to: '/events/create' })}
           color="primary"
-          startContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
+          className="text-white font-medium"
+          startContent={<MdAdd size={24} aria-hidden="true" />}>
           Create new
         </Button>
         <SidebarItem />

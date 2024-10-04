@@ -13,6 +13,7 @@ import { DropdownActions } from '../common/DropdownActions'
 import { Button } from '../ui/Button'
 
 import { EventService } from '@/services/event/event-service'
+import { EventStatus } from '@/types/enums'
 
 const ownerActions = [
   {
@@ -52,6 +53,7 @@ export function EventActions({
     name: string
     description?: string
     image_url: string | null | undefined
+    status: EventStatus
   }
   isOwner: boolean
 
@@ -86,7 +88,12 @@ export function EventActions({
     }
 
     if (key === 'view') {
-      router.navigate({ to: `/events/${event.id}?action=view` })
+      const isInactive = !isOwner && event.status !== EventStatus.ACTIVE
+      const targetRoute = isInactive
+        ? `/enroll/${event.id}`
+        : `/events/${event.id}?action=view`
+
+      router.navigate({ to: targetRoute })
     }
   }
 

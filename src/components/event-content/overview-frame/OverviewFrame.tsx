@@ -2,6 +2,7 @@ import { ReactNode, useContext, useState } from 'react'
 
 import { Button, Tab, Tabs } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
+import { MdAdd, MdFormatListBulletedAdd } from 'react-icons/md'
 import { TbListDetails } from 'react-icons/tb'
 import { TfiAgenda } from 'react-icons/tfi'
 
@@ -70,12 +71,14 @@ export function OverviewFrame() {
   )
 
   if (!permissions.canUpdateFrame) {
-    return <FrameDetailsView />
+    return <FrameDetailsView className="pl-8" />
   }
 
   const renderContent = () => {
     if (selectedTab === 'event-info') {
-      return (
+      return preview ? (
+        <FrameDetailsView className="pl-[10%]" />
+      ) : (
         <ThemeEffects selectedTheme={event.theme}>
           <ContentWrapper
             permissions={permissions}
@@ -149,12 +152,13 @@ export function OverviewFrame() {
               color="primary"
               variant="solid"
               isLoading={isAddSectionLoading}
+              startContent={<MdFormatListBulletedAdd size={22} />}
               onClick={() =>
                 insertInSectionId
                   ? addSection({ afterSectionId: insertInSectionId })
                   : addSection({ addToLast: true })
               }>
-              + Add Section
+              Add Section
             </Button>
             <Button
               size="sm"
@@ -162,11 +166,12 @@ export function OverviewFrame() {
               variant="ghost"
               className="border-1"
               isLoading={isAddFrameLoading}
+              startContent={<MdAdd size={24} />}
               onClick={() => {
                 setAddedFromSessionPlanner(true)
                 setOpenContentTypePicker(true)
               }}>
-              + Add Frame
+              Add Frame
             </Button>
           </div>
         </RenderIf>

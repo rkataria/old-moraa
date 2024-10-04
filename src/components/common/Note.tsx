@@ -98,7 +98,7 @@ export function Note({
       <TextBlockEditor
         key={frameId}
         autoFocus
-        placeholder="Type your note here"
+        placeholder=" "
         showToolbar={false}
         block={{ id: frameId, type: 'paragraph', data: { html: updatedNote } }}
         className={cn('w-full h-full overflow-y-auto', className)}
