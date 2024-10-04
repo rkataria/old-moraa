@@ -5,6 +5,7 @@ import { cn } from '@/utils/utils'
 type HeaderButtonProps = {
   tooltipContent: string
   label: string
+  size?: 'lg' | 'sm'
   icon: React.ReactNode
   hideTooltip?: boolean
   active?: boolean
@@ -15,6 +16,7 @@ type HeaderButtonProps = {
 export function HeaderButton({
   tooltipContent,
   label,
+  size = 'lg',
   icon,
   hideTooltip,
   active,
@@ -28,7 +30,7 @@ export function HeaderButton({
       }}
       buttonProps={{
         variant: 'light',
-        size: 'lg',
+        size,
         radius: 'md',
         isIconOnly: true,
         disabled,
@@ -39,7 +41,7 @@ export function HeaderButton({
       hideTooltip={hideTooltip}
       onClick={onClick}>
       {icon}
-      <span className="text-xs mt-1">{label}</span>
+      {label && <span className="text-xs mt-1">{label}</span>}
     </ControlButton>
   )
 }

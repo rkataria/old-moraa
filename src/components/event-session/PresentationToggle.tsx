@@ -1,7 +1,8 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoPlay, IoStop } from 'react-icons/io5'
+import { IoPlay } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
+import { PresentationControls } from '../common/PresentationControls'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -37,22 +38,23 @@ export function PresentationToggle() {
 
   useHotkeys('s', handlePresentationToggle, [presentationStatus])
 
+  if (presentationStarted) {
+    return <PresentationControls onStop={stopPresentation} />
+  }
+
   return (
     <ControlButton
       buttonProps={{
-        isIconOnly: true,
         size: 'sm',
-        className: cn('text-white', {
-          'bg-green-500': !presentationStarted,
-          'bg-red-500': presentationStarted,
-        }),
+        className: cn('text-white bg-green-500'),
       }}
       tooltipProps={{
         label: KeyboardShortcuts.Live.startAndStopPresentation.label,
         actionKey: KeyboardShortcuts.Live.startAndStopPresentation.key,
       }}
       onClick={handlePresentationToggle}>
-      {presentationStarted ? <IoStop size={18} /> : <IoPlay size={18} />}
+      <IoPlay size={18} />
+      <span className="text-white">Start</span>
     </ControlButton>
   )
 }

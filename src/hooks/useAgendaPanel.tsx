@@ -4,8 +4,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { useEventPermissions } from './useEventPermissions'
 
-import { EventContext } from '@/contexts/EventContext'
-import { EventContextType } from '@/types/event-context.type'
+import { useEventContext } from '@/contexts/EventContext'
 import { ContentType } from '@/utils/content.util'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 import { getFilteredFramesByStatus } from '@/utils/event.util'
@@ -35,30 +34,26 @@ export function AgendaPanelContextProvider({
   const {
     sections,
     currentFrame,
-
     eventMode,
     overviewOpen,
     currentSectionId,
     setCurrentSectionId,
     setCurrentFrame,
     setOverviewOpen,
-  } = useContext(EventContext) as EventContextType
-
+  } = useEventContext()
   const { permissions } = useEventPermissions()
-
   const [expandedSectionIds, setExpandedSectionIds] = useState<string[]>(
     sections?.length ? [sections[0].id] : [] // Check if sections exist and have elements
   )
-
   const [listDisplayMode, setListDisplayMode] =
-    useState<ListDisplayMode>('list')
+    useState<ListDisplayMode>('grid')
   const [expanded, setExpanded] = useState<boolean>(false)
 
   const showPublishedFrames = !permissions.canUpdateFrame
 
   // hotkeys
-  useHotkeys('l', () => setListDisplayMode('list'), [])
-  useHotkeys('g', () => setListDisplayMode('grid'), [])
+  // useHotkeys('l', () => setListDisplayMode('list'), [])
+  // useHotkeys('g', () => setListDisplayMode('grid'), [])
 
   const previousFrame = useMemo(
     () =>

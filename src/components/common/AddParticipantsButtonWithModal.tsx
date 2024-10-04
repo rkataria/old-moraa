@@ -26,6 +26,7 @@ import { Button } from '../ui/Button'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventService } from '@/services/event/event-service'
+import { cn } from '@/utils/utils'
 
 type addParticipant = ParticipantsFormData & {
   closeonSave?: boolean
@@ -85,6 +86,9 @@ export function ButtonWithModal({
           isIconOnly
           variant="light"
           {...buttonProps}
+          className={cn('bg-transparent hover:bg-black/10', {
+            'bg-primary text-white hover:bg-primary/80': open,
+          })}
           onClick={() => setOpen(true)}>
           <LuUserPlus size={20} />
         </Button>

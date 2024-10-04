@@ -10,6 +10,7 @@ import { Orientation } from 'unsplash-js'
 
 import { MediaProviderContent, MediaProviderType } from './MediaProviderContent'
 import { SideMenuItem } from './SideMenuItem'
+import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/utils'
@@ -39,6 +40,8 @@ const MENU_OPTIONS = {
 }
 
 type MediaPickerProps = {
+  hideLabel?: boolean
+  small?: boolean
   ImageOrientation?: Orientation
   trigger?: React.ReactNode
   placement?: 'top' | 'bottom' | 'left' | 'right'
@@ -48,6 +51,8 @@ type MediaPickerProps = {
 }
 
 export function MediaPicker({
+  hideLabel,
+  small,
   ImageOrientation,
   trigger,
   placement = 'bottom',
@@ -65,7 +70,7 @@ export function MediaPicker({
   return (
     <Popover
       placement={placement}
-      offset={10}
+      offset={18}
       showArrow
       isOpen={open}
       onOpenChange={setOpen}>
@@ -73,13 +78,21 @@ export function MediaPicker({
         {trigger || (
           <Button
             variant="light"
-            size="lg"
+            size={small ? 'sm' : 'lg'}
             isIconOnly
             className={cn('flex flex-col justify-center items-center gap-1', {
               'bg-primary text-white hover:bg-primary hover:text-white': open,
             })}>
-            <FaPhotoVideo size={18} />
-            <span className="text-xs mt-1">Media</span>
+            <Tooltip
+              content="Media"
+              placement="top"
+              className="block"
+              offset={14}>
+              <div className="flex flex-col gap-1 justify-center items-center">
+                <FaPhotoVideo size={18} />
+                {!hideLabel && <span className="text-xs mt-1">Media</span>}
+              </div>
+            </Tooltip>
           </Button>
         )}
       </PopoverTrigger>

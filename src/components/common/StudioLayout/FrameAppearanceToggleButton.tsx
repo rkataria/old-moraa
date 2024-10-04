@@ -1,27 +1,38 @@
 import { MdOutlineDesignServices } from 'react-icons/md'
+import { useDispatch } from 'react-redux'
 
 import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
-import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { setContentStudioRightSidebarAction } from '@/stores/slices/layout/studio.slice'
 import { cn } from '@/utils/utils'
 
 export function FrameAppearanceToggleButton() {
-  const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
+  const dispatch = useDispatch()
+  const { contentStudioRightSidebar } = useStoreSelector(
+    (state) => state.layout.studio
+  )
 
   const toggleSidebar = () => {
-    setRightSidebarVisiblity(
-      rightSidebarVisiblity === 'frame-appearance' ? null : 'frame-appearance'
+    dispatch(
+      setContentStudioRightSidebarAction(
+        contentStudioRightSidebar === 'frame-appearance'
+          ? null
+          : 'frame-appearance'
+      )
     )
   }
 
+  const isVisible = contentStudioRightSidebar === 'frame-appearance'
+
   return (
-    <Tooltip label="Frame Appearance" placement="left">
+    <Tooltip label="Frame Appearance" placement="top">
       <Button
         size="sm"
         isIconOnly
         className={cn({
-          'bg-primary-100': rightSidebarVisiblity === 'frame-appearance',
+          'bg-primary-100': isVisible,
         })}
         onClick={toggleSidebar}>
         <MdOutlineDesignServices size={18} />

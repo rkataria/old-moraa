@@ -25,7 +25,13 @@ export const BULLET_CHARS: string[] = Object.values(BULLET_TYPES)
 
 export const getBulletChar = (type: string) => BULLET_TYPES[type]
 
-export function ListBox() {
+export function ListBox({
+  hideLabel = false,
+  small = false,
+}: {
+  hideLabel?: boolean
+  small?: boolean
+}) {
   const [open, setOpen] = useState(false)
   const { canvas } = useMoraaSlideEditorContext()
 
@@ -70,7 +76,7 @@ export function ListBox() {
   }
 
   return (
-    <Tooltip content="List" placement="bottom">
+    <Tooltip content="List" placement="top">
       <div>
         <Popover
           placement="bottom"
@@ -81,13 +87,13 @@ export function ListBox() {
           <PopoverTrigger>
             <Button
               variant="light"
-              size="lg"
+              size={small ? 'sm' : 'lg'}
               isIconOnly
               className={cn('flex flex-col justify-center items-center gap-1', {
                 'bg-black text-white hover:bg-black hover:text-white': open,
               })}>
               <IoListSharp size={18} />
-              <span className="text-xs mt-1">List</span>
+              {!hideLabel && <span className="text-xs mt-1">List</span>}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-0">

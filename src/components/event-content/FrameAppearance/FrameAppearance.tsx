@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import { MdOutlineDesignServices } from 'react-icons/md'
 
 import { BreakoutAppearance } from './BreakoutAppearance'
@@ -14,13 +12,12 @@ import { TextImageAppearance } from './TextImageAppearance'
 
 import { ContentType } from '@/components/common/ContentTypePicker'
 import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
-import { EventContextType } from '@/types/event-context.type'
 
 export function FrameAppearance() {
-  const { currentFrame } = useContext(EventContext) as EventContextType
+  const { currentFrame } = useEventContext()
   const { canvas } = useMoraaSlideEditorContext()
 
   // if (!canvas) return null

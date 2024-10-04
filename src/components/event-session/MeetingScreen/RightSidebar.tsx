@@ -80,7 +80,12 @@ export function RightSidebar({ dyteStates, setDyteStates }: RightSidebarProps) {
               icon={HeaderMap[rightSidebarMode!].icon}
             />
           </div>
-          <NoteOverlay editable={false} />
+          <NoteOverlay
+            editable={false}
+            onClose={() => {
+              dispatch(closeRightSidebarAction())
+            }}
+          />
         </>
       )
     }

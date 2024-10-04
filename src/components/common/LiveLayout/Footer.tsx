@@ -5,5 +5,5 @@ type FooterProps = {
 }
 
 export function Footer({ children }: FooterProps) {
-  return <div className="h-14 w-full flex-none">{children}</div>
+  return <div className="h-16 w-full flex-none">{children}</div>
 }

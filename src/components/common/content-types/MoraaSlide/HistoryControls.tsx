@@ -9,7 +9,13 @@ import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { EventContextType } from '@/types/event-context.type'
 
-export function HistoryControls() {
+export function HistoryControls({
+  hideLabel = false,
+  small = false,
+}: {
+  hideLabel?: boolean
+  small?: boolean
+}) {
   const { currentFrame } = useContext(EventContext) as EventContextType
   const { canvas } = useMoraaSlideEditorContext()
   const history = useMoraaSlideStore(
@@ -21,16 +27,18 @@ export function HistoryControls() {
   return (
     <>
       <HeaderButton
+        size={small ? 'sm' : 'lg'}
         tooltipContent="Undo"
-        label="Undo"
+        label={!hideLabel ? 'Undo' : ''}
         icon={<LuUndo size={18} />}
         onClick={() => {
           history.undo()
         }}
       />
       <HeaderButton
+        size={small ? 'sm' : 'lg'}
         tooltipContent="Redo"
-        label="Redo"
+        label={!hideLabel ? 'Redo' : ''}
         icon={<LuRedo size={18} />}
         onClick={() => {
           history.redo()

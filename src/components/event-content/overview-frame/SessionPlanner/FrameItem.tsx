@@ -5,6 +5,7 @@
 import { Dispatch, Key, SetStateAction, useContext } from 'react'
 
 import { Button, Checkbox, Chip } from '@nextui-org/react'
+import { useRouter } from '@tanstack/react-router'
 import { Draggable } from 'react-beautiful-dnd'
 import { BsArrowsAngleExpand, BsTrash } from 'react-icons/bs'
 import { IoCheckmarkCircle } from 'react-icons/io5'
@@ -29,6 +30,7 @@ import {
   setCurrentFrameIdAction,
   setIsOverviewOpenAction,
 } from '@/stores/slices/event/current-event/event.slice'
+import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
@@ -49,6 +51,7 @@ export function FrameItem({
   selectedFrameIds: string[]
   setSelectedFrameIds: Dispatch<SetStateAction<string[]>>
 }) {
+  const router = useRouter()
   const {
     isOwner,
     preview,
@@ -252,6 +255,14 @@ export function FrameItem({
             onClick={() => {
               dispatch(setCurrentFrameIdAction(frame.id))
               dispatch(setIsOverviewOpenAction(false))
+              dispatch(setActiveTabAction('content-studio'))
+              router.navigate({
+                search: (prev) => ({
+                  ...prev,
+                  tab: 'content-studio',
+                  frameId: frame.id,
+                }),
+              })
             }}>
             <ContentTypeIcon frameType={frame.type} />
 
@@ -270,8 +281,8 @@ export function FrameItem({
                 e.stopPropagation()
               }}
             />
-            <p className="gap-2 items-center text-gray-600 absolute right-4 top-[50%] -translate-y-[50%] hidden group-hover/frame-name:flex cursor-pointer">
-              <BsArrowsAngleExpand className=" text-gray-400" size={16} />
+            <p className="gap-2 items-center text-primary absolute right-4 top-[50%] -translate-y-[50%] hidden group-hover/frame-name:flex cursor-pointer">
+              <BsArrowsAngleExpand className=" text-primary" size={12} />
               Open
             </p>
           </div>

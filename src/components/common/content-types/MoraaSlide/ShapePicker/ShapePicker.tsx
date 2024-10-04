@@ -8,6 +8,7 @@ import { LuShapes } from 'react-icons/lu'
 import { SHAPE_TYPES, ShapePickerContent } from './ShapePickerContent'
 import { SideMenuItem } from './SideMenuItem'
 
+import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/utils'
 
@@ -43,11 +44,15 @@ const MENU_OPTIONS = [
 
 type ShapePickerProps = {
   trigger?: React.ReactNode
+  hideLabel?: boolean
+  small?: boolean
   onSelect: (file: File) => void
   onSelectCallback: (svg: string) => void
 }
 
 export function ShapePicker({
+  hideLabel,
+  small,
   trigger,
   onSelect,
   onSelectCallback,
@@ -65,14 +70,22 @@ export function ShapePicker({
       <PopoverTrigger>
         {trigger || (
           <Button
-            size="lg"
+            size={small ? 'sm' : 'lg'}
             variant="light"
             isIconOnly
             className={cn('flex flex-col justify-center items-center gap-1', {
               'bg-primary text-white hover:bg-primary hover:text-white': open,
             })}>
-            <LuShapes size={18} />
-            <span className="text-xs mt-1">Shape</span>
+            <Tooltip
+              content="Shape"
+              placement="top"
+              className="block"
+              offset={14}>
+              <div className="flex flex-col gap-1 justify-center items-center">
+                <LuShapes size={18} />
+                {!hideLabel && <span className="text-xs mt-1">Shape</span>}
+              </div>
+            </Tooltip>
           </Button>
         )}
       </PopoverTrigger>

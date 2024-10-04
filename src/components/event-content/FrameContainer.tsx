@@ -1,33 +1,24 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 
 import { Frame } from './Frame'
-import { OverviewFrame } from './overview-frame/OverviewFrame'
-import { FrameControls } from '../common/FrameControls'
 import { SectionOverview } from '../common/SectionOverview'
 
 import { EventContext } from '@/contexts/EventContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
-import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { ContentType } from '@/utils/content.util'
 import { getFrameCount } from '@/utils/utils'
 
 export function FrameContainer() {
-  const { currentFrame, overviewOpen, sections, currentSectionId } = useContext(
+  const { currentFrame, sections, currentSectionId } = useContext(
     EventContext
   ) as EventContextType
-  const { permissions } = useEventPermissions()
-  // If the overview is open, show the overview frame
-  if (overviewOpen) {
-    return <OverviewFrame />
-  }
+  const frameCount = useMemo(() => getFrameCount(sections), [sections])
 
   // If the current section is set, return section overview page
   if (currentSectionId) {
     return <SectionOverview />
   }
-
-  const frameCount = getFrameCount(sections)
 
   // If there are no frames, show a message
   if (frameCount === 0) {
@@ -51,7 +42,6 @@ export function FrameContainer() {
       ) : (
         <Frame frame={currentFrame} />
       )}
-      <FrameControls switchPublishedFrames={!permissions.canUpdateFrame} />
     </div>
   )
 }

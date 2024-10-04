@@ -12,7 +12,7 @@ import { TiDocumentDelete } from 'react-icons/ti'
 
 // TODO: Fix this.
 // eslint-disable-next-line import/no-cycle
-import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
+import { BreakoutFrameThumbnailCard } from './BreakoutFrameThumbnainCard'
 import { DropdownActions } from '../DropdownActions'
 import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
@@ -157,7 +157,7 @@ export function BreakoutRoomActivityCard({
                 if (!editable) return
                 setCurrentFrame(getFrameById(breakout?.activityId))
               }}>
-              <FrameThumbnailCard
+              <BreakoutFrameThumbnailCard
                 frame={getFrameById(breakout?.activityId)}
                 containerWidth={containerWidth}
                 inViewPort

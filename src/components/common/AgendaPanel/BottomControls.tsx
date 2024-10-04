@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/Button'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
-export const BOTTOM_CONTROLS_HEIGHT = 52
-export const BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED = 90
+export const BOTTOM_CONTROLS_HEIGHT = 0
+export const BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED = 0
 
 export function BottomControls() {
   const { leftSidebarVisiblity, toggleLeftSidebar } = useStudioLayout()

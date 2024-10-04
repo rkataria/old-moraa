@@ -116,7 +116,13 @@ export function Visit() {
 
   const handleEnrollClick = () => {
     if (isEnrolled) {
-      router.navigate({ to: `/events/${eventId}` })
+      router.navigate({
+        to: `/events/${eventId}`,
+        search: (prev) => ({
+          ...prev,
+          action: 'view',
+        }),
+      })
 
       return
     }

@@ -9,11 +9,9 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { Frame } from './Frame'
-import { FrameControls } from '../common/FrameControls'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
-import { useEventPermissions } from '@/hooks/useEventPermissions'
 import {
   EventSessionContextType,
   PresentationStatuses,
@@ -24,9 +22,8 @@ export function ContentContainer() {
   const { currentFrame } = useContext(
     EventSessionContext
   ) as EventSessionContextType
-  const { permissions } = useEventPermissions()
 
-  const { presentationStatus, previousFrame, nextFrame, isHost } = useContext(
+  const { presentationStatus, isHost } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -92,13 +89,6 @@ export function ContentContainer() {
         </RoomProvider>
       ) : (
         <Frame key={`frame-${currentFrame.id}`} />
-      )}
-      {isHost && (
-        <FrameControls
-          onPrevious={previousFrame}
-          onNext={nextFrame}
-          switchPublishedFrames={!permissions.canAcessAllSessionControls}
-        />
       )}
     </div>
   )

@@ -1,23 +1,26 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useHotkeys } from 'react-hotkeys-hook'
 
-import { BottomControls } from './AgendaPanel/BottomControls'
-import { Header } from './AgendaPanel/Header'
 import { SectionList } from './AgendaPanel/SectionList'
+import { RenderIf } from './RenderIf/RenderIf'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { AgendaPanelContextProvider } from '@/hooks/useAgendaPanel'
-import { EventContextType } from '@/types/event-context.type'
 import { ISection } from '@/types/frame.type'
+import { cn } from '@/utils/utils'
 
-export function AgendaPanel() {
+export function AgendaPanel({
+  header,
+  collapsed,
+}: {
+  header?: React.ReactNode
+  collapsed?: boolean
+}) {
   const [expandedSections, setExpandedSections] = useState<string[]>([])
-  const { currentFrame, sections, selectedSectionId } = useContext(
-    EventContext
-  ) as EventContextType
+  const { currentFrame, sections, selectedSectionId } = useEventContext()
 
   useEffect(() => {
     if (selectedSectionId) {
@@ -57,10 +60,11 @@ export function AgendaPanel() {
 
   return (
     <AgendaPanelContextProvider>
-      <div className="w-full h-full max-h-full">
-        <Header />
-        <SectionList />
-        <BottomControls />
+      <div className={cn('flex flex-col w-full h-full p-2')}>
+        {!collapsed && header}
+        <RenderIf isTrue={!collapsed}>
+          <SectionList />
+        </RenderIf>
       </div>
     </AgendaPanelContextProvider>
   )

@@ -43,13 +43,20 @@ export function GridView({
 
       return
     }
-    router.navigate({ to: `/events/${event.id}`, search: { action: 'view' } })
+    router.navigate({
+      to: `/events/${event.id}`,
+      search: (prev) => ({
+        ...prev,
+        action: 'view',
+      }),
+    })
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 gap-4 min-[1920px]:grid-cols-5">
       {eventRows.map((event) => (
         <Card
+          key={event.id}
           className="cursor-pointer hover:shadow-xl border border-gray-200"
           shadow="none"
           isPressable

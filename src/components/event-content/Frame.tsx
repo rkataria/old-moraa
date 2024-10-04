@@ -91,7 +91,7 @@ export function Frame({ frame }: FrameProps) {
       key={frame.id}
       data-frame-id={frame.id}
       className={cn(
-        'group w-full h-full p-4',
+        'group w-full h-full p-2',
         'relative flex flex-col gap-2 rounded-md overflow-auto transition-all'
       )}>
       <FrameTitleDescriptionPanel key={frame.id} />

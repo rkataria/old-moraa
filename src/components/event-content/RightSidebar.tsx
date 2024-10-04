@@ -45,7 +45,14 @@ export function RightSidebar() {
         return <FrameAppearance />
 
       case 'frame-notes':
-        return <NoteOverlay editable={permissions.canUpdateNotes} />
+        return (
+          <NoteOverlay
+            editable={permissions.canUpdateNotes}
+            onClose={() => {
+              setRightSidebarVisiblity(null)
+            }}
+          />
+        )
       default:
         break
     }

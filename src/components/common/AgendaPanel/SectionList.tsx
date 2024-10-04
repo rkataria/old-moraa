@@ -4,23 +4,14 @@ import { useContext, useEffect, useRef, useState } from 'react'
 
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 
-import {
-  BOTTOM_CONTROLS_HEIGHT,
-  BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED,
-} from './BottomControls'
-import { HEADER_HEIGHT, HEADER_HEIGHT_WHEN_MINIMIZED } from './Header'
 import { SectionItem } from './SectionItem'
 import { StrictModeDroppable } from '../StrictModeDroppable'
-import { HEADER_HEIGHT as MAIN_HEADER_HEIGHT } from '../StudioLayout/Header'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { cn, scrollParentToChild } from '@/utils/utils'
-
-const SECTION_LIST_CONTAINER_MAX_HEIGHT = `calc(100vh -  ${MAIN_HEADER_HEIGHT}px - ${HEADER_HEIGHT}px - ${BOTTOM_CONTROLS_HEIGHT}px)`
-const SECTION_LIST_CONTAINER_MAX_HEIGHT_WHEN_MANIMIZED = `calc(100vh -  ${MAIN_HEADER_HEIGHT}px - ${HEADER_HEIGHT_WHEN_MINIMIZED}px - ${BOTTOM_CONTROLS_HEIGHT_WHEN_MINIMIZED}px)`
 
 export function SectionList() {
   const {
@@ -56,10 +47,6 @@ export function SectionList() {
 
   const actionDisabled =
     eventMode !== 'edit' || !permissions.canUpdateSection || preview
-
-  const maxHeight = expanded
-    ? SECTION_LIST_CONTAINER_MAX_HEIGHT
-    : SECTION_LIST_CONTAINER_MAX_HEIGHT_WHEN_MANIMIZED
 
   const [sectionList, updateSectionList] = useState(sections)
 
@@ -103,14 +90,11 @@ export function SectionList() {
     <div
       ref={sectionListRef}
       className={cn(
-        'flex flex-col gap-3 overflow-y-auto scrollbar-none scrollbar-thumb-gray-300 scrollbar-track-gray-100 scroll-smooth h-full w-full py-2',
+        'flex flex-col gap-3 overflow-y-auto scrollbar-none scroll-smooth h-full w-full py-2',
         {
           'gap-2 py-2': !expanded,
         }
-      )}
-      style={{
-        maxHeight,
-      }}>
+      )}>
       <DragDropContext
         onDragEnd={(result, provided) => {
           if (!permissions.canUpdateSection) return

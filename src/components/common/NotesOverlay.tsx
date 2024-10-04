@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 
 import { Button } from '@nextui-org/react'
 import { RxCross1 } from 'react-icons/rx'
@@ -8,7 +8,6 @@ import { RxCross1 } from 'react-icons/rx'
 import { Note } from './Note'
 
 import { EventContext } from '@/contexts/EventContext'
-import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
@@ -29,19 +28,16 @@ function NoteOverlaySidebarWrapper({ contentClass, children, onClose }: any) {
   )
 }
 
-export function NoteOverlay({ editable = true }: { editable?: boolean }) {
-  const { setRightSidebarVisiblity } = useStudioLayout()
-
+export function NoteOverlay({
+  editable = true,
+  onClose,
+}: {
+  editable?: boolean
+  onClose: () => void
+}) {
   const { currentFrame, eventMode, preview } = useContext(
     EventContext
   ) as EventContextType
-
-  useEffect(() => {
-    if (!currentFrame?.id) {
-      setRightSidebarVisiblity(null)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame?.id])
 
   const isEditable = editable && eventMode === 'edit' && !preview
 
@@ -50,7 +46,7 @@ export function NoteOverlay({ editable = true }: { editable?: boolean }) {
   return (
     <NoteOverlaySidebarWrapper
       contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)] p-4"
-      onClose={() => setRightSidebarVisiblity(null)}>
+      onClose={onClose}>
       <Note
         frameId={currentFrame.id}
         note={currentFrame.notes}

@@ -480,7 +480,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       if (permissions.canUpdateFrame && eventMode === 'edit') {
         dispatch(setIsPreviewOpenAction(false))
         router.navigate({
-          search: { action: 'edit' },
+          search: (prev) => ({
+            ...prev,
+            action: 'edit',
+            tab: 'content-studio',
+            frameId: currentFrame?.id,
+          }),
         })
       }
     },
@@ -494,7 +499,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       if (!permissions.canUpdateFrame) return
       dispatch(setIsPreviewOpenAction(true))
       router.navigate({
-        search: { action: 'view' },
+        search: (prev) => ({
+          ...prev,
+          action: 'view',
+        }),
       })
     },
     [permissions.canUpdateFrame]

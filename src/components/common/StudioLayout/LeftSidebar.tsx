@@ -5,6 +5,7 @@ import { cn } from '@/utils/utils'
 
 export const LEFT_SIDEBAR_WIDTH = 224
 export const LEFT_SIDEBAR_MIN_WIDTH = 84
+const PADDING = 8
 
 export function LeftSidebar({ children }: { children: React.ReactNode }) {
   const { leftSidebarVisiblity } = useStudioLayout()
@@ -18,12 +19,11 @@ export function LeftSidebar({ children }: { children: React.ReactNode }) {
     <div
       id="left-sidebar"
       className={cn(
-        'flex-none h-full bg-transparent text-black dark:text-white',
-        'overflow-hidden' // No overflow for left sidebar, it should be hidden when it's too long and children will handle overflow
+        'flex-none w-64 h-full bg-white border-1 border-gray-200 ml-2 mb-2 rounded-md overflow-hidden'
       )}
       style={{
         width: leftSidebarWidth,
-        maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+        maxHeight: `calc(100vh - ${HEADER_HEIGHT + PADDING}px)`,
       }}>
       {children}
     </div>

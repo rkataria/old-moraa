@@ -24,8 +24,9 @@ export function ParticipantsToggle({
       buttonProps={{
         isIconOnly: true,
         size: 'sm',
-        className: cn('bg-gray-100 hover:bg-gray-200', {
-          'bg-primary-100': isParticipantsSidebarOpen,
+        className: cn('bg-transparent hover:bg-black/10', {
+          'bg-primary text-white hover:bg-primary/80':
+            isParticipantsSidebarOpen,
         }),
       }}
       tooltipProps={{

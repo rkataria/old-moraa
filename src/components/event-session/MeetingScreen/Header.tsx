@@ -1,56 +1,39 @@
-import { DyteClock } from '@dytesdk/react-ui-kit'
-import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from '@tanstack/react-router'
 
 import { LeaveMeetingToggle } from '../LeaveMeetingToggle'
 import { MediaSettingsToggle } from '../MediaSettingsToggle'
 
 import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
-import { ControlButton } from '@/components/common/ControlButton'
 import { HelpButton } from '@/components/common/HelpButton'
 import { Logo } from '@/components/common/Logo'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
+import { cn } from '@/utils/utils'
 
 export function Header() {
   const { eventId } = useParams({ strict: false })
   const { event } = useEvent({ id: eventId as string })
-  const { meeting } = useDyteMeeting()
-  const { setDyteStates } = useEventSession()
+  const { dyteStates, setDyteStates, isHost } = useEventSession()
 
   if (!event) return null
 
   return (
-    <div className="h-full w-full flex justify-between items-center px-2">
-      <div className="flex justify-end items-center gap-6">
-        <Logo className="text-white" />
-        <span className="max-w-[10.9375rem] overflow-hidden !whitespace-nowrap text-ellipsis font-semibold text-white">
-          {event.name}
-        </span>
-        <ControlButton
-          buttonProps={{
-            variant: 'light',
-            size: 'sm',
-            className: 'bg-gray-200 px-2',
-          }}
-          tooltipProps={{
-            label: 'Meeting time',
-          }}
-          onClick={() => {}}>
-          <DyteClock meeting={meeting} className="m-0" />
-        </ControlButton>
+    <div className="h-full w-full flex justify-between items-center p-2">
+      <div className="flex justify-end items-center gap-2 h-full bg-white p-2 rounded-md shadow-2xl">
+        <div className="pl-2 pr-4 border-r-2 border-gray-200">
+          <Logo />
+        </div>
+        <div className="pr-4 pl-2 border-r-0 border-gray-200">{event.name}</div>
       </div>
-      <div className="flex justify-end items-center gap-3">
-        <HelpButton
-          buttonProps={{
-            variant: 'light',
-            className: 'bg-black/10 text-white hover:bg-black/20',
-          }}
-        />
+      <div className="flex justify-end items-center gap-2 h-full bg-white p-2 rounded-md shadow-2xl">
+        <HelpButton />
         <MediaSettingsToggle
           buttonProps={{
             variant: 'light',
-            className: 'bg-black/10 text-white hover:bg-black/20',
+            className: cn('bg-transparent hover:bg-black/10', {
+              'bg-primary text-white hover:bg-primary/80':
+                dyteStates.activeSettings,
+            }),
           }}
           onClick={() =>
             setDyteStates((prevDyteStates) => ({
@@ -59,13 +42,15 @@ export function Header() {
             }))
           }
         />
-        <AddParticipantsButtonWithModal
-          eventId={eventId!}
-          triggerButtonProps={{
-            variant: 'light',
-            className: 'bg-black/10 text-white hover:bg-black/20',
-          }}
-        />
+        {isHost && (
+          <AddParticipantsButtonWithModal
+            eventId={eventId!}
+            triggerButtonProps={{
+              variant: 'light',
+              className: 'bg-transparent hover:bg-black/10',
+            }}
+          />
+        )}
         <LeaveMeetingToggle />
         {/* <UserMenu /> */}
       </div>

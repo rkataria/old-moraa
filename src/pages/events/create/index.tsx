@@ -125,7 +125,13 @@ export function EventsCreatePage() {
       onSuccess: async ({ data }) => {
         if (data) {
           toast.success('Event has been created!')
-          router.navigate({ to: `/events/${data.id}` })
+          router.navigate({
+            to: `/events/${data.id}`,
+            search: (prev) => ({
+              ...prev,
+              action: 'view',
+            }),
+          })
           setShowPageLoader(true)
         }
       },

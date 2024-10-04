@@ -169,7 +169,7 @@ export function SessionPlanner({
     <div
       ref={plannerRef}
       className={cn(
-        'flex flex-col flex-1 bg-white pb-8 pl-4 -ml-4',
+        'flex flex-col flex-1 w-full max-w-screen-2xl px-10',
         className
       )}>
       {header}

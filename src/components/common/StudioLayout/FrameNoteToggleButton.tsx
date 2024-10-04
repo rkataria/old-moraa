@@ -2,18 +2,23 @@ import { useContext } from 'react'
 
 import toast from 'react-hot-toast'
 import { LuClipboardEdit } from 'react-icons/lu'
+import { useDispatch } from 'react-redux'
 
 import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { setContentStudioRightSidebarAction } from '@/stores/slices/layout/studio.slice'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function FrameNoteToggleButton() {
-  const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
+  const dispatch = useDispatch()
+  const { contentStudioRightSidebar } = useStoreSelector(
+    (state) => state.layout.studio
+  )
   const { overviewOpen, currentSectionId } = useContext(
     EventContext
   ) as EventContextType
@@ -26,8 +31,10 @@ export function FrameNoteToggleButton() {
       return
     }
 
-    setRightSidebarVisiblity(
-      rightSidebarVisiblity === 'frame-notes' ? null : 'frame-notes'
+    dispatch(
+      setContentStudioRightSidebarAction(
+        contentStudioRightSidebar === 'frame-notes' ? null : 'frame-notes'
+      )
     )
   }
 
@@ -35,13 +42,15 @@ export function FrameNoteToggleButton() {
     return null
   }
 
+  const isVisible = contentStudioRightSidebar === 'frame-notes'
+
   return (
-    <Tooltip label="Notes" actionKey="N" placement="left">
+    <Tooltip label="Notes" actionKey="N" placement="top">
       <Button
         size="sm"
         isIconOnly
         className={cn({
-          'bg-primary-100': rightSidebarVisiblity === 'frame-notes',
+          'bg-primary-100': isVisible,
         })}
         onClick={toggleSidebar}>
         <LuClipboardEdit size={20} strokeWidth={1.7} />

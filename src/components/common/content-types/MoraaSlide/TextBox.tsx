@@ -62,7 +62,13 @@ export const TYPOGRAPHY_LIST: TYPOGRAPHY[] = [
   },
 ]
 
-export function TextBox() {
+export function TextBox({
+  hideLabel = false,
+  small = false,
+}: {
+  hideLabel?: boolean
+  small?: boolean
+}) {
   const [open, setOpen] = useState(false)
   const { canvas } = useMoraaSlideEditorContext()
 
@@ -90,19 +96,19 @@ export function TextBox() {
   }
 
   return (
-    <Tooltip content="Text" placement="bottom">
+    <Tooltip content="Text" placement="top">
       <div>
         <Dropdown showArrow offset={10} onOpenChange={setOpen}>
           <DropdownTrigger>
             <Button
               variant="light"
-              size="lg"
+              size={small ? 'sm' : 'lg'}
               isIconOnly
               className={cn('flex flex-col justify-center items-center gap-1', {
                 'bg-black text-white hover:bg-black hover:text-white': open,
               })}>
               <RxText size={18} />
-              <span className="text-xs mt-1">Text</span>
+              {!hideLabel && <span className="text-xs mt-1">Text</span>}
             </Button>
           </DropdownTrigger>
           <DropdownMenu>

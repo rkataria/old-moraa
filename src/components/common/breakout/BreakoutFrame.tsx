@@ -12,8 +12,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
+import { BreakoutFrameThumbnailCard } from './BreakoutFrameThumbnainCard'
 import { DeleteBreakoutRoomModal } from './DeleteBreakoutRoomModal'
-import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { ContentType, ContentTypePicker } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
@@ -339,7 +339,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
                     getFrameById(frame?.content?.groupActivityId || '')
                   )
                 }}>
-                <FrameThumbnailCard
+                <BreakoutFrameThumbnailCard
                   frame={getFrameById(frame?.content?.groupActivityId || '')}
                   containerWidth={containerWidth}
                   inViewPort

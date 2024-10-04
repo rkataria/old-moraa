@@ -45,7 +45,7 @@ export function Content() {
 
   return (
     <div
-      className="relative flex justify-start items-start flex-1 w-full h-full max-h-[calc(100vh_-_64px)] overflow-hidden overflow-y-auto"
+      className="relative flex justify-start items-start flex-1 w-full h-[calc(100vh_-_120px)] overflow-hidden overflow-y-auto"
       ref={mainContentRef}>
       {/* Sportlight View */}
       {spotlightMode && !isBreakoutOverviewOpen ? (
@@ -61,7 +61,7 @@ export function Content() {
                 <BreakoutRoomsWithParticipants hideActivityCards />
               </div>
             ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
-              <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2">
+              <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2 border-1 border-gray-200">
                 <ContentContainer />
               </div>
             ) : null}

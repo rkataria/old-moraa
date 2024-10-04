@@ -1,17 +1,12 @@
 /* eslint-disable react/button-has-type */
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { useParams } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { FaTableCellsRowLock } from 'react-icons/fa6'
 import { v4 as uuidv4 } from 'uuid'
 
-import { FrameContainer } from './FrameContainer'
 import { Header } from './Header'
-import { ResizableRightSidebar } from './ResizableRightSidebar'
-import { RightSidebar } from './RightSidebar'
-import { RightSidebarControls } from './RightSidebarControls'
-import { AgendaPanel } from '../common/AgendaPanel'
 import {
   BREAKOUT_TYPES,
   BreakoutTypePicker,
@@ -26,17 +21,16 @@ import {
   ContentTypePicker,
   ContentType,
 } from '@/components/common/ContentTypePicker'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { EventStatus, FrameStatus } from '@/types/enums'
-import { EventContextType } from '@/types/event-context.type'
+import { FrameStatus, EventStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
 
 export function FrameManager() {
   const { eventId } = useParams({ strict: false })
-
+  const { permissions } = useEventPermissions()
   const {
     event,
     isLoading: eventLoading,
@@ -63,11 +57,7 @@ export function FrameManager() {
     insertAfterFrameId,
     insertInSectionId,
     addFrameToSection,
-    eventMode,
-    overviewOpen,
-  } = useContext(EventContext) as EventContextType
-
-  const { permissions } = useEventPermissions()
+  } = useEventContext()
 
   useHotkeys('f', () => !preview && setOpenContentTypePicker(true), [preview])
   const handleAddNewFrame = (
@@ -159,24 +149,11 @@ export function FrameManager() {
     )
   }
 
-  const leftSidebarContent = () => {
-    if (permissions.canUpdateFrame && overviewOpen && eventMode === 'edit') {
-      return null
-    }
-
-    return <AgendaPanel />
-  }
-
   return (
     <>
       <StudioLayout
         header={<Header event={event} refetchEvent={refetchEvent} />}
-        leftSidebar={leftSidebarContent()}
-        resizableRightSidebar={<ResizableRightSidebar />}
-        rightSidebar={<RightSidebar />}
-        rightSidebarControls={!overviewOpen ? <RightSidebarControls /> : null}>
-        <FrameContainer />
-      </StudioLayout>
+      />
       <ContentTypePicker
         open={openContentTypePicker}
         onClose={() => setOpenContentTypePicker(false)}

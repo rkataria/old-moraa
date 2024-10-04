@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 // eslint-disable-next-line import/no-cycle
 import { ContentLoading } from '../ContentLoading'
+// TODO: Fix import cycle
+// eslint-disable-next-line import/no-cycle
 import { FramePreview } from '../FramePreview'
 
-import { useStoreSelector } from '@/hooks/useRedux'
 import { IFrame } from '@/types/frame.type'
 
-type FrameThumbnailCardProps = {
+type BreakoutFrameThumbnailCardProps = {
   frame: IFrame
   containerWidth: number
   inViewPort?: boolean
@@ -16,19 +17,16 @@ type FrameThumbnailCardProps = {
 const DEFAULT_WIDTH = 960
 const DEFAULT_HEIGHT = 540
 
-export function FrameThumbnailCard({
+export function BreakoutFrameThumbnailCard({
   frame,
   containerWidth,
   inViewPort,
-}: FrameThumbnailCardProps) {
+}: BreakoutFrameThumbnailCardProps) {
   const [renderCard, setRenderCard] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const { contentStudioLeftSidebarVisible } = useStoreSelector(
-    (store) => store.layout.studio
-  )
 
   useEffect(() => {
-    if (!inViewPort || !contentStudioLeftSidebarVisible) {
+    if (!inViewPort) {
       setRenderCard(false)
       clearTimeout(timerRef.current as NodeJS.Timeout)
 
@@ -38,7 +36,7 @@ export function FrameThumbnailCard({
     timerRef.current = setTimeout(() => {
       setRenderCard(true)
     }, 1000)
-  }, [inViewPort, contentStudioLeftSidebarVisible])
+  }, [inViewPort])
 
   const memoizedFramePreview = useMemo(
     () =>

@@ -166,7 +166,13 @@ export function ListView({
 
       return
     }
-    router.navigate({ to: `/events/${event.id}`, search: { action: 'view' } })
+    router.navigate({
+      to: `/events/${event.id}`,
+      search: (prev) => ({
+        ...prev,
+        action: 'view',
+      }),
+    })
   }
 
   return (

@@ -61,7 +61,7 @@ export function FramePreview({
   return (
     <div
       className={cn(
-        'relative group w-full h-full bg-white flex flex-col gap-2 p-4',
+        'relative group w-full h-full bg-white flex flex-col gap-2 p-2',
         {
           'overflow-y-scroll scrollbar-none':
             frame.type === ContentType.RICH_TEXT,

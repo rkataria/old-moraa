@@ -84,16 +84,28 @@ export function EventActions({
     }
 
     if (key === 'edit') {
-      router.navigate({ to: `/events/${event.id}` })
+      router.navigate({
+        to: `/events/${event.id}`,
+        search: (prev) => ({
+          ...prev,
+          action: 'edit',
+        }),
+      })
     }
 
     if (key === 'view') {
       const isInactive = !isOwner && event.status !== EventStatus.ACTIVE
       const targetRoute = isInactive
         ? `/enroll/${event.id}`
-        : `/events/${event.id}?action=view`
+        : `/events/${event.id}`
 
-      router.navigate({ to: targetRoute })
+      router.navigate({
+        to: targetRoute,
+        search: (prev) => ({
+          ...prev,
+          action: isInactive ? undefined : 'view',
+        }),
+      })
     }
   }
 

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 
 import { AgendaPanel } from '@/components/common/AgendaPanel'
+import { LiveAgendaHeader } from '@/components/common/AgendaPanel/LiveAgendaHeader'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
 
@@ -15,9 +16,12 @@ export function LeftSidebar() {
       }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
       className={cn(
-        'relative w-64 h-full bg-white ml-2 p-2 border-1 border-gray-200 rounded-md overflow-hidden'
+        'relative w-64 h-full bg-white ml-2 rounded-md overflow-hidden'
       )}>
-      <AgendaPanel />
+      <AgendaPanel
+        header={<LiveAgendaHeader />}
+        collapsed={leftSidebarMode === 'collapsed'}
+      />
     </motion.div>
   )
 }

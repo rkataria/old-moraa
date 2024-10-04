@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import { Chip } from '@nextui-org/react'
 import { useNavigate } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -7,7 +5,6 @@ import { IoIosArrowBack } from 'react-icons/io'
 
 import { PublishButton } from './PublishButton'
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
-import { Toolbars } from '../common/content-types/MoraaSlide/Toolbars'
 import { HelpButton } from '../common/HelpButton'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
 import { RenderIf } from '../common/RenderIf/RenderIf'
@@ -17,12 +14,9 @@ import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleBut
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 import { Button } from '../ui/Button'
 
-import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { EventStatus } from '@/types/enums'
-import { type EventContextType } from '@/types/event-context.type'
-import { ContentType } from '@/utils/content.util'
 import { getStatusColor } from '@/utils/event.util'
 
 export function Header({
@@ -35,9 +29,7 @@ export function Header({
   refetchEvent: any
 }) {
   const navigate = useNavigate()
-  const { isOwner, preview, currentFrame } = useContext(
-    EventContext
-  ) as EventContextType
+
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
 
   const { permissions } = useEventPermissions()
@@ -53,9 +45,7 @@ export function Header({
   const renderActionButtons = () => (
     <>
       <AIChatbotToggleButton />
-
       <HelpButton />
-
       <AddParticipantsButtonWithModal eventId={event.id} />
       <RenderIf
         isTrue={
@@ -84,11 +74,9 @@ export function Header({
 
   if (!event) return null
 
-  const editable = isOwner && !preview
-
   return (
-    <div className="h-full px-3 py-1">
-      <div className="flex items-center justify-between w-full h-12">
+    <div className="h-full p-2">
+      <div className="flex items-center justify-between w-full">
         <div className="flex items-center justify-start gap-2">
           <Tooltip label="Back to dashboard">
             <Button
@@ -112,9 +100,7 @@ export function Header({
             </RenderIf>
           </div>
         </div>
-        {editable && currentFrame?.type === ContentType.MORAA_SLIDE && (
-          <Toolbars />
-        )}
+
         <div className="flex items-center justify-start h-full gap-2">
           {renderActionButtons()}
         </div>

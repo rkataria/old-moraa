@@ -18,7 +18,9 @@ import { LeftSidebar } from './LeftSidebar'
 import { RightSidebar } from './RightSidebar'
 import { FlyingEmojisOverlay } from '../FlyingEmojisOverlay'
 import { IdleModeConfirmation } from '../IdleModeConfirmation'
+import { PresentationToggle } from '../PresentationToggle'
 
+import { AgendaPanelToggle } from '@/components/common/AgendaPanel/AgendaPanelToggle'
 import { CreateUnplannedBreakoutModal } from '@/components/common/breakout/CreateBreakoutModal'
 import { LiveLayout } from '@/components/common/LiveLayout'
 import { EventContext } from '@/contexts/EventContext'
@@ -28,6 +30,7 @@ import {
   setIsCreateBreakoutOpenAction,
   updateEventSessionModeAction,
 } from '@/stores/slices/event/current-event/live-session.slice'
+import { toggleLeftSidebarAction } from '@/stores/slices/layout/live.slice'
 import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionMode,
@@ -61,6 +64,7 @@ export function MeetingScreen() {
   const screensharingParticipant = useDyteSelector((m) =>
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
   )
+  const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
 
   const isScreensharing = !!screensharingParticipant || selfScreenShared
 
@@ -87,7 +91,20 @@ export function MeetingScreen() {
         <RightSidebar dyteStates={dyteStates} setDyteStates={setDyteStates} />
       }
       footer={<Footer />}>
-      <Content />
+      <div className="flex flex-col gap-2 h-full">
+        {leftSidebarMode === 'collapsed' && (
+          <div className="h-12 bg-white p-2 rounded-md shadow-2xl w-fit flex items-center justify-between gap-2">
+            <AgendaPanelToggle
+              collapsed
+              onToggle={() => {
+                dispatch(toggleLeftSidebarAction())
+              }}
+            />
+            <PresentationToggle />
+          </div>
+        )}
+        <Content />
+      </div>
       {/* Emoji Overlay */}
       <FlyingEmojisOverlay />
 
