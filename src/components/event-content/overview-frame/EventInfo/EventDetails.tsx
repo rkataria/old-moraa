@@ -125,7 +125,7 @@ export function EventDetails() {
                     onClick={descriptionModalDisclosure.onOpen}>
                     <div className="flex items-center gap-2 text-gray-400">
                       <TbFileDescription size={20} />
-                      <p className="text-sm font-normal">Description</p>
+                      <p className="text-sm font-normal">Edit Description</p>
                     </div>
 
                     <RenderIf
@@ -203,7 +203,11 @@ export function EventDetails() {
                   Update
                 </Button>
               )}
-              <BlurbEditor className="-ml-8" />
+              <BlurbEditor
+                className={cn({
+                  '-ml-8': !preview,
+                })}
+              />
             </div>
             <div className="relative aspect-square">
               <Controller
