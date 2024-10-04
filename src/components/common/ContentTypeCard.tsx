@@ -1,4 +1,4 @@
-import { Card, CardBody } from '@nextui-org/react'
+import { Card, CardBody, Tooltip } from '@nextui-org/react'
 
 import { ContentType, IContentType } from '@/utils/content.util'
 
@@ -11,23 +11,29 @@ export function ContentTypeCard({ card, onClick }: IContentCard) {
   if (!card) return null
 
   return (
-    <Card
-      shadow="none"
-      key={card.contentType}
-      isPressable
-      onPress={() => {
-        if (!card.disabled) {
-          onClick(card.contentType, card.templateKey)
-        }
-      }}
-      className="aspect-video border-2 border-transparent bg-gray-100 hover:border-primary hover:shadow-md">
-      <CardBody className="flex flex-col justify-center items-center gap-1">
-        <div className="text-primary-100">{card.iconLarge}</div>
-        <h3 className="font-semibold text-center text-lg text-primary-400">
-          {card.name}
-        </h3>
-        <p className="text-sm text-center text-gray-500">{card.description}</p>
-      </CardBody>
-    </Card>
+    <Tooltip
+      content={card.description}
+      className="w-56 rounded-md bg-black text-white">
+      <Card
+        shadow="none"
+        key={card.contentType}
+        isPressable
+        onPress={() => {
+          if (!card.disabled) {
+            onClick(card.contentType, card.templateKey)
+          }
+        }}
+        className="group w-48 aspect-video border-2 border-transparent bg-gray-50 hover:border-primary-400 hover:shadow-md">
+        <CardBody className="flex flex-col justify-center items-center gap-1">
+          <div className="text-gray-300 group-hover:text-primary-400">
+            {card.iconLarge}
+          </div>
+          <h3 className="font-semibold text-center text- text-gray-500 group-hover:text-primary-400">
+            {card.name}
+          </h3>
+          {/* <p className="text-sm text-center text-gray-500">{card.description}</p> */}
+        </CardBody>
+      </Card>
+    </Tooltip>
   )
 }
