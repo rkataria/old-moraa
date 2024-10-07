@@ -38,7 +38,7 @@ export function StudioLayout({ header }: StudioLayoutProps) {
     if (activeTab === 'session-planner') {
       return (
         <div className="w-full h-full bg-white">
-          <div className="mx-auto h-full max-w-screen-xl py-10 overflow-y-auto scrollbar-thin">
+          <div className="mx-auto h-full max-w-screen-2xl py-10 overflow-y-auto scrollbar-thin">
             <SessionPlanner />
           </div>
         </div>

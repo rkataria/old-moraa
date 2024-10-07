@@ -71,13 +71,13 @@ export function OverviewFrame() {
   )
 
   if (!permissions.canUpdateFrame) {
-    return <FrameDetailsView className="pl-8" />
+    return <FrameDetailsView />
   }
 
   const renderContent = () => {
     if (selectedTab === 'event-info') {
       return preview ? (
-        <FrameDetailsView className="pl-[10%]" />
+        <FrameDetailsView />
       ) : (
         <ThemeEffects selectedTheme={event.theme}>
           <ContentWrapper

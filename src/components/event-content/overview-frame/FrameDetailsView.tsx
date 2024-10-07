@@ -17,11 +17,10 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { UserAvatar } from '@/components/common/UserAvatar'
 import { Dates } from '@/components/enroll/Date'
 import { Participantslist } from '@/components/enroll/ParticipantList'
-import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { useEvent } from '@/hooks/useEvent'
 import { cn } from '@/utils/utils'
 
-export function FrameDetailsView({ className }: { className?: string }) {
+export function FrameDetailsView() {
   const { eventId }: { eventId: string } = useParams({ strict: false })
   const [showEditor, setShowEditor] = useState(true)
 
@@ -36,103 +35,95 @@ export function FrameDetailsView({ className }: { className?: string }) {
   if (!event) return null
 
   return (
-    <ThemeEffects
-      selectedTheme={event.theme}
-      className={cn('h-full pt-4', className)}>
-      <div className="overflow-y-auto scrollbar-thin h-full relative z-[50] pb-40">
-        <div className="max-w-[76.25rem] py-4 pt-8">
-          <div className="grid grid-cols-[60%_30%] items-start gap-6">
-            <div className="h-full flex flex-col gap-5 w-fit">
-              <p className="text-5xl font-bold">{event.name}</p>
+    <div className="overflow-y-auto scrollbar-none h-full relative z-[50] pb-40">
+      <div className="pt-4">
+        <div className="grid grid-cols-[60%_37%] items-start gap-6">
+          <div className="h-full flex flex-col gap-5 w-fit">
+            <p className="text-[40px] font-semibold">{event.name}</p>
 
-              <p className="text-gray-600 border-b pb-3 text-md">
-                About the event
-              </p>
-              <RenderIf isTrue={!!event.description}>
-                <div
-                  className={cn('text-sm rounded-xl backdrop-blur-3xl', {
-                    'p-4 pb-1 bg-default/20': event?.theme?.theme === 'Emoji',
-                  })}>
-                  <p className={cn('line-clamp-[7] break-all', {})}>
-                    {event.description}
-                  </p>
-                  <RenderIf isTrue={event?.description?.length > 400}>
-                    <Button
-                      variant="faded"
-                      className="text-xs text-gray-400 cursor-pointer w-fit p-1 h-6 border-1 my-2"
-                      onClick={() => descriptionModalDisclosure.onOpen()}>
-                      Read More
-                    </Button>
-                  </RenderIf>
-                </div>
-              </RenderIf>
+            <p className="text-gray-600 border-b pb-3 text-md">
+              About the event
+            </p>
+            <RenderIf isTrue={!!event.description}>
+              <div
+                className={cn('text-sm rounded-xl backdrop-blur-3xl', {
+                  'p-4 bg-default/10': event?.theme?.theme === 'Emoji',
+                })}>
+                <p className={cn('line-clamp-[7] break-all', {})}>
+                  {event.description}
+                </p>
+                <RenderIf isTrue={event?.description?.length > 400}>
+                  <Button
+                    variant="faded"
+                    className="text-xs text-gray-400 cursor-pointer w-fit p-1 h-6 border-1 my-2"
+                    onClick={() => descriptionModalDisclosure.onOpen()}>
+                    Read More
+                  </Button>
+                </RenderIf>
+              </div>
+            </RenderIf>
 
-              <RenderIf isTrue={!!showEditor}>
-                <div
-                  className={cn('shadow-sm backdrop-blur-3xl rounded-xl', {
-                    'p-4 bg-default/20': event?.theme?.theme === 'Emoji',
-                  })}>
-                  <RichTextEditor
-                    editorId={eventId!}
-                    showHeader={false}
-                    editable={false}
-                    hideSideBar
-                    classNames={{ editorInPreview: 'overflow-y-visible' }}
-                    onEmptyContent={() => setShowEditor(false)}
-                  />
-                </div>
-              </RenderIf>
-            </div>
-            <div className="flex flex-col gap-6">
-              <Image
-                src={
-                  event?.image_url ||
-                  'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
-                }
-                classNames={{
-                  wrapper: 'w-full h-full',
-                  img: 'w-full object-cover rounded-3xl shadow-xl aspect-square',
-                }}
-              />
-              <Dates
-                startDate={event?.start_date}
-                endDate={event?.end_date}
-                timeZone={event?.timezone}
-                className="pl-1"
-              />
-              <div>
-                <p className="text-sm font-medium text-slate-500">Hosted by</p>
-                <Divider className="mt-2 mb-3" />
-                <UserAvatar
-                  profile={profile}
-                  withName
-                  nameClass="font-medium"
+            <RenderIf isTrue={!!showEditor}>
+              <div
+                className={cn('shadow-sm backdrop-blur-3xl rounded-xl', {
+                  'p-4 bg-default/10': event?.theme?.theme === 'Emoji',
+                })}>
+                <RichTextEditor
+                  editorId={eventId!}
+                  showHeader={false}
+                  editable={false}
+                  hideSideBar
+                  classNames={{ editorInPreview: 'overflow-y-visible' }}
+                  onEmptyContent={() => setShowEditor(false)}
                 />
               </div>
-
-              <Participantslist participants={participants} />
-            </div>
+            </RenderIf>
           </div>
+          <div className="flex flex-col gap-6">
+            <Image
+              src={
+                event?.image_url ||
+                'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
+              }
+              classNames={{
+                wrapper: 'w-full h-full',
+                img: 'w-full object-cover rounded-3xl shadow-xl aspect-square',
+              }}
+            />
+            <Dates
+              startDate={event?.start_date}
+              endDate={event?.end_date}
+              timeZone={event?.timezone}
+              className="pl-1"
+            />
+            <div>
+              <p className="text-sm font-medium text-slate-500">Hosted by</p>
+              <Divider className="mt-2 mb-3" />
+              <UserAvatar profile={profile} withName nameClass="font-medium" />
+            </div>
 
-          <Modal
-            size="xl"
-            isOpen={descriptionModalDisclosure?.isOpen}
-            onClose={descriptionModalDisclosure.onClose}>
-            <ModalContent>
-              {() => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1 bg-primary text-white p-6">
-                    <h2 className="font-md font-semibold">Description</h2>
-                  </ModalHeader>
-                  <ModalBody className="mt-4 mb-4">
-                    <p className="break-all">{event.description}</p>
-                  </ModalBody>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
+            <Participantslist participants={participants} />
+          </div>
         </div>
+
+        <Modal
+          size="xl"
+          isOpen={descriptionModalDisclosure?.isOpen}
+          onClose={descriptionModalDisclosure.onClose}>
+          <ModalContent>
+            {() => (
+              <>
+                <ModalHeader className="flex flex-col gap-1 bg-primary text-white p-6">
+                  <h2 className="font-md font-semibold">Description</h2>
+                </ModalHeader>
+                <ModalBody className="mt-4 mb-4">
+                  <p className="break-all">{event.description}</p>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
-    </ThemeEffects>
+    </div>
   )
 }

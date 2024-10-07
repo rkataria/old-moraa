@@ -135,7 +135,7 @@ export function PublishButton({
                 </Button>
               </ModalHeader>
               <ModalBody className="mt-4">
-                <FrameDetailsView className="overflow-y-scroll scrollbar-thin" />
+                <FrameDetailsView />
               </ModalBody>
             </>
           )}

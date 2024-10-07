@@ -129,7 +129,7 @@ export function EventsCreatePage() {
             to: `/events/${data.id}`,
             search: (prev) => ({
               ...prev,
-              action: 'view',
+              action: 'edit',
             }),
           })
           setShowPageLoader(true)

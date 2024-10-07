@@ -2,11 +2,13 @@ import { useEffect } from 'react'
 
 import { Tab, Tabs } from '@nextui-org/react'
 import { useRouter, useSearch } from '@tanstack/react-router'
+import { MdAdd, MdFormatListBulletedAdd } from 'react-icons/md'
 
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
 
@@ -20,12 +22,18 @@ export function SecondaryHeader() {
   }) as any
   const dispatch = useStoreDispatch()
 
+  const { permissions } = useEventPermissions()
+
+  const { preview } = useEventContext()
+
   const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
   const editing = useStoreSelector((state) => state.layout.studio.editing)
   const isAddSectionLoading = useStoreSelector(
     (state) =>
       state.event.currentEvent.sectionState.createSectionThunk.isLoading
   )
+
+  const editable = !preview && permissions.canUpdateFrame
 
   const isAddFrameLoading = useStoreSelector(
     (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
@@ -56,31 +64,34 @@ export function SecondaryHeader() {
   }
 
   const renderRightContent = () => {
+    if (!editable) return null
     if (activeTab === 'session-planner') {
       return (
         <RenderIf isTrue={!editing}>
           <div className="flex justify-center gap-2">
             <Button
               size="sm"
-              color="default"
-              variant="flat"
-              isLoading={isAddFrameLoading}
-              onClick={() => {
-                setAddedFromSessionPlanner(true)
-                setOpenContentTypePicker(true)
-              }}>
-              + Add Frame
-            </Button>
-            <Button
-              size="sm"
               variant="flat"
               isLoading={isAddSectionLoading}
+              startContent={<MdFormatListBulletedAdd size={22} />}
               onClick={() =>
                 insertInSectionId
                   ? addSection({ afterSectionId: insertInSectionId })
                   : addSection({ addToLast: true })
               }>
-              + Add Section
+              Add Section
+            </Button>
+            <Button
+              size="sm"
+              color="default"
+              variant="flat"
+              isLoading={isAddFrameLoading}
+              startContent={<MdAdd size={24} />}
+              onClick={() => {
+                setAddedFromSessionPlanner(true)
+                setOpenContentTypePicker(true)
+              }}>
+              Add Frame
             </Button>
           </div>
         </RenderIf>
@@ -94,7 +105,7 @@ export function SecondaryHeader() {
     <div className="flex-none h-12 w-full px-2 -mb-[2px] flex justify-between items-center">
       <Tabs
         variant="underlined"
-        aria-label="Stuido Tabs"
+        aria-label="Studio Tabs"
         color="primary"
         selectedKey={activeTab}
         classNames={{
@@ -106,7 +117,10 @@ export function SecondaryHeader() {
         }}
         onSelectionChange={handleTabChange}>
         <Tab key="landing-page" title="Course Page" />
-        <Tab key="session-planner" title="Session Planner" />
+        {permissions.canUpdateFrame && (
+          <Tab key="session-planner" title="Session Planner" />
+        )}
+
         <Tab key="content-studio" title="Content Studio" />
       </Tabs>
 

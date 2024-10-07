@@ -168,10 +168,7 @@ export function SessionPlanner({
   return (
     <div
       ref={plannerRef}
-      className={cn(
-        'flex flex-col flex-1 w-full max-w-screen-2xl px-10',
-        className
-      )}>
+      className={cn('flex flex-col flex-1 w-full px-10', className)}>
       {header}
       <div className="scrollbar-none">
         <DragDropContext
