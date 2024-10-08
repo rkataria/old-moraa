@@ -9,21 +9,27 @@ import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useFlags } from '@/flags/client'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { setContentStudioRightResizableSidebarAction } from '@/stores/slices/layout/studio.slice'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function ToggleButton() {
-  const { resizableRightSidebarVisiblity, setResizableRightSidebarVisiblity } =
-    useStudioLayout()
+  const dispatch = useStoreDispatch()
+
+  const resizableRightSidebarVisibility = useStoreSelector(
+    (state) => state.layout.studio.contentStudioRightResizableSidebar
+  )
 
   const toggleSidebar = () => {
-    setResizableRightSidebarVisiblity(
-      resizableRightSidebarVisiblity === 'ai-chat' ? null : 'ai-chat'
+    dispatch(
+      setContentStudioRightResizableSidebarAction(
+        resizableRightSidebarVisibility === 'ai-chat' ? null : 'ai-chat'
+      )
     )
   }
 
-  useHotkeys('a', toggleSidebar, [resizableRightSidebarVisiblity])
+  useHotkeys('a', toggleSidebar, [resizableRightSidebarVisibility])
 
   return (
     <Tooltip label="Assist" actionKey="A">
@@ -33,7 +39,7 @@ export function ToggleButton() {
         onClick={toggleSidebar}
         variant="light"
         className={cn('cursor-pointer', {
-          'text-primary': resizableRightSidebarVisiblity === 'ai-chat',
+          'text-primary': resizableRightSidebarVisibility === 'ai-chat',
         })}>
         <LuSparkles size={18} strokeWidth={1.7} />
       </Button>
@@ -48,6 +54,8 @@ export function AIChatbotToggleButton() {
 
   const { permissions } = useEventPermissions()
 
+  const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
+
   if (!flags?.show_ai_panel) return null
 
   if (!permissions.canUpdateFrame) {
@@ -55,6 +63,7 @@ export function AIChatbotToggleButton() {
   }
 
   if (preview) return null
+  if (activeTab !== 'content-studio') return null
 
   return <ToggleButton />
 }

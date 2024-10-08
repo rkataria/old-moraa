@@ -24,7 +24,6 @@ import { Note } from '@/components/common/Note'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
-import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch } from '@/hooks/useRedux'
 import {
   setCurrentFrameIdAction,
@@ -42,6 +41,7 @@ export function FrameItem({
   frameIndex,
   frameIdToBeFocus,
   selectedFrameIds,
+  editable = false,
   setSelectedFrameIds,
 }: {
   section: ISection
@@ -49,13 +49,13 @@ export function FrameItem({
   frameIndex: number
   frameIdToBeFocus: string
   selectedFrameIds: string[]
+  editable: boolean
   setSelectedFrameIds: Dispatch<SetStateAction<string[]>>
 }) {
   const router = useRouter()
   const {
     isOwner,
     preview,
-    eventMode,
     insertAfterFrameId,
     updateFrame,
     setAddedFromSessionPlanner,
@@ -63,10 +63,6 @@ export function FrameItem({
   } = useContext(EventContext) as EventContextType
 
   const dispatch = useStoreDispatch()
-  const { permissions } = useEventPermissions()
-
-  const editable =
-    permissions.canUpdateFrame && !preview && eventMode === 'edit'
 
   const onFrameTitleChange = (frameId: string, title: string) => {
     if (!editable) return

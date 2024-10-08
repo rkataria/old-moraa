@@ -65,6 +65,7 @@ export function Frame({ frame }: FrameProps) {
     ),
     [ContentType.RICH_TEXT]: (
       <RichTextEditor
+        hideSideBar
         editorId={frame.id}
         classNames={{
           wrapper: 'overflow-hidden',

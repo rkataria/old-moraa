@@ -96,7 +96,7 @@ export function EventDetails() {
     <div className="h-fit relative z-[50]">
       <form onSubmit={createEventForm.handleSubmit(onSubmit)}>
         <div className="pb-10">
-          <div className="grid grid-cols-[60%_37%] items-start gap-6">
+          <div className="grid grid-cols-[60%_34%] items-start gap-6">
             <div className="flex flex-col justify-between h-full gap-4">
               <div className="flex flex-col gap-4">
                 <Controller

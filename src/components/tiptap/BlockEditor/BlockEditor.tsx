@@ -128,7 +128,6 @@ export function BlockEditor({
             />
           </RenderIf>
         </div>
-
         <div
           className={cn('flex flex-col w-full', {
             'ml-4': leftSidebar.isOpen,
@@ -176,6 +175,7 @@ export function BlockEditor({
               words={characterCount.words()}
               isSidebarOpen={leftSidebar.isOpen}
               toggleSidebar={leftSidebar.toggle}
+              hideSidebar={hideSideBar}
             />
           </RenderIf>
 

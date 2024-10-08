@@ -83,7 +83,7 @@ export const useBlockEditor = ({
 
   const editor = useEditor(
     {
-      autofocus: true,
+      autofocus: false,
       // eslint-disable-next-line @typescript-eslint/no-shadow
       onCreate: ({ editor }) => {
         provider?.on('synced', () => {

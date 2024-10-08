@@ -232,7 +232,7 @@ export function Visit() {
                 }
                 classNames={{
                   wrapper: 'w-full h-full',
-                  img: 'w-full object-cover rounded-3xl shadow-xl aspect-square',
+                  img: 'w-full object-cover rounded-lg shadow-xl aspect-square',
                 }}
               />
               <RenderIf isTrue={visibleUserNote()}>

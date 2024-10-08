@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 
-import { Checkbox } from '@nextui-org/react'
+import { Button, Checkbox } from '@nextui-org/react'
+import { MdFormatListBulletedAdd, MdAdd } from 'react-icons/md'
 
 import { BottomBar } from './BottomBar'
 import { FrameItem } from './FrameItem'
@@ -8,6 +9,8 @@ import { FrameItem } from './FrameItem'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { useEventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { ISection } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
@@ -18,8 +21,30 @@ export function FramesList({
   section: ISection
   frameIdToBeFocus: string
 }) {
-  const { insertInSectionId } = useEventContext()
-  const { preview } = useEventContext()
+  const {
+    insertInSectionId,
+    addSection,
+    setOpenContentTypePicker,
+    setAddedFromSessionPlanner,
+    setInsertInSectionId,
+    setInsertAfterSectionId,
+  } = useEventContext()
+
+  const isAddFrameLoading = useStoreSelector(
+    (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
+  )
+
+  const isAddSectionLoading = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.sectionState.createSectionThunk.isLoading
+  )
+
+  const { preview, eventMode } = useEventContext()
+
+  const { permissions } = useEventPermissions()
+
+  const editable =
+    permissions.canUpdateFrame && !preview && eventMode === 'edit'
 
   const [selectedFrameIds, setSelectedFrameIds] = useState<string[]>([])
 
@@ -97,11 +122,52 @@ export function FramesList({
                             frameIndex={frameIndex}
                             frameIdToBeFocus={frameIdToBeFocus}
                             selectedFrameIds={selectedFrameIds}
+                            editable={editable}
                             setSelectedFrameIds={setSelectedFrameIds}
                           />
                         </Fragment>
                       </RenderIf>
                     ))}
+                    <RenderIf isTrue={editable}>
+                      <div className="flex items-center p-1 opacity-30">
+                        <div className="flex justify-center gap-2">
+                          <Button
+                            size="sm"
+                            color="default"
+                            variant="light"
+                            isLoading={
+                              isAddFrameLoading &&
+                              insertInSectionId === section.id
+                            }
+                            className="pl-1 gap-2"
+                            startContent={<MdAdd size={24} />}
+                            onClick={() => {
+                              setInsertInSectionId(section.id)
+                              setAddedFromSessionPlanner(true)
+                              setOpenContentTypePicker(true)
+                            }}>
+                            Add Frame
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="light"
+                            isLoading={
+                              isAddSectionLoading &&
+                              insertInSectionId === section.id
+                            }
+                            startContent={<MdFormatListBulletedAdd size={22} />}
+                            onClick={() => {
+                              setInsertInSectionId(section.id)
+                              setInsertAfterSectionId(section.id)
+                              addSection({
+                                afterSectionId: section.id,
+                              })
+                            }}>
+                            Add Section
+                          </Button>
+                        </div>
+                      </div>
+                    </RenderIf>
                   </div>
                   {frameProvided.placeholder}
                 </div>

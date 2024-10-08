@@ -37,7 +37,7 @@ export function FrameDetailsView() {
   return (
     <div className="overflow-y-auto scrollbar-none h-full relative z-[50] pb-40">
       <div className="pt-4">
-        <div className="grid grid-cols-[60%_37%] items-start gap-6">
+        <div className="grid grid-cols-[60%_34%] items-start gap-6">
           <div className="h-full flex flex-col gap-5 w-fit">
             <p className="text-[40px] font-semibold">{event.name}</p>
 
@@ -87,7 +87,7 @@ export function FrameDetailsView() {
               }
               classNames={{
                 wrapper: 'w-full h-full',
-                img: 'w-full object-cover rounded-3xl shadow-xl aspect-square',
+                img: 'w-full object-cover rounded-lg shadow-xl aspect-square',
               }}
             />
             <Dates

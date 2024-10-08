@@ -22,7 +22,8 @@ export function RichTextPreview({
       editorId={frame.id}
       editable={canEditRichText}
       startContent={visibleStartContent ? startContent : null}
-      hideSideBar={asThumbnail}
+      // hideSideBar={asThumbnail}
+      hideSideBar
     />
   )
 }

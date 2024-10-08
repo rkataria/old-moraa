@@ -2,11 +2,8 @@ import { useEffect } from 'react'
 
 import { Tab, Tabs } from '@nextui-org/react'
 import { useRouter, useSearch } from '@tanstack/react-router'
-import { MdAdd, MdFormatListBulletedAdd } from 'react-icons/md'
+import { useHotkeys } from 'react-hotkeys-hook'
 
-import { RenderIf } from '../RenderIf/RenderIf'
-
-import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -27,17 +24,8 @@ export function SecondaryHeader() {
   const { preview } = useEventContext()
 
   const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
-  const editing = useStoreSelector((state) => state.layout.studio.editing)
-  const isAddSectionLoading = useStoreSelector(
-    (state) =>
-      state.event.currentEvent.sectionState.createSectionThunk.isLoading
-  )
 
   const editable = !preview && permissions.canUpdateFrame
-
-  const isAddFrameLoading = useStoreSelector(
-    (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
-  )
 
   useEffect(() => {
     const queryParamActiveTab = searchParams?.tab
@@ -48,13 +36,6 @@ export function SecondaryHeader() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams?.tab, dispatch])
 
-  const {
-    addSection,
-    setOpenContentTypePicker,
-    setAddedFromSessionPlanner,
-    insertInSectionId,
-  } = useEventContext()
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleTabChange = (key: any) => {
     dispatch(setActiveTabAction(key))
@@ -63,40 +44,50 @@ export function SecondaryHeader() {
     })
   }
 
+  const secondKey = permissions.canUpdateFrame
+    ? 'session-planner'
+    : 'content-studio'
+
+  useHotkeys('1', () => handleTabChange('landing-page'))
+  useHotkeys('2', () => handleTabChange(secondKey))
+  useHotkeys('3', () =>
+    permissions.canUpdateFrame ? handleTabChange('content-studio') : {}
+  )
+
   const renderRightContent = () => {
     if (!editable) return null
-    if (activeTab === 'session-planner') {
-      return (
-        <RenderIf isTrue={!editing}>
-          <div className="flex justify-center gap-2">
-            <Button
-              size="sm"
-              variant="flat"
-              isLoading={isAddSectionLoading}
-              startContent={<MdFormatListBulletedAdd size={22} />}
-              onClick={() =>
-                insertInSectionId
-                  ? addSection({ afterSectionId: insertInSectionId })
-                  : addSection({ addToLast: true })
-              }>
-              Add Section
-            </Button>
-            <Button
-              size="sm"
-              color="default"
-              variant="flat"
-              isLoading={isAddFrameLoading}
-              startContent={<MdAdd size={24} />}
-              onClick={() => {
-                setAddedFromSessionPlanner(true)
-                setOpenContentTypePicker(true)
-              }}>
-              Add Frame
-            </Button>
-          </div>
-        </RenderIf>
-      )
-    }
+    // if (activeTab === 'session-planner') {
+    //   return (
+    //     <RenderIf isTrue={!editing}>
+    //       <div className="flex justify-center gap-2">
+    //         <Button
+    //           size="sm"
+    //           variant="flat"
+    //           isLoading={isAddSectionLoading}
+    //           startContent={<MdFormatListBulletedAdd size={22} />}
+    //           onClick={() =>
+    //             insertInSectionId
+    //               ? addSection({ afterSectionId: insertInSectionId })
+    //               : addSection({ addToLast: true })
+    //           }>
+    //           Add Section
+    //         </Button>
+    //         <Button
+    //           size="sm"
+    //           color="default"
+    //           variant="flat"
+    //           isLoading={isAddFrameLoading}
+    //           startContent={<MdAdd size={24} />}
+    //           onClick={() => {
+    //             setAddedFromSessionPlanner(true)
+    //             setOpenContentTypePicker(true)
+    //           }}>
+    //           Add Frame
+    //         </Button>
+    //       </div>
+    //     </RenderIf>
+    //   )
+    // }
 
     return null
   }

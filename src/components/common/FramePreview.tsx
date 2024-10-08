@@ -12,10 +12,7 @@ import { PDFViewer, PDFViewerFrameType } from './content-types/PDFViewer'
 import { PollPreview } from './content-types/Poll/Preview'
 import { RichTextPreview } from './content-types/RichText/Preview'
 import { TextImageFrameType } from './content-types/TextImage'
-import {
-  FrameTitleDescription,
-  FrameTitleDescriptionPreview,
-} from './FrameTitleDescriptionPreview'
+import { FrameTitleDescriptionPreview } from './FrameTitleDescriptionPreview'
 import {
   MiroEmbedEditor,
   MiroEmbedFrameType,
@@ -141,7 +138,7 @@ export function FramePreview({
             key={frame.config.allowToCollaborate}
             frame={frame}
             asThumbnail={asThumbnail}
-            startContent={<FrameTitleDescription frame={frame as any} />}
+            // startContent={<FrameTitleDescription frame={frame as any} />}
           />
         )}
         {frame.type === ContentType.MORAA_BOARD && (

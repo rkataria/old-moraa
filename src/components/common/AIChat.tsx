@@ -346,7 +346,7 @@ function AiChatSidebarWrapper({
   const dispatch = useDispatch()
 
   return (
-    <div className={cn('w-full h-full')}>
+    <div className={cn('w-full h-full bg-white')}>
       <div className="flex items-center justify-between w-full p-4">
         <h3 className="text-lg font-semibold text-center tracking-tight">
           Moraa Assist

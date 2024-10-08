@@ -12,6 +12,7 @@ export interface StudioLayoutState {
   activeTab: StudioTabType
   contentStudioLeftSidebarVisible: boolean
   contentStudioRightSidebar: 'frame-appearance' | 'frame-notes' | null
+  contentStudioRightResizableSidebar: 'ai-chat' | null
 }
 
 const initialState: StudioLayoutState = {
@@ -19,6 +20,7 @@ const initialState: StudioLayoutState = {
   activeTab: 'landing-page',
   contentStudioLeftSidebarVisible: true,
   contentStudioRightSidebar: null,
+  contentStudioRightResizableSidebar: null,
 }
 
 export const layoutStudioSlice = createSlice({
@@ -38,6 +40,9 @@ export const layoutStudioSlice = createSlice({
     setEditing(state, action) {
       state.editing = action.payload
     },
+    setContentStudioRightResizableSidebar(state, action) {
+      state.contentStudioRightResizableSidebar = action.payload
+    },
     resetStudioLayoutState(state) {
       state.activeTab = 'landing-page'
       state.contentStudioLeftSidebarVisible = true
@@ -52,5 +57,6 @@ export const {
   toggleContentStudioLeftSidebarVisibleAction,
   setContentStudioRightSidebarAction,
   setEditingAction,
+  setContentStudioRightResizableSidebarAction,
   resetStudioLayoutStateAction,
 } = renameSliceActions(layoutStudioSlice.actions)
