@@ -2,6 +2,7 @@ import { useParams } from '@tanstack/react-router'
 
 import { LeaveMeetingToggle } from '../LeaveMeetingToggle'
 import { MediaSettingsToggle } from '../MediaSettingsToggle'
+import { Timer } from '../Timer'
 
 import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
 import { HelpButton } from '@/components/common/HelpButton'
@@ -25,6 +26,7 @@ export function Header() {
         </div>
         <div className="pr-4 pl-2 border-r-0 border-gray-200">{event.name}</div>
       </div>
+      <Timer />
       <div className="flex justify-end items-center gap-2 h-full bg-white p-2 rounded-md shadow-2xl">
         <HelpButton />
         <MediaSettingsToggle

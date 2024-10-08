@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
+
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { Button } from '@nextui-org/react'
-import { IoPeopleOutline } from 'react-icons/io5'
+import { VscMultipleWindows } from 'react-icons/vsc'
 
 import { ControlButton } from '../ControlButton'
 
@@ -23,35 +25,34 @@ import { cn } from '@/utils/utils'
 export function BreakoutToggleButton({
   onClick,
   isActive,
-  useTextButton,
+  // useTextButton,
 }: {
   onClick: () => void
   isActive: boolean
-  useTextButton?: boolean
+  // useTextButton?: boolean
 }) {
   const { isBreakoutActive } = useBreakoutRooms()
 
   return (
     <ControlButton
+      hideTooltip
       buttonProps={{
-        isIconOnly: !useTextButton,
-        radius: 'md',
-        variant: useTextButton ? 'solid' : 'light',
-        color: useTextButton ? 'success' : undefined,
-        className: cn('transition-all duration-300', {
-          'bg-black text-white': isActive,
+        size: 'md',
+        variant: 'light',
+        className: cn('gap-2 w-full justify-between pr-2', {
+          'bg-primary-100': isBreakoutActive,
+          'bg-transparent': !isBreakoutActive,
         }),
-        size: 'sm',
       }}
-      tooltipProps={{
-        label: isActive
+      onClick={() => onClick()}>
+      <span className="flex items-center gap-4">
+        <VscMultipleWindows size={24} className="text-gray-600" />
+        {isActive
           ? 'Hide Breakouts'
           : isBreakoutActive
             ? 'View Active Breakout'
-            : 'Start Breakouts',
-      }}
-      onClick={() => onClick()}>
-      {useTextButton ? 'Start Breakout' : <IoPeopleOutline size={20} />}
+            : 'Start Breakouts'}
+      </span>
     </ControlButton>
   )
 }
@@ -94,6 +95,7 @@ export function BreakoutHeaderButton() {
 
   const onBreakoutStartOnBreakoutSlide = async (breakoutFrame: IFrame) => {
     if (!meetingId) return
+
     try {
       await breakoutRoomsInstance?.startBreakoutRooms({
         /*
@@ -108,17 +110,18 @@ export function BreakoutHeaderButton() {
           breakoutFrameId: breakoutFrame?.id || null,
         })
       )
-      if (breakoutFrame?.config.breakoutTime) {
-        setTimeout(() => {
-          realtimeChannel?.send({
-            type: 'broadcast',
-            event: 'timer-start-event',
-            payload: {
-              remainingDuration:
-                (breakoutFrame?.config?.breakoutTime as number) * 60,
+      if (breakoutFrame?.config.breakoutDuration && realtimeChannel) {
+        realtimeChannel.send({
+          type: 'broadcast',
+          event: 'timer-start-event',
+          payload: {
+            duration: {
+              total: (breakoutFrame?.config?.breakoutDuration as number) * 60,
+              remaining:
+                (breakoutFrame?.config?.breakoutDuration as number) * 60,
             },
-          })
-        }, 500)
+          },
+        })
       }
       try {
         await SessionService.deleteAllExistingBreakoutSessions({ meetingId })
@@ -150,10 +153,21 @@ export function BreakoutHeaderButton() {
     breakoutRoomsInstance?.endBreakoutRooms()
     realtimeChannel?.send({
       type: 'broadcast',
-      event: 'timer-stop-event',
+      event: 'timer-close-event',
       payload: { remainingDuration: 0 },
     })
   }
+
+  useEffect(() => {
+    if (!realtimeChannel) return
+
+    realtimeChannel.on('broadcast', { event: 'time-out' }, () => {
+      if (isHost) {
+        onBreakoutEnd()
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [realtimeChannel, isHost])
 
   if (!isHost) return null
   if (isCurrentDyteMeetingInABreakoutRoom) return null
@@ -164,11 +178,16 @@ export function BreakoutHeaderButton() {
       currentFrame?.content?.breakoutFrameId)
   ) {
     return (
-      <Button
-        variant="solid"
-        size="sm"
-        radius="md"
-        className="bg-green-500 text-white"
+      <ControlButton
+        hideTooltip
+        buttonProps={{
+          size: 'md',
+          variant: 'light',
+          className: cn('gap-2 w-full justify-between pr-2', {
+            'bg-primary-100': isBreakoutActive,
+            'bg-transparent': !isBreakoutActive,
+          }),
+        }}
         onClick={() =>
           onBreakoutStartOnBreakoutSlide(
             currentFrame?.content?.breakoutFrameId
@@ -176,14 +195,18 @@ export function BreakoutHeaderButton() {
               : currentFrame
           )
         }>
-        Start Breakout
-      </Button>
+        <span className="flex items-center gap-4">
+          <VscMultipleWindows size={24} className="text-gray-600" />
+          Start breakout
+        </span>
+      </ControlButton>
     )
   }
 
   if (!isBreakoutActive) {
     return (
       <BreakoutToggleButton
+        // useTextButton
         isActive={isCreateBreakoutOpen}
         onClick={() =>
           dispatch(setIsCreateBreakoutOpenAction(!isCreateBreakoutOpen))
@@ -201,8 +224,8 @@ export function BreakoutHeaderButton() {
       <Button
         color="danger"
         variant="solid"
-        size="sm"
-        className="!bg-red-500"
+        size="md"
+        className="!bg-red-500 w-full mt-3"
         radius="md"
         onClick={onBreakoutEnd}>
         End Breakout

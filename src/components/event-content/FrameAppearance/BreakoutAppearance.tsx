@@ -83,22 +83,20 @@ export function BreakoutAppearance() {
       <span className="flex items-center justify-between">
         <span>Duration</span>
         <TwoWayNumberCounter
-          defaultCount={currentFrame?.config?.breakoutTime as number}
+          defaultCount={currentFrame?.config?.breakoutDuration as number}
           onCountChange={(count) => {
             updateFrame({
               framePayload: {
                 config: {
                   ...currentFrame?.config,
-                  breakoutTime: count,
+                  breakoutDuration: count,
                 },
               },
               frameId: currentFrame?.id,
             })
           }}
           noNegative
-          incrementStep={5}
           postfixLabel="min"
-          minCount={5}
         />
       </span>
       <span className="flex items-center justify-between">
@@ -114,7 +112,6 @@ export function BreakoutAppearance() {
               : currentFrame?.config?.participantPerGroup
           }
           noNegative
-          minCount={2}
           onCountChange={(count) => updateBreakout(count)}
           isDeleteModal={
             currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS

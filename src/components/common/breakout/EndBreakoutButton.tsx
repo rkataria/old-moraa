@@ -15,8 +15,8 @@ export function EndBreakoutButton() {
     dispatch(setIsBreakoutOverviewOpenAction(false))
     realtimeChannel?.send({
       type: 'broadcast',
-      event: 'timer-stop-event',
-      payload: { remainingDuration: 0 },
+      event: 'timer-close-event',
+      payload: {},
     })
   }
 

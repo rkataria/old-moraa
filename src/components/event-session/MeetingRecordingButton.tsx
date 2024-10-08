@@ -30,23 +30,24 @@ export function MeetingRecordingButton() {
 
   return (
     <ControlButton
+      hideTooltip
       buttonProps={{
-        isIconOnly: true,
         size: 'sm',
         radius: 'md',
-        variant: 'flat',
+        variant: 'light',
+
         className: cn(
-          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
+          'w-full gap-4 justify-between transition-all duration-300',
           {
             'bg-red-500 text-white': isRecording,
           }
         ),
       }}
-      tooltipProps={{
-        content: isRecording ? 'Stop Recording' : 'Start Recording',
-      }}
       onClick={onRecordingToggle}>
-      <IoMdRadioButtonOn size={20} />
+      <span className="flex items-center gap-4">
+        <IoMdRadioButtonOn size={24} />
+        {isRecording ? 'Stop' : 'Start'} Recording
+      </span>
     </ControlButton>
   )
 }

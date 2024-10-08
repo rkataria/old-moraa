@@ -30,6 +30,7 @@ import {
   setIsCreateBreakoutOpenAction,
   updateEventSessionModeAction,
 } from '@/stores/slices/event/current-event/live-session.slice'
+import { setUpdateTimerOnParticipantJoinAction } from '@/stores/slices/event/current-event/timers.slice'
 import { toggleLeftSidebarAction } from '@/stores/slices/layout/live.slice'
 import { EventContextType } from '@/types/event-context.type'
 import {
@@ -82,6 +83,28 @@ export function MeetingScreen() {
     dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScreensharing, activePlugin, presentationStatus, preview, isHost])
+
+  useEffect(() => {
+    if (!meeting || !isHost) return
+    const handleParticipantJoined = () => {
+      if (isHost) {
+        dispatch(setUpdateTimerOnParticipantJoinAction(true))
+      }
+    }
+
+    meeting.participants.joined.on('participantJoined', handleParticipantJoined)
+
+    function onUnmount() {
+      meeting.participants.joined.off(
+        'participantJoined',
+        handleParticipantJoined
+      )
+    }
+
+    // eslint-disable-next-line consistent-return
+    return onUnmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meeting, isHost])
 
   return (
     <LiveLayout

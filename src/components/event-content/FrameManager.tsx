@@ -93,7 +93,7 @@ export function FrameManager() {
       const breakoutPayload = {
         breakoutType,
         [breakoutConfigKeyName]: breakoutRoomsGroupsCount,
-        breakoutTime: breakoutRoomsGroupsTime,
+        breakoutDuration: breakoutRoomsGroupsTime,
       }
       frameConfig = {
         ...frameConfig,

@@ -126,12 +126,14 @@ export function FrameItem({
   }
 
   const updateTime = (updatedTime: number) => {
+    const timeKey =
+      frame.type === ContentType.BREAKOUT ? 'breakoutDuration' : 'time'
     updateFrame({
       frameId: frame.id,
       framePayload: {
         config: {
           ...frame.config,
-          time: updatedTime,
+          [timeKey]: updatedTime,
         },
       },
     })
@@ -232,12 +234,14 @@ export function FrameItem({
 
           <RenderIf isTrue={preview}>
             <div className="grid place-items-center">
-              {frame.config.time || 0} min
+              {frame.config?.breakoutDuration || frame.config.time || 0} min
             </div>
           </RenderIf>
           <RenderIf isTrue={editable}>
             <Minutes
-              minutes={frame.config?.time || 0}
+              minutes={
+                frame.config?.breakoutDuration || frame.config?.time || 0
+              }
               onChange={updateTime}
               className="grid p-2 place-items-center"
             />

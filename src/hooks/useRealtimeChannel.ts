@@ -9,7 +9,6 @@ let realtimeChannel: RealtimeChannel | null
 
 export const useRealtimeChannel = () => {
   const { eventId } = useEventContext()
-
   useEffect(() => {
     realtimeChannel = supabaseClient
       .channel(`event:${eventId}`, {

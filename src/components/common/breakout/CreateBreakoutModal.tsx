@@ -61,7 +61,7 @@ export function CreateUnplannedBreakoutModal({
 
   useEffect(() => {
     if (!realtimeChannel || !breakoutRoomsInstance) return
-    realtimeChannel.on('broadcast', { event: 'timer-stop-event' }, () => {
+    realtimeChannel.on('broadcast', { event: 'timer-close-event' }, () => {
       // breakoutRoomsInstance?.endBreakout()
     })
   }, [breakoutRoomsInstance, realtimeChannel])

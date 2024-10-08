@@ -1,14 +1,15 @@
 import { useContext } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
+import { Kbd } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoEaselOutline } from 'react-icons/io5'
+import { MdOutlineDraw } from 'react-icons/md'
 
 import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn } from '@/utils/utils'
 
 const DYTE_WHITEBOARD_PLUGIN_ID = 'ae79b269-24ca-4f8a-8112-f96084c8c19a'
 
@@ -42,19 +43,21 @@ export function WhiteBoardToggle() {
 
   return (
     <ControlButton
+      hideTooltip
       buttonProps={{
-        isIconOnly: true,
-        size: 'sm',
-        className: cn({
-          'bg-primary-100': isWhiteboardActive,
+        size: 'md',
+        variant: 'light',
+        className: cn('gap-4 w-full justify-between pr-2', {
+          'bg-red-300': isWhiteboardActive,
+          'bg-transparent': !isWhiteboardActive,
         }),
       }}
-      tooltipProps={{
-        label: KeyboardShortcuts.Live.whiteboard.label,
-        actionKey: KeyboardShortcuts.Live.whiteboard.key,
-      }}
       onClick={handleWhiteBoard}>
-      <IoEaselOutline size={20} />
+      <span className="flex items-center gap-4">
+        <MdOutlineDraw size={24} className="text-gray-600" />
+        {isWhiteboardActive ? 'Stop' : 'Start'} white board
+      </span>
+      <Kbd className="shadow-none rounded-md">w</Kbd>
     </ControlButton>
   )
 }

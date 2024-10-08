@@ -29,6 +29,7 @@ export function MeetingSetupScreen() {
   const {
     data: profile,
     isLoading: isLoadingProfile,
+    isFetching: isFetchingProfile,
     isRequiredNames,
   } = useProfile()
   const dispatch = useStoreDispatch()
@@ -199,6 +200,11 @@ export function MeetingSetupScreen() {
                   fullWidth
                   disabled={
                     !(meetingSession.isSuccess && enrollmentQuery.isSuccess)
+                  }
+                  isLoading={
+                    meetingSession.isLoading ||
+                    enrollmentQuery.isLoading ||
+                    isFetchingProfile
                   }
                   onClick={handleJoinMeeting}>
                   Join Meeting

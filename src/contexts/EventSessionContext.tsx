@@ -57,7 +57,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventMode, setCurrentFrame } = useContext(
     EventContext
   ) as EventContextType
-
   const { permissions } = useEventPermissions()
 
   const isHost = permissions.canAcessAllSessionControls

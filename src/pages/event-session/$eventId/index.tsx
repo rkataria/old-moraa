@@ -11,6 +11,7 @@ import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContex
 import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
+import { useTimer } from '@/hooks/use-timer'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setDyteClientAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
@@ -54,6 +55,8 @@ function EventSessionPage() {
   const meetingEl = useRef<HTMLDivElement>(null)
   const [dyteClient, initDyteMeeting] = useDyteClient()
   const dispatch = useStoreDispatch()
+
+  useTimer()
 
   useSyncValueInRedux({
     value: dyteClient,

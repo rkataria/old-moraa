@@ -48,5 +48,5 @@ export const useEventPermissions = () => {
     canaccessNotes: checkPermission('notes', 'READ'),
   }
 
-  return { permissions }
+  return { permissions, isLoading: eventQuery.isLoading }
 }

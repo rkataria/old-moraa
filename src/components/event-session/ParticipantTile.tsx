@@ -8,7 +8,7 @@ import {
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant, DyteSelf } from '@dytesdk/web-core'
-import { HiMiniHandRaised } from 'react-icons/hi2'
+import { motion } from 'framer-motion'
 import uniqolor from 'uniqolor'
 
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
@@ -54,7 +54,19 @@ export function ParticipantTile({
           />
         </DyteNameTag>
         {handRaised && (
-          <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-primary" />
+          <motion.span
+            animate={{ scale: [0, 1.5, 1] }}
+            className={cn(
+              'absolute top-1 text-2xl flex justify-center items-center',
+              {
+                '!right-12': participant.id === selfParticipant.id,
+                'right-3': participant.id !== selfParticipant.id,
+              }
+            )}>
+            <em-emoji set="apple" id="hand" size={32} />
+          </motion.span>
+
+          // <HiMiniHandRaised className="absolute right-2 top-2 text-2xl flex justify-center items-center text-yellow-500" />
         )}
         {participant.id === selfParticipant.id && (
           <VideoBackgroundSettingsButtonWithModal
