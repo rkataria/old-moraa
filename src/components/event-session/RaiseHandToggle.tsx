@@ -64,12 +64,9 @@ export function RaiseHandToggle() {
         radius: 'md',
         size: 'sm',
         variant: 'flat',
-        className: cn(
-          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
-          {
-            'bg-black text-white': isHandRaised,
-          }
-        ),
+        className: cn('live-button', {
+          active: isHandRaised,
+        }),
       }}
       tooltipProps={{
         label: KeyboardShortcuts.Live.raiseAndLowerHand.label,

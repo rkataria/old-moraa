@@ -52,6 +52,7 @@ export const meetingSlice = createSlice({
       newSections.splice(action.payload.destinationIndex, 0, sourceSectionId)
       state.meeting.data.sections = newSections
     },
+    resetMeeting: () => initialState,
   },
   extraReducers: (builder) => {
     attachThunkToBuilder({
@@ -165,5 +166,8 @@ attachStoreListener({
   },
 })
 
-export const { setCurrentMeetingAction, reorderSectionsAction } =
-  renameSliceActions(meetingSlice.actions)
+export const {
+  setCurrentMeetingAction,
+  reorderSectionsAction,
+  resetMeetingAction,
+} = renameSliceActions(meetingSlice.actions)

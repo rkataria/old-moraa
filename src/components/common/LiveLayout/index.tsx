@@ -5,7 +5,6 @@ import { Footer } from './Footer'
 import { Header } from './Header'
 import { LeftSidebar } from './LeftSidebar'
 import { RightSidebar } from './RightSidebar'
-import { BackgroundContainer } from '../BackgroundContainer'
 
 type LiveLayoutProps = {
   children: ReactNode
@@ -23,18 +22,14 @@ export function LiveLayout({
   footer,
 }: LiveLayoutProps) {
   return (
-    <BackgroundContainer
-      animateLogo={false}
-      gradientStyle="bg-[var(--bg-studio)]">
-      <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden backdrop-blur-3xl">
-        <Header>{header}</Header>
-        <div className="flex-auto flex justify-start items-start gap-2 w-full overflow-hidden z-0">
-          <LeftSidebar>{leftSidebar}</LeftSidebar>
-          <Content>{children}</Content>
-          <RightSidebar>{rightSidebar}</RightSidebar>
-        </div>
-        <Footer>{footer}</Footer>
+    <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-white">
+      <Header>{header}</Header>
+      <div className="flex-auto flex justify-start items-start gap-2 w-full overflow-hidden z-0">
+        <LeftSidebar>{leftSidebar}</LeftSidebar>
+        <Content>{children}</Content>
+        <RightSidebar>{rightSidebar}</RightSidebar>
       </div>
-    </BackgroundContainer>
+      <Footer>{footer}</Footer>
+    </div>
   )
 }

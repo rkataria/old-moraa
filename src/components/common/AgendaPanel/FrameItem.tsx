@@ -113,7 +113,7 @@ export function FrameItem({
 
     setCurrentFrame(clickedFrame)
 
-    // Dispatch an action to update event session mode to 'Preview' if presentation is not started and user is the owner of the event
+    // Dispatch an action to update event session mode to 'Peek' if presentation is not started and user is the owner of the event
     if (
       isMeetingJoined &&
       isHost &&

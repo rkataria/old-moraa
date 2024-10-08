@@ -44,6 +44,7 @@ export function FrameTitleDescriptionPreview({
       ContentType.PDF_VIEWER,
       ContentType.VIDEO_EMBED,
       ContentType.VIDEO,
+      ContentType.RICH_TEXT,
     ].includes(frame.type)
   ) {
     return null

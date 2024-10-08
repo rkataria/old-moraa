@@ -13,7 +13,15 @@ import { EventSessionProvider } from '@/contexts/EventSessionContext'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useTimer } from '@/hooks/use-timer'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { setDyteClientAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { resetEventAction } from '@/stores/slices/event/current-event/event.slice'
+import { resetFrameAction } from '@/stores/slices/event/current-event/frame.slice'
+import {
+  resetLiveSessionAction,
+  setDyteClientAction,
+} from '@/stores/slices/event/current-event/live-session.slice'
+import { resetMeetingAction } from '@/stores/slices/event/current-event/meeting.slice'
+import { resetMoraaSlideAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
+import { resetSectionAction } from '@/stores/slices/event/current-event/section.slice'
 import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
 import { beforeLoad } from '@/utils/before-load'
 
@@ -73,6 +81,16 @@ function EventSessionPage() {
         eventId,
       })
     )
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      dispatch(resetEventAction())
+      dispatch(resetMeetingAction())
+      dispatch(resetSectionAction())
+      dispatch(resetFrameAction())
+      dispatch(resetMoraaSlideAction())
+      dispatch(resetLiveSessionAction())
+    }
   }, [dispatch, eventId])
 
   useEffect(() => {

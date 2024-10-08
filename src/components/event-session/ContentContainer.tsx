@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import {
   DyteAudioVisualizer,
   DyteNameTag,
@@ -9,23 +7,16 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { Frame } from './Frame'
+import { ContentType } from '../common/ContentTypePicker'
+import { SectionOverview } from '../common/SectionOverview'
 
-import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
-import {
-  EventSessionContextType,
-  PresentationStatuses,
-} from '@/types/event-session.type'
-import { ContentType } from '@/utils/content.util'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { PresentationStatuses } from '@/types/event-session.type'
 
 export function ContentContainer() {
-  const { currentFrame } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
-
-  const { presentationStatus, isHost } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { currentFrame, presentationStatus, isHost } = useEventSession()
 
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
@@ -33,6 +24,9 @@ export function ContentContainer() {
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
   const screensharingParticipant = useDyteSelector((m) =>
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
+  )
+  const currentSectionId = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.currentSectionId
   )
 
   const recentActivePlugin = activePlugins?.[activePlugins.length - 1]
@@ -79,17 +73,23 @@ export function ContentContainer() {
     return null
   }
 
-  if (!currentFrame) return null
+  if (currentSectionId) {
+    return <SectionOverview />
+  }
 
-  return (
-    <div className="relative h-full flex flex-col">
-      {currentFrame?.type === ContentType.MORAA_BOARD ? (
-        <RoomProvider key={`frame-${currentFrame.id}`}>
-          <Frame />
-        </RoomProvider>
-      ) : (
-        <Frame key={`frame-${currentFrame.id}`} />
-      )}
-    </div>
-  )
+  if (currentFrame) {
+    return (
+      <div className="relative h-full flex flex-col">
+        {currentFrame.type === ContentType.MORAA_BOARD ? (
+          <RoomProvider key={`frame-${currentFrame.id}`}>
+            <Frame />
+          </RoomProvider>
+        ) : (
+          <Frame key={`frame-${currentFrame.id}`} />
+        )}
+      </div>
+    )
+  }
+
+  return null
 }

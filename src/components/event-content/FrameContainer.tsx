@@ -1,18 +1,15 @@
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { Frame } from './Frame'
 import { SectionOverview } from '../common/SectionOverview'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
-import { EventContextType } from '@/types/event-context.type'
 import { ContentType } from '@/utils/content.util'
 import { getFrameCount } from '@/utils/utils'
 
 export function FrameContainer() {
-  const { currentFrame, sections, currentSectionId } = useContext(
-    EventContext
-  ) as EventContextType
+  const { currentFrame, sections, currentSectionId } = useEventContext()
   const frameCount = useMemo(() => getFrameCount(sections), [sections])
 
   // If the current section is set, return section overview page

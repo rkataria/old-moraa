@@ -2,11 +2,15 @@ import { motion } from 'framer-motion'
 
 import { AgendaPanel } from '@/components/common/AgendaPanel'
 import { LiveAgendaHeader } from '@/components/common/AgendaPanel/LiveAgendaHeader'
+import { useEventContext } from '@/contexts/EventContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
 
 export function LeftSidebar() {
+  const { isOwner } = useEventContext()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
+
+  if (!isOwner) return null
 
   return (
     <motion.div

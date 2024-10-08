@@ -78,12 +78,9 @@ export function ReactWithEmojiToggle() {
               radius: 'md',
               size: 'sm',
               variant: 'flat',
-              className: cn(
-                'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
-                {
-                  'bg-black text-white': isOpen,
-                }
-              ),
+              className: cn('live-button', {
+                active: isOpen,
+              }),
             }}
             tooltipProps={{
               label: KeyboardShortcuts.Live.emoji.label,

@@ -29,7 +29,7 @@ type EventState = {
 const initialState: EventState = {
   eventId: null,
   event: buildThunkState<EventModel>(),
-  isOverviewOpen: true,
+  isOverviewOpen: false,
   isCurrentUserOwnerOfEvent: null,
   isPreviewOpen: false,
   currentFrameId: null,

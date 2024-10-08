@@ -32,13 +32,9 @@ export function VideoToggle({ className = '' }: { className?: string }) {
         radius: 'md',
         size: 'sm',
         variant: 'flat',
-        className: cn(
-          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
-          className,
-          {
-            'bg-red-500 text-white': !isVideoEnabled,
-          }
-        ),
+        className: cn('live-button', className, {
+          '!bg-red-500 !text-white hover:!bg-red-500': !isVideoEnabled,
+        }),
       }}
       tooltipProps={{
         label: KeyboardShortcuts.Live.startAndStopVideo.label,

@@ -12,7 +12,7 @@ import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
 import { useParams } from '@tanstack/react-router'
 
-import { EventContext } from './EventContext'
+import { useEventContext } from './EventContext'
 
 import type {
   IPollResponse,
@@ -28,7 +28,6 @@ import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { useEventSelector } from '@/stores/hooks/useEventSections'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
-import { EventContextType } from '@/types/event-context.type'
 import {
   type EventSessionContextType,
   type VideoMiddlewareConfig,
@@ -54,9 +53,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
   const { sections } = useEventSelector()
   const currentFrame = useCurrentFrame()
-  const { eventMode, setCurrentFrame } = useContext(
-    EventContext
-  ) as EventContextType
+  const { eventMode, setCurrentFrame } = useEventContext()
+
   const { permissions } = useEventPermissions()
 
   const isHost = permissions.canAcessAllSessionControls
@@ -89,6 +87,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { data: fetchedFrameReactions } = useFrameReactions(currentFrame?.id)
   const eventSessionMode = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.eventSessionMode
+  )
+  const currentSectionId = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.currentSectionId
   )
 
   useEffect(() => {
@@ -220,6 +221,16 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [realtimeChannel, currentFrame, eventSessionMode])
+
+  useEffect(() => {
+    if (presentationStatus !== PresentationStatuses.STARTED) return
+    if (!isHost) return
+    dispatch(
+      updateMeetingSessionDataAction({
+        currentSectionId: currentSectionId || null,
+      })
+    )
+  }, [isHost, currentSectionId, dispatch, presentationStatus])
 
   const nextFrame = useCallback(() => {
     if (!isHost || !realtimeChannel) return null

@@ -85,10 +85,10 @@ export function ButtonWithModal({
           size="sm"
           isIconOnly
           variant="light"
-          {...buttonProps}
           className={cn('bg-transparent hover:bg-black/10', {
             'bg-primary text-white hover:bg-primary/80': open,
           })}
+          {...buttonProps}
           onClick={() => setOpen(true)}>
           <LuUserPlus size={20} />
         </Button>

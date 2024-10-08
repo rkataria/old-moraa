@@ -91,7 +91,6 @@ export const sectionSlice = createSlice({
         }
       })
     },
-
     toggleSectionExpansionInPlanner: (
       state,
       action: PayloadAction<{
@@ -110,7 +109,6 @@ export const sectionSlice = createSlice({
         )
       }
     },
-
     setExpandedSectionsInPlanner: (
       state,
       action: PayloadAction<{ ids: string[] }>
@@ -119,6 +117,7 @@ export const sectionSlice = createSlice({
 
       state.expandedSectionsInSessionPlanner = [...ids]
     },
+    resetSection: () => initialState,
   },
   extraReducers: (builder) => {
     attachThunkToBuilder({
@@ -336,4 +335,5 @@ export const {
   reorderFrameAction,
   setExpandedSectionsInPlannerAction,
   toggleSectionExpansionInPlannerAction,
+  resetSectionAction,
 } = renameSliceActions(sectionSlice.actions)

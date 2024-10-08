@@ -50,8 +50,8 @@ export function ChatsToggle({
           isIconOnly: true,
           size: 'sm',
           variant: 'light',
-          className: cn('bg-transparent hover:bg-black/10', {
-            'bg-primary text-white hover:bg-primary/80': isChatsSidebarOpen,
+          className: cn('live-button', {
+            active: isChatsSidebarOpen,
           }),
         }}
         tooltipProps={{

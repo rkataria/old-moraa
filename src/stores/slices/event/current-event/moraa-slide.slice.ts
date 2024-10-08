@@ -23,9 +23,9 @@ export const moraaSlideSlice = createSlice({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       state.activeObject = action.payload as any
     },
+    resetMoraaSlide: () => initialState,
   },
 })
 
-export const { setActiveObjectAction } = renameSliceActions(
-  moraaSlideSlice.actions
-)
+export const { setActiveObjectAction, resetMoraaSlideAction } =
+  renameSliceActions(moraaSlideSlice.actions)

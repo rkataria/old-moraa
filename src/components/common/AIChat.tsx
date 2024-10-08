@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 
 import { Button, ScrollShadow } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Converstations } from './AiChat/Converstations'
 import { RenderIf } from './RenderIf/RenderIf'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useProfile } from '@/hooks/useProfile'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -27,7 +27,6 @@ import {
 } from '@/stores/slices/ai/ai.slice'
 import { RootState } from '@/stores/store'
 import { fetchChatThunk } from '@/stores/thunks/ai.thunk'
-import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function AIChat({ onClose }: { onClose: () => void }) {
@@ -42,9 +41,8 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const lastMessagePlaceholderRef = useRef<HTMLDivElement>(null)
   const { data: userProfile } = useProfile()
-  const { currentFrame, currentSectionId, sections, overviewOpen } = useContext(
-    EventContext
-  ) as EventContextType
+  const { currentFrame, currentSectionId, sections, overviewOpen } =
+    useEventContext()
 
   const sectionId =
     currentSectionId || currentFrame?.section_id || sections[0].id

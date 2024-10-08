@@ -18,12 +18,9 @@ export function ScreenShareToggle() {
         radius: 'md',
         size: 'sm',
         variant: 'flat',
-        className: cn(
-          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
-          {
-            'bg-red-500 text-white': isScreenShared,
-          }
-        ),
+        className: cn('live-button', {
+          active: isScreenShared,
+        }),
       }}
       tooltipProps={{
         label: isScreenShared ? 'Stop Screen Share' : 'Scree Share',

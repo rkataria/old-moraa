@@ -6,14 +6,16 @@ import { LuClipboardEdit } from 'react-icons/lu'
 import { useDispatch } from 'react-redux'
 
 import { ChatsToggle } from '../ChatsToggle'
+import { MeetingRecordingButton } from '../MeetingRecordingButton'
 import { MicToggle } from '../MicToggle'
 import { ParticipantsToggle } from '../ParticipantsToggle'
 import { RaiseHandToggle } from '../RaiseHandToggle'
 import { ReactWithEmojiToggle } from '../ReactWithEmojiToggle'
 import { ScreenShareToggle } from '../ScreenShareToggle'
+import { Timer } from '../Timer'
 import { VideoToggle } from '../VideoToggle'
-import { WidgetsToggle } from '../WidgetsToggle'
 
+import { BreakoutHeaderButton } from '@/components/common/breakout/BreakoutToggleButton'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
@@ -91,12 +93,15 @@ export function Footer() {
 
   return (
     <div className="h-full w-full flex justify-between items-center px-2">
-      <div className="flex justify-start items-center gap-2 bg-white p-2 rounded-md shadow-2xl h-12">
+      <div className="flex justify-start items-center gap-2 p-2 h-12">
         <div className="flex justify-start items-center gap-2">
-          <DyteClock meeting={meeting} className="m-0 px-2" />
+          <DyteClock
+            meeting={meeting}
+            className="m-0 px-2 h-8 rounded-md live-button"
+          />
           {eventSessionMode === EventSessionMode.PRESENTATION && (
             <div
-              className="relative h-8 w-64 flex justify-start gap-2 px-2 items-center bg-gray-100 rounded-md overflow-hidden after:contents-[''] after:absolute after:left-0 after:top-0 after:h-full after:bg-primary/20 after:transition-all after:duration-300 after:w-[var(--frame-progress-width)]"
+              className="relative h-8 w-64 flex justify-start gap-2 px-2 items-center live-button rounded-md overflow-hidden after:contents-[''] after:absolute after:left-0 after:top-0 after:h-full after:bg-black/10 after:transition-all after:duration-300 after:w-[var(--frame-progress-width)]"
               style={{
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
@@ -108,16 +113,22 @@ export function Footer() {
         </div>
       </div>
       <div className="flex justify-center items-center gap-2">
-        <div className="flex justify-center items-center gap-2 bg-white p-2 rounded-md shadow-2xl">
+        <div className="flex justify-center items-center gap-2 p-2">
           <MicToggle />
           <VideoToggle />
           {isHost && <ScreenShareToggle />}
           <RaiseHandToggle />
           <ReactWithEmojiToggle />
-          {isHost && <WidgetsToggle />}
+          {isHost && (
+            <>
+              <BreakoutHeaderButton />
+              <Timer />
+              <MeetingRecordingButton />
+            </>
+          )}
         </div>
       </div>
-      <div className="flex justify-end items-center gap-2 bg-white p-2 rounded-md shadow-2xl">
+      <div className="flex justify-end items-center gap-2 p-2">
         <div className="flex justify-end items-center gap-2">
           {isHost && (
             <Tooltip label="Notes" actionKey="N" placement="top">
@@ -125,9 +136,8 @@ export function Footer() {
                 size="sm"
                 isIconOnly
                 variant="light"
-                className={cn('bg-transparent hover:bg-black/10', {
-                  'bg-primary text-white hover:bg-primary/80':
-                    rightSidebarMode === 'frame-notes',
+                className={cn('live-button', {
+                  active: rightSidebarMode === 'frame-notes',
                 })}
                 onClick={() => {
                   if (rightSidebarMode === 'frame-notes') {

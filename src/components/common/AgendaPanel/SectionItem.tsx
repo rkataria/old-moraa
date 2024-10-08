@@ -17,8 +17,14 @@ import { StrictModeDroppable } from '../StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventContextType } from '@/types/event-context.type'
+import {
+  EventSessionMode,
+  PresentationStatuses,
+} from '@/types/event-session.type'
 import { IFrame, ISection } from '@/types/frame.type'
 import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { cn } from '@/utils/utils'
@@ -48,9 +54,7 @@ export function SectionItem({
     addFrameToSection,
     insertInSectionId,
   } = useContext(EventContext) as EventContextType
-
   const { permissions } = useEventPermissions()
-
   const {
     expandedSectionIds,
     currentSectionId,
@@ -59,6 +63,18 @@ export function SectionItem({
   } = useAgendaPanel()
   const { leftSidebarVisiblity } = useStudioLayout()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
+  const dispatch = useStoreDispatch()
+  const isMeetingJoined = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.dyte.isMeetingJoined
+  )
+  const isHost = useStoreSelector(
+    (store) => store.event.currentEvent.eventState.isCurrentUserOwnerOfEvent
+  )
+  const presentationStatus = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.presentationStatus
+  )
 
   const frames =
     permissions.canUpdateFrame &&
@@ -70,14 +86,28 @@ export function SectionItem({
         })
 
   // When a section is clicked, it should be expanded and the current section should be active in the agenda panel
-  const handleSectionClick = () => {
+  const handleSectionCaretClick = () => {
     toggleExpandedSection(section.id)
 
     setInsertInSectionId(section.id)
     setInsertAfterFrameId(null)
     setCurrentSectionId(section.id)
     setCurrentFrame(null)
+  }
+
+  const handleSectionClick = () => {
     setOverviewOpen(false)
+
+    // Dispatch an action to update event session mode to 'Peek' if presentation is not started and user is the owner of the event
+    if (
+      isMeetingJoined &&
+      isHost &&
+      presentationStatus !== PresentationStatuses.STARTED
+    ) {
+      setCurrentSectionId(section.id)
+      setCurrentFrame(null)
+      dispatch(updateEventSessionModeAction(EventSessionMode.PEEK))
+    }
   }
 
   const sectionExpanded = expandedSectionIds.includes(section.id)
@@ -120,6 +150,7 @@ export function SectionItem({
               className={cn('duration-300 shrink-0 cursor-pointer', {
                 'rotate-90': sectionExpanded,
               })}
+              onClick={handleSectionCaretClick}
             />
 
             <EditableLabel
@@ -166,6 +197,7 @@ export function SectionItem({
             className={cn('duration-300 shrink-0 cursor-pointer', {
               'rotate-90 text-primary': sectionExpanded,
             })}
+            onClick={handleSectionCaretClick}
           />
 
           <svg

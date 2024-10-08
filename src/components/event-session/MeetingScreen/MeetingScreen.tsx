@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 
 import {
   DyteDialogManager,
@@ -23,7 +23,7 @@ import { PresentationToggle } from '../PresentationToggle'
 import { AgendaPanelToggle } from '@/components/common/AgendaPanel/AgendaPanelToggle'
 import { CreateUnplannedBreakoutModal } from '@/components/common/breakout/CreateBreakoutModal'
 import { LiveLayout } from '@/components/common/LiveLayout'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import {
@@ -32,7 +32,6 @@ import {
 } from '@/stores/slices/event/current-event/live-session.slice'
 import { setUpdateTimerOnParticipantJoinAction } from '@/stores/slices/event/current-event/timers.slice'
 import { toggleLeftSidebarAction } from '@/stores/slices/layout/live.slice'
-import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionMode,
   PresentationStatuses,
@@ -52,7 +51,7 @@ export type DyteStates = {
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
-  const { preview } = useContext(EventContext) as EventContextType
+  const { preview, isOwner } = useEventContext()
   const dispatch = useStoreDispatch()
   const isCreateBreakoutOpen = useStoreSelector(
     (state) =>
@@ -115,7 +114,7 @@ export function MeetingScreen() {
       }
       footer={<Footer />}>
       <div className="flex flex-col gap-2 h-full">
-        {leftSidebarMode === 'collapsed' && (
+        {leftSidebarMode === 'collapsed' && isOwner && (
           <div className="h-12 bg-white p-2 rounded-md shadow-2xl w-fit flex items-center justify-between gap-2">
             <AgendaPanelToggle
               collapsed

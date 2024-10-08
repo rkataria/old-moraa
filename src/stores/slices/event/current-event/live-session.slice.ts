@@ -37,6 +37,7 @@ export type SessionState = {
   breakoutFrameId?: string | null
   presentationStatus?: PresentationStatuses
   handsRaised?: string[]
+  currentSectionId?: string | null
 }
 
 type SessionModelWithData = Omit<SessionModel, 'data'> & { data?: SessionState }
@@ -161,6 +162,8 @@ export const liveSessionSlice = createSlice({
     setIsDyteMeetingLoading: (state, action: PayloadAction<boolean>) => {
       state.dyte.isDyteMeetingLoading = action.payload
     },
+
+    resetLiveSession: () => initialState,
   },
   extraReducers: (builder) => {
     attachThunkToBuilder({
@@ -429,4 +432,5 @@ export const {
   setIsDyteMeetingLoadingAction,
   setIsInBreakoutAction,
   setDyteClientAction,
+  resetLiveSessionAction,
 } = renameSliceActions(liveSessionSlice.actions)

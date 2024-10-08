@@ -2,6 +2,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
+import { useState } from 'react'
+
 import { Modal, ModalContent, ModalBody, ModalHeader } from '@nextui-org/react'
 import {
   IconCards,
@@ -12,7 +14,7 @@ import {
   IconPhoto,
 } from '@tabler/icons-react'
 import { BsQuestionCircle } from 'react-icons/bs'
-import { IoPeopleOutline } from 'react-icons/io5'
+import { IoArrowBack, IoPeopleOutline } from 'react-icons/io5'
 import { MdOutlineDraw } from 'react-icons/md'
 import { SiGoogleslides, SiMicrosoftpowerpoint, SiMiro } from 'react-icons/si'
 import { TbNews } from 'react-icons/tb'
@@ -43,6 +45,7 @@ export interface ContentTypePickerFrame {
   templateKey?: string
   isAvailableForBreakout?: boolean
   category: ContentCategory
+  hasTemplates?: boolean
 }
 
 export enum ContentType {
@@ -71,7 +74,7 @@ export const INTERACTIVE_FRAME_TYPES = [
 
 export const frames: ContentTypePickerFrame[] = [
   {
-    name: 'Article',
+    name: 'Moraa Slide',
     icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
     iconLarge: <IconAlignCenter size={32} />,
     iconSmall: <IconAlignCenter size={18} />,
@@ -79,26 +82,7 @@ export const frames: ContentTypePickerFrame[] = [
     contentType: ContentType.MORAA_SLIDE,
     templateKey: 'article',
     category: ContentCategory.PRESENTATION,
-  },
-  {
-    name: 'Image Left',
-    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <IconAlignCenter size={32} />,
-    iconSmall: <IconAlignCenter size={18} />,
-    description: 'Create a image left frame to share your content',
-    contentType: ContentType.MORAA_SLIDE,
-    templateKey: 'article-image-left',
-    category: ContentCategory.PRESENTATION,
-  },
-  {
-    name: 'Image Right',
-    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <IconAlignCenter size={32} />,
-    iconSmall: <IconAlignCenter size={18} />,
-    description: 'Create a image right frame to share your content',
-    contentType: ContentType.MORAA_SLIDE,
-    templateKey: 'article-image-right',
-    category: ContentCategory.PRESENTATION,
+    hasTemplates: true,
   },
   {
     name: 'Page',
@@ -212,11 +196,53 @@ export const frames: ContentTypePickerFrame[] = [
   },
 ]
 
+const frameTemplates: Record<ContentType, TemplateType[]> = {
+  [ContentType.MORAA_SLIDE]: [
+    {
+      name: 'Article',
+      icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+      description: 'Create a article frame to share your content',
+      contentType: ContentType.MORAA_SLIDE,
+      templateKey: 'article',
+    },
+    {
+      name: 'Image Left',
+      icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
+      description: 'Create a image left frame to share your content',
+      contentType: ContentType.MORAA_SLIDE,
+      templateKey: 'article-image-left',
+    },
+  ],
+  [ContentType.COVER]: [],
+  [ContentType.POLL]: [],
+  [ContentType.VIDEO]: [],
+  [ContentType.GOOGLE_SLIDES]: [],
+  [ContentType.GOOGLE_SLIDES_IMPORT]: [],
+  [ContentType.REFLECTION]: [],
+  [ContentType.PDF_VIEWER]: [],
+  [ContentType.VIDEO_EMBED]: [],
+  [ContentType.MIRO_EMBED]: [],
+  [ContentType.IMAGE_VIEWER]: [],
+  [ContentType.TEXT_IMAGE]: [],
+  [ContentType.RICH_TEXT]: [],
+  [ContentType.MORAA_BOARD]: [],
+  [ContentType.BREAKOUT]: [],
+  [ContentType.POWERPOINT]: [],
+}
+
 interface ChooseContentTypeProps {
   open: boolean
   onClose: () => void
   onChoose: (contentType: ContentType, templateKey?: string) => void
   isBreakoutActivity?: boolean
+}
+
+type TemplateType = {
+  name: string
+  icon: React.ReactNode
+  description: string
+  contentType: ContentType
+  templateKey: string
 }
 
 export function ContentTypePicker({
@@ -226,6 +252,7 @@ export function ContentTypePicker({
   isBreakoutActivity = false,
 }: ChooseContentTypeProps) {
   const { flags } = useFlags()
+  const [templates, setTemplates] = useState<TemplateType[] | null>(null)
 
   const frameCategories = {
     [ContentCategory.PRESENTATION]: {
@@ -271,61 +298,97 @@ export function ContentTypePicker({
     category.frames = category.frames.filter((frame) => !frame.disabled)
   })
 
+  const handleChoose = (frame: ContentTypePickerFrame) => {
+    if (frame.hasTemplates && frameTemplates[frame.contentType]?.length > 0) {
+      setTemplates(frameTemplates[frame.contentType])
+    } else {
+      onChoose(frame.contentType, frame.templateKey)
+    }
+  }
+
+  const renderContents = () => {
+    if (templates) {
+      return (
+        <div className="z-0 flex justify-start items-start gap-4 p-4">
+          {templates.map((template) => (
+            <Tooltip content={template.description}>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  onChoose(template.contentType, template.templateKey)
+                  setTemplates(null)
+                }}>
+                {template.name}
+              </Button>
+            </Tooltip>
+          ))}
+        </div>
+      )
+    }
+
+    return (
+      <div className="z-0 flex flex-col gap-4">
+        {framesWithCategory.map(
+          ({ category, label, helpText, frames: _frames }) => (
+            <div
+              className={cn('p-4 rounded-md flex flex-col gap-4')}
+              id={category}>
+              <div className="flex justify-start items-center gap-2">
+                <p className="text-primary">{label}</p>
+                <Tooltip size="sm" content={helpText}>
+                  <div>
+                    <BsQuestionCircle className="text-black/50" />
+                  </div>
+                </Tooltip>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {_frames.map((frame) => (
+                  <RenderIf
+                    isTrue={Boolean(
+                      isBreakoutActivity ? frame?.isAvailableForBreakout : true
+                    )}>
+                    <Tooltip content={frame.description}>
+                      <Button
+                        variant="ghost"
+                        startContent={frame.iconSmall}
+                        onClick={() => handleChoose(frame)}>
+                        {frame.name}
+                      </Button>
+                    </Tooltip>
+                    {/* <ContentTypeCard card={frame} onClick={onChoose} /> */}
+                  </RenderIf>
+                ))}
+              </div>
+            </div>
+          )
+        )}
+      </div>
+    )
+  }
+
   return (
     <Modal
       isOpen={open}
       onClose={onClose}
-      className="max-h-[96vh] max-w-5xl shadow-2xl slide-up m-auto"
+      className="h-[96vh] max-w-5xl shadow-2xl slide-up m-auto"
       classNames={{
         wrapper: 'justify-center scrollbar-none duration-300 bg-black/20',
       }}
       scrollBehavior="inside"
       backdrop="transparent">
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">Pick Frame</ModalHeader>
+        <ModalHeader className="flex justify-start items-center gap-2">
+          {templates && (
+            <Button isIconOnly onClick={() => setTemplates(null)}>
+              <IoArrowBack />
+            </Button>
+          )}
+          <span>{templates ? 'Choose Template' : 'Pick Frame'}</span>
+        </ModalHeader>
         <ModalBody
           id="content-picker-container"
           className="p-4 pt-0 scrollbar-none relative">
-          <div className="z-0 flex flex-col gap-4">
-            {framesWithCategory.map(
-              ({ category, label, helpText, frames: _frames }) => (
-                <div
-                  className={cn('p-4 rounded-md flex flex-col gap-4')}
-                  id={category}>
-                  <div className="flex justify-start items-center gap-2">
-                    <p className="text-primary">{label}</p>
-                    <Tooltip size="sm" content={helpText}>
-                      <div>
-                        <BsQuestionCircle className="text-black/50" />
-                      </div>
-                    </Tooltip>
-                  </div>
-                  <div className="flex flex-wrap gap-4">
-                    {_frames.map((frame) => (
-                      <RenderIf
-                        isTrue={Boolean(
-                          isBreakoutActivity
-                            ? frame?.isAvailableForBreakout
-                            : true
-                        )}>
-                        <Tooltip content={frame.description}>
-                          <Button
-                            variant="ghost"
-                            startContent={frame.iconSmall}
-                            onClick={() =>
-                              onChoose(frame.contentType, frame.templateKey)
-                            }>
-                            {frame.name}
-                          </Button>
-                        </Tooltip>
-                        {/* <ContentTypeCard card={frame} onClick={onChoose} /> */}
-                      </RenderIf>
-                    ))}
-                  </div>
-                </div>
-              )
-            )}
-          </div>
+          {renderContents()}
         </ModalBody>
       </ModalContent>
     </Modal>

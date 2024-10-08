@@ -60,6 +60,7 @@ export const frameSlice = createSlice({
       state.frame.data =
         state.frame.data?.filter((frame) => frame.id !== action.payload) || null
     },
+    resetFrame: () => initialState,
   },
   extraReducers: (builder) => {
     attachThunkToBuilder({
@@ -254,5 +255,9 @@ attachStoreListener({
     )
   },
 })
-export const { updateFrameAction, insertFrameAction, deleteFrameAction } =
-  renameSliceActions(frameSlice.actions)
+export const {
+  updateFrameAction,
+  insertFrameAction,
+  deleteFrameAction,
+  resetFrameAction,
+} = renameSliceActions(frameSlice.actions)

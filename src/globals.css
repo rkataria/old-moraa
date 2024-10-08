@@ -78,6 +78,14 @@
   .bg-studio {
     @apply bg-[var(--studio-background)];
   }
+
+  .live-button {
+    @apply !bg-black/30 !text-white hover:!bg-black/40;
+  }
+
+  .live-button.active {
+    @apply !bg-black/40 !text-white;
+  }
 }
 
 /* Google Fonts */

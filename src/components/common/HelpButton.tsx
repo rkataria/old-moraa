@@ -21,11 +21,11 @@ export function HelpButton({
           size="sm"
           isIconOnly
           variant="light"
-          {...buttonProps}
           className={cn('shrink-0 bg-transparent hover:bg-black/10', {
             'bg-primary text-white hover:bg-primary/80':
               keyboardShortcutsDisClosure.isOpen,
           })}
+          {...buttonProps}
           onClick={() => keyboardShortcutsDisClosure.onOpen()}>
           <IoIosHelpCircleOutline size={24} />
         </Button>

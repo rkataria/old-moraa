@@ -78,7 +78,7 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   }
 
   return (
-    <div className="relative w-full h-full flex justify-start items-start">
+    <div className="max-w-5xl relative w-full h-full flex justify-start items-start">
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
@@ -87,8 +87,8 @@ export function PDFViewer({ frame }: PDFViewerProps) {
         <Page
           loading={<ContentLoading />}
           pageNumber={position}
-          renderAnnotationLayer
-          renderTextLayer
+          renderAnnotationLayer={false}
+          renderTextLayer={false}
           className="w-full"
           devicePixelRatio={5}
         />

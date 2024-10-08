@@ -34,14 +34,10 @@ export function MeetingRecordingButton() {
       buttonProps={{
         size: 'sm',
         radius: 'md',
-        variant: 'light',
-
-        className: cn(
-          'w-full gap-4 justify-between transition-all duration-300',
-          {
-            'bg-red-500 text-white': isRecording,
-          }
-        ),
+        variant: 'flat',
+        className: cn('live-button', {
+          active: isRecording,
+        }),
       }}
       onClick={onRecordingToggle}>
       <span className="flex items-center gap-4">

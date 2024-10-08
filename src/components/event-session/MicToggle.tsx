@@ -32,13 +32,9 @@ export function MicToggle({ className = '' }: { className?: string }) {
         size: 'sm',
         radius: 'md',
         variant: 'flat',
-        className: cn(
-          'transition-all duration-300 bg-[#F3F4F6] text-[#444444]',
-          className,
-          {
-            'bg-red-500 text-white': !isMicEnabled,
-          }
-        ),
+        className: cn('live-button', className, {
+          '!bg-red-500 !text-white hover:!bg-red-500': !isMicEnabled,
+        }),
       }}
       tooltipProps={{
         label: KeyboardShortcuts.Live.muteUnmute.label,

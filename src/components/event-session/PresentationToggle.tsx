@@ -6,11 +6,18 @@ import { PresentationControls } from '../common/PresentationControls'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import {
+  setCurrentFrameIdAction,
+  setCurrentSectionIdAction,
+  setIsOverviewOpenAction,
+} from '@/stores/slices/event/current-event/event.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function PresentationToggle() {
-  const { sections } = useEventContext()
+  const dispatch = useStoreDispatch()
+  const { sections, overviewOpen, currentSectionId } = useEventContext()
   const {
     currentFrame,
     presentationStatus,
@@ -26,9 +33,16 @@ export function PresentationToggle() {
     if (e.target.localName.includes('dyte-sidebar')) return
 
     if (presentationStatus === PresentationStatuses.STOPPED) {
-      startPresentation(
-        currentFrame ? currentFrame.id : sections[0].frames[0].id
-      )
+      const frameSelected = !overviewOpen && !currentSectionId && currentFrame
+
+      const frameToStart = frameSelected
+        ? currentFrame.id
+        : sections[0].frames[0].id
+
+      startPresentation(frameToStart)
+      dispatch(setIsOverviewOpenAction(false))
+      dispatch(setCurrentSectionIdAction(null))
+      dispatch(setCurrentFrameIdAction(frameToStart))
 
       return
     }

@@ -39,9 +39,8 @@ export function BreakoutToggleButton({
       buttonProps={{
         size: 'md',
         variant: 'light',
-        className: cn('gap-2 w-full justify-between pr-2', {
+        className: cn('gap-2 w-full justify-between pr-2 live-button', {
           'bg-primary-100': isBreakoutActive,
-          'bg-transparent': !isBreakoutActive,
         }),
       }}
       onClick={() => onClick()}>
@@ -178,16 +177,13 @@ export function BreakoutHeaderButton() {
       currentFrame?.content?.breakoutFrameId)
   ) {
     return (
-      <ControlButton
-        hideTooltip
-        buttonProps={{
-          size: 'md',
-          variant: 'light',
-          className: cn('gap-2 w-full justify-between pr-2', {
-            'bg-primary-100': isBreakoutActive,
-            'bg-transparent': !isBreakoutActive,
-          }),
-        }}
+      <Button
+        variant="solid"
+        size="sm"
+        radius="md"
+        className={cn('live-button', {
+          active: isBreakoutActive,
+        })}
         onClick={() =>
           onBreakoutStartOnBreakoutSlide(
             currentFrame?.content?.breakoutFrameId
@@ -199,7 +195,7 @@ export function BreakoutHeaderButton() {
           <VscMultipleWindows size={24} className="text-gray-600" />
           Start breakout
         </span>
-      </ControlButton>
+      </Button>
     )
   }
 

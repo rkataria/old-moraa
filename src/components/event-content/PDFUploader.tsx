@@ -157,7 +157,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
 
       case !!downloadPDFQuery.data:
         return (
-          <div className="w-4/5 h-full flex justify-start items-start gap-4">
+          <div className="max-w-5xl h-full flex justify-start items-start gap-4">
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -169,8 +169,8 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
               }>
               <Page
                 pageNumber={selectedPage}
-                renderAnnotationLayer
-                renderTextLayer
+                renderAnnotationLayer={false}
+                renderTextLayer={false}
                 className="w-full"
                 devicePixelRatio={5}
               />
