@@ -8,6 +8,7 @@ import { ParticipantTiles } from '../ParticipantTiles'
 
 import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsFrame'
 import { PanelResizer } from '@/components/common/PanelResizer'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -15,9 +16,18 @@ import { EventSessionMode } from '@/types/event-session.type'
 
 export function Content() {
   const { eventSessionMode, isHost } = useEventSession()
+  const { getFrameById } = useEventContext()
   const isBreakoutOverviewOpen = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isBreakoutOverviewOpen
+  )
+  const sessionBreakoutFrameId = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutFrameId
+  )
+  const currentFrameId = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.currentFrameId
   )
   const [panelSize, setPanelSize] = useState(18) // Initial default size
 
@@ -43,6 +53,15 @@ export function Content() {
     eventSessionMode === EventSessionMode.LOBBY ||
     (eventSessionMode === EventSessionMode.PEEK && isHost)
 
+  const breakoutFrame = getFrameById(sessionBreakoutFrameId!)
+  const isSmartBreakout = !(
+    breakoutFrame?.content?.breakoutRooms ||
+    breakoutFrame?.content?.groupActivityId
+  )
+  const isCurrentFrameInBreakout =
+    typeof currentFrameId === 'string' &&
+    currentFrameId === sessionBreakoutFrameId
+
   return (
     <div
       className="relative flex justify-start items-start flex-1 w-full h-[calc(100vh_-_120px)] overflow-hidden overflow-y-auto"
@@ -55,10 +74,18 @@ export function Content() {
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
           <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
-            {isHost && isBreakoutActive && isBreakoutOverviewOpen ? (
+            {isHost &&
+            isBreakoutActive &&
+            (isBreakoutOverviewOpen || isCurrentFrameInBreakout) ? (
               <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
                 <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
-                <BreakoutRoomsWithParticipants hideActivityCards />
+                <BreakoutRoomsWithParticipants
+                  smartBreakoutActivityId={
+                    isSmartBreakout
+                      ? sessionBreakoutFrameId || undefined
+                      : undefined
+                  }
+                />
               </div>
             ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
               <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2 border-1 border-gray-200">
