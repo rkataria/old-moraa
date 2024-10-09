@@ -80,11 +80,11 @@
   }
 
   .live-button {
-    @apply !bg-black/30 !text-white hover:!bg-black/40;
+    @apply !bg-black/25 !text-white hover:!bg-black/35;
   }
 
   .live-button.active {
-    @apply !bg-black/40 !text-white;
+    @apply !bg-black/35 !text-white;
   }
 }
 

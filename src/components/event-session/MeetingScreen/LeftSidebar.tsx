@@ -20,12 +20,9 @@ export function LeftSidebar() {
       }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
       className={cn(
-        'relative w-64 h-full bg-white ml-2 rounded-md overflow-hidden'
+        'relative w-64 h-full ml-2 rounded-md overflow-hidden bg-white border-1 border-gray-200'
       )}>
-      <AgendaPanel
-        header={<LiveAgendaHeader />}
-        collapsed={leftSidebarMode === 'collapsed'}
-      />
+      <AgendaPanel header={<LiveAgendaHeader />} />
     </motion.div>
   )
 }

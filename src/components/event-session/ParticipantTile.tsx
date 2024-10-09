@@ -13,6 +13,7 @@ import uniqolor from 'uniqolor'
 
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
 
+import { useProfile } from '@/hooks/useProfile'
 import { cn } from '@/utils/utils'
 
 export function ParticipantTile({
@@ -22,10 +23,12 @@ export function ParticipantTile({
   participant: DyteParticipant | Readonly<DyteSelf>
   handRaised?: boolean
 }) {
+  const { data: user } = useProfile()
   const tileRef = useRef<HTMLDivElement>(null)
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
   const tileBgColor = uniqolor(participant.id)
+  const avatarColor = uniqolor(user.id)
 
   return (
     <div
@@ -41,12 +44,18 @@ export function ParticipantTile({
         style={{
           backgroundColor: tileBgColor.color,
         }}>
-        <DyteAvatar size="md" participant={participant} />
+        <DyteAvatar
+          size="md"
+          participant={participant}
+          style={{
+            backgroundColor: avatarColor.color,
+          }}
+        />
         <DyteNameTag
           meeting={meeting}
           participant={participant}
           size="sm"
-          className="left-1/2 -translate-x-1/2">
+          className="left-3 w-fit">
           <DyteAudioVisualizer
             size="sm"
             slot="start"

@@ -65,7 +65,7 @@ export function RaiseHandToggle() {
         size: 'sm',
         variant: 'flat',
         className: cn('live-button', {
-          active: isHandRaised,
+          '!bg-yellow-400 hover:!bg-yellow-400': isHandRaised,
         }),
       }}
       tooltipProps={{

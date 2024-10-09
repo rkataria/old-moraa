@@ -1,30 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-no-bind */
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 
 import { SectionItem } from './SectionItem'
 import { StrictModeDroppable } from '../StrictModeDroppable'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { EventContextType } from '@/types/event-context.type'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { cn, scrollParentToChild } from '@/utils/utils'
 
 export function SectionList() {
-  const {
-    currentFrame,
-    sections,
-    reorderSection,
-    reorderFrame,
-    eventMode,
-    preview,
-  } = useContext(EventContext) as EventContextType
+  const { sections, reorderSection, reorderFrame, eventMode, preview } =
+    useEventContext()
   const { permissions } = useEventPermissions()
   const sectionListRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
+  const currentFrame = useCurrentFrame()
 
   const expanded = leftSidebarVisiblity === 'maximized'
 

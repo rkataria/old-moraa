@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { Button } from '@nextui-org/react'
 import { VscMultipleWindows } from 'react-icons/vsc'
 
 import { ControlButton } from '../ControlButton'
 
+import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -33,25 +33,27 @@ export function BreakoutToggleButton({
 }) {
   const { isBreakoutActive } = useBreakoutRooms()
 
+  const tooltipContent = isActive
+    ? 'Hide Breakouts'
+    : isBreakoutActive
+      ? 'View Active Breakout'
+      : 'Start Breakouts'
+
   return (
     <ControlButton
-      hideTooltip
+      tooltipProps={{
+        content: tooltipContent,
+      }}
       buttonProps={{
-        size: 'md',
+        size: 'sm',
         variant: 'light',
-        className: cn('gap-2 w-full justify-between pr-2 live-button', {
-          'bg-primary-100': isBreakoutActive,
+        isIconOnly: true,
+        className: cn('live-button', {
+          '!bg-primary-100': isBreakoutActive,
         }),
       }}
       onClick={() => onClick()}>
-      <span className="flex items-center gap-4">
-        <VscMultipleWindows size={24} className="text-gray-600" />
-        {isActive
-          ? 'Hide Breakouts'
-          : isBreakoutActive
-            ? 'View Active Breakout'
-            : 'Start Breakouts'}
-      </span>
+      <VscMultipleWindows size={18} className="text-white" />
     </ControlButton>
   )
 }
@@ -181,6 +183,7 @@ export function BreakoutHeaderButton() {
         variant="solid"
         size="sm"
         radius="md"
+        isIconOnly
         className={cn('live-button', {
           active: isBreakoutActive,
         })}
@@ -191,10 +194,7 @@ export function BreakoutHeaderButton() {
               : currentFrame
           )
         }>
-        <span className="flex items-center gap-4">
-          <VscMultipleWindows size={24} className="text-gray-600" />
-          Start breakout
-        </span>
+        <VscMultipleWindows size={18} className="text-white" />
       </Button>
     )
   }

@@ -5,20 +5,13 @@ import { useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { SectionList } from './AgendaPanel/SectionList'
-import { RenderIf } from './RenderIf/RenderIf'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { AgendaPanelContextProvider } from '@/hooks/useAgendaPanel'
 import { ISection } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
-export function AgendaPanel({
-  header,
-  collapsed,
-}: {
-  header?: React.ReactNode
-  collapsed?: boolean
-}) {
+export function AgendaPanel({ header }: { header?: React.ReactNode }) {
   const [expandedSections, setExpandedSections] = useState<string[]>([])
   const { currentFrame, sections, selectedSectionId } = useEventContext()
 
@@ -61,10 +54,8 @@ export function AgendaPanel({
   return (
     <AgendaPanelContextProvider>
       <div className={cn('flex flex-col w-full h-full p-2')}>
-        {!collapsed && header}
-        <RenderIf isTrue={!collapsed}>
-          <SectionList />
-        </RenderIf>
+        {header}
+        <SectionList />
       </div>
     </AgendaPanelContextProvider>
   )

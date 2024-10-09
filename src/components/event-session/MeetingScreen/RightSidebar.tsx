@@ -19,6 +19,8 @@ type RightSidebarProps = {
   setDyteStates: Dispatch<SetStateAction<DyteStates>>
 }
 
+const RIGHT_SIDEBAR_WIDTH = 320
+
 const HeaderMap = {
   chat: {
     title: 'Chats',
@@ -95,12 +97,12 @@ export function RightSidebar({ dyteStates, setDyteStates }: RightSidebarProps) {
 
   return (
     <motion.div
-      initial={{ marginRight: -256 }}
+      initial={{ marginRight: -RIGHT_SIDEBAR_WIDTH }}
       animate={{
-        marginRight: rightSidebarMode ? 8 : -256,
+        marginRight: rightSidebarMode ? 8 : -RIGHT_SIDEBAR_WIDTH,
       }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
-      className="relative w-64 h-full bg-white mr-2 p-2 border-1 border-gray-200 rounded-md overflow-hidden">
+      className="relative w-80 h-full bg-white mr-2 p-2 border-1 border-gray-200 rounded-md overflow-hidden">
       {renderContent()}
     </motion.div>
   )

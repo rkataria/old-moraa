@@ -1,14 +1,12 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { useContext } from 'react'
-
 import { Button } from '@nextui-org/react'
 import { RxCross1 } from 'react-icons/rx'
 
 import { Note } from './Note'
 
-import { EventContext } from '@/contexts/EventContext'
-import { EventContextType } from '@/types/event-context.type'
+import { useEventContext } from '@/contexts/EventContext'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { cn } from '@/utils/utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,13 +33,20 @@ export function NoteOverlay({
   editable?: boolean
   onClose: () => void
 }) {
-  const { currentFrame, eventMode, preview } = useContext(
-    EventContext
-  ) as EventContextType
+  const { eventMode, preview } = useEventContext()
+  const currentFrame = useCurrentFrame()
 
   const isEditable = editable && eventMode === 'edit' && !preview
 
-  if (!currentFrame) return null
+  if (!currentFrame) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="text-lg font-semibold tracking-tight text-center">
+          No frame selected
+        </span>
+      </div>
+    )
+  }
 
   return (
     <NoteOverlaySidebarWrapper
@@ -49,7 +54,7 @@ export function NoteOverlay({
       onClose={onClose}>
       <Note
         frameId={currentFrame.id}
-        note={currentFrame.notes}
+        note={currentFrame.notes || ''}
         editable={isEditable}
         placeholder={isEditable ? 'Type your note here' : 'No notes found'}
         className="cursor-text"

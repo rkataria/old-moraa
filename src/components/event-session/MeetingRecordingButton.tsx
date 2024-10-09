@@ -30,20 +30,21 @@ export function MeetingRecordingButton() {
 
   return (
     <ControlButton
-      hideTooltip
+      tooltipProps={{
+        content: isRecording ? 'Stop Recording' : 'Start Recording',
+        actionKey: 'R',
+      }}
       buttonProps={{
         size: 'sm',
         radius: 'md',
         variant: 'flat',
+        isIconOnly: true,
         className: cn('live-button', {
           active: isRecording,
         }),
       }}
       onClick={onRecordingToggle}>
-      <span className="flex items-center gap-4">
-        <IoMdRadioButtonOn size={24} />
-        {isRecording ? 'Stop' : 'Start'} Recording
-      </span>
+      <IoMdRadioButtonOn size={18} />
     </ControlButton>
   )
 }
