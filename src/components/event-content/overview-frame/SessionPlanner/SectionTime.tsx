@@ -13,6 +13,7 @@ import { IoCloseCircle, IoTimeOutline } from 'react-icons/io5'
 
 import { Minutes } from './Minutes'
 
+import { ContentType } from '@/components/common/ContentTypePicker'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { EventContext } from '@/contexts/EventContext'
@@ -56,8 +57,20 @@ export function SectionTime({
     let totalTime = 0
 
     frames.forEach((frame) => {
-      if (frame?.config && typeof frame?.config?.time === 'number') {
+      if (
+        frame?.config &&
+        typeof frame?.config?.time === 'number' &&
+        frame.type !== ContentType.BREAKOUT
+      ) {
         totalTime += frame.config.time
+
+        return
+      }
+      if (
+        frame?.config &&
+        typeof frame?.config?.breakoutDuration === 'number'
+      ) {
+        totalTime += frame.config.breakoutDuration
       }
     })
 

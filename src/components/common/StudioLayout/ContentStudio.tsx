@@ -29,7 +29,6 @@ export function ContentStudio() {
         {/* <ContentStudioHeader /> */}
         <PanelGroup direction="horizontal">
           <Panel
-            id="hello"
             defaultSize={resizableRightSidebarVisible ? 60 : 100}
             minSize={resizableRightSidebarVisible ? 40 : 100}>
             {/* Main Container */}

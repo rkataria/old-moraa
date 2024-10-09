@@ -18,7 +18,7 @@ import isEqual from 'lodash.isequal'
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 import { BsTrash } from 'react-icons/bs'
 import { IoChevronDown } from 'react-icons/io5'
-import { MdDragIndicator } from 'react-icons/md'
+import { MdAdd, MdDragIndicator } from 'react-icons/md'
 
 import { SessionColorTracker } from './ColorTracker'
 import { FramesList } from './FramesList'
@@ -28,6 +28,7 @@ import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
 import { DropdownActions } from '@/components/common/DropdownActions'
 import { EditableLabel } from '@/components/common/EditableLabel'
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
+import { Loading } from '@/components/common/Loading'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
@@ -59,9 +60,16 @@ export function SessionPlanner({
     setInsertInSectionId,
     deleteSection,
     setInsertAfterFrameId,
+    setInsertAfterSectionId,
+    addSection,
   } = useContext(EventContext) as EventContextType
 
   const dispatch = useStoreDispatch()
+
+  const isAddSectionLoading = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.sectionState.createSectionThunk.isLoading
+  )
 
   const [filteredSections, setFilteredSections] = useState(sections)
   const { permissions } = useEventPermissions()
@@ -182,7 +190,10 @@ export function SessionPlanner({
             {(sectionDroppableProvided) => (
               <div
                 className={cn(
-                  'flex flex-col justify-start items-center gap-5 w-full flex-nowrap'
+                  'flex flex-col justify-start items-center w-full flex-nowrap',
+                  {
+                    'gap-5': !editable,
+                  }
                 )}
                 ref={sectionDroppableProvided.innerRef}
                 {...sectionDroppableProvided.droppableProps}>
@@ -466,6 +477,45 @@ export function SessionPlanner({
                                 section={section}
                                 frameIdToBeFocus={itemIdToBeFocus}
                               />
+                            </RenderIf>
+
+                            <RenderIf isTrue={editable}>
+                              <div
+                                className={cn(
+                                  'relative flex items-center w-full h-5 opacity-0 hover:opacity-100 cursor-pointer group/add-section duration-100',
+                                  {
+                                    'translate-y-[10px]':
+                                      expandedSections.includes(
+                                        sections[sectionIndex + 1]?.id
+                                      ),
+                                  }
+                                )}
+                                onClick={() => {
+                                  setInsertInSectionId(section.id)
+                                  setInsertAfterSectionId(section.id)
+                                  addSection({
+                                    afterSectionId: section.id,
+                                  })
+                                }}>
+                                <div className="w-full h-[1px] bg-primary-200" />
+                                <div className="flex items-center px-4 gap-2 text-gray-400">
+                                  {isAddSectionLoading ? (
+                                    <Loading />
+                                  ) : (
+                                    <MdAdd
+                                      size={24}
+                                      className="shrink-0 text-primary"
+                                    />
+                                  )}
+
+                                  <p className="min-w-max text-xs text-primary font-medium">
+                                    Add Section
+                                  </p>
+                                </div>
+                                <div className="w-full h-[1px] bg-primary-200" />
+
+                                <div />
+                              </div>
                             </RenderIf>
                           </div>
                         </Fragment>

@@ -43,6 +43,7 @@ export function FrameItem({
   selectedFrameIds,
   editable = false,
   setSelectedFrameIds,
+  className = '',
 }: {
   section: ISection
   frame: IFrame
@@ -51,6 +52,7 @@ export function FrameItem({
   selectedFrameIds: string[]
   editable: boolean
   setSelectedFrameIds: Dispatch<SetStateAction<string[]>>
+  className?: string
 }) {
   const router = useRouter()
   const {
@@ -164,6 +166,7 @@ export function FrameItem({
           {..._provided.draggableProps}
           className={cn(
             'relative w-full bg-white min-h-[3.125rem] group/frame grid grid-cols-[40px_100px_12px_1fr_1fr_70px] hover:bg-gray-50 border-b last:border-none last:rounded-b-xl hover:shadow-sm duration-300',
+            className,
             {
               'grid-cols-[100px_12px_1fr_1fr_130px]': preview,
               'before:absolute before:w-1.5 before:bg-primary-300 before:h-full before:top-0 before:-left-1.5 last:before:h-[88%]':

@@ -102,7 +102,7 @@ export function SecondaryHeader() {
         classNames={{
           base: 'h-full',
           tabList: 'bg-transparent border-gray-100 shadow-none h-full pb-0',
-          tab: 'text-gray-600 h-full',
+          tab: 'text-gray-600 h-full !outline-none',
           tabContent:
             'px-4 text-gray-600 h-full flex justify-center items-center font-medium',
         }}

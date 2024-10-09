@@ -1,16 +1,17 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Fragment, useState } from 'react'
 
-import { Button, Checkbox } from '@nextui-org/react'
-import { MdFormatListBulletedAdd, MdAdd } from 'react-icons/md'
+import { Checkbox } from '@nextui-org/react'
 
 import { BottomBar } from './BottomBar'
 import { FrameItem } from './FrameItem'
 
+import { ContentType } from '@/components/common/ContentTypePicker'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useStoreSelector } from '@/hooks/useRedux'
 import { ISection } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
@@ -23,21 +24,11 @@ export function FramesList({
 }) {
   const {
     insertInSectionId,
-    addSection,
     setOpenContentTypePicker,
     setAddedFromSessionPlanner,
     setInsertInSectionId,
-    setInsertAfterSectionId,
+    setInsertAfterFrameId,
   } = useEventContext()
-
-  const isAddFrameLoading = useStoreSelector(
-    (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
-  )
-
-  const isAddSectionLoading = useStoreSelector(
-    (state) =>
-      state.event.currentEvent.sectionState.createSectionThunk.isLoading
-  )
 
   const { preview, eventMode } = useEventContext()
 
@@ -99,7 +90,7 @@ export function FramesList({
                       </div>
                     </RenderIf>
 
-                    <p className="p-2 text-center">Duration</p>
+                    <p className="p-2 text-center">Duration(min)</p>
                     <p className="border-r" />
                     <p className="p-2 text-center">Name</p>
 
@@ -108,11 +99,14 @@ export function FramesList({
                     <p className="p-2 text-center">Status</p>
                   </div>
                   <div className="flex flex-col justify-start items-start w-full transition-all">
-                    {section.frames.length === 0 && (
-                      <p className="text-center w-full py-4">
-                        No frames in this section.
-                      </p>
-                    )}
+                    <RenderIf isTrue={!editable}>
+                      {section.frames.length === 0 && (
+                        <p className="text-center w-full py-4">
+                          No frames in this section.
+                        </p>
+                      )}
+                    </RenderIf>
+
                     {section.frames.map((frame, frameIndex) => (
                       <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
                         <Fragment key={frame.id}>
@@ -129,43 +123,31 @@ export function FramesList({
                       </RenderIf>
                     ))}
                     <RenderIf isTrue={editable}>
-                      <div className="flex items-center p-1 opacity-30">
-                        <div className="flex justify-center gap-2">
-                          <Button
-                            size="sm"
-                            color="default"
-                            variant="light"
-                            isLoading={
-                              isAddFrameLoading &&
-                              insertInSectionId === section.id
-                            }
-                            className="pl-1 gap-2"
-                            startContent={<MdAdd size={24} />}
-                            onClick={() => {
-                              setInsertInSectionId(section.id)
-                              setAddedFromSessionPlanner(true)
-                              setOpenContentTypePicker(true)
-                            }}>
-                            Add Frame
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="light"
-                            isLoading={
-                              isAddSectionLoading &&
-                              insertInSectionId === section.id
-                            }
-                            startContent={<MdFormatListBulletedAdd size={22} />}
-                            onClick={() => {
-                              setInsertInSectionId(section.id)
-                              setInsertAfterSectionId(section.id)
-                              addSection({
-                                afterSectionId: section.id,
-                              })
-                            }}>
-                            Add Section
-                          </Button>
-                        </div>
+                      <div
+                        className="w-full cursor-pointer"
+                        onClick={() => {
+                          setAddedFromSessionPlanner(true)
+                          setInsertAfterFrameId(
+                            section.frames[section.frames.length - 1]?.id
+                          )
+                          setInsertInSectionId(section.id)
+                          setOpenContentTypePicker(true)
+                        }}>
+                        <FrameItem
+                          section={section}
+                          frame={{
+                            name: '+ Add frame',
+                            config: { time: 1 },
+                            type: ContentType.MORAA_SLIDE,
+                            id: 'placeholder',
+                          }}
+                          frameIndex={-1}
+                          selectedFrameIds={selectedFrameIds}
+                          frameIdToBeFocus="placeholder-id"
+                          editable={editable}
+                          setSelectedFrameIds={setSelectedFrameIds}
+                          className="opacity-30 pointer-events-none"
+                        />
                       </div>
                     </RenderIf>
                   </div>

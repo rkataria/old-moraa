@@ -45,7 +45,7 @@ export function Minutes({
           mainWrapper: 'gap-0.5',
           base: '!opacity-100',
         }}
-        description="min"
+        // description="min"
         startContent={
           <Button
             isDisabled={preview}
