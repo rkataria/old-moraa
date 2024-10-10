@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { PropsWithChildren, useEffect, useRef, useState } from 'react'
 
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
@@ -13,6 +13,7 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { EventSessionMode } from '@/types/event-session.type'
+import { cn } from '@/utils/utils'
 
 export function Content() {
   const { eventSessionMode, isHost } = useEventSession()
@@ -62,53 +63,91 @@ export function Content() {
     typeof currentFrameId === 'string' &&
     currentFrameId === sessionBreakoutFrameId
 
+  const ContentViewModes = {
+    spotlight_mode_participants: (
+      <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-lg m-auto">
+        <ParticipantTiles spotlightMode />
+      </div>
+    ),
+    frame_presentation_view: (
+      <PanelsContent panelRef={panelRef}>
+        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2 border-1 border-gray-200">
+          <ContentContainer />
+        </div>
+      </PanelsContent>
+    ),
+    lobby_breakout_view: (
+      <PanelsContent panelRef={panelRef}>
+        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
+          <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
+          <BreakoutRoomsWithParticipants hideActivityCards />
+        </div>
+      </PanelsContent>
+    ),
+    frame_breakout_view: (
+      <PanelsContent panelRef={panelRef}>
+        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
+          <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
+          <BreakoutRoomsWithParticipants
+            smartBreakoutActivityId={
+              isSmartBreakout ? sessionBreakoutFrameId || undefined : undefined
+            }
+          />
+        </div>
+      </PanelsContent>
+    ),
+  }
+
+  const contentToShow = cn({
+    lobby_breakout_view:
+      isHost &&
+      isBreakoutActive &&
+      !sessionBreakoutFrameId &&
+      eventSessionMode !== 'Presentation',
+    spotlight_mode_participants: spotlightMode && !isBreakoutOverviewOpen,
+    frame_breakout_view:
+      isHost &&
+      isBreakoutActive &&
+      (isBreakoutOverviewOpen || isCurrentFrameInBreakout),
+    frame_presentation_view: ['Preview', 'Presentation'].includes(
+      eventSessionMode
+    ),
+  }).split(' ')[0] as keyof typeof ContentViewModes
+
   return (
     <div
       className="relative flex justify-start items-start flex-1 w-full h-[calc(100vh_-_120px)] overflow-hidden overflow-y-auto"
       ref={mainContentRef}>
       {/* Sportlight View */}
-      {spotlightMode && !isBreakoutOverviewOpen ? (
-        <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-lg m-auto">
-          <ParticipantTiles spotlightMode />
-        </div>
-      ) : (
-        <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
-          <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
-            {isHost &&
-            isBreakoutActive &&
-            (isBreakoutOverviewOpen || isCurrentFrameInBreakout) ? (
-              <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
-                <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
-                <BreakoutRoomsWithParticipants
-                  smartBreakoutActivityId={
-                    isSmartBreakout
-                      ? sessionBreakoutFrameId || undefined
-                      : undefined
-                  }
-                />
-              </div>
-            ) : ['Preview', 'Presentation'].includes(eventSessionMode) ? (
-              <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2 border-1 border-gray-200">
-                <ContentContainer />
-              </div>
-            ) : null}
-          </Panel>
-
-          <PanelResizer />
-
-          <Panel
-            minSize={20}
-            collapsedSize={20}
-            defaultSize={20}
-            maxSize={50}
-            ref={panelRef}>
-            <div className="flex flex-col overflow-auto h-full flex-1">
-              <ParticipantTiles spotlightMode={false} />
-            </div>
-          </Panel>
-        </PanelGroup>
-      )}
+      {ContentViewModes[contentToShow]}
       <FrameOverlayView />
     </div>
+  )
+}
+
+function PanelsContent({
+  children,
+  panelRef,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: PropsWithChildren<{ panelRef: any }>) {
+  return (
+    <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
+      <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
+        {children}
+      </Panel>
+
+      <PanelResizer />
+
+      <Panel
+        minSize={20}
+        collapsedSize={20}
+        defaultSize={20}
+        maxSize={50}
+        ref={panelRef}>
+        <div className="flex flex-col overflow-auto h-full flex-1">
+          <ParticipantTiles spotlightMode={false} />
+        </div>
+      </Panel>
+    </PanelGroup>
   )
 }

@@ -5,7 +5,6 @@ import { VscMultipleWindows } from 'react-icons/vsc'
 
 import { ControlButton } from '../ControlButton'
 
-import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -13,7 +12,6 @@ import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
 import {
-  setIsBreakoutOverviewOpenAction,
   setIsCreateBreakoutOpenAction,
   updateMeetingSessionDataAction,
 } from '@/stores/slices/event/current-event/live-session.slice'
@@ -24,35 +22,31 @@ import { cn } from '@/utils/utils'
 
 export function BreakoutToggleButton({
   onClick,
-  isActive,
-  // useTextButton,
+  label,
+  color,
 }: {
   onClick: () => void
-  isActive: boolean
-  // useTextButton?: boolean
+  label: string
+  color?: 'success' | 'danger'
 }) {
-  const { isBreakoutActive } = useBreakoutRooms()
-
-  const tooltipContent = isActive
-    ? 'Hide Breakouts'
-    : isBreakoutActive
-      ? 'View Active Breakout'
-      : 'Start Breakouts'
+  const bgColor = {
+    danger: '!bg-red-500 hover:!bg-red-500',
+    success: '!bg-green-500 hover:!bg-green-500',
+    none: '',
+  }[color || 'none']
 
   return (
     <ControlButton
       tooltipProps={{
-        content: tooltipContent,
+        content: label,
       }}
       buttonProps={{
         size: 'sm',
-        variant: 'light',
+        variant: 'solid',
         isIconOnly: true,
-        className: cn('live-button', {
-          '!bg-primary-100': isBreakoutActive,
-        }),
+        className: cn('gap-2 justify-between pr-2 live-button', bgColor),
       }}
-      onClick={() => onClick()}>
+      onClick={onClick}>
       <VscMultipleWindows size={18} className="text-white" />
     </ControlButton>
   )
@@ -60,16 +54,17 @@ export function BreakoutToggleButton({
 
 export function BreakoutHeaderButton() {
   const dyteMeeting = useDyteMeeting()
-  const isBreakoutOverviewOpen = useStoreSelector(
-    (state) =>
-      state.event.currentEvent.liveSessionState.breakout.isBreakoutOverviewOpen
-  )
   const isCreateBreakoutOpen = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isCreateBreakoutOpen
   )
-  const { isHost, currentFrame, setCurrentFrame, realtimeChannel } =
-    useEventSession()
+  const {
+    isHost,
+    currentFrame,
+    presentationStatus,
+    setCurrentFrame,
+    realtimeChannel,
+  } = useEventSession()
 
   const { getFrameById } = useEventContext()
 
@@ -108,7 +103,10 @@ export function BreakoutHeaderButton() {
       })
       dispatch(
         updateMeetingSessionDataAction({
-          breakoutFrameId: breakoutFrame?.id || null,
+          breakoutFrameId:
+            presentationStatus === PresentationStatuses.STARTED
+              ? breakoutFrame?.id
+              : null,
         })
       )
       if (breakoutFrame?.config.breakoutDuration && realtimeChannel) {
@@ -139,7 +137,7 @@ export function BreakoutHeaderButton() {
                 .activityId
                 ? breakoutFrame?.content!.breakoutRooms?.[index].activityId
                 : breakoutFrame?.content!.groupActivityId,
-              presentationStatus: PresentationStatuses.STARTED,
+              presentationStatus,
             },
             meeting_id: meetingId,
           })
@@ -179,31 +177,23 @@ export function BreakoutHeaderButton() {
       currentFrame?.content?.breakoutFrameId)
   ) {
     return (
-      <Button
-        variant="solid"
-        size="sm"
-        radius="md"
-        isIconOnly
-        className={cn('live-button', {
-          active: isBreakoutActive,
-        })}
+      <BreakoutToggleButton
+        label="Start breakout"
         onClick={() =>
           onBreakoutStartOnBreakoutSlide(
             currentFrame?.content?.breakoutFrameId
               ? getFrameById(currentFrame?.content?.breakoutFrameId as string)
               : currentFrame
           )
-        }>
-        <VscMultipleWindows size={18} className="text-white" />
-      </Button>
+        }
+      />
     )
   }
 
   if (!isBreakoutActive) {
     return (
       <BreakoutToggleButton
-        // useTextButton
-        isActive={isCreateBreakoutOpen}
+        label="Start breakout"
         onClick={() =>
           dispatch(setIsCreateBreakoutOpenAction(!isCreateBreakoutOpen))
         }
@@ -217,25 +207,30 @@ export function BreakoutHeaderButton() {
     currentFrame?.content?.breakoutFrameId === sessionBreakoutFrameId
   ) {
     return (
-      <Button
+      <BreakoutToggleButton
+        label="End breakout"
         color="danger"
-        variant="solid"
-        size="md"
-        className="!bg-red-500 w-full mt-3"
-        radius="md"
-        onClick={onBreakoutEnd}>
-        End Breakout
-      </Button>
+        onClick={onBreakoutEnd}
+      />
     )
   }
 
   if (!sessionBreakoutFrameId) {
     return (
       <BreakoutToggleButton
-        isActive={isBreakoutOverviewOpen}
-        onClick={() =>
-          dispatch(setIsBreakoutOverviewOpenAction(!isBreakoutOverviewOpen))
-        }
+        label="End breakout"
+        color="danger"
+        onClick={onBreakoutEnd}
+      />
+    )
+  }
+
+  if (sessionBreakoutFrameId === currentFrame?.id) {
+    return (
+      <BreakoutToggleButton
+        label="End breakout"
+        color="danger"
+        onClick={onBreakoutEnd}
       />
     )
   }
@@ -243,7 +238,7 @@ export function BreakoutHeaderButton() {
   if (sessionBreakoutFrameId) {
     return (
       <BreakoutToggleButton
-        isActive={currentFrame?.id === sessionBreakoutFrameId}
+        label="View breakout"
         onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}
       />
     )

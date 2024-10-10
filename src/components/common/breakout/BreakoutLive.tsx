@@ -17,7 +17,6 @@ import { DragDropContext } from 'react-beautiful-dnd'
 
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 import { BreakoutRoomsWithParticipants } from './BreakoutRoomsFrame'
-import { EndBreakoutButton } from './EndBreakoutButton'
 import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { RenderIf } from '../RenderIf/RenderIf'
@@ -126,14 +125,6 @@ export function BreakoutFrameLive({
               />
             ))}
           </DragDropContext>
-        </div>
-        <div className="mt-4">
-          {isHost &&
-          isBreakoutActive &&
-          breakoutFrameId === currentFrame?.id &&
-          !isInBreakoutMeeting ? (
-            <EndBreakoutButton />
-          ) : undefined}
         </div>
       </RenderIf>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS}>

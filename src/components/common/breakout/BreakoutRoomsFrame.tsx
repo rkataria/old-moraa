@@ -5,7 +5,6 @@ import { Button } from '@nextui-org/react'
 import { DragDropContext } from 'react-beautiful-dnd'
 
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
-import { EndBreakoutButton } from './EndBreakoutButton'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
@@ -82,9 +81,6 @@ export function BreakoutRoomsWithParticipants({
             />
           ))}
         </DragDropContext>
-      </div>
-      <div className="my-4">
-        <EndBreakoutButton />
       </div>
     </div>
   )

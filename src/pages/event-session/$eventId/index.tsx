@@ -40,10 +40,20 @@ export function EventSessionPageInner() {
     (state) =>
       state.event.currentEvent.liveSessionState.dyte.isDyteMeetingLoading
   )
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
   if (isBreakoutLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
-        <Loading message="Joining Breakout Room" />
+        <Loading
+          message={
+            isInBreakoutMeeting
+              ? 'Exiting Breakout Room'
+              : 'Joining Breakout Room'
+          }
+        />
       </div>
     )
   }
@@ -63,6 +73,13 @@ function EventSessionPage() {
   const meetingEl = useRef<HTMLDivElement>(null)
   const [dyteClient, initDyteMeeting] = useDyteClient()
   const dispatch = useStoreDispatch()
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
+  const isMeetingJoined = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
+  )
 
   useTimer()
 
@@ -142,7 +159,15 @@ function EventSessionPage() {
       value={dyteClient}
       fallback={
         <div className="h-screen flex flex-col justify-center items-center">
-          <Loading message="Joining the live session..." />
+          <Loading
+            message={
+              isMeetingJoined
+                ? isInBreakoutMeeting
+                  ? 'Exiting Breakout Room'
+                  : 'Joining Breakout Room'
+                : 'Joining the live session...'
+            }
+          />
         </div>
       }>
       <BreakoutManagerContextProvider>
