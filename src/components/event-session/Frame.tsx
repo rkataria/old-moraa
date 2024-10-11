@@ -12,15 +12,14 @@ import { VideoEmbed } from './content-types/VideoEmbed'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
 import { BreakoutFrameLive } from '../common/breakout/BreakoutLive'
 import { MoraaBoard } from '../common/content-types/MoraaBoard'
+import { MoraaPad } from '../common/content-types/MoraaPad/MoraaPad'
 import { MoraaSlidePreview } from '../common/content-types/MoraaSlide/Preview'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
 
-import { Cover } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { Poll } from '@/components/event-session/content-types/Poll/Poll'
-import { TextImage } from '@/components/event-session/content-types/TextImage'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useAuth } from '@/hooks/useAuth'
@@ -52,9 +51,6 @@ export function Frame() {
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: null,
     [FrameType.GOOGLE_SLIDES_IMPORT]: null,
-    [FrameType.COVER]: (
-      <Cover key={currentFrame.id} frame={currentFrame as any} />
-    ),
     [FrameType.POLL]: (
       <Poll
         key={currentFrame.id}
@@ -73,9 +69,6 @@ export function Frame() {
     [FrameType.REFLECTION]: <Reflection key={currentFrame.id} />,
     [FrameType.VIDEO_EMBED]: (
       <VideoEmbed key={currentFrame.id} frame={currentFrame as any} />
-    ),
-    [FrameType.TEXT_IMAGE]: (
-      <TextImage key={currentFrame.id} frame={currentFrame} />
     ),
     [FrameType.IMAGE_VIEWER]: (
       <ImageViewer
@@ -101,7 +94,7 @@ export function Frame() {
     ),
     [FrameType.POWERPOINT]: null,
     [FrameType.Q_A]: null,
-    [FrameType.MORAA_PAD]: null,
+    [FrameType.MORAA_PAD]: <MoraaPad frame={currentFrame} />,
   }
 
   const renderer = renderersByFrameType[currentFrame.type as FrameType]

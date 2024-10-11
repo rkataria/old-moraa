@@ -3,10 +3,8 @@
 
 import { useContext } from 'react'
 
-import { CoverEditor } from './content-types/CoverEditor'
 import { MoraaBoardEditor } from './content-types/MoraaBoardEditor'
 import { PollEditor } from './content-types/PollEditor'
-import { TextImageEditor } from './content-types/TextImageEditor'
 import { FrameTitleDescriptionPanel } from './FrameTitleDescriptionPanel'
 import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
 import { GoogleSlidesEditor } from './GoogleSlidesEditor'
@@ -16,6 +14,7 @@ import { PowerpointImporter } from './PowerpointImporter'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
+import { MoraaPad } from '../common/content-types/MoraaPad/MoraaPad'
 import { MoraaSlide } from '../common/content-types/MoraaSlide/MoraaSlide'
 import { RichTextEditor } from '../common/content-types/RichText/Editor'
 import { FramePreview } from '../common/FramePreview'
@@ -53,13 +52,11 @@ export function Frame({ frame }: FrameProps) {
     [FrameType.GOOGLE_SLIDES_IMPORT]: (
       <GoogleSlidesImportEditor frame={frame} />
     ),
-    [FrameType.COVER]: <CoverEditor />,
     [FrameType.POLL]: <PollEditor frame={frame as any} />,
     [FrameType.GOOGLE_SLIDES]: <GoogleSlidesEditor frame={frame as any} />,
     [FrameType.PDF_VIEWER]: <PDFUploader frame={frame as any} />,
     [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
     [FrameType.VIDEO_EMBED]: <VideoEmbedEditor frame={frame as any} />,
-    [FrameType.TEXT_IMAGE]: <TextImageEditor />,
     [FrameType.IMAGE_VIEWER]: (
       <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
     ),
@@ -83,7 +80,7 @@ export function Frame({ frame }: FrameProps) {
     [FrameType.BREAKOUT]: <BreakoutFrame frame={frame as any} isEditable />,
     [FrameType.POWERPOINT]: <PowerpointImporter frame={frame as any} />,
     [FrameType.Q_A]: null,
-    [FrameType.MORAA_PAD]: null,
+    [FrameType.MORAA_PAD]: <MoraaPad frame={frame} />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType]

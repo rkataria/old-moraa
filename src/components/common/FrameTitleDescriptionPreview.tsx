@@ -32,8 +32,6 @@ export function FrameTitleDescriptionPreview({
 
   if (
     [
-      FrameType.COVER,
-      FrameType.TEXT_IMAGE,
       FrameType.GOOGLE_SLIDES,
       FrameType.GOOGLE_SLIDES_IMPORT,
       FrameType.PDF_VIEWER,

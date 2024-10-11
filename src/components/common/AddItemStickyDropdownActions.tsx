@@ -3,7 +3,6 @@
 import { useContext } from 'react'
 
 import {
-  Button,
   ButtonGroup,
   Dropdown,
   DropdownItem,
@@ -14,16 +13,19 @@ import { ChevronDownIcon } from 'lucide-react'
 import { BsCardText, BsCollection } from 'react-icons/bs'
 import { LuPlusCircle } from 'react-icons/lu'
 
+import { Button } from '../ui/Button'
+
 import { EventContext } from '@/contexts/EventContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { EventContextType } from '@/types/event-context.type'
+import { cn } from '@/utils/utils'
 
 const descriptionMap: {
   'new-section': string
   'new-frame': string
 } = {
-  'new-section': 'Add a new section after the last section',
-  'new-frame': 'Add a new frame to the last section',
+  'new-section': 'Add a new section to the agenda',
+  'new-frame': 'Add a new frame to the current section',
 }
 
 const iconMap: {
@@ -43,8 +45,10 @@ const labelMap: {
 }
 
 export function AddItemStickyDropdownActions({
+  className = '',
   onOpenContentTypePicker,
 }: {
+  className?: string
   onOpenContentTypePicker?: (open: boolean) => void
 }) {
   const {
@@ -97,18 +101,24 @@ export function AddItemStickyDropdownActions({
 
   return (
     <ButtonGroup
-      variant="flat"
-      className="bg-black text-white max-w-[300px] rounded-md overflow-hidden mt-2"
+      size="sm"
+      variant="solid"
+      color="primary"
+      className={cn(
+        'bg-primary max-w-[300px] rounded-md overflow-hidden mt-2',
+        className
+      )}
       isDisabled={isAddSectionLoading || isAddFrameLoading}>
       <Button
+        disableRipple
+        color="primary"
         startContent={<LuPlusCircle />}
-        className="bg-black text-white"
         onClick={() => handleAddItem(new Set(['new-frame']))}>
         {labelMap['new-frame']}
       </Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
-          <Button isIconOnly className="bg-black text-white">
+          <Button isIconOnly color="primary" disableRipple>
             <ChevronDownIcon />
           </Button>
         </DropdownTrigger>
@@ -118,12 +128,12 @@ export function AddItemStickyDropdownActions({
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onSelectionChange={handleAddItem}
           className="max-w-[300px]">
-          <DropdownItem
+          {/* <DropdownItem
             key="new-frame"
             startContent={iconMap['new-frame']}
             description={descriptionMap['new-frame']}>
             {labelMap['new-frame']}
-          </DropdownItem>
+          </DropdownItem> */}
           <DropdownItem
             key="new-section"
             startContent={iconMap['new-section']}

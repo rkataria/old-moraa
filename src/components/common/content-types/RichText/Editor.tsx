@@ -27,6 +27,7 @@ export function RichTextEditor({
   startContent,
   hideSideBar,
   initalContent,
+  enableCollaboration = false,
 }: {
   editorId: string
   editable?: boolean
@@ -37,6 +38,7 @@ export function RichTextEditor({
   startContent?: ReactNode
   hideSideBar?: boolean
   initalContent?: Content
+  enableCollaboration?: boolean
 }) {
   const [provider, setProvider] = useState<TiptapCollabProvider | null>(null)
   const [collabToken, setCollabToken] = useState<string | null>(null)
@@ -93,7 +95,7 @@ export function RichTextEditor({
       <BlockEditor
         aiToken={aiToken}
         ydoc={ydoc}
-        hasCollab
+        hasCollab={enableCollaboration}
         provider={provider}
         editorInfo={{ name, avatar }}
         editable={editable}

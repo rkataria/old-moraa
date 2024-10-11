@@ -8,7 +8,6 @@ import { PdfAppearance } from './PdfAppearance'
 import { PollAppearance } from './PollAppearance'
 import { ReflectionAppearance } from './ReflectionAppearance'
 import { RichTextAppearance } from './RichTextAppearance'
-import { TextImageAppearance } from './TextImageAppearance'
 
 import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { useEventContext } from '@/contexts/EventContext'
@@ -29,13 +28,11 @@ export function FrameAppearance() {
   const renderersByContentType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: null,
     [FrameType.GOOGLE_SLIDES_IMPORT]: null,
-    [FrameType.COVER]: null,
     [FrameType.POLL]: <PollAppearance />,
     [FrameType.GOOGLE_SLIDES]: null,
     [FrameType.PDF_VIEWER]: <PdfAppearance key={currentFrame.id} />,
     [FrameType.REFLECTION]: <ReflectionAppearance key={currentFrame.id} />,
     [FrameType.VIDEO_EMBED]: null,
-    [FrameType.TEXT_IMAGE]: <TextImageAppearance key={currentFrame.id} />,
     [FrameType.IMAGE_VIEWER]: null,
     [FrameType.RICH_TEXT]: <RichTextAppearance key={currentFrame.id} />,
     [FrameType.MIRO_EMBED]: null,

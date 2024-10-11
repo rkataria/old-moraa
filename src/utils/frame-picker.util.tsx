@@ -48,7 +48,6 @@ export type FramePickerFrame = {
 
 export enum FrameType {
   MORAA_SLIDE = 'Moraa Slide',
-  COVER = 'Title',
   POLL = 'Poll',
   VIDEO = 'Video',
   GOOGLE_SLIDES = 'Google Slides',
@@ -58,7 +57,6 @@ export enum FrameType {
   VIDEO_EMBED = 'Video Embed',
   MIRO_EMBED = 'Miro Embed',
   IMAGE_VIEWER = 'Image',
-  TEXT_IMAGE = 'Text & Image',
   RICH_TEXT = 'Rich Text',
   MORAA_BOARD = 'Moraa Board',
   BREAKOUT = 'Breakout',
@@ -247,7 +245,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     type: FrameType.MORAA_PAD,
     // isAvailableForBreakout: true,
     category: FrameCategory.COLLABORATION_TOOL,
-    isCommingSoon: true,
+    isCommingSoon: false,
   },
 ]
 

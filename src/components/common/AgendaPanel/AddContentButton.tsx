@@ -1,14 +1,10 @@
 import { useContext } from 'react'
 
-import { AiOutlinePlusSquare } from 'react-icons/ai'
+import { AddItemStickyDropdownActions } from '../AddItemStickyDropdownActions'
 
-import { Tooltip } from '../ShortuctTooltip'
-
-import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
-import { cn } from '@/utils/utils'
 
 export function AddContentButton({ className }: { className?: string }) {
   const { setOpenContentTypePicker } = useContext(
@@ -23,19 +19,11 @@ export function AddContentButton({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn('flex justify-center items-center', className)}>
-      <Tooltip label="Add a new frame" actionKey="F">
-        <Button
-          size="sm"
-          color="primary"
-          fullWidth
-          endContent={<AiOutlinePlusSquare size={18} />}
-          onClick={() => {
-            setOpenContentTypePicker?.(true)
-          }}>
-          Add frame
-        </Button>
-      </Tooltip>
-    </div>
+    <AddItemStickyDropdownActions
+      className={className}
+      onOpenContentTypePicker={() => {
+        setOpenContentTypePicker?.(true)
+      }}
+    />
   )
 }
