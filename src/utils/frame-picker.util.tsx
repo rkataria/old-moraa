@@ -265,9 +265,5 @@ export const PRESENTATION_FRAMES = FRAME_PICKER_FRAMES.filter(
     ].includes(frame.category) && !frame.disabled
 )
 
-export const getFrameType = (frameType: FrameType, templateKey?: string) =>
-  FRAME_PICKER_FRAMES.find((type) =>
-    type.type === frameType && templateKey
-      ? type.templateKey === templateKey
-      : true
-  )
+export const getFrameType = (frameType: FrameType) =>
+  FRAME_PICKER_FRAMES.find((type) => type.type === frameType)
