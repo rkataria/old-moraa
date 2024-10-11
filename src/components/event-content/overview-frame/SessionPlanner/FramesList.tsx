@@ -5,22 +5,31 @@ import { Fragment, useState } from 'react'
 import { Checkbox } from '@nextui-org/react'
 
 import { BottomBar } from './BottomBar'
+// eslint-disable-next-line import/no-cycle
 import { FrameItem } from './FrameItem'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { ISection } from '@/types/frame.type'
+import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function FramesList({
-  section,
+  sectionId,
+  frames = [],
   frameIdToBeFocus,
+  placeholder = true,
+  className = '',
+  parentBreakoutFrame,
 }: {
-  section: ISection
-  frameIdToBeFocus: string
+  sectionId: string
+  frames: IFrame[]
+  frameIdToBeFocus?: string
+  placeholder?: boolean
+  className?: string
+  parentBreakoutFrame?: IFrame | null
 }) {
   const {
     insertInSectionId,
@@ -40,19 +49,19 @@ export function FramesList({
   const [selectedFrameIds, setSelectedFrameIds] = useState<string[]>([])
 
   const onChangeAll = (checked: boolean) => {
-    setSelectedFrameIds(checked ? section.frames.map((f) => f.id) : [])
+    setSelectedFrameIds(checked ? frames.map((f) => f.id) : [])
   }
 
   return (
-    <div>
+    <>
       <StrictModeDroppable
-        droppableId={`frame-droppable-sectionId-${section?.id}`}
+        droppableId={`frame-droppable-sectionId-${sectionId}`}
         type="frame">
         {(frameProvided, snapshot) => (
           <div
-            key={`frame-draggable-${section.id}`}
+            key={`frame-draggable-${sectionId}`}
             ref={frameProvided.innerRef}
-            className={cn('rounded-sm transition-all w-full', {
+            className={cn('rounded-sm transition-all w-full', className, {
               'bg-gray-50': snapshot.isDraggingOver,
             })}
             {...frameProvided.droppableProps}>
@@ -61,25 +70,27 @@ export function FramesList({
                 'w-full relative border border-l-[6px] rounded-xl',
                 {
                   'border-primary-100':
-                    insertInSectionId === section.id && !preview,
+                    insertInSectionId === sectionId && !preview,
                 }
               )}>
               <div className="w-full">
                 <div>
                   <div
-                    className={cn(
-                      'grid grid-cols-[100px_12px_1fr_1fr_130px] border-b bg-gray-50 rounded-t-xl',
-                      {
-                        'grid-cols-[40px_100px_12px_1fr_1fr_70px]': !preview,
-                      }
-                    )}>
+                    className={cn('grid  border-b bg-gray-50 rounded-t-xl', {
+                      'grid-cols-[40px_100px_120px_1fr_1fr_70px]': editable,
+                      'grid-cols-[100px_120px_1fr_1fr_130px]': !editable,
+                      'grid-cols-[40px_1fr_1fr_70px]':
+                        parentBreakoutFrame && editable,
+                      'grid-cols-[1fr_1fr_130px]':
+                        parentBreakoutFrame && !editable,
+                    })}>
                     <RenderIf isTrue={!preview}>
                       <div className="grid place-items-center border-r">
                         <Checkbox
                           size="md"
                           isSelected={
                             selectedFrameIds.length !== 0 &&
-                            selectedFrameIds.length === section.frames.length
+                            selectedFrameIds.length === frames.length
                           }
                           onValueChange={onChangeAll}
                           classNames={{
@@ -89,52 +100,55 @@ export function FramesList({
                         />
                       </div>
                     </RenderIf>
+                    <RenderIf isTrue={!parentBreakoutFrame}>
+                      <p className="p-2 text-center">Duration(min)</p>
+                    </RenderIf>
+                    <RenderIf isTrue={!parentBreakoutFrame}>
+                      <p className="p-2 text-center border-x">Category</p>
+                    </RenderIf>
 
-                    <p className="p-2 text-center">Duration(min)</p>
-                    <p className="border-r" />
-                    <p className="p-2 text-center">Name</p>
-
+                    <p className="p-2 text-center">
+                      {parentBreakoutFrame ? 'Activity' : 'Name'}
+                    </p>
                     <p className="border-x p-2 text-center">Notes</p>
-
                     <p className="p-2 text-center">Status</p>
                   </div>
                   <div className="flex flex-col justify-start items-start w-full transition-all">
                     <RenderIf isTrue={!editable}>
-                      {section.frames.length === 0 && (
+                      {frames.length === 0 && (
                         <p className="text-center w-full py-4">
                           No frames in this section.
                         </p>
                       )}
                     </RenderIf>
 
-                    {section.frames.map((frame, frameIndex) => (
-                      <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
-                        <Fragment key={frame.id}>
-                          <FrameItem
-                            section={section}
-                            frame={frame}
-                            frameIndex={frameIndex}
-                            frameIdToBeFocus={frameIdToBeFocus}
-                            selectedFrameIds={selectedFrameIds}
-                            editable={editable}
-                            setSelectedFrameIds={setSelectedFrameIds}
-                          />
-                        </Fragment>
-                      </RenderIf>
+                    {frames.map((frame, frameIndex) => (
+                      // <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
+                      <Fragment key={frame.id}>
+                        <FrameItem
+                          sectionId={sectionId}
+                          frame={frame}
+                          frameIndex={frameIndex}
+                          frameIdToBeFocus={frameIdToBeFocus}
+                          selectedFrameIds={selectedFrameIds}
+                          editable={editable}
+                          setSelectedFrameIds={setSelectedFrameIds}
+                          parentBreakoutFrame={parentBreakoutFrame}
+                        />
+                      </Fragment>
+                      // </RenderIf>
                     ))}
-                    <RenderIf isTrue={editable}>
+                    <RenderIf isTrue={editable && placeholder}>
                       <div
                         className="w-full cursor-pointer"
                         onClick={() => {
                           setAddedFromSessionPlanner(true)
-                          setInsertAfterFrameId(
-                            section.frames[section.frames.length - 1]?.id
-                          )
-                          setInsertInSectionId(section.id)
+                          setInsertAfterFrameId(frames[frames.length - 1]?.id)
+                          setInsertInSectionId(sectionId)
                           setOpenContentTypePicker(true)
                         }}>
                         <FrameItem
-                          section={section}
+                          sectionId={sectionId}
                           frame={{
                             name: '+ Add frame',
                             config: { time: 1 },
@@ -159,10 +173,12 @@ export function FramesList({
         )}
       </StrictModeDroppable>
       <BottomBar
-        section={section}
+        sectionId={sectionId}
+        frames={frames}
         selectedFrameIds={selectedFrameIds}
         setSelectedFrameIds={setSelectedFrameIds}
+        parentBreakoutFrame={parentBreakoutFrame}
       />
-    </div>
+    </>
   )
 }

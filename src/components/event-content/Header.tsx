@@ -1,4 +1,5 @@
 import { Chip } from '@nextui-org/react'
+import { useRouter } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { PublishButton } from './PublishButton'
@@ -26,6 +27,7 @@ export function Header({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetchEvent: any
 }) {
+  const router = useRouter()
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
 
   const { permissions } = useEventPermissions()
@@ -74,10 +76,15 @@ export function Header({
     <div className="flex items-center justify-between w-full h-full px-3">
       <div className="flex justify-end items-center gap-2 h-full">
         <div className="pr-4 border-r-2 border-gray-200">
-          <Logo />
+          <Logo
+            onClick={() => router.navigate({ to: '/events' })}
+            className="cursor-pointer text-primary"
+          />
         </div>
         <div className="pr-4 pl-2 border-r-0 border-gray-200 font-semibold flex justify-start items-center gap-4">
-          <span className="font-medium">{event?.name}</span>
+          <span className="font-medium line-clamp-1 max-w-40">
+            {event?.name}
+          </span>
           <RenderIf isTrue={permissions.canUpdateFrame}>
             <Chip
               variant="flat"

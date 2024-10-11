@@ -61,6 +61,40 @@ export function FrameColorCode({
             ref?.current?.click()
           }}
           className={cn(
+            'relative bg-[#C4C4C4] w-full h-full right-0 top-0 grid place-items-center cursor-pointer group/color_code_2'
+          )}>
+          <p>{selectedColor?.label || 'None'}</p>
+        </div>
+      </Tooltip>
+      <DropdownActions
+        actions={Object.values(FrameColorCodes)}
+        onAction={handleColorChange}
+        triggerIcon={<div ref={ref} />}
+      />
+    </div>
+  )
+
+  return (
+    <div>
+      <Tooltip
+        content={
+          selectedColor?.label === 'None'
+            ? 'Select category'
+            : selectedColor?.label || 'Select Category'
+        }
+        color="primary"
+        showArrow
+        placement="right"
+        radius="sm">
+        <div
+          style={{
+            backgroundColor: selectedColor?.color,
+          }}
+          onClick={() => {
+            if (preview) return
+            ref?.current?.click()
+          }}
+          className={cn(
             'relative bg-[#C4C4C4] w-3 h-full right-0 top-0 grid place-items-center cursor-pointer group/color_code_2',
             {
               'hover:scale-125 duration-300': !preview,

@@ -40,7 +40,7 @@ export type CreateEventFormData = yup.InferType<
 
 const createEventValidationSchema = yup.object({
   // eslint-disable-next-line newline-per-chained-call
-  name: yup.string().label('Event name').max(50).required(),
+  name: yup.string().label('Event name').max(80).required(),
   description: yup.string().label('Event description'),
   eventType: yup.string().required(),
   imageUrl: yup.string(),

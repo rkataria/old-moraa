@@ -185,17 +185,16 @@ export function Visit() {
         <div className="max-w-[76.25rem] mx-auto py-4 pt-8">
           <div className="grid grid-cols-[60%_30%] items-start gap-6">
             <div className="h-full flex flex-col gap-5">
-              <p className="text-5xl font-bold">{event.name}</p>
-
-              <p className="text-gray-600 border-b pb-3 text-md">
-                About the event
+              <p className="text-[40px] font-semibold leading-[46px]">
+                {event.name}
               </p>
+
               <RenderIf isTrue={!!event.description}>
                 <div
                   className={cn('text-sm rounded-xl backdrop-blur-3xl', {
                     'p-4 pb-1 bg-default/20': event?.theme?.theme === 'Emoji',
                   })}>
-                  <p className={cn('line-clamp-[7]', {})}>
+                  <p className="line-clamp-[7] text-base">
                     {event.description}
                   </p>
                   <RenderIf isTrue={event?.description?.length > 400}>
@@ -208,6 +207,9 @@ export function Visit() {
                   </RenderIf>
                 </div>
               </RenderIf>
+              <p className="text-gray-600 border-b pb-3 text-sm font-medium">
+                EVENT OVERVIEW
+              </p>
               <RenderIf isTrue={!!showEditor}>
                 <div
                   className={cn('shadow-sm backdrop-blur-3xl rounded-xl', {

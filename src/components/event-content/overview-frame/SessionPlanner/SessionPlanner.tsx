@@ -34,6 +34,7 @@ import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { setIsPreviewOpenAction } from '@/stores/slices/event/current-event/event.slice'
 import { toggleSectionExpansionInPlannerAction } from '@/stores/slices/event/current-event/section.slice'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
@@ -62,6 +63,7 @@ export function SessionPlanner({
     setInsertAfterFrameId,
     setInsertAfterSectionId,
     addSection,
+    setOpenContentTypePicker,
   } = useContext(EventContext) as EventContextType
 
   const dispatch = useStoreDispatch()
@@ -461,6 +463,17 @@ export function SessionPlanner({
                                   }
                                   title="Get Started with Frames"
                                   description="Your space is blank right now. Add some frames to visualize your event and take the first step in your planning journey"
+                                  actionButton={
+                                    <Button
+                                      onClick={() => {
+                                        dispatch(setIsPreviewOpenAction(false))
+                                        setOpenContentTypePicker(true)
+                                      }}
+                                      color="primary"
+                                      startContent={<MdAdd size={28} />}>
+                                      Add frame
+                                    </Button>
+                                  }
                                 />
                               </div>
                             </RenderIf>
@@ -474,7 +487,10 @@ export function SessionPlanner({
                                 )
                               }>
                               <FramesList
-                                section={section}
+                                sectionId={section.id}
+                                frames={section.frames.filter(
+                                  (f) => !f?.content?.breakoutFrameId
+                                )}
                                 frameIdToBeFocus={itemIdToBeFocus}
                               />
                             </RenderIf>

@@ -53,6 +53,8 @@ export function FramePreview({
     )
   }, [frame])
 
+  if (!frame) return null
+
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: null,
     [FrameType.GOOGLE_SLIDES_IMPORT]: (

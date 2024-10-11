@@ -37,19 +37,18 @@ export function FrameDetailsView() {
   return (
     <div className="overflow-y-auto scrollbar-none h-full relative z-[50] pb-40">
       <div className="pt-4">
-        <div className="grid grid-cols-[60%_34%] items-start gap-6">
+        <div className="grid grid-cols-[60%_30%] items-start gap-6">
           <div className="h-full flex flex-col gap-5 w-fit">
-            <p className="text-[40px] font-semibold">{event.name}</p>
-
-            <p className="text-gray-600 border-b pb-3 text-md">
-              About the event
+            <p className="text-[40px] font-semibold leading-[46px]">
+              {event.name}
             </p>
+
             <RenderIf isTrue={!!event.description}>
               <div
-                className={cn('text-sm rounded-xl backdrop-blur-3xl', {
+                className={cn('text-lg rounded-xl backdrop-blur-3xl', {
                   'p-4 bg-default/10': event?.theme?.theme === 'Emoji',
                 })}>
-                <p className={cn('line-clamp-[7] break-all', {})}>
+                <p className={cn('line-clamp-[7] break-all text-base', {})}>
                   {event.description}
                 </p>
                 <RenderIf isTrue={event?.description?.length > 400}>
@@ -62,6 +61,10 @@ export function FrameDetailsView() {
                 </RenderIf>
               </div>
             </RenderIf>
+
+            <p className="text-gray-600 border-b pb-3 font-medium">
+              EVENT OVERVIEW
+            </p>
 
             <RenderIf isTrue={!!showEditor}>
               <div

@@ -1,12 +1,8 @@
 import { useContext } from 'react'
 
-import { Button } from '@nextui-org/react'
-import { PiChartBarHorizontal } from 'react-icons/pi'
-
 import { SwitchControl } from '@/components/common/SwitchControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
-import { cn } from '@/utils/utils'
 
 export function PollAppearance() {
   const { currentFrame, updateFrame } = useContext(
@@ -48,7 +44,7 @@ export function PollAppearance() {
           })
         }
       />
-      <div>
+      {/* <div>
         <p className="">Visualization Types</p>
         <div className="flex items-center gap-2 mt-4">
           <Button
@@ -93,7 +89,7 @@ export function PollAppearance() {
             <PiChartBarHorizontal className="text-2xl -rotate-90" />
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

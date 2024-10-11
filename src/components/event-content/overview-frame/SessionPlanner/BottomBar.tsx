@@ -18,6 +18,8 @@ import { MdOutlineUnpublished } from 'react-icons/md'
 import { RiShare2Line } from 'react-icons/ri'
 import { v4 as uuidv4 } from 'uuid'
 
+import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import {
@@ -25,20 +27,24 @@ import {
   createFramesThunk,
 } from '@/stores/thunks/frame.thunks'
 import { FrameStatus } from '@/types/enums'
-import { ISection } from '@/types/frame.type'
+import { IFrame } from '@/types/frame.type'
 
 interface IBottomBar {
   selectedFrameIds: string[]
-  section: ISection
+  sectionId: string
+  frames: IFrame[]
   setSelectedFrameIds: Dispatch<SetStateAction<string[]>>
+  parentBreakoutFrame?: IFrame | null
 }
 
 export function BottomBar({
   selectedFrameIds,
-  section,
+  sectionId,
+  frames = [],
   setSelectedFrameIds,
+  parentBreakoutFrame,
 }: IBottomBar) {
-  const { deleteFrames } = useEventContext()
+  const { deleteFrames, updateFrame } = useEventContext()
   const dispatch = useStoreDispatch()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [actionRunning, setActionRunning] = useState(false)
@@ -47,11 +53,43 @@ export function BottomBar({
     (state) => state.event.currentEvent.frameState.deleteFramesThunk.isLoading
   )
 
+  const handleBreakoutActivityFrameDelete = (breakoutFrame: IFrame | null) => {
+    if (!breakoutFrame) return
+    let payload = {}
+    if (breakoutFrame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
+      payload = {
+        content: {
+          ...breakoutFrame.content,
+          breakoutRooms:
+            breakoutFrame.content?.breakoutRooms?.map((activity) =>
+              selectedFrameIds.includes(activity.activityId || '')
+                ? { ...activity, activityId: null }
+                : activity
+            ) || [],
+        },
+      }
+    } else {
+      payload = {
+        content: {
+          ...breakoutFrame.content,
+          groupActivityId: null,
+        },
+      }
+    }
+
+    updateFrame({ framePayload: payload, frameId: breakoutFrame.id })
+  }
+
   const deleteSelectedFrames = async () => {
     await deleteFrames({
       frameIds: selectedFrameIds,
-      sectionId: section.id,
+      sectionId,
     })
+
+    if (parentBreakoutFrame) {
+      handleBreakoutActivityFrameDelete(parentBreakoutFrame)
+    }
+
     setActionRunning(true)
     setSelectedFrameIds([])
   }
@@ -73,7 +111,7 @@ export function BottomBar({
   }
 
   const onDuplicate = async () => {
-    const selectedFramesWithContent = section.frames.filter((f) =>
+    const selectedFramesWithContent = frames.filter((f) =>
       selectedFrameIds.includes(f.id)
     )
     const duplicatedFramesPayload = selectedFramesWithContent.map((f) => ({
@@ -83,7 +121,7 @@ export function BottomBar({
 
     dispatch(
       createFramesThunk({
-        sectionId: section.id,
+        sectionId,
         frames: duplicatedFramesPayload,
         insertAfterFrameId:
           selectedFramesWithContent[selectedFramesWithContent.length - 1].id,
@@ -105,12 +143,15 @@ export function BottomBar({
           <p className="text-xl font-light pt-4 mr-4 min-w-fit">
             Frames selected
           </p>
-          <div
-            className="grid place-items-center h-full py-2 cursor-pointer"
-            onClick={onDuplicate}>
-            <IoDuplicateOutline size={22} className="hover:text-primary" />
-            <p>Duplicate</p>
-          </div>
+          <RenderIf isTrue={!parentBreakoutFrame}>
+            <div
+              className="grid place-items-center h-full py-2 cursor-pointer"
+              onClick={onDuplicate}>
+              <IoDuplicateOutline size={22} className="hover:text-primary" />
+              <p>Duplicate</p>
+            </div>
+          </RenderIf>
+
           <div
             className="grid place-items-center h-full py-2 cursor-pointer"
             onClick={() => {

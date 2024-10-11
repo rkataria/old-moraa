@@ -37,7 +37,7 @@ export type CreateEventFormData = yup.InferType<
 
 const createEventValidationSchema = yup.object({
   // eslint-disable-next-line newline-per-chained-call
-  name: yup.string().label('Event name').max(50).required(),
+  name: yup.string().label('Event name').max(80).required(),
   description: yup.string().label('Event description'),
   imageUrl: yup.string(),
 })
@@ -96,7 +96,7 @@ export function EventDetails() {
     <div className="h-fit relative z-[50]">
       <form onSubmit={createEventForm.handleSubmit(onSubmit)}>
         <div className="pb-10">
-          <div className="grid grid-cols-[60%_34%] items-start gap-6">
+          <div className="grid grid-cols-[60%_30%] items-start gap-6">
             <div className="flex flex-col justify-between h-full gap-4">
               <div className="flex flex-col gap-4">
                 <Controller
@@ -113,7 +113,7 @@ export function EventDetails() {
                       minRows={1}
                       classNames={{
                         input:
-                          'text-[40px] font-semibold tracking-tight text-black/80 leading-[50px]',
+                          'text-[40px] font-semibold tracking-tight text-black/80 leading-[46px]',
                         inputWrapper: 'border-none p-0 shadow-none',
                       }}
                     />
@@ -132,7 +132,7 @@ export function EventDetails() {
                       isTrue={
                         createEventForm.getValues('description')!.length > 0
                       }>
-                      <p className="line-clamp-[4] break-word ml-1 mt-2">
+                      <p className="text-base line-clamp-[2] break-word ml-1 mt-2">
                         {createEventForm.getValues('description')}
                       </p>
                     </RenderIf>
