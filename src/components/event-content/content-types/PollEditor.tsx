@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import isEqual from 'lodash.isequal'
 import { BsTrash3 } from 'react-icons/bs'
 import ReactTextareaAutosize from 'react-textarea-autosize'
+import { v4 as uuidv4 } from 'uuid'
 
 import { ColorPicker } from '../../common/ColorPicker'
 
@@ -38,6 +39,7 @@ export function PollEditor({ frame: frameFromRemote }: PollEditorProps) {
     newOptions[index] = {
       name: `${e.target.value}`,
       color: newOptions[index].color,
+      id: newOptions[index].id,
     }
     setOptions(newOptions)
   }
@@ -48,6 +50,7 @@ export function PollEditor({ frame: frameFromRemote }: PollEditorProps) {
     newOptions[index] = {
       name: newOptions[index].name,
       color: updatedColor,
+      id: newOptions[index].id,
     }
     setOptions(newOptions)
   }
@@ -59,7 +62,7 @@ export function PollEditor({ frame: frameFromRemote }: PollEditorProps) {
   }
 
   const addNewOption = () => {
-    setOptions([...options, { name: '', color: '#E7E0FF' }])
+    setOptions([...options, { name: '', color: '#E7E0FF', id: uuidv4() }])
   }
 
   const focusOnFirstEmptyOption = (

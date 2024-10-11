@@ -68,14 +68,17 @@ export const getDefaultContent = ({
           {
             name: '',
             color: '#E7E0FF',
+            id: uuidv4(),
           },
           {
             name: '',
             color: '#E7E0FF',
+            id: uuidv4(),
           },
           {
             name: '',
             color: '#E7E0FF',
+            id: uuidv4(),
           },
         ],
         blocks: [paragraphBlock],

@@ -22,8 +22,8 @@ export function PollBar({
   if (frame.config.allowVoteOnMultipleOptions && canVote && !voted) {
     return (
       <Checkbox
-        isSelected={isOptionSelected(pollOption.name)}
-        onValueChange={() => handleVoteCheckbox(pollOption.name)}
+        isSelected={isOptionSelected(pollOption.id)}
+        onValueChange={() => handleVoteCheckbox(pollOption.id)}
         radius="sm"
         classNames={{
           label: 'font-bold text-black',

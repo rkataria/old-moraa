@@ -45,7 +45,7 @@ export function HorizontalPreview({
                 style={{
                   backgroundColor: option.color,
                 }}
-                key={option.name}
+                key={option.id}
                 {...animatedProps(option.percentage)}
                 transition={{
                   duration: 1,

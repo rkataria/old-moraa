@@ -64,12 +64,12 @@ export function StudioTabs() {
             'px-4 text-gray-600 h-full flex justify-center items-center font-medium',
         }}
         onSelectionChange={handleTabChange}>
-        <Tab key="landing-page" title="Course Page" />
+        <Tab key="landing-page" title="Overview" />
         {permissions.canUpdateFrame && (
-          <Tab key="session-planner" title="Session Planner" />
+          <Tab key="session-planner" title="Plan" />
         )}
 
-        <Tab key="content-studio" title="Content Studio" />
+        <Tab key="content-studio" title="Content" />
       </Tabs>
     </div>
   )

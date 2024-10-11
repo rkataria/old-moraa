@@ -118,6 +118,7 @@ export interface IPollResponse {
 export interface PollOption {
   name: string
   color: string
+  id: string
 }
 
 export interface PollPreviewOption {
@@ -125,6 +126,7 @@ export interface PollPreviewOption {
   color: string
   percentage: number
   votedUsers: any
+  id: string
 }
 
 export type Vote = {

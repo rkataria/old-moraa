@@ -65,8 +65,8 @@ export function PollResponse({
 
   const polls = options.map((option: PollOption) => ({
     ...option,
-    percentage: getOptionWidth(option.name),
-    votedUsers: getVotedUserForOption(option.name),
+    percentage: getOptionWidth(option.id),
+    votedUsers: getVotedUserForOption(option.id),
   }))
 
   const verticalPreview = frame.config.visualization === 'vertical'

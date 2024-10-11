@@ -72,7 +72,7 @@ export function PollVotes({
             }
 
             onVote(frame, {
-              selectedOptions: [option.name],
+              selectedOptions: [option.id],
               anonymous: makeMyVoteAnonymous,
             })
             setDisableVotes(true)
