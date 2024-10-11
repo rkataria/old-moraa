@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
+import { useMemo } from 'react'
+
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { Button } from '@nextui-org/react'
 import { DragDropContext } from 'react-beautiful-dnd'
@@ -32,6 +34,24 @@ export function BreakoutRoomsWithParticipants({
   const breakoutFrame = getFrameById(breakoutFrameId!)
   const smartBreakoutActivity = getFrameById(smartBreakoutActivityId!)
 
+  const sortedBreakoutMeetings = useMemo(
+    () =>
+      meeting.connectedMeetings.meetings.sort((a, b) => {
+        const nameA = a.title?.toUpperCase() || 0
+        const nameB = b.title?.toUpperCase() || 0
+        if (nameA < nameB) {
+          return -1
+        }
+        if (nameA > nameB) {
+          return 1
+        }
+
+        // names must be equal
+        return 0
+      }),
+    [meeting.connectedMeetings.meetings]
+  )
+
   return (
     <div className="w-full flex-1">
       <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
@@ -47,17 +67,20 @@ export function BreakoutRoomsWithParticipants({
               destinationRoomId
             )
           }}>
-          {meeting.connectedMeetings.meetings.map((meet, index) => (
+          {sortedBreakoutMeetings.map((meet, index) => (
             <BreakoutRoomActivityCard
               idx={index}
               breakout={{
                 activityId:
-                  breakoutFrame?.content?.activityId ||
+                  breakoutFrame?.content?.breakoutRooms?.[index]?.activityId ||
                   breakoutFrame?.content?.groupActivityId ||
                   smartBreakoutActivityId,
-                name: breakoutFrame?.content?.groupActivityId
-                  ? ''
-                  : smartBreakoutActivity?.content?.title,
+                name:
+                  breakoutFrame?.content?.breakoutRooms?.[index]?.name ||
+                  getFrameById(breakoutFrame?.content?.groupActivityId || '')
+                    ?.content?.title ||
+                  smartBreakoutActivity?.content?.title,
+                meetingName: meet.title,
               }}
               editable={false}
               roomId={meet.id}

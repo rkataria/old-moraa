@@ -71,12 +71,17 @@ export class BreakoutRooms {
     participantId: string,
     destinationMeetingId: string
   ) {
-    await this.cleanupBreakoutManagerInstance()
-    this.manager.assignParticipantsToMeeting(
-      [participantId],
-      destinationMeetingId || ''
+    const sourceMeeting = this.dyteClient.connectedMeetings.meetings.find(
+      (meet) =>
+        meet.participants.some(
+          (participant) => participant.id === participantId
+        )
     )
-    await this.manager.applyChanges(this.dyteClient)
+    this.dyteClient.connectedMeetings.moveParticipants(
+      sourceMeeting?.id || '',
+      destinationMeetingId,
+      [participantId]
+    )
 
     return this.cleanupBreakoutManagerInstance()
   }

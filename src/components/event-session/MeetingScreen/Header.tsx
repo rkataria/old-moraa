@@ -21,6 +21,9 @@ export function Header() {
   const { event } = useEvent({ id: eventId as string })
   const { dyteStates, setDyteStates, isHost } = useEventSession()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
+  const dyteClient = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.dyte.dyteClient
+  )
 
   if (!event) return null
 
@@ -40,7 +43,7 @@ export function Header() {
           )}
         </div>
         <div className="pr-4 pl-2 border-r-0 border-gray-200 font-semibold">
-          {event.name}
+          {dyteClient?.meta?.meetingTitle || event.name}
         </div>
       </div>
       <Timer />

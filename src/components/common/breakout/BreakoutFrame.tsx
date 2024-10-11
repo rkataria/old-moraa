@@ -4,15 +4,13 @@
 
 import 'tldraw/tldraw.css'
 
-import { useContext, useRef, useState } from 'react'
+import { useContext, useState } from 'react'
 
-import { Button, Card } from '@nextui-org/react'
 import { HiOutlinePlus } from 'react-icons/hi2'
 import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
-import { BreakoutFrameThumbnailCard } from './BreakoutFrameThumbnainCard'
 import { DeleteBreakoutRoomModal } from './DeleteBreakoutRoomModal'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
@@ -20,7 +18,6 @@ import { FramePicker } from '../FramePicker'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
-import { useDimensions } from '@/hooks/useDimensions'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
@@ -52,7 +49,6 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     sections,
     insertInSectionId,
     addFrameToSection,
-    setCurrentFrame,
     updateFrame,
     deleteFrame,
     getFrameById,
@@ -63,13 +59,6 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
   )
 
   const editable = isOwner && !preview && isEditable
-
-  const thumbnailContainerRef = useRef<HTMLDivElement>(null)
-
-  const { width: containerWidth } = useDimensions(
-    thumbnailContainerRef,
-    'maximized'
-  )
 
   const [deletingRoomIndex, setDeletingRoomIndex] = useState(-1)
   const [deletingActivityFrameIndex, setDeletingActivityFrameIndex] =
@@ -321,52 +310,26 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         </div>
       </RenderIf>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS}>
-        <Card
-          key="breakout-group-activity"
-          shadow="none"
-          className="border-2 border-primary-200 p-4 w-full h-full">
-          <div className="flex justify-between gap-4">
-            <span className="text-md font-semibold">Group Activity</span>
-          </div>
-          <div className="h-full border border-dotted border-primary-200 p-2 mt-4 flex items-center justify-center rounded-md">
-            <RenderIf isTrue={Boolean(frame?.content?.groupActivityId)}>
-              {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-              <div
-                ref={thumbnailContainerRef}
-                className="relative h-full aspect-video"
-                onClick={() => {
-                  if (!editable) return
-                  setCurrentFrame(
-                    getFrameById(frame?.content?.groupActivityId || '')
-                  )
-                }}>
-                <BreakoutFrameThumbnailCard
-                  frame={getFrameById(frame?.content?.groupActivityId || '')}
-                  containerWidth={containerWidth}
-                  inViewPort
-                />
-              </div>
-            </RenderIf>
-            <RenderIf isTrue={!frame?.content?.groupActivityId && !preview}>
-              <div className="flex flex-col gap-4 w-1/2">
-                <div className="text-center">
-                  You can add existing slide from any section or add new slide
-                  which will be added under the Breakout section
-                </div>
-                <div className="flex justify-center items-center">
-                  <Button
-                    color="primary"
-                    variant="ghost"
-                    onClick={() => {
-                      setOpenContentTypePicker(true)
-                    }}>
-                    Add Group Activity
-                  </Button>
-                </div>
-              </div>
-            </RenderIf>
-          </div>
-        </Card>
+        <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3">
+          <BreakoutRoomActivityCard
+            breakout={{
+              name: 'Group Activity',
+              activityId: frame?.content?.groupActivityId,
+            }}
+            deleteRoomGroup={(deletingIdx) => setDeletingRoomIndex(deletingIdx)}
+            hideRoomDelete={(frame.content?.breakoutRooms?.length || 0) <= 2}
+            idx={0}
+            editable={editable}
+            onAddNewActivity={() => {
+              setOpenContentTypePicker(true)
+            }}
+            deleteActivityFrame={() =>
+              handleBreakoutActivityFrameDelete(
+                getFrameById(frame?.content?.groupActivityId || '')
+              )
+            }
+          />
+        </div>
       </RenderIf>
 
       <FramePicker

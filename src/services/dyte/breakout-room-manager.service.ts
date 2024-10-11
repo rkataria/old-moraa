@@ -36,7 +36,6 @@ export const createAndAutoAssignBreakoutRooms = async ({
     (participant) =>
       participant.customParticipantId !== meeting.self.customParticipantId
   )
-  console.log(stateManager)
 
   stateManager.assignParticipantsToMeeting(
     [meeting.self.customParticipantId],

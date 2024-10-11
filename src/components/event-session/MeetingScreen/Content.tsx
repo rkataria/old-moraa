@@ -6,7 +6,7 @@ import { ContentContainer } from '../ContentContainer'
 import { FrameOverlayView } from '../FrameOverlayView'
 import { ParticipantTiles } from '../ParticipantTiles'
 
-import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsFrame'
+import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsWithParticipants'
 import { PanelResizer } from '@/components/common/PanelResizer'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'

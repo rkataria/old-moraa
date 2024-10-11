@@ -11,10 +11,7 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
-import {
-  setIsCreateBreakoutOpenAction,
-  updateMeetingSessionDataAction,
-} from '@/stores/slices/event/current-event/live-session.slice'
+import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -44,20 +41,16 @@ export function BreakoutToggleButton({
         size: 'sm',
         variant: 'solid',
         isIconOnly: true,
-        className: cn('gap-2 justify-between pr-2 live-button', bgColor),
+        className: cn('gap-2 p-1 justify-between live-button', bgColor),
       }}
       onClick={onClick}>
-      <VscMultipleWindows size={18} className="text-white" />
+      <VscMultipleWindows size={22} className="text-white" />
     </ControlButton>
   )
 }
 
 export function BreakoutHeaderButton() {
   const dyteMeeting = useDyteMeeting()
-  const isCreateBreakoutOpen = useStoreSelector(
-    (state) =>
-      state.event.currentEvent.liveSessionState.breakout.isCreateBreakoutOpen
-  )
   const {
     isHost,
     currentFrame,
@@ -172,18 +165,29 @@ export function BreakoutHeaderButton() {
   if (isCurrentDyteMeetingInABreakoutRoom) return null
 
   if (
-    !isBreakoutActive &&
-    (currentFrame?.type === FrameType.BREAKOUT ||
-      currentFrame?.content?.breakoutFrameId)
+    currentFrame?.type !== FrameType.BREAKOUT &&
+    !currentFrame?.content?.breakoutFrameId
   ) {
+    if (sessionBreakoutFrameId && isBreakoutActive) {
+      return (
+        <BreakoutToggleButton
+          label="View breakout"
+          onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}
+        />
+      )
+    }
+
+    return null
+  }
+
+  // This condition is for any frame which is part of breakout. Basically activity frame.
+  if (!isBreakoutActive && currentFrame?.content?.breakoutFrameId) {
     return (
       <BreakoutToggleButton
         label="Start breakout"
         onClick={() =>
           onBreakoutStartOnBreakoutSlide(
-            currentFrame?.content?.breakoutFrameId
-              ? getFrameById(currentFrame?.content?.breakoutFrameId as string)
-              : currentFrame
+            getFrameById(currentFrame?.content?.breakoutFrameId as string)
           )
         }
       />
@@ -194,16 +198,13 @@ export function BreakoutHeaderButton() {
     return (
       <BreakoutToggleButton
         label="Start breakout"
-        onClick={() =>
-          dispatch(setIsCreateBreakoutOpenAction(!isCreateBreakoutOpen))
-        }
+        onClick={() => onBreakoutStartOnBreakoutSlide(currentFrame)}
       />
     )
   }
 
   if (
-    (currentFrame?.content?.breakoutFrameId &&
-      currentFrame?.type === FrameType.BREAKOUT) ||
+    currentFrame?.content?.breakoutFrameId ||
     currentFrame?.content?.breakoutFrameId === sessionBreakoutFrameId
   ) {
     return (
@@ -231,15 +232,6 @@ export function BreakoutHeaderButton() {
         label="End breakout"
         color="danger"
         onClick={onBreakoutEnd}
-      />
-    )
-  }
-
-  if (sessionBreakoutFrameId) {
-    return (
-      <BreakoutToggleButton
-        label="View breakout"
-        onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}
       />
     )
   }

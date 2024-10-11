@@ -82,7 +82,7 @@ export function BreakoutRoomActivityCard({
     thumbnailContainerRef,
     'maximized'
   )
-  const { setCurrentFrame, getFrameById } = useEventContext()
+  const { setCurrentFrame, getFrameById, isOwner } = useEventContext()
 
   const getActions = () => {
     const actions = []
@@ -110,7 +110,7 @@ export function BreakoutRoomActivityCard({
       key={breakout?.name}>
       <div className="flex justify-between items-center gap-4 px-3">
         <EditableLabel
-          readOnly={!editable}
+          readOnly={!editable || !updateBreakoutRoomName}
           label={breakout?.name || ''}
           className="text-sm line-clamp-1 my-2"
           onUpdate={(value) => {
@@ -206,9 +206,10 @@ export function BreakoutRoomActivityCard({
               key={`participant-draggable_${roomId}`}
               ref={participantDroppableProvided.innerRef}
               className={cn(
-                'flex items-center m-2 pl-2 relative rounded-sm transition-all',
+                'flex items-center m-2 pl-2 relative rounded-md transition-all',
                 {
-                  'bg-gray-500': snapshot.isDraggingOver,
+                  'border-3 border-gray-600': snapshot.isDraggingOver,
+                  'border-2 border-gray-400': snapshot.draggingFromThisWith,
                 }
               )}
               {...participantDroppableProvided.droppableProps}>
@@ -218,9 +219,10 @@ export function BreakoutRoomActivityCard({
 
               {participants?.map((participant, index) => (
                 <Draggable
-                  key={`participant-draggable_${participant.customParticipantId}`}
+                  key={`participant-draggable_${participant.id}`}
                   index={index}
-                  draggableId={`participant-draggable_${participant.customParticipantId}`}>
+                  isDragDisabled={!isOwner}
+                  draggableId={`participant-draggable_${participant.id}`}>
                   {(sectionDraggableProvided) => (
                     <div
                       className="mb-2 items-center mr-2"
