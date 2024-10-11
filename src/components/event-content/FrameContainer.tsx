@@ -5,7 +5,7 @@ import { SectionOverview } from '../common/SectionOverview'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
-import { ContentType } from '@/utils/content.util'
+import { FrameType } from '@/utils/frame-picker.util'
 import { getFrameCount } from '@/utils/utils'
 
 export function FrameContainer() {
@@ -32,7 +32,7 @@ export function FrameContainer() {
   // Render the current frame and frame controls
   return (
     <div key={currentFrame.id} className="relative w-full h-full">
-      {currentFrame?.type === ContentType.MORAA_BOARD ? (
+      {currentFrame?.type === FrameType.MORAA_BOARD ? (
         <RoomProvider>
           <Frame frame={currentFrame} />
         </RoomProvider>

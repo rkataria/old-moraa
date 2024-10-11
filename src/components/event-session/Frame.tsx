@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext } from 'react'
 
+import { User } from '@supabase/supabase-js'
+
 import { GoogleSlides } from './content-types/GoogleSlides'
 import { PDFViewer } from './content-types/PDFViewer'
 import { Reflection } from './content-types/Reflection'
@@ -17,16 +19,26 @@ import { Cover } from '@/components/common/content-types/Cover'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { ContentLoading } from '@/components/common/ContentLoading'
-import { ContentType } from '@/components/common/ContentTypePicker'
 import { Poll } from '@/components/event-session/content-types/Poll/Poll'
 import { TextImage } from '@/components/event-session/content-types/TextImage'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { Vote } from '@/types/frame.type'
-import { checkVoted } from '@/utils/content.util'
+import { IPollResponse, IReflectionResponse, Vote } from '@/types/frame.type'
+import { FrameType } from '@/utils/frame-picker.util'
 import { getOjectPublicUrl } from '@/utils/utils'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const checkVoted = (
+  votes: IReflectionResponse[] | IPollResponse[] | null | undefined,
+  user: User
+) => {
+  if (!Array.isArray(votes)) return false
+  if (!user) return false
+
+  return votes.some((vote) => vote.participant.enrollment.user_id === user.id)
+}
 
 export function Frame() {
   const { currentFrame, currentFrameResponses, currentFrameLoading, isHost } =
@@ -37,13 +49,13 @@ export function Frame() {
 
   if (currentFrameLoading) return <ContentLoading />
 
-  const renderersByContentType: Record<ContentType, React.ReactNode> = {
-    [ContentType.VIDEO]: null,
-    [ContentType.GOOGLE_SLIDES_IMPORT]: null,
-    [ContentType.COVER]: (
+  const renderersByFrameType: Record<FrameType, React.ReactNode> = {
+    [FrameType.VIDEO]: null,
+    [FrameType.GOOGLE_SLIDES_IMPORT]: null,
+    [FrameType.COVER]: (
       <Cover key={currentFrame.id} frame={currentFrame as any} />
     ),
-    [ContentType.POLL]: (
+    [FrameType.POLL]: (
       <Poll
         key={currentFrame.id}
         frame={currentFrame as any}
@@ -52,45 +64,47 @@ export function Frame() {
         voted={checkVoted(currentFrameResponses, currentUser)}
       />
     ),
-    [ContentType.GOOGLE_SLIDES]: (
+    [FrameType.GOOGLE_SLIDES]: (
       <GoogleSlides key={currentFrame.id} frame={currentFrame as any} />
     ),
-    [ContentType.PDF_VIEWER]: (
+    [FrameType.PDF_VIEWER]: (
       <PDFViewer key={currentFrame.id} frame={currentFrame as any} />
     ),
-    [ContentType.REFLECTION]: <Reflection key={currentFrame.id} />,
-    [ContentType.VIDEO_EMBED]: (
+    [FrameType.REFLECTION]: <Reflection key={currentFrame.id} />,
+    [FrameType.VIDEO_EMBED]: (
       <VideoEmbed key={currentFrame.id} frame={currentFrame as any} />
     ),
-    [ContentType.TEXT_IMAGE]: (
+    [FrameType.TEXT_IMAGE]: (
       <TextImage key={currentFrame.id} frame={currentFrame} />
     ),
-    [ContentType.IMAGE_VIEWER]: (
+    [FrameType.IMAGE_VIEWER]: (
       <ImageViewer
         key={currentFrame.id}
         src={getOjectPublicUrl(currentFrame.content?.path as string)}
       />
     ),
-    [ContentType.RICH_TEXT]: <RichTextLive frame={currentFrame} />,
-    [ContentType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
-    [ContentType.MORAA_BOARD]: (
+    [FrameType.RICH_TEXT]: <RichTextLive frame={currentFrame} />,
+    [FrameType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
+    [FrameType.MORAA_BOARD]: (
       <RoomProvider>
         <MoraaBoard frame={currentFrame as any} />
       </RoomProvider>
     ),
-    [ContentType.MORAA_SLIDE]: (
+    [FrameType.MORAA_SLIDE]: (
       <MoraaSlidePreview
         key={currentFrame.id}
         frameCanvasSvg={currentFrame.content?.svg as string}
       />
     ),
-    [ContentType.BREAKOUT]: (
+    [FrameType.BREAKOUT]: (
       <BreakoutFrameLive frame={currentFrame as BreakoutFrame} />
     ),
-    [ContentType.POWERPOINT]: null,
+    [FrameType.POWERPOINT]: null,
+    [FrameType.Q_A]: null,
+    [FrameType.MORAA_PAD]: null,
   }
 
-  const renderer = renderersByContentType[currentFrame.type]
+  const renderer = renderersByFrameType[currentFrame.type as FrameType]
 
   return (
     <div className="relative h-full w-full flex flex-col gap-2">

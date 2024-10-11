@@ -12,21 +12,19 @@ import {
   BreakoutTypePicker,
 } from '../common/BreakoutTypePicker'
 import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
+import { FramePicker } from '../common/FramePicker'
 import { Loading } from '../common/Loading'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { SyncingStatus } from '../common/SyncingStatus'
 
-import {
-  ContentTypePicker,
-  ContentType,
-} from '@/components/common/ContentTypePicker'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { FrameStatus, EventStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
+import { FrameType } from '@/utils/frame-picker.util'
 
 export function FrameManager() {
   const { eventId } = useParams({ strict: false })
@@ -36,9 +34,7 @@ export function FrameManager() {
     isLoading: eventLoading,
     refetch: refetchEvent,
   } = useEvent({ id: eventId as string })
-  const [selectedContentType, setContentType] = useState<ContentType | null>(
-    null
-  )
+  const [selectedContentType, setContentType] = useState<FrameType | null>(null)
   const [selectedTemplateKey, setTemplateKey] = useState<string | undefined>(
     undefined
   )
@@ -60,8 +56,9 @@ export function FrameManager() {
   } = useEventContext()
 
   useHotkeys('f', () => !preview && setOpenContentTypePicker(true), [preview])
+
   const handleAddNewFrame = (
-    contentType: ContentType,
+    type: FrameType,
     templateKey?: string,
     breakoutType?: BREAKOUT_TYPES,
     breakoutRoomsGroupsCount?: number,
@@ -89,7 +86,7 @@ export function FrameManager() {
         ? 'breakoutRoomsCount'
         : 'participantPerGroup'
 
-    if (contentType === ContentType.BREAKOUT) {
+    if (type === FrameType.BREAKOUT) {
       const breakoutPayload = {
         breakoutType,
         [breakoutConfigKeyName]: breakoutRoomsGroupsCount,
@@ -106,7 +103,7 @@ export function FrameManager() {
       name: `Frame ${(insertInSection?.frames?.length || 0) + 1}`,
       config: frameConfig,
       content: getDefaultContent({
-        contentType,
+        frameType: type,
         templateKey,
         data: {
           breakoutRoomsCount: breakoutRoomsGroupsCount,
@@ -115,7 +112,7 @@ export function FrameManager() {
         // TODO: Fix any
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as any,
-      type: contentType,
+      type,
       status: FrameStatus.DRAFT,
     }
 
@@ -154,11 +151,11 @@ export function FrameManager() {
       <StudioLayout
         header={<Header event={event} refetchEvent={refetchEvent} />}
       />
-      <ContentTypePicker
+      <FramePicker
         open={openContentTypePicker}
         onClose={() => setOpenContentTypePicker(false)}
         onChoose={(content, templateType) => {
-          if (content === ContentType.BREAKOUT) {
+          if (content === FrameType.BREAKOUT) {
             setContentType(content)
             setTemplateKey(templateType)
             setOpenBreakoutSelectorModal(true)

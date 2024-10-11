@@ -6,7 +6,6 @@ import { Badge } from '@nextui-org/react'
 import { Draggable } from 'react-beautiful-dnd'
 
 import { FrameItem } from './FrameItem'
-import { ContentType } from '../ContentTypePicker'
 import { FramePlaceholder } from '../FramePlaceholder'
 import { RenderIf } from '../RenderIf/RenderIf'
 
@@ -14,6 +13,7 @@ import { useEventContext } from '@/contexts/EventContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { IFrame } from '@/types/frame.type'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 type FrameListProps = {
@@ -47,7 +47,7 @@ export function FrameList({
   if (!showList) return null
 
   const getBreakoutFrames = (frame: IFrame) => {
-    if (frame?.type === ContentType.BREAKOUT) {
+    if (frame?.type === FrameType.BREAKOUT) {
       const tempFrames = sections.map((sec) => sec.frames).flat(2)
       const breakoutFrames = tempFrames.filter(
         (f) => f?.content?.breakoutFrameId === frame?.id
@@ -109,7 +109,7 @@ export function FrameList({
                         </Badge>
                         <RenderIf
                           isTrue={
-                            (currentFrame?.type === ContentType.BREAKOUT &&
+                            (currentFrame?.type === FrameType.BREAKOUT &&
                               currentFrame?.id === frame?.id) ||
                             (!!currentFrame &&
                               Boolean(

@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import { useHotkeys } from 'react-hotkeys-hook'
 
-import { ContentType } from '../common/ContentTypePicker'
 import { FramePreview } from '../common/FramePreview'
 import { SectionOverview } from '../common/SectionOverview'
 import { Button } from '../ui/Button'
@@ -12,6 +11,7 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventSessionMode } from '@/types/event-session.type'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function FrameOverlayView() {
@@ -58,9 +58,9 @@ export function FrameOverlayView() {
         isInteractive={false}
         className={cn('overflow-hidden rounded-md', {
           'p-0': [
-            ContentType.MORAA_SLIDE,
-            ContentType.GOOGLE_SLIDES,
-            ContentType.PDF_VIEWER,
+            FrameType.MORAA_SLIDE,
+            FrameType.GOOGLE_SLIDES,
+            FrameType.PDF_VIEWER,
           ].includes(currentFrame.type),
         })}
       />

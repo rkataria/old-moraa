@@ -7,7 +7,6 @@ import { Tooltip } from '@nextui-org/react'
 import { IconDots } from '@tabler/icons-react'
 
 import { ContentTypeIcon } from './ContentTypeIcon'
-import { getContentType } from './ContentTypePicker'
 import { DeleteFrameModal } from './DeleteFrameModal'
 import { EditableLabel } from './EditableLabel'
 import { FrameActions } from './FrameActions'
@@ -23,6 +22,7 @@ import { useDimensions } from '@/hooks/useDimensions'
 import { type AgendaFrameDisplayType } from '@/types/event.type'
 import { type IFrame } from '@/types/frame.type'
 import { isFrameThumbnailAvailable } from '@/utils/content.util'
+import { getFrameType } from '@/utils/frame-picker.util'
 import { getFrameName } from '@/utils/getFrameName'
 import { cn } from '@/utils/utils'
 
@@ -181,7 +181,7 @@ function FrameThumbnailView({
   const myRef = useRef(null)
 
   const actionDisabled = eventMode !== 'edit' || !isOwner || preview
-  const contentType = getContentType(frame.type)
+  const contentType = getFrameType(frame.type)
 
   const renderFrameThumbnail = () => {
     if (isFrameThumbnailAvailable(frame.type)) {

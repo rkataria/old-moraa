@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 
+import { FrameType } from './frame-picker.util'
+
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
-import { getContentType } from '@/components/common/ContentTypePicker'
-import { FrameStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 
 export const headerBlock = {
@@ -22,22 +22,22 @@ export const paragraphBlock = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getDefaultContent = ({
-  contentType,
+  frameType,
   data,
   templateKey,
 }: {
-  contentType: ContentType
+  frameType: FrameType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any
   templateKey?: string
 }) => {
-  switch (contentType) {
-    case ContentType.MORAA_SLIDE:
+  switch (frameType) {
+    case FrameType.MORAA_SLIDE:
       return {
         defaultTemplate: templateKey,
         canvas: null,
       }
-    case ContentType.COVER:
+    case FrameType.COVER:
       return {
         blocks: [
           {
@@ -57,7 +57,7 @@ export const getDefaultContent = ({
         ],
       }
 
-    case ContentType.TEXT_IMAGE:
+    case FrameType.TEXT_IMAGE:
       return {
         blocks: [
           {
@@ -86,7 +86,7 @@ export const getDefaultContent = ({
         ],
       }
 
-    case ContentType.RICH_TEXT:
+    case FrameType.RICH_TEXT:
       return {
         blocks: [
           {
@@ -99,18 +99,18 @@ export const getDefaultContent = ({
         ],
       }
 
-    case ContentType.VIDEO:
+    case FrameType.VIDEO:
       return {
         url: 'https://www.youtube.com/watch?v=5qap5aO4i9A',
         blocks: [headerBlock, paragraphBlock],
       }
 
-    case ContentType.VIDEO_EMBED:
+    case FrameType.VIDEO_EMBED:
       return {
         blocks: [headerBlock, paragraphBlock],
       }
 
-    case ContentType.POLL:
+    case FrameType.POLL:
       return {
         question: '',
         options: [
@@ -130,42 +130,42 @@ export const getDefaultContent = ({
         blocks: [paragraphBlock],
       }
 
-    case ContentType.REFLECTION:
+    case FrameType.REFLECTION:
       return {
         blocks: [paragraphBlock],
       }
 
-    case ContentType.GOOGLE_SLIDES:
+    case FrameType.GOOGLE_SLIDES:
       return {
         googleSlideURL: '',
         startPosition: 1,
         blocks: [headerBlock, paragraphBlock],
       }
 
-    case ContentType.GOOGLE_SLIDES_IMPORT:
+    case FrameType.GOOGLE_SLIDES_IMPORT:
       return {
         googleSlideURL: '',
         startPosition: 1,
         blocks: [headerBlock, paragraphBlock],
       }
 
-    case ContentType.PDF_VIEWER:
+    case FrameType.PDF_VIEWER:
       return {
         googleSlideURL: '', // FIXME: This should be pdfURL
         startPosition: 1,
         blocks: [headerBlock, paragraphBlock],
       }
 
-    case ContentType.MIRO_EMBED:
+    case FrameType.MIRO_EMBED:
       return {
         blocks: [headerBlock, paragraphBlock],
       }
 
-    case ContentType.MORAA_BOARD:
+    case FrameType.MORAA_BOARD:
       return {
         blocks: [headerBlock, paragraphBlock],
       }
-    case ContentType.BREAKOUT:
+    case FrameType.BREAKOUT:
       return {
         blocks: [headerBlock, paragraphBlock],
         title: data?.title,
@@ -183,122 +183,43 @@ export const getDefaultContent = ({
   }
 }
 
-export const getDefaultCoverFrame = ({
-  name = 'Frame 1',
-  title = 'Title',
-  description = 'Description',
-}: {
-  name?: string
-  title?: string
-  description?: string
-}) => ({
-  id: uuidv4(),
-  name,
-  config: {
-    textColor: '#000',
-    time: 1,
-  },
-  content: getDefaultContent({
-    contentType: ContentType.COVER,
-    data: { title, description },
-  }),
-  type: ContentType.COVER,
-  status: FrameStatus.PUBLISHED,
-})
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const checkVoted = (votes: any, user: any) => {
-  if (!Array.isArray(votes)) return false
-  if (!user) return false
-
-  return votes.some((vote) => vote.participant.enrollment.user_id === user.id)
-}
-
 export const isFrameInteractive = (frame: IFrame) =>
   [
-    ContentType.POLL,
-    ContentType.GOOGLE_SLIDES_IMPORT,
-    ContentType.REFLECTION,
-    ContentType.VIDEO_EMBED,
-    ContentType.PDF_VIEWER,
-    ContentType.MORAA_BOARD,
+    FrameType.POLL,
+    FrameType.GOOGLE_SLIDES_IMPORT,
+    FrameType.REFLECTION,
+    FrameType.VIDEO_EMBED,
+    FrameType.PDF_VIEWER,
+    FrameType.MORAA_BOARD,
   ].includes(frame.type)
 
-export const frameHasFrameResponses = (frame: IFrame) =>
-  [ContentType.POLL, ContentType.REFLECTION].includes(frame.type)
-
-export const isFrameThumbnailAvailable = (frameType: ContentType) =>
+export const isFrameThumbnailAvailable = (frameType: FrameType) =>
   [
-    ContentType.COVER,
-    ContentType.TEXT_IMAGE,
-    ContentType.IMAGE_VIEWER,
-    ContentType.PDF_VIEWER,
-    ContentType.POLL,
-    ContentType.REFLECTION,
-    ContentType.VIDEO_EMBED,
-    ContentType.MIRO_EMBED,
-    ContentType.RICH_TEXT,
+    FrameType.COVER,
+    FrameType.TEXT_IMAGE,
+    FrameType.IMAGE_VIEWER,
+    FrameType.PDF_VIEWER,
+    FrameType.POLL,
+    FrameType.REFLECTION,
+    FrameType.VIDEO_EMBED,
+    FrameType.MIRO_EMBED,
+    FrameType.RICH_TEXT,
   ].includes(frameType)
 
-export enum ContentType {
-  MORAA_SLIDE = 'Moraa Slide',
-  COVER = 'Title',
-  POLL = 'Poll',
-  VIDEO = 'Video',
-  GOOGLE_SLIDES = 'Google Slides',
-  GOOGLE_SLIDES_IMPORT = 'Google Slides Import',
-  REFLECTION = 'Reflections',
-  PDF_VIEWER = 'PDF',
-  VIDEO_EMBED = 'Video Embed',
-  MIRO_EMBED = 'Miro Embed',
-  IMAGE_VIEWER = 'Image',
-  TEXT_IMAGE = 'Text & Image',
-  RICH_TEXT = 'Rich Text',
-  MORAA_BOARD = 'Moraa Board',
-  BREAKOUT = 'Breakout',
-  POWERPOINT = 'Powerpoint',
-}
-
-export interface IContentType {
-  name: string
-  icon: React.ReactNode
-  iconLarge?: React.ReactNode
-  description: string
-  contentType: ContentType
-  disabled?: boolean
-  templateKey?: string
-}
-
-export const collaborativeActivities = [
-  getContentType(ContentType.POLL),
-  getContentType(ContentType.REFLECTION),
-  getContentType(ContentType.MORAA_BOARD),
-  getContentType(ContentType.BREAKOUT),
-]
-export const presentationContent = [
-  getContentType(ContentType.MORAA_SLIDE, 'blank'),
-  getContentType(ContentType.RICH_TEXT),
-]
-export const goodies = [
-  getContentType(ContentType.GOOGLE_SLIDES),
-  getContentType(ContentType.PDF_VIEWER),
-  getContentType(ContentType.MIRO_EMBED),
-  getContentType(ContentType.VIDEO_EMBED),
-]
 export const collaborativeTypes = [
-  ContentType.POLL,
-  ContentType.REFLECTION,
-  ContentType.MORAA_BOARD,
-  ContentType.BREAKOUT,
+  FrameType.POLL,
+  FrameType.REFLECTION,
+  FrameType.MORAA_BOARD,
+  FrameType.BREAKOUT,
 ]
 export const presentationTypes = [
-  ContentType.MORAA_SLIDE,
-  ContentType.RICH_TEXT,
-  ContentType.COVER,
+  FrameType.MORAA_SLIDE,
+  FrameType.RICH_TEXT,
+  FrameType.COVER,
 ]
 export const goodiesTypes = [
-  ContentType.GOOGLE_SLIDES,
-  ContentType.PDF_VIEWER,
-  ContentType.MIRO_EMBED,
-  ContentType.VIDEO_EMBED,
+  FrameType.GOOGLE_SLIDES,
+  FrameType.PDF_VIEWER,
+  FrameType.MIRO_EMBED,
+  FrameType.VIDEO_EMBED,
 ]

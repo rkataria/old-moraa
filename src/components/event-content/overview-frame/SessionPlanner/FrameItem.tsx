@@ -17,7 +17,6 @@ import { Minutes } from './Minutes'
 import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
-import { ContentType } from '@/components/common/ContentTypePicker'
 import { DropdownActions } from '@/components/common/DropdownActions'
 import { EditableLabel } from '@/components/common/EditableLabel'
 import { Note } from '@/components/common/Note'
@@ -33,6 +32,7 @@ import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function FrameItem({
@@ -68,7 +68,7 @@ export function FrameItem({
 
   const onFrameTitleChange = (frameId: string, title: string) => {
     if (!editable) return
-    const changedKey = frame.type === ContentType.POLL ? 'question' : 'title'
+    const changedKey = frame.type === FrameType.POLL ? 'question' : 'title'
 
     updateFrame({
       frameId,
@@ -94,7 +94,7 @@ export function FrameItem({
       },
     })
     if (
-      frame.type === ContentType.BREAKOUT &&
+      frame.type === FrameType.BREAKOUT &&
       frame?.content?.breakoutRooms?.length
     ) {
       if (frame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
@@ -125,7 +125,7 @@ export function FrameItem({
 
   const updateTime = (updatedTime: number) => {
     const timeKey =
-      frame.type === ContentType.BREAKOUT ? 'breakoutDuration' : 'time'
+      frame.type === FrameType.BREAKOUT ? 'breakoutDuration' : 'time'
     updateFrame({
       frameId: frame.id,
       framePayload: {

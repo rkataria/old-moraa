@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 
 import { type AgendaFrameDisplayType } from './event.type'
 
-import { ContentType } from '@/components/common/ContentTypePicker'
+import { FrameType } from '@/utils/frame-picker.util'
 
 export type FrameMode = 'edit' | 'present'
 
@@ -74,7 +74,7 @@ export interface IFrame {
   created_at?: string
   updated_at?: string
   config: any
-  type: (typeof ContentType)[keyof typeof ContentType]
+  type: (typeof FrameType)[keyof typeof FrameType]
   order?: number
   meeting_id?: string
   section_id?: string

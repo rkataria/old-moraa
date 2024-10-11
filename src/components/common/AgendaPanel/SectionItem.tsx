@@ -85,18 +85,14 @@ export function SectionItem({
           status: 'PUBLISHED',
         })
 
-  // When a section is clicked, it should be expanded and the current section should be active in the agenda panel
-  const handleSectionCaretClick = () => {
+  const handleSectionClick = () => {
+    setOverviewOpen(false)
     toggleExpandedSection(section.id)
 
     setInsertInSectionId(section.id)
     setInsertAfterFrameId(null)
     setCurrentSectionId(section.id)
     setCurrentFrame(null)
-  }
-
-  const handleSectionClick = () => {
-    setOverviewOpen(false)
 
     // Dispatch an action to update event session mode to 'Peek' if presentation is not started and user is the owner of the event
     if (
@@ -104,8 +100,6 @@ export function SectionItem({
       isHost &&
       presentationStatus !== PresentationStatuses.STARTED
     ) {
-      setCurrentSectionId(section.id)
-      setCurrentFrame(null)
       dispatch(updateEventSessionModeAction(EventSessionMode.PEEK))
     }
   }
@@ -150,7 +144,6 @@ export function SectionItem({
               className={cn('duration-300 shrink-0 cursor-pointer', {
                 'rotate-90': sectionExpanded,
               })}
-              onClick={handleSectionCaretClick}
             />
 
             <EditableLabel
@@ -197,7 +190,6 @@ export function SectionItem({
             className={cn('duration-300 shrink-0 cursor-pointer', {
               'rotate-90 text-primary': sectionExpanded,
             })}
-            onClick={handleSectionCaretClick}
           />
 
           <svg

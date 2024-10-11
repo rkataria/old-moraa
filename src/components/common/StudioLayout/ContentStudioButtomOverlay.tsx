@@ -1,14 +1,13 @@
 import { Toolbars } from '../content-types/MoraaSlide/Toolbars'
-import { ContentType } from '../ContentTypePicker'
 
 import { useEventContext } from '@/contexts/EventContext'
+import { FrameType } from '@/utils/frame-picker.util'
 
 export function ContentStudioBottomOverlay() {
   const { currentFrame, isOwner, preview } = useEventContext()
 
   const editable = isOwner && !preview
-  const showToolbars =
-    editable && currentFrame?.type === ContentType.MORAA_SLIDE
+  const showToolbars = editable && currentFrame?.type === FrameType.MORAA_SLIDE
 
   if (!showToolbars) return null
 

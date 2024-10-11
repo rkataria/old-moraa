@@ -1,8 +1,8 @@
 import { TooltipProps } from '@nextui-org/react'
 
-import { ContentType, getContentType } from './ContentTypePicker'
 import { Tooltip } from './ShortuctTooltip'
 
+import { FrameType, getFrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function ContentTypeIcon({
@@ -10,11 +10,11 @@ export function ContentTypeIcon({
   classNames,
   tooltipProps = {},
 }: {
-  frameType: ContentType
+  frameType: FrameType
   classNames?: string
   tooltipProps?: TooltipProps
 }) {
-  const contentType = getContentType(frameType)
+  const contentType = getFrameType(frameType)
 
   if (!contentType) return null
 

@@ -1,6 +1,7 @@
 import { HtmlToTextOptions, convert } from 'html-to-text'
 
-import { ContentType } from '@/components/common/ContentTypePicker'
+import { FrameType } from './frame-picker.util'
+
 import { IFrame, ISection, TextBlock } from '@/types/frame.type'
 
 const options: HtmlToTextOptions = {
@@ -18,7 +19,7 @@ const getPollNumber = ({ sections }: { sections: ISection[] }) => {
 
   sections.forEach((section) => {
     const { frames } = section
-    const polls = frames.filter((_f) => _f.type === ContentType.POLL)
+    const polls = frames.filter((_f) => _f.type === FrameType.POLL)
     polls.forEach((_frame) => allPollNumber.push(maxPollNumber(_frame.name)))
   })
 
@@ -40,11 +41,11 @@ export const getFrameName = ({
     return frame.name
   }
 
-  if (frame.type === ContentType.REFLECTION) {
+  if (frame.type === FrameType.REFLECTION) {
     return frame.content?.title || frame.name
   }
 
-  if (frame.type === ContentType.POLL) {
+  if (frame.type === FrameType.POLL) {
     let pollIdentifier
     if (!sections) return frame.name
     if (frame.name.includes('Poll #')) {

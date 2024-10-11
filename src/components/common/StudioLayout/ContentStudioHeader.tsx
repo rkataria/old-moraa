@@ -3,11 +3,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { AddContentButton } from '../AgendaPanel/AddContentButton'
 import { AgendaPanelToggle } from '../AgendaPanel/AgendaPanelToggle'
 import { Toolbars } from '../content-types/MoraaSlide/Toolbars'
-import { ContentType } from '../ContentTypePicker'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { toggleContentStudioLeftSidebarVisibleAction } from '@/stores/slices/layout/studio.slice'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function ContentStudioHeader() {
@@ -59,8 +59,7 @@ function CenterSidebar() {
   const { currentFrame, isOwner, preview } = useEventContext()
 
   const editable = isOwner && !preview
-  const showToolbars =
-    editable && currentFrame?.type === ContentType.MORAA_SLIDE
+  const showToolbars = editable && currentFrame?.type === FrameType.MORAA_SLIDE
 
   return (
     <AnimatePresence>

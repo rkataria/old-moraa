@@ -15,8 +15,8 @@ import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 import { BreakoutFrameThumbnailCard } from './BreakoutFrameThumbnainCard'
 import { DeleteBreakoutRoomModal } from './DeleteBreakoutRoomModal'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
-import { ContentType, ContentTypePicker } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
+import { FramePicker } from '../FramePicker'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -26,6 +26,7 @@ import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
+import { FrameType } from '@/utils/frame-picker.util'
 
 // eslint-disable-next-line import/no-cycle
 
@@ -79,7 +80,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     useState<boolean>(false)
 
   const handleAddNewFrame = (
-    contentType: ContentType,
+    contentType: FrameType,
     templateKey?: string
   ): void => {
     let currentSection
@@ -98,7 +99,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       allowVoteOnMultipleOptions: false,
     }
 
-    if (contentType === ContentType.RICH_TEXT) {
+    if (contentType === FrameType.RICH_TEXT) {
       frameConfig.allowToCollaborate = true
     }
 
@@ -108,7 +109,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       config: frameConfig,
       content: {
         ...(getDefaultContent({
-          contentType,
+          frameType: contentType,
           templateKey,
           // TODO: Fix any
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -368,7 +369,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         </Card>
       </RenderIf>
 
-      <ContentTypePicker
+      <FramePicker
         open={openContentTypePicker}
         onClose={() => setOpenContentTypePicker(false)}
         onChoose={(content, templateType) => {

@@ -1,5 +1,5 @@
 export const HEADER_HEIGHT = 56
 
 export function Header({ children }: { children: React.ReactNode }) {
-  return <div className="flex-none h-16 w-full">{children}</div>
+  return <div className="flex-none h-14 w-full">{children}</div>
 }

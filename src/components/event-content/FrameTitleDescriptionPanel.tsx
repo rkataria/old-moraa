@@ -2,19 +2,16 @@ import { useContext, useState } from 'react'
 
 import { FrameText } from './FrameText'
 import { FrameTextBlock } from './FrameTextBlock'
-import { ContentType } from '../common/ContentTypePicker'
 
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
+import { FrameType } from '@/utils/frame-picker.util'
 
-export const frameTypesWithTitle = [
-  ContentType.REFLECTION,
-  ContentType.BREAKOUT,
-]
+export const frameTypesWithTitle = [FrameType.REFLECTION, FrameType.BREAKOUT]
 
 export const frameTypesWithDescription = [
-  ContentType.REFLECTION,
-  ContentType.BREAKOUT,
+  FrameType.REFLECTION,
+  FrameType.BREAKOUT,
 ]
 
 export function FrameTitleDescriptionPanel() {

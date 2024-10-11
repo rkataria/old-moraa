@@ -34,9 +34,12 @@ import {
   PresentationStatuses,
   DyteStates,
 } from '@/types/event-session.type'
-import { frameHasFrameResponses } from '@/utils/content.util'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
+import { FrameType } from '@/utils/frame-picker.util'
 import { supabaseClient } from '@/utils/supabase/client'
+
+const frameHasFrameResponses = (frameType: FrameType) =>
+  [FrameType.POLL, FrameType.REFLECTION].includes(frameType)
 
 const supabase = supabaseClient
 interface EventSessionProviderProps {
@@ -164,7 +167,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   useEffect(() => {
     if (!currentFrame || !realtimeChannel) return
 
-    if (!frameHasFrameResponses(currentFrame as IFrame)) {
+    if (!frameHasFrameResponses(currentFrame.type as FrameType)) {
       setCurrentFrameLoading(false)
 
       return
@@ -195,7 +198,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     fetchCurrentFrameResponses()
 
-    if (!frameHasFrameResponses(currentFrame as IFrame)) return
+    if (!frameHasFrameResponses(currentFrame.type as FrameType)) return
 
     const channels = supabase
       .channel('frame-response-channel')

@@ -11,7 +11,8 @@ import { TextBlockEditor } from './TextBlockEditor'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, TextBlock } from '@/types/frame.type'
-import { ContentType, headerBlock, paragraphBlock } from '@/utils/content.util'
+import { headerBlock, paragraphBlock } from '@/utils/content.util'
+import { FrameType } from '@/utils/frame-picker.util'
 import { getFrameName } from '@/utils/getFrameName'
 
 const getDefaultBlock = (blockType: string) => {
@@ -117,7 +118,7 @@ export function FrameTextBlock({
         block={block}
         editable={editableId === block.id}
         placeholder={
-          localFrame.type === ContentType.REFLECTION
+          localFrame.type === FrameType.REFLECTION
             ? "Write out problem areas that you or user's may noticed while studying or analyzing in live session. Sample learner's reflections card displayed below, showcasing how it appears during live sessions."
             : ''
         }

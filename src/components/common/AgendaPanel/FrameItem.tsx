@@ -7,7 +7,6 @@ import { RxDotsVertical } from 'react-icons/rx'
 import { AddItemBar } from './AddItemBar'
 import { FrameGridView } from './FrameGridView'
 import { ContentTypeIcon } from '../ContentTypeIcon'
-import { ContentType } from '../ContentTypePicker'
 import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
@@ -26,6 +25,7 @@ import {
   PresentationStatuses,
 } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 type FrameItemProps = {
@@ -93,7 +93,7 @@ export function FrameItem({
   )
 
   const handleDelete = async (_frame: IFrame) => {
-    if (_frame.type === ContentType.BREAKOUT) {
+    if (_frame.type === FrameType.BREAKOUT) {
       deleteBreakoutFrames(_frame)
     } else {
       deleteFrame(_frame)

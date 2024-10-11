@@ -50,15 +50,16 @@ export function StudioTabs() {
   )
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="h-full">
       <Tabs
-        variant="solid"
+        variant="underlined"
         aria-label="Studio Tabs"
         color="primary"
         selectedKey={activeTab}
         classNames={{
           base: 'h-full',
-          tab: '!outline-none',
+          tabList: 'h-full p-0',
+          tab: '!outline-none h-full',
           tabContent:
             'px-4 text-gray-600 h-full flex justify-center items-center font-medium',
         }}

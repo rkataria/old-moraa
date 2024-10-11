@@ -7,13 +7,13 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
 import { Frame } from './Frame'
-import { ContentType } from '../common/ContentTypePicker'
 import { SectionOverview } from '../common/SectionOverview'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { PresentationStatuses } from '@/types/event-session.type'
+import { FrameType } from '@/utils/frame-picker.util'
 
 export function ContentContainer() {
   const { currentFrame, presentationStatus, isHost } = useEventSession()
@@ -80,7 +80,7 @@ export function ContentContainer() {
   if (currentFrame) {
     return (
       <div className="relative h-full flex flex-col">
-        {currentFrame.type === ContentType.MORAA_BOARD ? (
+        {currentFrame.type === FrameType.MORAA_BOARD ? (
           <RoomProvider key={`frame-${currentFrame.id}`}>
             <Frame />
           </RoomProvider>

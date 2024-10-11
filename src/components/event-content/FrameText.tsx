@@ -4,11 +4,10 @@ import { useDebounce } from '@uidotdev/usehooks'
 import isEqual from 'lodash.isequal'
 import TextareaAutosize from 'react-textarea-autosize'
 
-import { ContentType } from '../common/ContentTypePicker'
-
 import { TITLE_CHARACTER_LIMIT } from '@/constants/common'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function FrameText({
@@ -27,14 +26,14 @@ export function FrameText({
   ) as EventContextType
 
   const placeholder =
-    currentFrame?.type === ContentType.POLL
+    currentFrame?.type === FrameType.POLL
       ? "What's the question?"
-      : currentFrame?.type === ContentType.REFLECTION
+      : currentFrame?.type === FrameType.REFLECTION
         ? 'Subject that shaped thoughts and opinions to reflect upon...'
         : "What's the title?"
 
   const getChangedKey = () => {
-    if (currentFrame?.type === ContentType.POLL && type === 'title') {
+    if (currentFrame?.type === FrameType.POLL && type === 'title') {
       return 'question'
     }
 

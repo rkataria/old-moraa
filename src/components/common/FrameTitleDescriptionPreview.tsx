@@ -1,8 +1,8 @@
 import { FrameTitle } from '../event-session/content-types/common/FrameTitle'
 import { TextBlockView } from '../event-session/content-types/common/TextBlockView'
 
-import { ContentType } from '@/components/common/ContentTypePicker'
 import { IFrame, TextBlock } from '@/types/frame.type'
+import { FrameType } from '@/utils/frame-picker.util'
 
 export function FrameTitleDescription({ frame }: { frame: IFrame }) {
   const frameTitle = frame.content?.title || frame.content?.question
@@ -32,27 +32,27 @@ export function FrameTitleDescriptionPreview({
 
   if (
     [
-      ContentType.COVER,
-      ContentType.TEXT_IMAGE,
-      ContentType.GOOGLE_SLIDES,
-      ContentType.GOOGLE_SLIDES_IMPORT,
-      ContentType.PDF_VIEWER,
-      ContentType.IMAGE_VIEWER,
-      ContentType.MIRO_EMBED,
-      ContentType.RICH_TEXT,
-      ContentType.MORAA_BOARD,
-      ContentType.PDF_VIEWER,
-      ContentType.VIDEO_EMBED,
-      ContentType.VIDEO,
-      ContentType.RICH_TEXT,
+      FrameType.COVER,
+      FrameType.TEXT_IMAGE,
+      FrameType.GOOGLE_SLIDES,
+      FrameType.GOOGLE_SLIDES_IMPORT,
+      FrameType.PDF_VIEWER,
+      FrameType.IMAGE_VIEWER,
+      FrameType.MIRO_EMBED,
+      FrameType.RICH_TEXT,
+      FrameType.MORAA_BOARD,
+      FrameType.PDF_VIEWER,
+      FrameType.VIDEO_EMBED,
+      FrameType.VIDEO,
+      FrameType.RICH_TEXT,
     ].includes(frame.type)
   ) {
     return null
   }
 
-  if (asThumbnail && frame.type === ContentType.MORAA_SLIDE) return null
+  if (asThumbnail && frame.type === FrameType.MORAA_SLIDE) return null
 
-  if (frame.type === ContentType.RICH_TEXT) {
+  if (frame.type === FrameType.RICH_TEXT) {
     if (!frame.config.allowToCollaborate && !asThumbnail) return null
   }
 

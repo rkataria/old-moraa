@@ -10,11 +10,11 @@ import { ReflectionAppearance } from './ReflectionAppearance'
 import { RichTextAppearance } from './RichTextAppearance'
 import { TextImageAppearance } from './TextImageAppearance'
 
-import { ContentType } from '@/components/common/ContentTypePicker'
 import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { useEventContext } from '@/contexts/EventContext'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
+import { FrameType } from '@/utils/frame-picker.util'
 
 export function FrameAppearance() {
   const { currentFrame } = useEventContext()
@@ -26,30 +26,32 @@ export function FrameAppearance() {
 
   if (!currentFrame) return null
 
-  const renderersByContentType: Record<ContentType, React.ReactNode> = {
-    [ContentType.VIDEO]: null,
-    [ContentType.GOOGLE_SLIDES_IMPORT]: null,
-    [ContentType.COVER]: null,
-    [ContentType.POLL]: <PollAppearance />,
-    [ContentType.GOOGLE_SLIDES]: null,
-    [ContentType.PDF_VIEWER]: <PdfAppearance key={currentFrame.id} />,
-    [ContentType.REFLECTION]: <ReflectionAppearance key={currentFrame.id} />,
-    [ContentType.VIDEO_EMBED]: null,
-    [ContentType.TEXT_IMAGE]: <TextImageAppearance key={currentFrame.id} />,
-    [ContentType.IMAGE_VIEWER]: null,
-    [ContentType.RICH_TEXT]: <RichTextAppearance key={currentFrame.id} />,
-    [ContentType.MIRO_EMBED]: null,
-    [ContentType.MORAA_BOARD]: (
+  const renderersByContentType: Record<FrameType, React.ReactNode> = {
+    [FrameType.VIDEO]: null,
+    [FrameType.GOOGLE_SLIDES_IMPORT]: null,
+    [FrameType.COVER]: null,
+    [FrameType.POLL]: <PollAppearance />,
+    [FrameType.GOOGLE_SLIDES]: null,
+    [FrameType.PDF_VIEWER]: <PdfAppearance key={currentFrame.id} />,
+    [FrameType.REFLECTION]: <ReflectionAppearance key={currentFrame.id} />,
+    [FrameType.VIDEO_EMBED]: null,
+    [FrameType.TEXT_IMAGE]: <TextImageAppearance key={currentFrame.id} />,
+    [FrameType.IMAGE_VIEWER]: null,
+    [FrameType.RICH_TEXT]: <RichTextAppearance key={currentFrame.id} />,
+    [FrameType.MIRO_EMBED]: null,
+    [FrameType.MORAA_BOARD]: (
       <RoomProvider>
         <MoraaBoardAppearance key={currentFrame.id} />
       </RoomProvider>
     ),
-    [ContentType.MORAA_SLIDE]: <MoraaSlideAppearance key={currentFrame.id} />,
-    [ContentType.BREAKOUT]: <BreakoutAppearance key={currentFrame.id} />,
-    [ContentType.POWERPOINT]: null,
+    [FrameType.MORAA_SLIDE]: <MoraaSlideAppearance key={currentFrame.id} />,
+    [FrameType.BREAKOUT]: <BreakoutAppearance key={currentFrame.id} />,
+    [FrameType.POWERPOINT]: null,
+    [FrameType.Q_A]: null,
+    [FrameType.MORAA_PAD]: null,
   }
 
-  const renderer = renderersByContentType[currentFrame.type]
+  const renderer = renderersByContentType[currentFrame.type as FrameType]
 
   return (
     <div>

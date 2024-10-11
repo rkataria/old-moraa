@@ -71,7 +71,7 @@ export function Header({
   if (!event) return null
 
   return (
-    <div className="flex items-center justify-between w-full h-full p-4">
+    <div className="flex items-center justify-between w-full h-full px-3">
       <div className="flex justify-end items-center gap-2 h-full">
         <div className="pr-4 border-r-2 border-gray-200">
           <Logo />
@@ -88,9 +88,8 @@ export function Header({
             </Chip>
           </RenderIf>
         </div>
+        <StudioTabs />
       </div>
-
-      <StudioTabs />
 
       <div className="flex items-center justify-start h-full gap-2">
         {renderActionButtons()}

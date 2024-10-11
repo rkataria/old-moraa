@@ -5,9 +5,9 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { useEventPermissions } from './useEventPermissions'
 
 import { useEventContext } from '@/contexts/EventContext'
-import { ContentType } from '@/utils/content.util'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 import { getFilteredFramesByStatus } from '@/utils/event.util'
+import { FrameType } from '@/utils/frame-picker.util'
 
 type ListDisplayMode = 'list' | 'grid'
 
@@ -351,7 +351,7 @@ export function AgendaPanelContextProvider({
     if (!permissions.canUpdateFrame && eventMode === 'present') return
 
     if (
-      currentFrame?.type === ContentType.GOOGLE_SLIDES &&
+      currentFrame?.type === FrameType.GOOGLE_SLIDES &&
       !currentFrame.content?.individualFrame
     ) {
       return

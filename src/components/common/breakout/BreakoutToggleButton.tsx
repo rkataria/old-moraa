@@ -17,7 +17,7 @@ import {
 } from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
-import { ContentType } from '@/utils/content.util'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function BreakoutToggleButton({
@@ -173,7 +173,7 @@ export function BreakoutHeaderButton() {
 
   if (
     !isBreakoutActive &&
-    (currentFrame?.type === ContentType.BREAKOUT ||
+    (currentFrame?.type === FrameType.BREAKOUT ||
       currentFrame?.content?.breakoutFrameId)
   ) {
     return (
@@ -203,7 +203,7 @@ export function BreakoutHeaderButton() {
 
   if (
     (currentFrame?.content?.breakoutFrameId &&
-      currentFrame?.type === ContentType.BREAKOUT) ||
+      currentFrame?.type === FrameType.BREAKOUT) ||
     currentFrame?.content?.breakoutFrameId === sessionBreakoutFrameId
   ) {
     return (

@@ -42,9 +42,31 @@ const loadCenterGuideHelperRect = (canvas: fabric.Canvas) => {
 
 export const MORAA_SLIDE_TEMPLATES: Template[] = [
   {
-    key: 'blank',
-    name: 'Blank',
+    key: 'title',
+    name: 'Title',
     loadTemplate: (canvas: fabric.Canvas) => {
+      const title = 'Your awesome title here'
+      const subtitle = 'This is a subtitle'
+
+      const titleText = new fabric.Textbox(title, {
+        name: titleTypography.name,
+        fontSize: titleTypography.fontSize,
+        fontWeight: titleTypography.fontWeight,
+        fontFamily: DEFAULT_FONT_FAMILY,
+        textAlign: 'center',
+        width: canvas.getWidth() * 0.8,
+        left: canvas.getWidth() * 0.1,
+        top: canvas.getHeight() * 0.1,
+      })
+      const subtitleText = new fabric.Textbox(subtitle, {
+        name: subheadingTypography.name,
+        fontSize: subheadingTypography.fontSize,
+        fontWeight: subheadingTypography.fontWeight,
+        fontFamily: DEFAULT_FONT_FAMILY,
+        textAlign: 'center',
+        width: canvas.getWidth() * 0.8,
+      })
+
       canvas.clear()
 
       // NOTE: Add a background rect to make guides visible to center objects
@@ -52,7 +74,11 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
 
       canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
 
-      canvas.requestRenderAll()
+      canvas.add(titleText)
+      canvas.add(subtitleText)
+      canvas.viewportCenterObject(titleText)
+
+      canvas.renderAll()
       canvas.fire('object:modified')
 
       return canvas

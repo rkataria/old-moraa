@@ -10,7 +10,7 @@ import { ContentStudioRightSidebarControls } from './ContentStudioRightSidebarCo
 import { AIChatPanel } from '@/components/event-content/AIChatPanel'
 import { useStoreSelector } from '@/hooks/useRedux'
 
-const StudioLayoutHeaderHeight = 64
+const StudioLayoutHeaderHeight = 56
 
 export function ContentStudio() {
   const resizableRightSidebarVisible =

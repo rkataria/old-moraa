@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ContentType } from '../ContentTypePicker'
 
 import { FrameContainer } from '@/components/event-content/FrameContainer'
 import { useEventContext } from '@/contexts/EventContext'
+import { FrameType } from '@/utils/frame-picker.util'
 
 const framesWithVideoAspectRatio = [
-  ContentType.VIDEO,
-  ContentType.MORAA_BOARD,
-  ContentType.MIRO_EMBED,
-  ContentType.IMAGE_VIEWER,
-  ContentType.MORAA_SLIDE,
-  ContentType.GOOGLE_SLIDES,
-  ContentType.GOOGLE_SLIDES_IMPORT,
-  ContentType.VIDEO_EMBED,
+  FrameType.VIDEO,
+  FrameType.MORAA_BOARD,
+  FrameType.MIRO_EMBED,
+  FrameType.IMAGE_VIEWER,
+  FrameType.MORAA_SLIDE,
+  FrameType.GOOGLE_SLIDES,
+  FrameType.GOOGLE_SLIDES_IMPORT,
+  FrameType.VIDEO_EMBED,
 ]
 
 export function ContentStudioFrameContainer() {

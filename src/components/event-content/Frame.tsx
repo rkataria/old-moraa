@@ -21,12 +21,12 @@ import { RichTextEditor } from '../common/content-types/RichText/Editor'
 import { FramePreview } from '../common/FramePreview'
 
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
-import { ContentType } from '@/components/common/ContentTypePicker'
 import { EventContext } from '@/contexts/EventContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
 interface FrameProps {
@@ -48,22 +48,22 @@ export function Frame({ frame }: FrameProps) {
 
   if (!frame) return null
 
-  const renderersByContentType: Record<ContentType, React.ReactNode> = {
-    [ContentType.VIDEO]: <VideoEmbedEditor frame={frame as any} />,
-    [ContentType.GOOGLE_SLIDES_IMPORT]: (
+  const renderersByFrameType: Record<FrameType, React.ReactNode> = {
+    [FrameType.VIDEO]: <VideoEmbedEditor frame={frame as any} />,
+    [FrameType.GOOGLE_SLIDES_IMPORT]: (
       <GoogleSlidesImportEditor frame={frame} />
     ),
-    [ContentType.COVER]: <CoverEditor />,
-    [ContentType.POLL]: <PollEditor frame={frame as any} />,
-    [ContentType.GOOGLE_SLIDES]: <GoogleSlidesEditor frame={frame as any} />,
-    [ContentType.PDF_VIEWER]: <PDFUploader frame={frame as any} />,
-    [ContentType.REFLECTION]: <ReflectionEditor frame={frame} />,
-    [ContentType.VIDEO_EMBED]: <VideoEmbedEditor frame={frame as any} />,
-    [ContentType.TEXT_IMAGE]: <TextImageEditor />,
-    [ContentType.IMAGE_VIEWER]: (
+    [FrameType.COVER]: <CoverEditor />,
+    [FrameType.POLL]: <PollEditor frame={frame as any} />,
+    [FrameType.GOOGLE_SLIDES]: <GoogleSlidesEditor frame={frame as any} />,
+    [FrameType.PDF_VIEWER]: <PDFUploader frame={frame as any} />,
+    [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
+    [FrameType.VIDEO_EMBED]: <VideoEmbedEditor frame={frame as any} />,
+    [FrameType.TEXT_IMAGE]: <TextImageEditor />,
+    [FrameType.IMAGE_VIEWER]: (
       <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
     ),
-    [ContentType.RICH_TEXT]: (
+    [FrameType.RICH_TEXT]: (
       <RichTextEditor
         hideSideBar
         editorId={frame.id}
@@ -73,19 +73,20 @@ export function Frame({ frame }: FrameProps) {
         }}
       />
     ),
-
-    [ContentType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
-    [ContentType.MORAA_BOARD]: (
+    [FrameType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,
+    [FrameType.MORAA_BOARD]: (
       <RoomProvider>
         <MoraaBoardEditor />
       </RoomProvider>
     ),
-    [ContentType.MORAA_SLIDE]: <MoraaSlide frame={frame as any} />,
-    [ContentType.BREAKOUT]: <BreakoutFrame frame={frame as any} isEditable />,
-    [ContentType.POWERPOINT]: <PowerpointImporter frame={frame as any} />,
+    [FrameType.MORAA_SLIDE]: <MoraaSlide frame={frame as any} />,
+    [FrameType.BREAKOUT]: <BreakoutFrame frame={frame as any} isEditable />,
+    [FrameType.POWERPOINT]: <PowerpointImporter frame={frame as any} />,
+    [FrameType.Q_A]: null,
+    [FrameType.MORAA_PAD]: null,
   }
 
-  const renderer = renderersByContentType[frame.type]
+  const renderer = renderersByFrameType[frame.type as FrameType]
 
   return (
     <div
