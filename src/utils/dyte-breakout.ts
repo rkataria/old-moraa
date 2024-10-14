@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BreakoutRoomsManager } from '@dytesdk/react-ui-kit'
 import DyteClient from '@dytesdk/web-core'
+import chunk from 'lodash.chunk'
 
 import {
-  createAndAutoAssignBreakoutRooms,
   moveHostToRoom,
   stopBreakoutRooms,
 } from '@/services/dyte/breakout-room-manager.service'
@@ -59,12 +59,14 @@ export class BreakoutRooms {
   }
 
   async endBreakout() {
-    await this.cleanupBreakoutManagerInstance()
-    await stopBreakoutRooms({
-      meeting: this.dyteClient,
-      stateManager: this.manager,
+    const parentMeetingId = this.dyteClient.connectedMeetings.parentMeeting.id
+    this.dyteClient.connectedMeetings.meetings.forEach((meeting) => {
+      this.dyteClient.connectedMeetings.moveParticipants(
+        meeting.id || '',
+        parentMeetingId || '',
+        meeting.participants.map((participant) => participant.id || '')
+      )
     })
-    await this.cleanupBreakoutManagerInstance()
   }
 
   async moveParticipantToAnotherRoom(
@@ -90,14 +92,38 @@ export class BreakoutRooms {
     participantsPerRoom,
     roomsCount,
   }: StartBreakoutConfig) {
-    await this.cleanupBreakoutManagerInstance()
-    await createAndAutoAssignBreakoutRooms({
-      roomsCount,
-      groupSize: participantsPerRoom,
-      meeting: this.dyteClient,
-      stateManager: this.manager,
+    const parentMeetingId = this.dyteClient.connectedMeetings.parentMeeting.id
+
+    const participants = this.dyteClient.participants.joined.toArray()
+    const getGroupSize = () => {
+      if (participantsPerRoom) return participantsPerRoom
+
+      return Math.ceil(participants.length / roomsCount!)
+    }
+    const groupSize = getGroupSize()
+
+    const participantGroups = chunk(participants, groupSize)
+
+    const createdMeetings =
+      await this.dyteClient.connectedMeetings.createMeetings(
+        new Array(roomsCount || participantGroups.length)
+          .fill('')
+          .map((_, idx) => ({
+            title: `Room ${idx + 1}`,
+          }))
+      )
+
+    createdMeetings.forEach(async (createdMeeting, index) => {
+      const breakoutRoomParticipants = participantGroups[index]
+
+      if (breakoutRoomParticipants?.length > 0) {
+        await this.dyteClient.connectedMeetings.moveParticipants(
+          parentMeetingId || '',
+          createdMeeting.id,
+          breakoutRoomParticipants.map((p) => p.customParticipantId!)
+        )
+      }
     })
-    await this.cleanupBreakoutManagerInstance()
   }
 
   async endBreakoutRooms() {
