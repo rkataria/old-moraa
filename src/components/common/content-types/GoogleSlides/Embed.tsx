@@ -3,21 +3,21 @@ import { useEffect, useState } from 'react'
 import { Skeleton } from '@nextui-org/react'
 import ReactGoogleSlides from 'react-google-slides'
 
-import { PageControls } from './PageControls'
+import { PageControls } from '@/components/common/PageControls'
 
-export type GoogleSlideEmbedProps = {
+export type EmbedProps = {
   url: string
   showControls?: boolean
   startPage?: number
   onPageChange?: (pageNumber: number) => void
 }
 
-export function GoogleSlideEmbed({
+export function Embed({
   url,
   showControls,
   startPage = 1,
   onPageChange,
-}: GoogleSlideEmbedProps) {
+}: EmbedProps) {
   const [currentPage, setCurrentPage] = useState<number>(startPage)
   const [loading, setLoading] = useState<boolean>(true)
 

@@ -14,8 +14,7 @@ export function StudioAgendaHeader() {
       animate={{ opacity: 1 }}
       transition={{
         duration: 0.3,
-      }}
-      layoutId="content-studio-left-sidebar-header">
+      }}>
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <span className="text-base font-semibold">Agenda</span>

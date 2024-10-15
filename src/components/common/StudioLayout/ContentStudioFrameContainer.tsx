@@ -11,7 +11,6 @@ const framesWithVideoAspectRatio = [
   FrameType.IMAGE_VIEWER,
   FrameType.MORAA_SLIDE,
   FrameType.GOOGLE_SLIDES,
-  FrameType.GOOGLE_SLIDES_IMPORT,
   FrameType.VIDEO_EMBED,
 ]
 

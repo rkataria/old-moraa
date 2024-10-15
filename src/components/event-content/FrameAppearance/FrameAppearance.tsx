@@ -27,7 +27,6 @@ export function FrameAppearance() {
 
   const renderersByContentType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: null,
-    [FrameType.GOOGLE_SLIDES_IMPORT]: null,
     [FrameType.POLL]: <PollAppearance />,
     [FrameType.GOOGLE_SLIDES]: null,
     [FrameType.PDF_VIEWER]: <PdfAppearance key={currentFrame.id} />,

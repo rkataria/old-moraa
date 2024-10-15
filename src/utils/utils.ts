@@ -339,3 +339,18 @@ export function truncateHTMLWithTags(htmlString: string, maxLength: number) {
 
   return truncatedHTML
 }
+
+export const getGoogleSlidesPresentationId = (url: string) => {
+  const regex =
+    /^https:\/\/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9-_]+)/ // Regular expression to match the presentation ID
+  const match = url.match(regex)
+
+  return match ? match[1] : null
+}
+
+export const isValidGoogleSlidesUrl = (url: string) => {
+  const regex =
+    /^https:\/\/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9-_]+)/
+
+  return regex.test(url)
+}

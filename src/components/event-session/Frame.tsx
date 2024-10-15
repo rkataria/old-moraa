@@ -4,7 +4,6 @@ import React, { useContext } from 'react'
 
 import { User } from '@supabase/supabase-js'
 
-import { GoogleSlides } from './content-types/GoogleSlides'
 import { PDFViewer } from './content-types/PDFViewer'
 import { Reflection } from './content-types/Reflection'
 import { RichTextLive } from './content-types/RichTextLive'
@@ -16,6 +15,7 @@ import { MoraaPad } from '../common/content-types/MoraaPad/MoraaPad'
 import { MoraaSlidePreview } from '../common/content-types/MoraaSlide/Preview'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
 
+import { GoogleSlides } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { ContentLoading } from '@/components/common/ContentLoading'
@@ -24,6 +24,7 @@ import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
+import { GoogleSlidesType } from '@/types/frame-picker.type'
 import { IPollResponse, IReflectionResponse, Vote } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { getOjectPublicUrl } from '@/utils/utils'
@@ -50,7 +51,6 @@ export function Frame() {
 
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: null,
-    [FrameType.GOOGLE_SLIDES_IMPORT]: null,
     [FrameType.POLL]: (
       <Poll
         key={currentFrame.id}
@@ -61,7 +61,11 @@ export function Frame() {
       />
     ),
     [FrameType.GOOGLE_SLIDES]: (
-      <GoogleSlides key={currentFrame.id} frame={currentFrame as any} />
+      <GoogleSlides
+        key={currentFrame.id}
+        frame={currentFrame as GoogleSlidesType}
+        isLiveSession
+      />
     ),
     [FrameType.PDF_VIEWER]: (
       <PDFViewer key={currentFrame.id} frame={currentFrame as any} />

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useMemo, useState } from 'react'
 
 import {
@@ -6,7 +7,6 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@nextui-org/react'
-import { useHotkeys } from 'react-hotkeys-hook'
 import { IoIosCheckmarkCircle } from 'react-icons/io'
 import { MdOutlineRadioButtonUnchecked } from 'react-icons/md'
 
@@ -44,21 +44,6 @@ export function FrameStatusToggleButton() {
 
   const { permissions } = useEventPermissions()
 
-  // TODO: Fix ctrl+! issue
-  useHotkeys('ctrl+1', () => setIsOpen(true))
-  useHotkeys('1', () => {
-    if (isOpen) {
-      updateFrameStatus(FrameStatus.DRAFT)
-      setIsOpen(false)
-    }
-  })
-  useHotkeys('2', () => {
-    if (isOpen) {
-      updateFrameStatus(FrameStatus.PUBLISHED)
-      setIsOpen(false)
-    }
-  })
-
   if (!currentFrame) return null
 
   if (!permissions.canUpdateFrame) {
@@ -95,17 +80,15 @@ export function FrameStatusToggleButton() {
           key="draft"
           className="bg-transparent hover:bg-gray-200"
           startContent={statusIconMap.DRAFT}
-          shortcut="1"
           onClick={() => updateFrameStatus(FrameStatus.DRAFT)}>
-          Draft
+          Don't Share
         </DropdownItem>
         <DropdownItem
           key="publish"
           className="bg-transparent hover:bg-gray-200"
           startContent={statusIconMap.PUBLISHED}
-          shortcut="2"
           onClick={() => updateFrameStatus(FrameStatus.PUBLISHED)}>
-          Publish
+          Share
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>

@@ -242,12 +242,12 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           googleSlideUrl,
           meetingId: meeting!.id,
           sectionId: frame.section_id,
+          uploaderFrameId: frame.id,
           startPosition,
           endPosition,
         },
       }
     )
-    console.log(importGoogleSlidesResponse)
     if (!importGoogleSlidesResponse.data?.success) {
       console.error(
         'error while importing google Slides: ',

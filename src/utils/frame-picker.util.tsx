@@ -51,7 +51,6 @@ export enum FrameType {
   POLL = 'Poll',
   VIDEO = 'Video',
   GOOGLE_SLIDES = 'Google Slides',
-  GOOGLE_SLIDES_IMPORT = 'Google Slides Import',
   REFLECTION = 'Reflections',
   PDF_VIEWER = 'PDF',
   VIDEO_EMBED = 'Video Embed',

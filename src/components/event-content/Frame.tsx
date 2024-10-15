@@ -6,8 +6,6 @@ import { useContext } from 'react'
 import { MoraaBoardEditor } from './content-types/MoraaBoardEditor'
 import { PollEditor } from './content-types/PollEditor'
 import { FrameTitleDescriptionPanel } from './FrameTitleDescriptionPanel'
-import { GoogleSlidesImportEditor } from './GoogleSlideImportEditor'
-import { GoogleSlidesEditor } from './GoogleSlidesEditor'
 import { MiroEmbedEditor } from './MiroEmbedEditor'
 import { PDFUploader } from './PDFUploader'
 import { PowerpointImporter } from './PowerpointImporter'
@@ -19,11 +17,13 @@ import { MoraaSlide } from '../common/content-types/MoraaSlide/MoraaSlide'
 import { RichTextEditor } from '../common/content-types/RichText/Editor'
 import { FramePreview } from '../common/FramePreview'
 
+import { GoogleSlides } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { EventContext } from '@/contexts/EventContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
+import { GoogleSlidesType } from '@/types/frame-picker.type'
 import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
@@ -49,11 +49,10 @@ export function Frame({ frame }: FrameProps) {
 
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: <VideoEmbedEditor frame={frame as any} />,
-    [FrameType.GOOGLE_SLIDES_IMPORT]: (
-      <GoogleSlidesImportEditor frame={frame} />
-    ),
     [FrameType.POLL]: <PollEditor frame={frame as any} />,
-    [FrameType.GOOGLE_SLIDES]: <GoogleSlidesEditor frame={frame as any} />,
+    [FrameType.GOOGLE_SLIDES]: (
+      <GoogleSlides frame={frame as GoogleSlidesType} />
+    ),
     [FrameType.PDF_VIEWER]: <PDFUploader frame={frame as any} />,
     [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
     [FrameType.VIDEO_EMBED]: <VideoEmbedEditor frame={frame as any} />,

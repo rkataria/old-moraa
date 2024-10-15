@@ -91,21 +91,13 @@ export const getDefaultContent = ({
 
     case FrameType.GOOGLE_SLIDES:
       return {
-        googleSlideURL: '',
+        googleSlideUrl: '',
         startPosition: 1,
-        blocks: [headerBlock, paragraphBlock],
-      }
-
-    case FrameType.GOOGLE_SLIDES_IMPORT:
-      return {
-        googleSlideURL: '',
-        startPosition: 1,
-        blocks: [headerBlock, paragraphBlock],
       }
 
     case FrameType.PDF_VIEWER:
       return {
-        googleSlideURL: '', // FIXME: This should be pdfURL
+        googleSlideUrl: '', // FIXME: This should be pdfURL
         startPosition: 1,
         blocks: [headerBlock, paragraphBlock],
       }
@@ -140,7 +132,6 @@ export const getDefaultContent = ({
 export const isFrameInteractive = (frame: IFrame) =>
   [
     FrameType.POLL,
-    FrameType.GOOGLE_SLIDES_IMPORT,
     FrameType.REFLECTION,
     FrameType.VIDEO_EMBED,
     FrameType.PDF_VIEWER,

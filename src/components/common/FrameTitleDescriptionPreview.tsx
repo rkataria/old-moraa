@@ -33,7 +33,6 @@ export function FrameTitleDescriptionPreview({
   if (
     [
       FrameType.GOOGLE_SLIDES,
-      FrameType.GOOGLE_SLIDES_IMPORT,
       FrameType.PDF_VIEWER,
       FrameType.IMAGE_VIEWER,
       FrameType.MIRO_EMBED,

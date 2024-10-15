@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from './breakout/BreakoutFrame'
-import { GoogleSlides, GoogleSlidesType } from './content-types/GoogleSlides'
 import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
 import { MoraaPad } from './content-types/MoraaPad/MoraaPad'
 import { MoraaSlidePreview } from './content-types/MoraaSlide/Preview'
@@ -23,8 +22,10 @@ import {
   VideoEmbedFrameType,
 } from '../event-content/VideoEmbedEditor'
 
+import { GoogleSlides } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { RoomProvider } from '@/contexts/RoomProvider'
+import { GoogleSlidesType } from '@/types/frame-picker.type'
 import { IFrame, PollFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
@@ -57,14 +58,6 @@ export function FramePreview({
 
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: null,
-    [FrameType.GOOGLE_SLIDES_IMPORT]: (
-      <div className="w-full h-full flex justify-center items-center bg-white text-black">
-        <p className="text-center">
-          This frame will be replaced with the imported Google Slides once the
-          import is completed.
-        </p>
-      </div>
-    ),
     [FrameType.POLL]: (
       <PollPreview
         frame={frame as PollFrame}
@@ -73,7 +66,10 @@ export function FramePreview({
       />
     ),
     [FrameType.GOOGLE_SLIDES]: (
-      <GoogleSlides frame={frame as GoogleSlidesType} />
+      <GoogleSlides
+        frame={frame as GoogleSlidesType}
+        asThumbnail={asThumbnail}
+      />
     ),
     [FrameType.PDF_VIEWER]: <PDFViewer frame={frame as PDFViewerFrameType} />,
     [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
