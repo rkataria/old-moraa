@@ -51,7 +51,9 @@ export function VideoBackgroundSettingsButtonWithModal({
     value: string | number
   }) => {
     const videoBackgroundTransformer =
-      await DyteVideoBackgroundTransformer.init()
+      await DyteVideoBackgroundTransformer.init({
+        meeting,
+      })
 
     let middleWare
 
