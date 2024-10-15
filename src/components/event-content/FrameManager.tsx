@@ -98,6 +98,11 @@ export function FrameManager() {
       }
     }
 
+    if (type === FrameType.MORAA_BOARD) {
+      const defaultBoardConfig = { allowToDraw: true }
+      frameConfig = { ...frameConfig, ...defaultBoardConfig }
+    }
+
     const newFrame: IFrame = {
       id: uuidv4(),
       name: `Frame ${(insertInSection?.frames?.length || 0) + 1}`,

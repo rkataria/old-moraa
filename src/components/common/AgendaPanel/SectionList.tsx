@@ -23,22 +23,29 @@ export function SectionList() {
 
   const expanded = leftSidebarVisiblity === 'maximized'
 
-  useEffect(() => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const scrollToActiveFrame = () => {
     if (!currentFrame) return
 
     const currentFrameElement = document.querySelector(
       `div[data-miniframe-id="${currentFrame.id}"]`
     )
 
-    if (!currentFrameElement) return
+    const ele = currentFrameElement
+
+    if (!ele) return
 
     scrollParentToChild({
       parent: sectionListRef.current!,
-      child: currentFrameElement as HTMLElement,
+      child: ele as HTMLElement,
       topOffset: 100,
       bottomOffset: 100,
     })
-  }, [currentFrame])
+  }
+
+  useEffect(() => {
+    scrollToActiveFrame()
+  }, [currentFrame, scrollToActiveFrame])
 
   const actionDisabled =
     eventMode !== 'edit' || !permissions.canUpdateSection || preview

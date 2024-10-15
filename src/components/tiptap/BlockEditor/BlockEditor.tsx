@@ -63,10 +63,10 @@ export function BlockEditor({
       provider,
       editorInfo,
       editable,
+      initialContent,
       setCollabToken,
       setAiToken,
       onEmptyContent,
-      initialContent,
     })
 
   const displayedUsers = users.slice(0, 3)

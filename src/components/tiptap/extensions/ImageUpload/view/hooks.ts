@@ -6,15 +6,17 @@ import { API } from '@/components/tiptap/lib/api'
 
 export const useUploader = ({
   onUpload,
+  file,
 }: {
   onUpload: (url: string) => void
+  file: File
 }) => {
   const [loading, setLoading] = useState(false)
 
   const uploadFile = useCallback(async () => {
     setLoading(true)
     try {
-      const url = await API.uploadImage()
+      const url = await API.uploadImage(file)
 
       onUpload(url)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,7 +25,7 @@ export const useUploader = ({
       toast.error(error)
     }
     setLoading(false)
-  }, [onUpload])
+  }, [file, onUpload])
 
   return { loading, uploadFile }
 }

@@ -1,10 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { useHotkeys } from 'react-hotkeys-hook'
+import { useDispatch } from 'react-redux'
 
 import { useEventPermissions } from './useEventPermissions'
+import { useStoreSelector } from './useRedux'
 
 import { useEventContext } from '@/contexts/EventContext'
+import {
+  setAgendaPanelDisplayTypeAction,
+  setExpandedSectionsAction,
+} from '@/stores/slices/layout/studio.slice'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -42,18 +48,18 @@ export function AgendaPanelContextProvider({
     setOverviewOpen,
   } = useEventContext()
   const { permissions } = useEventPermissions()
-  const [expandedSectionIds, setExpandedSectionIds] = useState<string[]>(
-    sections?.length ? [sections[0].id] : [] // Check if sections exist and have elements
+
+  const dispatch = useDispatch()
+  const listDisplayMode = useStoreSelector(
+    (state) => state.layout.studio.agendaPanelDisplayType
   )
-  const [listDisplayMode, setListDisplayMode] =
-    useState<ListDisplayMode>('grid')
+  const expandedSectionIds = useStoreSelector(
+    (state) => state.layout.studio.expandedSections
+  )
+
   const [expanded, setExpanded] = useState<boolean>(false)
 
   const showPublishedFrames = !permissions.canUpdateFrame
-
-  // hotkeys
-  // useHotkeys('l', () => setListDisplayMode('list'), [])
-  // useHotkeys('g', () => setListDisplayMode('grid'), [])
 
   const previousFrame = useMemo(
     () =>
@@ -64,6 +70,7 @@ export function AgendaPanelContextProvider({
       }),
     [sections, currentFrame, showPublishedFrames, eventMode]
   )
+
   const nextFrame = useMemo(
     () =>
       getNextFrame({
@@ -390,35 +397,43 @@ export function AgendaPanelContextProvider({
   useEffect(() => {
     if (!currentFrame) return
 
-    setExpandedSectionIds((prev) => {
-      if (!currentFrame.section_id) return prev
+    dispatch(
+      setExpandedSectionsAction(
+        currentFrame.section_id &&
+          !expandedSectionIds.includes(currentFrame.section_id)
+          ? [...expandedSectionIds, currentFrame.section_id]
+          : expandedSectionIds
+      )
+    )
 
-      if (prev.includes(currentFrame.section_id)) {
-        return prev
-      }
-
-      return [...prev, currentFrame.section_id]
-    })
     setCurrentSectionId(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame])
+  }, [currentFrame, expandedSectionIds])
 
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
 
   const toggleExpandedSection = (sectionId: string) => {
-    setExpandedSectionIds((prev) => {
-      if (prev.includes(sectionId)) {
-        return prev.filter((id) => id !== sectionId)
-      }
+    if (expandedSectionIds.includes(sectionId)) {
+      dispatch(
+        setExpandedSectionsAction(
+          expandedSectionIds.filter((id) => id !== sectionId)
+        )
+      )
 
-      return [...prev, sectionId]
-    })
+      return
+    }
+
+    dispatch(setExpandedSectionsAction([...expandedSectionIds, sectionId]))
   }
 
   const toggleListDisplayMode = () => {
-    setListDisplayMode((prev) => (prev === 'list' ? 'grid' : 'list'))
+    dispatch(
+      setAgendaPanelDisplayTypeAction(
+        listDisplayMode === 'list' ? 'grid' : 'list'
+      )
+    )
   }
 
   return (

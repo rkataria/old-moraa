@@ -46,9 +46,9 @@ import {
   TaskList,
 } from '.'
 import { ImageUpload } from './ImageUpload'
+import { ImageLoadingPlaceholder } from './ImageUpload/ImageLoadingPlaceholder'
+import { handlePasteAndDropImage } from './ImageUpload/view/utils'
 import { TableOfContentsNode } from './TableOfContentsNode'
-
-import { API } from '@/components/tiptap/lib/api'
 
 interface ExtensionKitProps {
   provider?: HocuspocusProvider | null
@@ -82,6 +82,7 @@ export const ExtensionKit = ({
     levels: [1, 2, 3, 4, 5, 6],
   }),
   HorizontalRule,
+  ImageLoadingPlaceholder,
   StarterKit.configure({
     document: false,
     dropcursor: false,
@@ -114,26 +115,11 @@ export const ExtensionKit = ({
   ImageBlock,
   FileHandler.configure({
     allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
-    onDrop: (currentEditor, files, pos) => {
-      files.forEach(async () => {
-        const url = await API.uploadImage()
-
-        currentEditor.chain().setImageBlockAt({ pos, src: url }).focus().run()
-      })
+    onDrop: (currentEditor, files) => {
+      handlePasteAndDropImage(currentEditor, files)
     },
     onPaste: (currentEditor, files) => {
-      files.forEach(async () => {
-        const url = await API.uploadImage()
-
-        return currentEditor
-          .chain()
-          .setImageBlockAt({
-            pos: currentEditor.state.selection.anchor,
-            src: url,
-          })
-          .focus()
-          .run()
-      })
+      handlePasteAndDropImage(currentEditor, files)
     },
   }),
   Emoji.configure({

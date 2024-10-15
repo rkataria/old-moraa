@@ -9,6 +9,7 @@ import {
   insertFrameAction,
   updateFrameAction,
 } from './frame.slice'
+import { setExpandedSectionsAction } from '../../layout/studio.slice'
 
 import {
   attachThunkToBuilder,
@@ -194,17 +195,16 @@ attachStoreListener({
   actionCreator: getSectionsThunk.fulfilled,
   effect: (_, { dispatch, getState }) => {
     const { eventId } = getState().event.currentEvent.eventState
+    const sections = getState().event.currentEvent.sectionState.section.data
     const meetingId =
       getState().event.currentEvent.meetingState.meeting.data?.id
 
     dispatch(
       setExpandedSectionsInPlannerAction({
-        ids:
-          getState().event.currentEvent.sectionState.section.data?.map(
-            (section) => section.id
-          ) || [],
+        ids: sections?.map((section) => section.id) || [],
       })
     )
+    dispatch(setExpandedSectionsAction([sections?.[0].id]))
     supabaseClient
       .channel(`event:${eventId}-1`)
       .on(
