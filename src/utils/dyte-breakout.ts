@@ -3,11 +3,6 @@ import { BreakoutRoomsManager } from '@dytesdk/react-ui-kit'
 import DyteClient from '@dytesdk/web-core'
 import chunk from 'lodash.chunk'
 
-import {
-  moveHostToRoom,
-  stopBreakoutRooms,
-} from '@/services/dyte/breakout-room-manager.service'
-
 type StartBreakoutConfig =
   | {
       participantsPerRoom?: number
@@ -58,17 +53,6 @@ export class BreakoutRooms {
     await this.manager.applyChanges(this.dyteClient)
   }
 
-  async endBreakout() {
-    const parentMeetingId = this.dyteClient.connectedMeetings.parentMeeting.id
-    this.dyteClient.connectedMeetings.meetings.forEach((meeting) => {
-      this.dyteClient.connectedMeetings.moveParticipants(
-        meeting.id || '',
-        parentMeetingId || '',
-        meeting.participants.map((participant) => participant.id || '')
-      )
-    })
-  }
-
   async moveParticipantToAnotherRoom(
     participantId: string,
     destinationMeetingId: string
@@ -92,7 +76,7 @@ export class BreakoutRooms {
     participantsPerRoom,
     roomsCount,
   }: StartBreakoutConfig) {
-    const parentMeetingId = this.dyteClient.connectedMeetings.parentMeeting.id
+    const currentMeetingId = this.dyteClient.meta.meetingId
 
     const participants = this.dyteClient.participants.joined.toArray()
     const getGroupSize = () => {
@@ -118,7 +102,7 @@ export class BreakoutRooms {
 
       if (breakoutRoomParticipants?.length > 0) {
         await this.dyteClient.connectedMeetings.moveParticipants(
-          parentMeetingId || '',
+          currentMeetingId,
           createdMeeting.id,
           breakoutRoomParticipants.map((p) => p.customParticipantId!)
         )
@@ -127,21 +111,27 @@ export class BreakoutRooms {
   }
 
   async endBreakoutRooms() {
-    await this.cleanupBreakoutManagerInstance()
-    await stopBreakoutRooms({
-      meeting: this.dyteClient,
-      stateManager: this.manager,
+    const currentMeetingId = this.dyteClient.meta.meetingId
+
+    this.dyteClient.connectedMeetings.meetings.forEach((meet) => {
+      this.dyteClient.connectedMeetings.moveParticipants(
+        meet.id || '',
+        currentMeetingId,
+        meet.participants.map((participant) => participant.id || '')
+      )
     })
-    await this.cleanupBreakoutManagerInstance()
+    this.dyteClient.connectedMeetings.deleteMeetings(
+      this.dyteClient.connectedMeetings.meetings.map((meet) => meet.id || '')
+    )
   }
 
   async joinRoom(meetId: string) {
-    await this.cleanupBreakoutManagerInstance()
-    await moveHostToRoom({
-      meeting: this.dyteClient,
-      stateManager: this.manager,
-      destinationMeetingId: meetId,
-    })
-    await this.cleanupBreakoutManagerInstance()
+    const hostId = this.dyteClient.self.id
+    const currentMeetingId = this.dyteClient.meta.meetingId
+    this.dyteClient.connectedMeetings.moveParticipants(
+      currentMeetingId,
+      meetId,
+      [hostId]
+    )
   }
 }
