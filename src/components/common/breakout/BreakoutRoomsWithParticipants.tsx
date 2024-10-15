@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 
-import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { useDyteSelector } from '@dytesdk/react-web-core'
 import { Button } from '@nextui-org/react'
 import { DragDropContext } from 'react-beautiful-dnd'
 
@@ -20,7 +20,10 @@ export function BreakoutRoomsWithParticipants({
   smartBreakoutActivityId?: string
 }) {
   const { getFrameById } = useEventContext()
-  const { meeting } = useDyteMeeting()
+  const connectedMeetings = useDyteSelector((m) => m.connectedMeetings.meetings)
+  const parentMeetingId = useDyteSelector(
+    (m) => m.connectedMeetings.parentMeeting.id
+  )
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
   const breakoutFrameId = useStoreSelector(
     (state) =>
@@ -36,7 +39,7 @@ export function BreakoutRoomsWithParticipants({
 
   const sortedBreakoutMeetings = useMemo(
     () =>
-      meeting.connectedMeetings.meetings.sort((a, b) => {
+      connectedMeetings.sort((a, b) => {
         const nameA = a.title?.toUpperCase() || 0
         const nameB = b.title?.toUpperCase() || 0
         if (nameA < nameB) {
@@ -49,7 +52,7 @@ export function BreakoutRoomsWithParticipants({
         // names must be equal
         return 0
       }),
-    [meeting.connectedMeetings.meetings]
+    [connectedMeetings]
   )
 
   return (
@@ -91,7 +94,7 @@ export function BreakoutRoomsWithParticipants({
                 displayPictureUrl: p?.displayPictureUrl || '',
               }))}
               JoinRoomButton={
-                meet.id !== meeting.connectedMeetings.parentMeeting.id ? (
+                meet.id !== parentMeetingId ? (
                   <Button
                     className="m-2 border-1"
                     size="sm"

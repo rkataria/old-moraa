@@ -1,4 +1,4 @@
-import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { useDyteSelector } from '@dytesdk/react-web-core'
 
 import { useSyncValueInRedux } from './syncValueInRedux'
 
@@ -9,7 +9,7 @@ export const useBreakoutRooms = () => {
     (meeting) => meeting.connectedMeetings.parentMeeting?.id
   )
   const isBreakoutActive = useDyteSelector((m) => m.connectedMeetings.isActive)
-  const { meeting } = useDyteMeeting()
+  const currentMeetingId = useDyteSelector((m) => m.meta.meetingId)
 
   useSyncValueInRedux({
     value: isBreakoutActive,
@@ -19,12 +19,12 @@ export const useBreakoutRooms = () => {
   })
 
   const isCurrentDyteMeetingInABreakoutRoom =
-    parentMeetingId !== meeting.meta.meetingId
+    parentMeetingId !== currentMeetingId
 
   return {
     isBreakoutActive,
     isCurrentDyteMeetingInABreakoutRoom,
-    currentMeetingId: meeting.meta.meetingId,
+    currentMeetingId,
     parentMeetingId,
   }
 }
