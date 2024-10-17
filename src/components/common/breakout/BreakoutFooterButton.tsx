@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 
+import { DyteBreakoutRoomsToggle } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { VscMultipleWindows } from 'react-icons/vsc'
 
@@ -27,6 +28,8 @@ export function BreakoutFooterButton() {
     presentationStatus,
     setCurrentFrame,
     realtimeChannel,
+    dyteStates,
+    setDyteStates,
   } = useEventSession()
 
   const meetingId = useStoreSelector(
@@ -176,14 +179,15 @@ export function BreakoutFooterButton() {
 
   if (presentationStatus === PresentationStatuses.STOPPED) {
     return (
-      <BreakoutToggleButton
-        key="start-breakout-1"
-        label="Start breakout"
-        onStartBreakoutClick={(breakoutConfig) =>
-          onBreakoutStartOnBreakoutSlide({
-            ...breakoutConfig,
-          })
-        }
+      <DyteBreakoutRoomsToggle
+        style={{
+          // transform: 'scale(0.6, 0.6)',
+          width: 80,
+          height: 30,
+        }}
+        meeting={dyteMeeting.meeting}
+        states={dyteStates}
+        onDyteStateUpdate={(event) => setDyteStates(event.detail)}
       />
     )
   }
