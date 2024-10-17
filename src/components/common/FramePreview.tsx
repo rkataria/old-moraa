@@ -71,7 +71,12 @@ export function FramePreview({
         asThumbnail={asThumbnail}
       />
     ),
-    [FrameType.PDF_VIEWER]: <PDFViewer frame={frame as PDFViewerFrameType} />,
+    [FrameType.PDF_VIEWER]: (
+      <PDFViewer
+        frame={frame as PDFViewerFrameType}
+        asThumbnail={asThumbnail}
+      />
+    ),
     [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
     [FrameType.VIDEO_EMBED]: (
       <VideoEmbedEditor

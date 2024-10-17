@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 
 import { Skeleton } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
+import { useDebounce } from '@uidotdev/usehooks'
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import { pdfjs, Document, Page } from 'react-pdf'
 
@@ -39,11 +40,15 @@ export function PDFViewer({ frame }: PDFViewerProps) {
     frame.content?.defaultPage || 1
   )
 
-  useEffect(() => {
-    if (!activeSession?.PdfFrameLastPosition) return
+  const [updatePdfPayload, setUpdatePdfPayload] = useState(null)
 
-    setPosition(activeSession?.PdfFrameLastPosition)
-  }, [activeSession?.PdfFrameLastPosition])
+  const debouncedPayload = useDebounce(updatePdfPayload, 200)
+
+  useEffect(() => {
+    if (!activeSession?.pdfPages?.[frame.id]) return
+
+    setPosition(activeSession?.pdfPages[frame.id])
+  }, [activeSession?.pdfPages, frame.id])
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
@@ -63,15 +68,22 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   }, [frame.content?.pdfPath])
 
   useEffect(() => {
+    if (!debouncedPayload) return
+
+    updateActiveSession({
+      pdfPages: debouncedPayload,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedPayload])
+
+  useEffect(() => {
     if (!realtimeChannel) return
     realtimeChannel.on(
       'broadcast',
       { event: positionChangeEvent },
       ({ payload }) => {
         setPosition(payload.position || 1)
-        updateActiveSession({
-          PdfFrameLastPosition: payload.position || 1,
-        })
+        setUpdatePdfPayload(payload.pdfPages)
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,7 +97,13 @@ export function PDFViewer({ frame }: PDFViewerProps) {
     realtimeChannel?.send({
       type: 'broadcast',
       event: positionChangeEvent,
-      payload: { position: newPosition },
+      payload: {
+        // position: newPosition,
+        pdfPages: {
+          ...activeSession.pdfPages,
+          [frame.id]: newPosition || 1,
+        },
+      },
     })
   }
 

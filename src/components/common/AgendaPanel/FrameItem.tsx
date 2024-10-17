@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import { RxDotsVertical } from 'react-icons/rx'
 
 import { AddItemBar } from './AddItemBar'
@@ -43,7 +44,6 @@ export function FrameItem({
 }: FrameItemProps) {
   const {
     currentFrame,
-    overviewOpen,
     eventMode,
     updateFrame,
     moveUpFrame,
@@ -54,6 +54,13 @@ export function FrameItem({
     setInsertAfterFrameId,
     setInsertInSectionId,
   } = useEventContext()
+  const navigate = useNavigate()
+
+  const router = useRouter()
+  const searches = router.latestLocation.search as {
+    action: string
+  }
+
   const breakoutFrameId = useStoreSelector(
     (store) =>
       store.event.currentEvent.liveSessionState.activeSession.data?.data
@@ -113,6 +120,12 @@ export function FrameItem({
 
     setCurrentFrame(clickedFrame)
 
+    if (eventMode === 'edit') {
+      navigate({
+        search: { ...searches, frameId: clickedFrame.id },
+      })
+    }
+
     // Dispatch an action to update event session mode to 'Peek' if presentation is not started and user is the owner of the event
     if (
       isMeetingJoined &&
@@ -125,8 +138,7 @@ export function FrameItem({
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
-  const frameActive =
-    !overviewOpen && !currentSectionId && currentFrame?.id === frame?.id
+  const frameActive = !currentSectionId && currentFrame?.id === frame?.id
 
   const renderFrameContent = () => {
     if (sidebarExpanded) {

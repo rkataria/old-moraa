@@ -70,8 +70,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   )
   const dispatch = useStoreDispatch()
   const router = useRouter()
-  const { action: eventViewFromQuery } = router.latestLocation.search as {
+  const searchParams = router.latestLocation.search as {
     action: string
+    frameId?: string
   }
 
   const currentUser = useStoreSelector((state) => state.user.currentUser.user)
@@ -122,13 +123,19 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     if (event.owner_id !== currentUser.id) return
 
-    if (eventViewFromQuery === 'view') {
+    if (searchParams?.frameId) {
+      dispatch(setCurrentFrameIdAction(searchParams.frameId))
+    }
+
+    if (searchParams.action === 'view') {
       dispatch(setIsPreviewOpenAction(true))
 
       return
     }
+
     dispatch(setIsPreviewOpenAction(false))
-  }, [currentUser?.id, eventViewFromQuery, event?.owner_id, dispatch])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.id, event?.owner_id])
 
   // useEffect(() => {
   //   if (!currentFrame) return
@@ -177,6 +184,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     handleSectionExpansionInSessionPlanner(section.id)
     setInsertAfterFrameId(frame.id!)
+    router.navigate({
+      search: { ...searchParams, frameId: frame.id },
+    })
   }
 
   const addSection = async ({

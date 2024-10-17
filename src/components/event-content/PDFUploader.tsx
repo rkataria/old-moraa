@@ -20,6 +20,7 @@ import {
 } from '@/services/pdf.service'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
+import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
 import { QueryKeys } from '@/utils/query-keys'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
@@ -42,10 +43,11 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [fileUrl, setFileURL] = useState<string | undefined>(
     frame.content?.pdfPath
   )
+
   const [uploadProgress, setUploadProgress] = useState(0)
   const [totalPages, setTotalPages] = useState<null | number>(null)
   const [selectedPage, setSelectedPage] = useState<number>(
-    frame.content?.defaultPage || 1
+    frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
@@ -178,10 +180,11 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
             <PageControls
               currentPage={selectedPage}
               totalPages={totalPages}
-              handleCurrentPageChange={(page) => {
+              handleCurrentPageChange={(page: number) => {
                 setSelectedPage(
                   page <= (totalPages || 1) ? page : totalPages || 1
                 )
+                updateLastVisitedPage(frame.id, page)
               }}
             />
           </div>

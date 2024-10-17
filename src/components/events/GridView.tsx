@@ -84,7 +84,7 @@ export function GridView({
                 size="sm"
                 radius="full"
                 color={getStatusColor(event.status)}
-                classNames={{ base: 'text-center' }}>
+                classNames={{ base: 'text-center !text-[0.625rem]' }}>
                 {event.status}
               </Chip>
 

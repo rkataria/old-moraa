@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import { Switch } from '@nextui-org/react'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 
 import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -9,9 +9,13 @@ import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function PreviewSwitcher() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const { preview, setPreview } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
+  const searchParams = router.latestLocation.search as {
+    action: string
+    frameId?: string
+  }
 
   if (!permissions.canUpdateFrame) {
     return null
@@ -20,8 +24,8 @@ export function PreviewSwitcher() {
   const handlePreviewSwitcher = () => {
     setPreview(!preview)
 
-    navigate({
-      search: { action: preview ? 'edit' : 'view' },
+    router.navigate({
+      search: { ...searchParams, action: preview ? 'edit' : 'view' },
     })
   }
 

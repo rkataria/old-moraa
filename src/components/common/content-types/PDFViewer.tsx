@@ -11,6 +11,7 @@ import { EmptyPlaceholder } from '../EmptyPlaceholder'
 import { PageControls } from '@/components/common/PageControls'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { IFrame } from '@/types/frame.type'
+import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
 export type PDFViewerFrameType = IFrame & {
@@ -22,15 +23,16 @@ export type PDFViewerFrameType = IFrame & {
 
 interface PDFViewerProps {
   frame: PDFViewerFrameType
+  asThumbnail?: boolean
 }
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 
-export function PDFViewer({ frame }: PDFViewerProps) {
+export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
-    frame.content?.defaultPage || 1
+    asThumbnail ? 1 : frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
 
   const downloadPDFMutation = useMutation({
@@ -98,6 +100,7 @@ export function PDFViewer({ frame }: PDFViewerProps) {
         totalPages={totalPages}
         handleCurrentPageChange={(page) => {
           handlePositionChange(page <= totalPages ? page : totalPages)
+          updateLastVisitedPage(frame.id, page)
         }}
       />
     </div>

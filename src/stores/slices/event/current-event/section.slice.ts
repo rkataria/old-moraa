@@ -205,6 +205,7 @@ attachStoreListener({
       })
     )
     dispatch(setExpandedSectionsAction([sections?.[0].id]))
+
     supabaseClient
       .channel(`event:${eventId}-1`)
       .on(
