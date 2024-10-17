@@ -15,7 +15,7 @@ import { downloadPDFFile } from '@/services/pdf.service'
 import { EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
-import { getFileObjectFromBlob } from '@/utils/utils'
+import { cn, getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFViewerProps {
   frame: IFrame & {
@@ -31,6 +31,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 const positionChangeEvent = 'pdf-position-changed'
 
 export function PDFViewer({ frame }: PDFViewerProps) {
+  const [pdfView, setPdfView] = useState('portrait')
   const [file, setFile] = useState<File | undefined>()
   const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
@@ -129,7 +130,11 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   }
 
   return (
-    <div className="max-w-5xl relative w-full h-full flex justify-start items-start">
+    <div
+      className={cn('flex justify-start items-start gap-4', {
+        'w-full': pdfView === 'landscape',
+        'max-w-5xl h-full': pdfView === 'portrait',
+      })}>
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
@@ -142,6 +147,9 @@ export function PDFViewer({ frame }: PDFViewerProps) {
           renderTextLayer={false}
           className="w-full"
           devicePixelRatio={5}
+          onLoadSuccess={(page) => {
+            setPdfView(page.height > page.width ? 'portrait' : 'landscape')
+          }}
         />
       </Document>
       {isHost && (

@@ -22,7 +22,7 @@ import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
 import { QueryKeys } from '@/utils/query-keys'
-import { getFileObjectFromBlob } from '@/utils/utils'
+import { cn, getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
   frame: IFrame & {
@@ -49,6 +49,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [selectedPage, setSelectedPage] = useState<number>(
     frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
+  const [pdfView, setPdfView] = useState('portrait')
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
     queryFn: () =>
@@ -159,11 +160,17 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
 
       case !!downloadPDFQuery.data:
         return (
-          <div className="max-w-5xl h-full flex justify-start items-start gap-4">
+          <div
+            className={cn('flex justify-start items-start gap-4', {
+              'w-full': pdfView === 'landscape',
+              'max-w-5xl h-full': pdfView === 'portrait',
+            })}>
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
-              className="relative aspect-video h-full ml-0 overflow-y-auto scrollbar-thin"
+              className={cn(
+                'relative h-full ml-0 overflow-y-auto scrollbar-none'
+              )}
               loading={
                 <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
                   <Loading />
@@ -175,6 +182,11 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                 renderTextLayer={false}
                 className="w-full"
                 devicePixelRatio={5}
+                onLoadSuccess={(page) => {
+                  setPdfView(
+                    page.height > page.width ? 'portrait' : 'landscape'
+                  )
+                }}
               />
             </Document>
             <PageControls

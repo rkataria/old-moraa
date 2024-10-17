@@ -12,7 +12,7 @@ import { PageControls } from '@/components/common/PageControls'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { IFrame } from '@/types/frame.type'
 import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
-import { getFileObjectFromBlob } from '@/utils/utils'
+import { cn, getFileObjectFromBlob } from '@/utils/utils'
 
 export type PDFViewerFrameType = IFrame & {
   content: {
@@ -29,6 +29,7 @@ interface PDFViewerProps {
 pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 
 export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
+  const [pdfView, setPdfView] = useState('portrait')
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
@@ -80,7 +81,11 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
   }
 
   return (
-    <div className="max-w-5xl relative w-full h-full flex justify-start items-start">
+    <div
+      className={cn('flex justify-start items-start gap-4', {
+        'w-full': pdfView === 'landscape',
+        'max-w-5xl h-full': pdfView === 'portrait',
+      })}>
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
@@ -93,6 +98,9 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
           renderTextLayer={false}
           className="w-full"
           devicePixelRatio={5}
+          onLoadSuccess={(page) => {
+            setPdfView(page.height > page.width ? 'portrait' : 'landscape')
+          }}
         />
       </Document>
       <PageControls
