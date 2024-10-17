@@ -42,6 +42,7 @@
     "@nextui-org/react": "^2.4.6",
     "@nextui-org/tooltip": "^2.0.37",
     "@reduxjs/toolkit": "^2.2.7",
+    "@sentry/react": "^8.34.0",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/realtime-js": "~2.9.4",
