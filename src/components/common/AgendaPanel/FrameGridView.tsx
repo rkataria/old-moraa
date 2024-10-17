@@ -12,6 +12,7 @@ import { frameActions } from '../FrameActions'
 import { RenderIf } from '../RenderIf/RenderIf'
 import { Tooltip } from '../ShortuctTooltip'
 
+import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useOnScreen } from '@/hooks/useOnScreen'
@@ -34,6 +35,7 @@ export function FrameGridView({
   frameActive: boolean
   onClick: (frame: IFrame) => void
 }) {
+  const { preview } = useEventContext()
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const breakoutFrameId = useStoreSelector(
     (store) =>
@@ -51,7 +53,10 @@ export function FrameGridView({
   const isVisible = useOnScreen(thumbnailContainerRef)
 
   return (
-    <ContextMenu items={frameActions} handleActions={handleFrameAction}>
+    <ContextMenu
+      items={frameActions}
+      handleActions={handleFrameAction}
+      disabled={!permissions.canUpdateFrame || preview}>
       <div
         key={`frame-${frame?.id}`}
         data-miniframe-id={frame?.id}

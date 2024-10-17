@@ -163,7 +163,14 @@ export const goodiesTypes = [
   FrameType.VIDEO_EMBED,
 ]
 
-export const getContentStudioRightSidebarControlKeys = (frame: IFrame) => {
+export const getContentStudioRightSidebarControlKeys = (
+  frame: IFrame,
+  preview: boolean
+) => {
+  if (preview) {
+    return ['frame-notes']
+  }
+
   if ([FrameType.MORAA_SLIDE].includes(frame.type as FrameType)) {
     return ['frame-appearance', 'frame-notes', 'frame-status']
   }

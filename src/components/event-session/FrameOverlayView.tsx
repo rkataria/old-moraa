@@ -54,6 +54,7 @@ export function FrameOverlayView() {
 
     return (
       <FramePreview
+        asThumbnail={[FrameType.GOOGLE_SLIDES].includes(currentFrame.type)}
         frame={currentFrame}
         isInteractive={false}
         className={cn('overflow-hidden rounded-md', {

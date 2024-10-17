@@ -29,15 +29,17 @@ export function StudioLayout({ header }: StudioLayoutProps) {
   const renderContent = () => {
     if (activeTab === 'landing-page') {
       return (
-        <div className="w-full h-full bg-white">
-          <LandingPage />
+        <div className="w-full h-full p-2">
+          <div className="w-full h-full bg-white border-1 border-gray-200 rounded-md">
+            <LandingPage />
+          </div>
         </div>
       )
     }
     if (activeTab === 'session-planner') {
       return (
-        <div className="w-full h-full bg-white">
-          <div className="h-full max-w-screen-3xl py-10 overflow-y-auto scrollbar-thin">
+        <div className="w-full h-full p-2">
+          <div className="h-full max-w-screen-3xl py-10 overflow-y-auto scrollbar-thin bg-white rounded-md border-1 border-gray-200">
             <SessionPlanner />
           </div>
         </div>

@@ -11,7 +11,10 @@ export function ContentStudioLeftSidebar() {
   if (!contentStudioLeftSidebarVisible) return null
 
   return (
-    <div className={cn('flex-none w-56 h-full rounded-md ml-0 z-[2] bg-white')}>
+    <div
+      className={cn(
+        'flex-none w-56 h-full rounded-md ml-0 z-[2] bg-white border-1 border-gray-200'
+      )}>
       <StudioAgendaPanel />
     </div>
   )

@@ -14,7 +14,7 @@ import { cn } from '@/utils/utils'
 
 export function ContentStudioRightSidebarControls() {
   const dispatch = useDispatch()
-  const { eventMode, currentFrame } = useEventContext()
+  const { eventMode, currentFrame, preview } = useEventContext()
   const { permissions } = useEventPermissions()
 
   useHotkeys(
@@ -32,6 +32,10 @@ export function ContentStudioRightSidebarControls() {
 
   const renderContent = () => {
     if (!currentFrame) return []
+
+    if (preview) {
+      return [<FrameNoteToggleButton />]
+    }
 
     if ([FrameType.MORAA_SLIDE].includes(currentFrame.type as FrameType)) {
       return [
@@ -65,7 +69,7 @@ export function ContentStudioRightSidebarControls() {
   return (
     <div
       className={cn(
-        'flex-none flex flex-col justify-center items-center gap-2 p-2 rounded-md bg-white shadow-2xl'
+        'flex-none flex flex-col justify-center items-center gap-2 p-2 rounded-md bg-white border-1 border-gray-200'
       )}>
       {renderContent()}
     </div>

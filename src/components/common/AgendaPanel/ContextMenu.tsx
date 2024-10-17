@@ -10,10 +10,12 @@ import { FrameAction } from '@/types/frame.type'
 export function ContextMenu({
   children,
   items,
+  disabled,
   handleActions,
 }: {
   children: ReactNode
   items: FrameAction[]
+  disabled?: boolean
   handleActions: (item: FrameAction) => void
 }) {
   const [visible, setVisible] = useState(false)
@@ -56,7 +58,7 @@ export function ContextMenu({
       ref={menuRef}
       className="relative inline-block w-full h-full">
       {children}
-      <RenderIf isTrue={visible}>
+      <RenderIf isTrue={visible && !disabled}>
         <Listbox
           aria-label="Actions"
           className="fixed w-fit bg-white border border-gray-300 shadow-lg z-[200] py-1 mt-1 rounded-lg"

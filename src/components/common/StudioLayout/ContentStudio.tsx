@@ -20,7 +20,7 @@ export function ContentStudio() {
 
   return (
     <div
-      className="w-full p-2 pt-0 flex justify-start items-start gap-2"
+      className="w-full p-2 flex justify-start items-start gap-2"
       style={{
         height: `calc(100vh - ${StudioLayoutHeaderHeight}px)`,
       }}>

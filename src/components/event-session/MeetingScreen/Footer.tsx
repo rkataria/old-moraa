@@ -1,11 +1,10 @@
-import { useMemo } from 'react'
-
 import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import toast from 'react-hot-toast'
 import { LuClipboardEdit } from 'react-icons/lu'
 import { useDispatch } from 'react-redux'
 
+import { PresentationProgress } from './PresentationProgress'
 import { ChatsToggle } from '../ChatsToggle'
 import { MeetingRecordingButton } from '../MeetingRecordingButton'
 import { MicToggle } from '../MicToggle'
@@ -18,7 +17,6 @@ import { VideoToggle } from '../VideoToggle'
 import { BreakoutFooterButton } from '@/components/common/breakout/BreakoutFooterButton'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { Button } from '@/components/ui/Button'
-import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
@@ -26,21 +24,13 @@ import {
   closeRightSidebarAction,
   setRightSidebarAction,
 } from '@/stores/slices/layout/live.slice'
-import { EventSessionMode } from '@/types/event-session.type'
-import { cn, getFrameCount } from '@/utils/utils'
+import { cn } from '@/utils/utils'
 
 export function Footer() {
   const { meeting } = useDyteMeeting()
-  const { sections } = useEventContext()
   const { isHost, setDyteStates, dyteStates } = useEventSession()
   const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
-  const { isOverviewOpen, currentSectionId } = useStoreSelector(
-    (store) => store.event.currentEvent.eventState
-  )
   const currentFrame = useCurrentFrame()
-  const { eventSessionMode } = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState
-  )
 
   const dispatch = useDispatch()
 
@@ -64,55 +54,6 @@ export function Footer() {
     }
   }
 
-  const frameCount = useMemo(() => getFrameCount(sections), [sections])
-  const currentFrameIndex = useMemo(() => {
-    if (!currentFrame) return -1
-
-    const frameIds = sections
-      .flat(2)
-      .map((f) => f.frames)
-      .flat(2)
-      .map((f) => f.id)
-
-    return frameIds.indexOf(currentFrame.id)
-  }, [sections, currentFrame])
-
-  const getProgressWidth = () => {
-    if (isOverviewOpen) return 0
-
-    if (currentFrameIndex === -1) return 0
-
-    if (currentFrameIndex === frameCount - 1) return '100%'
-
-    return `${((currentFrameIndex + 1) / frameCount) * 100}%`
-  }
-
-  const getProgressText = () => {
-    if (currentSectionId) {
-      return sections.find((s) => s.id === currentSectionId)?.name
-    }
-
-    return `(${currentFrameIndex + 1}/${frameCount}) ${currentFrame?.name}`
-  }
-
-  const renderProgress = () => {
-    if (isHost || eventSessionMode === EventSessionMode.PRESENTATION) {
-      return (
-        <div
-          className="relative h-8 w-64 flex justify-start gap-2 px-2 items-center rounded-md overflow-hidden live-button after:contents-[''] after:absolute after:left-0 after:top-0 after:h-full after:bg-black/10 after:transition-all after:duration-300 after:w-[var(--frame-progress-width)] after:z-0"
-          style={{
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            '--frame-progress-width': getProgressWidth(),
-          }}>
-          <span className="z-[1]">{getProgressText()}</span>
-        </div>
-      )
-    }
-
-    return null
-  }
-
   return (
     <div className="h-full w-full flex justify-between items-center px-2">
       <div className="flex justify-start items-center gap-2 p-2 h-12">
@@ -121,7 +62,7 @@ export function Footer() {
             meeting={meeting}
             className="m-0 px-2 h-8 rounded-md live-button"
           />
-          {renderProgress()}
+          <PresentationProgress />
         </div>
       </div>
       <div className="flex justify-center items-center gap-2">

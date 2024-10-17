@@ -23,14 +23,12 @@ export function LiveAgendaHeader() {
         height,
       }}>
       <div
-        className={cn('flex flex-col', {
-          'flex-col gap-4': isMaximized,
+        className={cn('flex', {
+          'flex-col gap-2': isMaximized,
           'flex-row gap-2': !isMaximized,
         })}>
         <div className="flex items-center justify-between gap-2">
-          {isMaximized && (
-            <span className="text-base font-semibold">Agenda</span>
-          )}
+          {isMaximized && <span className="font-medium">Agenda</span>}
           <div className={cn('flex justify-end items-center gap-2')}>
             {isMaximized && <ListViewToggle />}
           </div>
