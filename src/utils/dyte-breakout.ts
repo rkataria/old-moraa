@@ -8,15 +8,10 @@ import {
   stopBreakoutRooms,
 } from '@/services/dyte/breakout-room-manager.service'
 
-type StartBreakoutConfig =
-  | {
-      participantsPerRoom?: number
-      roomsCount?: never
-    }
-  | {
-      participantsPerRoom?: never
-      roomsCount?: number
-    }
+export type StartBreakoutConfig = {
+  participantsPerRoom?: number
+  roomsCount?: number
+}
 
 export class BreakoutRooms {
   private manager: BreakoutRoomsManager

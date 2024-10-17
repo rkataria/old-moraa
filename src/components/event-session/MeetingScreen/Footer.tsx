@@ -15,7 +15,7 @@ import { ReactWithEmojiToggle } from '../ReactWithEmojiToggle'
 import { ScreenShareToggle } from '../ScreenShareToggle'
 import { VideoToggle } from '../VideoToggle'
 
-import { BreakoutHeaderButton } from '@/components/common/breakout/BreakoutToggleButton'
+import { BreakoutFooterButton } from '@/components/common/breakout/BreakoutFooterButton'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
@@ -133,7 +133,7 @@ export function Footer() {
           <ReactWithEmojiToggle />
           {isHost && (
             <>
-              <BreakoutHeaderButton />
+              <BreakoutFooterButton />
               <MeetingRecordingButton />
             </>
           )}

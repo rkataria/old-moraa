@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { MeetingRecordingButton } from './MeetingRecordingButton'
 import { TimerToggle } from './TimerToggle'
 import { WhiteBoardToggle } from './WhiteBoardToggle'
-import { BreakoutHeaderButton } from '../common/breakout/BreakoutToggleButton'
+import { BreakoutFooterButton } from '../common/breakout/BreakoutFooterButton'
 import { Button } from '../ui/Button'
 
 import { cn } from '@/utils/utils'
@@ -51,7 +51,7 @@ export function WidgetsToggle() {
           <div>
             <WhiteBoardToggle />
             <TimerToggle />
-            <BreakoutHeaderButton />
+            <BreakoutFooterButton />
             <MeetingRecordingButton />
           </div>
         </PopoverContent>
