@@ -146,7 +146,6 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     iconSmall: <TbNews size={24} />,
     description: 'Create a frame using a rich text editor',
     type: FrameType.RICH_TEXT,
-    // isAvailableForBreakout: true,
     category: FrameCategory.DOCUMENT,
   },
   {
@@ -156,7 +155,6 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     iconSmall: <IconVideo size={24} />,
     description: 'Embed videos from YouTube platform',
     type: FrameType.VIDEO_EMBED,
-    // isAvailableForBreakout: true,
     category: FrameCategory.MEDIA,
   },
   {
@@ -187,7 +185,6 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description:
       'Ignite insights through thoughtful reflection. Share perspectives, spark growth.',
     type: FrameType.REFLECTION,
-    // isAvailableForBreakout: true,
     category: FrameCategory.INTERACTION,
   },
   {
@@ -218,7 +215,6 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description:
       'Create a Q/A to collaborate and brainstorm with your audience',
     type: FrameType.Q_A,
-    // isAvailableForBreakout: true,
     category: FrameCategory.COLLABORATION_TOOL,
     isCommingSoon: true,
   },
@@ -230,7 +226,6 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description:
       'Embed Miro boards to collaborate and brainstorm with your audience',
     type: FrameType.MIRO_EMBED,
-    // isAvailableForBreakout: true,
     category: FrameCategory.COLLABORATION_TOOL,
     disabled: true,
   },
@@ -242,7 +237,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description:
       'Create a Moraapad to collaborate and brainstorm with your audience',
     type: FrameType.MORAA_PAD,
-    // isAvailableForBreakout: true,
+    isAvailableForBreakout: true,
     category: FrameCategory.COLLABORATION_TOOL,
     isCommingSoon: false,
   },
