@@ -8,14 +8,14 @@ import { cn } from '@/utils/utils'
 
 type SwitchControlProps = {
   label: string
-  onChange: (value: boolean) => void
   checked: boolean
+  onChange: (value: boolean) => void
 }
 
 export function SwitchControl({
   label,
-  onChange,
   checked,
+  onChange,
 }: SwitchControlProps) {
   const [value, setValue] = useState(checked)
 

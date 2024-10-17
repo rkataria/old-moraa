@@ -45,7 +45,7 @@ export function FrameNoteToggleButton() {
   const isVisible = contentStudioRightSidebar === 'frame-notes'
 
   return (
-    <Tooltip label="Notes" actionKey="N" placement="top">
+    <Tooltip label="Notes" actionKey="N" placement="left">
       <Button
         size="sm"
         isIconOnly

@@ -162,3 +162,23 @@ export const goodiesTypes = [
   FrameType.MIRO_EMBED,
   FrameType.VIDEO_EMBED,
 ]
+
+export const getContentStudioRightSidebarControlKeys = (frame: IFrame) => {
+  if ([FrameType.MORAA_SLIDE].includes(frame.type as FrameType)) {
+    return ['frame-appearance', 'frame-notes', 'frame-status']
+  }
+
+  if (
+    [
+      FrameType.BREAKOUT,
+      FrameType.POLL,
+      FrameType.REFLECTION,
+      FrameType.MORAA_BOARD,
+      FrameType.PDF_VIEWER,
+    ].includes(frame.type as FrameType)
+  ) {
+    return ['frame-settings', 'frame-notes', 'frame-status']
+  }
+
+  return ['frame-notes', 'frame-status']
+}

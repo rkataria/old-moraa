@@ -11,7 +11,11 @@ export interface StudioLayoutState {
   editing: boolean
   activeTab: StudioTabType
   contentStudioLeftSidebarVisible: boolean
-  contentStudioRightSidebar: 'frame-appearance' | 'frame-notes' | null
+  contentStudioRightSidebar:
+    | 'frame-settings'
+    | 'frame-appearance'
+    | 'frame-notes'
+    | null
   contentStudioRightResizableSidebar: 'ai-chat' | null
   expandedSections: string[]
   agendaPanelDisplayType: 'list' | 'grid'

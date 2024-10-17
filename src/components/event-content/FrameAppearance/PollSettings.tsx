@@ -4,7 +4,7 @@ import { SwitchControl } from '@/components/common/SwitchControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
-export function PollAppearance() {
+export function PollSettings() {
   const { currentFrame, updateFrame } = useContext(
     EventContext
   ) as EventContextType

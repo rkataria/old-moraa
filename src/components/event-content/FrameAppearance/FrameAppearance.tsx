@@ -1,18 +1,10 @@
 import { MdOutlineDesignServices } from 'react-icons/md'
 
-import { BreakoutAppearance } from './BreakoutAppearance'
-import { CommonAppearance } from './CommonAppearance'
-import { MoraaBoardAppearance } from './MoraaBoardAppearance'
 import { MoraaSlideAppearance } from './MoraaSlideAppearance'
-import { PdfAppearance } from './PdfAppearance'
-import { PollAppearance } from './PollAppearance'
-import { ReflectionAppearance } from './ReflectionAppearance'
-import { RichTextAppearance } from './RichTextAppearance'
 
 import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { useEventContext } from '@/contexts/EventContext'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
-import { RoomProvider } from '@/contexts/RoomProvider'
 import { FrameType } from '@/utils/frame-picker.util'
 
 export function FrameAppearance() {
@@ -27,21 +19,17 @@ export function FrameAppearance() {
 
   const renderersByContentType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: null,
-    [FrameType.POLL]: <PollAppearance />,
+    [FrameType.POLL]: null,
     [FrameType.GOOGLE_SLIDES]: null,
-    [FrameType.PDF_VIEWER]: <PdfAppearance key={currentFrame.id} />,
-    [FrameType.REFLECTION]: <ReflectionAppearance key={currentFrame.id} />,
+    [FrameType.PDF_VIEWER]: null,
+    [FrameType.REFLECTION]: null,
     [FrameType.VIDEO_EMBED]: null,
     [FrameType.IMAGE_VIEWER]: null,
-    [FrameType.RICH_TEXT]: <RichTextAppearance key={currentFrame.id} />,
+    [FrameType.RICH_TEXT]: null,
     [FrameType.MIRO_EMBED]: null,
-    [FrameType.MORAA_BOARD]: (
-      <RoomProvider>
-        <MoraaBoardAppearance key={currentFrame.id} />
-      </RoomProvider>
-    ),
+    [FrameType.MORAA_BOARD]: null,
     [FrameType.MORAA_SLIDE]: <MoraaSlideAppearance key={currentFrame.id} />,
-    [FrameType.BREAKOUT]: <BreakoutAppearance key={currentFrame.id} />,
+    [FrameType.BREAKOUT]: null,
     [FrameType.POWERPOINT]: null,
     [FrameType.Q_A]: null,
     [FrameType.MORAA_PAD]: null,
@@ -55,10 +43,7 @@ export function FrameAppearance() {
         icon={<MdOutlineDesignServices size={18} />}
         title={activeObject?.type ? activeObject.type : currentFrame.type}
       />
-      <div className="p-4 flex flex-col gap-4">
-        <CommonAppearance />
-        {renderer}
-      </div>
+      <div className="p-4 flex flex-col gap-4">{renderer}</div>
     </div>
   )
 }

@@ -4,7 +4,7 @@ import { SwitchControl } from '@/components/common/SwitchControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
-export function RichTextAppearance() {
+export function ReflectionSettings() {
   const { currentFrame, updateFrame } = useContext(
     EventContext
   ) as EventContextType
@@ -13,14 +13,14 @@ export function RichTextAppearance() {
 
   return (
     <SwitchControl
-      label="Allow users to collaborate"
-      checked={currentFrame.config.allowToCollaborate}
+      label="User can reflect anonymously"
+      checked={currentFrame.config.allowVoteOnMultipleOptions}
       onChange={() =>
         updateFrame({
           framePayload: {
             config: {
               ...currentFrame.config,
-              allowToCollaborate: !currentFrame.config.allowToCollaborate,
+              allowAnonymously: !currentFrame.config.allowAnonymously,
             },
           },
           frameId: currentFrame.id,
