@@ -493,7 +493,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
           search: (prev) => ({
             ...prev,
             action: 'edit',
-            tab: 'content-studio',
             frameId: currentFrame?.id,
           }),
         })
