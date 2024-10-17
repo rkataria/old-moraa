@@ -52,7 +52,9 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
             </DragDropContext>
           </div>
         ) : (
-          <BreakoutRoomsWithParticipants />
+          <div className="overflow-y-auto">
+            <BreakoutRoomsWithParticipants />
+          </div>
         )}
       </RenderIf>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS}>
@@ -70,7 +72,9 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
             </DragDropContext>
           </div>
         ) : (
-          <BreakoutRoomsWithParticipants />
+          <div className="overflow-y-auto">
+            <BreakoutRoomsWithParticipants />
+          </div>
         )}
       </RenderIf>
     </div>

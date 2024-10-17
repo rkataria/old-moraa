@@ -1,7 +1,11 @@
 import { useEffect, useRef } from 'react'
 
 import { provideDyteDesignSystem } from '@dytesdk/react-ui-kit'
-import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
+import {
+  DyteProvider,
+  useDyteClient,
+  useDyteSelector,
+} from '@dytesdk/react-web-core'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 
 import { Loading } from '@/components/common/Loading'
@@ -18,6 +22,7 @@ import { resetFrameAction } from '@/stores/slices/event/current-event/frame.slic
 import {
   resetLiveSessionAction,
   setDyteClientAction,
+  setIsBreakoutActiveAction,
 } from '@/stores/slices/event/current-event/live-session.slice'
 import { resetMeetingAction } from '@/stores/slices/event/current-event/meeting.slice'
 import { resetMoraaSlideAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
@@ -44,6 +49,15 @@ export function EventSessionPageInner() {
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
   )
+  const isBreakoutActive = useDyteSelector((m) => m.connectedMeetings.isActive)
+
+  useSyncValueInRedux({
+    value: isBreakoutActive,
+    reduxStateSelector: (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isBreakoutActive,
+    actionFn: setIsBreakoutActiveAction,
+  })
+
   if (isBreakoutLoading) {
     return (
       <div className="h-screen flex justify-center items-center">

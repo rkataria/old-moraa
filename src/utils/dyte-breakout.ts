@@ -11,6 +11,7 @@ import {
 export type StartBreakoutConfig = {
   participantsPerRoom?: number
   roomsCount?: number
+  roomNames?: string[]
 }
 
 export class BreakoutRooms {
@@ -73,7 +74,9 @@ export class BreakoutRooms {
         )
     )
     this.dyteClient.connectedMeetings.moveParticipants(
-      sourceMeeting?.id || '',
+      sourceMeeting?.id ||
+        this.dyteClient.connectedMeetings.parentMeeting.id ||
+        '',
       destinationMeetingId,
       [participantId]
     )
@@ -84,6 +87,7 @@ export class BreakoutRooms {
   async startBreakoutRooms({
     participantsPerRoom,
     roomsCount,
+    roomNames,
   }: StartBreakoutConfig) {
     await this.cleanupBreakoutManagerInstance()
     await createAndAutoAssignBreakoutRooms({
@@ -91,6 +95,7 @@ export class BreakoutRooms {
       groupSize: participantsPerRoom,
       meeting: this.dyteClient,
       stateManager: this.manager,
+      roomNames,
     })
     await this.cleanupBreakoutManagerInstance()
   }

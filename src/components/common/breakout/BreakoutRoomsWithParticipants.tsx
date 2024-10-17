@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 
-import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { Button } from '@nextui-org/react'
 import { DragDropContext } from 'react-beautiful-dnd'
 
@@ -21,6 +21,7 @@ export function BreakoutRoomsWithParticipants({
 }) {
   const { getFrameById } = useEventContext()
   const { meeting } = useDyteMeeting()
+  const connectedMeetings = useDyteSelector((dyte) => dyte.connectedMeetings)
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
   const breakoutFrameId = useStoreSelector(
     (state) =>
@@ -36,7 +37,7 @@ export function BreakoutRoomsWithParticipants({
 
   const sortedBreakoutMeetings = useMemo(
     () =>
-      meeting.connectedMeetings.meetings.sort((a, b) => {
+      connectedMeetings.meetings.sort((a, b) => {
         const nameA = a.title?.toUpperCase() || 0
         const nameB = b.title?.toUpperCase() || 0
         if (nameA < nameB) {
@@ -49,7 +50,25 @@ export function BreakoutRoomsWithParticipants({
         // names must be equal
         return 0
       }),
-    [meeting.connectedMeetings.meetings]
+    [connectedMeetings.meetings]
+  )
+
+  const breakoutRooms = useMemo(
+    () =>
+      [...(breakoutFrame?.content?.breakoutRooms || [])]?.sort((a, b) => {
+        const nameA = a.name?.toUpperCase() || 0
+        const nameB = b.name?.toUpperCase() || 0
+        if (nameA < nameB) {
+          return -1
+        }
+        if (nameA > nameB) {
+          return 1
+        }
+
+        // names must be equal
+        return 0
+      }),
+    [breakoutFrame?.content?.breakoutRooms]
   )
 
   return (
@@ -67,16 +86,34 @@ export function BreakoutRoomsWithParticipants({
               destinationRoomId
             )
           }}>
+          <BreakoutRoomActivityCard
+            editable={false}
+            breakout={{
+              name: 'Main Room',
+            }}
+            roomId={
+              connectedMeetings.parentMeeting?.id || meeting.meta.meetingId
+            }
+            idx={1000}
+            hideActivityCard
+            participants={connectedMeetings.parentMeeting.participants?.map(
+              (p) => ({
+                displayName: p?.displayName || '',
+                id: p?.id || '',
+                displayPictureUrl: p?.displayPictureUrl || '',
+              })
+            )}
+          />
           {sortedBreakoutMeetings.map((meet, index) => (
             <BreakoutRoomActivityCard
               idx={index}
               breakout={{
                 activityId:
-                  breakoutFrame?.content?.breakoutRooms?.[index]?.activityId ||
+                  breakoutRooms?.[index]?.activityId ||
                   breakoutFrame?.content?.groupActivityId ||
                   smartBreakoutActivityId,
                 name:
-                  breakoutFrame?.content?.breakoutRooms?.[index]?.name ||
+                  breakoutRooms?.[index]?.name ||
                   getFrameById(breakoutFrame?.content?.groupActivityId || '')
                     ?.content?.title ||
                   smartBreakoutActivity?.content?.title,
@@ -91,7 +128,7 @@ export function BreakoutRoomsWithParticipants({
                 displayPictureUrl: p?.displayPictureUrl || '',
               }))}
               JoinRoomButton={
-                meet.id !== meeting.connectedMeetings.parentMeeting.id ? (
+                meet.id !== connectedMeetings.parentMeeting.id ? (
                   <Button
                     className="m-2 border-1"
                     size="sm"

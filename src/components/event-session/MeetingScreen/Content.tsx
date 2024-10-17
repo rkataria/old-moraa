@@ -80,7 +80,9 @@ export function Content() {
       <PanelsContent panelRef={panelRef}>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
           <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
-          <BreakoutRoomsWithParticipants hideActivityCards />
+          <div className="overflow-y-auto">
+            <BreakoutRoomsWithParticipants hideActivityCards />
+          </div>
         </div>
       </PanelsContent>
     ),

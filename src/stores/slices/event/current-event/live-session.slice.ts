@@ -289,18 +289,15 @@ attachStoreListener({
   effect: (action, { dispatch, getState }) => {
     const dyteClient = action.payload
     if (!dyteClient) return
-    const state = getState()
     dispatch(setCurrentDyteMeetingIdAction(dyteClient.meta.meetingId))
+
     if (
       dyteClient.connectedMeetings?.parentMeeting &&
       dyteClient.meta.meetingId !==
-        dyteClient.connectedMeetings?.parentMeeting?.id &&
-      !state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+        dyteClient.connectedMeetings?.parentMeeting?.id
     ) {
       dispatch(setIsInBreakoutAction(true))
-    } else if (
-      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
-    ) {
+    } else {
       dispatch(setIsInBreakoutAction(false))
     }
     const roomJoinedListener = () => {

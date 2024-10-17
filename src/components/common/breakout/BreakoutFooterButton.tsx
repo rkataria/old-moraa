@@ -54,7 +54,7 @@ export function BreakoutFooterButton() {
     breakoutConfig: {
       breakoutFrameId?: string
       breakoutDuration?: number
-      activityIds?: Array<string>
+      activities?: Array<{ activityId?: string; name: string }>
       activityId?: string
     } & StartBreakoutConfig
   ) => {
@@ -68,6 +68,7 @@ export function BreakoutFooterButton() {
          */
         roomsCount: breakoutConfig.roomsCount,
         participantsPerRoom: breakoutConfig.participantsPerRoom,
+        roomNames: breakoutConfig.activities?.map((activity) => activity.name),
       })
       dispatch(
         updateMeetingSessionDataAction({
@@ -101,7 +102,7 @@ export function BreakoutFooterButton() {
             connected_dyte_meeting_id: meet.id!,
             data: {
               currentFrameId:
-                breakoutConfig.activityIds?.[index] ||
+                breakoutConfig.activities?.[index]?.activityId ||
                 breakoutConfig.activityId,
               presentationStatus,
             },
@@ -205,9 +206,7 @@ export function BreakoutFooterButton() {
             ...breakoutConfig,
             breakoutFrameId: currentFrame.id,
             activityId: currentFrame?.content?.groupActivityId,
-            activityIds: currentFrame?.content?.breakoutRooms?.map(
-              (room) => room.activityId || ''
-            ),
+            activities: currentFrame?.content?.breakoutRooms,
           })
         }
       />
