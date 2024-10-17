@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 
+import './sentry'
 import './globals.css'
 import { ContentLoading } from './components/common/ContentLoading'
 import { Error } from './components/Error'
