@@ -169,7 +169,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
               className={cn(
-                'relative h-full ml-0 overflow-y-auto scrollbar-none'
+                'relative h-full ml-0 overflow-y-auto scrollbar-thin'
               )}
               loading={
                 <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">

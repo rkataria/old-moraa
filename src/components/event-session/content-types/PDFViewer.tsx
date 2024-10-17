@@ -131,7 +131,7 @@ export function PDFViewer({ frame }: PDFViewerProps) {
 
   return (
     <div
-      className={cn('flex justify-start items-start gap-4', {
+      className={cn('relative w-full h-full flex justify-start items-start', {
         'w-full': pdfView === 'landscape',
         'max-w-5xl h-full': pdfView === 'portrait',
       })}>
