@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -22,7 +22,7 @@ import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
 import { QueryKeys } from '@/utils/query-keys'
-import { getFileObjectFromBlob } from '@/utils/utils'
+import { cn, getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
   frame: IFrame & {
@@ -39,6 +39,7 @@ const getPDFName = (frameId: string) => `${frameId}_pdf.pdf`
 
 export function PDFUploader({ frame }: PDFUploaderProps) {
   const { updateFrame } = useContext(EventContext) as EventContextType
+  const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
 
   const [fileUrl, setFileURL] = useState<string | undefined>(
     frame.content?.pdfPath
@@ -49,6 +50,10 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [selectedPage, setSelectedPage] = useState<number>(
     frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerRef = useRef<any>()
+
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
     queryFn: () =>
@@ -116,6 +121,16 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
     setTotalPages(nextNumPages)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onLoadSuccess = (page: any) => {
+    const isPortraitPage = page.width < page.height
+    setPageView({
+      isPortrait: isPortraitPage,
+      maxWidth:
+        containerRef.current.offsetWidth / containerRef.current.offsetHeight,
+    })
+  }
+
   const getInnerContent = () => {
     switch (true) {
       case downloadPDFQuery.isLoading:
@@ -159,11 +174,27 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
 
       case !!downloadPDFQuery.data:
         return (
-          <div className="max-w-5xl h-full flex justify-start items-start gap-4">
+          <div
+            style={{
+              maxWidth:
+                pageView.isPortrait && !frame.config.landcapeView
+                  ? pageView.maxWidth
+                  : '',
+            }}
+            className={cn('flex justify-start items-start gap-4 h-full', {
+              'w-[60%]': pageView.isPortrait && frame.config.landcapeView,
+              'mx-auto': pageView.isPortrait && !frame.config.landcapeView,
+              'w-full': !pageView.isPortrait,
+            })}>
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
-              className="relative aspect-video h-full ml-0 overflow-y-auto scrollbar-thin"
+              className={cn(
+                'relative h-full ml-0 overflow-y-auto scrollbar-none',
+                {
+                  'w-full': frame.config.landcapeView,
+                }
+              )}
               loading={
                 <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
                   <Loading />
@@ -174,7 +205,13 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
                 className="w-full"
-                devicePixelRatio={5}
+                // devicePixelRatio={5}
+                devicePixelRatio={
+                  (!pageView.isPortrait || frame.config.landcapeView
+                    ? 2.5
+                    : 1) * window.devicePixelRatio
+                }
+                onLoadSuccess={onLoadSuccess}
               />
             </Document>
             <PageControls

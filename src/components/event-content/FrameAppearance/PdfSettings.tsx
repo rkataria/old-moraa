@@ -2,6 +2,7 @@ import { useContext } from 'react'
 
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
 import { NumberInput } from '@/components/common/NumberInput'
+import { SwitchControl } from '@/components/common/SwitchControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
@@ -13,25 +14,42 @@ export function PdfSettings() {
   if (!currentFrame) return null
 
   return (
-    <LabelWithInlineControl
-      label="Initial Page"
-      control={
-        <NumberInput
-          min={1}
-          number={+(currentFrame?.config?.defaultPage || 1)}
-          onNumberChange={(updateValue) => {
-            updateFrame({
-              framePayload: {
-                config: {
-                  ...currentFrame.config,
-                  defaultPage: updateValue,
+    <div className="flex flex-col gap-4">
+      <LabelWithInlineControl
+        label="Initial Page"
+        control={
+          <NumberInput
+            min={1}
+            number={+(currentFrame?.config?.defaultPage || 1)}
+            onNumberChange={(updateValue) => {
+              updateFrame({
+                framePayload: {
+                  config: {
+                    ...currentFrame.config,
+                    defaultPage: updateValue,
+                  },
                 },
+                frameId: currentFrame.id,
+              })
+            }}
+          />
+        }
+      />
+      <SwitchControl
+        label="Lanscape"
+        checked={currentFrame.config.landcapeView}
+        onChange={() =>
+          updateFrame({
+            framePayload: {
+              config: {
+                ...currentFrame.config,
+                landcapeView: !currentFrame.config.landcapeView,
               },
-              frameId: currentFrame.id,
-            })
-          }}
-        />
-      }
-    />
+            },
+            frameId: currentFrame.id,
+          })
+        }
+      />
+    </div>
   )
 }

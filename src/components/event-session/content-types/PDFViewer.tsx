@@ -8,6 +8,7 @@ import { pdfjs, Document, Page } from 'react-pdf'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
+import { Loading } from '@/components/common/Loading'
 import { PageControls } from '@/components/common/PageControls'
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -15,7 +16,7 @@ import { downloadPDFFile } from '@/services/pdf.service'
 import { EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
-import { getFileObjectFromBlob } from '@/utils/utils'
+import { cn, getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFViewerProps {
   frame: IFrame & {
@@ -31,6 +32,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 const positionChangeEvent = 'pdf-position-changed'
 
 export function PDFViewer({ frame }: PDFViewerProps) {
+  const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
+
   const [file, setFile] = useState<File | undefined>()
   const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
@@ -111,7 +114,14 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   const onDocumentLoadSuccess: any = ({ numPages: nextNumPages }: any) => {
     setTotalPages(nextNumPages)
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onLoadSuccess = (page: any) => {
+    const isPortraitPage = page.width < page.height
+    setPageView({
+      isPortrait: isPortraitPage,
+      maxWidth: page.width + 20,
+    })
+  }
   if (downloadPDFMutation.isError) {
     return (
       <EmptyPlaceholder
@@ -129,19 +139,42 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   }
 
   return (
-    <div className="max-w-5xl relative w-full h-full flex justify-start items-start">
+    <div
+      style={{
+        maxWidth:
+          pageView.isPortrait && !frame.config.landcapeView
+            ? pageView.maxWidth
+            : '',
+      }}
+      className={cn('flex justify-start items-start gap-4 h-full', {
+        'w-[60%]': pageView.isPortrait && frame.config.landcapeView,
+        'mx-auto': pageView.isPortrait && !frame.config.landcapeView,
+        'w-full': !pageView.isPortrait,
+      })}>
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
-        className="absolute left-0 top-0 h-full w-full m-0 overflow-y-auto scrollbar-thin"
-        loading="Please wait! Loading the PDF.">
+        className={cn('relative h-full ml-0 overflow-y-auto scrollbar-thin', {
+          'w-full': frame.config.landcapeView,
+          'aspect-video': !pageView.isPortrait,
+        })}
+        loading={
+          <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
+            <Loading />
+          </div>
+        }>
         <Page
           loading={<ContentLoading />}
           pageNumber={position}
           renderAnnotationLayer={false}
           renderTextLayer={false}
           className="w-full"
-          devicePixelRatio={5}
+          // devicePixelRatio={5}
+          devicePixelRatio={
+            (!pageView.isPortrait || frame.config.landcapeView ? 2.6 : 1) *
+            window.devicePixelRatio
+          }
+          onLoadSuccess={onLoadSuccess}
         />
       </Document>
       {isHost && (
