@@ -2,14 +2,17 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
-import { MORAA_SLIDE_TEMPLATES, Template } from '@/utils/moraa-slide-templates'
+import {
+  MORAA_SLIDE_TEMPLATES,
+  MoraaSlideTemplate,
+} from '@/utils/moraa-slide-templates'
 
 export function MoraaSlideTemplates() {
   const { canvas } = useMoraaSlideEditorContext()
 
   if (!canvas) return null
 
-  const loadTemplate = (template: Template) => {
+  const loadTemplate = (template: MoraaSlideTemplate) => {
     template.loadTemplate(canvas)
   }
 

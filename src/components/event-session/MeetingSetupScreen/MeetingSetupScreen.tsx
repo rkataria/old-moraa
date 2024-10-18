@@ -4,6 +4,7 @@ import { DyteDialogManager, DyteParticipantsAudio } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { Link, useParams } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
+import toast from 'react-hot-toast'
 
 import { SelfParticipantTile } from './SelfParticipantTile'
 import { VideoControls } from './VideoControls'
@@ -49,6 +50,9 @@ export function MeetingSetupScreen() {
   const isInBreakoutMeeting = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
+  const isParticipantLoading = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.participant.isLoading
   )
   const enrollmentQuery = useEnrollment()
   const selfParticipant = useDyteSelector((meeting) => meeting.self)
@@ -104,12 +108,17 @@ export function MeetingSetupScreen() {
   ])
 
   const handleJoinMeeting = async () => {
-    dispatch(
+    const response = await dispatch(
       getExistingOrCreateNewParticipantThunk({
         enrollmentId: enrollmentQuery.enrollment!.id,
         sessionId: meetingSession.data?.id || '',
       })
     )
+    if (!response.payload) {
+      toast.error('Failed to join meeting, please try again.')
+
+      return
+    }
     meeting.join()
   }
 
@@ -204,7 +213,8 @@ export function MeetingSetupScreen() {
                   isLoading={
                     meetingSession.isLoading ||
                     enrollmentQuery.isLoading ||
-                    isFetchingProfile
+                    isFetchingProfile ||
+                    isParticipantLoading
                   }
                   onClick={handleJoinMeeting}>
                   Join Meeting

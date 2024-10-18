@@ -17,6 +17,7 @@ import { EventSessionProvider } from '@/contexts/EventSessionContext'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useTimer } from '@/hooks/use-timer'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { useUserPreferences } from '@/hooks/userPreferences'
 import { resetEventAction } from '@/stores/slices/event/current-event/event.slice'
 import { resetFrameAction } from '@/stores/slices/event/current-event/frame.slice'
 import {
@@ -80,6 +81,7 @@ export function EventSessionPageInner() {
 }
 
 function EventSessionPage() {
+  const { userPreferences } = useUserPreferences()
   const { eventId } = useParams({ strict: false })
   const enrollment = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.enrollment.data
@@ -130,8 +132,8 @@ function EventSessionPage() {
     initDyteMeeting({
       authToken: enrollment.meeting_token,
       defaults: {
-        audio: false,
-        video: false,
+        audio: userPreferences?.meeting?.audio ?? true,
+        video: userPreferences?.meeting?.video ?? true,
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

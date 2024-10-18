@@ -3,9 +3,10 @@ import { fabric } from 'fabric'
 import { TYPOGRAPHY_LIST } from '@/components/common/content-types/MoraaSlide/TextBox'
 import { DEFAULT_FONT_FAMILY } from '@/libs/fonts'
 
-export type Template = {
+export type MoraaSlideTemplate = {
   key: string
   name: string
+  thumbnail: string
   loadTemplate: (canvas: fabric.Canvas) => fabric.Canvas
 }
 
@@ -40,13 +41,31 @@ const loadCenterGuideHelperRect = (canvas: fabric.Canvas) => {
   // canvas.sendToBack(rect)
 }
 
-export const MORAA_SLIDE_TEMPLATES: Template[] = [
+export const MORAA_SLIDE_TEMPLATES: MoraaSlideTemplate[] = [
+  {
+    key: 'blank',
+    name: 'Blank',
+    thumbnail: '/images/frame-templates/moraa-slide/blank.png',
+    loadTemplate: (canvas: fabric.Canvas) => {
+      canvas.clear()
+
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
+
+      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+
+      canvas.renderAll()
+      canvas.fire('object:modified')
+
+      return canvas
+    },
+  },
   {
     key: 'title',
     name: 'Title',
+    thumbnail: '/images/frame-templates/moraa-slide/title.png',
     loadTemplate: (canvas: fabric.Canvas) => {
       const title = 'Your awesome title here'
-      const subtitle = 'This is a subtitle'
 
       const titleText = new fabric.Textbox(title, {
         name: titleTypography.name,
@@ -57,95 +76,6 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
         width: canvas.getWidth() * 0.8,
         left: canvas.getWidth() * 0.1,
         top: canvas.getHeight() * 0.1,
-      })
-      const subtitleText = new fabric.Textbox(subtitle, {
-        name: subheadingTypography.name,
-        fontSize: subheadingTypography.fontSize,
-        fontWeight: subheadingTypography.fontWeight,
-        fontFamily: DEFAULT_FONT_FAMILY,
-        textAlign: 'center',
-        width: canvas.getWidth() * 0.8,
-      })
-
-      canvas.clear()
-
-      // NOTE: Add a background rect to make guides visible to center objects
-      loadCenterGuideHelperRect(canvas)
-
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
-
-      canvas.add(titleText)
-      canvas.add(subtitleText)
-      canvas.viewportCenterObject(titleText)
-
-      canvas.renderAll()
-      canvas.fire('object:modified')
-
-      return canvas
-    },
-  },
-  {
-    key: 'quote',
-    name: 'Quote',
-    loadTemplate: (canvas: fabric.Canvas) => {
-      const quote = 'The harder you fall, the higher you bounce.'
-      const author = '- Anonymous'
-
-      const quoteText = new fabric.Textbox(quote, {
-        name: headingTypography.name,
-        fontSize: headingTypography.fontSize,
-        fontWeight: headingTypography.fontWeight,
-        fontFamily: DEFAULT_FONT_FAMILY,
-        textAlign: 'center',
-        width: canvas.getWidth() * 0.9,
-        left: canvas.getWidth() * 0.05,
-        top: canvas.getHeight() * 0.3,
-      })
-
-      const authorText = new fabric.Textbox(author, {
-        name: bodyTypography.name,
-        fontSize: bodyTypography.fontSize,
-        fontWeight: bodyTypography.fontWeight,
-        fontFamily: DEFAULT_FONT_FAMILY,
-        textAlign: 'center',
-        width: canvas.getWidth() * 0.6,
-        left: canvas.getWidth() * 0.2,
-        top:
-          quoteText.getBoundingRect().top +
-          quoteText.getBoundingRect().height +
-          10,
-      })
-
-      canvas.clear()
-
-      // NOTE: Add a background rect to make guides visible to center objects
-      loadCenterGuideHelperRect(canvas)
-
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
-
-      canvas.add(quoteText)
-      canvas.add(authorText)
-
-      canvas.renderAll()
-      canvas.fire('object:modified')
-
-      return canvas
-    },
-  },
-  {
-    key: 'intro',
-    name: 'Intro',
-    loadTemplate: (canvas: fabric.Canvas) => {
-      const title = 'A light minimalist template'
-
-      const titleText = new fabric.Textbox(title, {
-        name: titleTypography.name,
-        fontSize: titleTypography.fontSize,
-        fontWeight: titleTypography.fontWeight,
-        fontFamily: DEFAULT_FONT_FAMILY,
-        textAlign: 'center',
-        padding: 10,
-        width: canvas.getWidth() * 0.6,
       })
 
       canvas.clear()
@@ -167,6 +97,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
   {
     key: 'main-title',
     name: 'Main Title',
+    thumbnail: '/images/frame-templates/moraa-slide/main.png',
     loadTemplate: (canvas: fabric.Canvas) => {
       const title = 'A beautiful title'
       const subtitle = 'This is a subtitle for your beautiful presentation'
@@ -257,8 +188,58 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
     },
   },
   {
+    key: 'quote',
+    name: 'Quote',
+    thumbnail: '/images/frame-templates/moraa-slide/quote.png',
+    loadTemplate: (canvas: fabric.Canvas) => {
+      const quote = 'The harder you fall, the higher you bounce.'
+      const author = '- Anonymous'
+
+      const quoteText = new fabric.Textbox(quote, {
+        name: headingTypography.name,
+        fontSize: headingTypography.fontSize,
+        fontWeight: headingTypography.fontWeight,
+        fontFamily: DEFAULT_FONT_FAMILY,
+        textAlign: 'center',
+        width: canvas.getWidth() * 0.9,
+        left: canvas.getWidth() * 0.05,
+        top: canvas.getHeight() * 0.3,
+      })
+
+      const authorText = new fabric.Textbox(author, {
+        name: bodyTypography.name,
+        fontSize: bodyTypography.fontSize,
+        fontWeight: bodyTypography.fontWeight,
+        fontFamily: DEFAULT_FONT_FAMILY,
+        textAlign: 'center',
+        width: canvas.getWidth() * 0.6,
+        left: canvas.getWidth() * 0.2,
+        top:
+          quoteText.getBoundingRect().top +
+          quoteText.getBoundingRect().height +
+          10,
+      })
+
+      canvas.clear()
+
+      // NOTE: Add a background rect to make guides visible to center objects
+      loadCenterGuideHelperRect(canvas)
+
+      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+
+      canvas.add(quoteText)
+      canvas.add(authorText)
+
+      canvas.renderAll()
+      canvas.fire('object:modified')
+
+      return canvas
+    },
+  },
+  {
     key: 'article',
     name: 'Article',
+    thumbnail: '/images/frame-templates/moraa-slide/article.png',
     loadTemplate: (canvas: fabric.Canvas) => {
       const title = 'A beautiful article'
       const subtitle = 'This is a subtitle for your beautiful presentation'
@@ -328,6 +309,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
   {
     key: 'article-image-left',
     name: 'Image Left',
+    thumbnail: '/images/frame-templates/moraa-slide/article-image-left.png',
     loadTemplate: (canvas: fabric.Canvas) => {
       canvas.clear()
 
@@ -418,6 +400,7 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
   {
     key: 'article-image-right',
     name: 'Image Right',
+    thumbnail: '/images/frame-templates/moraa-slide/article-image-right.png',
     loadTemplate: (canvas: fabric.Canvas) => {
       canvas.clear()
 
@@ -490,34 +473,6 @@ export const MORAA_SLIDE_TEMPLATES: Template[] = [
 
       canvas.renderAll()
       canvas.fire('object:modified')
-
-      return canvas
-    },
-  },
-  {
-    key: 'background-image',
-    name: 'Background Image',
-    loadTemplate: (canvas: fabric.Canvas) => {
-      canvas.clear()
-
-      // NOTE: Add a background rect to make guides visible to center objects
-      loadCenterGuideHelperRect(canvas)
-
-      const imageUrl =
-        'https://images.unsplash.com/photo-1574001412367-cf5f9756bb32?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1920&h=1920&fit=max&ixid=eyJhcHBfaWQiOjgzNjd9'
-
-      fabric.Image.fromURL(imageUrl, (img) => {
-        img.set({
-          left: 0,
-          top: 0,
-        })
-
-        img.scaleToHeight(canvas.getHeight())
-        img.scaleToWidth(canvas.getWidth())
-        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas))
-        canvas.fire('object:modified', { target: img })
-        canvas.renderAll()
-      })
 
       return canvas
     },

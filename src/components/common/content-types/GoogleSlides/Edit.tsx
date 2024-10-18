@@ -9,6 +9,7 @@ import { SiGoogleslides } from 'react-icons/si'
 import * as yup from 'yup'
 
 import { EmbedEdit } from './EmbedEdit'
+import { IframeEdit } from './IframeEdit'
 import { ImportEdit } from './ImportEdit'
 
 import { GoogleSlidesType } from '@/types/frame-picker.type'
@@ -42,11 +43,7 @@ export function Edit({ frame }: EditProps) {
 
   // If frame has googleSlideUrl, allow to edit google slides content
   if (frame.content?.googleSlideUrl) {
-    return (
-      <div className="w-full h-full">
-        <iframe src={frame.content.googleSlideUrl} className="w-full h-full" />
-      </div>
-    )
+    return <IframeEdit url={frame.content?.googleSlideUrl} />
   }
 
   if (mode === 'embed' || !flags?.import_google_slides) {

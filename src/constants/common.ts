@@ -1,3 +1,5 @@
+import { UserPreferences } from '@/types/common'
+
 export const DEFAULT_PAGE_SIZE = 10
 export const TITLE_CHARACTER_LIMIT = 300
 export const FRAME_BG_COLOR_PALETTE = [
@@ -13,3 +15,10 @@ export const FRAME_BG_COLOR_PALETTE = [
   '#9900EF',
 ]
 export const IMAGE_PLACEHOLDER = '/images/image-placeholder.png'
+export const USER_PREFERENCES_LOCAL_STORAGE_KEY = 'moraa-user-preferences'
+export const INITIAL_USER_PREFERENCES: UserPreferences = {
+  meeting: {
+    video: true,
+    audio: true,
+  },
+}

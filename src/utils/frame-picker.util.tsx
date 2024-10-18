@@ -12,6 +12,8 @@ import { MdOutlineDraw } from 'react-icons/md'
 import { SiGoogleslides, SiMicrosoftpowerpoint, SiMiro } from 'react-icons/si'
 import { TbNews, TbNotes } from 'react-icons/tb'
 
+import { MORAA_SLIDE_TEMPLATES } from './moraa-slide-templates'
+
 export enum FrameCategory {
   PRESENTATION = 'presentation',
   MEDIA = 'media',
@@ -63,39 +65,6 @@ export enum FrameType {
   Q_A = 'Q/A',
   MORAA_PAD = 'Moraapad',
 }
-
-const MORAA_SLIDE_TEMPLATES: FrameTemplate[] = [
-  {
-    key: 'title',
-    name: 'Title',
-    thumbnail: '/images/frame-templates/moraa-slide/title.png',
-  },
-  {
-    key: 'main-title',
-    name: 'Main',
-    thumbnail: '/images/frame-templates/moraa-slide/main.png',
-  },
-  {
-    key: 'quote',
-    name: 'Quote',
-    thumbnail: '/images/frame-templates/moraa-slide/quote.png',
-  },
-  {
-    key: 'article',
-    name: 'Article',
-    thumbnail: '/images/frame-templates/moraa-slide/article.png',
-  },
-  {
-    key: 'article-image-left',
-    name: 'Image Left',
-    thumbnail: '/images/frame-templates/moraa-slide/article-image-left.png',
-  },
-  {
-    key: 'article-image-right',
-    name: 'Image Right',
-    thumbnail: '/images/frame-templates/moraa-slide/article-image-right.png',
-  },
-]
 
 export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
   {

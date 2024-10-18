@@ -20,7 +20,10 @@ export function Preview({ frame, startPage, onPageChange }: PreviewProps) {
     return (
       <Embed
         url={frame.content.googleSlideUrl}
-        showControls={!frame.content.individualFrame}
+        showControls={
+          !frame.content.individualFrame &&
+          permissions.canAcessAllSessionControls
+        }
         startPage={startPage || frame.content.startPosition}
         onPageChange={(pageNumber) => {
           if (permissions.canAcessAllSessionControls) {

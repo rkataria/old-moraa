@@ -4,9 +4,11 @@ import { IoMicOutline, IoMicOffOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
+import { useUserPreferences } from '@/hooks/userPreferences'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function MicToggle({ className = '' }: { className?: string }) {
+  const { userPreferencesMeetingAudio } = useUserPreferences()
   const self = useDyteSelector((state) => state.self)
   const isMicEnabled = useDyteSelector((state) => state.self?.audioEnabled)
 
@@ -16,11 +18,13 @@ export function MicToggle({ className = '' }: { className?: string }) {
 
     if (isMicEnabled) {
       self.disableAudio()
+      userPreferencesMeetingAudio(false)
 
       return
     }
 
     self.enableAudio()
+    userPreferencesMeetingAudio(true)
   }
 
   useHotkeys('m', handleMic, [self, isMicEnabled])

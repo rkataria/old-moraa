@@ -4,9 +4,11 @@ import { IoVideocamOffOutline, IoVideocamOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
+import { useUserPreferences } from '@/hooks/userPreferences'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function VideoToggle({ className = '' }: { className?: string }) {
+  const { userPreferencesMeetingVideo } = useUserPreferences()
   const self = useDyteSelector((state) => state.self)
   const isVideoEnabled = useDyteSelector((state) => state.self?.videoEnabled)
 
@@ -16,11 +18,13 @@ export function VideoToggle({ className = '' }: { className?: string }) {
 
     if (isVideoEnabled) {
       self.disableVideo()
+      userPreferencesMeetingVideo(false)
 
       return
     }
 
     self.enableVideo()
+    userPreferencesMeetingVideo(true)
   }
 
   useHotkeys('v', handleVideo, [self, isVideoEnabled])

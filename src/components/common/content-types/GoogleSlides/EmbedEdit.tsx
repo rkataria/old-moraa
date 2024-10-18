@@ -9,6 +9,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { SiGoogleslides } from 'react-icons/si'
 import * as yup from 'yup'
 
+import { IframeEdit } from './IframeEdit'
 import { ContentLoading } from '../../ContentLoading'
 
 import { FrameFormContainer } from '@/components/event-content/FrameFormContainer'
@@ -70,21 +71,16 @@ export function EmbedEdit({
 
   if (frame.content?.googleSlideUrl) {
     return (
-      <div className="w-full h-full">
-        <iframe
-          src={frame.content.googleSlideUrl}
-          className="w-full h-full"
-          onLoad={() => {
-            setLoading(false)
-          }}
-        />
-      </div>
+      <IframeEdit
+        url={frame.content.googleSlideUrl}
+        onLoad={() => setLoading(false)}
+      />
     )
   }
 
   if (loading) {
     return (
-      <div className="w-full h-fullflex justify-center items-center">
+      <div className="w-full h-full flex justify-center items-center">
         <ContentLoading />
       </div>
     )
