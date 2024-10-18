@@ -8,6 +8,7 @@ import { pdfjs, Document, Page } from 'react-pdf'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
+import { Loading } from '@/components/common/Loading'
 import { PageControls } from '@/components/common/PageControls'
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
@@ -31,7 +32,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 const positionChangeEvent = 'pdf-position-changed'
 
 export function PDFViewer({ frame }: PDFViewerProps) {
-  const [pdfView, setPdfView] = useState('portrait')
+  const [pageView, setPageView] = useState({ isLandscape: false, ratio: 1 })
+
   const [file, setFile] = useState<File | undefined>()
   const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
@@ -131,24 +133,34 @@ export function PDFViewer({ frame }: PDFViewerProps) {
 
   return (
     <div
-      className={cn('relative w-full h-full flex justify-start items-start', {
-        'w-full': pdfView === 'landscape',
-        'max-w-5xl h-full': pdfView === 'portrait',
+      style={{ maxWidth: pageView.ratio * window.innerHeight - 57 }}
+      className={cn('flex justify-start items-start gap-4 h-full mx-auto', {
+        'w-full': pageView.isLandscape,
       })}>
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
-        className="absolute left-0 top-0 h-full w-full m-0 overflow-y-auto scrollbar-thin"
-        loading="Please wait! Loading the PDF.">
+        className={cn('relative h-full ml-0 overflow-y-auto scrollbar-thin')}
+        loading={
+          <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
+            <Loading />
+          </div>
+        }>
         <Page
           loading={<ContentLoading />}
           pageNumber={position}
           renderAnnotationLayer={false}
           renderTextLayer={false}
           className="w-full"
-          devicePixelRatio={5}
+          // devicePixelRatio={5}
+          devicePixelRatio={
+            (pageView.isLandscape ? 2.5 : 1) * window.devicePixelRatio
+          }
           onLoadSuccess={(page) => {
-            setPdfView(page.height > page.width ? 'portrait' : 'landscape')
+            setPageView({
+              isLandscape: page.width > page.height,
+              ratio: page.width / page.height,
+            })
           }}
         />
       </Document>

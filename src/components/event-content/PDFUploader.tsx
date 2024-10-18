@@ -39,7 +39,7 @@ const getPDFName = (frameId: string) => `${frameId}_pdf.pdf`
 
 export function PDFUploader({ frame }: PDFUploaderProps) {
   const { updateFrame } = useContext(EventContext) as EventContextType
-
+  const [pageView, setPageView] = useState({ isLandscape: false, ratio: 1 })
   const [fileUrl, setFileURL] = useState<string | undefined>(
     frame.content?.pdfPath
   )
@@ -49,7 +49,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [selectedPage, setSelectedPage] = useState<number>(
     frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
-  const [pdfView, setPdfView] = useState('portrait')
+
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
     queryFn: () =>
@@ -161,10 +161,13 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
       case !!downloadPDFQuery.data:
         return (
           <div
-            className={cn('flex justify-start items-start gap-4', {
-              'w-full': pdfView === 'landscape',
-              'max-w-5xl h-full': pdfView === 'portrait',
-            })}>
+            style={{ maxWidth: pageView.ratio * window.innerHeight - 57 }}
+            className={cn(
+              'flex justify-start items-start gap-4 h-full mx-auto',
+              {
+                'w-full': pageView.isLandscape,
+              }
+            )}>
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -181,11 +184,15 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
                 className="w-full"
-                devicePixelRatio={5}
+                // devicePixelRatio={5}
+                devicePixelRatio={
+                  (pageView.isLandscape ? 2.5 : 1) * window.devicePixelRatio
+                }
                 onLoadSuccess={(page) => {
-                  setPdfView(
-                    page.height > page.width ? 'portrait' : 'landscape'
-                  )
+                  setPageView({
+                    isLandscape: page.width > page.height,
+                    ratio: page.width / page.height,
+                  })
                 }}
               />
             </Document>
