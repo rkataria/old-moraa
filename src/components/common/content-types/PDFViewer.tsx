@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Skeleton } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
@@ -30,14 +30,12 @@ interface PDFViewerProps {
 pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 
 export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
-  const [pageView, setPageView] = useState({ isLandscape: false, ratio: 1 })
+  const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
     asThumbnail ? 1 : frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const containerRef = useRef<any>()
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
@@ -67,6 +65,16 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
     setTotalPages(nextNumPages)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onLoadSuccess = (page: any) => {
+    const isPortraitPage = page.width < page.height
+
+    setPageView({
+      isPortrait: isPortraitPage,
+      maxWidth: page.width,
+    })
+  }
+
   if (downloadPDFMutation.isError) {
     return (
       <EmptyPlaceholder
@@ -85,17 +93,16 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
 
   return (
     <div
-      ref={containerRef}
       style={{
         maxWidth:
-          !frame.config.landcapeView && containerRef?.current?.height
-            ? pageView.ratio * containerRef.current.height
+          pageView.isPortrait && !frame.config.landcapeView
+            ? pageView.maxWidth
             : '',
       }}
       className={cn('flex justify-start items-start gap-4 h-full', {
-        'w-full': pageView.isLandscape,
-        'w-[70%]': frame.config.landcapeView,
-        'mx-auto max-w-fit': !frame.config.landcapeView,
+        'w-[60%]': pageView.isPortrait && frame.config.landcapeView,
+        'mx-auto': pageView.isPortrait && !frame.config.landcapeView,
+        'w-full': !pageView.isPortrait,
       })}>
       <Document
         file={file}
@@ -120,15 +127,10 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
           className="w-full"
           // devicePixelRatio={5}
           devicePixelRatio={
-            (pageView.isLandscape || frame.config.landcapeView ? 2.6 : 1) *
+            (!pageView.isPortrait || frame.config.landcapeView ? 2.5 : 1) *
             window.devicePixelRatio
           }
-          onLoadSuccess={(page) => {
-            setPageView({
-              isLandscape: page.width > page.height,
-              ratio: page.width / page.height,
-            })
-          }}
+          onLoadSuccess={onLoadSuccess}
         />
       </Document>
       <PageControls
