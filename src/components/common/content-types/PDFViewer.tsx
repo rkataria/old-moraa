@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Skeleton } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
@@ -36,6 +36,8 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
   const [position, setPosition] = useState<number>(
     asThumbnail ? 1 : frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerRef = useRef<any>()
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
@@ -83,14 +85,29 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
 
   return (
     <div
-      style={{ maxWidth: pageView.ratio * window.innerHeight - 57 }}
-      className={cn('flex justify-start items-start gap-4 h-full mx-auto', {
+      ref={containerRef}
+      style={{
+        maxWidth:
+          !frame.config.landcapeView && containerRef?.current?.height
+            ? pageView.ratio * containerRef.current.height
+            : '',
+      }}
+      className={cn('flex justify-start items-start gap-4 h-full', {
         'w-full': pageView.isLandscape,
+        'w-[70%]': frame.config.landcapeView,
+        'mx-auto max-w-fit': !frame.config.landcapeView,
       })}>
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
-        className={cn('relative h-full ml-0 overflow-y-auto scrollbar-thin')}
+        className={cn(
+          'relative h-full ml-0 overflow-y-auto scrollbar-none',
+
+          {
+            'w-full': frame.config.landcapeView,
+            'aspect-video': pageView.isLandscape,
+          }
+        )}
         loading={
           <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
             <Loading />
@@ -104,7 +121,8 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
           className="w-full"
           // devicePixelRatio={5}
           devicePixelRatio={
-            (pageView.isLandscape ? 2.5 : 1) * window.devicePixelRatio
+            (pageView.isLandscape || frame.config.landcapeView ? 2.6 : 1) *
+            window.devicePixelRatio
           }
           onLoadSuccess={(page) => {
             setPageView({

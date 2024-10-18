@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -49,6 +49,9 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [selectedPage, setSelectedPage] = useState<number>(
     frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerRef = useRef<any>()
 
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
@@ -161,18 +164,27 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
       case !!downloadPDFQuery.data:
         return (
           <div
-            style={{ maxWidth: pageView.ratio * window.innerHeight - 57 }}
-            className={cn(
-              'flex justify-start items-start gap-4 h-full mx-auto',
-              {
-                'w-full': pageView.isLandscape,
-              }
-            )}>
+            ref={containerRef}
+            style={{
+              maxWidth:
+                !frame.config.landcapeView && containerRef?.current?.height
+                  ? pageView.ratio * containerRef.current.height
+                  : '',
+            }}
+            className={cn('flex justify-start items-start gap-4 h-full', {
+              'w-full': pageView.isLandscape,
+              'w-[60%]': frame.config.landcapeView,
+              'mx-auto max-w-fit': !frame.config.landcapeView,
+            })}>
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
               className={cn(
-                'relative h-full ml-0 overflow-y-auto scrollbar-thin'
+                'relative h-full ml-0 overflow-y-auto scrollbar-none',
+                {
+                  'w-full': frame.config.landcapeView,
+                  'aspect-video': pageView.isLandscape,
+                }
               )}
               loading={
                 <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
@@ -186,7 +198,9 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                 className="w-full"
                 // devicePixelRatio={5}
                 devicePixelRatio={
-                  (pageView.isLandscape ? 2.5 : 1) * window.devicePixelRatio
+                  (pageView.isLandscape || frame.config.landcapeView
+                    ? 2.6
+                    : 1) * window.devicePixelRatio
                 }
                 onLoadSuccess={(page) => {
                   setPageView({
