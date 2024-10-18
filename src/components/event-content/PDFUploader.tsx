@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -50,9 +50,6 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [selectedPage, setSelectedPage] = useState<number>(
     frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const containerRef = useRef<any>()
 
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
@@ -126,8 +123,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
     const isPortraitPage = page.width < page.height
     setPageView({
       isPortrait: isPortraitPage,
-      maxWidth:
-        containerRef.current.offsetWidth / containerRef.current.offsetHeight,
+      maxWidth: page.width,
     })
   }
 
