@@ -183,7 +183,6 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                 'relative h-full ml-0 overflow-y-auto scrollbar-none',
                 {
                   'w-full': frame.config.landcapeView,
-                  'aspect-video': pageView.isLandscape,
                 }
               )}
               loading={

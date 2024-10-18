@@ -105,7 +105,6 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
 
           {
             'w-full': frame.config.landcapeView,
-            'aspect-video': pageView.isLandscape,
           }
         )}
         loading={
