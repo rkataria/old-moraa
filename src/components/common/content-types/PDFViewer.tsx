@@ -1,13 +1,18 @@
-import { useEffect, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
+import React, { useEffect, useState } from 'react'
 
 import { Skeleton } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
-import { pdfjs, Document, Page } from 'react-pdf'
+import { pdfjs, Document, Page, Thumbnail } from 'react-pdf'
 
 import { ContentLoading } from '../ContentLoading'
 import { EmptyPlaceholder } from '../EmptyPlaceholder'
 import { Loading } from '../Loading'
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { PageControls } from '@/components/common/PageControls'
 import { downloadPDFFile } from '@/services/pdf.service'
@@ -36,6 +41,9 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
   const [position, setPosition] = useState<number>(
     asThumbnail ? 1 : frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
+  const containerRef = React.useRef(null)
+  const [pageWidth, setPageWidth] = React.useState(null)
+  const [pageHeight, setPageHeight] = React.useState(null)
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
@@ -73,6 +81,10 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
       isPortrait: isPortraitPage,
       maxWidth: page.width,
     })
+
+    const aspectRatio = page.view[2] / page.view[3] // width / height
+    setPageWidth(containerRef.current.clientWidth)
+    setPageHeight(containerRef.current.clientWidth / aspectRatio)
   }
 
   if (downloadPDFMutation.isError) {
@@ -93,12 +105,7 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
 
   return (
     <div
-      style={{
-        maxWidth:
-          pageView.isPortrait && !frame.config.landcapeView
-            ? pageView.maxWidth
-            : '',
-      }}
+      ref={containerRef}
       className={cn('flex justify-start items-start gap-4 h-full', {
         'w-[60%]': pageView.isPortrait && frame.config.landcapeView,
         'mx-auto': pageView.isPortrait && !frame.config.landcapeView,
@@ -119,19 +126,25 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
             <Loading />
           </div>
         }>
-        <Page
-          loading={<ContentLoading />}
-          pageNumber={position}
-          renderAnnotationLayer={false}
-          renderTextLayer={false}
-          className="w-full"
-          // devicePixelRatio={5}
-          devicePixelRatio={
-            (!pageView.isPortrait || frame.config.landcapeView ? 2.5 : 1) *
-            window.devicePixelRatio
-          }
-          onLoadSuccess={onLoadSuccess}
-        />
+        <RenderIf isTrue={asThumbnail}>
+          <Thumbnail pageNumber={1} />
+        </RenderIf>
+        <RenderIf isTrue={!asThumbnail}>
+          <Page
+            width={pageWidth * window.devicePixelRatio} // Scale for devicePixelRatio
+            loading={<ContentLoading />}
+            pageNumber={position}
+            renderAnnotationLayer={false}
+            renderTextLayer={false}
+            className="w-full"
+            // devicePixelRatio={5}
+            devicePixelRatio={
+              (!pageView.isPortrait || frame.config.landcapeView ? 2.5 : 1) *
+              window.devicePixelRatio
+            }
+            onLoadSuccess={onLoadSuccess}
+          />
+        </RenderIf>
       </Document>
       <PageControls
         currentPage={position}

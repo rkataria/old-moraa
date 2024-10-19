@@ -1,9 +1,11 @@
-/* eslint-disable no-restricted-syntax */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+/* eslint-disable no-restricted-syntax */
 
 import React, { useContext, useEffect, useRef, useState } from 'react'
 
+import { Button } from '@nextui-org/button'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { FaFilePdf } from 'react-icons/fa'
@@ -52,13 +54,6 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [selectedPage, setSelectedPage] = useState<number>(
     frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
-
-  const [pageDimensions, setPageDimensions] = React.useState({
-    width: 0,
-    height: 0,
-  })
-
-  const [pageScale, setPageScale] = useState(1)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const containerRef = useRef<any>()
@@ -130,49 +125,31 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
     setTotalPages(nextNumPages)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onLoadSuccess = (page: any) => {
-    const isPortraitPage = page.width < page.height
-    setPageView({
-      isPortrait: isPortraitPage,
-      maxWidth: page.width,
-    })
-    const viewport = page.getViewport({ scale: 1 }) // Get the PDF page's original dimensions
-    const { width: pdfWidth, height: pdfHeight } = viewport
+  const [zoom, setZoom] = useState(10) // Initialize zoom level
 
+  const [pageScale, setPageScale] = useState(1) // Manage the zoom scale
+  const [pdfPageWidth, setPdfPageWidth] = useState(0) // Actual page width
+
+  // Callback to fit the page into the container
+  const fitPageToContainer = (page) => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth
-      const containerHeight = containerRef.current.clientHeight
+      const viewport = page.getViewport({ scale: 1 })
+      const scale = containerWidth / viewport.width // Scale based on container width
 
-      // Calculate aspect ratios
-      const pdfAspectRatio = pdfWidth / pdfHeight
-      const containerAspectRatio = containerWidth / containerHeight
-
-      let newWidth
-      let newHeight
-
-      // If the PDF's aspect ratio is wider than the container's, fit by width, else fit by height
-      if (pdfAspectRatio > containerAspectRatio) {
-        newWidth = containerWidth
-        newHeight = containerWidth / pdfAspectRatio
-      } else {
-        newHeight = containerHeight
-        newWidth = containerHeight * pdfAspectRatio
-      }
-
-      // Adjust for device pixel ratio to keep it sharp on high-resolution screens
-      const dpr = window.devicePixelRatio || 1
-
-      // Update dimensions and scaling factor based on calculated values
-      setPageDimensions({
-        width: newWidth,
-        height: newHeight,
-      })
-
-      setPageScale(dpr) // Set scale to adjust for DPI
+      setPdfPageWidth(viewport.width * scale) // Set width to container width
     }
   }
+  const handleZoomIn = () => {
+    setPageScale((prevScale) => Math.min(prevScale + 0.25, 3)) // Max zoom scale: 3x (300%)
+  }
 
+  // const handleZoomOut = () => {
+  //   setPageScale((prevScale) => Math.max(prevScale - 0.25, 0.5)) // Min zoom scale: 0.5x
+  // }
+  const handleZoomOut = () => {
+    setPageScale((prevScale) => Math.max(prevScale - 0.25, 0.25)) // Min zoom scale: 0.25x (25%)
+  }
   const getInnerContent = () => {
     switch (true) {
       case downloadPDFQuery.isLoading:
@@ -238,14 +215,19 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                 </div>
               }>
               <Page
-                width={pageDimensions.width / pageScale} // Adjust width based on scale
-                height={pageDimensions.height / pageScale} // Adjust height based on scale
-                pageNumber={selectedPage}
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
-                onLoadSuccess={onLoadSuccess}
+                pageNumber={selectedPage}
+                width={pdfPageWidth * pageScale * devicePixelRatio} // Apply zoom scaling and DPR
+                onLoadSuccess={fitPageToContainer} // Fit page initially when loaded
               />
             </Document>
+            <Button onClick={handleZoomIn} className="fixed left-[40%] top-16">
+              zoonIn
+            </Button>
+            <Button onClick={handleZoomOut} className="fixed left-[30%] top-16">
+              zoonOut
+            </Button>
             <PageControls
               currentPage={selectedPage}
               totalPages={totalPages}
