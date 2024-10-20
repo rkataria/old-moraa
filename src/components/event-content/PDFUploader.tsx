@@ -15,6 +15,7 @@ import { PageControls } from '../common/PageControls'
 
 import { Loading } from '@/components/common/Loading'
 import { EventContext } from '@/contexts/EventContext'
+import { usePDFZoomControls } from '@/hooks/usePDFZoomControls'
 import {
   deletePDFFile,
   downloadPDFFile,
@@ -41,7 +42,6 @@ const getPDFName = (frameId: string) => `${frameId}_pdf.pdf`
 
 export function PDFUploader({ frame }: PDFUploaderProps) {
   const { updateFrame } = useContext(EventContext) as EventContextType
-  const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
 
   const [fileUrl, setFileURL] = useState<string | undefined>(
     frame.content?.pdfPath
@@ -50,18 +50,20 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [totalPages, setTotalPages] = useState<null | number>(null)
   const [selectedPage, setSelectedPage] = useState<number>(
-    frame.content?.defaultPage || getLastVisitedPage(frame.id)
+    frame.content?.defaultPage || getLastVisitedPage(frame.id).position || 1
   )
-
-  const [pageDimensions, setPageDimensions] = React.useState({
-    width: 0,
-    height: 0,
-  })
-
-  const [pageScale, setPageScale] = useState(1)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const containerRef = useRef<any>()
+
+  const {
+    handleZoomIn,
+    handleZoomOut,
+    pageScale,
+    pdfPageWidth,
+    isLandscape,
+    fitPageToContainer,
+  } = usePDFZoomControls(containerRef, getLastVisitedPage(frame.id).pageScale)
 
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
@@ -118,6 +120,18 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
       },
     })
   }
+  const handleScaleChange = (zoomType: string) => {
+    let newScale
+    if (zoomType === 'zoomIn') {
+      newScale = handleZoomIn()
+    } else {
+      newScale = handleZoomOut()
+    }
+
+    updateLastVisitedPage(frame.id, {
+      pageScale: newScale,
+    })
+  }
 
   useEffect(() => {
     if (frame.content?.defaultPage) {
@@ -128,49 +142,6 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDocumentLoadSuccess: any = ({ numPages: nextNumPages }: any) => {
     setTotalPages(nextNumPages)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onLoadSuccess = (page: any) => {
-    const isPortraitPage = page.width < page.height
-    setPageView({
-      isPortrait: isPortraitPage,
-      maxWidth: page.width,
-    })
-    const viewport = page.getViewport({ scale: 1 }) // Get the PDF page's original dimensions
-    const { width: pdfWidth, height: pdfHeight } = viewport
-
-    if (containerRef.current) {
-      const containerWidth = containerRef.current.clientWidth
-      const containerHeight = containerRef.current.clientHeight
-
-      // Calculate aspect ratios
-      const pdfAspectRatio = pdfWidth / pdfHeight
-      const containerAspectRatio = containerWidth / containerHeight
-
-      let newWidth
-      let newHeight
-
-      // If the PDF's aspect ratio is wider than the container's, fit by width, else fit by height
-      if (pdfAspectRatio > containerAspectRatio) {
-        newWidth = containerWidth
-        newHeight = containerWidth / pdfAspectRatio
-      } else {
-        newHeight = containerHeight
-        newWidth = containerHeight * pdfAspectRatio
-      }
-
-      // Adjust for device pixel ratio to keep it sharp on high-resolution screens
-      const dpr = window.devicePixelRatio || 1
-
-      // Update dimensions and scaling factor based on calculated values
-      setPageDimensions({
-        width: newWidth,
-        height: newHeight,
-      })
-
-      setPageScale(dpr) // Set scale to adjust for DPI
-    }
   }
 
   const getInnerContent = () => {
@@ -218,18 +189,19 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
         return (
           <div
             ref={containerRef}
-            className={cn('flex justify-start items-start gap-4 h-full', {
-              'w-[60%]': pageView.isPortrait && frame.config.landcapeView,
-              'mx-auto': pageView.isPortrait && !frame.config.landcapeView,
-              'w-full': !pageView.isPortrait,
-            })}>
+            className={cn(
+              'flex justify-start items-start gap-4 h-full w-full mx-auto',
+              {
+                'w-auto aspect-video h-auto max-h-full': isLandscape,
+              }
+            )}>
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
               className={cn(
                 'relative h-full ml-0 overflow-y-auto scrollbar-none',
                 {
-                  'w-full': frame.config.landcapeView,
+                  'w-fit h-[inherit]': isLandscape,
                 }
               )}
               loading={
@@ -238,23 +210,35 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                 </div>
               }>
               <Page
+                renderAnnotationLayer={false}
+                renderTextLayer={false}
+                pageNumber={selectedPage}
+                width={pdfPageWidth * pageScale * devicePixelRatio} // Apply zoom scaling and DPR
+                onLoadSuccess={fitPageToContainer} // Fit page initially when loaded
+              />
+              {/* <Page
                 width={pageDimensions.width / pageScale} // Adjust width based on scale
                 height={pageDimensions.height / pageScale} // Adjust height based on scale
                 pageNumber={selectedPage}
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
                 onLoadSuccess={onLoadSuccess}
-              />
+              /> */}
             </Document>
             <PageControls
+              scale={pageScale}
               currentPage={selectedPage}
               totalPages={totalPages}
+              shouldRenderZoomControls={!isLandscape}
               handleCurrentPageChange={(page: number) => {
                 setSelectedPage(
                   page <= (totalPages || 1) ? page : totalPages || 1
                 )
-                updateLastVisitedPage(frame.id, page)
+                updateLastVisitedPage(frame.id, {
+                  position: page,
+                })
               }}
+              handleScaleChange={handleScaleChange}
             />
           </div>
         )

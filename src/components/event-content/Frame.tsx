@@ -9,10 +9,10 @@ import { MoraaBoardEditor } from './content-types/MoraaBoardEditor'
 import { PollEditor } from './content-types/PollEditor'
 import { FrameTitleDescriptionPanel } from './FrameTitleDescriptionPanel'
 import { MiroEmbedEditor } from './MiroEmbedEditor'
+import { PDFUploader } from './PDFUploader'
 import { PowerpointImporter } from './PowerpointImporter'
 import { ReflectionEditor } from './ReflectionEditor'
 import { VideoEmbedEditor } from './VideoEmbedEditor'
-import { PDFUploader } from './Zoom'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
 import { MoraaPad } from '../common/content-types/MoraaPad/MoraaPad'
 import { MoraaSlide } from '../common/content-types/MoraaSlide/MoraaSlide'
@@ -55,8 +55,8 @@ export function Frame({ frame }: FrameProps) {
     [FrameType.GOOGLE_SLIDES]: (
       <GoogleSlides frame={frame as GoogleSlidesType} />
     ),
-    // [FrameType.PDF_VIEWER]: <PDFUploader frame={frame as any} />,
     [FrameType.PDF_VIEWER]: <PDFUploader frame={frame as any} />,
+    // [FrameType.PDF_VIEWER]: <PDFUploader frame={frame as any} />,
 
     [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
     [FrameType.VIDEO_EMBED]: <VideoEmbedEditor frame={frame as any} />,

@@ -2,19 +2,26 @@ import { Button, cn } from '@nextui-org/react'
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
 
 import { Tooltip } from './ShortuctTooltip'
+import { ZoomControls } from './ZoomControls'
 
 import { useHotkeys } from '@/hooks/useHotkeys'
 
 interface PageControlsProps {
   currentPage: number
   totalPages?: number | null
+  scale?: number
+  shouldRenderZoomControls?: boolean
   handleCurrentPageChange: (pageNumber: number) => void
+  handleScaleChange?: (zoomType: string) => void
 }
 
 export function PageControls({
   currentPage,
   totalPages,
+  scale,
+  shouldRenderZoomControls = false,
   handleCurrentPageChange,
+  handleScaleChange,
 }: PageControlsProps) {
   const handlePrevious = () => {
     if (currentPage === 1) return
@@ -30,8 +37,15 @@ export function PageControls({
 
   const arrowRight = useHotkeys('ArrowRight', handleNext)
 
+  const visibleZoomControls =
+    shouldRenderZoomControls && scale && handleScaleChange
+
   return (
     <div className={cn('absolute right-2 top-2 flex gap-1')}>
+      {visibleZoomControls && (
+        <ZoomControls scale={scale} handleScaleChange={handleScaleChange} />
+      )}
+
       <Tooltip content="Previous page" placement="top">
         <Button
           variant="flat"

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 /* eslint-disable no-restricted-syntax */
 
 import React, { useContext, useEffect, useRef, useState } from 'react'
@@ -17,6 +14,7 @@ import { PageControls } from '../common/PageControls'
 
 import { Loading } from '@/components/common/Loading'
 import { EventContext } from '@/contexts/EventContext'
+import { usePDFZoomControls } from '@/hooks/usePDFZoomControls'
 import {
   deletePDFFile,
   downloadPDFFile,
@@ -43,7 +41,17 @@ const getPDFName = (frameId: string) => `${frameId}_pdf.pdf`
 
 export function PDFUploader({ frame }: PDFUploaderProps) {
   const { updateFrame } = useContext(EventContext) as EventContextType
-  const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerRef = useRef<any>()
+
+  const {
+    handleZoomIn,
+    handleZoomOut,
+    pageScale,
+    pdfPageWidth,
+    fitPageToContainer,
+  } = usePDFZoomControls(containerRef)
 
   const [fileUrl, setFileURL] = useState<string | undefined>(
     frame.content?.pdfPath
@@ -54,9 +62,6 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const [selectedPage, setSelectedPage] = useState<number>(
     frame.content?.defaultPage || getLastVisitedPage(frame.id)
   )
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const containerRef = useRef<any>()
 
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
@@ -125,31 +130,30 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
     setTotalPages(nextNumPages)
   }
 
-  const [zoom, setZoom] = useState(10) // Initialize zoom level
+  // const [zoom, setZoom] = useState(10) // Initialize zoom level
 
-  const [pageScale, setPageScale] = useState(1) // Manage the zoom scale
-  const [pdfPageWidth, setPdfPageWidth] = useState(0) // Actual page width
+  // const [pageScale, setPageScale] = useState(0.5) // Manage the zoom scale
+  // const [pdfPageWidth, setPdfPageWidth] = useState(0) // Actual page width
 
   // Callback to fit the page into the container
-  const fitPageToContainer = (page) => {
-    if (containerRef.current) {
-      const containerWidth = containerRef.current.clientWidth
-      const viewport = page.getViewport({ scale: 1 })
-      const scale = containerWidth / viewport.width // Scale based on container width
+  // const fitPageToContainer = (page) => {
+  //   if (containerRef.current) {
+  //     const containerWidth = containerRef.current.clientWidth
+  //     const viewport = page.getViewport({ scale: 1 })
+  //     const scale = containerWidth / viewport.width // Scale based on container width
 
-      setPdfPageWidth(viewport.width * scale) // Set width to container width
-    }
-  }
-  const handleZoomIn = () => {
-    setPageScale((prevScale) => Math.min(prevScale + 0.25, 3)) // Max zoom scale: 3x (300%)
-  }
+  //     setPdfPageWidth(viewport.width * scale) // Set width to container width
+  //   }
+  // }
+
+  // const handleZoomIn = () => {
+  //   setPageScale((prevScale) => Math.min(prevScale + 0.15, 1)) // Max zoom scale: 3x (300%)
+  // }
 
   // const handleZoomOut = () => {
-  //   setPageScale((prevScale) => Math.max(prevScale - 0.25, 0.5)) // Min zoom scale: 0.5x
+  //   setPageScale((prevScale) => Math.max(prevScale - 0.15, 0.3)) // Min zoom scale: 0.25x (25%)
   // }
-  const handleZoomOut = () => {
-    setPageScale((prevScale) => Math.max(prevScale - 0.25, 0.25)) // Min zoom scale: 0.25x (25%)
-  }
+
   const getInnerContent = () => {
     switch (true) {
       case downloadPDFQuery.isLoading:
@@ -195,11 +199,9 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
         return (
           <div
             ref={containerRef}
-            className={cn('flex justify-start items-start gap-4 h-full', {
-              'w-[60%]': pageView.isPortrait && frame.config.landcapeView,
-              'mx-auto': pageView.isPortrait && !frame.config.landcapeView,
-              'w-full': !pageView.isPortrait,
-            })}>
+            className={cn(
+              'flex justify-start items-start gap-4 h-full w-full mx-auto'
+            )}>
             <Document
               file={downloadPDFQuery.data}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -225,6 +227,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
             <Button onClick={handleZoomIn} className="fixed left-[40%] top-16">
               zoonIn
             </Button>
+            <Button className="fixed left-[80%] top-16">{pageScale}</Button>
             <Button onClick={handleZoomOut} className="fixed left-[30%] top-16">
               zoonOut
             </Button>
@@ -248,4 +251,3 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
 
   return <>{getInnerContent()}</>
 }
-// --scale-factor: 1.1013071895424837; background-color: white; position: relative; min-width: min-content; min-height: min-content;

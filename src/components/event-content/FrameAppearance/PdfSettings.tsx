@@ -2,7 +2,6 @@ import { useContext } from 'react'
 
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
 import { NumberInput } from '@/components/common/NumberInput'
-import { SwitchControl } from '@/components/common/SwitchControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
@@ -33,21 +32,6 @@ export function PdfSettings() {
               })
             }}
           />
-        }
-      />
-      <SwitchControl
-        label="Lanscape"
-        checked={currentFrame.config.landcapeView}
-        onChange={() =>
-          updateFrame({
-            framePayload: {
-              config: {
-                ...currentFrame.config,
-                landcapeView: !currentFrame.config.landcapeView,
-              },
-            },
-            frameId: currentFrame.id,
-          })
         }
       />
     </div>

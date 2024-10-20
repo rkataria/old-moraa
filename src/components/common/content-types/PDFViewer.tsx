@@ -15,6 +15,7 @@ import { Loading } from '../Loading'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { PageControls } from '@/components/common/PageControls'
+import { usePDFZoomControls } from '@/hooks/usePDFZoomControls'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { IFrame } from '@/types/frame.type'
 import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
@@ -39,9 +40,21 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
-    asThumbnail ? 1 : frame.content?.defaultPage || getLastVisitedPage(frame.id)
+    asThumbnail
+      ? 1
+      : frame.content?.defaultPage || getLastVisitedPage(frame.id).position || 1
   )
   const containerRef = React.useRef(null)
+  const canvasRef = React.useRef(null)
+
+  const {
+    handleZoomIn,
+    handleZoomOut,
+    pageScale,
+    isLandscape,
+    pdfPageWidth,
+    fitPageToContainer,
+  } = usePDFZoomControls(containerRef, getLastVisitedPage(frame.id).pageScale)
   const [pageWidth, setPageWidth] = React.useState(null)
   const [pageHeight, setPageHeight] = React.useState(null)
 
@@ -68,24 +81,37 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
     setPosition(newPosition)
   }
 
+  const handleScaleChange = (zoomType: string) => {
+    let newScale
+    if (zoomType === 'zoomIn') {
+      newScale = handleZoomIn()
+    } else {
+      newScale = handleZoomOut()
+    }
+
+    updateLastVisitedPage(frame.id, {
+      pageScale: newScale,
+    })
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDocumentLoadSuccess: any = ({ numPages: nextNumPages }: any) => {
     setTotalPages(nextNumPages)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onLoadSuccess = (page: any) => {
-    const isPortraitPage = page.width < page.height
+  // const onLoadSuccess = (page: any) => {
+  //   const isPortraitPage = page.width < page.height
 
-    setPageView({
-      isPortrait: isPortraitPage,
-      maxWidth: page.width,
-    })
+  //   setPageView({
+  //     isPortrait: isPortraitPage,
+  //     maxWidth: page.width,
+  //   })
 
-    const aspectRatio = page.view[2] / page.view[3] // width / height
-    setPageWidth(containerRef.current.clientWidth)
-    setPageHeight(containerRef.current.clientWidth / aspectRatio)
-  }
+  //   const aspectRatio = page.view[2] / page.view[3] // width / height
+  //   setPageWidth(containerRef.current.clientWidth)
+  //   setPageHeight(containerRef.current.clientWidth / aspectRatio)
+  // }
 
   if (downloadPDFMutation.isError) {
     return (
@@ -106,21 +132,19 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
   return (
     <div
       ref={containerRef}
-      className={cn('flex justify-start items-start gap-4 h-full', {
-        'w-[60%]': pageView.isPortrait && frame.config.landcapeView,
-        'mx-auto': pageView.isPortrait && !frame.config.landcapeView,
-        'w-full': !pageView.isPortrait,
-      })}>
+      id="container"
+      className={cn(
+        'flex justify-start items-start gap-4 h-full mx-auto w-full',
+        {
+          'w-auto aspect-video h-auto max-h-full': isLandscape,
+        }
+      )}>
       <Document
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
-        className={cn(
-          'relative h-full ml-0 overflow-y-auto scrollbar-none',
-
-          {
-            'w-full': frame.config.landcapeView,
-          }
-        )}
+        className={cn('relative h-full ml-0 overflow-y-auto scrollbar-none', {
+          'w-fit h-[inherit]': isLandscape,
+        })}
         loading={
           <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
             <Loading />
@@ -131,28 +155,27 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
         </RenderIf>
         <RenderIf isTrue={!asThumbnail}>
           <Page
-            width={pageWidth * window.devicePixelRatio} // Scale for devicePixelRatio
-            loading={<ContentLoading />}
-            pageNumber={position}
             renderAnnotationLayer={false}
             renderTextLayer={false}
-            className="w-full"
-            // devicePixelRatio={5}
-            devicePixelRatio={
-              (!pageView.isPortrait || frame.config.landcapeView ? 2.5 : 1) *
-              window.devicePixelRatio
-            }
-            onLoadSuccess={onLoadSuccess}
+            pageNumber={position}
+            width={pdfPageWidth * pageScale * devicePixelRatio} // Apply zoom scaling and DPR
+            onLoadSuccess={fitPageToContainer} // Fit page initially when loaded
+            loading={<ContentLoading />}
           />
         </RenderIf>
       </Document>
       <PageControls
+        scale={pageScale}
         currentPage={position}
         totalPages={totalPages}
+        shouldRenderZoomControls={!isLandscape}
         handleCurrentPageChange={(page) => {
           handlePositionChange(page <= totalPages ? page : totalPages)
-          updateLastVisitedPage(frame.id, page)
+          updateLastVisitedPage(frame.id, {
+            position: page,
+          })
         }}
+        handleScaleChange={handleScaleChange}
       />
     </div>
   )
