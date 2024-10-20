@@ -137,6 +137,7 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
         'flex justify-start items-start gap-4 h-full mx-auto w-full',
         {
           'w-auto aspect-video h-auto max-h-full': isLandscape,
+          'justify-center': !isLandscape,
         }
       )}>
       <Document

@@ -180,6 +180,7 @@ export function PDFViewer({ frame }: PDFViewerProps) {
         'flex justify-center items-start h-full w-full mx-auto overflow-y-auto scrollbar-none',
         {
           'w-auto aspect-video h-auto max-h-full': isLandscape,
+          'justify-center': !isLandscape,
         }
       )}>
       <Document

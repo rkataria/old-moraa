@@ -193,6 +193,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
               'flex justify-start items-start gap-4 h-full w-full mx-auto',
               {
                 'w-auto aspect-video h-auto max-h-full': isLandscape,
+                'justify-center': !isLandscape,
               }
             )}>
             <Document
