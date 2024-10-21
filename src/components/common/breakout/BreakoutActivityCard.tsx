@@ -249,7 +249,9 @@ export function BreakoutRoomActivityCard({
                   )}
                 </Draggable>
               ))}
-              {participantDroppableProvided.placeholder}
+              <div className="inline-flex">
+                {participantDroppableProvided.placeholder}
+              </div>
             </div>
           )}
         </StrictModeDroppable>

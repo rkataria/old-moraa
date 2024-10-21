@@ -388,7 +388,11 @@ attachStoreListener({
             payload.eventType === 'INSERT' &&
             meetingId &&
             !getState().event.currentEvent.liveSessionState.breakout
-              .isInBreakoutMeeting
+              .isInBreakoutMeeting &&
+            !getState().event.currentEvent.liveSessionState.breakout
+              .isBreakoutActive &&
+            !getState().event.currentEvent.liveSessionState.dyte
+              .isDyteMeetingLoading
           ) {
             dispatch(getMeetingSessionThunk({ meetingId }))
 
