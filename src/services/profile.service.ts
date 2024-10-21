@@ -1,10 +1,12 @@
+import { UserType } from '@/types/common'
 import { supabaseClient } from '@/utils/supabase/client'
 
 export type UpdateProfile = {
   userId: string
   payload: {
-    first_name: string
-    last_name: string
+    first_name?: string
+    last_name?: string
+    user_type?: UserType
   }
 }
 

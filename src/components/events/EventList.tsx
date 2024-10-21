@@ -96,7 +96,7 @@ export function EventList() {
   if (eventRows.length === 0 && !isLoading) {
     return (
       <EmptyPlaceholder
-        icon={<IoCalendarClear className=" text-[200px] text-gray-200" />}
+        icon={<IoCalendarClear className="text-[200px] text-gray-200" />}
         title="No upcoming events"
         description="You don't have any upcoming events. Create one now!"
         actionButton={

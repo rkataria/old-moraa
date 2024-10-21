@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './pages/__root'
 import { Route as IndexImport } from './pages/index'
+import { Route as OnboardingIndexImport } from './pages/onboarding/index'
 import { Route as LoginIndexImport } from './pages/login/index'
 import { Route as LoginMessagesImport } from './pages/login/messages'
 import { Route as dashboardLayoutImport } from './pages/(dashboard)/_layout'
@@ -42,6 +43,11 @@ const dashboardRoute = dashboardImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const OnboardingIndexRoute = OnboardingIndexImport.update({
+  path: '/onboarding/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -159,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexImport
       parentRoute: typeof rootRoute
     }
+    '/onboarding/': {
+      id: '/onboarding/'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/event-session/$eventId/layout': {
       id: '/event-session/$eventId/layout'
       path: '/event-session/$eventId/layout'
@@ -254,6 +267,7 @@ export const routeTree = rootRoute.addChildren({
   }),
   LoginMessagesRoute,
   LoginIndexRoute,
+  OnboardingIndexRoute,
   EventSessionEventIdLayoutRoute,
   EventsEventIdLayoutRoute,
   EnrollEventIdIndexRoute,
@@ -274,6 +288,7 @@ export const routeTree = rootRoute.addChildren({
         "/",
         "/login/messages",
         "/login/",
+        "/onboarding/",
         "/event-session/$eventId/layout",
         "/events/$eventId/layout",
         "/enroll/$eventId/",
@@ -304,6 +319,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/login/": {
       "filePath": "login/index.tsx"
+    },
+    "/onboarding/": {
+      "filePath": "onboarding/index.tsx"
     },
     "/event-session/$eventId/layout": {
       "filePath": "event-session/$eventId/layout.tsx"

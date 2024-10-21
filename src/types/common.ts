@@ -8,3 +8,8 @@ export type UserPreferences = {
     audio: boolean
   }
 }
+
+export enum UserType {
+  LEARNER = 'LEARNER',
+  CREATOR = 'CREATOR',
+}
