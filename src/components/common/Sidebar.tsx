@@ -8,7 +8,7 @@ export function SidebarComponent() {
   const navigate = useNavigate()
 
   return (
-    <div className="sticky left-0 top-0 w-56 h-full px-4 shrink-0 bg-white border-r border-gray-100 pt-7">
+    <div className="sticky left-0 top-0 w-56 h-full px-4 shrink-0 bg-white border-r border-gray-200 pt-7">
       <div className="flex flex-col grow gap-y-4 overflow-y-auto pb-4">
         <Button
           style={{
