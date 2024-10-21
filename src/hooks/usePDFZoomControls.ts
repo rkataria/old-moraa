@@ -43,7 +43,7 @@ export function usePDFZoomControls(
       // console.log('containerHeight', containerHeght)
       // console.log('pageHeight', pageHeight)
 
-      setPdfPageWidth(viewport.width * scale) // Set width to container width
+      setPdfPageWidth((viewport.width * scale) / devicePixelRatio) // Set width to container width
 
       if (viewport.width > viewport.height) {
         setPageScale(1)

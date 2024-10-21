@@ -159,7 +159,7 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
             renderAnnotationLayer={false}
             renderTextLayer={false}
             pageNumber={position}
-            width={pdfPageWidth * pageScale * devicePixelRatio} // Apply zoom scaling and DPR
+            width={pdfPageWidth * pageScale} // Apply zoom scaling and DPR
             onLoadSuccess={fitPageToContainer} // Fit page initially when loaded
             loading={<ContentLoading />}
           />
