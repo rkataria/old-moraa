@@ -183,7 +183,7 @@ export function Visit() {
       <LogoWithName primary className="m-4" />
       <div className="overflow-y-scroll h-full relative z-[50] pb-40">
         <div className="max-w-[76.25rem] mx-auto py-4 pt-8">
-          <div className="grid grid-cols-[60%_30%] items-start gap-6">
+          <div className="grid grid-cols-[60%_27%] items-start gap-6">
             <div className="h-full flex flex-col gap-5">
               <p className="text-[40px] font-semibold leading-[46px]">
                 {event.name}
@@ -207,13 +207,17 @@ export function Visit() {
                   </RenderIf>
                 </div>
               </RenderIf>
-              <p className="text-gray-600 border-b pb-3 text-sm font-medium">
-                EVENT OVERVIEW
-              </p>
+              <RenderIf isTrue={!!showEditor}>
+                <p className="text-gray-600 border-b pb-3 text-sm font-medium">
+                  Event details
+                </p>
+              </RenderIf>
+
               <RenderIf isTrue={!!showEditor}>
                 <div
-                  className={cn('shadow-sm backdrop-blur-3xl rounded-xl', {
-                    'p-4 bg-default/20': event?.theme?.theme === 'Emoji',
+                  className={cn(' backdrop-blur-3xl rounded-xl', {
+                    'p-4 bg-default/20 shadow-sm':
+                      event?.theme?.theme === 'Emoji',
                   })}>
                   <RichTextEditor
                     editorId={eventId!}

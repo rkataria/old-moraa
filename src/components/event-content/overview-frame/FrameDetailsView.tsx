@@ -37,8 +37,8 @@ export function FrameDetailsView() {
   return (
     <div className="overflow-y-auto scrollbar-none h-full relative z-[50] pb-40">
       <div className="pt-4">
-        <div className="grid grid-cols-[60%_30%] items-start gap-6">
-          <div className="h-full flex flex-col gap-5 w-fit">
+        <div className="grid grid-cols-[60%_27%] items-start gap-6">
+          <div className="h-full flex flex-col gap-5 w-auto">
             <p className="text-[40px] font-semibold leading-[46px]">
               {event.name}
             </p>
@@ -62,14 +62,17 @@ export function FrameDetailsView() {
               </div>
             </RenderIf>
 
-            <p className="text-gray-600 border-b pb-3 font-medium">
-              EVENT OVERVIEW
-            </p>
+            <RenderIf isTrue={showEditor}>
+              <p className="text-gray-600 border-b pb-3 font-medium">
+                Event details
+              </p>
+            </RenderIf>
 
             <RenderIf isTrue={!!showEditor}>
               <div
-                className={cn('shadow-sm backdrop-blur-3xl rounded-xl', {
-                  'p-4 bg-default/10': event?.theme?.theme === 'Emoji',
+                className={cn('backdrop-blur-3xl rounded-xl', {
+                  'p-4 bg-default/10 shadow-sm':
+                    event?.theme?.theme === 'Emoji',
                 })}>
                 <RichTextEditor
                   editorId={eventId!}

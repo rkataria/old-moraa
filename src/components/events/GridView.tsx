@@ -57,7 +57,7 @@ export function GridView({
       {eventRows.map((event) => (
         <Card
           key={event.id}
-          className="cursor-pointer hover:shadow-xl border border-gray-200"
+          className="cursor-pointer hover:shadow-xl border border-gray-100 shadow-sm group/card"
           shadow="none"
           isPressable
           onPress={() => handleCardClick(event)}>
@@ -88,12 +88,14 @@ export function GridView({
                 {event.status}
               </Chip>
 
-              <EventActions
-                as="dropdown"
-                event={event}
-                isOwner={event.owner_id === currentUserId}
-                onDone={refetch}
-              />
+              <div className="opacity-0 group-hover/card:opacity-100">
+                <EventActions
+                  as="dropdown"
+                  event={event}
+                  isOwner={event.owner_id === currentUserId}
+                  onDone={refetch}
+                />
+              </div>
             </div>
 
             <p className="text-xl font-semibold text-black/80 mt-1 line-clamp-2">
@@ -159,19 +161,26 @@ export function GridView({
             </p>
 
             <div className="w-full absolute bottom-0 left-0 flex items-center justify-between p-4">
-              <p className="text-xs text-black/60 ">
-                <RenderIf isTrue={event.owner_id === currentUserId}>
-                  Created by you on{' '}
-                </RenderIf>
-                {DateTime.fromISO(event.created_at).toLocaleString({
-                  year: 'numeric',
-                  month: 'short',
-                  day: '2-digit',
-                })}
-              </p>
+              <Tooltip label="Last updated" showArrow delay={700}>
+                <p className="text-xs text-black/60 ">
+                  <RenderIf isTrue={event.owner_id === currentUserId}>
+                    Updated by you on{' '}
+                  </RenderIf>
+                  {DateTime.fromISO(event.updated_at).toLocaleString({
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                  })}
+                </p>
+              </Tooltip>
 
               <RenderIf isTrue={event.owner_id !== currentUserId}>
                 <UserAvatar
+                  tooltipProps={{
+                    label: 'Creator',
+                    showArrow: true,
+                    delay: 700,
+                  }}
                   profile={event.profile}
                   withName
                   avatarProps={{

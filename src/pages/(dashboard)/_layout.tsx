@@ -9,11 +9,12 @@ export const Route = createFileRoute('/(dashboard)/_layout')({
 
 function DashboardLayout() {
   return (
-    <div className="flex">
-      <SidebarComponent />
-      <div className="w-full flex flex-col">
-        <HeaderComponent />
-        <main className="flex-grow p-6 bg-white rounded-2xl">
+    <div className="flex flex-col h-screen">
+      <HeaderComponent />
+
+      <div className="w-full flex h-full">
+        <SidebarComponent />
+        <main className="flex-grow p-8 bg-white max-h-[calc(100vh_-_56px)] overflow-y-auto scrollbar-none">
           <Outlet />
         </main>
       </div>

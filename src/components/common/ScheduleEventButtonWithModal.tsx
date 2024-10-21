@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import {
   ButtonProps,
@@ -32,7 +32,7 @@ export function ScheduleEventButtonWithModal({
 }: {
   id?: string
   withoutModal?: boolean
-  actionButtonLabel?: string
+  actionButtonLabel?: string | ReactNode
   showLabel?: boolean
   disclosure?: UseDisclosureReturn
   buttonProps?: ButtonProps

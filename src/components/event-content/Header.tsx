@@ -5,11 +5,9 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { PublishButton } from './PublishButton'
 import { StudioTabs } from './StudioTabs'
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
-import { HelpButton } from '../common/HelpButton'
 import { Logo } from '../common/Logo'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
 import { RenderIf } from '../common/RenderIf/RenderIf'
-import { ScheduleEventButtonWithModal } from '../common/ScheduleEventButtonWithModal'
 import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleButton'
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 
@@ -43,13 +41,13 @@ export function Header({
   const renderActionButtons = () => (
     <>
       <AIChatbotToggleButton />
-      <HelpButton />
+      {/* <HelpButton /> */}
       <AddParticipantsButtonWithModal eventId={event.id} />
       <RenderIf
         isTrue={
           event.status !== EventStatus.DRAFT && permissions.canUpdateFrame
         }>
-        <ScheduleEventButtonWithModal
+        {/* <ScheduleEventButtonWithModal
           buttonProps={{
             variant: 'bordered',
             className: 'border-1',
@@ -57,7 +55,7 @@ export function Header({
           showLabel
           id="re-schedule"
           actionButtonLabel="Re-schedule"
-        />
+        /> */}
       </RenderIf>
 
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
@@ -82,7 +80,7 @@ export function Header({
           />
         </div>
         <div className="pr-4 pl-2 border-r-0 border-gray-200 font-semibold flex justify-start items-center gap-4">
-          <span className="font-medium line-clamp-1 max-w-40">
+          <span className="font-medium text-base line-clamp-1 max-w-40">
             {event?.name}
           </span>
           <RenderIf isTrue={permissions.canUpdateFrame}>

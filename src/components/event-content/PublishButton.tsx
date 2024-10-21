@@ -9,13 +9,17 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
+  useDisclosure,
 } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { ChevronDownIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { GrTestDesktop } from 'react-icons/gr'
+import { RiCalendarScheduleLine } from 'react-icons/ri'
 
 import { FrameDetailsView } from './overview-frame/FrameDetailsView'
+import { ScheduleEventButtonWithModal } from '../common/ScheduleEventButtonWithModal'
 import { Tooltip } from '../common/ShortuctTooltip'
 import { Button } from '../ui/Button'
 
@@ -33,6 +37,7 @@ export function PublishButton({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetchEvent: any
 }) {
+  const scheduleModal = useDisclosure()
   const router = useRouter()
   const { permissions } = useEventPermissions()
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
@@ -95,16 +100,36 @@ export function PublishButton({
               if (key === 'live-session') {
                 router.navigate({ to: `/event-session/${eventId}` })
               }
+              if (key === 're-schedule') {
+                scheduleModal.onOpen()
+              }
             }}>
             <DropdownItem
-              key="live-session"
-              className="p-2 rounded-md h-8 bg-gray-100 hover:bg-gray-200"
+              key="re-schedule"
+              className="p-2 rounded-md h-8 hover:bg-gray-200"
               closeOnSelect>
-              Test live session
+              <div className="flex items-center gap-3">
+                <RiCalendarScheduleLine size={19} className="text-gray-600" />
+                Re-schedule event
+              </div>
+            </DropdownItem>
+            <DropdownItem
+              key="live-session"
+              className="p-2 rounded-md h-8 hover:bg-gray-200 flex items-center gap-2"
+              closeOnSelect>
+              <div className="flex items-center gap-3">
+                <GrTestDesktop size={18} className="text-gray-600" />
+                Test live session
+              </div>
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </div>
+      <ScheduleEventButtonWithModal
+        id="re-schedule"
+        showLabel={false}
+        disclosure={scheduleModal}
+      />
       <Modal
         scrollBehavior="inside"
         size="5xl"

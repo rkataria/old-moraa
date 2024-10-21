@@ -566,3 +566,23 @@ export const initialCourseContent = {
     },
   ],
 }
+
+export const initalContentAiWriter = {
+  type: 'doc',
+  content: [
+    {
+      type: 'aiWriter',
+      attrs: {
+        id: '41781a46-1134-4d84-9021-ed5be49530c9',
+        authorName: 'Maxi',
+      },
+    },
+    {
+      type: 'paragraph',
+      attrs: {
+        class: null,
+        textAlign: 'left',
+      },
+    },
+  ],
+}

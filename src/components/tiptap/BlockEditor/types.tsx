@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 
 import { TiptapCollabProvider } from '@hocuspocus/provider'
-import { Content } from '@tiptap/core'
+import { Content, Editor } from '@tiptap/core'
 import { Language } from '@tiptap-pro/extension-ai'
 
 import type { Doc as YDoc } from 'yjs'
@@ -16,7 +16,7 @@ export interface TiptapProps {
   setAiToken: (token: string) => void
   setCollabToken: (token: string) => void
   showHeader?: boolean
-  onEmptyContent?: () => void
+  onEmptyContent?: (editor: Editor) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   classNames?: any
   startContent?: ReactNode
