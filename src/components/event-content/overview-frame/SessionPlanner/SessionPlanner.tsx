@@ -330,7 +330,7 @@ export function SessionPlanner({
                                     }
                                     showTooltip={false}
                                     className={cn(
-                                      'text-lg font-semibold tracking-tight max-w-[31.25rem] text-black/70',
+                                      'text-base font-semibold tracking-tight max-w-[31.25rem] text-black/70',
                                       {
                                         'border border-transparent hover:border-default':
                                           editable,

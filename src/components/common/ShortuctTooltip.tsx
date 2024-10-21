@@ -2,7 +2,7 @@ import {
   Kbd,
   KbdKey,
   Tooltip as NextUiTooltip,
-  TooltipProps,
+  TooltipProps as NextUiTooltipProps,
 } from '@nextui-org/react'
 import { ReactNode } from '@tanstack/react-router'
 
@@ -17,6 +17,9 @@ export type TooltipComponentProps = {
   content?: ReactNode
 }
 
+export type TooltipProps = TooltipComponentProps &
+  Omit<NextUiTooltipProps, 'content'>
+
 export function Tooltip({
   children,
   label,
@@ -24,7 +27,7 @@ export function Tooltip({
   actionKey,
   content,
   ...rest
-}: TooltipComponentProps & Omit<TooltipProps, 'content'>) {
+}: TooltipProps) {
   return (
     <NextUiTooltip
       {...rest}

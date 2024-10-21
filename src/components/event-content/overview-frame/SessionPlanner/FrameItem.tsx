@@ -238,7 +238,7 @@ export function FrameItem({
             ref={_provided.innerRef}
             {..._provided.draggableProps}
             className={cn(
-              'relative w-full bg-white min-h-[3.125rem] group/frame grid  hover:bg-gray-50 border-b last:border-none last:rounded-b-xl hover:shadow-sm duration-300',
+              'relative w-full bg-white min-h-[40px] group/frame grid hover:bg-gray-50 border-b last:border-none last:rounded-b-xl hover:shadow-sm duration-300',
               className,
               {
                 'grid-cols-[40px_100px_120px_1fr_1fr_70px]': editable,
@@ -328,6 +328,7 @@ export function FrameItem({
                 {frame.config?.breakoutDuration || frame.config.time || 0} min
               </div>
             </RenderIf>
+
             <RenderIf isTrue={editable && !parentBreakoutFrame}>
               <Minutes
                 minutes={
@@ -379,7 +380,7 @@ export function FrameItem({
                   </p>
                 </RenderIf>
 
-                <p className="flex items-center gap-2  cursor-pointer">
+                <p className="flex items-center gap-2 cursor-pointer">
                   <BsArrowsAngleExpand className=" text-primary" size={12} />
                   Open
                 </p>
@@ -393,7 +394,7 @@ export function FrameItem({
               note={frame.notes}
               placeholder={preview ? '' : 'Type your note here'}
               editable={editable}
-              className="border-x-1 p-4 cursor-text"
+              className="border-x-1 px-4 py-2 cursor-text"
               wrapOnBlur
             />
 
@@ -460,7 +461,7 @@ export function FrameItem({
         </RenderIf>
 
         <RenderIf isTrue={breakoutFrames?.length === 0}>
-          <div className="grid place-items-center  text-center w-full py-10 bg-primary-50 gap-4">
+          <div className="grid place-items-center text-center w-full py-10 bg-primary-50 gap-4">
             <PiNoteBlankLight size={32} className="text-primary" />
             <p className="text-primary">
               No activity added yet.{' '}

@@ -80,17 +80,19 @@ export function ButtonWithModal({
 
   return (
     <>
-      <Tooltip label="Invite others">
+      <Tooltip label="Invite and include participants">
         <Button
           size="sm"
-          isIconOnly
-          variant="light"
-          className={cn('bg-transparent hover:bg-black/10', {
-            'bg-primary text-white hover:bg-primary/80': open,
+          className={cn('bg-transparent border-1 text-gray-500', {
+            'bg-primary text-white hover:bg-gray/80': open,
           })}
           {...buttonProps}
           onClick={() => setOpen(true)}>
-          <LuUserPlus size={20} />
+          {buttonProps.children || (
+            <>
+              <LuUserPlus size={20} /> Invite participants
+            </>
+          )}
         </Button>
       </Tooltip>
 

@@ -1,5 +1,7 @@
 import { Avatar, AvatarProps, User } from '@nextui-org/react'
 
+import { Tooltip, TooltipProps } from './ShortuctTooltip'
+
 export interface IUserProfile {
   first_name?: string
   last_name?: string
@@ -13,6 +15,7 @@ interface IUserAvatar {
   avatarProps?: AvatarProps
   nameClass?: string
   descriptionClass?: string
+  tooltipProps?: TooltipProps
 }
 export const getProfileName = (profile: IUserProfile) => {
   if (!profile) {
@@ -44,18 +47,21 @@ export function UserAvatar({
   avatarProps,
   nameClass,
   descriptionClass,
+  tooltipProps,
 }: IUserAvatar) {
   if (withName) {
     return (
-      <User
-        name={getProfileName(profile)}
-        description={description}
-        avatarProps={{
-          ...avatarProps,
-          src: getAvatar(profile),
-        }}
-        classNames={{ name: nameClass, description: descriptionClass }}
-      />
+      <Tooltip {...tooltipProps}>
+        <User
+          name={getProfileName(profile)}
+          description={description}
+          avatarProps={{
+            ...avatarProps,
+            src: getAvatar(profile),
+          }}
+          classNames={{ name: nameClass, description: descriptionClass }}
+        />
+      </Tooltip>
     )
   }
 

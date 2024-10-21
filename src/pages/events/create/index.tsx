@@ -21,7 +21,7 @@ import * as yup from 'yup'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { LocalFilePicker } from '@/components/common/LocalFilePicker'
-import { Logo } from '@/components/common/Logo'
+import { MoraaLogo } from '@/components/common/MoraaLogo'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { theme, ThemeModal, Themes } from '@/components/events/ThemeModal'
@@ -156,10 +156,13 @@ export function EventsCreatePage() {
     <ThemeEffects
       className="w-screen min-h-screen grid place-items-center "
       selectedTheme={selectedTheme}>
-      <Logo
+      <MoraaLogo
+        color="primary"
+        filled
         onClick={() => router.navigate({ to: '/events' })}
-        className="fixed left-0 top-0 m-4 cursor-pointer"
+        className="fixed left-0 top-0 m-8 cursor-pointer"
       />
+
       <motion.form
         className="relative z-10"
         initial={{ x: 30 }}
@@ -266,7 +269,7 @@ export function EventsCreatePage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-400">
                     <TbFileDescription size={20} />
-                    <p className="text-base">Description</p>
+                    <p className="text-base">Brief headline</p>
                   </div>
                   {/* <BiExpandAlt
                     className="text-gray-400"

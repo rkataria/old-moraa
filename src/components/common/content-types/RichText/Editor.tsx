@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react'
 
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import 'iframe-resizer/js/iframeResizer.contentWindow'
-import { Content } from '@tiptap/core'
+import { Content, Editor } from '@tiptap/core'
 import { Doc as YDoc } from 'yjs'
 
 import { Loading } from '../../Loading'
@@ -34,7 +34,7 @@ export function RichTextEditor({
   showHeader?: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   classNames?: any
-  onEmptyContent?: () => void
+  onEmptyContent?: (editor: Editor) => void
   startContent?: ReactNode
   hideSideBar?: boolean
   initalContent?: Content

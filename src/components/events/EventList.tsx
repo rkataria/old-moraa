@@ -80,7 +80,7 @@ export function EventList() {
           variant="bordered"
           showShadow
           boundaries={2}
-          color="secondary"
+          color="primary"
           showControls
           page={currentPage}
           total={pages}
@@ -119,8 +119,8 @@ export function EventList() {
     return (
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-[28px] font-medium text-black/80">
-            Good to see you again , {getProfileName(profile)}
+          <p className="text-2xl font-medium text-black/80">
+            Hi there, {getProfileName(profile)}!
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -166,7 +166,7 @@ export function EventList() {
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full h-full">
+    <div className="flex flex-col gap-4 w-full h-full">
       {renderHeader()}
       <div className="flex flex-col h-full">
         {getView()}

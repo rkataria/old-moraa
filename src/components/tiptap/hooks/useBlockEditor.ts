@@ -44,7 +44,7 @@ export const useBlockEditor = ({
   editable?: boolean
   setAiToken: (t: string) => void
   setCollabToken: (t: string) => void
-  onEmptyContent: () => void
+  onEmptyContent: (editor: Editor) => void
   initialContent?: Content
 }) => {
   const leftSidebar = useSidebar()
@@ -91,7 +91,7 @@ export const useBlockEditor = ({
             if (initialContent) {
               editor.commands.setContent(initialContent)
             }
-            onEmptyContent?.()
+            onEmptyContent?.(editor as Editor)
           }
         })
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
