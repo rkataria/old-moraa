@@ -35,7 +35,7 @@ export function ContentStudioFrameContainer() {
   }
 
   return (
-    <div className="w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-thin bg-white border-1 border-gray-200">
+    <div className="w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-thin bg-white">
       {renderFrame()}
     </div>
   )

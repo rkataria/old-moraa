@@ -71,7 +71,7 @@ export function Header({
   if (!event) return null
 
   return (
-    <div className="flex items-center justify-between w-full h-full px-3 bg-white border-b-1 border-gray-200">
+    <div className="flex items-center justify-between w-full h-full px-3 bg-white">
       <div className="flex justify-end items-center gap-2 h-full">
         <div className="pr-4 border-r-2 border-gray-200">
           <Logo
