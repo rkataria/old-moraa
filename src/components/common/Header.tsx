@@ -4,7 +4,7 @@ import { UserMenu } from './UserMenu'
 
 export function HeaderComponent() {
   return (
-    <div className="flex justify-between items-center sticky top-0 z-[50] h-14 bg-white border-b-1 border-gray-200 px-6">
+    <div className="flex justify-between items-center sticky top-0 z-[50] h-14 bg-white px-6">
       <SidebarMini />
       <MoraaLogo color="primary" filled />
 

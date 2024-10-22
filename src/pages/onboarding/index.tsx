@@ -23,7 +23,7 @@ const UserTypes = [
   {
     title: 'Creator',
     role: UserType.CREATOR,
-    image: '/images/website-creator.png',
+    image: '/images/creator.png',
 
     description:
       'As a Creator, you can design courses, host live sessions, and share your content with learners.',
@@ -40,7 +40,7 @@ const UserTypes = [
 
     role: UserType.LEARNER,
 
-    image: '/images/student.png',
+    image: '/images/learner.png',
 
     description:
       'As a Learner, you can access courses, participate in live sessions, and enhance your knowledge.',
