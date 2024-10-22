@@ -42,7 +42,7 @@ export class BreakoutRooms {
 
     return new Promise((resolve) => {
       this.dyteClient.connectedMeetings.getConnectedMeetings().then(() => {
-        setTimeout(resolve, 400)
+        resolve(null)
       })
     })
   }

@@ -17,6 +17,7 @@ import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { IFrame } from '@/types/frame.type'
 // eslint-disable-next-line import/no-cycle
 
@@ -35,11 +36,19 @@ interface BreakoutProps {
 
 export function BreakoutFrameLive({ frame }: BreakoutProps) {
   const { isBreakoutActive } = useBreakoutRooms()
+  const isCurrentFrameBreakoutFrame = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutFrameId === state.event.currentEvent.eventState.currentFrameId
+  )
+
+  const isBreakoutActiveOnCurrentFrame =
+    isBreakoutActive && isCurrentFrameBreakoutFrame
 
   return (
     <div>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
-        {!isBreakoutActive ? (
+        {!isBreakoutActiveOnCurrentFrame ? (
           <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
             <DragDropContext onDragEnd={() => {}}>
               {frame.content?.breakoutRooms?.map((breakout, idx) => (
@@ -58,7 +67,7 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
         )}
       </RenderIf>
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.GROUPS}>
-        {!isBreakoutActive ? (
+        {!isBreakoutActiveOnCurrentFrame ? (
           <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
             <DragDropContext onDragEnd={() => {}}>
               <BreakoutRoomActivityCard
