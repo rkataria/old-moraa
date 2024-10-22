@@ -74,14 +74,25 @@ export function BreakoutFooterButton() {
          */
         roomsCount: breakoutConfig.roomsCount,
         participantsPerRoom: breakoutConfig.participantsPerRoom,
-        roomNames: breakoutConfig.activities?.map((activity) => activity.name),
       })
+      const connectedMeetingsToActivitiesMap: { [x: string]: string } =
+        dyteMeeting.meeting.connectedMeetings.meetings.reduce(
+          (acc, meet, idx) => ({
+            ...acc,
+            [meet.id as string]:
+              breakoutConfig?.activities?.[idx]?.activityId ||
+              breakoutConfig.activityId ||
+              null,
+          }),
+          {}
+        )
       dispatch(
         updateMeetingSessionDataAction({
           breakoutFrameId:
             presentationStatus === PresentationStatuses.STARTED
               ? breakoutConfig.breakoutFrameId
               : null,
+          connectedMeetingsToActivitiesMap,
         })
       )
       if (breakoutConfig.breakoutDuration && realtimeChannel) {
@@ -99,12 +110,10 @@ export function BreakoutFooterButton() {
 
       SessionService.createSessionForBreakouts({
         dyteMeetings: dyteMeeting.meeting.connectedMeetings.meetings.map(
-          (meet, index) => ({
+          (meet) => ({
             connected_dyte_meeting_id: meet.id!,
             data: {
-              currentFrameId:
-                breakoutConfig.activities?.[index]?.activityId ||
-                breakoutConfig.activityId,
+              currentFrameId: connectedMeetingsToActivitiesMap[meet.id!],
               presentationStatus,
             },
             meeting_id: meetingId,

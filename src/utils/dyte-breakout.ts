@@ -87,7 +87,6 @@ export class BreakoutRooms {
   async startBreakoutRooms({
     participantsPerRoom,
     roomsCount,
-    roomNames,
   }: StartBreakoutConfig) {
     await this.cleanupBreakoutManagerInstance()
     await createAndAutoAssignBreakoutRooms({
@@ -95,7 +94,6 @@ export class BreakoutRooms {
       groupSize: participantsPerRoom,
       meeting: this.dyteClient,
       stateManager: this.manager,
-      roomNames,
     })
     await this.cleanupBreakoutManagerInstance()
   }

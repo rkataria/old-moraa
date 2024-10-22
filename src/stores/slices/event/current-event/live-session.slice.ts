@@ -38,6 +38,9 @@ export type SessionState = {
   presentationStatus?: PresentationStatuses
   handsRaised?: string[]
   currentSectionId?: string | null
+  connectedMeetingsToActivitiesMap?: {
+    [x: string]: string
+  }
 }
 
 type SessionModelWithData = Omit<SessionModel, 'data'> & { data?: SessionState }

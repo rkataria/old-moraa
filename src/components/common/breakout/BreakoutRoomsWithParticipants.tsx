@@ -1,7 +1,5 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { useMemo } from 'react'
-
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { Button } from '@nextui-org/react'
 import { DragDropContext } from 'react-beautiful-dnd'
@@ -14,10 +12,8 @@ import { useStoreSelector } from '@/hooks/useRedux'
 
 export function BreakoutRoomsWithParticipants({
   hideActivityCards,
-  smartBreakoutActivityId,
 }: {
   hideActivityCards?: boolean
-  smartBreakoutActivityId?: string
 }) {
   const { getFrameById } = useEventContext()
   const { meeting } = useDyteMeeting()
@@ -28,48 +24,18 @@ export function BreakoutRoomsWithParticipants({
       state.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutFrameId
   )
+  const connectedMeetingsToActivitiesMap = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.connectedMeetingsToActivitiesMap
+  )
   const joinRoom = (meetId: string) => {
     breakoutRoomsInstance?.joinRoom(meetId)
   }
 
   const breakoutFrame = getFrameById(breakoutFrameId!)
-  const smartBreakoutActivity = getFrameById(smartBreakoutActivityId!)
 
-  const sortedBreakoutMeetings = useMemo(
-    () =>
-      connectedMeetings.meetings.sort((a, b) => {
-        const nameA = a.title?.toUpperCase() || 0
-        const nameB = b.title?.toUpperCase() || 0
-        if (nameA < nameB) {
-          return -1
-        }
-        if (nameA > nameB) {
-          return 1
-        }
-
-        // names must be equal
-        return 0
-      }),
-    [connectedMeetings.meetings]
-  )
-
-  const breakoutRooms = useMemo(
-    () =>
-      [...(breakoutFrame?.content?.breakoutRooms || [])]?.sort((a, b) => {
-        const nameA = a.name?.toUpperCase() || 0
-        const nameB = b.name?.toUpperCase() || 0
-        if (nameA < nameB) {
-          return -1
-        }
-        if (nameA > nameB) {
-          return 1
-        }
-
-        // names must be equal
-        return 0
-      }),
-    [breakoutFrame?.content?.breakoutRooms]
-  )
+  const breakoutRooms = breakoutFrame?.content?.breakoutRooms || []
 
   return (
     <div className="w-full flex-1">
@@ -104,19 +70,20 @@ export function BreakoutRoomsWithParticipants({
               })
             )}
           />
-          {sortedBreakoutMeetings.map((meet, index) => (
+          {connectedMeetings.meetings.map((meet, index) => (
             <BreakoutRoomActivityCard
               idx={index}
               breakout={{
                 activityId:
-                  breakoutRooms?.[index]?.activityId ||
-                  breakoutFrame?.content?.groupActivityId ||
-                  smartBreakoutActivityId,
+                  connectedMeetingsToActivitiesMap?.[meet.id as string],
                 name:
-                  breakoutRooms?.[index]?.name ||
+                  breakoutRooms.find(
+                    (room) =>
+                      room.activityId ===
+                      connectedMeetingsToActivitiesMap?.[meet.id as string]
+                  )?.name ||
                   getFrameById(breakoutFrame?.content?.groupActivityId || '')
-                    ?.content?.title ||
-                  smartBreakoutActivity?.content?.title,
+                    ?.content?.title,
                 meetingName: meet.title,
               }}
               editable={false}

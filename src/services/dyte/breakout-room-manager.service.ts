@@ -10,7 +10,6 @@ type CreateAndAutoAssignBreakoutRoomsArgs = {
   roomsCount?: number
   meeting: DyteClient
   stateManager: BreakoutRoomsManager
-  roomNames?: string[]
 }
 
 export const createAndAutoAssignBreakoutRooms = async ({
@@ -18,7 +17,6 @@ export const createAndAutoAssignBreakoutRooms = async ({
   roomsCount,
   meeting,
   stateManager,
-  roomNames,
 }: CreateAndAutoAssignBreakoutRoomsArgs) => {
   if (argGroupSize === undefined && roomsCount === undefined) {
     throw new Error('Either groupSize or roomsCount must be provided')
@@ -63,10 +61,7 @@ export const createAndAutoAssignBreakoutRooms = async ({
 
   createdMeetings.forEach((createdMeeting, index) => {
     const breakoutRoomParticipants = participantGroups[index]
-    stateManager.updateMeetingTitle(
-      createdMeeting.id,
-      roomNames?.[index] || `Room - ${index + 1}`
-    )
+    stateManager.updateMeetingTitle(createdMeeting.id, 'Breakout Room')
 
     if (breakoutRoomParticipants?.length > 0) {
       stateManager.assignParticipantsToMeeting(

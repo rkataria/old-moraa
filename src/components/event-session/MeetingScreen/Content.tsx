@@ -8,7 +8,6 @@ import { ParticipantTiles } from '../ParticipantTiles'
 
 import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsWithParticipants'
 import { PanelResizer } from '@/components/common/PanelResizer'
-import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -17,7 +16,6 @@ import { cn } from '@/utils/utils'
 
 export function Content() {
   const { eventSessionMode, isHost } = useEventSession()
-  const { getFrameById } = useEventContext()
   const isBreakoutOverviewOpen = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isBreakoutOverviewOpen
@@ -54,11 +52,6 @@ export function Content() {
     eventSessionMode === EventSessionMode.LOBBY ||
     (eventSessionMode === EventSessionMode.PEEK && isHost)
 
-  const breakoutFrame = getFrameById(sessionBreakoutFrameId!)
-  const isSmartBreakout = !(
-    breakoutFrame?.content?.breakoutRooms ||
-    breakoutFrame?.content?.groupActivityId
-  )
   const isCurrentFrameInBreakout =
     typeof currentFrameId === 'string' &&
     currentFrameId === sessionBreakoutFrameId
@@ -90,11 +83,7 @@ export function Content() {
       <PanelsContent panelRef={panelRef}>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
           <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
-          <BreakoutRoomsWithParticipants
-            smartBreakoutActivityId={
-              isSmartBreakout ? sessionBreakoutFrameId || undefined : undefined
-            }
-          />
+          <BreakoutRoomsWithParticipants />
         </div>
       </PanelsContent>
     ),

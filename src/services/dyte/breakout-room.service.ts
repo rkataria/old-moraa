@@ -4,7 +4,7 @@ import type DyteClient from '@dytesdk/web-core'
 
 export const participantIdentifier = (
   participant: DyteParticipant | DyteClient['self']
-) => participant.id
+) => participant.customParticipantId || participant.id
 
 // NOTE: Keeping this code for reference
 // export const getAllConnectedParticipants = (meeting: DyteClient) => {
