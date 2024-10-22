@@ -34,11 +34,24 @@ export const beforeLoad = async ({
     session.data.session.user.id
   )
 
-  if (!userProfile.user_type) {
+  if (
+    !userProfile.user_type ||
+    !userProfile.first_name ||
+    !userProfile.last_name
+  ) {
+    const missingParams = {
+      userType: !userProfile.user_type,
+      firstName: !userProfile.first_name,
+      lastName: !userProfile.last_name,
+    }
+
     throw redirect({
       to: '/onboarding',
       search: {
         redirect: location.href,
+        userPersona: missingParams.userType,
+        firstName: missingParams.firstName,
+        lastName: missingParams.lastName,
       },
     })
   }
