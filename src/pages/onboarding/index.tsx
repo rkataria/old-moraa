@@ -141,10 +141,7 @@ export function OnboardingPage() {
         <>
           <div className="grid gap-4">
             <p className="font-semibold text-2xl text-center text-black/80">
-              Give Details?
-            </p>
-            <p className="text-sm text-center text-black/60">
-              We&apos;ll fit the experience to your needs.
+              Tell us about yourself
             </p>
           </div>
           <form
