@@ -95,7 +95,7 @@ export function EventList() {
     )
   }
 
-  if (true) {
+  if (eventRows.length === 0 && !isLoading) {
     return (
       <EmptyPlaceholder
         icon={<IoCalendarClear className="text-[200px] text-gray-200" />}
