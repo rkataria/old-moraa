@@ -53,7 +53,7 @@ export function PresentationToggle() {
   useHotkeys('s', handlePresentationToggle, [presentationStatus])
 
   if (presentationStarted) {
-    return <PresentationControls onStop={stopPresentation} />
+    return <PresentationControls />
   }
 
   return (

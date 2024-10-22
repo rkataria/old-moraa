@@ -80,11 +80,11 @@
   }
 
   .live-button {
-    @apply !bg-black/25 !text-white hover:!bg-black/35;
+    @apply !bg-gray-100 !text-black hover:!bg-gray-200;
   }
 
   .live-button.active {
-    @apply !bg-black/35 !text-white;
+    @apply !bg-gray-200 !text-black;
   }
 }
 
@@ -464,4 +464,13 @@ input[type='number']::-webkit-outer-spin-button {
 
 #note-editor ul {
   margin: 0 !important;
+}
+
+
+/* Dyte Notification */
+dyte-notifications {
+  @apply fixed top-0 left-1/2 -translate-x-1/2 z-50 h-fit w-fit flex justify-center items-center p-2;
+}
+dyte-notification {
+  @apply !animate-none !transition-none;
 }

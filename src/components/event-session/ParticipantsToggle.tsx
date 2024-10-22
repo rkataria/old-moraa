@@ -1,8 +1,12 @@
+import { ButtonGroup } from '@nextui-org/button'
+import { useParams } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoPeopleOutline } from 'react-icons/io5'
+import { LuUserPlus2 } from 'react-icons/lu'
 
+import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
 import { ControlButton } from '../common/ControlButton'
 
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function ParticipantsToggle({
@@ -12,6 +16,9 @@ export function ParticipantsToggle({
   isParticipantsSidebarOpen: boolean
   onClick: () => void
 }) {
+  const { isHost } = useEventSession()
+  const { eventId } = useParams({ strict: false })
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleShortCut = (e: any) => {
     if (e.target.localName.includes('dyte-sidebar')) return
@@ -20,20 +27,33 @@ export function ParticipantsToggle({
   useHotkeys('p', handleShortCut)
 
   return (
-    <ControlButton
-      buttonProps={{
-        isIconOnly: true,
-        size: 'sm',
-        className: cn('live-button', {
-          active: isParticipantsSidebarOpen,
-        }),
-      }}
-      tooltipProps={{
-        label: KeyboardShortcuts.Live.participants.label,
-        actionKey: KeyboardShortcuts.Live.participants.key,
-      }}
-      onClick={onClick}>
-      <IoPeopleOutline size={20} />
-    </ControlButton>
+    <ButtonGroup className="live-button rounded-md">
+      <ControlButton
+        buttonProps={{
+          // isIconOnly: true,
+          size: 'sm',
+          className: cn('live-button rounded-r-none', {
+            active: isParticipantsSidebarOpen,
+          }),
+        }}
+        tooltipProps={{
+          label: KeyboardShortcuts.Live.participants.label,
+          actionKey: KeyboardShortcuts.Live.participants.key,
+        }}
+        onClick={onClick}>
+        {/* <IoPeopleOutline size={20} /> */}
+        People
+      </ControlButton>
+      {isHost && (
+        <AddParticipantsButtonWithModal
+          eventId={eventId!}
+          triggerButtonProps={{
+            isIconOnly: true,
+            className: 'bg-gray-200 rounded-l-none',
+            children: <LuUserPlus2 />,
+          }}
+        />
+      )}
+    </ButtonGroup>
   )
 }

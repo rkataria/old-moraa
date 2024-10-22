@@ -3,12 +3,11 @@
 
 import { ListViewToggle } from './ListViewToggle'
 
-import { PresentationToggle } from '@/components/event-session/PresentationToggle'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
 
-export const HEADER_HEIGHT = 80
-export const HEADER_HEIGHT_WHEN_MINIMIZED = 40
+export const HEADER_HEIGHT = 36
+export const HEADER_HEIGHT_WHEN_MINIMIZED = 36
 
 export function LiveAgendaHeader() {
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
@@ -33,7 +32,6 @@ export function LiveAgendaHeader() {
             {isMaximized && <ListViewToggle />}
           </div>
         </div>
-        <PresentationToggle />
       </div>
     </div>
   )

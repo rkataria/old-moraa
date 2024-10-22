@@ -1,5 +1,5 @@
 import { ButtonProps } from '@nextui-org/button'
-import { MdVideoSettings } from 'react-icons/md'
+import { LuSettings } from 'react-icons/lu'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -24,7 +24,7 @@ export function MediaSettingsToggle({
         label: 'Setting',
       }}
       onClick={onClick}>
-      <MdVideoSettings size={20} />
+      <LuSettings size={20} />
       {label}
     </ControlButton>
   )

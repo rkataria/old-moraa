@@ -10,7 +10,6 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react'
-import { VscMultipleWindows } from 'react-icons/vsc'
 
 import { ControlButton } from '../ControlButton'
 
@@ -180,13 +179,14 @@ export function BreakoutToggleButton({
         buttonProps={{
           size: 'sm',
           variant: 'solid',
-          isIconOnly: true,
-          className: cn('gap-2 p-1 justify-between live-button', bgColor),
+          // isIconOnly: true,
+          className: cn('gap-2 justify-between live-button', bgColor),
         }}
         onClick={() =>
           onStartBreakoutClick ? setOpen(true) : onEndBreakoutClick?.()
         }>
-        <VscMultipleWindows size={22} className="text-white" />
+        {/* <VscMultipleWindows size={22} /> */}
+        Breakout
       </ControlButton>
       {!!onStartBreakoutClick && (
         <Modal isOpen={isOpen} onClose={() => setOpen(false)}>

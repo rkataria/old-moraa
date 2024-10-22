@@ -161,7 +161,7 @@ export function BreakoutFooterButton() {
               className: cn('gap-2 p-1 justify-between live-button'),
             }}
             onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}>
-            <VscMultipleWindows size={22} className="text-white" />
+            <VscMultipleWindows size={22} />
           </ControlButton>
         )
       }

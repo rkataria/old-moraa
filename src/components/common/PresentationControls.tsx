@@ -1,104 +1,123 @@
-import { useContext, useMemo } from 'react'
+import { motion } from 'framer-motion'
+import {
+  RiArrowLeftDoubleLine,
+  RiArrowRightDoubleLine,
+  RiPlayCircleFill,
+  RiStopCircleFill,
+} from 'react-icons/ri'
 
-import { Button, ButtonGroup } from '@nextui-org/react'
-import { IoStop } from 'react-icons/io5'
+import { ContentTypeIcon } from './ContentTypeIcon'
+import { Button } from '../ui/Button'
 
-import { Tooltip } from './ShortuctTooltip'
-
-import { EventContext } from '@/contexts/EventContext'
-import { EventContextType } from '@/types/event-context.type'
-import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
+import { useEventSession } from '@/contexts/EventSessionContext'
+import { PresentationStatuses } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
-export function PresentationControls({
-  onPrevious,
-  onNext,
-  switchPublishedFrames = false,
-  onStop,
-}: {
-  onPrevious?: () => void
-  onNext?: () => void
-  switchPublishedFrames?: boolean
-  onStop: () => void
-}) {
-  const { sections, currentFrame, setCurrentFrame, eventMode } = useContext(
-    EventContext
-  ) as EventContextType
+export function PresentationControls() {
+  const {
+    previousFrame,
+    currentFrame,
+    nextFrame,
+    startPresentation,
+    stopPresentation,
+    presentationStatus,
+  } = useEventSession()
 
-  const previousFrame = useMemo(
-    () =>
-      getPreviousFrame({
-        sections,
-        currentFrame,
-        onlyPublished: switchPublishedFrames && eventMode !== 'present',
-      }),
-    [sections, currentFrame, switchPublishedFrames, eventMode]
-  )
-  const nextFrame = useMemo(
-    () =>
-      getNextFrame({
-        sections,
-        currentFrame,
-        onlyPublished: switchPublishedFrames && eventMode !== 'present',
-      }),
-    [sections, currentFrame, switchPublishedFrames, eventMode]
-  )
+  if (!currentFrame) return <div />
 
-  const handlePrevious = () => {
-    if (eventMode === 'present') onPrevious?.()
-
-    if (previousFrame) setCurrentFrame(previousFrame)
-  }
-
-  const handleNext = () => {
-    if (eventMode === 'present') onNext?.()
-
-    if (nextFrame) setCurrentFrame(nextFrame)
-  }
+  const presentationStarted =
+    presentationStatus === PresentationStatuses.STARTED
 
   return (
-    <ButtonGroup
-      radius="sm"
-      size="sm"
-      fullWidth
-      className="p-1 bg-gray-100 rounded-lg">
-      <Tooltip content="Previous frame" placement="bottom">
+    <div className="flex justify-between items-center gap-2 p-2 pl-4 h-10 bg-gray-100 rounded-full">
+      <motion.div className="flex justify-start items-center gap-2">
+        <ContentTypeIcon
+          frameType={currentFrame.type}
+          classNames="text-black"
+        />
+        <span className="font-semibold w-44 text-ellipsis overflow-hidden">
+          {currentFrame.name}
+        </span>
+      </motion.div>
+      <div className="flex justify-end items-center">
         <Button
-          size="sm"
-          className={cn(
-            'font-semibold rounded-md bg-gray-100 hover:bg-gray-200',
-            {
-              'text-gray-500 hover:bg-gray-100': !previousFrame,
+          isIconOnly
+          className="rounded-full"
+          variant="light"
+          onClick={previousFrame}>
+          <RiArrowLeftDoubleLine size={18} />
+        </Button>
+        <Button
+          isIconOnly
+          className={cn('rounded-full')}
+          variant="light"
+          onClick={() => {
+            if (presentationStarted) {
+              stopPresentation()
+            } else {
+              startPresentation(currentFrame.id)
             }
+          }}>
+          {presentationStarted ? (
+            <RiStopCircleFill size={28} className="text-red-500" />
+          ) : (
+            <RiPlayCircleFill size={28} className="text-green-500" />
           )}
-          disabled={!previousFrame}
-          onClick={handlePrevious}>
-          Prev
         </Button>
-      </Tooltip>
-      <Tooltip content="Stop presentation" placement="bottom">
         <Button
-          size="sm"
-          className="font-semibold rounded-md bg-gray-100 hover:bg-gray-200"
-          onClick={onStop}>
-          <IoStop size={18} className="flex-none" />
-          Stop
+          isIconOnly
+          className="rounded-full"
+          variant="light"
+          onClick={nextFrame}>
+          <RiArrowRightDoubleLine size={18} />
         </Button>
-      </Tooltip>
-      <Tooltip content="Next frame" placement="bottom">
-        <Button
-          size="sm"
-          className={cn(
-            'font-semibold rounded-md bg-gray-100 hover:bg-gray-200',
-            {
-              'text-gray-500 hover:bg-gray-100': !nextFrame,
-            }
-          )}
-          disabled={!nextFrame}
-          onClick={handleNext}>
-          Next
-        </Button>
-      </Tooltip>
-    </ButtonGroup>
+      </div>
+    </div>
   )
+
+  // return (
+  //   <ButtonGroup
+  //     radius="sm"
+  //     size="sm"
+  //     fullWidth
+  //     className="p-1 bg-gray-100 rounded-lg">
+  //     <Tooltip content="Previous frame" placement="bottom">
+  //       <Button
+  //         size="sm"
+  //         className={cn(
+  //           'font-semibold rounded-md bg-gray-100 hover:bg-gray-200',
+  //           {
+  //             'text-gray-500 hover:bg-gray-100': !previousFrame,
+  //           }
+  //         )}
+  //         disabled={!previousFrame}
+  //         onClick={handlePrevious}>
+  //         Prev
+  //       </Button>
+  //     </Tooltip>
+  //     <Tooltip content="Stop presentation" placement="bottom">
+  //       <Button
+  //         size="sm"
+  //         className="font-semibold rounded-md bg-gray-100 hover:bg-gray-200"
+  //         onClick={onStop}>
+  //         <IoStop size={18} className="flex-none" />
+  //         Stop
+  //       </Button>
+  //     </Tooltip>
+  //     <Tooltip content="Next frame" placement="bottom">
+  //       <Button
+  //         size="sm"
+  //         className={cn(
+  //           'font-semibold rounded-md bg-gray-100 hover:bg-gray-200',
+  //           {
+  //             'text-gray-500 hover:bg-gray-100': !nextFrame,
+  //           }
+  //         )}
+  //         disabled={!nextFrame}
+  //         onClick={handleNext}>
+  //         Next
+  //       </Button>
+  //     </Tooltip>
+  //   </ButtonGroup>
+  // )
 }

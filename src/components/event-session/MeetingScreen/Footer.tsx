@@ -1,10 +1,6 @@
-import { DyteClock } from '@dytesdk/react-ui-kit'
-import { useDyteMeeting } from '@dytesdk/react-web-core'
 import toast from 'react-hot-toast'
-import { LuClipboardEdit } from 'react-icons/lu'
 import { useDispatch } from 'react-redux'
 
-import { PresentationProgress } from './PresentationProgress'
 import { ChatsToggle } from '../ChatsToggle'
 import { MeetingRecordingButton } from '../MeetingRecordingButton'
 import { MicToggle } from '../MicToggle'
@@ -15,6 +11,7 @@ import { ScreenShareToggle } from '../ScreenShareToggle'
 import { VideoToggle } from '../VideoToggle'
 
 import { BreakoutFooterButton } from '@/components/common/breakout/BreakoutFooterButton'
+import { PresentationControls } from '@/components/common/PresentationControls'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -27,7 +24,6 @@ import {
 import { cn } from '@/utils/utils'
 
 export function Footer() {
-  const { meeting } = useDyteMeeting()
   const { isHost, setDyteStates, dyteStates } = useEventSession()
   const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
   const currentFrame = useCurrentFrame()
@@ -58,11 +54,7 @@ export function Footer() {
     <div className="h-full w-full flex justify-between items-center px-2">
       <div className="flex justify-start items-center gap-2 p-2 h-12">
         <div className="flex justify-start items-center gap-2">
-          <DyteClock
-            meeting={meeting}
-            className="m-0 px-2 h-8 rounded-md live-button"
-          />
-          <PresentationProgress />
+          <PresentationControls />
         </div>
       </div>
       <div className="flex justify-center items-center gap-2">
@@ -74,8 +66,8 @@ export function Footer() {
           <ReactWithEmojiToggle />
           {isHost && (
             <>
-              <BreakoutFooterButton />
               <MeetingRecordingButton />
+              <BreakoutFooterButton />
             </>
           )}
         </div>
@@ -86,7 +78,7 @@ export function Footer() {
             <Tooltip label="Notes" actionKey="N" placement="top">
               <Button
                 size="sm"
-                isIconOnly
+                // isIconOnly
                 variant="light"
                 className={cn('live-button', {
                   active: rightSidebarMode === 'frame-notes',
@@ -104,7 +96,8 @@ export function Footer() {
                     dispatch(setRightSidebarAction('frame-notes'))
                   }
                 }}>
-                <LuClipboardEdit size={20} strokeWidth={1.7} />
+                {/* <LuClipboardEdit size={20} strokeWidth={1.7} /> */}
+                Note
               </Button>
             </Tooltip>
           )}

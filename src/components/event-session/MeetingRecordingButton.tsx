@@ -1,5 +1,4 @@
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { IoMdRadioButtonOn } from 'react-icons/io'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -38,13 +37,14 @@ export function MeetingRecordingButton() {
         size: 'sm',
         radius: 'md',
         variant: 'flat',
-        isIconOnly: true,
+        // isIconOnly: true,
         className: cn('live-button', {
           active: isRecording,
         }),
       }}
       onClick={onRecordingToggle}>
-      <IoMdRadioButtonOn size={18} />
+      {/* <IoMdRadioButtonOn size={18} /> */}
+      {isRecording ? 'Recording' : 'Record'}
     </ControlButton>
   )
 }

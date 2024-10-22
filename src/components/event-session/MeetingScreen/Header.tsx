@@ -1,3 +1,5 @@
+import { DyteClock } from '@dytesdk/react-ui-kit'
+import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from '@tanstack/react-router'
 import { useDispatch } from 'react-redux'
 
@@ -5,7 +7,6 @@ import { LeaveMeetingToggle } from '../LeaveMeetingToggle'
 import { MediaSettingsToggle } from '../MediaSettingsToggle'
 import { Timer } from '../Timer'
 
-import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
 import { AgendaPanelToggle } from '@/components/common/AgendaPanel/AgendaPanelToggle'
 import { HelpButton } from '@/components/common/HelpButton'
 import { Logo } from '@/components/common/Logo'
@@ -16,6 +17,7 @@ import { toggleLeftSidebarAction } from '@/stores/slices/layout/live.slice'
 import { cn } from '@/utils/utils'
 
 export function Header() {
+  const { meeting: dyetMeeting } = useDyteMeeting()
   const dispatch = useDispatch()
   const { eventId } = useParams({ strict: false })
   const { event } = useEvent({ id: eventId as string })
@@ -42,24 +44,26 @@ export function Header() {
             <Logo />
           )}
         </div>
-        <div className="pr-4 pl-2 border-r-0 border-gray-200 font-semibold">
+        <div className="pr-4 pl-2 border-r-0 border-gray-200 text-md font-semibold">
           {dyteClient?.meta?.meetingTitle || event.name}
         </div>
       </div>
-      <Timer />
       <div className="flex justify-end items-center gap-2 h-full">
+        <Timer />
         <HelpButton
           buttonProps={{
             variant: 'light',
-            className: cn('live-button', {
+            className: cn('bg-transparent', {
               active: dyteStates.activeSettings,
             }),
           }}
         />
+        <DyteClock meeting={dyetMeeting} className="m-0 px-2 h-8" />
+        <LeaveMeetingToggle />
         <MediaSettingsToggle
           buttonProps={{
             variant: 'light',
-            className: cn('live-button', {
+            className: cn('bg-transparent', {
               active: dyteStates.activeSettings,
             }),
           }}
@@ -70,16 +74,6 @@ export function Header() {
             }))
           }
         />
-        {isHost && (
-          <AddParticipantsButtonWithModal
-            eventId={eventId!}
-            triggerButtonProps={{
-              variant: 'light',
-              className: 'live-button',
-            }}
-          />
-        )}
-        <LeaveMeetingToggle />
         {/* <UserMenu /> */}
       </div>
     </div>
