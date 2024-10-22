@@ -30,7 +30,7 @@ export function StudioLayout({ header }: StudioLayoutProps) {
     if (activeTab === 'landing-page') {
       return (
         <div className="w-full h-full p-2">
-          <div className="w-full h-full bg-white border-1 border-gray-200 rounded-md">
+          <div className="w-full h-full bg-white rounded-md">
             <LandingPage />
           </div>
         </div>
@@ -39,7 +39,7 @@ export function StudioLayout({ header }: StudioLayoutProps) {
     if (activeTab === 'session-planner') {
       return (
         <div className="w-full h-full p-2">
-          <div className="h-full max-w-screen-3xl py-10 overflow-y-auto scrollbar-thin bg-white rounded-md border-1 border-gray-200">
+          <div className="h-full max-w-screen-3xl pb-10 pt-4 overflow-y-auto scrollbar-thin bg-white rounded-md">
             <SessionPlanner />
           </div>
         </div>
@@ -55,7 +55,8 @@ export function StudioLayout({ header }: StudioLayoutProps) {
   return (
     <BackgroundContainer
       animateLogo={false}
-      gradientStyle="var(--studio-background)">
+      gradientStyle="white"
+      showLogo={false}>
       <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden backdrop-blur-3xl">
         <div className="flex-none w-full sticky top-0 z-50">
           <Header>{header}</Header>

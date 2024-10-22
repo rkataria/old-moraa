@@ -16,12 +16,13 @@ import { Button } from '../ui/Button'
 import { useAuth } from '@/hooks/useAuth'
 import { useEvents } from '@/hooks/useEvents'
 import { useProfile } from '@/hooks/useProfile'
+import { UserType } from '@/types/common'
 
 const rowsPerPage = 10
 
 export function EventList() {
   const { navigate } = useRouter()
-  const { data: profile } = useProfile()
+  const { data: profile = {} } = useProfile()
   const { currentUser } = useAuth()
   const [listDisplayMode, toggleListDisplayMode] = useState('grid' as Key)
   const [currentPage, setCurrentPage] = useState(1)
@@ -30,6 +31,7 @@ export function EventList() {
     from: (currentPage - 1) * rowsPerPage,
     to: currentPage * rowsPerPage - 1,
   })
+  const isCreator = profile.user_type === UserType.CREATOR
   const [totalEventsCount, setTotalEventsCount] = useState(0)
 
   const pages = Math.ceil(totalEventsCount / rowsPerPage)
@@ -96,18 +98,20 @@ export function EventList() {
   if (eventRows.length === 0 && !isLoading) {
     return (
       <EmptyPlaceholder
-        icon={<IoCalendarClear className=" text-[200px] text-gray-200" />}
+        icon={<IoCalendarClear className="text-[200px] text-gray-200" />}
         title="No upcoming events"
-        description="You don't have any upcoming events. Create one now!"
+        description={`You don't have any upcoming events. ${isCreator ? 'Create one now!' : ''}`}
         actionButton={
-          <Link to="/events/create">
-            <Button
-              size="sm"
-              color="primary"
-              endContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
-              Create new
-            </Button>
-          </Link>
+          profile.user_type === UserType.CREATOR && (
+            <Link to="/events/create">
+              <Button
+                size="sm"
+                color="primary"
+                endContent={<MdOutlineAddBox size={18} aria-hidden="true" />}>
+                Create new
+              </Button>
+            </Link>
+          )
         }
       />
     )
