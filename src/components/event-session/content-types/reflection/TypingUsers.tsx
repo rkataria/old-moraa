@@ -17,7 +17,7 @@ export function TypingUsers() {
         // eslint-disable-next-line react/no-array-index-key
         key={`${typingUser.participantName}-${index}`}
         classNames={{
-          base: 'border border-[#cbbcbc] rounded-full min-w-max justify-start p-2 pr-3 bg-white h-fit',
+          base: 'border border-gray-300 rounded-xl min-w-max justify-start p-2 pr-4 w-fit bg-white h-fit',
           name: 'font-semibold text-black',
         }}
         name={
@@ -31,7 +31,7 @@ export function TypingUsers() {
         }
         avatarProps={{
           src: getAvatarForName(typingUser.participantName),
-          size: 'md',
+          size: 'sm',
         }}
       />
     ))

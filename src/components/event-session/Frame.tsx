@@ -70,7 +70,7 @@ export function Frame() {
     [FrameType.PDF_VIEWER]: (
       <PDFViewer key={currentFrame.id} frame={currentFrame as any} />
     ),
-    [FrameType.REFLECTION]: <Reflection key={currentFrame.id} />,
+    [FrameType.REFLECTION]: <Reflection />,
     [FrameType.VIDEO_EMBED]: (
       <VideoEmbed key={currentFrame.id} frame={currentFrame as any} />
     ),

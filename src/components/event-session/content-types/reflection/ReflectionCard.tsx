@@ -5,11 +5,10 @@ import {
   CardBody,
   CardHeader,
   Chip,
-  Divider,
 } from '@nextui-org/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import countBy from 'lodash.countby'
-import { MdOutlineAddReaction } from 'react-icons/md'
+import { VscReactions } from 'react-icons/vsc'
 
 import { EmojiPicker } from '@/components/common/EmojiPicker'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -22,6 +21,10 @@ type ReactionsProps = {
 }
 function Reactions({ responseId }: ReactionsProps) {
   const { participant, emoteOnReflection, frameReactions } = useEventSession()
+
+  // useEffect(() => {
+  //   console.log('frameReactions', frameReactions)
+  // }, [frameReactions])
 
   const reactions = frameReactions.filter(
     (reaction) => reaction.frame_response_id === responseId
@@ -65,7 +68,7 @@ function Reactions({ responseId }: ReactionsProps) {
 
   return (
     <div className="flex items-start gap-1 justify-between">
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1.5">
         <AnimatePresence initial={false}>
           {distinctReactions.map((reaction: string) => (
             <motion.div
@@ -78,12 +81,11 @@ function Reactions({ responseId }: ReactionsProps) {
                 className={cn(
                   'font-bold hover:bg-primary group/item duration-300 cursor-pointer',
                   {
-                    'border border-primary bg-primary-100':
-                      participantEmotedOnReaction(reaction),
+                    'bg-primary/20': participantEmotedOnReaction(reaction),
                   }
                 )}
                 variant="flat"
-                avatar={<em-emoji set="apple" id={reaction} size={20} />}>
+                avatar={<em-emoji set="apple" id={reaction} size={22} />}>
                 <span className="font-bold text-gray-600 group-hover/item:text-white ">
                   {countsByReaction[reaction]}
                 </span>
@@ -92,17 +94,23 @@ function Reactions({ responseId }: ReactionsProps) {
           ))}
         </AnimatePresence>
       </div>
-      <EmojiPicker
-        triggerIcon={
-          <Button variant="light" className="w-[30px] h-[26px] p-0 min-w-fit">
-            <MdOutlineAddReaction className="text-gray-400 text-xl mt-[0.0625rem]" />
-          </Button>
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onEmojiSelect={(selectedEmoji: any) =>
-          handleEmojiSelect(selectedEmoji.id)
-        }
-      />
+
+      <div>
+        <EmojiPicker
+          triggerIcon={
+            <Button variant="light" className="w-[30px] h-[26px] p-0 min-w-fit">
+              <VscReactions
+                className="text-gray-400 mt-[0.0625rem]"
+                size={24}
+              />
+            </Button>
+          }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onEmojiSelect={(selectedEmoji: any) =>
+            handleEmojiSelect(selectedEmoji.id)
+          }
+        />
+      </div>
     </div>
   )
 }
@@ -136,39 +144,35 @@ export function ReflectionCard({
   }
 
   return (
-    <Card
-      shadow="none"
-      className={cn('border-2 border-primary-200 rounded-md')}>
-      <CardHeader>
-        <div className="flex justify-start items-center gap-5">
+    <Card className="rounded-2xl shadow-md border border-gray-50">
+      <CardHeader className="p-4">
+        <div className="flex justify-start items-center gap-2">
           <Avatar
-            isBordered
             radius="full"
-            size="md"
-            className="min-w-fit"
-            color="primary"
+            size="sm"
+            className="min-w-fit w-6 h-6"
             src={getAvatar()}
           />
-          <h4 className="text-small font-semibold leading-none text-primary-600">
+          <h4 className="text-sm text-black/70">
             {isAnonymous ? 'Anonymous' : username}
             {isOwner && ' (you)'}
           </h4>
         </div>
       </CardHeader>
-      <CardBody className="pt-0 flex flex-col justify-between">
-        <div>
-          <p className="text-gray-500">{reflection}</p>
+      <CardBody className="pt-0 px-4 flex flex-col justify-between">
+        <div className="w-full">
+          <p className="text-base text-gray-800">{reflection}</p>
           {isOwner && (
             <Button
               variant="light"
               onClick={enableEditReflection}
-              className="w-auto p-0 min-w-fit h-auto text-xs text-slate-600">
+              className="w-auto p-0 min-w-fit mt-2.5 h-auto text-xs text-slate-400 hover:text-primary !bg-transparent">
               <span>Edit</span>
             </Button>
           )}
         </div>
-        <div>
-          <Divider className="my-3" />
+        <div className="mt-6">
+          {/* <Divider className="my-3" /> */}
           <Reactions responseId={responseId} />
         </div>
       </CardBody>

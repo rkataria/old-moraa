@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 
 import uniqBy from 'lodash.uniqby'
 
-import { useRealtimeChannel } from './useRealtimeChannel'
+import { useEventSession } from '@/contexts/EventSessionContext'
 
 export const useTypingUsers = () => {
-  const { realtimeChannel } = useRealtimeChannel()
+  const { realtimeChannel } = useEventSession()
   const [typingUsers, setTypingUsers] = useState<
     Array<{ participantId: string; participantName: string }>
   >([])

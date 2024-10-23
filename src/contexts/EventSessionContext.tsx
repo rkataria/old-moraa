@@ -173,10 +173,16 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       return
     }
 
-    setCurrentFrameLoading(true)
-
     // Fetch current frame responses
-    const fetchCurrentFrameResponses = async () => {
+    const fetchCurrentFrameResponses = async ({
+      shouldTriggerLoader = true,
+    }: {
+      shouldTriggerLoader?: boolean
+      calledBy?: string
+    }) => {
+      if (shouldTriggerLoader) {
+        setCurrentFrameLoading(true)
+      }
       const { data, error: _error } = await supabase
         .from('frame_response')
         .select(
@@ -196,7 +202,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       setCurrentFrameLoading(false)
     }
 
-    fetchCurrentFrameResponses()
+    fetchCurrentFrameResponses({})
 
     if (!frameHasFrameResponses(currentFrame.type as FrameType)) return
 
@@ -212,7 +218,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         },
         (payload) => {
           if (['INSERT', 'UPDATE'].includes(payload.eventType)) {
-            fetchCurrentFrameResponses()
+            fetchCurrentFrameResponses({
+              shouldTriggerLoader: false,
+            })
           }
         }
       )
@@ -223,7 +231,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       channels.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel, currentFrame, eventSessionMode])
+  }, [currentFrame, eventSessionMode])
 
   useEffect(() => {
     if (presentationStatus !== PresentationStatuses.STARTED) return
@@ -453,7 +461,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
             updatedReactions.push(payload.new)
           }
 
-          if (payload.eventType === 'UPDATE') {
+          if (payload.eventType === 'UPDATE' && !payload.new.reaction) {
+            updatedReactions = updatedReactions.filter(
+              (r) => r.id !== payload.new.id
+            )
+          }
+
+          if (payload.eventType === 'UPDATE' && payload.new.reaction) {
             updatedReactions = updatedReactions.map((reaction) => {
               if (reaction.id === payload.old.id) {
                 return payload.new
@@ -462,7 +476,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
               return reaction
             })
           }
-          setFrameReactions(updatedReactions)
+          console.log('updated reactions after block', updatedReactions)
+          setFrameReactions([...updatedReactions])
         }
       )
       .subscribe()
@@ -510,7 +525,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       if (action === 'DELETE') {
         reactionQueryResponse = await supabase
           .from('reaction')
-          .delete()
+          .update({
+            reaction: null,
+          })
+          .eq('id', reactionId)
+        reactionQueryResponse = await supabase
+          .from('reaction')
+          .delete({ id: reaction })
           .eq('id', reactionId)
       }
 

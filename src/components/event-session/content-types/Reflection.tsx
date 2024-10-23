@@ -124,7 +124,7 @@ export function Reflection() {
 
   return (
     <div className="w-full h-full flex justify-start items-start bg-white p-2 rounded-md">
-      <div className="w-full grid grid-cols-2 lg:grid-cols-3 gap-2">
+      <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-4">
         {isHost ? <HostView /> : <ParticipantView />}
       </div>
     </div>

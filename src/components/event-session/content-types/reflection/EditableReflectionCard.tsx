@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import {
   Avatar,
-  Button,
   Card,
   CardBody,
   CardFooter,
@@ -15,6 +14,7 @@ import { useDebounce } from '@uidotdev/usehooks'
 
 import type { IFrame, IReflectionResponse } from '@/types/frame.type'
 
+import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useTypingUsers } from '@/hooks/useTypingUsers'
 import { cn, getAvatarForName } from '@/utils/utils'
@@ -106,22 +106,16 @@ export function EditableReflectionCard({
   }
 
   return (
-    <Card
-      shadow="none"
-      className={cn('border-2 border-primary-200 rounded-md')}>
-      <CardHeader>
+    <Card className="rounded-2xl shadow-md border border-gray-50">
+      <CardHeader className="p-4">
         <div className="flex justify-start items-center gap-2">
           <Avatar
-            isBordered
             radius="full"
-            size="md"
-            className="min-w-fit"
-            color="primary"
+            size="sm"
+            className="min-w-fit w-6 h-6"
             src={getAvatarForName(username, avatarUrl)}
           />
-          <h4 className="text-small font-semibold leading-none text-primary-500">
-            {username}
-          </h4>
+          <h4 className="text-sm text-black/70">{username}</h4>
         </div>
       </CardHeader>
       <CardBody className="pt-0 flex flex-col justify-between">
@@ -157,6 +151,7 @@ export function EditableReflectionCard({
               type="button"
               color="primary"
               variant="ghost"
+              className="border-1"
               onClick={() => {
                 removeTyping()
                 if (!selfResponse) {
@@ -177,7 +172,7 @@ export function EditableReflectionCard({
 
                 setEditEnabled(false)
               }}>
-              Submit
+              Save
             </Button>
           </div>
         </div>
