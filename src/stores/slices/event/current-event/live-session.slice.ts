@@ -110,7 +110,7 @@ export const liveSessionSlice = createSlice({
       state,
       action: PayloadAction<SessionState>
     ) => {
-      if (state.activeSession.isSuccess !== true) {
+      if (!state.activeSession.data || state.activeSession.isSuccess !== true) {
         console.error('Session must be fetched before updating it.')
 
         return
