@@ -37,7 +37,7 @@ export type FrameReaction = {
 }
 
 export type DyteStates = {
-  [key: string]: string | boolean
+  [key: string]: any
 }
 
 export type EventSessionContextType = {

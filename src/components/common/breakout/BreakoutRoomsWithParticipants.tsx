@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { DyteConnectedMeetings } from '@dytesdk/web-core'
 import { Button } from '@nextui-org/react'
 import { DragDropContext } from 'react-beautiful-dnd'
 
@@ -17,7 +18,10 @@ export function BreakoutRoomsWithParticipants({
 }) {
   const { getFrameById } = useEventContext()
   const { meeting } = useDyteMeeting()
-  const connectedMeetings = useDyteSelector((dyte) => dyte.connectedMeetings)
+  const mainMeetingId = meeting.meta.meetingId
+  const connectedMeetings = meeting.connectedMeetings?.meetings || []
+  const mainMeetingParticipants =
+    meeting.connectedMeetings?.parentMeeting?.participants || []
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
   const breakoutFrameId = useStoreSelector(
     (state) =>
@@ -35,7 +39,33 @@ export function BreakoutRoomsWithParticipants({
 
   const breakoutFrame = getFrameById(breakoutFrameId!)
 
-  const breakoutRooms = breakoutFrame?.content?.breakoutRooms || []
+  const breakoutRooms = breakoutFrame?.content?.breakoutRooms || [
+    {
+      activityId: breakoutFrame.content?.groupActivityId,
+      name: 'Group Activity',
+    },
+  ]
+  const activityIdToConnectedMeetingIdsMap: typeof connectedMeetingsToActivitiesMap =
+    Object.entries(connectedMeetingsToActivitiesMap || {}).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [value]: key,
+      }),
+      {}
+    )
+
+  const sortedConnectedMeetings = breakoutFrame.content?.groupActivityId
+    ? connectedMeetings.sort((a, b) => a.id!.localeCompare(b.id!))
+    : breakoutRooms
+        .map(
+          (room) =>
+            connectedMeetings.find(
+              (meet) =>
+                meet.id ===
+                activityIdToConnectedMeetingIdsMap[room.activityId || '']
+            ) as DyteConnectedMeetings['meetings'][number]
+        )
+        .filter(Boolean)
 
   return (
     <div className="w-full flex-1">
@@ -57,21 +87,14 @@ export function BreakoutRoomsWithParticipants({
             breakout={{
               name: 'Main Room',
             }}
-            roomId={
-              connectedMeetings.parentMeeting?.id || meeting.meta.meetingId
-            }
+            roomId={mainMeetingId}
             idx={1000}
             hideActivityCard
-            participants={connectedMeetings.parentMeeting.participants?.map(
-              (p) => ({
-                displayName: p?.displayName || '',
-                id: p?.id || '',
-                displayPictureUrl: p?.displayPictureUrl || '',
-              })
-            )}
+            participants={mainMeetingParticipants}
           />
-          {connectedMeetings.meetings.map((meet, index) => (
+          {sortedConnectedMeetings.map((meet, index) => (
             <BreakoutRoomActivityCard
+              key={meet.id}
               idx={index}
               breakout={{
                 activityId:
@@ -91,11 +114,11 @@ export function BreakoutRoomsWithParticipants({
               hideActivityCard={hideActivityCards}
               participants={meet.participants?.map((p) => ({
                 displayName: p?.displayName || '',
-                id: p?.id || '',
+                customParticipantId: p?.customParticipantId || '',
                 displayPictureUrl: p?.displayPictureUrl || '',
               }))}
               JoinRoomButton={
-                meet.id !== connectedMeetings.parentMeeting.id ? (
+                meet.id !== mainMeetingId ? (
                   <Button
                     className="m-2 border-1"
                     size="sm"

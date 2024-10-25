@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { VscMultipleWindows } from 'react-icons/vsc'
 
-import { BreakoutToggleButton } from './BreakoutToggleButton'
+import { BreakoutButtonWithConfirmationModal } from './BreakoutButtonWithConfirmationModal'
 import { ControlButton } from '../ControlButton'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
@@ -19,7 +19,7 @@ import { StartBreakoutConfig } from '@/utils/dyte-breakout'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
-export function BreakoutFooterButton() {
+export function BreakoutButton() {
   const dyteMeeting = useDyteMeeting()
   const {
     isHost,
@@ -27,6 +27,7 @@ export function BreakoutFooterButton() {
     presentationStatus,
     setCurrentFrame,
     realtimeChannel,
+    setDyteStates,
   } = useEventSession()
 
   const meetingId = useStoreSelector(
@@ -127,6 +128,12 @@ export function BreakoutFooterButton() {
 
   const onBreakoutEnd = () => {
     breakoutRoomsInstance?.endBreakoutRooms()
+    dispatch(
+      updateMeetingSessionDataAction({
+        breakoutFrameId: null,
+        connectedMeetingsToActivitiesMap: {},
+      })
+    )
     realtimeChannel?.send({
       type: 'broadcast',
       event: 'timer-close-event',
@@ -151,6 +158,37 @@ export function BreakoutFooterButton() {
   const defaultRoomsCount = currentFrame?.content?.breakoutRooms?.length
   const defaultParticipantsPerRoom = currentFrame?.config?.participantPerGroup
   const defaultBreakoutDuration = currentFrame?.config.breakoutDuration
+
+  if (
+    !sessionBreakoutFrameId &&
+    presentationStatus === PresentationStatuses.STOPPED
+  ) {
+    return (
+      <ControlButton
+        tooltipProps={{
+          content: isBreakoutActive ? 'View Breakout' : 'Start Breakout',
+        }}
+        buttonProps={{
+          size: 'sm',
+          variant: 'solid',
+          // isIconOnly: true,
+          className: cn('gap-2 justify-between live-button', {
+            '!bg-green-500 !text-white': isBreakoutActive,
+          }),
+        }}
+        onClick={() =>
+          setDyteStates((state) => ({
+            ...state,
+            activeBreakoutRoomsManager: {
+              active: true,
+              mode: 'create',
+            },
+          }))
+        }>
+        Breakout
+      </ControlButton>
+    )
+  }
 
   if (isBreakoutActive) {
     if (
@@ -177,24 +215,10 @@ export function BreakoutFooterButton() {
     }
 
     return (
-      <BreakoutToggleButton
+      <BreakoutButtonWithConfirmationModal
         key="end-breakout"
         label="End breakout"
         onEndBreakoutClick={onBreakoutEnd}
-      />
-    )
-  }
-
-  if (presentationStatus === PresentationStatuses.STOPPED) {
-    return (
-      <BreakoutToggleButton
-        key="start-breakout-1"
-        label="Start breakout"
-        onStartBreakoutClick={(breakoutConfig) =>
-          onBreakoutStartOnBreakoutSlide({
-            ...breakoutConfig,
-          })
-        }
       />
     )
   }
@@ -205,7 +229,7 @@ export function BreakoutFooterButton() {
       currentFrame?.type === FrameType.BREAKOUT)
   ) {
     return (
-      <BreakoutToggleButton
+      <BreakoutButtonWithConfirmationModal
         key="start-breakout-2"
         label="Start breakout"
         roomsCount={defaultRoomsCount}

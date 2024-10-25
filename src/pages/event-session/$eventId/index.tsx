@@ -1,11 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 import { provideDyteDesignSystem } from '@dytesdk/react-ui-kit'
-import {
-  DyteProvider,
-  useDyteClient,
-  useDyteSelector,
-} from '@dytesdk/react-web-core'
+import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 
 import { Loading } from '@/components/common/Loading'
@@ -16,6 +12,7 @@ import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useTimer } from '@/hooks/use-timer'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useUserPreferences } from '@/hooks/userPreferences'
 import { resetEventAction } from '@/stores/slices/event/current-event/event.slice'
@@ -50,7 +47,7 @@ export function EventSessionPageInner() {
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
   )
-  const isBreakoutActive = useDyteSelector((m) => m.connectedMeetings.isActive)
+  const { isBreakoutActive } = useBreakoutRooms()
 
   useSyncValueInRedux({
     value: isBreakoutActive,

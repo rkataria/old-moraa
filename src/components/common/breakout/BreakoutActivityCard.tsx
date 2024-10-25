@@ -219,10 +219,10 @@ export function BreakoutRoomActivityCard({
 
               {participants?.map((participant, index) => (
                 <Draggable
-                  key={`participant-draggable_${participant.id}`}
+                  key={`participant-draggable_${participant.customParticipantId}`}
                   index={index}
                   isDragDisabled={!isOwner}
-                  draggableId={`participant-draggable_${participant.id}`}>
+                  draggableId={`participant-draggable_${participant.customParticipantId}`}>
                   {(sectionDraggableProvided) => (
                     <div
                       className="mb-2 items-center mr-2"

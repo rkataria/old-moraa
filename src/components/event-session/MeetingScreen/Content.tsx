@@ -70,14 +70,17 @@ export function Content() {
       </PanelsContent>
     ),
     lobby_breakout_view: (
-      <PanelsContent panelRef={panelRef}>
-        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
-          <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
-          <div className="overflow-y-auto">
-            <BreakoutRoomsWithParticipants hideActivityCards />
-          </div>
-        </div>
-      </PanelsContent>
+      <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-lg m-auto">
+        <ParticipantTiles spotlightMode />
+      </div>
+      // <PanelsContent panelRef={panelRef}>
+      //   <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
+      //     <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
+      //     <div className="overflow-y-auto">
+      //       <BreakoutRoomsWithParticipants hideActivityCards />
+      //     </div>
+      //   </div>
+      // </PanelsContent>
     ),
     frame_breakout_view: (
       <PanelsContent panelRef={panelRef}>

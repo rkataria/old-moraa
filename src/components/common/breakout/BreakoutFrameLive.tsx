@@ -53,6 +53,7 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
             <DragDropContext onDragEnd={() => {}}>
               {frame.content?.breakoutRooms?.map((breakout, idx) => (
                 <BreakoutRoomActivityCard
+                  key={breakout.activityId}
                   idx={idx}
                   editable={false}
                   breakout={breakout}
@@ -71,6 +72,7 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
           <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
             <DragDropContext onDragEnd={() => {}}>
               <BreakoutRoomActivityCard
+                key={frame.id}
                 idx={0}
                 editable={false}
                 breakout={{

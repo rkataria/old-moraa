@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import {
@@ -15,7 +15,7 @@ import { ControlButton } from '../ControlButton'
 
 import { cn } from '@/utils/utils'
 
-export function BreakoutToggleButton({
+export function BreakoutButtonWithConfirmationModal({
   onStartBreakoutClick,
   onEndBreakoutClick,
   label,
@@ -50,6 +50,25 @@ export function BreakoutToggleButton({
         : 2),
     breakoutDuration: breakoutDuration || 5,
   })
+
+  useEffect(() => {
+    setBreakoutConfig({
+      participantPerGroup:
+        participantPerGroup ||
+        Math.ceil(currentParticipantCount / (roomsCount || 2)),
+      roomsCount:
+        roomsCount ||
+        (participantPerGroup
+          ? Math.floor(currentParticipantCount / participantPerGroup)
+          : 2),
+      breakoutDuration: breakoutDuration || 5,
+    })
+  }, [
+    breakoutDuration,
+    currentParticipantCount,
+    participantPerGroup,
+    roomsCount,
+  ])
 
   const bgColor = {
     danger: '!bg-red-500 hover:!bg-red-500',

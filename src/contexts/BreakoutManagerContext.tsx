@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 
-import { useDyteSelector } from '@dytesdk/react-web-core'
+import { useDyteMeeting } from '@dytesdk/react-web-core'
 
 import { BreakoutRooms } from '@/utils/dyte-breakout'
 
@@ -19,13 +19,13 @@ export function BreakoutManagerContextProvider({
 }: PropsWithChildren<unknown>) {
   const [breakoutRoomsInstance, setBreakoutRoomsInstance] =
     useState<BreakoutRooms | null>(null)
-  const dyteClient = useDyteSelector((state) => state)
+  const { meeting } = useDyteMeeting()
 
   const initiateBreakoutInstance = useCallback(() => {
-    if (!dyteClient) return
-    const _breakoutRoomsInstance = new BreakoutRooms(dyteClient)
+    if (!meeting) return
+    const _breakoutRoomsInstance = new BreakoutRooms(meeting)
     setBreakoutRoomsInstance(_breakoutRoomsInstance)
-  }, [dyteClient])
+  }, [meeting])
 
   useEffect(() => {
     initiateBreakoutInstance()
