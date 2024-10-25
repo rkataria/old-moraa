@@ -44,10 +44,7 @@ export function PublishButton({
 
   const publishMutation = useMutation({
     mutationFn: async () => {
-      await EventService.updateEvent({
-        eventId,
-        data: { status: EventStatus.ACTIVE },
-      })
+      await EventService.publishEvent({ id: eventId })
     },
     onError: () => {
       console.error('Failed to publish the event.')

@@ -151,6 +151,11 @@ const createEvent = async (event: ICreateEventPayload) => {
   }
 }
 
+const publishEvent = async (payload: { id: string }) =>
+  supabaseClient.functions.invoke('publish-event', {
+    body: payload,
+  })
+
 const updateEvent = async (payload: {
   eventId: string
   data: {
@@ -195,4 +200,5 @@ export const EventService = {
   updateEvent,
   deleteEventParticipant,
   scheduleEvent,
+  publishEvent,
 }
