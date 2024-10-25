@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 
 import { useSelf } from '@liveblocks/react/suspense'
+import { ErrorBoundary } from '@sentry/react'
 import { Tldraw } from 'tldraw'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -17,12 +18,14 @@ export function MoraaBoardEditor() {
 
   return (
     <div className="relative w-full h-full flex flex-col justify-center items-center rounded-md overflow-hidden z-[0]">
-      <Tldraw
-        // persistenceKey={roomId}
-        autoFocus
-        store={store}
-        hideUi={preview}
-      />
+      <ErrorBoundary>
+        <Tldraw
+          // persistenceKey={roomId}
+          autoFocus
+          store={store}
+          hideUi={preview}
+        />
+      </ErrorBoundary>
     </div>
   )
 }

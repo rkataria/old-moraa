@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useSelf } from '@liveblocks/react/suspense'
+import { ErrorBoundary } from '@sentry/react'
 import { Tldraw, track, useEditor } from 'tldraw'
 
 import { ContentLoading } from '../ContentLoading'
@@ -44,17 +45,19 @@ export function MoraaBoard({ frame, isInteractive = true }: MoraaBoardProps) {
           <ContentLoading />
         </div>
       ) : (
-        <Tldraw
-          // persistenceKey={roomId}
-          autoFocus
-          store={store}
-          components={{
-            SharePanel: readOnly ? null : NameEditor,
-          }}
-          onMount={(editor) => {
-            editor.updateInstanceState({ isReadonly: !!readOnly })
-          }}
-        />
+        <ErrorBoundary>
+          <Tldraw
+            // persistenceKey={roomId}
+            autoFocus
+            store={store}
+            components={{
+              SharePanel: readOnly ? null : NameEditor,
+            }}
+            onMount={(editor) => {
+              editor.updateInstanceState({ isReadonly: !!readOnly })
+            }}
+          />
+        </ErrorBoundary>
       )}
     </div>
   )
