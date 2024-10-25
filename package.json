@@ -25,9 +25,9 @@
   "dependencies": {
     "@ai-sdk/openai": "^0.0.13",
     "@dytesdk/react-ui-kit": "^2.0.5",
-    "@dytesdk/react-web-core": "^2.1.4",
+    "@dytesdk/react-web-core": "^2.1.9",
     "@dytesdk/video-background-transformer": "^2.0.3",
-    "@dytesdk/web-core": "^2.1.4",
+    "@dytesdk/web-core": "^2.1.9",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@fontsource-variable/outfit": "^5.0.13",
