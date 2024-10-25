@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { User } from '@supabase/supabase-js'
-import userflow from 'userflow.js'
 
 import { attachOnStoreInitListener, renameSliceActions } from '@/stores/helpers'
 import { getUserThunk } from '@/stores/thunks/user.thunks'
@@ -23,8 +22,6 @@ export const userSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload
-      userflow.identify(state.user.id)
-      userflow.init(`${import.meta.env.VITE_USERFLOW_ID}`)
     },
   },
   extraReducers: (builder) => {

@@ -12,6 +12,7 @@ import { motion } from 'framer-motion'
 import { Controller, useForm } from 'react-hook-form'
 import { FaCheck } from 'react-icons/fa6'
 import { IoIosCheckmarkCircle } from 'react-icons/io'
+import userflow from 'userflow.js'
 import * as z from 'zod'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
@@ -105,6 +106,13 @@ export function OnboardingPage() {
       onSuccess: ({ data }) => {
         if (data) {
           namesForm.reset()
+
+          // Update userflow with first and last name
+          userflow.updateUser({
+            first_name: values.first_name,
+            last_name: values.last_name,
+          })
+
           if (userPersona) {
             router.navigate({
               search: {
@@ -129,6 +137,9 @@ export function OnboardingPage() {
       {
         onSuccess: ({ data }) => {
           if (data) {
+            // Update userflow with user type
+            userflow.updateUser({ user_type: userType })
+
             router.navigate({ to: redirect })
           }
         },

@@ -15,6 +15,7 @@ import { cn } from '@/utils/utils'
 
 export function PresentationControls() {
   const {
+    isHost,
     previousFrame,
     currentFrame,
     nextFrame,
@@ -39,39 +40,41 @@ export function PresentationControls() {
           {currentFrame.name}
         </span>
       </motion.div>
-      <div className="flex justify-end items-center">
-        <Button
-          isIconOnly
-          className="rounded-full"
-          variant="light"
-          onClick={previousFrame}>
-          <RiArrowLeftDoubleLine size={18} />
-        </Button>
-        <Button
-          isIconOnly
-          className={cn('rounded-full')}
-          variant="light"
-          onClick={() => {
-            if (presentationStarted) {
-              stopPresentation()
-            } else {
-              startPresentation(currentFrame.id)
-            }
-          }}>
-          {presentationStarted ? (
-            <RiStopCircleFill size={28} className="text-red-500" />
-          ) : (
-            <RiPlayCircleFill size={28} className="text-green-500" />
-          )}
-        </Button>
-        <Button
-          isIconOnly
-          className="rounded-full"
-          variant="light"
-          onClick={nextFrame}>
-          <RiArrowRightDoubleLine size={18} />
-        </Button>
-      </div>
+      {isHost && (
+        <div className="flex justify-end items-center">
+          <Button
+            isIconOnly
+            className="rounded-full"
+            variant="light"
+            onClick={previousFrame}>
+            <RiArrowLeftDoubleLine size={18} />
+          </Button>
+          <Button
+            isIconOnly
+            className={cn('rounded-full')}
+            variant="light"
+            onClick={() => {
+              if (presentationStarted) {
+                stopPresentation()
+              } else {
+                startPresentation(currentFrame.id)
+              }
+            }}>
+            {presentationStarted ? (
+              <RiStopCircleFill size={28} className="text-red-500" />
+            ) : (
+              <RiPlayCircleFill size={28} className="text-green-500" />
+            )}
+          </Button>
+          <Button
+            isIconOnly
+            className="rounded-full"
+            variant="light"
+            onClick={nextFrame}>
+            <RiArrowRightDoubleLine size={18} />
+          </Button>
+        </div>
+      )}
     </div>
   )
 

@@ -16,8 +16,8 @@ export function ParticipantsGalleryView({
       gridSize={GRID_SIZE}
       gridStyles={{
         'grid-cols-2 grid-rows-auto justify-center content-center':
-          firstPageParticipants.length <= 5,
-        'grid-cols-4 grid-rows-4': firstPageParticipants.length > 5,
+          firstPageParticipants.length <= 4,
+        'grid-cols-4 grid-rows-4': firstPageParticipants.length > 4,
       }}
       participants={participants}
     />
