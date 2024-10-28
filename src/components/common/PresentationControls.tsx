@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   RiArrowLeftDoubleLine,
   RiArrowRightDoubleLine,
@@ -23,6 +24,17 @@ export function PresentationControls() {
     stopPresentation,
     presentationStatus,
   } = useEventSession()
+
+  const handlePresentationToggle = () => {
+    if (!currentFrame) return
+    if (presentationStarted) {
+      stopPresentation()
+    } else {
+      startPresentation(currentFrame.id)
+    }
+  }
+
+  useHotkeys('s', handlePresentationToggle, { enabled: isHost })
 
   if (!currentFrame) return <div />
 
@@ -53,13 +65,7 @@ export function PresentationControls() {
             isIconOnly
             className={cn('rounded-full')}
             variant="light"
-            onClick={() => {
-              if (presentationStarted) {
-                stopPresentation()
-              } else {
-                startPresentation(currentFrame.id)
-              }
-            }}>
+            onClick={handlePresentationToggle}>
             {presentationStarted ? (
               <RiStopCircleFill size={28} className="text-red-500" />
             ) : (

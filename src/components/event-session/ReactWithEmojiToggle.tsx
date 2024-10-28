@@ -43,7 +43,11 @@ export function ReactWithEmojiToggle() {
     setIsOpen(!isOpen)
   }
 
-  useHotkeys('e', handleEmojiShortcut, [isOpen, setIsOpen])
+  useHotkeys(KeyboardShortcuts.Live.emoji.key, handleEmojiShortcut, [
+    isOpen,
+    setIsOpen,
+  ])
+
   useHotkeys('ESC', () => setIsOpen(false), [])
 
   const handleEmoji = (emojiIndex: number) => {

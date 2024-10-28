@@ -27,7 +27,10 @@ export function MicToggle({ className = '' }: { className?: string }) {
     userPreferencesMeetingAudio(true)
   }
 
-  useHotkeys('m', handleMic, [self, isMicEnabled])
+  useHotkeys(KeyboardShortcuts.Live.muteUnmute.key, handleMic, [
+    self,
+    isMicEnabled,
+  ])
 
   return (
     <ControlButton

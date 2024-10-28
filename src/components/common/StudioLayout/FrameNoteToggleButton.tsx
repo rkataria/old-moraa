@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 
 import toast from 'react-hot-toast'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { LuClipboardEdit } from 'react-icons/lu'
 import { useDispatch } from 'react-redux'
 
@@ -37,6 +38,8 @@ export function FrameNoteToggleButton() {
       )
     )
   }
+
+  useHotkeys('n', toggleSidebar, { enabled: permissions.canaccessNotes })
 
   if (!permissions.canaccessNotes) {
     return null

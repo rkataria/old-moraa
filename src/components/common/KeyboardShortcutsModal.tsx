@@ -11,10 +11,13 @@ import {
 } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
+import { Loading } from './Loading'
 import { RenderIf } from './RenderIf/RenderIf'
 
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
+import { useProfile } from '@/hooks/useProfile'
+import { UserType } from '@/types/common'
 import { KeyboardShortcuts } from '@/utils/utils'
 
 export function KeyboardShortcutsModal({
@@ -25,6 +28,7 @@ export function KeyboardShortcutsModal({
   disclosure?: UseDisclosureReturn
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const { data: profile, isLoading } = useProfile()
 
   useHotkeys('mod + /', () => setIsOpen(true), [])
 
@@ -33,8 +37,19 @@ export function KeyboardShortcutsModal({
     disclosure?.onClose()
   }
 
+  if (isLoading || !profile) return <Loading />
+
+  const learnerShortcuts = Object.fromEntries(
+    Object.entries(KeyboardShortcuts).filter(([key]) => key !== 'Studio Mode')
+  )
+
+  const shortcuts =
+    profile.user_type === UserType.CREATOR
+      ? KeyboardShortcuts
+      : learnerShortcuts
+
   const keyboardListing = () =>
-    Object.entries(KeyboardShortcuts).map(([section, actions], index) => (
+    Object.entries(shortcuts).map(([section, actions], index) => (
       <div key={section}>
         <p className="text-gray-800 text-sm font-medium">{section}</p>
         <div className="mt-2 grid gap-3">

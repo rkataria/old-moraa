@@ -53,7 +53,10 @@ export function RaiseHandToggle() {
     })
   }
 
-  useHotkeys('h', handleRaiseHand, [isHandRaised, selfParticipant])
+  useHotkeys(KeyboardShortcuts.Live.raiseAndLowerHand.key, handleRaiseHand, [
+    isHandRaised,
+    selfParticipant,
+  ])
 
   if (!participant) return null
 
