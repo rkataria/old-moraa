@@ -32,7 +32,7 @@ export function ToggleButton() {
   useHotkeys('a', toggleSidebar, [resizableRightSidebarVisibility])
 
   return (
-    <Tooltip label="Assist" actionKey="A">
+    <Tooltip label="ChatGPT 4o Co-pilot" actionKey="A">
       <Button
         size="sm"
         isIconOnly
@@ -41,7 +41,7 @@ export function ToggleButton() {
         className={cn('cursor-pointer', {
           'text-primary': resizableRightSidebarVisibility === 'ai-chat',
         })}>
-        <LuSparkles size={18} strokeWidth={1.7} />
+        <LuSparkles size={18} strokeWidth={1.2} />
       </Button>
     </Tooltip>
   )

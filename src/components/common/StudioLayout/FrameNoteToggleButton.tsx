@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import toast from 'react-hot-toast'
-import { LuClipboardEdit } from 'react-icons/lu'
+import { TbBubbleText } from 'react-icons/tb'
 import { useDispatch } from 'react-redux'
 
 import { Tooltip } from '../ShortuctTooltip'
@@ -53,7 +53,7 @@ export function FrameNoteToggleButton() {
           'bg-primary-100': isVisible,
         })}
         onClick={toggleSidebar}>
-        <LuClipboardEdit size={20} strokeWidth={1.7} />
+        <TbBubbleText size={20} strokeWidth={1.5} />
       </Button>
     </Tooltip>
   )

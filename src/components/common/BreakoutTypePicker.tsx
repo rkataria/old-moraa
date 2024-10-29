@@ -13,9 +13,9 @@ import {
   ModalFooter,
   Button,
 } from '@nextui-org/react'
-import { PiSquaresFourLight } from 'react-icons/pi'
-import { SiGoogleclassroom } from 'react-icons/si'
-import { TbUsersGroup } from 'react-icons/tb'
+import { BsCircleSquare } from 'react-icons/bs'
+import { FaPeopleGroup } from 'react-icons/fa6'
+import { LuSquareStack } from 'react-icons/lu'
 
 import { TwoWayNumberCounter } from './content-types/MoraaSlide/FontSizeControl'
 
@@ -46,7 +46,7 @@ export const breakoutTypes: IBreakoutType[] = [
   {
     name: 'Groups',
     icon: (
-      <TbUsersGroup
+      <FaPeopleGroup
         className="w-full h-full max-w-11 max-h-11"
         width={60}
         height={60}
@@ -59,7 +59,7 @@ export const breakoutTypes: IBreakoutType[] = [
   },
   {
     name: 'Rooms',
-    icon: <SiGoogleclassroom className="w-full h-full max-w-11 max-h-11" />,
+    icon: <LuSquareStack className="w-full h-full max-w-11 max-h-11" />,
     description:
       'You can allocate participants or let them choose based on the specific no of rooms',
     breakoutType: BREAKOUT_TYPES.ROOMS,
@@ -86,7 +86,7 @@ export function BreakoutTypePicker({
     useState<BREAKOUT_TYPES>(BREAKOUT_TYPES.GROUPS)
 
   const [breakoutRoomsGroupsCount, setBreakoutRoomsGroupsCount] =
-    useState<number>(3)
+    useState<number>(2)
 
   const [breakoutRoomsGroupsTime, setBreakoutRoomsGroupsTime] =
     useState<number>(5)
@@ -109,7 +109,7 @@ export function BreakoutTypePicker({
                 <div className="flex items-center gap-2">
                   <span className="p-1 rounded-full bg-[#FCFAFF] flex items-center justify-center">
                     <span className="p-2 bg-[#E9D8FD] flex items-center rounded-full text-[#6947C3]">
-                      <PiSquaresFourLight height={36} width={36} />
+                      <BsCircleSquare height={36} width={36} />
                     </span>
                   </span>
                   <h3 className="font-semibold text-xl text-black">
@@ -219,11 +219,6 @@ export function BreakoutTypePicker({
                   onClick={onSubmit}
                   className="flex gap-2">
                   Create
-                  <SiGoogleclassroom
-                    className="text-white"
-                    height={12}
-                    width={12}
-                  />
                 </Button>
               </div>
             </ModalFooter>

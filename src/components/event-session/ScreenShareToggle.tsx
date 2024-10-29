@@ -23,7 +23,7 @@ export function ScreenShareToggle() {
         }),
       }}
       tooltipProps={{
-        label: isScreenShared ? 'Stop Screen Share' : 'Scree Share',
+        label: isScreenShared ? 'Stop Screen Share' : 'Start Screen Share',
       }}
       onClick={async () => {
         if (isScreenShared) {

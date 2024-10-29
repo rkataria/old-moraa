@@ -60,7 +60,7 @@ export function PreviewSwitcher() {
           'text-gray-500': preview,
           'text-primary-500': !preview,
         })}>
-        Edit Mode
+        Editable
       </p>
     </div>
   )
