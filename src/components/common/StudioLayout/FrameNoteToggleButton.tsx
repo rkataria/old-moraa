@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 
 import toast from 'react-hot-toast'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { TbBubbleText } from 'react-icons/tb'
 import { useDispatch } from 'react-redux'
 
