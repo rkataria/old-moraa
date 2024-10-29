@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from '../content-types/Breakout/Breakout'
 import { GoogleSlidesFrame } from '../content-types/GoogleSlides/GoogleSlides'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
@@ -30,7 +31,7 @@ export function PreviewFrame({ frame }: PreviewFrameProps) {
     [FrameType.MIRO_EMBED]: <MiroEmbedFrame frame={frame as any} />,
     [FrameType.MORAA_BOARD]: (
       <RoomProvider frameId={frame.id}>
-        <MoraaBoardFrame frame={frame as any} />
+        <MoraaBoardFrame />
       </RoomProvider>
     ),
     [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} />,

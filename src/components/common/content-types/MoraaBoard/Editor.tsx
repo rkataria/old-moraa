@@ -25,7 +25,7 @@ export function Editor({ readOnly = false }: EditorProps) {
       autoFocus
       store={store}
       components={{
-        SharePanel: readOnly ? null : NameEditor,
+        SharePanel: NameEditor,
       }}
       hideUi={readOnly}
       onMount={(editor) => {

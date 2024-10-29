@@ -1,11 +1,18 @@
 import { useEffect } from 'react'
 
-import { useDyteSelector } from '@dytesdk/react-web-core'
 import { track, useEditor } from 'tldraw'
+
+import { useStoreSelector } from '@/hooks/useRedux'
 
 export const NameEditor = track(() => {
   const editor = useEditor()
-  const name = useDyteSelector((s) => s.self.name)
+  const dyteMeeting = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.dyte.dyteClient
+  )
+
+  if (!dyteMeeting) return null
+
+  const { name } = dyteMeeting.self
 
   useEffect(() => {
     editor.user.updateUserPreferences({

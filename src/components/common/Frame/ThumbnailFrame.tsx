@@ -36,7 +36,7 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
     [FrameType.MIRO_EMBED]: <MiroEmbedFrame frame={frame as any} asThumbnail />,
     [FrameType.MORAA_BOARD]: (
       <RoomProvider frameId={frame.id}>
-        <MoraaBoardFrame frame={frame as any} asThumbnail />
+        <MoraaBoardFrame asThumbnail />
       </RoomProvider>
     ),
     [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} />,

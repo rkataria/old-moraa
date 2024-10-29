@@ -40,7 +40,7 @@ export function LiveFrame({ frame }: FrameContainerProps) {
     ),
     [FrameType.MORAA_BOARD]: (
       <RoomProvider frameId={frame.id}>
-        <MoraaBoardFrame frame={frame as any} isLiveSession />
+        <MoraaBoardFrame isLiveSession />
       </RoomProvider>
     ),
     [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} isLiveSession />,
