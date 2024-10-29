@@ -12,7 +12,7 @@ import { EmbedEdit } from './EmbedEdit'
 import { IframeEdit } from './IframeEdit'
 import { ImportEdit } from './ImportEdit'
 
-import { GoogleSlidesType } from '@/types/frame-picker.type'
+import { type GoogleSlidesFrame } from '@/types/frame-picker.type'
 import { cn } from '@/utils/utils'
 
 const googleSlidesEmbedSchema = yup.object({
@@ -30,7 +30,7 @@ export type GoogleSlideEmbedFormData = yup.InferType<
 >
 
 type EditProps = {
-  frame: GoogleSlidesType
+  frame: GoogleSlidesFrame
 }
 
 export function Edit({ frame }: EditProps) {

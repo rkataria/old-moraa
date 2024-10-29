@@ -1,4 +1,4 @@
-import { RichTextEditor } from '../../common/content-types/RichText/Editor'
+import { Editor as RichTextEditor } from '../../common/content-types/RichText/Editor'
 
 import { IFrame } from '@/types/frame.type'
 

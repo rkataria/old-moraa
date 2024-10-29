@@ -38,6 +38,8 @@ export function FrameNoteToggleButton() {
     )
   }
 
+  useHotkeys('n', toggleSidebar, { enabled: permissions.canaccessNotes })
+
   if (!permissions.canaccessNotes) {
     return null
   }

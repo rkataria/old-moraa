@@ -10,14 +10,16 @@ import {
 } from '@liveblocks/react/suspense'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
-import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 
-export function RoomProvider({ children }: { children: ReactNode }) {
-  const currentFrame = useCurrentFrame()
+type RoomProviderProps = {
+  children: ReactNode
+  frameId: string
+}
 
+export function RoomProvider({ children, frameId }: RoomProviderProps) {
   return (
     <LBRoomProvider
-      id={`moraaboard:${currentFrame?.id}`}
+      id={`moraaboard:${frameId}`}
       initialPresence={{ presence: undefined }}
       initialStorage={{ records: new LiveMap() }}>
       <ClientSideSuspense

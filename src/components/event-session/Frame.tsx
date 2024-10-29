@@ -10,12 +10,11 @@ import { RichTextLive } from './content-types/RichTextLive'
 import { VideoEmbed } from './content-types/VideoEmbed'
 import { BreakoutFrame } from '../common/breakout/BreakoutFrame'
 import { BreakoutFrameLive } from '../common/breakout/BreakoutFrameLive'
-import { MoraaBoard } from '../common/content-types/MoraaBoard'
-import { MoraaPad } from '../common/content-types/MoraaPad/MoraaPad'
-import { MoraaSlidePreview } from '../common/content-types/MoraaSlide/Preview'
+import { GoogleSlidesFrame } from '../common/content-types/GoogleSlides/GoogleSlides'
+import { MoraaBoardFrame } from '../common/content-types/MoraaBoard/MoraaBoard'
+import { MoraaPadFrame } from '../common/content-types/MoraaPad/MoraaPad'
 import { FrameTitleDescriptionPreview } from '../common/FrameTitleDescriptionPreview'
 
-import { GoogleSlides } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { MiroEmbed } from '@/components/common/content-types/MiroEmbed'
 import { ContentLoading } from '@/components/common/ContentLoading'
@@ -24,7 +23,6 @@ import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { GoogleSlidesType } from '@/types/frame-picker.type'
 import { IPollResponse, IReflectionResponse, Vote } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { getOjectPublicUrl } from '@/utils/utils'
@@ -61,9 +59,9 @@ export function Frame() {
       />
     ),
     [FrameType.GOOGLE_SLIDES]: (
-      <GoogleSlides
+      <GoogleSlidesFrame
         key={currentFrame.id}
-        frame={currentFrame as GoogleSlidesType}
+        frame={currentFrame as any}
         isLiveSession
       />
     ),
@@ -83,22 +81,17 @@ export function Frame() {
     [FrameType.RICH_TEXT]: <RichTextLive frame={currentFrame} />,
     [FrameType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
     [FrameType.MORAA_BOARD]: (
-      <RoomProvider>
-        <MoraaBoard frame={currentFrame as any} />
+      <RoomProvider frameId={currentFrame.id}>
+        <MoraaBoardFrame />
       </RoomProvider>
     ),
-    [FrameType.MORAA_SLIDE]: (
-      <MoraaSlidePreview
-        key={currentFrame.id}
-        frameCanvasSvg={currentFrame.content?.svg as string}
-      />
-    ),
+    [FrameType.MORAA_SLIDE]: null,
     [FrameType.BREAKOUT]: (
       <BreakoutFrameLive frame={currentFrame as BreakoutFrame} />
     ),
     [FrameType.POWERPOINT]: null,
     [FrameType.Q_A]: null,
-    [FrameType.MORAA_PAD]: <MoraaPad frame={currentFrame} />,
+    [FrameType.MORAA_PAD]: <MoraaPadFrame frame={currentFrame} />,
   }
 
   const renderer = renderersByFrameType[currentFrame.type as FrameType]

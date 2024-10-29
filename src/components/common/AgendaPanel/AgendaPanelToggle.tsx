@@ -1,4 +1,3 @@
-import { useHotkeys } from 'react-hotkeys-hook'
 import { LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu'
 
 import { Tooltip } from '../ShortuctTooltip'
@@ -13,20 +12,10 @@ export function AgendaPanelToggle({
   collapsed: boolean
   onToggle: () => void
 }) {
-  useHotkeys(
-    KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key,
-    onToggle,
-    {
-      enableOnFormTags: ['INPUT', 'TEXTAREA'],
-    },
-    [onToggle]
-  )
-
   return (
     <Tooltip
       label={!collapsed ? 'Collapse' : 'Expand'}
-      actionKey={KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key}
-      systemKeys={['ctrl']}>
+      actionKey={KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key}>
       <Button size="sm" isIconOnly variant="flat" onClick={onToggle}>
         {!collapsed ? (
           <LuPanelLeftClose size={18} strokeWidth={1.2} />

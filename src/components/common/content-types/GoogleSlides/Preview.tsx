@@ -2,11 +2,11 @@ import { Embed } from './Embed'
 import { LoadError } from './LoadError'
 
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { GoogleSlidesType } from '@/types/frame-picker.type'
+import { type GoogleSlidesFrame } from '@/types/frame-picker.type'
 import { isValidGoogleSlidesUrl } from '@/utils/utils'
 
 type PreviewProps = {
-  frame: GoogleSlidesType
+  frame: GoogleSlidesFrame
   startPage?: number
   onPageChange?: (pageNumber: number) => void
 }
@@ -35,11 +35,9 @@ export function Preview({ frame, startPage, onPageChange }: PreviewProps) {
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <LoadError
-        invalidUrl={!frame.content?.googleSlideUrl}
-        canUpdateFrame={permissions.canUpdateFrame}
-      />
-    </div>
+    <LoadError
+      invalidUrl={!frame.content?.googleSlideUrl}
+      canUpdateFrame={permissions.canUpdateFrame}
+    />
   )
 }

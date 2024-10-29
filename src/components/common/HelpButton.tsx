@@ -16,7 +16,7 @@ export function HelpButton({
 
   return (
     <>
-      <Tooltip label="Help" actionKey="+ /" systemKeys={['command']}>
+      <Tooltip label="Help" actionKey="shift + /">
         <Button
           size="sm"
           isIconOnly

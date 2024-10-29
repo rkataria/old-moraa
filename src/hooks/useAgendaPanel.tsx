@@ -394,6 +394,9 @@ export function AgendaPanelContextProvider({
     toggleExpandedSection(currentSectionId)
   })
 
+  useHotkeys('l', () => dispatch(setAgendaPanelDisplayTypeAction('list')))
+  useHotkeys('g', () => dispatch(setAgendaPanelDisplayTypeAction('grid')))
+
   useEffect(() => {
     if (!currentFrame) return
 

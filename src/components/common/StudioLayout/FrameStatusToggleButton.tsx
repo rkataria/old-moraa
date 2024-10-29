@@ -7,14 +7,18 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@nextui-org/react'
+import toast from 'react-hot-toast'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { IoIosCheckmarkCircle } from 'react-icons/io'
 import { MdOutlineRadioButtonUnchecked } from 'react-icons/md'
+
+import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { FrameStatus } from '@/types/enums'
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 const statusIconMap = {
   DRAFT: <MdOutlineRadioButtonUnchecked size={20} />,
@@ -35,6 +39,7 @@ export function FrameStatusToggleButton() {
     () => Array.from(selectedKeys).join(', ').replace('_', ' '),
     [selectedKeys]
   ) as FrameStatus
+  const { permissions } = useEventPermissions()
 
   useEffect(() => {
     if (currentFrame) {
@@ -42,21 +47,42 @@ export function FrameStatusToggleButton() {
     }
   }, [currentFrame])
 
-  const { permissions } = useEventPermissions()
-
-  if (!currentFrame) return null
-
-  if (!permissions.canUpdateFrame) {
-    return null
-  }
-
   const updateFrameStatus = (status: FrameStatus) => {
+    if (!currentFrame) return
     updateFrame({
       framePayload: {
         status,
       },
       frameId: currentFrame.id,
     })
+    toast.success(
+      status === FrameStatus.PUBLISHED
+        ? 'This frame is now accessible to learners'
+        : 'This frame has been removed from learner visibility.'
+    )
+  }
+
+  useHotkeys(
+    's',
+    () => {
+      if (!currentFrame) return
+
+      updateFrameStatus(
+        currentFrame.status === FrameStatus.DRAFT
+          ? FrameStatus.PUBLISHED
+          : FrameStatus.DRAFT
+      )
+    },
+    {
+      enabled: currentFrame && permissions.canUpdateFrame,
+    },
+    [currentFrame, updateFrameStatus]
+  )
+
+  if (!currentFrame) return null
+
+  if (!permissions.canUpdateFrame) {
+    return null
   }
 
   return (
@@ -68,9 +94,15 @@ export function FrameStatusToggleButton() {
           className={cn({
             'bg-primary-100': false,
           })}>
-          {statusIconMap[selectedValue]}
+          <Tooltip
+            label={KeyboardShortcuts['Studio Mode'].share.label}
+            actionKey={KeyboardShortcuts['Studio Mode'].share.key}
+            placement="left">
+            <div>{statusIconMap[selectedValue]}</div>
+          </Tooltip>
         </Button>
       </DropdownTrigger>
+
       <DropdownMenu
         aria-label="Frame status"
         disallowEmptySelection

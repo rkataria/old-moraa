@@ -13,6 +13,7 @@ import {
 } from '../common/BreakoutTypePicker'
 import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
 import { FramePicker } from '../common/FramePicker'
+import { KeyboardShortcutsModal } from '../common/KeyboardShortcutsModal'
 import { Loading } from '../common/Loading'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { StudioLayout } from '../common/StudioLayout/Index'
@@ -170,6 +171,7 @@ export function FrameManager() {
         }}
       />
       <SyncingStatus syncing={syncing} />
+      <KeyboardShortcutsModal />
       <RenderIf isTrue={openBreakoutSelectorModal}>
         <BreakoutTypePicker
           open={openBreakoutSelectorModal}

@@ -5,19 +5,23 @@ import {
   DyteScreenshareView,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { useHotkeys } from 'react-hotkeys-hook'
 
-import { Frame } from './Frame'
+import { Frame } from '../common/Frame/Frame'
 import { SectionOverview } from '../common/SectionOverview'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { RoomProvider } from '@/contexts/RoomProvider'
-import { useStoreSelector } from '@/hooks/useRedux'
-import { PresentationStatuses } from '@/types/event-session.type'
-import { FrameType } from '@/utils/frame-picker.util'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
+import {
+  EventSessionMode,
+  PresentationStatuses,
+} from '@/types/event-session.type'
 
 export function ContentContainer() {
-  const { currentFrame, presentationStatus, isHost } = useEventSession()
-
+  const { currentFrame, presentationStatus, isHost, eventSessionMode } =
+    useEventSession()
+  const dispatch = useStoreDispatch()
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
   const activePlugins = useDyteSelector((m) => m.plugins.active.toArray())
@@ -28,6 +32,12 @@ export function ContentContainer() {
   const currentSectionId = useStoreSelector(
     (state) => state.event.currentEvent.eventState.currentSectionId
   )
+
+  useHotkeys('esc', () => {
+    if (eventSessionMode === EventSessionMode.PEEK) {
+      dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
+    }
+  })
 
   const recentActivePlugin = activePlugins?.[activePlugins.length - 1]
 
@@ -78,15 +88,13 @@ export function ContentContainer() {
   }
 
   if (currentFrame) {
+    if (eventSessionMode === EventSessionMode.PEEK) {
+      return <Frame frame={currentFrame} />
+    }
+
     return (
       <div className="relative h-full flex flex-col">
-        {currentFrame.type === FrameType.MORAA_BOARD ? (
-          <RoomProvider key={`frame-${currentFrame.id}`}>
-            <Frame />
-          </RoomProvider>
-        ) : (
-          <Frame key={`frame-${currentFrame.id}`} />
-        )}
+        <Frame key={`frame-${currentFrame.id}`} frame={currentFrame} />
       </div>
     )
   }

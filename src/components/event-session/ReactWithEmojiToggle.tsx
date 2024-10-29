@@ -17,8 +17,8 @@ import { EventSessionContextType } from '@/types/event-session.type'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 const EMOJIS = [
-  'heart',
   '+1',
+  'heart',
   'tada',
   'clap',
   'joy',
@@ -43,7 +43,11 @@ export function ReactWithEmojiToggle() {
     setIsOpen(!isOpen)
   }
 
-  useHotkeys('e', handleEmojiShortcut, [isOpen, setIsOpen])
+  useHotkeys(KeyboardShortcuts.Live.emoji.key, handleEmojiShortcut, [
+    isOpen,
+    setIsOpen,
+  ])
+
   useHotkeys('ESC', () => setIsOpen(false), [])
 
   const handleEmoji = (emojiIndex: number) => {
@@ -93,24 +97,20 @@ export function ReactWithEmojiToggle() {
           </ControlButton>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="rounded-full overflow-hidden">
-        <div className="bg-[#2C2C2C] flex items-center gap-2 py-[0.0625rem]">
+      <PopoverContent className="rounded-full overflow-hidden shadow-xl">
+        <div className="bg-gray-100 flex items-center gap-2 py-[0.0625rem]">
           {EMOJIS.map((emoji) => (
             <Button
               key={emoji}
               isIconOnly
-              className="!opacity-100 rounded-full grid place-items-center bg-transparent hover:bg-[#4D4949] duration-300">
-              <em-emoji
-                set="apple"
-                id={emoji}
-                size={25}
-                onClick={() =>
-                  flyEmoji({
-                    emoji,
-                    name: selfParticipant.name,
-                  })
-                }
-              />
+              onClick={() =>
+                flyEmoji({
+                  emoji,
+                  name: selfParticipant.name,
+                })
+              }
+              className="!opacity-100 rounded-full grid place-items-center bg-transparent hover:bg-gray-200 duration-300">
+              <em-emoji set="apple" id={emoji} size={25} />
             </Button>
           ))}
         </div>

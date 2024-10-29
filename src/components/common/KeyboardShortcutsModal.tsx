@@ -11,11 +11,14 @@ import {
 } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
+import { Loading } from './Loading'
 import { RenderIf } from './RenderIf/RenderIf'
 
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
-import { KeyboardShortcuts } from '@/utils/utils'
+import { useProfile } from '@/hooks/useProfile'
+import { UserType } from '@/types/common'
+import { KeyboardShortcuts as creatorShorcuts } from '@/utils/utils'
 
 export function KeyboardShortcutsModal({
   disclosure,
@@ -25,16 +28,31 @@ export function KeyboardShortcutsModal({
   disclosure?: UseDisclosureReturn
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const { data: profile, isLoading } = useProfile()
 
-  useHotkeys('mod + /', () => setIsOpen(true), [])
+  useHotkeys('shift + slash', () => setIsOpen(true), [])
 
   const closeModal = () => {
     setIsOpen(false)
     disclosure?.onClose()
   }
 
+  if (isLoading || !profile) return <Loading />
+
+  const learnerShortcuts = {
+    'Agenda Panel': Object.fromEntries(
+      Object.entries(creatorShorcuts['Agenda Panel']).filter(
+        ([key]) => key !== 'expandAndCollapse'
+      )
+    ),
+    Live: creatorShorcuts.Live,
+  }
+
+  const shortcuts =
+    profile.user_type === UserType.CREATOR ? creatorShorcuts : learnerShortcuts
+
   const keyboardListing = () =>
-    Object.entries(KeyboardShortcuts).map(([section, actions], index) => (
+    Object.entries(shortcuts).map(([section, actions], index) => (
       <div key={section}>
         <p className="text-gray-800 text-sm font-medium">{section}</p>
         <div className="mt-2 grid gap-3">
@@ -59,8 +77,7 @@ export function KeyboardShortcutsModal({
             )
           })}
         </div>
-        <RenderIf
-          isTrue={index !== Object.entries(KeyboardShortcuts).length - 1}>
+        <RenderIf isTrue={index !== Object.entries(shortcuts).length - 1}>
           <Divider className="my-4" />
         </RenderIf>
       </div>
@@ -86,7 +103,7 @@ export function KeyboardShortcutsModal({
             </ModalHeader>
             <ModalBody>
               <p className="text-lg font-medium">Keyboard Shortcuts</p>
-              <div className="max-h-[90vh] overflow-y-scroll scrollbar-none">
+              <div className="max-h-[90vh] pb-2 overflow-y-scroll scrollbar-none">
                 {keyboardListing()}
               </div>
             </ModalBody>

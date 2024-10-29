@@ -29,10 +29,10 @@ export function BreakoutButton() {
     realtimeChannel,
     setDyteStates,
   } = useEventSession()
-
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
+
   const sessionBreakoutFrameId = useStoreSelector(
     (store) =>
       store.event.currentEvent.liveSessionState.activeSession.data?.data
@@ -50,6 +50,37 @@ export function BreakoutButton() {
     ?.map((section) => section.frames)
     .flat()
     .find((frame) => frame?.id === sessionBreakoutFrameId)
+
+  useEffect(() => {
+    if (presentationStatus !== PresentationStatuses.STOPPED) return () => {}
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const onNewMeetingsCreated = (meeting: any) => {
+      if (meeting.meetings.length) {
+        SessionService.createSessionForBreakouts({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          dyteMeetings: meeting.meetings.map((meet: any) => ({
+            connected_dyte_meeting_id: meet.id!,
+            data: {
+              currentFrameId: null,
+              presentationStatus: PresentationStatuses.STOPPED,
+            },
+            meeting_id: meetingId!,
+          })),
+        })
+      }
+    }
+    dyteMeeting.meeting.connectedMeetings.on(
+      'stateUpdate',
+      onNewMeetingsCreated
+    )
+
+    return () =>
+      dyteMeeting.meeting.connectedMeetings.off(
+        'stateUpdate',
+        onNewMeetingsCreated
+      )
+  }, [dyteMeeting, meetingId, presentationStatus])
 
   const onBreakoutStartOnBreakoutSlide = async (
     breakoutConfig: {

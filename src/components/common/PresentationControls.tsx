@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   RiArrowLeftDoubleLine,
   RiArrowRightDoubleLine,
@@ -24,19 +25,32 @@ export function PresentationControls() {
     presentationStatus,
   } = useEventSession()
 
+  const handlePresentationToggle = () => {
+    if (!currentFrame) return
+    if (presentationStarted) {
+      stopPresentation()
+    } else {
+      startPresentation(currentFrame.id)
+    }
+  }
+
+  useHotkeys('s', handlePresentationToggle, { enabled: isHost })
+
   if (!currentFrame) return <div />
 
   const presentationStarted =
     presentationStatus === PresentationStatuses.STARTED
 
   return (
-    <div className="flex justify-between items-center gap-2 p-2 pl-4 h-10 bg-gray-100 rounded-full">
+    <div className="flex justify-between items-center gap-2 p-1 pl-4 bg-gray-100 rounded-md">
       <motion.div className="flex justify-start items-center gap-2">
         <ContentTypeIcon
           frameType={currentFrame.type}
           classNames="text-black"
         />
-        <span className="font-semibold w-44 text-ellipsis overflow-hidden">
+        <span
+          className="font-semibold w-44 text-ellipsis overflow-hidden line-clamp-1"
+          title={currentFrame.name}>
           {currentFrame.name}
         </span>
       </motion.div>
@@ -44,31 +58,31 @@ export function PresentationControls() {
         <div className="flex justify-end items-center">
           <Button
             isIconOnly
-            className="rounded-full"
+            size="sm"
+            className="rounded-md"
             variant="light"
             onClick={previousFrame}>
             <RiArrowLeftDoubleLine size={18} />
           </Button>
           <Button
             isIconOnly
-            className={cn('rounded-full')}
+            size="sm"
+            className={cn('rounded-md')}
             variant="light"
-            onClick={() => {
-              if (presentationStarted) {
-                stopPresentation()
-              } else {
-                startPresentation(currentFrame.id)
-              }
-            }}>
+            onClick={handlePresentationToggle}>
             {presentationStarted ? (
-              <RiStopCircleFill size={28} className="text-red-500" />
+              <RiStopCircleFill size={28} className="text-red-500 scale-125" />
             ) : (
-              <RiPlayCircleFill size={28} className="text-green-500" />
+              <RiPlayCircleFill
+                size={28}
+                className="text-green-500 scale-125"
+              />
             )}
           </Button>
           <Button
             isIconOnly
-            className="rounded-full"
+            size="sm"
+            className="rounded-md"
             variant="light"
             onClick={nextFrame}>
             <RiArrowRightDoubleLine size={18} />

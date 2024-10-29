@@ -27,7 +27,10 @@ export function VideoToggle({ className = '' }: { className?: string }) {
     userPreferencesMeetingVideo(true)
   }
 
-  useHotkeys('v', handleVideo, [self, isVideoEnabled])
+  useHotkeys(KeyboardShortcuts.Live.startAndStopVideo.key, handleVideo, [
+    self,
+    isVideoEnabled,
+  ])
 
   return (
     <ControlButton

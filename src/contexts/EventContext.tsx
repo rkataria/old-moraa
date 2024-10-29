@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 import { useParams, useRouter } from '@tanstack/react-router'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
-import { useHotkeys } from 'react-hotkeys-hook'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
@@ -483,41 +482,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
 
     return cFrame
   }
-
-  useHotkeys(
-    'e',
-    () => {
-      if (permissions.canUpdateFrame && eventMode === 'edit') {
-        dispatch(setIsPreviewOpenAction(false))
-        router.navigate({
-          search: (prev) => ({
-            ...prev,
-            action: 'edit',
-            frameId: currentFrame?.id,
-          }),
-        })
-      }
-    },
-    [permissions.canUpdateFrame, eventMode]
-  )
-
-  useHotkeys(
-    'p',
-    () => {
-      if (eventMode !== 'edit') return
-      if (!permissions.canUpdateFrame) return
-      dispatch(setIsPreviewOpenAction(true))
-      router.navigate({
-        search: (prev) => ({
-          ...prev,
-          action: 'view',
-        }),
-      })
-    },
-    [permissions.canUpdateFrame]
-  )
-
-  useHotkeys('alt + N', () => !isPreviewOpen && addSection({}), [isPreviewOpen])
 
   const actions = {
     updateFrame: withPermissionCheck(updateFrame, permissions.canUpdateFrame),

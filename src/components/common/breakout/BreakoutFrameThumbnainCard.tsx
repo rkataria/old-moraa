@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { ContentLoading } from '../ContentLoading'
 // TODO: Fix import cycle
 // eslint-disable-next-line import/no-cycle
-import { FramePreview } from '../FramePreview'
+import { Frame } from '../Frame/Frame'
 
 import { IFrame } from '@/types/frame.type'
 
@@ -40,16 +40,7 @@ export function BreakoutFrameThumbnailCard({
 
   const memoizedFramePreview = useMemo(
     () =>
-      renderCard ? (
-        <FramePreview
-          frame={frame}
-          isInteractive={false}
-          fullWidth
-          asThumbnail
-        />
-      ) : (
-        <ContentLoading />
-      ),
+      renderCard ? <Frame frame={frame} isThumbnail /> : <ContentLoading />,
     [frame, renderCard]
   )
 

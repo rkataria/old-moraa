@@ -2,7 +2,7 @@ import { cn } from '@nextui-org/react'
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels'
 
 import { ContentStudioBottomOverlay } from './ContentStudioButtomOverlay'
-import { ContentStudioFrameContainer } from './ContentStudioFrameContainer'
+import { ContentStudioContentContainer } from './ContentStudioContentContainer'
 import { ContentStudioLeftSidebar } from './ContentStudioLeftSidebar'
 import { ContentStudioRightSidebar } from './ContentStudioRightSidebar'
 import { ContentStudioRightSidebarControls } from './ContentStudioRightSidebarControls'
@@ -20,7 +20,7 @@ export function ContentStudio() {
 
   return (
     <div
-      className="w-full p-2 flex justify-start items-start gap-2"
+      className="w-full p-4 flex justify-start items-start gap-4"
       style={{
         height: `calc(100vh - ${StudioLayoutHeaderHeight}px)`,
       }}>
@@ -32,7 +32,7 @@ export function ContentStudio() {
             defaultSize={resizableRightSidebarVisible ? 60 : 100}
             minSize={resizableRightSidebarVisible ? 40 : 100}>
             {/* Main Container */}
-            <ContentStudioFrameContainer />
+            <ContentStudioContentContainer />
             <ContentStudioBottomOverlay />
           </Panel>
           {resizableRightSidebarVisible && (

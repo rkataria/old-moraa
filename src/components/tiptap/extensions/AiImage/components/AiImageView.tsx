@@ -6,13 +6,13 @@ import { ImageOptions } from '@tiptap-pro/extension-ai'
 import toast from 'react-hot-toast'
 import { v4 as uuid } from 'uuid'
 
-import { Button } from '@/components/tiptap/ui/Button'
 import { DropdownButton } from '@/components/tiptap/ui/Dropdown'
 import { Icon } from '@/components/tiptap/ui/Icon'
 import { Loader } from '@/components/tiptap/ui/Loader'
 import { Panel, PanelHeadline } from '@/components/tiptap/ui/Panel'
 import { Textarea } from '@/components/tiptap/ui/Textarea'
 import { Toolbar } from '@/components/tiptap/ui/Toolbar'
+import { Button } from '@/components/ui/Button'
 
 const imageStyles = [
   { name: 'photorealistic', label: 'Photorealistic', value: 'photorealistic' },
@@ -100,6 +100,10 @@ export function AiImageView({
     }
   }, [data, aiOptions])
 
+  const discard = useCallback(() => {
+    deleteNode()
+  }, [deleteNode])
+
   const insert = useCallback(() => {
     if (!previewImage?.length) {
       return
@@ -111,13 +115,9 @@ export function AiImageView({
       .deleteRange({ from: getPos(), to: getPos() })
       .focus()
       .run()
-
+    discard()
     setIsFetching(false)
-  }, [editor, previewImage, getPos])
-
-  const discard = useCallback(() => {
-    deleteNode()
-  }, [deleteNode])
+  }, [editor, previewImage, getPos, discard])
 
   const handleTextareaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -171,7 +171,7 @@ export function AiImageView({
             <div className="flex justify-between w-auto gap-1">
               <Popover placement="bottom">
                 <PopoverTrigger>
-                  <Button variant="tertiary">
+                  <Button>
                     <Icon name="Image" />
                     {currentImageStyle?.label || 'Image style'}
                     <Icon name="ChevronDown" />
@@ -207,7 +207,7 @@ export function AiImageView({
             <div className="flex flex-row items-center justify-between gap-1">
               {previewImage && (
                 <Button
-                  variant="ghost"
+                  variant="flat"
                   className="text-red-500 hover:bg-red-500/10 hover:text-red-500"
                   onClick={discard}>
                   <Icon name="Trash" />
@@ -215,12 +215,12 @@ export function AiImageView({
                 </Button>
               )}
               {previewImage && (
-                <Button variant="ghost" onClick={insert}>
+                <Button variant="flat" onClick={insert}>
                   <Icon name="Check" />
                   Insert
                 </Button>
               )}
-              <Button variant="primary" onClick={generateImage}>
+              <Button color="primary" onClick={generateImage}>
                 {previewImage ? (
                   <Icon name="Repeat" />
                 ) : (

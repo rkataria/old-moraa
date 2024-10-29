@@ -28,7 +28,7 @@ export function FrameSettings() {
     [FrameType.RICH_TEXT]: <RichTextSettings />,
     [FrameType.MIRO_EMBED]: null,
     [FrameType.MORAA_BOARD]: (
-      <RoomProvider>
+      <RoomProvider frameId={currentFrame.id}>
         <MoraaBoardSettings key={currentFrame.id} />
       </RoomProvider>
     ),

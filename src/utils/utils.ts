@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { IoIosSquare } from 'react-icons/io'
 import { twMerge } from 'tailwind-merge'
 
+import { FrameStatus } from '@/types/enums'
 import { ISection } from '@/types/frame.type'
 
 export function cn(...inputs: ClassValue[]) {
@@ -32,6 +33,15 @@ export const getOjectPublicUrl = (objectPath: string) =>
 
 export const getFrameCount = (sections: ISection[]) =>
   sections.reduce((acc, section) => acc + section.frames.length, 0)
+
+export const getPublishedFrameCount = (sections: ISection[]) =>
+  sections.reduce(
+    (acc, section) =>
+      acc +
+      section.frames.filter((frame) => frame.status === FrameStatus.PUBLISHED)
+        .length,
+    0
+  )
 
 export const zeroPad = (num: number, places: number) =>
   String(num).padStart(places, '0')
@@ -204,32 +214,34 @@ export const FrameColorCodes = {
 }
 
 export const KeyboardShortcuts = {
-  Dashboard: {
-    createNew: {
-      label: 'Create a new event',
-      key: 'N',
-    },
-  },
   'Studio Mode': {
-    newSection: {
-      label: 'Create a new section at last',
-      key: 'alt + N',
-    },
     newFrame: {
       label: 'Add a new frame',
       key: 'F',
     },
     edit: {
-      label: 'Switch to Edit Mode',
+      label: 'Edit/Preview Mode',
       key: 'E',
-    },
-    preview: {
-      label: 'Switch to Preview Mode',
-      key: 'P',
     },
     notes: {
       label: 'Notes',
       key: 'N',
+    },
+    share: {
+      label: 'Toggle shared status',
+      key: 'S',
+    },
+    overviewTab: {
+      label: 'Switch to overview',
+      key: '1',
+    },
+    planTab: {
+      label: 'Switch to session planner',
+      key: '2',
+    },
+    contentTab: {
+      label: 'Switch to content',
+      key: '3',
     },
   },
 
@@ -239,44 +251,37 @@ export const KeyboardShortcuts = {
       key: 'G',
     },
     list: {
-      label: 'Grid View',
+      label: 'List View',
       key: 'L',
     },
     expandAndCollapse: {
       label: 'Collapse/Expand',
-      key: 'ctrl + [',
+      key: 'alt + [',
+      keyWithCode: 'alt+BracketLeft',
     },
   },
   Live: {
     muteUnmute: {
       label: 'Mute / unmute',
-      key: 'M',
+      key: 'alt + M',
     },
     startAndStopVideo: {
       label: 'Start / stop video',
-      key: 'V',
+      key: 'alt + V',
     },
     raiseAndLowerHand: {
       label: 'Raise/lower hand',
-      key: 'H',
+      key: 'alt + H',
     },
     startAndStopPresentation: {
       label: 'Start / stop presentation',
       key: 'S',
     },
     emoji: {
-      label: 'Emoji',
-      key: 'E',
+      label: 'Reaction',
+      key: 'alt + R',
     },
 
-    startAndStopTimer: {
-      label: 'Start / stop timer',
-      key: 'T',
-    },
-    whiteboard: {
-      label: 'Start whiteboard',
-      key: 'W',
-    },
     participants: {
       label: 'Show / hide participants',
       key: 'P',
