@@ -18,7 +18,7 @@ import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
 import { useProfile } from '@/hooks/useProfile'
 import { UserType } from '@/types/common'
-import { KeyboardShortcuts } from '@/utils/utils'
+import { KeyboardShortcuts as creatorShorcuts } from '@/utils/utils'
 
 export function KeyboardShortcutsModal({
   disclosure,
@@ -30,7 +30,7 @@ export function KeyboardShortcutsModal({
   const [isOpen, setIsOpen] = useState(false)
   const { data: profile, isLoading } = useProfile()
 
-  useHotkeys('mod + /', () => setIsOpen(true), [])
+  useHotkeys('shift + slash', () => setIsOpen(true), [])
 
   const closeModal = () => {
     setIsOpen(false)
@@ -39,14 +39,17 @@ export function KeyboardShortcutsModal({
 
   if (isLoading || !profile) return <Loading />
 
-  const learnerShortcuts = Object.fromEntries(
-    Object.entries(KeyboardShortcuts).filter(([key]) => key !== 'Studio Mode')
-  )
+  const learnerShortcuts = {
+    'Agenda Panel': Object.fromEntries(
+      Object.entries(creatorShorcuts['Agenda Panel']).filter(
+        ([key]) => key !== 'expandAndCollapse'
+      )
+    ),
+    Live: creatorShorcuts.Live,
+  }
 
   const shortcuts =
-    profile.user_type === UserType.CREATOR
-      ? KeyboardShortcuts
-      : learnerShortcuts
+    profile.user_type === UserType.CREATOR ? creatorShorcuts : learnerShortcuts
 
   const keyboardListing = () =>
     Object.entries(shortcuts).map(([section, actions], index) => (
@@ -74,8 +77,7 @@ export function KeyboardShortcutsModal({
             )
           })}
         </div>
-        <RenderIf
-          isTrue={index !== Object.entries(KeyboardShortcuts).length - 1}>
+        <RenderIf isTrue={index !== Object.entries(shortcuts).length - 1}>
           <Divider className="my-4" />
         </RenderIf>
       </div>
@@ -101,7 +103,7 @@ export function KeyboardShortcutsModal({
             </ModalHeader>
             <ModalBody>
               <p className="text-lg font-medium">Keyboard Shortcuts</p>
-              <div className="max-h-[90vh] overflow-y-scroll scrollbar-none">
+              <div className="max-h-[90vh] pb-2 overflow-y-scroll scrollbar-none">
                 {keyboardListing()}
               </div>
             </ModalBody>

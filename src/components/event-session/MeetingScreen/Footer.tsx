@@ -1,6 +1,6 @@
-import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 
+import { NoteToggle } from './NoteToggle'
 import { ChatsToggle } from '../ChatsToggle'
 import { MeetingRecordingButton } from '../MeetingRecordingButton'
 import { MicToggle } from '../MicToggle'
@@ -12,21 +12,16 @@ import { VideoToggle } from '../VideoToggle'
 
 import { BreakoutButton } from '@/components/common/breakout/BreakoutButton'
 import { PresentationControls } from '@/components/common/PresentationControls'
-import { Tooltip } from '@/components/common/ShortuctTooltip'
-import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
-import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import {
   closeRightSidebarAction,
   setRightSidebarAction,
 } from '@/stores/slices/layout/live.slice'
-import { cn } from '@/utils/utils'
 
 export function Footer() {
   const { isHost, setDyteStates, dyteStates } = useEventSession()
   const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
-  const currentFrame = useCurrentFrame()
 
   const dispatch = useDispatch()
 
@@ -74,33 +69,7 @@ export function Footer() {
       </div>
       <div className="flex justify-end items-center gap-2 p-2">
         <div className="flex justify-end items-center gap-2">
-          {isHost && (
-            <Tooltip label="Notes" actionKey="N" placement="top">
-              <Button
-                size="sm"
-                // isIconOnly
-                variant="light"
-                className={cn('live-button', {
-                  active: rightSidebarMode === 'frame-notes',
-                })}
-                onClick={() => {
-                  if (rightSidebarMode === 'frame-notes') {
-                    dispatch(closeRightSidebarAction())
-                  } else {
-                    if (!currentFrame) {
-                      toast.error('Select a frame to view notes')
-
-                      return
-                    }
-
-                    dispatch(setRightSidebarAction('frame-notes'))
-                  }
-                }}>
-                {/* <LuClipboardEdit size={20} strokeWidth={1.7} /> */}
-                Note
-              </Button>
-            </Tooltip>
-          )}
+          <NoteToggle />
           <ParticipantsToggle
             isParticipantsSidebarOpen={rightSidebarMode === 'participants'}
             onClick={() => {

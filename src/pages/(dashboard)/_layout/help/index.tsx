@@ -25,9 +25,10 @@ function TemplatesPage() {
         <p className="text-3xl font-semibold">Moraa keyboard shortcuts</p>
         <p className="mt-4 text-md font-medium">
           Navigate Moraa effortlessly with our keyboard shortcuts. Press
-          <Kbd keys={['command']} className="mx-1" />{' '}
-          <Kbd className="mx-1">/</Kbd>
-          to see the shortcuts. For the full list, keep reading.
+          <Kbd className="mx-1">?</Kbd>or
+          <Kbd keys={['shift']} className="mx-1" />{' '}
+          <Kbd className="mx-1">/</Kbd> to see the shortcuts. For the full list,
+          keep reading.
         </p>
         <div className="mt-6">
           <KeyboardShortcutsModal withoutModal />

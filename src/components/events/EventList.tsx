@@ -1,8 +1,7 @@
 import { Key, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { SortDescriptor, Pagination, Tabs, Tab } from '@nextui-org/react'
-import { Link, useRouter } from '@tanstack/react-router'
-import { useHotkeys } from 'react-hotkeys-hook'
+import { Link } from '@tanstack/react-router'
 import { BsGrid, BsList } from 'react-icons/bs'
 import { IoCalendarClear } from 'react-icons/io5'
 import { MdOutlineAddBox } from 'react-icons/md'
@@ -21,7 +20,6 @@ import { UserType } from '@/types/common'
 const rowsPerPage = 10
 
 export function EventList() {
-  const { navigate } = useRouter()
   const { data: profile = {} } = useProfile()
   const { currentUser } = useAuth()
   const [listDisplayMode, toggleListDisplayMode] = useState('grid' as Key)
@@ -35,8 +33,6 @@ export function EventList() {
   const [totalEventsCount, setTotalEventsCount] = useState(0)
 
   const pages = Math.ceil(totalEventsCount / rowsPerPage)
-
-  useHotkeys('n', () => navigate({ to: '/events/create' }), [])
 
   useEffect(() => {
     if (count) {

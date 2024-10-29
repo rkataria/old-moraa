@@ -12,7 +12,6 @@ import { cn } from '@/utils/utils'
 
 export type TooltipComponentProps = {
   label?: string | ReactNode
-  systemKeys?: KbdKey | KbdKey[]
   actionKey?: string
   content?: ReactNode
 }
@@ -23,11 +22,12 @@ export type TooltipProps = TooltipComponentProps &
 export function Tooltip({
   children,
   label,
-  systemKeys = [],
   actionKey,
   content,
   ...rest
 }: TooltipProps) {
+  const keysArray = actionKey?.split(' + ') || []
+
   return (
     <NextUiTooltip
       {...rest}
@@ -36,14 +36,17 @@ export function Tooltip({
           <div className="flex items-center gap-2 text-xs">
             {label}
             <RenderIf isTrue={!!actionKey}>
-              <Kbd
-                keys={systemKeys}
-                classNames={{
-                  base: 'bg-gray-700 text-white rounded-sm',
-                  content: 'text-xs',
-                }}>
-                {actionKey}
-              </Kbd>
+              <div className="flex items-center gap-2">
+                {keysArray.map((key) => (
+                  <Kbd
+                    keys={key === 'alt' ? 'option' : (key as KbdKey)}
+                    classNames={{
+                      base: 'bg-gray-700 text-white rounded-[4px]',
+                    }}>
+                    {key === 'alt' ? 'Opt' : key}
+                  </Kbd>
+                ))}
+              </div>
             </RenderIf>
           </div>
         )

@@ -254,6 +254,11 @@ export const KeyboardShortcuts = {
       label: 'List View',
       key: 'L',
     },
+    expandAndCollapse: {
+      label: 'Collapse/Expand',
+      key: 'alt + [',
+      keyWithCode: 'alt+BracketLeft',
+    },
   },
   Live: {
     muteUnmute: {
@@ -284,10 +289,6 @@ export const KeyboardShortcuts = {
     chats: {
       label: 'Show / hide Chats',
       key: 'C',
-    },
-    expandAndCollapse: {
-      label: 'Collapse/Expand',
-      key: 'ctrl + [',
     },
   },
 }

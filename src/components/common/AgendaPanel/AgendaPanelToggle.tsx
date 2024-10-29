@@ -15,8 +15,7 @@ export function AgendaPanelToggle({
   return (
     <Tooltip
       label={!collapsed ? 'Collapse' : 'Expand'}
-      actionKey={KeyboardShortcuts.Live.expandAndCollapse.key}
-      systemKeys={['ctrl']}>
+      actionKey={KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key}>
       <Button size="sm" isIconOnly variant="flat" onClick={onToggle}>
         {!collapsed ? (
           <LuPanelLeftClose size={18} strokeWidth={1.2} />
