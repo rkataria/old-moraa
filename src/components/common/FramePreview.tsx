@@ -107,7 +107,11 @@ export function FramePreview({
     ),
     [FrameType.MORAA_BOARD]: (
       <RoomProvider>
-        <MoraaBoard frame={frame as MoraaBoardFrame} isInteractive={false} />
+        <MoraaBoard
+          frame={frame as MoraaBoardFrame}
+          isInteractive={false}
+          isMiniView
+        />
       </RoomProvider>
     ),
     [FrameType.MORAA_SLIDE]: (

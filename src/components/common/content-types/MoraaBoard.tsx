@@ -23,9 +23,14 @@ export type MoraaBoardFrame = IFrame & {
 interface MoraaBoardProps {
   frame: MoraaBoardFrame
   isInteractive?: boolean
+  isMiniView?: boolean
 }
 
-export function MoraaBoard({ frame, isInteractive = true }: MoraaBoardProps) {
+export function MoraaBoard({
+  frame,
+  isMiniView,
+  isInteractive = true,
+}: MoraaBoardProps) {
   const { preview, eventMode } = useContext(EventContext) as EventContextType
   const id = useSelf((me) => me.id)
   const info = useSelf((me) => me.info)
@@ -35,8 +40,17 @@ export function MoraaBoard({ frame, isInteractive = true }: MoraaBoardProps) {
 
   const readOnly =
     preview ||
+    isMiniView ||
     (!isInteractive && !!frame.config?.allowToDraw) ||
     (!isInteractive && eventMode !== 'present')
+
+  if (isMiniView) {
+    return (
+      <div className="relative w-full flex-auto flex flex-col justify-center items-center z-[0] h-full bg-white rounded-md overflow-hidden">
+        <p>Moraaboard</p>
+      </div>
+    )
+  }
 
   return (
     <div className="relative w-full flex-auto flex flex-col justify-center items-center z-[0] h-full bg-white rounded-md overflow-hidden">
@@ -48,13 +62,15 @@ export function MoraaBoard({ frame, isInteractive = true }: MoraaBoardProps) {
         <ErrorBoundary>
           <Tldraw
             // persistenceKey={roomId}
-            autoFocus
+            autoFocus={!readOnly}
             store={store}
             components={{
               SharePanel: readOnly ? null : NameEditor,
             }}
             onMount={(editor) => {
-              editor.updateInstanceState({ isReadonly: !!readOnly })
+              editor.updateInstanceState({
+                isReadonly: !!readOnly,
+              })
             }}
           />
         </ErrorBoundary>
