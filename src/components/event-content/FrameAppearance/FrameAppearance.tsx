@@ -1,4 +1,4 @@
-import { MdOutlineDesignServices } from 'react-icons/md'
+import { FaWandMagicSparkles } from 'react-icons/fa6'
 
 import { MoraaSlideAppearance } from './MoraaSlideAppearance'
 
@@ -40,7 +40,7 @@ export function FrameAppearance() {
   return (
     <div>
       <RightSidebarHeader
-        icon={<MdOutlineDesignServices size={18} />}
+        icon={<FaWandMagicSparkles size={18} />}
         title={activeObject?.type ? activeObject.type : currentFrame.type}
       />
       <div className="p-4 flex flex-col gap-4">{renderer}</div>

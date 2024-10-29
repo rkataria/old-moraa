@@ -1,16 +1,15 @@
+import { IconPhoto } from '@tabler/icons-react'
+import { BiSolidBarChartAlt2 } from 'react-icons/bi'
 import {
-  IconAlignCenter,
-  IconBrandAdobe,
-  IconCards,
-  IconChartBar,
-  IconPhoto,
-  IconVideo,
-} from '@tabler/icons-react'
-import { BsQuestion } from 'react-icons/bs'
-import { IoPeopleOutline } from 'react-icons/io5'
-import { MdOutlineDraw } from 'react-icons/md'
-import { SiGoogleslides, SiMicrosoftpowerpoint, SiMiro } from 'react-icons/si'
-import { TbNews, TbNotes } from 'react-icons/tb'
+  BsFillFileEarmarkRichtextFill,
+  BsPlayBtnFill,
+  BsPostcardHeart,
+  BsQuestion,
+} from 'react-icons/bs'
+import { FaFilePdf, FaFilePowerpoint } from 'react-icons/fa'
+import { RiSketching } from 'react-icons/ri'
+import { SiGoogleslides, SiMiro, SiSlides } from 'react-icons/si'
+import { TbTextWrap, TbTriangleSquareCircleFilled } from 'react-icons/tb'
 
 import { MORAA_SLIDE_TEMPLATES } from './moraa-slide-templates'
 
@@ -68,10 +67,10 @@ export enum FrameType {
 
 export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
   {
-    name: 'Moraa Slide',
-    icon: <IconAlignCenter className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <IconAlignCenter size={32} />,
-    iconSmall: <IconAlignCenter size={24} />,
+    name: 'moraaSlide',
+    icon: <SiSlides className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <SiSlides size={32} />,
+    iconSmall: <SiSlides size={24} />,
     description:
       'Add a standard slide format with customized layouts for engaging visual presentations',
     type: FrameType.MORAA_SLIDE,
@@ -91,40 +90,43 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
   },
   {
     name: 'Powerpoint',
-    icon: <SiMicrosoftpowerpoint className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <SiMicrosoftpowerpoint size={32} />,
-    iconSmall: <SiMicrosoftpowerpoint size={24} />,
+    icon: <FaFilePowerpoint className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <FaFilePowerpoint size={32} />,
+    iconSmall: <FaFilePowerpoint size={24} />,
     description:
       'Insert PowerPoint slides, keeping your original formatting intact',
     type: FrameType.POWERPOINT,
     category: FrameCategory.DOCUMENT,
   },
-  {
-    name: 'PDF',
-    icon: <IconBrandAdobe className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <IconBrandAdobe size={32} />,
-    iconSmall: <IconBrandAdobe size={24} />,
-    description: 'Upload and integrate your PDF content as a multi-page frame!',
-    type: FrameType.PDF_VIEWER,
-    category: FrameCategory.DOCUMENT,
-  },
+
   {
     name: 'Page',
-    icon: <TbNews className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <TbNews size={32} />,
-    iconSmall: <TbNews size={24} />,
+    icon: (
+      <BsFillFileEarmarkRichtextFill className="w-full h-full max-w-11 max-h-11" />
+    ),
+    iconLarge: <BsFillFileEarmarkRichtextFill size={32} />,
+    iconSmall: <BsFillFileEarmarkRichtextFill size={24} />,
     description: 'Create a frame using a rich text editor',
     type: FrameType.RICH_TEXT,
     category: FrameCategory.DOCUMENT,
   },
   {
     name: 'Video',
-    icon: <IconVideo className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <IconVideo size={32} />,
-    iconSmall: <IconVideo size={24} />,
+    icon: <BsPlayBtnFill className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <BsPlayBtnFill size={32} />,
+    iconSmall: <BsPlayBtnFill size={24} />,
     description: 'Embed videos from YouTube platform',
     type: FrameType.VIDEO_EMBED,
     category: FrameCategory.MEDIA,
+  },
+  {
+    name: 'PDF',
+    icon: <FaFilePdf className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <FaFilePdf size={32} />,
+    iconSmall: <FaFilePdf size={24} />,
+    description: 'Upload and integrate your PDF content as a multi-page frame!',
+    type: FrameType.PDF_VIEWER,
+    category: FrameCategory.DOCUMENT,
   },
   {
     name: 'Image',
@@ -138,9 +140,9 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
   },
   {
     name: 'Poll',
-    icon: <IconChartBar className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <IconChartBar size={32} />,
-    iconSmall: <IconChartBar size={24} />,
+    icon: <BiSolidBarChartAlt2 className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <BiSolidBarChartAlt2 size={32} />,
+    iconSmall: <BiSolidBarChartAlt2 size={24} />,
     description:
       'Break ice, gauge opinions visually. Dive into dialogue effortlessly.',
     type: FrameType.POLL,
@@ -148,34 +150,14 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
   },
   {
     name: 'Reflections',
-    icon: <IconCards className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <IconCards size={32} />,
-    iconSmall: <IconCards size={24} />,
+    icon: <BsPostcardHeart className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <BsPostcardHeart size={32} />,
+    iconSmall: <BsPostcardHeart size={24} />,
     description:
       'Ignite insights through thoughtful reflection. Share perspectives, spark growth.',
     type: FrameType.REFLECTION,
     category: FrameCategory.INTERACTION,
     isAvailableForBreakout: true,
-  },
-  {
-    name: 'Breakout',
-    icon: <IoPeopleOutline className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <IoPeopleOutline size={32} />,
-    iconSmall: <IoPeopleOutline size={24} />,
-    description: 'Plan breakout rooms and activities',
-    type: FrameType.BREAKOUT,
-    category: FrameCategory.COLLABORATION_TOOL,
-  },
-  {
-    name: 'Moraaboard',
-    icon: <MdOutlineDraw className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <MdOutlineDraw size={32} />,
-    iconSmall: <MdOutlineDraw size={24} />,
-    description:
-      'Create a whiteboard to collaborate and brainstorm with your audience',
-    type: FrameType.MORAA_BOARD,
-    isAvailableForBreakout: true,
-    category: FrameCategory.COLLABORATION_TOOL,
   },
   {
     name: 'Q/A',
@@ -187,6 +169,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     type: FrameType.Q_A,
     category: FrameCategory.COLLABORATION_TOOL,
     isCommingSoon: true,
+    disabled: true,
   },
   {
     name: 'Miro',
@@ -197,13 +180,36 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
       'Embed Miro boards to collaborate and brainstorm with your audience',
     type: FrameType.MIRO_EMBED,
     category: FrameCategory.COLLABORATION_TOOL,
-    disabled: true,
+    disabled: false,
   },
   {
-    name: 'Moraapad',
-    icon: <TbNotes className="w-full h-full max-w-11 max-h-11" />,
-    iconLarge: <TbNotes size={32} />,
-    iconSmall: <TbNotes size={24} />,
+    name: 'Breakout',
+    icon: (
+      <TbTriangleSquareCircleFilled className="w-full h-full max-w-11 max-h-11" />
+    ),
+    iconLarge: <TbTriangleSquareCircleFilled size={32} />,
+    iconSmall: <TbTriangleSquareCircleFilled size={24} />,
+    description: 'Plan breakout rooms and activities',
+    type: FrameType.BREAKOUT,
+    category: FrameCategory.COLLABORATION_TOOL,
+  },
+  {
+    name: 'moraaBoard',
+    icon: <RiSketching className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <RiSketching size={32} />,
+    iconSmall: <RiSketching size={24} />,
+    description:
+      'Create a whiteboard to collaborate and brainstorm with your audience',
+    type: FrameType.MORAA_BOARD,
+    isAvailableForBreakout: true,
+    category: FrameCategory.COLLABORATION_TOOL,
+  },
+
+  {
+    name: 'moraaPad',
+    icon: <TbTextWrap className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <TbTextWrap size={32} />,
+    iconSmall: <TbTextWrap size={24} />,
     description:
       'Create a Moraapad to collaborate and brainstorm with your audience',
     type: FrameType.MORAA_PAD,

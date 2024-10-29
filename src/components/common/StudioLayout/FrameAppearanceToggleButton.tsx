@@ -1,4 +1,4 @@
-import { MdOutlineDesignServices } from 'react-icons/md'
+import { HiOutlineColorSwatch } from 'react-icons/hi'
 import { useDispatch } from 'react-redux'
 
 import { Tooltip } from '../ShortuctTooltip'
@@ -35,7 +35,7 @@ export function FrameAppearanceToggleButton() {
           'bg-primary-100': isVisible,
         })}
         onClick={toggleSidebar}>
-        <MdOutlineDesignServices size={18} />
+        <HiOutlineColorSwatch size={18} />
       </Button>
     </Tooltip>
   )

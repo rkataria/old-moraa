@@ -88,18 +88,18 @@ export function HomePage() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 100, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="text-[48px] font-[800] text-white text-center leading-[70px]">
-          Craft, Schedule, and Present
-          <br /> Streamline Event & Course Management
+          className="text-[48px] font-[800] text-white text-center leading-[72px]">
+          Plan, Create & Deliver
+          <br /> 😍 Collaborative 😍
+          <br /> Live Virtual Workshops
         </motion.p>
         <motion.p
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 100, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
           className="mt-[29px] text-white text-center text-base">
-          Transform and bring your ideas into captivating presentations and
+          All in one seamless platform. Goodbye ⌘ + T
           <br />
-          dynamic content with Moraa, the wow tool with AI for creators.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
