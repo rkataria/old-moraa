@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { IoIosSquare } from 'react-icons/io'
 import { twMerge } from 'tailwind-merge'
 
+import { FrameStatus } from '@/types/enums'
 import { ISection } from '@/types/frame.type'
 
 export function cn(...inputs: ClassValue[]) {
@@ -32,6 +33,15 @@ export const getOjectPublicUrl = (objectPath: string) =>
 
 export const getFrameCount = (sections: ISection[]) =>
   sections.reduce((acc, section) => acc + section.frames.length, 0)
+
+export const getPublishedFrameCount = (sections: ISection[]) =>
+  sections.reduce(
+    (acc, section) =>
+      acc +
+      section.frames.filter((frame) => frame.status === FrameStatus.PUBLISHED)
+        .length,
+    0
+  )
 
 export const zeroPad = (num: number, places: number) =>
   String(num).padStart(places, '0')

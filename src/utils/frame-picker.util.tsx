@@ -155,6 +155,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
       'Ignite insights through thoughtful reflection. Share perspectives, spark growth.',
     type: FrameType.REFLECTION,
     category: FrameCategory.INTERACTION,
+    isAvailableForBreakout: true,
   },
   {
     name: 'Breakout',
@@ -230,3 +231,13 @@ export const PRESENTATION_FRAMES = FRAME_PICKER_FRAMES.filter(
 
 export const getFrameType = (frameType: FrameType) =>
   FRAME_PICKER_FRAMES.find((type) => type.type === frameType)
+
+export const isFrameHasVideoAspectRatio = (frameType: FrameType) =>
+  [
+    FrameType.VIDEO,
+    FrameType.VIDEO_EMBED,
+    FrameType.GOOGLE_SLIDES,
+    FrameType.IMAGE_VIEWER,
+    FrameType.POWERPOINT,
+    FrameType.MORAA_SLIDE,
+  ].includes(frameType)

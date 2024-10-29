@@ -215,11 +215,14 @@ export function SessionPlanner({
                           <div>
                             <div
                               className={cn(
-                                'flex w-full items-center bg-white gap-2 p-2 group/section',
+                                'flex w-full items-center gap-2 p-2 group/section',
                                 {
-                                  'rounded-lg border':
+                                  'rounded-lg border bg-white':
                                     !expandedSections.includes(section.id),
                                   'pb-0': editable,
+                                  'bg-transparent': expandedSections.includes(
+                                    section.id
+                                  ),
                                 }
                               )}>
                               <div

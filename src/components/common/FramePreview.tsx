@@ -5,43 +5,35 @@ import { useEffect } from 'react'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from './breakout/BreakoutFrame'
-import { MoraaBoard, MoraaBoardFrame } from './content-types/MoraaBoard'
-import { MoraaPad } from './content-types/MoraaPad/MoraaPad'
-import { MoraaSlidePreview } from './content-types/MoraaSlide/Preview'
+import { GoogleSlidesFrame } from './content-types/GoogleSlides/GoogleSlides'
+import { MoraaBoard } from './content-types/MoraaBoard'
+import { MoraaPadFrame } from './content-types/MoraaPad/MoraaPad'
 import { PDFViewer, PDFViewerFrameType } from './content-types/PDFViewer'
-import { PollPreview } from './content-types/Poll/Preview'
-import { RichTextPreview } from './content-types/RichText/Preview'
+import { PollFrame } from './content-types/Poll/Poll'
+import { RichTextFrame } from './content-types/RichText/RichText'
+import { VideoEmbedFrame } from './content-types/VideoEmbed/VideoEmbed'
 import { FrameTitleDescriptionPreview } from './FrameTitleDescriptionPreview'
 import {
   MiroEmbedEditor,
   MiroEmbedFrameType,
 } from '../event-content/MiroEmbedEditor'
 import { ReflectionEditor } from '../event-content/ReflectionEditor'
-import {
-  VideoEmbedEditor,
-  VideoEmbedFrameType,
-} from '../event-content/VideoEmbedEditor'
 
-import { GoogleSlides } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
 import { ImageViewer } from '@/components/common/content-types/ImageViewer'
 import { RoomProvider } from '@/contexts/RoomProvider'
-import { GoogleSlidesType } from '@/types/frame-picker.type'
-import { IFrame, PollFrame } from '@/types/frame.type'
+import { type MoraaBoardFrame } from '@/types/frame-picker.type'
+import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn, getOjectPublicUrl } from '@/utils/utils'
 
 interface FrameProps {
   frame: IFrame
-  isInteractive?: boolean
-  fullWidth?: boolean
   asThumbnail?: boolean
   className?: string
 }
 
 export function FramePreview({
   frame,
-  isInteractive = true,
-  fullWidth,
   asThumbnail = false,
   className = '',
 }: FrameProps) {
@@ -58,18 +50,9 @@ export function FramePreview({
 
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.VIDEO]: null,
-    [FrameType.POLL]: (
-      <PollPreview
-        frame={frame as PollFrame}
-        disableAnimation={!isInteractive && asThumbnail}
-        renderAsThumbnail={asThumbnail}
-      />
-    ),
+    [FrameType.POLL]: <PollFrame frame={frame} />,
     [FrameType.GOOGLE_SLIDES]: (
-      <GoogleSlides
-        frame={frame as GoogleSlidesType}
-        asThumbnail={asThumbnail}
-      />
+      <GoogleSlidesFrame frame={frame as any} asThumbnail={asThumbnail} />
     ),
     [FrameType.PDF_VIEWER]: (
       <PDFViewer
@@ -78,20 +61,12 @@ export function FramePreview({
       />
     ),
     [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
-    [FrameType.VIDEO_EMBED]: (
-      <VideoEmbedEditor
-        frame={frame as VideoEmbedFrameType}
-        showControls={isInteractive}
-        fullWidth={fullWidth}
-        key={(frame as VideoEmbedFrameType).content.videoUrl}
-        asThumbnail={asThumbnail}
-      />
-    ),
+    [FrameType.VIDEO_EMBED]: <VideoEmbedFrame frame={frame} asThumbnail />,
     [FrameType.IMAGE_VIEWER]: (
       <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
     ),
     [FrameType.RICH_TEXT]: (
-      <RichTextPreview
+      <RichTextFrame
         key={frame.config.allowToCollaborate}
         frame={frame}
         asThumbnail={asThumbnail}
@@ -106,16 +81,11 @@ export function FramePreview({
       />
     ),
     [FrameType.MORAA_BOARD]: (
-      <RoomProvider>
+      <RoomProvider frameId={frame.id}>
         <MoraaBoard frame={frame as MoraaBoardFrame} isInteractive={false} />
       </RoomProvider>
     ),
-    [FrameType.MORAA_SLIDE]: (
-      <MoraaSlidePreview
-        key={frame.id}
-        frameCanvasSvg={frame.content?.svg as string}
-      />
-    ),
+    [FrameType.MORAA_SLIDE]: null,
     [FrameType.BREAKOUT]: <BreakoutFrame frame={frame as BreakoutFrame} />,
     [FrameType.POWERPOINT]: (
       <div className="w-full h-full flex justify-center items-center bg-white text-black">
@@ -126,7 +96,7 @@ export function FramePreview({
       </div>
     ),
     [FrameType.Q_A]: null,
-    [FrameType.MORAA_PAD]: <MoraaPad frame={frame} readonly />,
+    [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType]

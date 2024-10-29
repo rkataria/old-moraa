@@ -12,7 +12,7 @@ import {
 } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
 
-import { RichTextEditor } from '@/components/common/content-types/RichText/Editor'
+import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { UserAvatar } from '@/components/common/UserAvatar'
 import { Dates } from '@/components/enroll/Date'
@@ -38,7 +38,7 @@ export function FrameDetailsView() {
     <div className="overflow-y-auto scrollbar-none h-full relative z-[50] pb-40">
       <div className="pt-4">
         <div className="grid grid-cols-[60%_27%] items-start gap-6">
-          <div className="h-full flex flex-col gap-5 w-auto">
+          <div className="h-full flex flex-col gap-5 w-auto bg-white rounded-md p-4">
             <p className="text-[40px] font-semibold leading-[46px]">
               {event.name}
             </p>

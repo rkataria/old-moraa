@@ -21,7 +21,7 @@ import toast from 'react-hot-toast'
 import { FaCheckCircle } from 'react-icons/fa'
 
 import { ParticipantsFormData } from '@/components/common/AddParticipantsForm'
-import { RichTextEditor } from '@/components/common/content-types/RichText/Editor'
+import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { LogoWithName } from '@/components/common/Logo'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'

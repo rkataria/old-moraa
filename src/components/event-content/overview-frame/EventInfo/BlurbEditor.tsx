@@ -6,7 +6,7 @@ import { RiFileList3Line } from 'react-icons/ri'
 
 import { initalContentAiWriter } from '../InitalContent'
 
-import { RichTextEditor } from '@/components/common/content-types/RichText/Editor'
+import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'

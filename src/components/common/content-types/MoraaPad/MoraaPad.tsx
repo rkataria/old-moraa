@@ -1,23 +1,32 @@
-import { RichTextEditor } from '../RichText/Editor'
+import { Edit } from './Edit'
+import { Live } from './Live'
+import { Preview } from './Preview'
 
+import { useEventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { IFrame } from '@/types/frame.type'
 
-type MoraaPadProps = {
+type MoraaPadFrameProps = {
   frame: IFrame
-  readonly?: boolean
+  isLiveSession?: boolean
+  asThumbnail?: boolean
 }
 
-export function MoraaPad({ frame, readonly = false }: MoraaPadProps) {
-  return (
-    <RichTextEditor
-      hideSideBar
-      editorId={frame.id}
-      editable={!readonly}
-      enableCollaboration
-      classNames={{
-        wrapper: 'overflow-hidden',
-        container: 'flex flex-col overflow-hidden',
-      }}
-    />
-  )
+export function MoraaPadFrame({
+  frame,
+  isLiveSession,
+  asThumbnail,
+}: MoraaPadFrameProps) {
+  const { preview } = useEventContext()
+  const { permissions } = useEventPermissions()
+
+  if (isLiveSession) {
+    return <Live frame={frame} />
+  }
+
+  if (!preview && permissions.canUpdateFrame && !asThumbnail) {
+    return <Edit frame={frame} />
+  }
+
+  return <Preview frame={frame} />
 }

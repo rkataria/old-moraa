@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react'
 
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import 'iframe-resizer/js/iframeResizer.contentWindow'
-import { Content, Editor } from '@tiptap/core'
+import { Content, Editor as TiptapEditor } from '@tiptap/core'
 import { Doc as YDoc } from 'yjs'
 
 import { Loading } from '../../Loading'
@@ -18,7 +18,20 @@ export interface AiState {
   aiError?: string | null
 }
 
-export function RichTextEditor({
+type EditorProps = {
+  editorId: string
+  editable?: boolean
+  showHeader?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  classNames?: any
+  onEmptyContent?: (editor: TiptapEditor) => void
+  startContent?: ReactNode
+  hideSideBar?: boolean
+  initalContent?: Content
+  enableCollaboration?: boolean
+}
+
+export function Editor({
   editorId,
   editable = true,
   showHeader = true,
@@ -28,18 +41,7 @@ export function RichTextEditor({
   hideSideBar,
   initalContent,
   enableCollaboration = false,
-}: {
-  editorId: string
-  editable?: boolean
-  showHeader?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  classNames?: any
-  onEmptyContent?: (editor: Editor) => void
-  startContent?: ReactNode
-  hideSideBar?: boolean
-  initalContent?: Content
-  enableCollaboration?: boolean
-}) {
+}: EditorProps) {
   const [provider, setProvider] = useState<TiptapCollabProvider | null>(null)
   const [collabToken, setCollabToken] = useState<string | null>(null)
   const [aiToken, setAiToken] = useState<string | null>(null)

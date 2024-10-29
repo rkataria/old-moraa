@@ -14,7 +14,7 @@ import { ContentLoading } from '../../ContentLoading'
 
 import { FrameFormContainer } from '@/components/event-content/FrameFormContainer'
 import { useEventContext } from '@/contexts/EventContext'
-import { GoogleSlidesType } from '@/types/frame-picker.type'
+import { type GoogleSlidesFrame } from '@/types/frame-picker.type'
 
 const googleSlidesEmbedSchema = yup.object({
   googleSlideUrl: yup
@@ -31,7 +31,7 @@ export type GoogleSlideEmbedFormData = yup.InferType<
 >
 
 type EmbedEditProps = {
-  frame: GoogleSlidesType
+  frame: GoogleSlidesFrame
   hideImportLink?: boolean
   onChangeMode: () => void
 }

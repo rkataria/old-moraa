@@ -1,38 +1,37 @@
 /* eslint-disable jsx-a11y/iframe-has-title */
 import { Edit } from './Edit'
-import { Live } from './Live'
 import { Preview } from './Preview'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { GoogleSlidesType } from '@/types/frame-picker.type'
+import { type GoogleSlidesFrame } from '@/types/frame-picker.type'
 
-type GoogleSlidesProps = {
-  frame: GoogleSlidesType
+type GoogleSlidesFrameProps = {
+  frame: GoogleSlidesFrame
   isLiveSession?: boolean
   asThumbnail?: boolean
 }
 
-export function GoogleSlides({
+export function GoogleSlidesFrame({
   frame,
   isLiveSession,
   asThumbnail,
-}: GoogleSlidesProps) {
+}: GoogleSlidesFrameProps) {
   const { preview } = useEventContext()
   const { permissions } = useEventPermissions()
 
   if (isLiveSession) {
-    return <Live frame={frame} />
-  }
-
-  if (
-    preview ||
-    !permissions.canUpdateFrame ||
-    asThumbnail ||
-    frame.content?.individualFrame
-  ) {
     return <Preview frame={frame} />
   }
 
-  return <Edit frame={frame} />
+  if (
+    !preview &&
+    permissions.canUpdateFrame &&
+    !asThumbnail &&
+    !frame.content?.individualFrame
+  ) {
+    return <Edit frame={frame} />
+  }
+
+  return <Preview frame={frame} />
 }

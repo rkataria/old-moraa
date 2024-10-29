@@ -1,8 +1,11 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from '@tanstack/react-router'
 import { useDispatch } from 'react-redux'
 
+import { MeetingStatusAlert } from './MeetingStatusAlert'
 import { LeaveMeetingToggle } from '../LeaveMeetingToggle'
 import { MediaSettingsToggle } from '../MediaSettingsToggle'
 import { Timer } from '../Timer'
@@ -48,6 +51,7 @@ export function Header() {
           {dyteClient?.meta?.meetingTitle || event.name}
         </div>
       </div>
+      <MeetingStatusAlert />
       <div className="flex justify-end items-center gap-2 h-full">
         <Timer />
         <HelpButton

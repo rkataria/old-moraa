@@ -10,7 +10,7 @@ interface PollProps {
   renderAsThumbnail?: boolean
 }
 
-export function PollPreview({
+export function Preview({
   frame,
   disableAnimation,
   renderAsThumbnail = false,

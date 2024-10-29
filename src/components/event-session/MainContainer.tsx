@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
-import { FrameOverlayView } from './FrameOverlayView'
 import { ParticipantTiles } from './ParticipantTiles'
 import { PanelResizer } from '../common/PanelResizer'
 
@@ -73,7 +72,6 @@ export function MainContainer() {
           </Panel>
         </PanelGroup>
       )}
-      <FrameOverlayView />
     </div>
   )
 }

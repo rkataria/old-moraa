@@ -1,29 +1,19 @@
-import { ReactNode } from '@tanstack/react-router'
-
-import { RichTextEditor } from './Editor'
+import { Editor } from './Editor'
 
 import { IFrame } from '@/types/frame.type'
 
-export function RichTextPreview({
-  frame,
-  asThumbnail,
-  startContent,
-}: {
+type PreviewProps = {
   frame: IFrame
-  asThumbnail?: boolean
-  startContent?: ReactNode
-}) {
-  const canEditRichText = !!(!asThumbnail && frame.config.allowToCollaborate)
+  allowToCollaborate?: boolean
+}
 
-  const visibleStartContent = !asThumbnail && !canEditRichText
-
+export function Preview({ frame, allowToCollaborate }: PreviewProps) {
   return (
-    <RichTextEditor
+    <Editor
       editorId={frame.id}
-      editable={canEditRichText}
-      startContent={visibleStartContent ? startContent : null}
-      // hideSideBar={asThumbnail}
-      hideSideBar
+      editable={allowToCollaborate}
+      classNames={{ wrapper: 'overflow-hidden' }}
+      startContent={!allowToCollaborate}
     />
   )
 }

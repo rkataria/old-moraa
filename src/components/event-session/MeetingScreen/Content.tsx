@@ -3,7 +3,6 @@ import { PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from '../ContentContainer'
-import { FrameOverlayView } from '../FrameOverlayView'
 import { ParticipantTiles } from '../ParticipantTiles'
 
 import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsWithParticipants'
@@ -48,9 +47,7 @@ export function Content() {
     return () => clearInterval(intervalId)
   }, [panelSize])
 
-  const spotlightMode =
-    eventSessionMode === EventSessionMode.LOBBY ||
-    (eventSessionMode === EventSessionMode.PEEK && isHost)
+  const spotlightMode = eventSessionMode === EventSessionMode.LOBBY
 
   const isCurrentFrameInBreakout =
     typeof currentFrameId === 'string' &&
@@ -63,6 +60,13 @@ export function Content() {
       </div>
     ),
     frame_presentation_view: (
+      <PanelsContent panelRef={panelRef}>
+        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2 border-1 border-gray-200">
+          <ContentContainer />
+        </div>
+      </PanelsContent>
+    ),
+    frame_peek_view: (
       <PanelsContent panelRef={panelRef}>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2 border-1 border-gray-200">
           <ContentContainer />
@@ -106,6 +110,7 @@ export function Content() {
     frame_presentation_view: ['Preview', 'Presentation'].includes(
       eventSessionMode
     ),
+    frame_peek_view: eventSessionMode === EventSessionMode.PEEK,
   }).split(' ')[0] as keyof typeof ContentViewModes
 
   return (
@@ -114,7 +119,6 @@ export function Content() {
       ref={mainContentRef}>
       {/* Sportlight View */}
       {ContentViewModes[contentToShow]}
-      <FrameOverlayView />
     </div>
   )
 }

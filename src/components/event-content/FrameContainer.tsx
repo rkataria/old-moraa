@@ -33,7 +33,7 @@ export function FrameContainer() {
   return (
     <div key={currentFrame.id} className="relative w-full h-full">
       {currentFrame?.type === FrameType.MORAA_BOARD ? (
-        <RoomProvider>
+        <RoomProvider frameId={currentFrame.id}>
           <Frame frame={currentFrame} />
         </RoomProvider>
       ) : (

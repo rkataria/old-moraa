@@ -6,12 +6,13 @@ import { Preview } from './Preview'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { GoogleSlidesType } from '@/types/frame-picker.type'
+import { type GoogleSlidesFrame } from '@/types/frame-picker.type'
 import { isValidGoogleSlidesUrl } from '@/utils/utils'
 
 const positionChangeEvent = 'g-frame-position-changed'
+
 type LiveProps = {
-  frame: GoogleSlidesType
+  frame: GoogleSlidesFrame
 }
 
 export function Live({ frame }: LiveProps) {
