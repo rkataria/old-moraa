@@ -76,8 +76,10 @@ const deleteAllExistingBreakoutSessions = async ({
 
 const getExistingOrCreateNewActiveSession = async ({
   meetingId,
+  defaultData = null,
 }: {
   meetingId: string
+  defaultData?: object | null
 }) => {
   if (!meetingId) return null
 
@@ -93,7 +95,7 @@ const getExistingOrCreateNewActiveSession = async ({
   if (getQuery.data === null) {
     return createSession({
       meetingId,
-      defaultData: null,
+      defaultData,
       status: 'LIVE',
     })
   }

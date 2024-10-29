@@ -48,6 +48,17 @@ export function FrameList({
 
   const getBreakoutFrames = (frame: IFrame) => {
     if (frame?.type === FrameType.BREAKOUT) {
+      if (frame.content?.breakoutRooms?.length) {
+        const breakoutActivityFramesId = frame.content?.breakoutRooms
+          .map((activity) => activity.activityId)
+          .filter(Boolean)
+
+        const tempFrames = sections.map((sec) => sec.frames).flat(2)
+
+        return breakoutActivityFramesId
+          .map((id) => tempFrames.find((tFrame) => tFrame.id === id))
+          .filter(Boolean) as IFrame[]
+      }
       const tempFrames = sections.map((sec) => sec.frames).flat(2)
       const breakoutFrames = tempFrames.filter(
         (f) => f?.content?.breakoutFrameId === frame?.id
