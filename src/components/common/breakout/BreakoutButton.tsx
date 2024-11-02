@@ -197,14 +197,16 @@ export function BreakoutButton() {
     return (
       <ControlButton
         tooltipProps={{
-          content: isBreakoutActive ? 'View Breakout' : 'Start Breakout',
+          content: isBreakoutActive
+            ? 'Open breakout manager'
+            : 'Create breakout rooms',
         }}
         buttonProps={{
           size: 'sm',
           variant: 'solid',
           // isIconOnly: true,
           className: cn('gap-2 justify-between live-button', {
-            '!bg-green-500 !text-white': isBreakoutActive,
+            '!bg-gray-900 !text-white': isBreakoutActive, // RK - replace bg-gray-900 with theme color
           }),
         }}
         onClick={() =>
@@ -216,7 +218,7 @@ export function BreakoutButton() {
             },
           }))
         }>
-        Breakout
+        {isBreakoutActive ? 'Open breakout manager' : 'Create breakout rooms'}
       </ControlButton>
     )
   }
@@ -248,7 +250,7 @@ export function BreakoutButton() {
     return (
       <BreakoutButtonWithConfirmationModal
         key="end-breakout"
-        label="End breakout"
+        label="End breakout session"
         onEndBreakoutClick={onBreakoutEnd}
       />
     )
@@ -262,7 +264,7 @@ export function BreakoutButton() {
     return (
       <BreakoutButtonWithConfirmationModal
         key="start-breakout-2"
-        label="Start breakout"
+        label="Start breakout session"
         roomsCount={defaultRoomsCount}
         participantPerGroup={defaultParticipantsPerRoom}
         breakoutDuration={defaultBreakoutDuration}

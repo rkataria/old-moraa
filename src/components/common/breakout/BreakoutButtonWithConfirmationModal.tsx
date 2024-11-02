@@ -82,7 +82,7 @@ export function BreakoutButtonWithConfirmationModal({
 
   const DurationUI = (
     <div className="grid grid-cols-2 gap-4">
-      <p>Duration:</p>
+      <p>Duration (mins):</p>
       <ButtonGroup
         variant="bordered"
         size="sm"
@@ -119,10 +119,10 @@ export function BreakoutButtonWithConfirmationModal({
     rooms: (
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p>Breakout Rooms:</p>{' '}
+          <p>Number of rooms:</p>{' '}
           <p className="text-xs text-gray-500">
             Approx {Math.ceil(currentParticipantCount / (roomsCount as number))}{' '}
-            participant per room.
+            participants per room.
           </p>
         </div>
         <div>{roomsCount}</div>
@@ -131,7 +131,7 @@ export function BreakoutButtonWithConfirmationModal({
     participants_per_room: (
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p>Participants per room:</p>
+          <p>Max participants per room:</p>
           <p className="text-xs text-gray-500">
             {Math.ceil(
               currentParticipantCount / (participantPerGroup as number)
@@ -147,13 +147,13 @@ export function BreakoutButtonWithConfirmationModal({
   const ConfigureRoomsUI = (
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <p>Breakout Rooms:</p>{' '}
+        <p>Number of rooms:</p>{' '}
         <p className="text-xs text-gray-500">
           Approx{' '}
           {Math.ceil(
             currentParticipantCount / (breakoutConfig.roomsCount as number)
           )}{' '}
-          participant per room.
+          participants per room.
         </p>
       </div>
       <ButtonGroup
@@ -205,7 +205,7 @@ export function BreakoutButtonWithConfirmationModal({
           onStartBreakoutClick ? setOpen(true) : onEndBreakoutClick?.()
         }>
         {/* <VscMultipleWindows size={22} /> */}
-        Breakout
+        Start planned breakout
       </ControlButton>
       {!!onStartBreakoutClick && (
         <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
@@ -213,7 +213,7 @@ export function BreakoutButtonWithConfirmationModal({
             {(onClose) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  Start Breakout Meeting
+                  Breakout configuration
                 </ModalHeader>
                 <ModalBody>
                   {isConfigAlreadyProvided
