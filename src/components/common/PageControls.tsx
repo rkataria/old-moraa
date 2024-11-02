@@ -9,7 +9,8 @@ import { useHotkeys } from '@/hooks/useHotkeys'
 interface PageControlsProps {
   currentPage: number
   totalPages?: number | null
-  scale?: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  zoom?: any
   shouldRenderZoomControls?: boolean
   handleCurrentPageChange: (pageNumber: number) => void
   handleScaleChange?: (zoomType: string) => void
@@ -18,7 +19,7 @@ interface PageControlsProps {
 export function PageControls({
   currentPage,
   totalPages,
-  scale,
+  zoom,
   shouldRenderZoomControls = false,
   handleCurrentPageChange,
   handleScaleChange,
@@ -38,12 +39,12 @@ export function PageControls({
   const arrowRight = useHotkeys('ArrowRight', handleNext)
 
   const visibleZoomControls =
-    shouldRenderZoomControls && scale && handleScaleChange
+    shouldRenderZoomControls && zoom && handleScaleChange
 
   return (
     <div className={cn('absolute right-2 top-2 flex gap-1')}>
       {visibleZoomControls && (
-        <ZoomControls scale={scale} handleScaleChange={handleScaleChange} />
+        <ZoomControls zoom={zoom} handleScaleChange={handleScaleChange} />
       )}
 
       <Tooltip content="Previous page" placement="top">
@@ -52,6 +53,7 @@ export function PageControls({
           isIconOnly
           size="sm"
           radius="full"
+          isDisabled={currentPage === 1}
           className={cn('transition-all duration-200 cursor-pointer ring-0', {
             'bg-black text-white': currentPage > 1 && arrowLeft,
             'opacity-20 cursor-not-allowed': currentPage === 1,
@@ -67,6 +69,7 @@ export function PageControls({
           isIconOnly
           size="sm"
           radius="full"
+          isDisabled={totalPages === currentPage}
           className={cn('transition-all duration-200 cursor-pointer ring-0', {
             'bg-black text-white': totalPages !== currentPage && arrowRight,
             'opacity-20 cursor-not-allowed': totalPages === currentPage,

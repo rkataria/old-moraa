@@ -7,15 +7,16 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { FaFilePdf } from 'react-icons/fa'
-import { pdfjs, Document, Page } from 'react-pdf'
+import { pdfjs } from 'react-pdf'
 
 import { FrameFormContainer } from './FrameFormContainer'
+import { PdfPage } from '../common/content-types/PageRenderer'
 import { FilePickerDropzone } from '../common/FilePickerDropzone'
 import { PageControls } from '../common/PageControls'
 
 import { Loading } from '@/components/common/Loading'
 import { EventContext } from '@/contexts/EventContext'
-import { usePDFZoomControls } from '@/hooks/usePDFZoomControls'
+import { usePdfControls } from '@/hooks/usePdfControls'
 import {
   deletePDFFile,
   downloadPDFFile,
@@ -25,7 +26,7 @@ import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
 import { QueryKeys } from '@/utils/query-keys'
-import { cn, getFileObjectFromBlob } from '@/utils/utils'
+import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFUploaderProps {
   frame: IFrame & {
@@ -57,13 +58,12 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   const containerRef = useRef<any>()
 
   const {
-    handleZoomIn,
-    handleZoomOut,
-    pageScale,
-    pdfPageWidth,
+    zoomType,
+    fitDimensions,
     isLandscape,
     fitPageToContainer,
-  } = usePDFZoomControls(containerRef, getLastVisitedPage(frame.id).pageScale)
+    handleScaleChange,
+  } = usePdfControls(containerRef, frame.id)
 
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
@@ -118,18 +118,6 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
           frameId: frame.id,
         })
       },
-    })
-  }
-  const handleScaleChange = (zoomType: string) => {
-    let newScale
-    if (zoomType === 'zoomIn') {
-      newScale = handleZoomIn()
-    } else {
-      newScale = handleZoomOut()
-    }
-
-    updateLastVisitedPage(frame.id, {
-      pageScale: newScale,
     })
   }
 
@@ -187,60 +175,29 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
 
       case !!downloadPDFQuery.data:
         return (
-          <div
-            ref={containerRef}
-            className={cn(
-              'flex justify-start items-start gap-4 h-full w-full mx-auto',
-              {
-                'w-auto aspect-video h-auto max-h-full': isLandscape,
-                'justify-center': !isLandscape,
-              }
-            )}>
-            <Document
-              file={downloadPDFQuery.data}
-              onLoadSuccess={onDocumentLoadSuccess}
-              className={cn(
-                'relative h-full ml-0 overflow-y-auto scrollbar-none',
-                {
-                  'w-fit h-[inherit]': isLandscape,
-                }
-              )}
-              loading={
-                <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
-                  <Loading />
-                </div>
-              }>
-              <Page
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
+          <div className="relative h-full overflow-hidden" ref={containerRef}>
+            <div className="overflow-y-auto h-full scrollbar-none">
+              <PdfPage
+                file={downloadPDFQuery.data}
                 pageNumber={selectedPage}
-                width={pdfPageWidth * pageScale * devicePixelRatio} // Apply zoom scaling and DPR
-                onLoadSuccess={fitPageToContainer} // Fit page initially when loaded
+                onDocumentLoadSuccess={onDocumentLoadSuccess}
+                onPageLoadSucccess={fitPageToContainer}
+                fitDimensions={fitDimensions}
               />
-              {/* <Page
-                width={pageDimensions.width / pageScale} // Adjust width based on scale
-                height={pageDimensions.height / pageScale} // Adjust height based on scale
-                pageNumber={selectedPage}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
-                onLoadSuccess={onLoadSuccess}
-              /> */}
-            </Document>
-            <PageControls
-              scale={pageScale}
-              currentPage={selectedPage}
-              totalPages={totalPages}
-              shouldRenderZoomControls={!isLandscape}
-              handleCurrentPageChange={(page: number) => {
-                setSelectedPage(
-                  page <= (totalPages || 1) ? page : totalPages || 1
-                )
-                updateLastVisitedPage(frame.id, {
-                  position: page,
-                })
-              }}
-              handleScaleChange={handleScaleChange}
-            />
+              <PageControls
+                zoom={zoomType}
+                currentPage={selectedPage}
+                totalPages={totalPages}
+                shouldRenderZoomControls={!isLandscape}
+                handleCurrentPageChange={(page) => {
+                  handlePositionChange(page <= totalPages ? page : totalPages)
+                  updateLastVisitedPage(frame.id, {
+                    position: page,
+                  })
+                }}
+                handleScaleChange={handleScaleChange}
+              />
+            </div>
           </div>
         )
 
@@ -251,4 +208,3 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
 
   return <>{getInnerContent()}</>
 }
-// --scale-factor: 1.1013071895424837; background-color: white; position: relative; min-width: min-content; min-height: min-content;

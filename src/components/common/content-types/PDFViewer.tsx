@@ -1,25 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
-import React, { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Skeleton } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
-import { pdfjs, Document, Page, Thumbnail } from 'react-pdf'
 
-import { ContentLoading } from '../ContentLoading'
+import { PdfPage } from './PageRenderer'
 import { EmptyPlaceholder } from '../EmptyPlaceholder'
-import { Loading } from '../Loading'
-import { RenderIf } from '../RenderIf/RenderIf'
 
 import { PageControls } from '@/components/common/PageControls'
-import { usePDFZoomControls } from '@/hooks/usePDFZoomControls'
+import { usePdfControls } from '@/hooks/usePdfControls'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { IFrame } from '@/types/frame.type'
 import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
-import { cn, getFileObjectFromBlob } from '@/utils/utils'
+import { getFileObjectFromBlob } from '@/utils/utils'
 
 export type PDFViewerFrameType = IFrame & {
   content: {
@@ -33,30 +26,25 @@ interface PDFViewerProps {
   asThumbnail?: boolean
 }
 
-pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
-
 export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
-  const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
   const [file, setFile] = useState<File | undefined>()
   const [totalPages, setTotalPages] = useState<number>(0)
+
   const [position, setPosition] = useState<number>(
     asThumbnail
       ? 1
       : frame.content?.defaultPage || getLastVisitedPage(frame.id).position || 1
   )
-  const containerRef = React.useRef(null)
-  const canvasRef = React.useRef(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerRef = useRef<any>(null)
 
   const {
-    handleZoomIn,
-    handleZoomOut,
-    pageScale,
+    zoomType,
+    fitDimensions,
     isLandscape,
-    pdfPageWidth,
     fitPageToContainer,
-  } = usePDFZoomControls(containerRef, getLastVisitedPage(frame.id).pageScale)
-  const [pageWidth, setPageWidth] = React.useState(null)
-  const [pageHeight, setPageHeight] = React.useState(null)
+    handleScaleChange,
+  } = usePdfControls(containerRef, frame.id)
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
@@ -81,37 +69,10 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
     setPosition(newPosition)
   }
 
-  const handleScaleChange = (zoomType: string) => {
-    let newScale
-    if (zoomType === 'zoomIn') {
-      newScale = handleZoomIn()
-    } else {
-      newScale = handleZoomOut()
-    }
-
-    updateLastVisitedPage(frame.id, {
-      pageScale: newScale,
-    })
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDocumentLoadSuccess: any = ({ numPages: nextNumPages }: any) => {
     setTotalPages(nextNumPages)
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // const onLoadSuccess = (page: any) => {
-  //   const isPortraitPage = page.width < page.height
-
-  //   setPageView({
-  //     isPortrait: isPortraitPage,
-  //     maxWidth: page.width,
-  //   })
-
-  //   const aspectRatio = page.view[2] / page.view[3] // width / height
-  //   setPageWidth(containerRef.current.clientWidth)
-  //   setPageHeight(containerRef.current.clientWidth / aspectRatio)
-  // }
 
   if (downloadPDFMutation.isError) {
     return (
@@ -129,55 +90,36 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
     return <Skeleton className="w-full h-full rounded-md" />
   }
 
+  // return <Sample file={file} />
+
+  if (!file) {
+    return <p>Sorry! Unable to load file</p>
+  }
+
   return (
-    <div
-      ref={containerRef}
-      id="container"
-      className={cn(
-        'flex justify-start items-start gap-4 h-full mx-auto w-full',
-        {
-          'w-auto aspect-video h-auto max-h-full': isLandscape,
-          'justify-center': !isLandscape,
-        }
-      )}>
-      <Document
-        file={file}
-        onLoadSuccess={onDocumentLoadSuccess}
-        className={cn('relative h-full ml-0 overflow-y-auto scrollbar-none', {
-          'w-fit h-[inherit]': isLandscape,
-        })}
-        loading={
-          <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
-            <Loading />
-          </div>
-        }>
-        <RenderIf isTrue={asThumbnail}>
-          <Thumbnail pageNumber={1} />
-        </RenderIf>
-        <RenderIf isTrue={!asThumbnail}>
-          <Page
-            renderAnnotationLayer={false}
-            renderTextLayer={false}
-            pageNumber={position}
-            width={pdfPageWidth * pageScale} // Apply zoom scaling and DPR
-            onLoadSuccess={fitPageToContainer} // Fit page initially when loaded
-            loading={<ContentLoading />}
-          />
-        </RenderIf>
-      </Document>
-      <PageControls
-        scale={pageScale}
-        currentPage={position}
-        totalPages={totalPages}
-        shouldRenderZoomControls={!isLandscape}
-        handleCurrentPageChange={(page) => {
-          handlePositionChange(page <= totalPages ? page : totalPages)
-          updateLastVisitedPage(frame.id, {
-            position: page,
-          })
-        }}
-        handleScaleChange={handleScaleChange}
-      />
+    <div className="relative h-full overflow-hidden" ref={containerRef}>
+      <div className="overflow-y-auto h-full scrollbar-none">
+        <PdfPage
+          file={file}
+          pageNumber={position}
+          onDocumentLoadSuccess={onDocumentLoadSuccess}
+          onPageLoadSucccess={fitPageToContainer}
+          fitDimensions={fitDimensions}
+        />
+        <PageControls
+          zoom={zoomType}
+          currentPage={position}
+          totalPages={totalPages}
+          shouldRenderZoomControls={!isLandscape}
+          handleCurrentPageChange={(page) => {
+            handlePositionChange(page <= totalPages ? page : totalPages)
+            updateLastVisitedPage(frame.id, {
+              position: page,
+            })
+          }}
+          handleScaleChange={handleScaleChange}
+        />
+      </div>
     </div>
   )
 }

@@ -293,9 +293,9 @@
 }
 
 /* PDF */
-.react-pdf__Page__canvas {
+/* .react-pdf__Page__canvas {
   @apply mx-auto !w-full !h-auto;
-}
+} */
 
 .flying-emojis {
   position: fixed;

@@ -71,7 +71,7 @@ export function FramePreview({
         asThumbnail={asThumbnail}
       />
     ),
-    [FrameType.PDF_VIEWER]: (
+    [FrameType.PDF_VIEWER]: asThumbnail ? null : (
       <PDFViewer
         frame={frame as PDFViewerFrameType}
         asThumbnail={asThumbnail}

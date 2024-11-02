@@ -11,7 +11,7 @@ export const updateLastVisitedPage = (frameId: string, data: any) => {
   localStorage.setItem('pdf-page-states', JSON.stringify(pdfPageStates))
 }
 
-export const getLastVisitedPage = (frameId: string): number => {
+export const getLastVisitedPage = (frameId: string) => {
   const pdfPageStates = JSON.parse(
     localStorage.getItem('pdf-page-states') || '{}'
   )
