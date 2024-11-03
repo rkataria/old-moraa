@@ -5,15 +5,15 @@ import { Tooltip } from './ShortuctTooltip'
 import { ZoomControls } from './ZoomControls'
 
 import { useHotkeys } from '@/hooks/useHotkeys'
+import { IPdfZoom } from '@/types/frame.type'
 
 interface PageControlsProps {
   currentPage: number
   totalPages?: number | null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  zoom?: any
+  zoom?: IPdfZoom
   shouldRenderZoomControls?: boolean
   handleCurrentPageChange: (pageNumber: number) => void
-  handleScaleChange?: (zoomType: string) => void
+  handleScaleChange?: (zoomType: IPdfZoom) => void
 }
 
 export function PageControls({
@@ -42,7 +42,7 @@ export function PageControls({
     shouldRenderZoomControls && zoom && handleScaleChange
 
   return (
-    <div className={cn('absolute right-2 top-2 flex gap-1')}>
+    <div className={cn('absolute right-2 top-2 flex gap-1 z-[100]')}>
       {visibleZoomControls && (
         <ZoomControls zoom={zoom} handleScaleChange={handleScaleChange} />
       )}

@@ -14,21 +14,19 @@ const options = {
 
 type PDFFile = string | File | null
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function PdfPage({
   file,
   pageNumber = 1,
   fitDimensions = { width: 800 },
   onDocumentLoadSuccess,
-  onPageLoadSucccess,
+  onPageLoadSuccess,
 }: {
   file: PDFFile
   pageNumber: number
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fitDimensions: any
+  fitDimensions: { width?: number; height?: number }
   onDocumentLoadSuccess: () => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onPageLoadSucccess: (page: any) => void
+  onPageLoadSuccess: (page: any) => void
 }) {
   return (
     <Document
@@ -37,8 +35,8 @@ export function PdfPage({
       options={options}>
       <Page
         pageNumber={pageNumber}
-        onLoadSuccess={onPageLoadSucccess}
-        width={!fitDimensions.height ? fitDimensions.width : undefined}
+        onLoadSuccess={onPageLoadSuccess}
+        width={fitDimensions.width}
         height={fitDimensions.height}
       />
     </Document>

@@ -5,15 +5,17 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@nextui-org/react'
-import { IoMdAdd } from 'react-icons/io'
+import { IoMdAdd, IoMdPhoneLandscape, IoMdPhonePortrait } from 'react-icons/io'
 import { LuMinus } from 'react-icons/lu'
 
 import { Button } from '../ui/Button'
 
+import { IPdfZoom } from '@/types/frame.type'
+import { PdfView, PdfViews } from '@/utils/pdf.utils'
+
 interface IZoomControls {
-  handleScaleChange: (zoomType: string) => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  zoom: any
+  handleScaleChange: (zoom: IPdfZoom) => void
+  zoom: IPdfZoom
 }
 
 export function ZoomControls({ handleScaleChange, zoom }: IZoomControls) {
@@ -25,7 +27,7 @@ export function ZoomControls({ handleScaleChange, zoom }: IZoomControls) {
         size="sm"
         radius="full"
         className={cn(
-          'transition-all duration-200 cursor-pointer ring-0 hover:bg-gray-200 bg-transparent rounded-lg'
+          'transition-all duration-200 cursor-pointer ring-0 hover:bg-gray-200 bg-transparent rounded-full'
         )}
         onClick={() => handleScaleChange({ ...zoom, type: 'zoom-out' })}>
         <LuMinus size={14} />
@@ -40,7 +42,9 @@ export function ZoomControls({ handleScaleChange, zoom }: IZoomControls) {
               'transition-all duration-200 cursor-pointer ring-0 hover:bg-gray-200 rounded-lg px-0 !min-w-[auto] !bg-transparent'
             )}>
             <p className="text-xs">
-              {zoom.scale ? `${Math.floor(zoom.scale * 100)}%` : zoom.type}
+              {zoom.scale
+                ? `${Math.floor(zoom.scale * 100)}%`
+                : PdfViews[zoom.type as PdfView]}
             </p>
           </Button>
         </DropdownTrigger>
@@ -48,10 +52,20 @@ export function ZoomControls({ handleScaleChange, zoom }: IZoomControls) {
           aria-label="Static Actions"
           variant="flat"
           onAction={(actionKey) => {
-            handleScaleChange({ type: actionKey, scale: undefined })
+            handleScaleChange({ type: actionKey as string, scale: undefined })
           }}>
-          <DropdownItem key="fit-to-page">Fit to page</DropdownItem>
-          <DropdownItem key="full-page">Full page</DropdownItem>
+          <DropdownItem key="fit-to-page">
+            <div className="flex items-center gap-4">
+              <IoMdPhonePortrait size={28} className="text-gray-500" />
+              Fit to page
+            </div>
+          </DropdownItem>
+          <DropdownItem key="full-page">
+            <div className="flex items-center gap-4">
+              <IoMdPhoneLandscape size={28} className="text-gray-500" />
+              Full page
+            </div>
+          </DropdownItem>
         </DropdownMenu>
       </Dropdown>
 
@@ -61,7 +75,7 @@ export function ZoomControls({ handleScaleChange, zoom }: IZoomControls) {
         size="sm"
         radius="full"
         className={cn(
-          'transition-all duration-300 cursor-pointer ring-0 hover:bg-gray-200 bg-transparent'
+          'transition-all duration-300 cursor-pointer ring-0 hover:bg-gray-200 bg-transparent rounded-full'
         )}
         onClick={() => {
           handleScaleChange({ ...zoom, type: 'zoom-in' })

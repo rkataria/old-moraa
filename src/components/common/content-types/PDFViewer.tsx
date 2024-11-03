@@ -10,7 +10,7 @@ import { EmptyPlaceholder } from '../EmptyPlaceholder'
 import { PageControls } from '@/components/common/PageControls'
 import { usePdfControls } from '@/hooks/usePdfControls'
 import { downloadPDFFile } from '@/services/pdf.service'
-import { IFrame } from '@/types/frame.type'
+import { IFrame, IPdfZoom } from '@/types/frame.type'
 import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
 import { getFileObjectFromBlob } from '@/utils/utils'
 
@@ -38,13 +38,14 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const containerRef = useRef<any>(null)
 
+  const initialZoom = getLastVisitedPage(frame.id)?.pageScale
   const {
     zoomType,
     fitDimensions,
     isLandscape,
     fitPageToContainer,
     handleScaleChange,
-  } = usePdfControls(containerRef, frame.id)
+  } = usePdfControls(containerRef, initialZoom)
 
   const downloadPDFMutation = useMutation({
     mutationFn: () =>
@@ -72,6 +73,13 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDocumentLoadSuccess: any = ({ numPages: nextNumPages }: any) => {
     setTotalPages(nextNumPages)
+  }
+
+  const onChangeScale = (zoom: IPdfZoom) => {
+    const updatedZoom = handleScaleChange(zoom)
+    updateLastVisitedPage(frame.id, {
+      pageScale: updatedZoom,
+    })
   }
 
   if (downloadPDFMutation.isError) {
@@ -103,7 +111,7 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
           file={file}
           pageNumber={position}
           onDocumentLoadSuccess={onDocumentLoadSuccess}
-          onPageLoadSucccess={fitPageToContainer}
+          onPageLoadSuccess={fitPageToContainer}
           fitDimensions={fitDimensions}
         />
         <PageControls
@@ -111,13 +119,13 @@ export function PDFViewer({ frame, asThumbnail = false }: PDFViewerProps) {
           currentPage={position}
           totalPages={totalPages}
           shouldRenderZoomControls={!isLandscape}
+          handleScaleChange={onChangeScale}
           handleCurrentPageChange={(page) => {
             handlePositionChange(page <= totalPages ? page : totalPages)
             updateLastVisitedPage(frame.id, {
               position: page,
             })
           }}
-          handleScaleChange={handleScaleChange}
         />
       </div>
     </div>

@@ -169,3 +169,8 @@ export type FrameAction = {
   label: string
   icon: ReactNode
 }
+
+export type IPdfZoom = {
+  type: string
+  scale: number | undefined
+}

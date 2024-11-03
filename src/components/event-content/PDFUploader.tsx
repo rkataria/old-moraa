@@ -7,7 +7,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { FaFilePdf } from 'react-icons/fa'
-import { pdfjs } from 'react-pdf'
 
 import { FrameFormContainer } from './FrameFormContainer'
 import { PdfPage } from '../common/content-types/PageRenderer'
@@ -37,8 +36,6 @@ interface PDFUploaderProps {
   }
 }
 
-pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
-
 const getPDFName = (frameId: string) => `${frameId}_pdf.pdf`
 
 export function PDFUploader({ frame }: PDFUploaderProps) {
@@ -57,13 +54,15 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const containerRef = useRef<any>()
 
+  const initialZoom = getLastVisitedPage(frame.id)?.pageScale
+
   const {
     zoomType,
     fitDimensions,
     isLandscape,
     fitPageToContainer,
     handleScaleChange,
-  } = usePdfControls(containerRef, frame.id)
+  } = usePdfControls(containerRef, initialZoom)
 
   const downloadPDFQuery = useQuery({
     queryKey: QueryKeys.DownloadPDF.item(fileUrl || ''),
@@ -132,6 +131,18 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
     setTotalPages(nextNumPages)
   }
 
+  const handlePositionChange = (newPosition: number) => {
+    if (newPosition < 1 || newPosition > totalPages) return
+    setSelectedPage(newPosition)
+  }
+
+  const onChangeScale = (zoom: IPdfZoom) => {
+    const updatedZoom = handleScaleChange(zoom)
+    updateLastVisitedPage(frame.id, {
+      pageScale: updatedZoom,
+    })
+  }
+
   const getInnerContent = () => {
     switch (true) {
       case downloadPDFQuery.isLoading:
@@ -181,7 +192,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                 file={downloadPDFQuery.data}
                 pageNumber={selectedPage}
                 onDocumentLoadSuccess={onDocumentLoadSuccess}
-                onPageLoadSucccess={fitPageToContainer}
+                onPageLoadSuccess={fitPageToContainer}
                 fitDimensions={fitDimensions}
               />
               <PageControls
@@ -195,7 +206,7 @@ export function PDFUploader({ frame }: PDFUploaderProps) {
                     position: page,
                   })
                 }}
-                handleScaleChange={handleScaleChange}
+                handleScaleChange={onChangeScale}
               />
             </div>
           </div>

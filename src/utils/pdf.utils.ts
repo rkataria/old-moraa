@@ -18,3 +18,13 @@ export const getLastVisitedPage = (frameId: string) => {
 
   return pdfPageStates[frameId] || {}
 }
+
+export enum PdfView {
+  FIT_TO_PAGE = 'fit-to-page',
+  FULL_PAGE = 'full-page',
+}
+
+export const PdfViews = {
+  [PdfView.FIT_TO_PAGE]: 'Fit to page',
+  [PdfView.FULL_PAGE]: 'Full page',
+}

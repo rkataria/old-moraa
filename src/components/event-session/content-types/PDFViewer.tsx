@@ -4,20 +4,19 @@ import { Skeleton } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { useDebounce } from '@uidotdev/usehooks'
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
-import { pdfjs, Document, Page } from 'react-pdf'
+import { pdfjs } from 'react-pdf'
 
-import { ContentLoading } from '@/components/common/ContentLoading'
+import { PdfPage } from '@/components/common/content-types/PageRenderer'
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
-import { Loading } from '@/components/common/Loading'
 import { PageControls } from '@/components/common/PageControls'
 import { EventContext } from '@/contexts/EventContext'
 import { EventSessionContext } from '@/contexts/EventSessionContext'
-import { usePDFZoomControls } from '@/hooks/usePdfControls'
+import { usePdfControls } from '@/hooks/usePdfControls'
 import { downloadPDFFile } from '@/services/pdf.service'
 import { EventContextType } from '@/types/event-context.type'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { IFrame } from '@/types/frame.type'
-import { cn, getFileObjectFromBlob } from '@/utils/utils'
+import { IFrame, IPdfZoom } from '@/types/frame.type'
+import { getFileObjectFromBlob } from '@/utils/utils'
 
 interface PDFViewerProps {
   frame: IFrame & {
@@ -33,7 +32,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
 const positionChangeEvent = 'pdf-position-changed'
 
 export function PDFViewer({ frame }: PDFViewerProps) {
-  const [file, setFile] = useState<File | undefined>()
+  const [file, setFile] = useState<string | File | null>(null)
   const { preview } = useContext(EventContext) as EventContextType
   const { isHost, realtimeChannel, activeSession, updateActiveSession } =
     useContext(EventSessionContext) as EventSessionContextType
@@ -45,17 +44,17 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const containerRef = useRef<any>()
 
+  const initialZoom = isHost
+    ? activeSession?.pdfPages?.[frame.id]?.zoom
+    : undefined
+
   const {
-    pageScale,
-    pdfPageWidth,
+    zoomType,
+    fitDimensions,
     isLandscape,
-    handleZoomIn,
-    handleZoomOut,
     fitPageToContainer,
-  } = usePDFZoomControls(
-    containerRef,
-    isHost ? activeSession?.pdfPages?.[frame.id]?.scale : undefined
-  )
+    handleScaleChange,
+  } = usePdfControls(containerRef, initialZoom)
 
   const [updatePdfPayload, setUpdatePdfPayload] = useState(null)
 
@@ -99,7 +98,9 @@ export function PDFViewer({ frame }: PDFViewerProps) {
       'broadcast',
       { event: positionChangeEvent },
       ({ payload }) => {
-        setPosition(payload.position || 1)
+        if (payload.position) {
+          setPosition(payload.position)
+        }
         setUpdatePdfPayload(payload.pdfPages)
       }
     )
@@ -115,48 +116,35 @@ export function PDFViewer({ frame }: PDFViewerProps) {
       type: 'broadcast',
       event: positionChangeEvent,
       payload: {
-        // position: newPosition,
         pdfPages: {
           ...activeSession.pdfPages,
           [frame.id]: {
             position: newPosition,
-            scale: pageScale,
+            zoom: zoomType,
           },
         },
       },
     })
   }
 
-  const handleScaleChange = (zoomType: string) => {
-    let newScale
-    if (zoomType === 'zoomIn') {
-      newScale = handleZoomIn()
-    } else {
-      newScale = handleZoomOut()
-    }
-
+  const onChangeScale = (zoom: IPdfZoom) => {
+    const updatedZoom = handleScaleChange(zoom)
     updateActiveSession({
       pdfPages: {
         ...activeSession.pdfPages,
         [frame.id]: {
           position,
-          scale: newScale,
+          zoom: updatedZoom,
         },
       },
     })
   }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDocumentLoadSuccess: any = ({ numPages: nextNumPages }: any) => {
     setTotalPages(nextNumPages)
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // const onLoadSuccess = (page: any) => {
-  //   const isPortraitPage = page.width < page.height
-  //   setPageView({
-  //     isPortrait: isPortraitPage,
-  //     maxWidth: page.width + 20,
-  //   })
-  // }
+
   if (downloadPDFMutation.isError) {
     return (
       <EmptyPlaceholder
@@ -174,57 +162,27 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        'flex justify-center items-start h-full w-full mx-auto overflow-y-auto scrollbar-none',
-        {
-          'w-auto aspect-video h-auto max-h-full': isLandscape,
-          'justify-center': !isLandscape,
-        }
-      )}>
-      <Document
-        file={file}
-        onLoadSuccess={onDocumentLoadSuccess}
-        className={cn('relative h-fit ml-0 overflow-y-auto scrollbar-thin', {
-          'w-fit h-[inherit]': isLandscape,
-        })}
-        loading={
-          <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
-            <Loading />
-          </div>
-        }>
-        <Page
-          renderAnnotationLayer={false}
-          renderTextLayer={false}
+    <div className="relative h-full overflow-hidden" ref={containerRef}>
+      {position}
+      <div className="overflow-y-auto h-full scrollbar-none">
+        <PdfPage
+          file={file}
           pageNumber={position}
-          width={pdfPageWidth * pageScale * devicePixelRatio} // Apply zoom scaling and DPR
-          // height={pdfPageHeight * pageScale * devicePixelRatio} // Optional: ensure height is maintained too
-          onLoadSuccess={fitPageToContainer} // Fit page initially when loaded
-          loading={<ContentLoading />}
+          onDocumentLoadSuccess={onDocumentLoadSuccess}
+          onPageLoadSuccess={fitPageToContainer}
+          fitDimensions={fitDimensions}
         />
-        {/* <Page
-          loading={<ContentLoading />}
-          pageNumber={position}
-          renderAnnotationLayer={false}
-          renderTextLayer={false}
-          className="w-full"
-          // devicePixelRatio={5}
-          devicePixelRatio={
-            (!pageView.isPortrait || frame.config.landcapeView ? 2.6 : 1) *
-            window.devicePixelRatio
-          }
-          onLoadSuccess={onLoadSuccess}
-        /> */}
-      </Document>
-      <PageControls
-        currentPage={position}
-        totalPages={totalPages}
-        handleCurrentPageChange={handlePositionChange}
-        scale={pageScale}
-        handleScaleChange={handleScaleChange}
-        shouldRenderZoomControls={!isLandscape}
-      />
+        <PageControls
+          zoom={zoomType}
+          currentPage={position}
+          totalPages={totalPages}
+          shouldRenderZoomControls={!isLandscape}
+          handleCurrentPageChange={(page) => {
+            handlePositionChange(page <= totalPages ? page : totalPages)
+          }}
+          handleScaleChange={onChangeScale}
+        />
+      </div>
     </div>
   )
 }

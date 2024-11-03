@@ -4,6 +4,7 @@ import React, { useContext } from 'react'
 
 import { User } from '@supabase/supabase-js'
 
+import { PDFViewer } from './content-types/PDFViewer'
 import { Reflection } from './content-types/Reflection'
 import { RichTextLive } from './content-types/RichTextLive'
 import { VideoEmbed } from './content-types/VideoEmbed'
@@ -66,7 +67,7 @@ export function Frame() {
         isLiveSession
       />
     ),
-    [FrameType.PDF_VIEWER]: null,
+    [FrameType.PDF_VIEWER]: <PDFViewer frame={currentFrame as any} />,
     [FrameType.REFLECTION]: <Reflection key={currentFrame.id} />,
     [FrameType.VIDEO_EMBED]: (
       <VideoEmbed key={currentFrame.id} frame={currentFrame as any} />
