@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { provideDyteDesignSystem } from '@dytesdk/react-ui-kit'
 import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
@@ -103,6 +103,15 @@ function EventSessionPage() {
     actionFn: setDyteClientAction,
   })
 
+  const resetMeeting = useCallback(() => {
+    dispatch(resetEventAction())
+    dispatch(resetMeetingAction())
+    dispatch(resetSectionAction())
+    dispatch(resetFrameAction())
+    dispatch(resetMoraaSlideAction())
+    dispatch(resetLiveSessionAction())
+  }, [dispatch])
+
   useEffect(() => {
     if (!eventId) return
 
@@ -113,15 +122,20 @@ function EventSessionPage() {
     )
 
     // eslint-disable-next-line consistent-return
-    return () => {
-      dispatch(resetEventAction())
-      dispatch(resetMeetingAction())
-      dispatch(resetSectionAction())
-      dispatch(resetFrameAction())
-      dispatch(resetMoraaSlideAction())
-      dispatch(resetLiveSessionAction())
+    return resetMeeting
+  }, [dispatch, eventId, resetMeeting])
+
+  useEffect(() => {
+    if (eventId && dyteClient?.self.roomState === 'ended') {
+      resetMeeting()
+      dispatch(
+        getEnrollmentThunk({
+          eventId,
+        })
+      )
     }
-  }, [dispatch, eventId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventId, dyteClient?.self.roomState])
 
   useEffect(() => {
     if (!enrollment?.meeting_token) return
