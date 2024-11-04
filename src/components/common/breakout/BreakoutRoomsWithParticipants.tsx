@@ -5,6 +5,7 @@ import { DyteConnectedMeetings } from '@dytesdk/web-core'
 import { Button } from '@nextui-org/react'
 import { DragDropContext } from 'react-beautiful-dnd'
 
+// eslint-disable-next-line import/no-cycle
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
@@ -45,24 +46,21 @@ export function BreakoutRoomsWithParticipants({
       name: 'Group Activity',
     },
   ]
-  const activityIdToConnectedMeetingIdsMap: typeof connectedMeetingsToActivitiesMap =
-    Object.entries(connectedMeetingsToActivitiesMap || {}).reduce(
-      (acc, [key, value]) => ({
-        ...acc,
-        [value]: key,
-      }),
-      {}
-    )
+
+  const meetingsAndActivityList = Object.entries(
+    connectedMeetingsToActivitiesMap || {}
+  )
 
   const sortedConnectedMeetings = breakoutFrame.content?.groupActivityId
     ? connectedMeetings.sort((a, b) => a.id!.localeCompare(b.id!))
     : breakoutRooms
         .map(
           (room) =>
-            connectedMeetings.find(
-              (meet) =>
-                meet.id ===
-                activityIdToConnectedMeetingIdsMap[room.activityId || '']
+            connectedMeetings.find((meet) =>
+              meetingsAndActivityList.find(
+                ([meetId, activityId]) =>
+                  room?.activityId === activityId && meet.id === meetId
+              )
             ) as DyteConnectedMeetings['meetings'][number]
         )
         .filter(Boolean)
