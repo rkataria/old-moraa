@@ -5,13 +5,16 @@ import { Thumbnail } from './Thumbnail'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { IFrame } from '@/types/frame.type'
 
 type MoraaBoardFrameProps = {
+  frame: IFrame
   isLiveSession?: boolean
   asThumbnail?: boolean
 }
 
 export function MoraaBoardFrame({
+  frame,
   isLiveSession,
   asThumbnail,
 }: MoraaBoardFrameProps) {
@@ -19,16 +22,16 @@ export function MoraaBoardFrame({
   const { permissions } = useEventPermissions()
 
   if (isLiveSession) {
-    return <Live />
+    return <Live frame={frame} />
   }
 
   if (asThumbnail) {
-    return <Thumbnail />
+    return <Thumbnail frame={frame} />
   }
 
   if (!preview && permissions.canUpdateFrame) {
-    return <Edit />
+    return <Edit frame={frame} />
   }
 
-  return <Preview />
+  return <Preview frame={frame} />
 }

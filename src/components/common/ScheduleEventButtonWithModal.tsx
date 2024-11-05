@@ -100,18 +100,18 @@ export function ScheduleEventButtonWithModal({
       startDate: startDate || '',
       endDate: endDate || '',
       timezone: formData.timezone || '',
-      imageUrl: formData.imageUrl || event.event.image_url,
-      name: formData.name || event.event.name,
-      description: formData.description || event.event.description,
+      imageUrl: formData.imageUrl || event.event.image_url || '',
+      name: formData.name || event.event.name || '',
+      description: formData.description || event.event.description || '',
     })
   }
 
-  const startDate = DateTime.fromISO(event.event.start_date, {
-    zone: event.event.timezone,
+  const startDate = DateTime.fromISO(event.event.start_date as string, {
+    zone: event.event.timezone as string,
   }).toISO()
 
-  const endDate = DateTime.fromISO(event.event.end_date, {
-    zone: event.event.timezone,
+  const endDate = DateTime.fromISO(event.event.end_date as string, {
+    zone: event.event.timezone as string,
   }).toISO()
 
   const form = () => (
@@ -125,9 +125,9 @@ export function ScheduleEventButtonWithModal({
           endDate?.substring(0, 10) || DateTime.now().toFormat('yyyy-MM-dd'),
         endTime: endDate?.substring(11, 16) || nextRoundedHour(60),
         timezone: event.event.timezone || DateTime.local().zoneName,
-        imageUrl: event.event.image_url,
-        name: event.event.name,
-        description: event.event.description,
+        imageUrl: event.event.image_url as string,
+        name: event.event.name as string,
+        description: event.event.description as string,
       }}
       onSubmit={onSubmit}
       renderAction={(renderProps) => {

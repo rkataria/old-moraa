@@ -26,9 +26,11 @@ import {
 } from 'tldraw'
 
 export function useStorageStore({
+  frameId,
   shapeUtils = [],
   user,
 }: Partial<{
+  frameId: string
   shapeUtils: TLAnyShapeUtilConstructor[]
   user: {
     id: string
@@ -42,6 +44,7 @@ export function useStorageStore({
   // Set up tldraw store and status
   const [store] = useState(() => {
     const store = createTLStore({
+      id: frameId,
       shapeUtils: [...defaultShapeUtils, ...shapeUtils],
     })
 

@@ -13,11 +13,11 @@ export function LiveblocksProvider({ children }: React.PropsWithChildren) {
     <LBLiveblocksProvider
       authEndpoint={async () => {
         const response = await LiveBlockService.getUserToken({
-          userId: user?.id,
+          userId: user?.id as string,
           userInfo: {
-            avatar: user?.avatar_url,
-            color: uniqolor(user.id).color,
-            name: `${user.first_name} ${user.last_name}`,
+            avatar: user?.avatar_url as string,
+            color: uniqolor(user?.id as string).color as string,
+            name: `${user?.first_name} ${user?.last_name}`,
           },
         })
 

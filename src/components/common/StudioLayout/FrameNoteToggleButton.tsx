@@ -1,5 +1,4 @@
-import { useContext } from 'react'
-
+import { Badge } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { TbBubbleText } from 'react-icons/tb'
@@ -8,21 +7,20 @@ import { useDispatch } from 'react-redux'
 import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreSelector } from '@/hooks/useRedux'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { setContentStudioRightSidebarAction } from '@/stores/slices/layout/studio.slice'
-import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function FrameNoteToggleButton() {
   const dispatch = useDispatch()
+  const currentFrame = useCurrentFrame()
   const { contentStudioRightSidebar } = useStoreSelector(
     (state) => state.layout.studio
   )
-  const { overviewOpen, currentSectionId } = useContext(
-    EventContext
-  ) as EventContextType
+  const { overviewOpen, currentSectionId } = useEventContext()
   const { permissions } = useEventPermissions()
 
   const toggleSidebar = () => {
@@ -49,15 +47,34 @@ export function FrameNoteToggleButton() {
 
   return (
     <Tooltip label="Notes" actionKey="N" placement="left">
-      <Button
-        size="sm"
-        isIconOnly
-        className={cn({
-          'bg-primary-100': isVisible,
-        })}
-        onClick={toggleSidebar}>
-        <TbBubbleText size={20} strokeWidth={1.5} />
-      </Button>
+      {currentFrame?.notes ? (
+        <Badge
+          content=""
+          color="danger"
+          shape="circle"
+          placement="top-right"
+          hidden={!currentFrame?.notes}>
+          <Button
+            size="sm"
+            isIconOnly
+            className={cn('relative', {
+              'bg-primary-100': isVisible,
+            })}
+            onClick={toggleSidebar}>
+            <TbBubbleText size={20} strokeWidth={1.5} />
+          </Button>
+        </Badge>
+      ) : (
+        <Button
+          size="sm"
+          isIconOnly
+          className={cn('relative', {
+            'bg-primary-100': isVisible,
+          })}
+          onClick={toggleSidebar}>
+          <TbBubbleText size={20} strokeWidth={1.5} />
+        </Button>
+      )}
     </Tooltip>
   )
 }

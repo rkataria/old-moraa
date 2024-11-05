@@ -15,7 +15,7 @@ export function Preview({ frame }: PreviewProps) {
     <div className="w-full h-full flex justify-center items-center">
       <LoadFonts />
       <div
-        className="relative w-full h-fit aspect-video moraa-slide-preview rounded-md overflow-hidden bg-white"
+        className="relative w-full h-fit aspect-video moraa-slide-preview rounded-md overflow-hidden"
         dangerouslySetInnerHTML={{
           __html: svg || '',
         }}

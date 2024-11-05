@@ -1,16 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
 
 // eslint-disable-next-line import/no-cycle
-import { ContentLoading } from '../ContentLoading'
 import { Frame } from '../Frame/Frame'
 
-import { useStoreSelector } from '@/hooks/useRedux'
 import { IFrame } from '@/types/frame.type'
+import { FrameType } from '@/utils/frame-picker.util'
+import { cn } from '@/utils/utils'
 
 type FrameThumbnailCardProps = {
   frame: IFrame
   containerWidth: number
-  inViewPort?: boolean
 }
 
 const DEFAULT_WIDTH = 960
@@ -19,36 +18,20 @@ const DEFAULT_HEIGHT = 540
 export function FrameThumbnailCard({
   frame,
   containerWidth,
-  inViewPort,
 }: FrameThumbnailCardProps) {
-  const [renderCard, setRenderCard] = useState(false)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const { contentStudioLeftSidebarVisible } = useStoreSelector(
-    (store) => store.layout.studio
-  )
-
-  useEffect(() => {
-    if (!inViewPort || !contentStudioLeftSidebarVisible) {
-      setRenderCard(false)
-      clearTimeout(timerRef.current as NodeJS.Timeout)
-
-      return
-    }
-
-    timerRef.current = setTimeout(() => {
-      setRenderCard(true)
-    }, 1000)
-  }, [inViewPort, contentStudioLeftSidebarVisible])
-
   const memoizedFramePreview = useMemo(
-    () =>
-      renderCard ? <Frame frame={frame} isThumbnail /> : <ContentLoading />,
-    [frame, renderCard]
+    () => <Frame frame={frame} isThumbnail />,
+    [frame]
   )
 
   return (
     <div
-      className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0 hide-scrollbars"
+      className={cn(
+        'absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0',
+        {
+          'hide-scrollbars': ![FrameType.MORAA_BOARD].includes(frame.type),
+        }
+      )}
       style={{
         width: `${DEFAULT_WIDTH}px`,
         height: `${DEFAULT_HEIGHT}px`,

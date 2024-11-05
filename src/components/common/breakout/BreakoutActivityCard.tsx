@@ -12,7 +12,7 @@ import { TiDocumentDelete } from 'react-icons/ti'
 
 // TODO: Fix this.
 // eslint-disable-next-line import/no-cycle
-import { BreakoutFrameThumbnailCard } from './BreakoutFrameThumbnainCard'
+import { BreakoutFrameThumbnailCard } from './BreakoutFrameThumbnailCard'
 import { DropdownActions } from '../DropdownActions'
 import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'

@@ -6,7 +6,7 @@ import { Content, Editor as TiptapEditor } from '@tiptap/core'
 import { Doc as YDoc } from 'yjs'
 
 import { Loading } from '../../Loading'
-import { getAvatar, getProfileName } from '../../UserAvatar'
+import { getAvatar, getProfileName, IUserProfile } from '../../UserAvatar'
 
 import { BlockEditor } from '@/components/tiptap/BlockEditor'
 import { useProfile } from '@/hooks/useProfile'
@@ -48,8 +48,8 @@ export function Editor({
 
   const { data: profile, isLoading: isLoadingProfile } = useProfile()
 
-  const name = getProfileName(profile)
-  const avatar = getAvatar(profile)
+  const name = getProfileName(profile as IUserProfile)
+  const avatar = getAvatar(profile as IUserProfile)
 
   const room = editorId
 

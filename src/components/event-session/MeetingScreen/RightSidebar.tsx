@@ -99,10 +99,10 @@ export function RightSidebar({ dyteStates, setDyteStates }: RightSidebarProps) {
     <motion.div
       initial={{ marginRight: -RIGHT_SIDEBAR_WIDTH }}
       animate={{
-        marginRight: rightSidebarMode ? 8 : -RIGHT_SIDEBAR_WIDTH,
+        marginRight: rightSidebarMode ? 16 : -RIGHT_SIDEBAR_WIDTH,
       }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
-      className="relative w-80 h-full bg-white mr-2 p-2 border-1 border-gray-200 rounded-md overflow-hidden">
+      className="relative w-80 h-full bg-white mr-4 p-2 border-1 border-gray-200 rounded-md overflow-hidden">
       {renderContent()}
     </motion.div>
   )

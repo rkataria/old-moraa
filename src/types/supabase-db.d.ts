@@ -72,6 +72,7 @@ export type Database = {
       }
       event: {
         Row: {
+          active: boolean | null
           created_at: string
           description: string | null
           end_date: string | null
@@ -87,6 +88,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          active?: boolean | null
           created_at?: string
           description?: string | null
           end_date?: string | null
@@ -102,6 +104,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          active?: boolean | null
           created_at?: string
           description?: string | null
           end_date?: string | null
@@ -236,7 +239,6 @@ export type Database = {
           frames: string[] | null
           id: string
           sections: string[] | null
-          slides: string[] | null
           type: string | null
           updated_at: string | null
         }
@@ -247,7 +249,6 @@ export type Database = {
           frames?: string[] | null
           id?: string
           sections?: string[] | null
-          slides?: string[] | null
           type?: string | null
           updated_at?: string | null
         }
@@ -258,7 +259,6 @@ export type Database = {
           frames?: string[] | null
           id?: string
           sections?: string[] | null
-          slides?: string[] | null
           type?: string | null
           updated_at?: string | null
         }
@@ -278,7 +278,6 @@ export type Database = {
           created_at: string
           frame_id: string | null
           id: string
-          slide_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -286,7 +285,6 @@ export type Database = {
           created_at?: string
           frame_id?: string | null
           id?: string
-          slide_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -294,7 +292,6 @@ export type Database = {
           created_at?: string
           frame_id?: string | null
           id?: string
-          slide_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -303,13 +300,6 @@ export type Database = {
             columns: ['frame_id']
             isOneToOne: true
             referencedRelation: 'frame'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'notes_slide_id_fkey'
-            columns: ['slide_id']
-            isOneToOne: true
-            referencedRelation: 'slide'
             referencedColumns: ['id']
           },
         ]
@@ -362,6 +352,7 @@ export type Database = {
           id: string
           last_name: string | null
           updated_at: string | null
+          user_type: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -371,6 +362,7 @@ export type Database = {
           id: string
           last_name?: string | null
           updated_at?: string | null
+          user_type?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -380,16 +372,9 @@ export type Database = {
           id?: string
           last_name?: string | null
           updated_at?: string | null
+          user_type?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: 'public_profile_id_fkey'
-            columns: ['id']
-            isOneToOne: true
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          },
-        ]
+        Relationships: []
       }
       reaction: {
         Row: {
@@ -471,7 +456,6 @@ export type Database = {
           id: string
           meeting_id: string | null
           name: string | null
-          slides: string[] | null
           updated_at: string | null
         }
         Insert: {
@@ -481,7 +465,6 @@ export type Database = {
           id?: string
           meeting_id?: string | null
           name?: string | null
-          slides?: string[] | null
           updated_at?: string | null
         }
         Update: {
@@ -491,7 +474,6 @@ export type Database = {
           id?: string
           meeting_id?: string | null
           name?: string | null
-          slides?: string[] | null
           updated_at?: string | null
         }
         Relationships: [
@@ -538,105 +520,6 @@ export type Database = {
             columns: ['meeting_id']
             isOneToOne: false
             referencedRelation: 'meeting'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      slide: {
-        Row: {
-          config: Json | null
-          content: Json | null
-          created_at: string
-          id: string
-          meeting_id: string | null
-          name: string | null
-          section_id: string | null
-          status: string | null
-          type: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          config?: Json | null
-          content?: Json | null
-          created_at?: string
-          id?: string
-          meeting_id?: string | null
-          name?: string | null
-          section_id?: string | null
-          status?: string | null
-          type?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          config?: Json | null
-          content?: Json | null
-          created_at?: string
-          id?: string
-          meeting_id?: string | null
-          name?: string | null
-          section_id?: string | null
-          status?: string | null
-          type?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'public_slide_meeting_id_fkey'
-            columns: ['meeting_id']
-            isOneToOne: false
-            referencedRelation: 'meeting'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'public_slide_section_id_fkey'
-            columns: ['section_id']
-            isOneToOne: false
-            referencedRelation: 'section'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      slide_response: {
-        Row: {
-          created_at: string
-          dyte_meeting_id: string | null
-          id: string
-          participant_id: string | null
-          response: Json | null
-          slide_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string
-          dyte_meeting_id?: string | null
-          id?: string
-          participant_id?: string | null
-          response?: Json | null
-          slide_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string
-          dyte_meeting_id?: string | null
-          id?: string
-          participant_id?: string | null
-          response?: Json | null
-          slide_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'public_slide_response_participant_id_fkey'
-            columns: ['participant_id']
-            isOneToOne: false
-            referencedRelation: 'participant'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'public_slide_response_slide_id_fkey'
-            columns: ['slide_id']
-            isOneToOne: false
-            referencedRelation: 'slide'
             referencedColumns: ['id']
           },
         ]
@@ -752,4 +635,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
     ? PublicSchema['Enums'][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema['CompositeTypes']
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema['CompositeTypes']
+    ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
     : never

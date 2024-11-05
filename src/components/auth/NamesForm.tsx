@@ -112,7 +112,7 @@ export function NamesForm({
                     </label>
                     <Input
                       id="first_name"
-                      defaultValue={profile?.first_name}
+                      defaultValue={profile?.first_name as string}
                       disabled={isLoading}
                       className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
                       placeholder="First Name"
@@ -133,7 +133,7 @@ export function NamesForm({
                     </label>
                     <Input
                       id="last_name"
-                      defaultValue={profile?.last_name}
+                      defaultValue={profile?.last_name as string}
                       disabled={isLoading}
                       className="focus-visible:ring-0 text-black focus-visible:ring-offset-0 placeholder:text-gray-400"
                       placeholder="Last Name"

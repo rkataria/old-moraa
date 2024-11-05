@@ -76,7 +76,8 @@ export function EventsCreatePage() {
 
   const eventMutation = useMutation({
     mutationFn: (data: ICreateEventPayload) =>
-      EventService.createEvent(data).then(async (newEvent) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      EventService.createEvent(data).then(async (newEvent: any) => {
         const sectionResponse = await SectionService.createSection({
           name: 'Section 1',
           // TODO: Fix this meeting ID

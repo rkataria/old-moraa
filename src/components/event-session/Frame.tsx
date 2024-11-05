@@ -82,7 +82,7 @@ export function Frame() {
     [FrameType.MIRO_EMBED]: <MiroEmbed frame={currentFrame as any} />,
     [FrameType.MORAA_BOARD]: (
       <RoomProvider frameId={currentFrame.id}>
-        <MoraaBoardFrame />
+        <MoraaBoardFrame frame={currentFrame} />
       </RoomProvider>
     ),
     [FrameType.MORAA_SLIDE]: null,

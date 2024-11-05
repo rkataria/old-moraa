@@ -10,6 +10,7 @@ import { ReactWithEmojiToggle } from '../ReactWithEmojiToggle'
 import { ScreenShareToggle } from '../ScreenShareToggle'
 import { VideoToggle } from '../VideoToggle'
 
+import { AgendaPanelToggle } from '@/components/common/AgendaPanel/AgendaPanelToggle'
 import { BreakoutButton } from '@/components/common/breakout/BreakoutButton'
 import { PresentationControls } from '@/components/common/PresentationControls'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -17,11 +18,14 @@ import { useStoreSelector } from '@/hooks/useRedux'
 import {
   closeRightSidebarAction,
   setRightSidebarAction,
+  toggleLeftSidebarAction,
 } from '@/stores/slices/layout/live.slice'
 
 export function Footer() {
   const { isHost, setDyteStates, dyteStates } = useEventSession()
-  const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
+  const { leftSidebarMode, rightSidebarMode } = useStoreSelector(
+    (state) => state.layout.live
+  )
 
   const dispatch = useDispatch()
 
@@ -49,6 +53,14 @@ export function Footer() {
     <div className="h-full w-full flex justify-between items-center px-2">
       <div className="flex justify-start items-center gap-2 p-2 h-12">
         <div className="flex justify-start items-center gap-2">
+          {isHost && (
+            <AgendaPanelToggle
+              collapsed={leftSidebarMode === 'collapsed'}
+              onToggle={() => {
+                dispatch(toggleLeftSidebarAction())
+              }}
+            />
+          )}
           <PresentationControls />
         </div>
       </div>
@@ -69,16 +81,6 @@ export function Footer() {
       </div>
       <div className="flex justify-end items-center gap-2 p-2">
         <div className="flex justify-end items-center gap-2">
-          <NoteToggle />
-          <ParticipantsToggle
-            isParticipantsSidebarOpen={rightSidebarMode === 'participants'}
-            onClick={() => {
-              handleSidebarOpen({
-                activeSidebar: true,
-                sidebar: 'participants',
-              })
-            }}
-          />
           <ChatsToggle
             isChatsSidebarOpen={rightSidebarMode === 'chat'}
             onClick={() => {
@@ -88,6 +90,16 @@ export function Footer() {
               })
             }}
           />
+          <ParticipantsToggle
+            isParticipantsSidebarOpen={rightSidebarMode === 'participants'}
+            onClick={() => {
+              handleSidebarOpen({
+                activeSidebar: true,
+                sidebar: 'participants',
+              })
+            }}
+          />
+          <NoteToggle />
         </div>
       </div>
     </div>

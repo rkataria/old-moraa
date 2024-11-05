@@ -8,6 +8,7 @@ export const getEventThunk = createAsyncThunk<EventModel, string>(
   async (eventId: string) => {
     const response = await EventService.getEvent({ eventId })
 
-    return response.event
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return response.event as any
   }
 )

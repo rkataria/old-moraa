@@ -64,9 +64,9 @@ export function EventDetails() {
   const createEventForm = useForm<CreateEventFormData>({
     resolver: yupResolver(createEventValidationSchema),
     defaultValues: {
-      name: event.name,
-      description: event.description,
-      imageUrl: event.image_url,
+      name: event.name as string,
+      description: event.description as string,
+      imageUrl: event.image_url as string,
     },
   })
 
@@ -324,16 +324,17 @@ export function EventDetails() {
                   })}
                 />
                 <Dates
-                  startDate={event?.start_date}
-                  endDate={event?.end_date}
-                  timeZone={event?.timezone}
+                  startDate={event?.start_date as string}
+                  endDate={event?.end_date as string}
+                  timeZone={event?.timezone as string}
                   className="pl-1"
                 />
               </div>
 
               <Participantslist
                 hideOnEmptyList={false}
-                participants={participants}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                participants={participants as any}
                 rightLabelContent={
                   <AddParticipantsButtonWithModal
                     eventId={event.id}

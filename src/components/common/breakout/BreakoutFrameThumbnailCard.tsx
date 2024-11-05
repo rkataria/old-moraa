@@ -7,6 +7,8 @@ import { ContentLoading } from '../ContentLoading'
 import { Frame } from '../Frame/Frame'
 
 import { IFrame } from '@/types/frame.type'
+import { FrameType } from '@/utils/frame-picker.util'
+import { cn } from '@/utils/utils'
 
 type BreakoutFrameThumbnailCardProps = {
   frame: IFrame
@@ -46,7 +48,12 @@ export function BreakoutFrameThumbnailCard({
 
   return (
     <div
-      className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0 hide-scrollbars"
+      className={cn(
+        'absolute top-0 left-0 w-full h-full pointer-events-none rounded-md z-0',
+        {
+          'hide-scrollbars': ![FrameType.MORAA_BOARD].includes(frame.type),
+        }
+      )}
       style={{
         width: `${DEFAULT_WIDTH}px`,
         height: `${DEFAULT_HEIGHT}px`,

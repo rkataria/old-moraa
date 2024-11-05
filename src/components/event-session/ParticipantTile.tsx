@@ -29,7 +29,7 @@ export function ParticipantTile({
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
   const tileBgColor = uniqolor(participant.id)
-  const avatarColor = uniqolor(user.id)
+  const avatarColor = uniqolor(user?.id as string)
 
   return (
     <div

@@ -1,7 +1,11 @@
-export function Thumbnail() {
-  return (
-    <div className="flex justify-center items-center w-full h-full">
-      <span className="text-3xl">Moraa Board</span>
-    </div>
-  )
+import { Editor } from './Editor'
+
+import { IFrame } from '@/types/frame.type'
+
+type ThumbnailProps = {
+  frame: IFrame
+}
+
+export function Thumbnail({ frame }: ThumbnailProps) {
+  return <Editor frame={frame} asThumbnail />
 }

@@ -15,7 +15,6 @@ import { Tooltip } from '../ShortuctTooltip'
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useOnScreen } from '@/hooks/useOnScreen'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { FrameStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
@@ -50,8 +49,6 @@ export function FrameGridView({
     sidebarExpanded
   )
 
-  const isVisible = useOnScreen(thumbnailContainerRef)
-
   return (
     <ContextMenu
       items={frameActions}
@@ -61,7 +58,7 @@ export function FrameGridView({
         key={`frame-${frame?.id}`}
         data-miniframe-id={frame?.id}
         className={cn(
-          'relative cursor-pointer overflow-hidden rounded-lg group/frame-item',
+          'relative mr-6 cursor-pointer overflow-hidden rounded-lg group/frame-item',
           {
             'border-primary border-2': frameActive,
             'border-transparent border-2': !frameActive,
@@ -105,7 +102,6 @@ export function FrameGridView({
               <FrameThumbnailCard
                 frame={frame}
                 containerWidth={containerWidth}
-                inViewPort={isVisible}
               />
             </div>
           </div>

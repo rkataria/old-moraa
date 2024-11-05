@@ -21,21 +21,32 @@ enum FabricObjectType {
 const calculateBubbleMenuPosition = (target: fabric.Object) => {
   const boundingBox = target.getBoundingRect()
 
-  if (boundingBox.left > 0 && boundingBox.top > 60) {
+  // 1. Both are negative
+  if (boundingBox.left < 0 && boundingBox.top < 0) {
+    return {
+      left: 5,
+      top: 5,
+    }
+  }
+
+  // 2. Both are positive
+  if (boundingBox.left > 0 && boundingBox.top > 0) {
     return {
       left: boundingBox.left || 5,
       top: boundingBox.top || 5,
     }
   }
 
-  if (boundingBox.left < 0 && boundingBox.top > 60) {
+  // 3. left is negative and top is positive
+  if (boundingBox.left < 0 && boundingBox.top > 0) {
     return {
       left: 5,
       top: boundingBox.top || 5,
     }
   }
 
-  if (boundingBox.left > 0 && boundingBox.top < 60) {
+  // 4. left is positive and top is negative
+  if (boundingBox.left > 0 && boundingBox.top < 0) {
     return {
       left: boundingBox.left || 5,
       top: 5,
@@ -143,7 +154,7 @@ export function BubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
       className="absolute p-1 bg-white rounded-md shadow-sm min-w-11 border-1 border-primary-100"
       style={{
         left: bubbleMenuOptions?.left,
-        top: (bubbleMenuOptions?.top || 5) - 60,
+        top: bubbleMenuOptions?.top > 60 ? bubbleMenuOptions.top - 60 : 5,
         display: bubbleMenuOptions?.visible ? 'block' : 'none',
         opacity: objectMoving ? 0.5 : 1,
       }}>

@@ -45,7 +45,9 @@ const createSessionForBreakouts = async ({
 }) => {
   const query = supabaseClient
     .from('session')
-    .insert(dyteMeetings.map((session) => ({ ...session, status: 'LIVE' })))
+    .insert(
+      dyteMeetings.map((session) => ({ ...session, status: 'LIVE' })) as any
+    )
 
   return query.then(
     (res: any) => res,

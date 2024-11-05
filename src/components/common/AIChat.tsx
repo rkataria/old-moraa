@@ -132,7 +132,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
       ])
     )
 
-    const message = await summarizeSection(meeting.id)
+    const message = await summarizeSection(meeting?.id as string)
 
     dispatch(
       updateMessageAction({

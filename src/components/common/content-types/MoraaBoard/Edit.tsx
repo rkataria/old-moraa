@@ -1,5 +1,11 @@
 import { Editor } from './Editor'
 
-export function Edit() {
-  return <Editor readOnly={false} />
+import { IFrame } from '@/types/frame.type'
+
+type EditProps = {
+  frame: IFrame
+}
+
+export function Edit({ frame }: EditProps) {
+  return <Editor frame={frame} readOnly={false} />
 }

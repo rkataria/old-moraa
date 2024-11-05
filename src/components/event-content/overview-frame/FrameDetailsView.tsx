@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 
 import {
@@ -14,7 +15,7 @@ import { useParams } from '@tanstack/react-router'
 
 import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { UserAvatar } from '@/components/common/UserAvatar'
+import { IUserProfile, UserAvatar } from '@/components/common/UserAvatar'
 import { Dates } from '@/components/enroll/Date'
 import { Participantslist } from '@/components/enroll/ParticipantList'
 import { useEvent } from '@/hooks/useEvent'
@@ -46,12 +47,16 @@ export function FrameDetailsView() {
             <RenderIf isTrue={!!event.description}>
               <div
                 className={cn('text-lg rounded-xl backdrop-blur-3xl', {
-                  'p-4 bg-default/10': event?.theme?.theme === 'Emoji',
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  'p-4 bg-default/10': (event?.theme as any)?.theme === 'Emoji',
                 })}>
                 <p className={cn('line-clamp-[7] break-all text-base', {})}>
                   {event.description}
                 </p>
-                <RenderIf isTrue={event?.description?.length > 400}>
+                <RenderIf
+                  isTrue={
+                    !!(event?.description && event.description.length > 400)
+                  }>
                   <Button
                     variant="faded"
                     className="text-xs text-gray-400 cursor-pointer w-fit p-1 h-6 border-1 my-2"
@@ -72,7 +77,8 @@ export function FrameDetailsView() {
               <div
                 className={cn('backdrop-blur-3xl rounded-xl', {
                   'p-4 bg-default/10 shadow-sm':
-                    event?.theme?.theme === 'Emoji',
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (event?.theme as any)?.theme === 'Emoji',
                 })}>
                 <RichTextEditor
                   editorId={eventId!}
@@ -97,18 +103,22 @@ export function FrameDetailsView() {
               }}
             />
             <Dates
-              startDate={event?.start_date}
-              endDate={event?.end_date}
-              timeZone={event?.timezone}
+              startDate={event?.start_date as string}
+              endDate={event?.end_date as string}
+              timeZone={event?.timezone as string}
               className="pl-1"
             />
             <div>
               <p className="text-sm font-medium text-slate-500">Hosted by</p>
               <Divider className="mt-2 mb-3" />
-              <UserAvatar profile={profile} withName nameClass="font-medium" />
+              <UserAvatar
+                profile={profile as IUserProfile}
+                withName
+                nameClass="font-medium"
+              />
             </div>
 
-            <Participantslist participants={participants} />
+            <Participantslist participants={participants as any} />
           </div>
         </div>
 

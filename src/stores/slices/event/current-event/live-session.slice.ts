@@ -1,6 +1,6 @@
 import DyteClient from '@dytesdk/web-core'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
-import { RealtimePostgresChangesPayload } from '@supabase/realtime-js'
+import { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 
 import { setCurrentFrameIdAction } from './event.slice'
 

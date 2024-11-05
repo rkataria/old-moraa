@@ -1,3 +1,6 @@
+import { useEffect } from 'react'
+
+import { Badge } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useDispatch } from 'react-redux'
@@ -19,6 +22,12 @@ export function NoteToggle() {
   const { isHost } = useEventSession()
   const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
   const currentFrame = useCurrentFrame()
+
+  useEffect(() => {
+    if (currentFrame?.notes) {
+      dispatch(setRightSidebarAction('frame-notes'))
+    }
+  }, [currentFrame?.notes, dispatch])
 
   const handleNoteToggle = () => {
     if (rightSidebarMode === 'frame-notes') {
@@ -42,15 +51,34 @@ export function NoteToggle() {
 
   return (
     <Tooltip label="Notes" actionKey="N" placement="top">
-      <Button
-        size="sm"
-        variant="light"
-        className={cn('live-button', {
-          active: rightSidebarMode === 'frame-notes',
-        })}
-        onClick={handleNoteToggle}>
-        Note
-      </Button>
+      {currentFrame?.notes ? (
+        <Badge
+          content=""
+          color="danger"
+          shape="circle"
+          placement="top-right"
+          hidden={!currentFrame?.notes}>
+          <Button
+            size="sm"
+            variant="light"
+            className={cn('live-button', {
+              active: rightSidebarMode === 'frame-notes',
+            })}
+            onClick={handleNoteToggle}>
+            Note
+          </Button>
+        </Badge>
+      ) : (
+        <Button
+          size="sm"
+          variant="light"
+          className={cn('live-button', {
+            active: rightSidebarMode === 'frame-notes',
+          })}
+          onClick={handleNoteToggle}>
+          Note
+        </Button>
+      )}
     </Tooltip>
   )
 }

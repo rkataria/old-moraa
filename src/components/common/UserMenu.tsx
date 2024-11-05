@@ -7,7 +7,7 @@ import {
   DropdownItem,
 } from '@nextui-org/react'
 
-import { UserAvatar } from './UserAvatar'
+import { IUserProfile, UserAvatar } from './UserAvatar'
 import { NamesForm } from '../auth/NamesForm'
 import { Button } from '../ui/Button'
 
@@ -25,7 +25,7 @@ export function UserMenu() {
         <DropdownTrigger>
           <Button size="sm" isIconOnly>
             <UserAvatar
-              profile={profile}
+              profile={profile as IUserProfile}
               avatarProps={{ radius: 'sm', size: 'sm' }}
             />
           </Button>

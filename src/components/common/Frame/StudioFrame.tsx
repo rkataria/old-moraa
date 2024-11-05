@@ -32,7 +32,7 @@ export function StudioFrame({ frame }: FrameContainerProps) {
     [FrameType.MIRO_EMBED]: <MiroEmbedFrame frame={frame as any} />,
     [FrameType.MORAA_BOARD]: (
       <RoomProvider frameId={frame.id}>
-        <MoraaBoardFrame />
+        <MoraaBoardFrame frame={frame} />
       </RoomProvider>
     ),
     [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} />,

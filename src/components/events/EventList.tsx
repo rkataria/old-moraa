@@ -9,7 +9,7 @@ import { MdOutlineAddBox } from 'react-icons/md'
 import { GridView } from './GridView'
 import { ListView } from './ListView'
 import { EmptyPlaceholder } from '../common/EmptyPlaceholder'
-import { getProfileName } from '../common/UserAvatar'
+import { getProfileName, IUserProfile } from '../common/UserAvatar'
 import { Button } from '../ui/Button'
 
 import { useAuth } from '@/hooks/useAuth'
@@ -20,7 +20,11 @@ import { UserType } from '@/types/common'
 const rowsPerPage = 10
 
 export function EventList() {
-  const { data: profile = {} } = useProfile()
+  const {
+    data: profile = {
+      user_type: null,
+    },
+  } = useProfile()
   const { currentUser } = useAuth()
   const [listDisplayMode, toggleListDisplayMode] = useState('grid' as Key)
   const [currentPage, setCurrentPage] = useState(1)
@@ -120,7 +124,7 @@ export function EventList() {
       <div className="flex justify-between items-start">
         <div>
           <p className="text-2xl font-medium text-black/80">
-            Hi there, {getProfileName(profile)}!
+            Hi there, {getProfileName(profile as IUserProfile)}!
           </p>
         </div>
         <div className="flex items-center gap-2">

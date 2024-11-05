@@ -9,7 +9,7 @@ export const getMeetingThunk = createAsyncThunk<MeetingModel, string>(
   async (eventId: string) => {
     const response = await EventService.getEvent({ eventId })
 
-    return response.meeting
+    return response.meeting as MeetingModel
   }
 )
 

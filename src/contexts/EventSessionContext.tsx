@@ -198,7 +198,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         return
       }
 
-      setCurrentFrameResponses(data)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setCurrentFrameResponses(data as any)
       setCurrentFrameLoading(false)
     }
 
@@ -330,7 +331,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
         .eq('frame_id', frame.id)
-        .eq('participant_id', participant?.id)
+        .eq('participant_id', participant?.id as string)
         .select()
 
       if (frameResponse.error) {
@@ -394,7 +395,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           dyte_meeting_id: dyteMeeting.meta.meetingId,
         })
         .eq('frame_id', frame.id)
-        .eq('participant_id', participant?.id)
+        .eq('participant_id', participant?.id as string)
         .select()
 
       if (frameResponse.error) {
@@ -520,7 +521,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
             reaction,
           })
           .eq('participant_id', participantId)
-          .eq('frame_response_id', frameResponseId)
+          .eq('frame_response_id', frameResponseId as string)
       }
       if (action === 'DELETE') {
         reactionQueryResponse = await supabase
@@ -528,11 +529,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           .update({
             reaction: null,
           })
-          .eq('id', reactionId)
+          .eq('id', reactionId as string)
         reactionQueryResponse = await supabase
           .from('reaction')
-          .delete({ id: reaction })
-          .eq('id', reactionId)
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          .delete({ id: reaction as string })
+          .eq('id', reactionId as string)
       }
 
       if (reactionQueryResponse?.error) {

@@ -99,7 +99,10 @@ const getEvent = async ({
     }
   }
 
-  const profile = await ProfileService.getProfile(meeting.event.owner_id)
+  const profile = await ProfileService.getProfile(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (meeting.event as any).owner_id
+  )
 
   return {
     event: meeting.event,
@@ -132,7 +135,8 @@ const getEventPermissions = async ({
 const createEvent = async (event: ICreateEventPayload) => {
   const { data, error } = await supabaseClient
     .from('event')
-    .insert([event])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .insert([event] as any)
     .select()
 
   await new Promise((resolve) => {
@@ -142,7 +146,8 @@ const createEvent = async (event: ICreateEventPayload) => {
   const { data: meeting } = await supabaseClient
     .from('meeting')
     .select()
-    .eq('event_id', data?.[0]?.id)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .eq('event_id', data?.[0]?.id as any)
     .single()
 
   return {

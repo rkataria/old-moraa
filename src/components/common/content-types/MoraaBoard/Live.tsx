@@ -1,5 +1,11 @@
 import { Editor } from './Editor'
 
-export function Live() {
-  return <Editor />
+import { IFrame } from '@/types/frame.type'
+
+type LiveProps = {
+  frame: IFrame
+}
+
+export function Live({ frame }: LiveProps) {
+  return <Editor frame={frame} />
 }

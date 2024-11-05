@@ -35,14 +35,14 @@ export const beforeLoad = async ({
   )
 
   if (
-    !userProfile.user_type ||
-    !userProfile.first_name ||
-    !userProfile.last_name
+    !userProfile?.user_type ||
+    !userProfile?.first_name ||
+    !userProfile?.last_name
   ) {
     const missingParams = {
-      userType: !userProfile.user_type,
-      firstName: !userProfile.first_name,
-      lastName: !userProfile.last_name,
+      userType: !userProfile?.user_type,
+      firstName: !userProfile?.first_name,
+      lastName: !userProfile?.last_name,
     }
 
     throw redirect({

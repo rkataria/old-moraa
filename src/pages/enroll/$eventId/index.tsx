@@ -57,7 +57,8 @@ export function Visit() {
   })
   const eventPageUrl = `/events/${eventId}`
 
-  const { event } = useEventData
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const event = useEventData.event as any
   const { profile } = useEventData
   const participants =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -280,13 +281,17 @@ export function Visit() {
                 <p className="text-sm font-medium text-slate-500">Hosted by</p>
                 <Divider className="mt-2 mb-3" />
                 <UserAvatar
-                  profile={profile}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  profile={profile as any}
                   withName
                   nameClass="font-medium"
                 />
               </div>
 
-              <Participantslist participants={useEventData.participants} />
+              <Participantslist
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                participants={useEventData.participants as any}
+              />
             </div>
           </div>
 

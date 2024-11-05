@@ -11,6 +11,7 @@ import 'tldraw/tldraw.css'
 // eslint-disable-next-line import/no-cycle
 import { DragDropContext } from 'react-beautiful-dnd'
 
+// eslint-disable-next-line import/no-cycle
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 import { BreakoutRoomsWithParticipants } from './BreakoutRoomsWithParticipants'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'

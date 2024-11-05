@@ -46,7 +46,7 @@ export function Note({
 
   const debouncedNote = useDebounce(updatedNote, 500)
 
-  const truncatedString = truncateHTMLWithTags(note || placeholder, 60)
+  const truncatedString = truncateHTMLWithTags(note, 60)
 
   const handleBlockChange = (block: TextBlock) => {
     setUpdatedNote(block.data.html)
@@ -82,6 +82,7 @@ export function Note({
           'break-all ProseMirror tiptap',
           {
             'cursor-pointer': editable,
+            'text-gray-400': !note,
           },
           className
         )}

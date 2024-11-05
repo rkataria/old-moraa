@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { RealtimeChannel } from '@supabase/realtime-js'
+import { RealtimeChannel } from '@supabase/supabase-js'
 
 import { useBreakoutRooms } from './useBreakoutRooms'
 
