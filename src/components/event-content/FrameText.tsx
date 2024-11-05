@@ -25,12 +25,14 @@ export function FrameText({
     EventContext
   ) as EventContextType
 
+  const [initialLoaded, setInitialLoaded] = useState(false)
+
   const placeholder =
     currentFrame?.type === FrameType.POLL
       ? "What's the question?"
       : currentFrame?.type === FrameType.REFLECTION
         ? 'Subject that shaped thoughts and opinions to reflect upon...'
-        : "What's the title?"
+        : 'Start with a title..'
 
   const getChangedKey = () => {
     if (currentFrame?.type === FrameType.POLL && type === 'title') {
@@ -47,6 +49,26 @@ export function FrameText({
   )
   const debouncedText = useDebounce(updatedText, 500)
   const [successiveEnterPressCount, setSuccessiveEnterPressCount] = useState(0)
+
+  useEffect(() => {
+    if (initialLoaded) return
+    if (updatedText !== currentFrame?.content?.[changedKey]) {
+      setUpdatedText(currentFrame?.content?.[changedKey] as string)
+
+      setInitialLoaded(true)
+
+      return
+    }
+    setTimeout(() => {
+      setInitialLoaded(true)
+    }, 1000)
+  }, [
+    changedKey,
+    currentFrame?.content,
+    currentFrame?.content?.changedKey,
+    initialLoaded,
+    updatedText,
+  ])
 
   const updateText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (preview) return

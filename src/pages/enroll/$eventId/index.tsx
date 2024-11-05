@@ -195,7 +195,7 @@ export function Visit() {
                   className={cn('text-sm rounded-xl backdrop-blur-3xl', {
                     'p-4 pb-1 bg-default/20': event?.theme?.theme === 'Emoji',
                   })}>
-                  <p className="line-clamp-[7] text-base">
+                  <p className="line-clamp-[7] text-base break-words">
                     {event.description}
                   </p>
                   <RenderIf isTrue={event?.description?.length > 400}>

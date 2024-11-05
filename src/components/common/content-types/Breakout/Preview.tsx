@@ -8,5 +8,5 @@ type PreviewProps = {
 }
 
 export function Preview({ frame }: PreviewProps) {
-  return <BreakoutFrame frame={frame as BreakoutFrame} />
+  return <BreakoutFrame frame={frame as BreakoutFrame} isEditable={false} />
 }

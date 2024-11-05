@@ -1,4 +1,5 @@
 import { Editor } from './Editor'
+import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 
 import { IFrame } from '@/types/frame.type'
 
@@ -7,5 +8,10 @@ type LiveProps = {
 }
 
 export function Live({ frame }: LiveProps) {
-  return <Editor frame={frame} />
+  return (
+    <>
+      <FrameTitleDescriptionPreview frame={frame} />
+      <Editor frame={frame} />
+    </>
+  )
 }

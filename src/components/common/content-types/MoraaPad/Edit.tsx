@@ -1,5 +1,6 @@
 import { Editor } from '../RichText/Editor'
 
+import { FrameTitleDescriptionPanel } from '@/components/event-content/FrameTitleDescriptionPanel'
 import { IFrame } from '@/types/frame.type'
 
 type EditProps = {
@@ -8,15 +9,19 @@ type EditProps = {
 
 export function Edit({ frame }: EditProps) {
   return (
-    <Editor
-      hideSideBar
-      editorId={frame.id}
-      editable
-      enableCollaboration
-      classNames={{
-        wrapper: 'overflow-hidden',
-        container: 'flex flex-col overflow-hidden',
-      }}
-    />
+    <>
+      <FrameTitleDescriptionPanel key={frame.id} />
+
+      <Editor
+        hideSideBar
+        editorId={frame.id}
+        editable
+        enableCollaboration
+        classNames={{
+          wrapper: 'overflow-hidden',
+          container: 'flex flex-col overflow-hidden',
+        }}
+      />
+    </>
   )
 }

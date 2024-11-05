@@ -149,7 +149,7 @@ export function EventDetails() {
                           maxRows={4}
                           placeholder="Provide a brief overview of the event or course"
                           classNames={{
-                            input: 'tracking-tight text-lighter',
+                            input: 'tracking-tight text-lighter break-words',
                             inputWrapper: 'border-none p-0 shadow-none',
                           }}
                           isInvalid={!!fieldState.error?.message}

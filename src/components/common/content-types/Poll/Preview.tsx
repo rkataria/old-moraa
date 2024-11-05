@@ -1,5 +1,6 @@
 import { HorizontalPreview } from './HorizontalPreview'
 import { VerticalPreview } from './VerticalPreview'
+import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 
 import { PollFrame, PollOption } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
@@ -26,7 +27,8 @@ export function Preview({
   const verticalPreview = frame.config.visualization === 'vertical'
 
   return (
-    <div className="w-full h-full pt-4">
+    <div className="w-full h-full flex flex-col gap-4">
+      <FrameTitleDescriptionPreview frame={frame} />
       {verticalPreview ? (
         <VerticalPreview
           options={polls}

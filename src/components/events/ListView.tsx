@@ -69,7 +69,7 @@ export function ListView({
               }}
               classNames={{
                 description:
-                  'text-slate-400 line-clamp-2 break-word max-w-[400px]',
+                  'text-slate-400 line-clamp-2 break-words max-w-[400px]',
               }}
             />
           )

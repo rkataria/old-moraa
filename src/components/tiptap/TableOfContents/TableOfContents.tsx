@@ -62,7 +62,7 @@ export const TableOfContents = memo(
               style={{ paddingLeft: `${1 * item.level}rem` }}
               onClick={() => scrollToElementById(item.id)}
               className={cn(
-                'w-full outline-none line-clamp-1 text-sm tracking-tight break-all font-medium text-gray-500 cursor-pointer mb-2 px-1'
+                'w-full outline-none line-clamp-1 text-sm tracking-tight break-words font-medium text-gray-500 cursor-pointer mb-2 px-1'
               )}>
               {item.itemIndex}. &nbsp;{item.textContent}
             </div>

@@ -25,7 +25,7 @@ type ThumbnailFrameProps = {
 export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.BREAKOUT]: (
-      <BreakoutFrame frame={frame as BreakoutFrame} isEditable />
+      <BreakoutFrame frame={frame as BreakoutFrame} isEditable={false} />
     ),
     [FrameType.GOOGLE_SLIDES]: (
       <GoogleSlidesFrame frame={frame as any} asThumbnail />
@@ -39,7 +39,7 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
         <MoraaBoardFrame frame={frame} asThumbnail />
       </RoomProvider>
     ),
-    [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} />,
+    [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} asThumbnail />,
     [FrameType.MORAA_SLIDE]: (
       <MoraaSlideFrame key={frame.id} frame={frame as any} asThumbnail />
     ),

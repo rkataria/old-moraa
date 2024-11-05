@@ -8,7 +8,7 @@ export function FrameTitleDescription({ frame }: { frame: IFrame }) {
   const frameTitle = frame.content?.title || frame.content?.question
 
   return (
-    <>
+    <div className="flex flex-col gap-2">
       <FrameTitle title={(frameTitle as string) || ''} />
       <TextBlockView
         block={
@@ -17,7 +17,7 @@ export function FrameTitleDescription({ frame }: { frame: IFrame }) {
           ) as TextBlock
         }
       />
-    </>
+    </div>
   )
 }
 
@@ -36,22 +36,15 @@ export function FrameTitleDescriptionPreview({
       FrameType.PDF_VIEWER,
       FrameType.IMAGE_VIEWER,
       FrameType.MIRO_EMBED,
-      FrameType.RICH_TEXT,
-      FrameType.MORAA_BOARD,
       FrameType.PDF_VIEWER,
       FrameType.VIDEO_EMBED,
       FrameType.VIDEO,
-      FrameType.RICH_TEXT,
     ].includes(frame.type)
   ) {
     return null
   }
 
   if (asThumbnail && frame.type === FrameType.MORAA_SLIDE) return null
-
-  if (frame.type === FrameType.RICH_TEXT) {
-    if (!frame.config.allowToCollaborate && !asThumbnail) return null
-  }
 
   return <FrameTitleDescription frame={frame} />
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line import/no-cycle
-import { BreakoutFrame, BreakoutFrameLive } from '../breakout/BreakoutFrameLive'
+import { BreakoutFrame } from '../content-types/Breakout/Breakout'
 import { GoogleSlidesFrame } from '../content-types/GoogleSlides/GoogleSlides'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
 import { MiroEmbedFrame } from '../content-types/MiroEmbed/MiroEmbed'
@@ -14,6 +14,7 @@ import { ReflectionFrame } from '../content-types/Reflection/Reflection'
 import { RichTextFrame } from '../content-types/RichText/RichText'
 import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
 
+import { frameTypesWithTitle } from '@/components/event-content/FrameTitleDescriptionPanel'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { IFrame } from '@/types/frame.type'
 import {
@@ -28,7 +29,7 @@ type FrameContainerProps = {
 
 export function LiveFrame({ frame }: FrameContainerProps) {
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
-    [FrameType.BREAKOUT]: <BreakoutFrameLive frame={frame as BreakoutFrame} />,
+    [FrameType.BREAKOUT]: <BreakoutFrame frame={frame as any} isLiveSession />,
     [FrameType.GOOGLE_SLIDES]: (
       <GoogleSlidesFrame frame={frame as any} isLiveSession />
     ),
@@ -64,6 +65,7 @@ export function LiveFrame({ frame }: FrameContainerProps) {
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType]
+  const frameHasTitle = frameTypesWithTitle.includes(frame.type)
 
   return (
     <div className="w-full h-full flex justify-start items-start">
@@ -71,6 +73,7 @@ export function LiveFrame({ frame }: FrameContainerProps) {
         className={cn({
           'h-auto w-full aspect-video': isFrameHasVideoAspectRatio(frame?.type),
           'h-full w-full': !isFrameHasVideoAspectRatio(frame?.type),
+          'flex flex-col gap-4': frameHasTitle,
         })}>
         {renderer}
       </div>

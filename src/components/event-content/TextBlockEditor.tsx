@@ -135,7 +135,7 @@ const getExtensions = (type: string, placeholder: string | undefined) => {
           limit: TITLE_CHARACTER_LIMIT,
         }),
         Placeholder.configure({
-          placeholder: "What's the title?",
+          placeholder: 'Start with a title..',
           emptyEditorClass:
             'text-gray-500 text-left before:content-[attr(data-placeholder)] tracking-tight',
         }),
@@ -156,7 +156,7 @@ const getExtensions = (type: string, placeholder: string | undefined) => {
           limit: type === 'header' ? TITLE_CHARACTER_LIMIT : null,
         }),
         Placeholder.configure({
-          placeholder: placeholder || 'Can you add some further context?',
+          placeholder: placeholder || 'Describe the content here...',
           emptyEditorClass:
             'text-gray-400 text-left before:content-[attr(data-placeholder)]',
         }),

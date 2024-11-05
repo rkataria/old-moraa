@@ -1,4 +1,5 @@
 import { Editor } from './Editor'
+import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 
 import { IFrame } from '@/types/frame.type'
 
@@ -9,11 +10,15 @@ type PreviewProps = {
 
 export function Preview({ frame, allowToCollaborate }: PreviewProps) {
   return (
-    <Editor
-      editorId={frame.id}
-      editable={allowToCollaborate}
-      classNames={{ wrapper: 'overflow-hidden' }}
-      startContent={!allowToCollaborate}
-    />
+    <>
+      <FrameTitleDescriptionPreview frame={frame} />
+
+      <Editor
+        editorId={frame.id}
+        editable={allowToCollaborate}
+        classNames={{ wrapper: 'overflow-hidden' }}
+        startContent={!allowToCollaborate}
+      />
+    </>
   )
 }

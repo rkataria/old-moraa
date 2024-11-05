@@ -79,7 +79,7 @@ export function Note({
         }}
         id="note-editor"
         className={cn(
-          'break-all ProseMirror tiptap',
+          'break-words ProseMirror tiptap',
           {
             'cursor-pointer': editable,
             'text-gray-400': !note,

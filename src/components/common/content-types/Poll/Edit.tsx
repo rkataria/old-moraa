@@ -104,6 +104,7 @@ export function Edit({ frame: frameFromRemote }: EditProps) {
   return (
     <>
       <FrameText
+        key={frameFromRemote.id}
         type="title"
         disableEnter
         onSuccessiveEnters={focusOnFirstEmptyOption}

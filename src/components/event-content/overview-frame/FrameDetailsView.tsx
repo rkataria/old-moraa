@@ -50,7 +50,7 @@ export function FrameDetailsView() {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   'p-4 bg-default/10': (event?.theme as any)?.theme === 'Emoji',
                 })}>
-                <p className={cn('line-clamp-[7] break-all text-base', {})}>
+                <p className="line-clamp-[7] text-base break-words">
                   {event.description}
                 </p>
                 <RenderIf
@@ -133,7 +133,7 @@ export function FrameDetailsView() {
                   <h2 className="font-md font-semibold">Description</h2>
                 </ModalHeader>
                 <ModalBody className="mt-4 mb-4">
-                  <p className="break-all">{event.description}</p>
+                  <p className="break-words">{event.description}</p>
                 </ModalBody>
               </>
             )}

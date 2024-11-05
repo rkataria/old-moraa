@@ -4,9 +4,11 @@ import { Tab, Tabs } from '@nextui-org/react'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
+import { FrameStatus } from '@/types/enums'
 
 const VALID_TABS = ['landing-page', 'session-planner', 'content-studio']
 
@@ -19,6 +21,16 @@ export function StudioTabs() {
   const dispatch = useStoreDispatch()
 
   const { permissions } = useEventPermissions()
+
+  const { sections } = useEventContext()
+
+  const anyFramePublished = sections.some((section) =>
+    section.frames.some((frame) => frame.status === FrameStatus.PUBLISHED)
+  )
+
+  const visibleContentTab = permissions.canUpdateFrame
+    ? true
+    : anyFramePublished
 
   const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
 
@@ -68,8 +80,7 @@ export function StudioTabs() {
         {permissions.canUpdateFrame && (
           <Tab key="session-planner" title="Plan" />
         )}
-
-        <Tab key="content-studio" title="Content" />
+        {visibleContentTab && <Tab key="content-studio" title="Content" />}
       </Tabs>
     </div>
   )

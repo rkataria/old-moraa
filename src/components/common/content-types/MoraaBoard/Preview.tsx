@@ -1,4 +1,5 @@
 import { Editor } from './Editor'
+import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 
 import { IFrame } from '@/types/frame.type'
 
@@ -7,5 +8,11 @@ type PreviewProps = {
 }
 
 export function Preview({ frame }: PreviewProps) {
-  return <Editor frame={frame} readOnly />
+  return (
+    <>
+      <FrameTitleDescriptionPreview frame={frame} />
+
+      <Editor frame={frame} readOnly />
+    </>
+  )
 }

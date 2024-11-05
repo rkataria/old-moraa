@@ -7,11 +7,20 @@ import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { FrameType } from '@/utils/frame-picker.util'
 
-export const frameTypesWithTitle = [FrameType.REFLECTION, FrameType.BREAKOUT]
+export const frameTypesWithTitle = [
+  FrameType.REFLECTION,
+  FrameType.BREAKOUT,
+  FrameType.MORAA_BOARD,
+  FrameType.MORAA_PAD,
+  FrameType.RICH_TEXT,
+]
 
 export const frameTypesWithDescription = [
   FrameType.REFLECTION,
   FrameType.BREAKOUT,
+  FrameType.MORAA_BOARD,
+  FrameType.MORAA_PAD,
+  FrameType.RICH_TEXT,
 ]
 
 export function FrameTitleDescriptionPanel() {

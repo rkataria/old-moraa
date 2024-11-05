@@ -5,8 +5,9 @@ import { Card } from './Card'
 import { ParticipantView } from './ParticipantView'
 import { SelfCard } from './SelfCard'
 import { TypingUserCards } from './TypingUserCards'
+import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 
-import type { IReflectionResponse } from '@/types/frame.type'
+import type { IFrame, IReflectionResponse } from '@/types/frame.type'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
@@ -71,13 +72,16 @@ function HostView() {
 }
 
 export function Live() {
-  const { isHost } = useEventSession()
+  const { isHost, currentFrame } = useEventSession()
 
   return (
-    <div className="w-full h-full flex justify-start items-start bg-white p-2 rounded-md">
-      <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-4">
-        {isHost ? <HostView /> : <ParticipantView />}
+    <>
+      <FrameTitleDescriptionPreview frame={currentFrame as IFrame} />
+      <div className="w-full h-full flex justify-start items-start bg-white rounded-md">
+        <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-4">
+          {isHost ? <HostView /> : <ParticipantView />}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

@@ -14,6 +14,7 @@ import { ReflectionFrame } from '../content-types/Reflection/Reflection'
 import { RichTextFrame } from '../content-types/RichText/RichText'
 import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
 
+import { frameTypesWithTitle } from '@/components/event-content/FrameTitleDescriptionPanel'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -52,9 +53,16 @@ export function PreviewFrame({ frame }: PreviewFrameProps) {
 
   const renderer = renderersByFrameType[frame.type as FrameType]
 
+  const frameHasTitle = frameTypesWithTitle.includes(frame.type)
+
   return (
     <div className="w-full h-full flex justify-start items-start">
-      <div className={cn('h-full w-auto aspect-video')}>{renderer}</div>
+      <div
+        className={cn('h-full w-auto aspect-video', {
+          'flex flex-col gap-4': frameHasTitle,
+        })}>
+        {renderer}
+      </div>
     </div>
   )
 }

@@ -15,6 +15,7 @@ import { DragDropContext } from 'react-beautiful-dnd'
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 import { BreakoutRoomsWithParticipants } from './BreakoutRoomsWithParticipants'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
+import { FrameTitleDescriptionPreview } from '../FrameTitleDescriptionPreview'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
@@ -47,7 +48,8 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
     isBreakoutActive && isCurrentFrameBreakoutFrame
 
   return (
-    <div>
+    <>
+      <FrameTitleDescriptionPreview frame={frame} />
       <RenderIf isTrue={frame.config.breakoutType === BREAKOUT_TYPES.ROOMS}>
         {!isBreakoutActiveOnCurrentFrame ? (
           <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
@@ -89,6 +91,6 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
           </div>
         )}
       </RenderIf>
-    </div>
+    </>
   )
 }

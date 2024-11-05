@@ -39,7 +39,7 @@ export function FrameTextBlock({
   fillAvailableHeight?: boolean
   onClick?: (id: string) => void
 }) {
-  const { updateFrame, currentFrame, sections } = useContext(
+  const { updateFrame, currentFrame } = useContext(
     EventContext
   ) as EventContextType
 
@@ -96,7 +96,7 @@ export function FrameTextBlock({
           ...currentFrame.content,
           ...debouncedLocalFrame?.content,
         },
-        name: getFrameName({ frame: debouncedLocalFrame, sections }),
+        name: getFrameName({ frame: debouncedLocalFrame }),
       },
       frameId: currentFrame.id,
     })

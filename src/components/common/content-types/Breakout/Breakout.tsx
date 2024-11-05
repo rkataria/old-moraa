@@ -20,7 +20,6 @@ export function BreakoutFrame({
 }: BreakoutFrameProps) {
   const { preview } = useEventContext()
   const { permissions } = useEventPermissions()
-
   if (isLiveSession) {
     return <Live frame={frame} />
   }
