@@ -15,6 +15,7 @@ import { useTimer } from '@/hooks/use-timer'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useUserPreferences } from '@/hooks/userPreferences'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { resetEventAction } from '@/stores/slices/event/current-event/event.slice'
 import { resetFrameAction } from '@/stores/slices/event/current-event/frame.slice'
 import {
@@ -48,6 +49,7 @@ export function EventSessionPageInner() {
       state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
   )
   const { isBreakoutActive } = useBreakoutRooms()
+  const currentFrame = useCurrentFrame()
 
   useSyncValueInRedux({
     value: isBreakoutActive,
@@ -63,7 +65,7 @@ export function EventSessionPageInner() {
           message={
             isInBreakoutMeeting
               ? 'Exiting Breakout Room'
-              : 'Joining Breakout Room'
+              : `You are leaving main room to join ${currentFrame?.name}`
           }
         />
       </div>

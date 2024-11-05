@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+
 import { useEffect, useState } from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
@@ -13,6 +15,12 @@ import {
 
 import { ControlButton } from '../ControlButton'
 
+import { useEventSession } from '@/contexts/EventSessionContext'
+import {
+  notificationDuration,
+  notifyBreakoutEnd,
+  notifyBreakoutStart,
+} from '@/utils/breakout-notify.utils'
 import { cn } from '@/utils/utils'
 
 export function BreakoutButtonWithConfirmationModal({
@@ -34,6 +42,7 @@ export function BreakoutButtonWithConfirmationModal({
   participantPerGroup?: number
   breakoutDuration?: number
 }) {
+  const { realtimeChannel } = useEventSession()
   const [isOpen, setOpen] = useState(false)
   const dyteMeeting = useDyteMeeting()
   const currentParticipantCount =
@@ -189,6 +198,27 @@ export function BreakoutButtonWithConfirmationModal({
     </div>
   )
 
+  const startBreakout = () => {
+    if (!onStartBreakoutClick) {
+      return
+    }
+
+    if (!realtimeChannel) {
+      setOpen(false)
+      onStartBreakoutClick(breakoutConfig)
+
+      return
+    }
+
+    notifyBreakoutStart(realtimeChannel)
+    setOpen(false)
+
+    setTimeout(() => {
+      notifyBreakoutEnd(realtimeChannel)
+      onStartBreakoutClick(breakoutConfig)
+    }, notificationDuration * 1000)
+  }
+
   return (
     <div>
       <ControlButton
@@ -231,10 +261,7 @@ export function BreakoutButtonWithConfirmationModal({
                     onPress={onClose}>
                     Close
                   </Button>
-                  <Button
-                    color="primary"
-                    size="sm"
-                    onPress={() => onStartBreakoutClick(breakoutConfig)}>
+                  <Button color="primary" size="sm" onPress={startBreakout}>
                     Start
                   </Button>
                 </ModalFooter>

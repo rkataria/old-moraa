@@ -63,6 +63,7 @@ type LiveSessionState = {
     isInBreakoutMeeting: boolean
     isBreakoutOverviewOpen: boolean
     isCreateBreakoutOpen: boolean
+    breakoutNotify: boolean
   }
 }
 
@@ -83,6 +84,7 @@ const initialState: LiveSessionState = {
     isInBreakoutMeeting: false,
     isBreakoutOverviewOpen: false,
     isCreateBreakoutOpen: false,
+    breakoutNotify: false,
   },
 }
 
@@ -164,6 +166,13 @@ export const liveSessionSlice = createSlice({
     },
     setIsDyteMeetingLoading: (state, action: PayloadAction<boolean>) => {
       state.dyte.isDyteMeetingLoading = action.payload
+    },
+
+    setBreakoutNotify: (state, action: PayloadAction<boolean>) => {
+      if (!state.dyte.isMeetingJoined) {
+        return
+      }
+      state.breakout.breakoutNotify = action.payload
     },
 
     resetLiveSession: () => initialState,
@@ -437,4 +446,5 @@ export const {
   setIsInBreakoutAction,
   setDyteClientAction,
   resetLiveSessionAction,
+  setBreakoutNotifyAction,
 } = renameSliceActions(liveSessionSlice.actions)

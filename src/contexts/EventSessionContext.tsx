@@ -27,7 +27,10 @@ import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { useEventSelector } from '@/stores/hooks/useEventSections'
-import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
+import {
+  setBreakoutNotifyAction,
+  updateMeetingSessionDataAction,
+} from '@/stores/slices/event/current-event/live-session.slice'
 import {
   type EventSessionContextType,
   type VideoMiddlewareConfig,
@@ -148,7 +151,15 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         )
       }
     )
-  }, [realtimeChannel, eventId, session?.id])
+
+    realtimeChannel.on('broadcast', { event: 'start-breakout-notify' }, () => {
+      dispatch(setBreakoutNotifyAction(true))
+    })
+
+    realtimeChannel.on('broadcast', { event: 'stop-breakout-notify' }, () => {
+      dispatch(setBreakoutNotifyAction(false))
+    })
+  }, [realtimeChannel, eventId, session?.id, dispatch])
 
   useEffect(() => {
     if (!fetchedFrameReactions) return

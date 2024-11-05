@@ -15,6 +15,11 @@ import { SessionService } from '@/services/session.service'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { IFrame } from '@/types/frame.type'
+import {
+  notificationDuration,
+  notifyBreakoutEnd,
+  notifyBreakoutStart,
+} from '@/utils/breakout-notify.utils'
 import { StartBreakoutConfig } from '@/utils/dyte-breakout'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
@@ -172,6 +177,19 @@ export function BreakoutButton() {
     })
   }
 
+  const endBreakout = () => {
+    if (!realtimeChannel) {
+      onBreakoutEnd()
+
+      return
+    }
+    notifyBreakoutStart(realtimeChannel)
+    setTimeout(() => {
+      notifyBreakoutEnd(realtimeChannel)
+      onBreakoutEnd()
+    }, notificationDuration * 1000)
+  }
+
   useEffect(() => {
     if (!realtimeChannel) return
 
@@ -249,7 +267,7 @@ export function BreakoutButton() {
       <BreakoutButtonWithConfirmationModal
         key="end-breakout"
         label="End breakout"
-        onEndBreakoutClick={onBreakoutEnd}
+        onEndBreakoutClick={endBreakout}
       />
     )
   }

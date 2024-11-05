@@ -20,7 +20,9 @@ import { FlyingEmojisOverlay } from '../FlyingEmojisOverlay'
 import { IdleModeConfirmation } from '../IdleModeConfirmation'
 
 import { CreateUnplannedBreakoutModal } from '@/components/common/breakout/CreateBreakoutModal'
+import { Notify } from '@/components/common/breakout/Notify'
 import { LiveLayout } from '@/components/common/LiveLayout'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -53,6 +55,9 @@ export function MeetingScreen() {
   const isCreateBreakoutOpen = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isCreateBreakoutOpen
+  )
+  const isBreakoutStartNotifyOpen = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.breakout.breakoutNotify
   )
   const { isHost, presentationStatus, dyteStates, setDyteStates } =
     useEventSession()
@@ -132,6 +137,9 @@ export function MeetingScreen() {
         setOpen={() => dispatch(setIsCreateBreakoutOpenAction(false))}
       />
       <IdleModeConfirmation />
+      <RenderIf isTrue={isBreakoutStartNotifyOpen}>
+        <Notify />
+      </RenderIf>
     </LiveLayout>
   )
 }

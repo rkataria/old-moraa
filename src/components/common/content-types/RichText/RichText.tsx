@@ -22,12 +22,18 @@ export function RichTextFrame({
   const { allowToCollaborate } = frame.config
 
   if (isLiveSession) {
-    return <Live frame={frame} allowToCollaborate={allowToCollaborate} />
+    return (
+      <Live
+        frame={frame}
+        allowToCollaborate={allowToCollaborate}
+        key={frame.id}
+      />
+    )
   }
 
   if (!preview && permissions.canUpdateFrame && !asThumbnail) {
-    return <Edit frame={frame} />
+    return <Edit frame={frame} key={frame.id} />
   }
 
-  return <Preview frame={frame} />
+  return <Preview frame={frame} key={frame.id} />
 }
