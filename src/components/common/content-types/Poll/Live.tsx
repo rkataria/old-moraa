@@ -40,7 +40,8 @@ export function Live({ frame }: LiveProps) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const { currentUser } = useAuth()
-  const { onVote, currentFrameResponses: votes, isHost } = useEventSession()
+  const { onVote, currentFrameResponses, isHost } = useEventSession()
+  const votes = currentFrameResponses || []
   const [makeMyVoteAnonymous, setMakeMyVoteAnonymous] = useState<boolean>(
     isVoteAnonymous(votes as Vote[], currentUser)
   )
@@ -63,7 +64,7 @@ export function Live({ frame }: LiveProps) {
   }, [voted, canVote, frame.config.allowVoteOnMultipleOptions, selectedOptions])
 
   const showResponses = !canVote || voted
-
+  console.log('votes', votes)
   const renderContent = () => {
     if (showResponses) {
       return <PollResponse frame={frame} votes={votes as Vote[]} />
