@@ -1,15 +1,17 @@
 import { useEffect } from 'react'
 
-import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { VscMultipleWindows } from 'react-icons/vsc'
 
-import { BreakoutButtonWithConfirmationModal } from './BreakoutButtonWithConfirmationModal'
+import { EndBreakoutButton } from './EndBreakoutButton'
+import { StartBreakoutButtonWithConfirmationModal } from './StartBreakoutButtonWithConfirmationModal'
 import { ControlButton } from '../ControlButton'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
+import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
@@ -31,11 +33,14 @@ export function BreakoutButton() {
     currentFrame,
     presentationStatus,
     setCurrentFrame,
-    realtimeChannel,
     setDyteStates,
   } = useEventSession()
+  const { realtimeChannel } = useRealtimeChannel()
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
+  )
+  const areParticipantsPresentInMeeting = useDyteSelector(
+    (state) => state.participants.joined.toArray().length
   )
 
   const sessionBreakoutFrameId = useStoreSelector(
@@ -132,6 +137,8 @@ export function BreakoutButton() {
           connectedMeetingsToActivitiesMap,
         })
       )
+      console.log(breakoutConfig.breakoutDuration, realtimeChannel)
+
       if (breakoutConfig.breakoutDuration && realtimeChannel) {
         realtimeChannel.send({
           type: 'broadcast',
@@ -210,12 +217,15 @@ export function BreakoutButton() {
 
   if (
     !sessionBreakoutFrameId &&
-    presentationStatus === PresentationStatuses.STOPPED
+    presentationStatus === PresentationStatuses.STOPPED &&
+    areParticipantsPresentInMeeting
   ) {
     return (
       <ControlButton
         tooltipProps={{
-          content: isBreakoutActive ? 'View Breakout' : 'Start Breakout',
+          content: isBreakoutActive
+            ? 'Open breakout manager'
+            : 'Create breakout rooms',
         }}
         buttonProps={{
           size: 'sm',
@@ -234,7 +244,7 @@ export function BreakoutButton() {
             },
           }))
         }>
-        Breakout
+        {isBreakoutActive ? 'Open breakout manager' : 'Create breakout rooms'}
       </ControlButton>
     )
   }
@@ -264,23 +274,19 @@ export function BreakoutButton() {
     }
 
     return (
-      <BreakoutButtonWithConfirmationModal
-        key="end-breakout"
-        label="End breakout"
-        onEndBreakoutClick={endBreakout}
-      />
+      <EndBreakoutButton key="end-breakout" onEndBreakoutClick={endBreakout} />
     )
   }
 
   if (
+    areParticipantsPresentInMeeting &&
     currentFrame &&
-    (currentFrame?.content?.breakoutFrameId ||
-      currentFrame?.type === FrameType.BREAKOUT)
+    currentFrame?.type === FrameType.BREAKOUT
   ) {
     return (
-      <BreakoutButtonWithConfirmationModal
+      <StartBreakoutButtonWithConfirmationModal
         key="start-breakout-2"
-        label="Start breakout"
+        label="Start planned breakout"
         roomsCount={defaultRoomsCount}
         participantPerGroup={defaultParticipantsPerRoom}
         breakoutDuration={defaultBreakoutDuration}

@@ -7,25 +7,25 @@ import { useBreakoutRooms } from './useBreakoutRooms'
 import { useEventContext } from '@/contexts/EventContext'
 import { supabaseClient } from '@/utils/supabase/client'
 
-let realtimeChannel: RealtimeChannel | null
+let meetingRealtimeChannel: RealtimeChannel | null
 
-export const useRealtimeChannel = () => {
+export const useMeetingRealtimeChannel = () => {
   const { eventId } = useEventContext()
-  const { isBreakoutActive, currentMeetingId } = useBreakoutRooms()
+  const { currentMeetingId } = useBreakoutRooms()
 
   useEffect(() => {
-    realtimeChannel = supabaseClient
-      .channel(`meeting:${currentMeetingId}`, {
+    meetingRealtimeChannel = supabaseClient
+      .channel(`event:${eventId}:dyte-meeting:${currentMeetingId}`, {
         config: { broadcast: { self: true } },
       })
       .subscribe()
 
     return () => {
-      realtimeChannel?.unsubscribe()
+      meetingRealtimeChannel?.unsubscribe()
     }
-  }, [eventId, currentMeetingId, isBreakoutActive])
+  }, [eventId, currentMeetingId])
 
   return {
-    realtimeChannel,
+    meetingRealtimeChannel,
   }
 }

@@ -23,20 +23,18 @@ import {
 } from '@/utils/breakout-notify.utils'
 import { cn } from '@/utils/utils'
 
-export function BreakoutButtonWithConfirmationModal({
+export function StartBreakoutButtonWithConfirmationModal({
   onStartBreakoutClick,
-  onEndBreakoutClick,
-  label,
+  label = 'Breakout',
   roomsCount,
   participantPerGroup,
   breakoutDuration,
 }: {
-  onStartBreakoutClick?: (breakoutConfig: {
+  onStartBreakoutClick: (breakoutConfig: {
     roomsCount: number
     participantPerGroup: number
     breakoutDuration: number
   }) => void
-  onEndBreakoutClick?: () => void
   label: string
   roomsCount?: number
   participantPerGroup?: number
@@ -79,19 +77,13 @@ export function BreakoutButtonWithConfirmationModal({
     roomsCount,
   ])
 
-  const bgColor = {
-    danger: '!bg-red-500 hover:!bg-red-500',
-    success: '',
-    none: '',
-  }[onStartBreakoutClick ? 'success' : onEndBreakoutClick ? 'danger' : 'none']
-
   const isConfigAlreadyProvided =
     typeof roomsCount !== 'undefined' ||
     typeof participantPerGroup !== 'undefined'
 
   const DurationUI = (
     <div className="grid grid-cols-2 gap-4">
-      <p>Duration:</p>
+      <p>Duration (mins):</p>
       <ButtonGroup
         variant="bordered"
         size="sm"
@@ -128,10 +120,10 @@ export function BreakoutButtonWithConfirmationModal({
     rooms: (
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p>Breakout Rooms:</p>{' '}
+          <p>Number of rooms:</p>{' '}
           <p className="text-xs text-gray-500">
             Approx {Math.ceil(currentParticipantCount / (roomsCount as number))}{' '}
-            participant per room.
+            participant(s) per room.
           </p>
         </div>
         <div>{roomsCount}</div>
@@ -140,7 +132,7 @@ export function BreakoutButtonWithConfirmationModal({
     participants_per_room: (
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p>Participants per room:</p>
+          <p>Max participants per room:</p>
           <p className="text-xs text-gray-500">
             {Math.ceil(
               currentParticipantCount / (participantPerGroup as number)
@@ -156,13 +148,13 @@ export function BreakoutButtonWithConfirmationModal({
   const ConfigureRoomsUI = (
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <p>Breakout Rooms:</p>{' '}
+        <p>Number of rooms:</p>{' '}
         <p className="text-xs text-gray-500">
           Approx{' '}
           {Math.ceil(
             currentParticipantCount / (breakoutConfig.roomsCount as number)
           )}{' '}
-          participant per room.
+          participant(s) per room.
         </p>
       </div>
       <ButtonGroup
@@ -229,47 +221,40 @@ export function BreakoutButtonWithConfirmationModal({
           size: 'sm',
           variant: 'solid',
           // isIconOnly: true,
-          className: cn('gap-2 justify-between live-button', bgColor),
+          className: cn('gap-2 justify-between live-button'),
         }}
-        onClick={() =>
-          onStartBreakoutClick ? setOpen(true) : onEndBreakoutClick?.()
-        }>
-        {/* <VscMultipleWindows size={22} /> */}
-        Breakout
+        onClick={() => setOpen(true)}>
+        {label}
       </ControlButton>
-      {!!onStartBreakoutClick && (
-        <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  Start Breakout Meeting
-                </ModalHeader>
-                <ModalBody>
-                  {isConfigAlreadyProvided
-                    ? ShowConfigurationsUI[
-                        participantPerGroup ? 'participants_per_room' : 'rooms'
-                      ]
-                    : ConfigureRoomsUI}
-                  {DurationUI}
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    color="danger"
-                    variant="light"
-                    size="sm"
-                    onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button color="primary" size="sm" onPress={startBreakout}>
-                    Start
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+      <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">{label}</ModalHeader>
+              <ModalBody>
+                {isConfigAlreadyProvided
+                  ? ShowConfigurationsUI[
+                      participantPerGroup ? 'participants_per_room' : 'rooms'
+                    ]
+                  : ConfigureRoomsUI}
+                {DurationUI}
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  variant="light"
+                  size="sm"
+                  onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" size="sm" onPress={startBreakout}>
+                  Start
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
