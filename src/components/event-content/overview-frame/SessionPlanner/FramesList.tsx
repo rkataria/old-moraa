@@ -7,13 +7,13 @@ import { Checkbox } from '@nextui-org/react'
 import { BottomBar } from './BottomBar'
 // eslint-disable-next-line import/no-cycle
 import { FrameItem } from './FrameItem'
+import { NewFramePlaceholder } from './NewFramePlaceholder'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { IFrame } from '@/types/frame.type'
-import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function FramesList({
@@ -147,21 +147,7 @@ export function FramesList({
                           setInsertInSectionId(sectionId)
                           setOpenContentTypePicker(true)
                         }}>
-                        <FrameItem
-                          sectionId={sectionId}
-                          frame={{
-                            name: '+ Add frame',
-                            config: { time: 1 },
-                            type: FrameType.MORAA_SLIDE,
-                            id: 'placeholder',
-                          }}
-                          frameIndex={-1}
-                          selectedFrameIds={selectedFrameIds}
-                          frameIdToBeFocus="placeholder-id"
-                          editable={editable}
-                          setSelectedFrameIds={setSelectedFrameIds}
-                          className="opacity-30 pointer-events-none"
-                        />
+                        <NewFramePlaceholder />
                       </div>
                     </RenderIf>
                   </div>

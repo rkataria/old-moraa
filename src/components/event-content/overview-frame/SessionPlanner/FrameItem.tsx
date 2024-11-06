@@ -231,14 +231,14 @@ export function FrameItem({
         draggableId={`frame-draggable-frameId-${frame.id}`}
         index={frameIndex}
         isDragDisabled={!editable}>
-        {(_provided) => (
+        {(_provided, snapshot) => (
           <div
             id={frame.id}
             key={frame.id}
             ref={_provided.innerRef}
             {..._provided.draggableProps}
             className={cn(
-              'relative w-full bg-white min-h-[40px] group/frame grid hover:bg-gray-50 border-b last:border-none last:rounded-b-xl hover:shadow-sm duration-300',
+              'relative z-[10] w-full bg-white min-h-[40px] group/frame grid hover:bg-gray-50 border-b last:border-none last:rounded-b-xl hover:shadow-sm duration-300',
               className,
               {
                 'grid-cols-[40px_100px_120px_1fr_1fr_70px]': editable,
@@ -275,6 +275,7 @@ export function FrameItem({
                           isIconOnly
                           variant="light"
                           className="w-auto h-auto min-w-1"
+                          isDisabled={snapshot.isDragging}
                           {..._provided.dragHandleProps}>
                           <MdDragIndicator className="text-gray-400" />
                         </Button>
