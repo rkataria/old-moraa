@@ -275,7 +275,6 @@ export function FrameItem({
                           isIconOnly
                           variant="light"
                           className="w-auto h-auto min-w-1"
-                          isDisabled={snapshot.isDragging}
                           {..._provided.dragHandleProps}>
                           <MdDragIndicator className="text-gray-400" />
                         </Button>
@@ -287,7 +286,10 @@ export function FrameItem({
                           icon: <BsTrash className="text-red-500" size={16} />,
                         },
                       ]}
-                      onAction={(key) => handleFrameDropdownActions(key)}
+                      onAction={(key) => {
+                        if (snapshot.isDragging) return
+                        handleFrameDropdownActions(key)
+                      }}
                     />
                   </RenderIf>
                 </div>
