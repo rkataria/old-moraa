@@ -53,7 +53,7 @@ export function NewFramePlaceholder() {
         <p>+ Add Frame</p>
       </div>
 
-      <p className="border-x-1 px-4 py-2 cursor-text">Note</p>
+      <p className="border-x-1 px-4 py-2 cursor-text" />
 
       <div className="grid items-center justify-center scale-75">
         <Checkbox

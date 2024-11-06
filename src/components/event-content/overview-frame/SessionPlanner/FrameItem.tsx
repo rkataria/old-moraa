@@ -231,7 +231,7 @@ export function FrameItem({
         draggableId={`frame-draggable-frameId-${frame.id}`}
         index={frameIndex}
         isDragDisabled={!editable}>
-        {(_provided, snapshot) => (
+        {(_provided) => (
           <div
             id={frame.id}
             key={frame.id}
@@ -275,7 +275,6 @@ export function FrameItem({
                           isIconOnly
                           variant="light"
                           className="w-auto h-auto min-w-1"
-                          isDisabled={snapshot.isDragging}
                           {..._provided.dragHandleProps}>
                           <MdDragIndicator className="text-gray-400" />
                         </Button>
