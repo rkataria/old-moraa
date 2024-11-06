@@ -22,9 +22,8 @@ const isCurrentUserVoted = (votes: Vote[], currentUser: any) => {
 
   if (votes.length === 0) return false
 
-  return (
-    votes.find((vote) => vote.participant.enrollment.user_id === currentUser.id)
-      ?.response.anonymous || false
+  return votes.some(
+    (vote) => vote.participant.enrollment.user_id === currentUser.id
   )
 }
 
@@ -46,7 +45,7 @@ export function Live({ frame }: LiveProps) {
     isVoteAnonymous(votes as Vote[], currentUser)
   )
 
-  const canVote = isHost
+  const canVote = !isHost
 
   const voted = isCurrentUserVoted(votes as Vote[], currentUser)
 

@@ -119,7 +119,7 @@ export function Edit({ frame: frameFromRemote }: EditProps) {
                   // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   className="relative flex items-center gap-4 text-foreground group/poll">
-                  <div className="w-full py-2.5 rounded-md bg-[#F4F3F3]">
+                  <div className="w-full py-2.5 rounded-md bg-white">
                     <ReactTextareaAutosize
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       ref={(el: any) => {
