@@ -12,7 +12,7 @@ import { Button } from '../ui/Button'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { PresentationStatuses } from '@/types/event-session.type'
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function PresentationControls() {
   const {
@@ -25,7 +25,9 @@ export function PresentationControls() {
     presentationStatus,
   } = useEventSession()
 
-  const handlePresentationToggle = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handlePresentationToggle = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
     if (!currentFrame) return
     if (presentationStarted) {
       stopPresentation()
@@ -34,7 +36,11 @@ export function PresentationControls() {
     }
   }
 
-  useHotkeys('s', handlePresentationToggle, { enabled: isHost })
+  useHotkeys(
+    KeyboardShortcuts.Live.startAndStopPresentation.key,
+    handlePresentationToggle,
+    { enabled: isHost }
+  )
 
   if (!currentFrame) return <div />
 

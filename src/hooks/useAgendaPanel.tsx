@@ -394,8 +394,17 @@ export function AgendaPanelContextProvider({
     toggleExpandedSection(currentSectionId)
   })
 
-  useHotkeys('l', () => dispatch(setAgendaPanelDisplayTypeAction('list')))
-  useHotkeys('g', () => dispatch(setAgendaPanelDisplayTypeAction('grid')))
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const toggleView = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+    dispatch(
+      setAgendaPanelDisplayTypeAction(
+        listDisplayMode === 'list' ? 'grid' : 'list'
+      )
+    )
+  }
+
+  useHotkeys(['l', 'g'], toggleView)
 
   useEffect(() => {
     if (!currentFrame) return
