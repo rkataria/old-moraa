@@ -64,7 +64,7 @@ export function Live({ frame }: LiveProps) {
   }, [voted, canVote, frame.config.allowVoteOnMultipleOptions, selectedOptions])
 
   const showResponses = !canVote || voted
-  console.log('votes', votes)
+
   const renderContent = () => {
     if (showResponses) {
       return <PollResponse frame={frame} votes={votes as Vote[]} />
