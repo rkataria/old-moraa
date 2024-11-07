@@ -6,6 +6,7 @@ import { useRef } from 'react'
 import { Button } from '@nextui-org/button'
 import { IoCheckmarkCircle } from 'react-icons/io5'
 
+import { ActiveBreakoutIndicator } from './ActiveBreakoutIndicator'
 import { ContextMenu } from './ContextMenu'
 import { FrameThumbnailCard } from './FrameThumbnailCard'
 import { frameActions } from '../FrameActions'
@@ -62,16 +63,15 @@ export function FrameGridView({
           {
             'border-primary border-2': frameActive,
             'border-transparent border-2': !frameActive,
+            'border border-green-400': breakoutFrameId === frame?.id,
           }
         )}
         onClick={() => {
           onClick(frame)
         }}>
-        {breakoutFrameId === frame?.id ? (
-          <div className="absolute top-0 right-0 p-1 bg-primary text-white rounded-bl-md rounded-tr-md">
-            <p className="text-xs">In Breakout</p>
-          </div>
-        ) : null}
+        <RenderIf isTrue={breakoutFrameId === frame?.id}>
+          <ActiveBreakoutIndicator />
+        </RenderIf>
 
         <div
           className={cn(

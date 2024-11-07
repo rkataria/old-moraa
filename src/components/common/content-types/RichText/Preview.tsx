@@ -5,19 +5,19 @@ import { IFrame } from '@/types/frame.type'
 
 type PreviewProps = {
   frame: IFrame
-  allowToCollaborate?: boolean
 }
 
-export function Preview({ frame, allowToCollaborate }: PreviewProps) {
+export function Preview({ frame }: PreviewProps) {
   return (
     <>
       <FrameTitleDescriptionPreview frame={frame} />
 
       <Editor
         editorId={frame.id}
-        editable={allowToCollaborate}
+        editable={false}
         classNames={{ wrapper: 'overflow-hidden' }}
-        startContent={!allowToCollaborate}
+        hideSideBar
+        enableCollaboration={false}
       />
     </>
   )

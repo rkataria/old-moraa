@@ -22,9 +22,8 @@ const isCurrentUserVoted = (votes: Vote[], currentUser: any) => {
 
   if (votes.length === 0) return false
 
-  return (
-    votes.find((vote) => vote.participant.enrollment.user_id === currentUser.id)
-      ?.response.anonymous || false
+  return votes.some(
+    (vote) => vote.participant.enrollment.user_id === currentUser.id
   )
 }
 
@@ -41,12 +40,13 @@ export function Live({ frame }: LiveProps) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const { currentUser } = useAuth()
-  const { onVote, currentFrameResponses: votes, isHost } = useEventSession()
+  const { onVote, currentFrameResponses, isHost } = useEventSession()
+  const votes = currentFrameResponses || []
   const [makeMyVoteAnonymous, setMakeMyVoteAnonymous] = useState<boolean>(
     isVoteAnonymous(votes as Vote[], currentUser)
   )
 
-  const canVote = isHost
+  const canVote = !isHost
 
   const voted = isCurrentUserVoted(votes as Vote[], currentUser)
 

@@ -5,19 +5,19 @@ import { IFrame } from '@/types/frame.type'
 
 type LiveProps = {
   frame: IFrame
-  allowToCollaborate?: boolean
 }
 
-export function Live({ frame, allowToCollaborate }: LiveProps) {
+export function Live({ frame }: LiveProps) {
   return (
     <>
       <FrameTitleDescriptionPreview frame={frame} key={frame.id} />
 
       <Editor
         editorId={frame.id}
-        editable={allowToCollaborate}
+        editable={false}
         classNames={{ wrapper: 'overflow-hidden' }}
-        startContent={!allowToCollaborate}
+        hideSideBar
+        enableCollaboration={false}
       />
     </>
   )

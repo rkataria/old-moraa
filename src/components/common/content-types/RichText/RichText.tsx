@@ -19,16 +19,9 @@ export function RichTextFrame({
 }: RichTextFrameProps) {
   const { preview } = useEventContext()
   const { permissions } = useEventPermissions()
-  const { allowToCollaborate } = frame.config
 
   if (isLiveSession) {
-    return (
-      <Live
-        frame={frame}
-        allowToCollaborate={allowToCollaborate}
-        key={frame.id}
-      />
-    )
+    return <Live frame={frame} key={frame.id} />
   }
 
   if (!preview && permissions.canUpdateFrame && !asThumbnail) {

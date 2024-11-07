@@ -29,7 +29,9 @@ export function NoteToggle() {
     }
   }, [currentFrame?.notes, dispatch])
 
-  const handleNoteToggle = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleNoteToggle = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
     if (rightSidebarMode === 'frame-notes') {
       dispatch(closeRightSidebarAction())
     } else {

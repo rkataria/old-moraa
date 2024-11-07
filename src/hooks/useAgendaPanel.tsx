@@ -14,6 +14,7 @@ import {
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { FrameType } from '@/utils/frame-picker.util'
+import { KeyboardShortcuts } from '@/utils/utils'
 
 type ListDisplayMode = 'list' | 'grid'
 
@@ -394,8 +395,23 @@ export function AgendaPanelContextProvider({
     toggleExpandedSection(currentSectionId)
   })
 
-  useHotkeys('l', () => dispatch(setAgendaPanelDisplayTypeAction('list')))
-  useHotkeys('g', () => dispatch(setAgendaPanelDisplayTypeAction('grid')))
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const toggleView = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+    dispatch(
+      setAgendaPanelDisplayTypeAction(
+        listDisplayMode === 'list' ? 'grid' : 'list'
+      )
+    )
+  }
+
+  useHotkeys(
+    [
+      KeyboardShortcuts['Agenda Panel'].grid.key,
+      KeyboardShortcuts['Agenda Panel'].list.key,
+    ],
+    toggleView
+  )
 
   useEffect(() => {
     if (!currentFrame) return

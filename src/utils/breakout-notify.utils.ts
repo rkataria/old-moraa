@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { RealtimeChannel } from '@supabase/realtime-js'
 
 export const notifyBreakoutStart = (realtimeChannel: RealtimeChannel) => {
