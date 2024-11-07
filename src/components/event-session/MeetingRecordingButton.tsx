@@ -1,4 +1,6 @@
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { FaStopCircle } from 'react-icons/fa'
+import { IoMdRadioButtonOn } from 'react-icons/io'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -37,14 +39,18 @@ export function MeetingRecordingButton() {
         size: 'sm',
         radius: 'md',
         variant: 'flat',
-        // isIconOnly: true,
-        className: cn('live-button', {
+        color: isRecording ? 'danger' : 'default',
+        startContent: isRecording ? (
+          <FaStopCircle size={18} />
+        ) : (
+          <IoMdRadioButtonOn size={18} />
+        ),
+        className: cn('', {
           active: isRecording,
         }),
       }}
       onClick={onRecordingToggle}>
-      {/* <IoMdRadioButtonOn size={18} /> */}
-      {isRecording ? 'Recording' : 'Record'}
+      <span className="mb-0.5">{isRecording ? 'Recording' : 'Record'}</span>
     </ControlButton>
   )
 }

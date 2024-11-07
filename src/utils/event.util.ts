@@ -62,7 +62,7 @@ export const eventTableColumns = [
   },
   {
     key: 'full_name',
-    label: 'CREATOR',
+    label: 'EDUCATOR',
     sortable: true,
   },
   {

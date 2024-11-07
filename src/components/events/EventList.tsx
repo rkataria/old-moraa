@@ -33,7 +33,7 @@ export function EventList() {
     from: (currentPage - 1) * rowsPerPage,
     to: currentPage * rowsPerPage - 1,
   })
-  const isCreator = profile.user_type === UserType.CREATOR
+  const isEducator = profile.user_type === UserType.EDUCATOR
   const [totalEventsCount, setTotalEventsCount] = useState(0)
 
   const pages = Math.ceil(totalEventsCount / rowsPerPage)
@@ -100,9 +100,9 @@ export function EventList() {
       <EmptyPlaceholder
         icon={<IoCalendarClear className="text-[200px] text-gray-200" />}
         title="No upcoming events"
-        description={`You don't have any upcoming events. ${isCreator ? 'Create one now!' : ''}`}
+        description={`You don't have any upcoming events. ${isEducator ? 'Create one now!' : ''}`}
         actionButton={
-          profile.user_type === UserType.CREATOR && (
+          profile.user_type === UserType.EDUCATOR && (
             <Link to="/events/create">
               <Button
                 size="sm"

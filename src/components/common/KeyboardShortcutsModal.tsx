@@ -49,7 +49,7 @@ export function KeyboardShortcutsModal({
   }
 
   const shortcuts =
-    profile.user_type === UserType.CREATOR ? creatorShorcuts : learnerShortcuts
+    profile.user_type === UserType.EDUCATOR ? creatorShorcuts : learnerShortcuts
 
   const keyboardListing = () =>
     Object.entries(shortcuts).map(([section, actions], index) => (

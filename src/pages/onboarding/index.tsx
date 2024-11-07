@@ -37,12 +37,12 @@ export const Route = createFileRoute('/onboarding/')({
 
 const UserTypes = [
   {
-    title: 'Creator',
-    role: UserType.CREATOR,
+    title: 'Educator',
+    role: UserType.EDUCATOR,
     image: '/images/creator.png',
 
     description:
-      'As a Creator, you can design courses, host live sessions, and share your content with learners.',
+      'As a Educator, you can design courses, host live sessions, and share your content with learners.',
     benefits: [
       'Create and manage your own courses',
       'Host live sessions with learners',

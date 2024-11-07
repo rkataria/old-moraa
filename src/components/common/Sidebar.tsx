@@ -12,16 +12,16 @@ export function SidebarComponent() {
   const navigate = useNavigate()
   const { data: profile } = useProfile()
 
-  const isCreator = () => {
+  const isEducator = () => {
     if (!profile) return false
 
-    return profile.user_type === UserType.CREATOR
+    return profile.user_type === UserType.EDUCATOR
   }
 
   return (
     <div className="sticky left-0 top-0 w-56 h-full px-4 shrink-0 bg-white pt-7">
       <div className="flex flex-col grow gap-y-4 overflow-y-auto pb-4">
-        <RenderIf isTrue={isCreator()}>
+        <RenderIf isTrue={isEducator()}>
           <Button
             style={{
               background:

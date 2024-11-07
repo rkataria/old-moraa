@@ -30,7 +30,6 @@ export function ParticipantsToggle({
     <ButtonGroup className="live-button rounded-md">
       <ControlButton
         buttonProps={{
-          // isIconOnly: true,
           size: 'sm',
           className: cn('live-button rounded-r-none', {
             active: isParticipantsSidebarOpen,
@@ -41,7 +40,6 @@ export function ParticipantsToggle({
           actionKey: KeyboardShortcuts.Live.participants.key,
         }}
         onClick={onClick}>
-        {/* <IoPeopleOutline size={20} /> */}
         People
       </ControlButton>
       {isHost && (
@@ -49,7 +47,7 @@ export function ParticipantsToggle({
           eventId={eventId!}
           triggerButtonProps={{
             isIconOnly: true,
-            className: 'bg-gray-200 rounded-l-none',
+            className: 'bg-gray-100 hover:bg-gray-200 rounded-l-none',
             children: <LuUserPlus2 />,
           }}
         />

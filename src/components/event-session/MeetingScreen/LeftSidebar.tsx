@@ -16,11 +16,11 @@ export function LeftSidebar() {
     <motion.div
       initial={{ marginLeft: -256 }}
       animate={{
-        marginLeft: leftSidebarMode === 'maximized' ? 8 : -256,
+        marginLeft: leftSidebarMode === 'maximized' ? 16 : -256,
       }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
       className={cn(
-        'relative w-64 h-full ml-2 rounded-md overflow-hidden bg-white border-1 border-gray-200'
+        'relative w-64 h-full ml-4 rounded-md overflow-hidden bg-white border-1 border-gray-200'
       )}>
       <AgendaPanel header={<LiveAgendaHeader />} />
     </motion.div>

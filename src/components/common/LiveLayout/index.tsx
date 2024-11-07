@@ -22,9 +22,9 @@ export function LiveLayout({
   footer,
 }: LiveLayoutProps) {
   return (
-    <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-white">
+    <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-[#f5f5f5]">
       <Header>{header}</Header>
-      <div className="flex-auto flex justify-start items-start gap-2 w-full overflow-hidden z-0">
+      <div className="flex-auto flex justify-start items-start gap-4 w-full overflow-hidden">
         <LeftSidebar>{leftSidebar}</LeftSidebar>
         <Content>{children}</Content>
         <RightSidebar>{rightSidebar}</RightSidebar>

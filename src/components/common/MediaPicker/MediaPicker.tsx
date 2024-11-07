@@ -35,6 +35,7 @@ const MENU_OPTIONS = {
     {
       icon: <SiIcons8 size={18} className="text-green-500" />,
       label: MediaProviderType.ICON8,
+      disabled: true,
     },
   ],
 }
@@ -63,7 +64,7 @@ export function MediaPicker({
   const localFileInputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState(false)
   const [provider, setProvider] = useState<MediaProviderType>(
-    MediaProviderType.LIBRARY
+    MediaProviderType.UNSPLASH
   )
   const [fileType, setFileType] = useState<'images' | 'videos'>('images')
 
@@ -101,7 +102,9 @@ export function MediaPicker({
           <div className="w-48 h-full border-r-2 p-4 flex flex-col justify-between gap-8">
             <div className="flex flex-col gap-4">
               <div>
-                <span className="text-sm text-gray-400 p-2">Library</span>
+                <span className="text-sm text-gray-400 p-2">
+                  Add from library
+                </span>
                 <ul className="flex flex-col gap-1 mt-2">
                   {MENU_OPTIONS.library.map((option) => (
                     <SideMenuItem
@@ -132,6 +135,7 @@ export function MediaPicker({
                       icon={option.icon}
                       label={option.label}
                       active={provider === option.label}
+                      disabled={option.disabled}
                       onClick={() => {
                         setProvider(option.label as MediaProviderType)
                       }}

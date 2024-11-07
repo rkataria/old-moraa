@@ -51,21 +51,23 @@ export function Footer() {
 
   return (
     <div className="h-full w-full flex justify-between items-center px-2">
-      <div className="flex justify-start items-center gap-2 p-2 h-12">
+      <div className="flex-1 flex justify-start items-center gap-2 p-2 h-12">
         <div className="flex justify-start items-center gap-2">
           {isHost && (
-            <AgendaPanelToggle
-              collapsed={leftSidebarMode === 'collapsed'}
-              onToggle={() => {
-                dispatch(toggleLeftSidebarAction())
-              }}
-            />
+            <div className="p-2 bg-white rounded-md">
+              <AgendaPanelToggle
+                collapsed={leftSidebarMode === 'collapsed'}
+                onToggle={() => {
+                  dispatch(toggleLeftSidebarAction())
+                }}
+              />
+            </div>
           )}
           <PresentationControls />
         </div>
       </div>
-      <div className="flex justify-center items-center gap-2">
-        <div className="flex justify-center items-center gap-2 p-2">
+      <div className="flex-auto flex justify-center items-center gap-2">
+        <div className="flex justify-center items-center gap-2 p-2 bg-white rounded-md">
           <MicToggle />
           <VideoToggle />
           {isHost && <ScreenShareToggle />}
@@ -73,13 +75,14 @@ export function Footer() {
           <ReactWithEmojiToggle />
           {isHost && (
             <>
+              <div className="h-8 w-0.5 bg-gray-100 rounded-full mx-1" />
               <MeetingRecordingButton />
               <BreakoutButton />
             </>
           )}
         </div>
       </div>
-      <div className="flex justify-end items-center gap-2 p-2">
+      <div className="flex-1 flex justify-end items-center gap-2 p-2">
         <div className="flex justify-end items-center gap-2">
           <ChatsToggle
             isChatsSidebarOpen={rightSidebarMode === 'chat'}

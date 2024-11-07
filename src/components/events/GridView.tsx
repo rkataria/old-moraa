@@ -177,7 +177,7 @@ export function GridView({
               <RenderIf isTrue={event.owner_id !== currentUserId}>
                 <UserAvatar
                   tooltipProps={{
-                    label: 'Creator',
+                    label: 'Educator',
                     showArrow: true,
                     delay: 700,
                   }}

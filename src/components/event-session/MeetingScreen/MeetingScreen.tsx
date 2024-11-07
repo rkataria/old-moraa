@@ -26,6 +26,7 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import {
   setIsCreateBreakoutOpenAction,
   updateEventSessionModeAction,
@@ -35,6 +36,7 @@ import {
   EventSessionMode,
   PresentationStatuses,
 } from '@/types/event-session.type'
+import { getFrameCount } from '@/utils/utils'
 
 export type RightSiderbar =
   | 'participants'
@@ -50,12 +52,13 @@ export type DyteStates = {
 
 export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
-  const { preview } = useEventContext()
+  const { preview, sections, setCurrentFrame } = useEventContext()
   const dispatch = useStoreDispatch()
   const isCreateBreakoutOpen = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isCreateBreakoutOpen
   )
+  const currentFrame = useCurrentFrame()
   const isBreakoutStartNotifyOpen = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.breakout.breakoutNotify
   )
@@ -66,6 +69,18 @@ export function MeetingScreen() {
   const screensharingParticipant = useDyteSelector((m) =>
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
   )
+
+  // Purpose of this useEffect is to set the current frame to the first frame of the first section when the meeting starts and there is no current frame.
+  useEffect(() => {
+    if (currentFrame) return
+    if (!getFrameCount(sections)) {
+      return
+    }
+
+    // TODO: Write a util to get the first frame
+    setCurrentFrame(sections[0].frames[0])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const isScreensharing = !!screensharingParticipant || selfScreenShared
 

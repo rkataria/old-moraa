@@ -65,14 +65,14 @@ export function Content() {
     ),
     frame_presentation_view: (
       <PanelsContent panelRef={panelRef}>
-        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2 border-1 border-gray-200">
+        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none">
           <ContentContainer />
         </div>
       </PanelsContent>
     ),
     frame_peek_view: (
       <PanelsContent panelRef={panelRef}>
-        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none bg-white p-2 border-1 border-gray-200">
+        <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none">
           <ContentContainer />
         </div>
       </PanelsContent>

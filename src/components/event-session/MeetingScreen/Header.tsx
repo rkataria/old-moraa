@@ -36,9 +36,9 @@ export function Header() {
         <div className="pr-4 pl-2 border-r-0 border-gray-200 text-base font-semibold">
           {dyteClient?.meta?.meetingTitle || event.name}
         </div>
-        <DyteClock meeting={dyetMeeting} className="m-0 px-2 h-8" />
+        <DyteClock meeting={dyetMeeting} className="m-0 px-2 h-8 mr-2" />
+        <MeetingStatusAlert />
       </div>
-      <MeetingStatusAlert />
       <div className="flex justify-end items-center gap-2 h-full">
         <Timer />
         <HelpButton

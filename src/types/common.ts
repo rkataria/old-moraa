@@ -11,5 +11,5 @@ export type UserPreferences = {
 
 export enum UserType {
   LEARNER = 'LEARNER',
-  CREATOR = 'CREATOR',
+  EDUCATOR = 'EDUCATOR',
 }

@@ -178,7 +178,6 @@
     "userflow.js": "^2.12.0",
     "uuid": "^10.0.0",
     "vite": "^5.3.4",
-    "y-partykit": "^0.0.29",
     "y-prosemirror": "^1.2.9",
     "y-protocols": "^1.0.6",
     "y-utility": "^0.1.4",

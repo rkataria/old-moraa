@@ -11,7 +11,6 @@ export function Live({ frame }: LiveProps) {
   return (
     <>
       <FrameTitleDescriptionPreview frame={frame} />
-
       <Editor
         hideSideBar
         editorId={frame.id}
