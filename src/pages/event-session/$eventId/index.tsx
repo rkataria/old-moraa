@@ -37,6 +37,7 @@ export const Route = createFileRoute('/event-session/$eventId/')({
 })
 
 export function EventSessionPageInner() {
+  useTimer()
   const isRoomJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
@@ -95,8 +96,6 @@ function EventSessionPage() {
   const isMeetingJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
-
-  useTimer()
 
   useSyncValueInRedux({
     value: dyteClient,

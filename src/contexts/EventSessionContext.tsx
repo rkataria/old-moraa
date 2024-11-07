@@ -10,7 +10,6 @@ import {
 import { sendNotification } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
-import { useParams } from '@tanstack/react-router'
 
 import { useEventContext } from './EventContext'
 
@@ -22,6 +21,7 @@ import type {
 } from '@/types/frame.type'
 
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useMeetingRealtimeChannel } from '@/hooks/useMeetingRealtimeChannel'
 import { useFrameReactions } from '@/hooks/useReactions'
 import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -54,7 +54,6 @@ export const EventSessionContext =
 
 export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const dispatch = useStoreDispatch()
-  const { eventId } = useParams({ strict: false })
   const { meeting: dyteMeeting } = useDyteMeeting()
   const [dyteStates, setDyteStates] = useState<DyteStates>({})
   const { sections } = useEventSelector()
@@ -83,6 +82,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     (state) => state.event.currentEvent.liveSessionState.participant.data
   )
   const { realtimeChannel } = useRealtimeChannel()
+  const { meetingRealtimeChannel } = useMeetingRealtimeChannel()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const activeSession = session?.data
@@ -122,24 +122,40 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [dyteMeeting])
 
   useEffect(() => {
-    if (!eventId || !realtimeChannel || !session?.id) return
+    if (!realtimeChannel) return
 
-    realtimeChannel.on('broadcast', { event: 'hand-raised' }, ({ payload }) => {
-      const { participantId, participantName, sessionId } = payload
-      if (sessionId !== session?.id) return
-      if (!participantId) return
-
-      const dyteNotificationObject = {
-        id: new Date().getTime().toString(),
-        message: `${participantName} has raised a hand`,
-        duration: 5000,
-      }
-
-      sendNotification(dyteNotificationObject, 'message')
+    realtimeChannel.on('broadcast', { event: 'start-breakout-notify' }, () => {
+      dispatch(setBreakoutNotifyAction(true))
     })
 
+    realtimeChannel.on('broadcast', { event: 'stop-breakout-notify' }, () => {
+      dispatch(setBreakoutNotifyAction(false))
+    })
+  }, [realtimeChannel, dispatch])
+
+  useEffect(() => {
+    if (!meetingRealtimeChannel) return
+
+    meetingRealtimeChannel.on(
+      'broadcast',
+      { event: 'hand-raised' },
+      ({ payload }) => {
+        const { participantId, participantName, sessionId } = payload
+        if (sessionId !== session?.id) return
+        if (!participantId) return
+
+        const dyteNotificationObject = {
+          id: new Date().getTime().toString(),
+          message: `${participantName} has raised a hand`,
+          duration: 5000,
+        }
+
+        sendNotification(dyteNotificationObject, 'message')
+      }
+    )
+
     // Listen for flying emoji events
-    realtimeChannel.on(
+    meetingRealtimeChannel.on(
       'broadcast',
       { event: 'flying-emoji' },
       ({ payload }) => {
@@ -151,15 +167,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         )
       }
     )
-
-    realtimeChannel.on('broadcast', { event: 'start-breakout-notify' }, () => {
-      dispatch(setBreakoutNotifyAction(true))
-    })
-
-    realtimeChannel.on('broadcast', { event: 'stop-breakout-notify' }, () => {
-      dispatch(setBreakoutNotifyAction(false))
-    })
-  }, [realtimeChannel, eventId, session?.id, dispatch])
+  }, [meetingRealtimeChannel, session?.id])
 
   useEffect(() => {
     if (!fetchedFrameReactions) return
@@ -576,7 +584,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         ...new Set([...prevSessionRaisedHands, participantId]),
       ]
 
-      realtimeChannel?.send({
+      meetingRealtimeChannel?.send({
         type: 'broadcast',
         event: 'hand-raised',
         payload: {
@@ -599,7 +607,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }
 
   const flyEmoji = ({ emoji, name }: { emoji: string; name: string }) => {
-    realtimeChannel?.send({
+    meetingRealtimeChannel?.send({
       type: 'broadcast',
       event: 'flying-emoji',
       payload: {

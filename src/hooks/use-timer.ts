@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 
-import { useParams } from '@tanstack/react-router'
 import { useDispatch } from 'react-redux'
 
 import { useEventPermissions } from './useEventPermissions'
+import { useRealtimeChannel } from './useRealtimeChannel'
 
 import { useStoreSelector } from '@/hooks/useRedux'
 import {
@@ -11,12 +11,10 @@ import {
   setTimerStateAction,
   setUpdateTimerOnParticipantJoinAction,
 } from '@/stores/slices/event/current-event/timers.slice'
-import { supabaseClient } from '@/utils/supabase/client'
 
 export function useTimer() {
   const dispatch = useDispatch()
   const { permissions, isLoading: isLoadingPermissions } = useEventPermissions()
-  const { eventId } = useParams({ strict: false })
 
   const isHost = permissions.canAcessAllSessionControls
   const isTimerRunning =
@@ -30,9 +28,7 @@ export function useTimer() {
     (state) => state.event.currentEvent.liveTimer.updateTimerOnParticipantJoin
   )
 
-  const realtimeChannel = supabaseClient.channel(`event:${eventId}`, {
-    config: { broadcast: { self: true } },
-  })
+  const { realtimeChannel } = useRealtimeChannel()
 
   useEffect(() => {
     if (!realtimeChannel) return
@@ -41,6 +37,7 @@ export function useTimer() {
       'broadcast',
       { event: 'timer-start-event' },
       ({ payload }) => {
+        console.log('🚀 ~ useEffect ~ payload:', payload)
         dispatch(setTimerStateAction('running'))
 
         if (payload.duration) {
@@ -118,7 +115,7 @@ export function useTimer() {
   if (isLoadingPermissions) return
   if (isHost) return
   // TODO: Fix this
-  realtimeChannel.on(
+  realtimeChannel?.on(
     'broadcast',
     { event: 'updateTimerOnParticipantJoin' },
     ({ payload }) => {

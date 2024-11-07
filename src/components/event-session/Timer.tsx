@@ -9,6 +9,7 @@ import { LuTimerReset } from 'react-icons/lu'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { cn, zeroPad } from '@/utils/utils'
@@ -17,6 +18,7 @@ export const defaultDuration: Readonly<number> = 5 * 60
 
 export function Timer() {
   const [isOpen, setIsOpen] = useState(false)
+  const { isBreakoutActive } = useBreakoutRooms()
 
   const timerState = useStoreSelector(
     (state) => state.event.currentEvent.liveTimer.timerState
@@ -97,7 +99,7 @@ export function Timer() {
           }
         )}
       />
-      <RenderIf isTrue={isHost}>
+      <RenderIf isTrue={isHost && !isBreakoutActive}>
         <Button
           variant="light"
           isIconOnly
@@ -107,7 +109,7 @@ export function Timer() {
           <LuTimerReset size={20} />
         </Button>
       </RenderIf>
-      <RenderIf isTrue={isHost}>
+      <RenderIf isTrue={isHost && !isBreakoutActive}>
         <Button
           variant="light"
           isIconOnly
@@ -122,7 +124,7 @@ export function Timer() {
       </RenderIf>
 
       <TimerViewElement time={duration.remaining} size="sm" />
-      <RenderIf isTrue={isHost}>
+      <RenderIf isTrue={isHost && !isBreakoutActive}>
         <Button
           variant="light"
           isIconOnly
@@ -134,7 +136,7 @@ export function Timer() {
           <IoAdd size={20} />
         </Button>
       </RenderIf>
-      <RenderIf isTrue={isHost}>
+      <RenderIf isTrue={isHost && !isBreakoutActive}>
         <Button
           variant="light"
           isIconOnly
@@ -168,7 +170,7 @@ export function Timer() {
             </svg>
           </RenderIf>
         </Button>
-        <RenderIf isTrue={isHost}>
+        <RenderIf isTrue={isHost && !isBreakoutActive}>
           <Button
             variant="light"
             isIconOnly
