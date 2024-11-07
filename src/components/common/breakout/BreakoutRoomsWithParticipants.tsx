@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteConnectedMeetings } from '@dytesdk/web-core'
 import { Button } from '@nextui-org/react'
 import { DragDropContext } from 'react-beautiful-dnd'
@@ -18,7 +18,7 @@ export function BreakoutRoomsWithParticipants({
   hideActivityCards?: boolean
 }) {
   const { getFrameById } = useEventContext()
-  const { meeting } = useDyteMeeting()
+  const meeting = useDyteSelector((meet) => meet)
   const mainMeetingId = meeting.meta.meetingId
   const connectedMeetings = meeting.connectedMeetings?.meetings || []
   const mainMeetingParticipants =
@@ -74,6 +74,18 @@ export function BreakoutRoomsWithParticipants({
             const destinationRoomId = result.destination?.droppableId.split(
               '_'
             )[1] as string
+            const allMeetings = [
+              ...meeting.connectedMeetings.meetings,
+              meeting.connectedMeetings.parentMeeting,
+            ]
+
+            const sourceMeeting = allMeetings.find((meet) =>
+              meet.participants.some(
+                (participant) =>
+                  participant.customParticipantId === participantId
+              )
+            )
+            if (sourceMeeting?.id === destinationRoomId) return
 
             breakoutRoomsInstance?.moveParticipantToAnotherRoom(
               participantId,

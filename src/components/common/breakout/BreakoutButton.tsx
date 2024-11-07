@@ -137,7 +137,6 @@ export function BreakoutButton() {
           connectedMeetingsToActivitiesMap,
         })
       )
-      console.log(breakoutConfig.breakoutDuration, realtimeChannel)
 
       if (breakoutConfig.breakoutDuration && realtimeChannel) {
         realtimeChannel.send({

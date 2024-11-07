@@ -151,6 +151,33 @@ function EventSessionPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enrollment?.meeting_token])
 
+  useEffect(() => {
+    if (!dyteClient) return () => null
+
+    const onParticipantsListUpdate = () =>
+      dyteClient.connectedMeetings.getConnectedMeetings()
+
+    dyteClient.participants.active.addListener(
+      'participantJoined',
+      onParticipantsListUpdate
+    )
+    dyteClient.participants.active.addListener(
+      'participantLeft',
+      onParticipantsListUpdate
+    )
+
+    return () => {
+      dyteClient.participants.active.removeListener(
+        'participantJoined',
+        onParticipantsListUpdate
+      )
+      dyteClient.participants.active.removeListener(
+        'participantLeft',
+        onParticipantsListUpdate
+      )
+    }
+  }, [dyteClient])
+
   if (!enrollment?.meeting_token) {
     return (
       <div className="w-full h-screen flex justify-center items-center">

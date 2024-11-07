@@ -359,3 +359,10 @@ export const isValidGoogleSlidesUrl = (url: string) => {
 
   return regex.test(url)
 }
+
+export const waitForMs = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(null)
+    }, ms)
+  })

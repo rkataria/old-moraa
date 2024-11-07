@@ -1,5 +1,8 @@
 import { PropsWithChildren, useEffect, useRef, useState } from 'react'
 
+import { useDyteMeeting } from '@dytesdk/react-web-core'
+import { Button } from '@nextui-org/button'
+import { IoReload } from 'react-icons/io5'
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from '../ContentContainer'
@@ -14,6 +17,7 @@ import { EventSessionMode } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 export function Content() {
+  const dyteClient = useDyteMeeting()
   const { eventSessionMode, isHost } = useEventSession()
   const isBreakoutOverviewOpen = useStoreSelector(
     (state) =>
@@ -77,20 +81,23 @@ export function Content() {
       <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-lg m-auto">
         <ParticipantTiles spotlightMode />
       </div>
-      // <PanelsContent panelRef={panelRef}>
-      //   <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
-      //     <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
-      //     <div className="overflow-y-auto">
-      //       <BreakoutRoomsWithParticipants hideActivityCards />
-      //     </div>
-      //   </div>
-      // </PanelsContent>
     ),
     frame_breakout_view: (
       <PanelsContent panelRef={panelRef}>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
-          <h2 className="text-xl font-semibold my-4 mx-2">Breakout</h2>
-          <BreakoutRoomsWithParticipants />
+          <h2 className="text-xl font-semibold my-4 mx-2">
+            Breakout{' '}
+            <Button
+              isIconOnly
+              size="sm"
+              style={{ background: 'transparent' }}
+              onClick={() =>
+                dyteClient.meeting.connectedMeetings.getConnectedMeetings()
+              }>
+              <IoReload />
+            </Button>{' '}
+          </h2>
+          <BreakoutRoomsWithParticipants key="frame_breakout_view" />
         </div>
       </PanelsContent>
     ),

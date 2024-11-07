@@ -39,14 +39,6 @@ export class BreakoutRooms {
     await this.dyteClient.connectedMeetings.getConnectedMeetings()
   }
 
-  async startBreakoutWithRandomParticipants() {
-    await this.cleanupBreakoutManagerInstance()
-    await this.manager.addNewMeetings(3)
-    await this.manager.assignParticipantsRandomly()
-    await this.manager.applyChanges(this.dyteClient)
-    await this.cleanupBreakoutManagerInstance()
-  }
-
   async moveParticipantToAnotherRoom(
     customParticipantId: string,
     destinationMeetingId: string
@@ -90,27 +82,7 @@ export class BreakoutRooms {
       )
     }
 
-    this.manager.unassignParticipants(
-      this.dyteClient.participants.all
-        .toArray()
-        .filter(
-          (participant) =>
-            participant.customParticipantId !==
-            this.dyteClient.self.customParticipantId
-        )
-        .map((p) => p.customParticipantId!)
-    )
-
-    const participants = this.manager.unassignedParticipants.filter(
-      (participant) =>
-        participant.customParticipantId !==
-        this.dyteClient.self.customParticipantId
-    )
-
-    this.manager.assignParticipantsToMeeting(
-      [this.dyteClient.self.customParticipantId],
-      this.dyteClient.connectedMeetings.parentMeeting.id || ''
-    )
+    const participants = this.dyteClient.participants.joined.toArray()
 
     if (participants.length === 0) return
 
@@ -124,25 +96,30 @@ export class BreakoutRooms {
 
     const participantGroups = chunk(participants, groupSize)
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const createdMeetings = this.manager.addNewMeetings(
-      roomsCount || participantGroups.length
+    this.manager.addNewMeetings(roomsCount || participantGroups.length)
+
+    await this.manager.applyChanges(this.dyteClient)
+
+    await this.cleanupBreakoutManagerInstance()
+
+    this.dyteClient.connectedMeetings.meetings.forEach(
+      (createdMeeting, index) => {
+        if (!createdMeeting.id) return
+
+        const breakoutRoomParticipants = participantGroups[index]
+        this.manager.updateMeetingTitle(createdMeeting.id, 'Breakout Room')
+
+        if (breakoutRoomParticipants?.length > 0) {
+          this.manager.assignParticipantsToMeeting(
+            breakoutRoomParticipants.map((p) => p.customParticipantId!),
+            createdMeeting.id
+          )
+        }
+      }
     )
 
-    createdMeetings.forEach((createdMeeting, index) => {
-      const breakoutRoomParticipants = participantGroups[index]
-      this.manager.updateMeetingTitle(createdMeeting.id, 'Breakout Room')
-
-      if (breakoutRoomParticipants?.length > 0) {
-        this.manager.assignParticipantsToMeeting(
-          breakoutRoomParticipants.map((p) => p.customParticipantId!),
-          createdMeeting.id
-        )
-      }
-    })
-
-    // eslint-disable-next-line consistent-return
     await this.manager.applyChanges(this.dyteClient)
+
     await this.cleanupBreakoutManagerInstance()
   }
 

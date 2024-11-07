@@ -37,7 +37,6 @@ export function useTimer() {
       'broadcast',
       { event: 'timer-start-event' },
       ({ payload }) => {
-        console.log('🚀 ~ useEffect ~ payload:', payload)
         dispatch(setTimerStateAction('running'))
 
         if (payload.duration) {
