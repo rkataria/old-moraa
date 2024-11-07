@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { RxDotsVertical } from 'react-icons/rx'
 
+import { ActiveBreakoutIndicator } from './ActiveBreakoutIndicator'
 import { AddItemBar } from './AddItemBar'
 import { FrameGridView } from './FrameGridView'
 import { ContentTypeIcon } from '../ContentTypeIcon'
@@ -163,12 +164,16 @@ export function FrameItem({
             {
               'bg-primary-100': frameActive,
               'border-transparent': currentFrame?.id !== frame?.id,
-              'border border-green-700': breakoutFrameId === frame?.id,
+              'border border-green-400': breakoutFrameId === frame?.id,
             }
           )}
           onClick={() => {
             handleFrameItemClick(frame)
           }}>
+          <RenderIf isTrue={breakoutFrameId === frame?.id}>
+            <ActiveBreakoutIndicator />
+          </RenderIf>
+
           <div
             className={cn(
               'relative flex flex-col transition-all duration-400 ease-in-out group/frame-item'
