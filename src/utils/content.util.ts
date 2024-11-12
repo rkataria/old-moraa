@@ -189,3 +189,30 @@ export const getContentStudioRightSidebarControlKeys = (
 
   return ['frame-notes', 'frame-status']
 }
+
+export const getBreakoutFrames = ({
+  frames,
+  breakoutFrame,
+}: {
+  frames: IFrame[]
+  breakoutFrame?: IFrame
+}) => {
+  if (breakoutFrame?.type === FrameType.BREAKOUT) {
+    if (breakoutFrame.content?.breakoutRooms?.length) {
+      const breakoutActivityFramesId = breakoutFrame.content?.breakoutRooms
+        .map((activity) => activity.activityId)
+        .filter(Boolean)
+
+      return breakoutActivityFramesId
+        .map((id) => frames.find((tFrame) => tFrame.id === id))
+        .filter(Boolean) as IFrame[]
+    }
+    const breakoutFrames = frames.filter(
+      (f) => f?.content?.breakoutFrameId === breakoutFrame?.id
+    )
+
+    return breakoutFrames
+  }
+
+  return null
+}

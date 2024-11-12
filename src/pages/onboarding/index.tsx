@@ -107,11 +107,13 @@ export function OnboardingPage() {
         if (data) {
           namesForm.reset()
 
-          // Update userflow with first and last name
-          userflow.updateUser({
-            first_name: values.first_name,
-            last_name: values.last_name,
-          })
+          if (userflow.isIdentified()) {
+            // Update userflow with first and last name
+            userflow.updateUser({
+              first_name: values.first_name,
+              last_name: values.last_name,
+            })
+          }
 
           if (userPersona) {
             router.navigate({
@@ -137,8 +139,10 @@ export function OnboardingPage() {
       {
         onSuccess: ({ data }) => {
           if (data) {
-            // Update userflow with user type
-            userflow.updateUser({ user_type: userType })
+            if (userflow.isIdentified()) {
+              // Update userflow with user type
+              userflow.updateUser({ user_type: userType })
+            }
 
             router.navigate({ to: redirect })
           }

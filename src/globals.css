@@ -18,7 +18,7 @@
     @apply scroll-smooth;
   }
   body {
-    @apply bg-background text-foreground font-outfit text-sm;
+    @apply bg-background text-foreground font-inter text-sm;
   }
 }
 
@@ -80,11 +80,11 @@
   }
 
   .live-button {
-    @apply !bg-gray-100 !text-black hover:!bg-gray-200;
+    @apply !bg-transparent !text-black hover:!text-primary;
   }
 
   .live-button.active {
-    @apply !bg-gray-200 !text-black;
+    @apply !text-primary !opacity-100;
   }
 }
 
@@ -473,4 +473,9 @@ dyte-notifications {
 }
 dyte-notification {
   @apply !animate-none !transition-none;
+}
+
+/* Dyte Clock */
+dyte-clock dyte-icon {
+  @apply !hidden;
 }

@@ -5,16 +5,16 @@ type FontFamilyOption = {
 
 export const FONT_FAMILIES: FontFamilyOption[] = [
   {
-    label: 'Outfit',
-    value: 'Outfit Variable',
+    label: 'Inter',
+    value: 'Inter Variable',
   },
   {
     label: 'Times New Roman',
     value: 'Times New Roman',
   },
   {
-    label: 'Inter',
-    value: 'Inter',
+    label: 'Outfit',
+    value: 'Outfit',
   },
   {
     label: 'Roboto Mono',

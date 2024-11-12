@@ -58,7 +58,7 @@ export function MeetingStatusAlert() {
                     getFrameById(sessionBreakoutFrameId as string)
                   )
                 }}>
-                Return to Breakout
+                View Breakout
               </Button>
             </RenderIf>
           </div>
@@ -79,12 +79,7 @@ export function MeetingStatusAlert() {
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
           </svg>
           <div>
-            <RenderIf isTrue={!isHost}>
-              You are in <strong>breakout</strong>.
-            </RenderIf>
-            <RenderIf isTrue={isHost}>
-              <strong>Breakout</strong> session has started.
-            </RenderIf>
+            You are in <strong>breakout</strong> session.
           </div>
         </div>
       )
@@ -148,13 +143,11 @@ export function MeetingStatusAlert() {
           <span className="sr-only">Info</span>
           <div>
             You are in <strong>presentation mode</strong>.{' '}
-            <RenderIf isTrue={currentFrame?.type === FrameType.BREAKOUT}>
-              This is a breakout frame.
-            </RenderIf>
             <RenderIf
               isTrue={!!(currentFrame?.type === FrameType.BREAKOUT && isHost)}>
-              You can {isBreakoutStarted ? 'end' : 'start'} a breakout session
-              from bottom.
+              This is a breakout frame and you can{' '}
+              {isBreakoutStarted ? 'end' : 'start'} a breakout session from
+              bottom.
             </RenderIf>
           </div>
         </div>
@@ -164,5 +157,5 @@ export function MeetingStatusAlert() {
     return null
   }
 
-  return <div className="w-auto py-2">{renderContent()}</div>
+  return <div className="w-fit py-2 mx-auto">{renderContent()}</div>
 }

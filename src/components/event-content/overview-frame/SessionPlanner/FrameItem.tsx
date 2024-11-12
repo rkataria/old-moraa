@@ -35,6 +35,7 @@ import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
+import { getBreakoutFrames } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
@@ -198,19 +199,10 @@ export function FrameItem({
     setSelectedFrameIds(selectedFrameIds.filter((id) => id !== frame.id))
   }
 
-  const getBreakoutFrames = () => {
-    if (frame?.type === FrameType.BREAKOUT) {
-      const tempFrames = sections.map((sec) => sec.frames).flat(2)
-      const breakoutFrames = tempFrames.filter(
-        (f) => f?.content?.breakoutFrameId === frame?.id
-      )
-
-      return breakoutFrames
-    }
-
-    return null
-  }
-  const breakoutFrames = getBreakoutFrames()
+  const breakoutFrames = getBreakoutFrames({
+    frames: sections.find((s) => s.id === sectionId)?.frames || [],
+    breakoutFrame: frame,
+  })
   const navigateToFrameContent = (frameId: string) => {
     dispatch(setCurrentFrameIdAction(frameId))
     dispatch(setIsOverviewOpenAction(false))

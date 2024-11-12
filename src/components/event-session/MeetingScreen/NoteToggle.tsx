@@ -3,11 +3,11 @@ import { useEffect } from 'react'
 import { Badge } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { TbBubbleFilled, TbBubbleText } from 'react-icons/tb'
 import { useDispatch } from 'react-redux'
 
-import { Tooltip } from '@/components/common/ShortuctTooltip'
+import { ControlButton } from '@/components/common/ControlButton'
 import { cn } from '@/components/tiptap/lib/utils'
-import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
@@ -51,36 +51,70 @@ export function NoteToggle() {
 
   if (!isHost) return null
 
-  return (
-    <Tooltip label="Notes" actionKey="N" placement="top">
-      {currentFrame?.notes ? (
-        <Badge
-          content=""
-          color="danger"
-          shape="circle"
-          placement="top-right"
-          hidden={!currentFrame?.notes}>
-          <Button
-            size="sm"
-            variant="light"
-            className={cn('live-button', {
-              active: rightSidebarMode === 'frame-notes',
-            })}
-            onClick={handleNoteToggle}>
-            Note
-          </Button>
-        </Badge>
-      ) : (
-        <Button
-          size="sm"
-          variant="light"
-          className={cn('live-button', {
-            active: rightSidebarMode === 'frame-notes',
-          })}
-          onClick={handleNoteToggle}>
+  if (!currentFrame) return null
+
+  const isNotesSidebarOpen = rightSidebarMode === 'frame-notes'
+
+  if (!currentFrame?.notes) {
+    return (
+      <ControlButton
+        buttonProps={{
+          size: 'md',
+          variant: 'light',
+          disableRipple: true,
+          disableAnimation: true,
+          className: cn('live-button -mx-2', {
+            active: isNotesSidebarOpen,
+          }),
+        }}
+        tooltipProps={{
+          label: KeyboardShortcuts.Live.notes.label,
+          actionKey: KeyboardShortcuts.Live.notes.key,
+        }}
+        onClick={handleNoteToggle}>
+        <div className="flex flex-col justify-center items-center py-1">
+          {isNotesSidebarOpen ? (
+            <TbBubbleFilled size={20} />
+          ) : (
+            <TbBubbleText size={20} />
+          )}
           Note
-        </Button>
-      )}
-    </Tooltip>
+        </div>
+      </ControlButton>
+    )
+  }
+
+  return (
+    <Badge
+      content=""
+      color="danger"
+      shape="circle"
+      placement="top-right"
+      hidden={!currentFrame?.notes}>
+      <ControlButton
+        buttonProps={{
+          size: 'md',
+          variant: 'light',
+          disableRipple: true,
+          disableAnimation: true,
+          className: cn('live-button -mx-2', {
+            active: isNotesSidebarOpen,
+          }),
+        }}
+        tooltipProps={{
+          label: KeyboardShortcuts.Live.notes.label,
+          actionKey: KeyboardShortcuts.Live.notes.key,
+        }}
+        onClick={handleNoteToggle}>
+        <div className="flex flex-col justify-center items-center py-1">
+          {isNotesSidebarOpen ? (
+            <TbBubbleFilled size={20} />
+          ) : (
+            <TbBubbleText size={20} />
+          )}
+          Note
+        </div>
+      </ControlButton>
+    </Badge>
   )
 }

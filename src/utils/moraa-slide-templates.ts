@@ -52,7 +52,7 @@ export const MORAA_SLIDE_TEMPLATES: MoraaSlideTemplate[] = [
       // NOTE: Add a background rect to make guides visible to center objects
       loadCenterGuideHelperRect(canvas)
 
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas))
 
       canvas.renderAll()
       canvas.fire('object:modified')
@@ -83,7 +83,7 @@ export const MORAA_SLIDE_TEMPLATES: MoraaSlideTemplate[] = [
       // NOTE: Add a background rect to make guides visible to center objects
       loadCenterGuideHelperRect(canvas)
 
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas))
 
       canvas.add(titleText)
       canvas.viewportCenterObject(titleText)
@@ -173,7 +173,7 @@ export const MORAA_SLIDE_TEMPLATES: MoraaSlideTemplate[] = [
       // NOTE: Add a background rect to make guides visible to center objects
       loadCenterGuideHelperRect(canvas)
 
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas))
 
       canvas.add(titleText)
       canvas.add(subtitleText)
@@ -225,7 +225,7 @@ export const MORAA_SLIDE_TEMPLATES: MoraaSlideTemplate[] = [
       // NOTE: Add a background rect to make guides visible to center objects
       loadCenterGuideHelperRect(canvas)
 
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas))
 
       canvas.add(quoteText)
       canvas.add(authorText)
@@ -294,7 +294,7 @@ export const MORAA_SLIDE_TEMPLATES: MoraaSlideTemplate[] = [
       // NOTE: Add a background rect to make guides visible to center objects
       loadCenterGuideHelperRect(canvas)
 
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas))
 
       canvas.add(titleText)
       canvas.add(subtitleText)
@@ -389,7 +389,7 @@ export const MORAA_SLIDE_TEMPLATES: MoraaSlideTemplate[] = [
 
       canvas.requestRenderAll()
 
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas))
 
       canvas.renderAll()
       canvas.fire('object:modified')
@@ -469,7 +469,7 @@ export const MORAA_SLIDE_TEMPLATES: MoraaSlideTemplate[] = [
 
       canvas.requestRenderAll()
 
-      canvas.setBackgroundColor('transparent', canvas.renderAll.bind(canvas))
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas))
 
       canvas.renderAll()
       canvas.fire('object:modified')

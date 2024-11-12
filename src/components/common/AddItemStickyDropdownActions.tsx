@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext } from 'react'
 
 import {
   ButtonGroup,
@@ -15,9 +14,8 @@ import { LuPlusCircle } from 'react-icons/lu'
 
 import { Button } from '../ui/Button'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useStoreSelector } from '@/hooks/useRedux'
-import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 const descriptionMap: {
@@ -60,7 +58,7 @@ export function AddItemStickyDropdownActions({
     addSection,
     setInsertAfterFrameId,
     setInsertInSectionId,
-  } = useContext(EventContext) as EventContextType
+  } = useEventContext()
   const isAddSectionLoading = useStoreSelector(
     (state) =>
       state.event.currentEvent.sectionState.createSectionThunk.isLoading

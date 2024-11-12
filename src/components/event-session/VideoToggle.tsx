@@ -1,6 +1,6 @@
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoVideocamOffOutline, IoVideocamOutline } from 'react-icons/io5'
+import { BsCameraVideo, BsFillCameraVideoOffFill } from 'react-icons/bs'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -40,7 +40,7 @@ export function VideoToggle({ className = '' }: { className?: string }) {
         size: 'sm',
         variant: 'flat',
         className: cn('live-button', className, {
-          '!bg-red-500 !text-white hover:!bg-red-500': !isVideoEnabled,
+          '!text-red-500 hover:!text-red-500': !isVideoEnabled,
         }),
       }}
       tooltipProps={{
@@ -49,9 +49,9 @@ export function VideoToggle({ className = '' }: { className?: string }) {
       }}
       onClick={handleVideo}>
       {isVideoEnabled ? (
-        <IoVideocamOutline size={20} />
+        <BsCameraVideo size={20} />
       ) : (
-        <IoVideocamOffOutline size={20} />
+        <BsFillCameraVideoOffFill size={20} />
       )}
     </ControlButton>
   )

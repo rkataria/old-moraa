@@ -25,9 +25,9 @@ export function MeetingRecordingButton() {
     }
   }
 
-  if (flags?.show_recording_button || !isHost) {
-    return null
-  }
+  if (!isHost) return null
+
+  if (!flags?.show_recording_button) return null
 
   return (
     <ControlButton

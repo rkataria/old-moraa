@@ -1,9 +1,9 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { LuClipboardEdit } from 'react-icons/lu'
+import { TbBubbleText } from 'react-icons/tb'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function NotesToggle({
   isNotesSidebarOpen,
@@ -12,24 +12,37 @@ export function NotesToggle({
   isNotesSidebarOpen: boolean
   onClick: () => void
 }) {
-  useHotkeys('n', onClick)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleShortCut = (e: any) => {
+    if (e.target.localName.includes('dyte-sidebar')) return
+    onClick()
+  }
+  useHotkeys('n', handleShortCut)
 
   return (
     <ControlButton
       buttonProps={{
-        isIconOnly: true,
-        radius: 'md',
-        size: 'sm',
+        size: 'md',
         variant: 'light',
-        className: cn('transition-all duration-300 text-[#444444]', {
-          'bg-black text-white hover:bg-black': isNotesSidebarOpen,
+        disableRipple: true,
+        disableAnimation: true,
+        className: cn('live-button', {
+          active: isNotesSidebarOpen,
         }),
       }}
       tooltipProps={{
-        content: isNotesSidebarOpen ? 'Hide Notes' : 'Show Notes',
+        label: KeyboardShortcuts.Live.notes.label,
+        actionKey: KeyboardShortcuts.Live.notes.key,
       }}
       onClick={onClick}>
-      <LuClipboardEdit size={20} strokeWidth={1.7} />
+      <div className="flex flex-col justify-center items-center py-1">
+        {isNotesSidebarOpen ? (
+          <TbBubbleText size={20} />
+        ) : (
+          <TbBubbleText size={20} />
+        )}
+        Note
+      </div>
     </ControlButton>
   )
 }

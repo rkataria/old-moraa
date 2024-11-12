@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from 'react-redux'
 
 import { RootState } from '../store'
 
+import { IFrame } from '@/types/frame.type'
 import { FrameModel, SectionModel } from '@/types/models'
+import { getBreakoutFrames } from '@/utils/content.util'
+import { FrameType } from '@/utils/frame-picker.util'
 
 type PopulatedSectionSelector = Array<
   Omit<SectionModel, 'frames'> & {
@@ -33,7 +37,7 @@ export const useEventSelector = () => {
 
             return {
               ...section,
-              frames,
+              frames: orderFramesByParent(frames),
             }
           })
           .filter(Boolean) || []
@@ -43,6 +47,31 @@ export const useEventSelector = () => {
   return {
     sections: sections?.filter((s) => s.id), // Adding this logic to filter recently deleted section
   }
+}
+
+const orderFramesByParent = (frames: Array<FrameModel>) => {
+  const orderedFrames: Array<FrameModel> = []
+
+  frames.forEach((frame: any) => {
+    if (frame.type === FrameType.BREAKOUT || frame.content?.breakoutFrameId) {
+      // Order activity frames based on breakout frame
+      if (frame.type === FrameType.BREAKOUT) {
+        orderedFrames.push(frame)
+      }
+      const activityFrames = getBreakoutFrames({
+        frames: frames as IFrame[],
+        breakoutFrame: frame,
+      })
+
+      if (Array.isArray(activityFrames)) {
+        orderedFrames.push(...(activityFrames as FrameModel[]))
+      }
+    } else {
+      orderedFrames.push(frame)
+    }
+  })
+
+  return orderedFrames
 }
 
 export const useEventLoadingSelector = () =>

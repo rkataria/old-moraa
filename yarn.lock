@@ -673,10 +673,20 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.4.tgz#1d459cee5031893a08a0e064c406ad2130cced7c"
   integrity sha512-dWO2pw8hhi+WrXq1YJy2yCuWoL20PddgGaqTgVe4cOS9Q6qklXCiA1tJEqX6BEwRNSCP84/afac9hd4MS+zEUA==
 
+"@fontsource-variable/inter@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/inter/-/inter-5.1.0.tgz#8174c56d3a24ef20a7dd4ae3bb0c3df2ea1f5f70"
+  integrity sha512-Wj2dUGP0vUpxRGQTXQTCNJO+aLcFcQm+gUPXfj/aS877bQkEPBPv9JvZJpwdm2vzelt8NTZ+ausKlBCJjh2XIg==
+
 "@fontsource-variable/outfit@^5.0.13":
   version "5.0.13"
   resolved "https://registry.yarnpkg.com/@fontsource-variable/outfit/-/outfit-5.0.13.tgz#c9ceb74ad88ab4277a20e08f7d5377476a12c619"
   integrity sha512-y5yl8YcLqoQghwLfPaM420PKxG0DMKmobryGptXmv7Q5CX8F1vg8h714qEptXdtyoS9rHIMwLl/hJYLzZgSE4w==
+
+"@fontsource/geist-sans@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/geist-sans/-/geist-sans-5.1.0.tgz#5eacb9e8b3a264c2786314f13aa511bbd5075fbb"
+  integrity sha512-4AI/UxIcZiYgK6/cTo4R9oM4VHHLcFdHVv7m2+M42VyY16hhKJADrGe4HPjTxvolmce2IZX/jc6sFJ+GkLB64w==
 
 "@formatjs/ecma402-abstract@2.0.0":
   version "2.0.0"
@@ -7315,7 +7325,7 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-lib0@^0.2.42, lib0@^0.2.43, lib0@^0.2.85, lib0@^0.2.86, lib0@^0.2.87, lib0@^0.2.94:
+lib0@^0.2.42, lib0@^0.2.43, lib0@^0.2.85, lib0@^0.2.86, lib0@^0.2.87:
   version "0.2.94"
   resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.94.tgz#fc28b4b65f816599f1e2f59d3401e231709535b3"
   integrity sha512-hZ3p54jL4Wpu7IOg26uC7dnEWiMyNlUrb9KoG7+xYs45WkQwpVvKFndVq2+pqLYKe1u8Fp3+zAfZHVvTK34PvQ==
@@ -9988,17 +9998,6 @@ xmlchars@^2.2.0:
   resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-y-partykit@^0.0.29:
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/y-partykit/-/y-partykit-0.0.29.tgz#03e7dde5cae62f54b88bc6f607fe4a7964cbd4d7"
-  integrity sha512-exz9laL/ymnguW1S5Ypa7HbbRZu8VCe5/9neJ35HFohhwEwSJDWDQQiTU04xB1ZK/dNxYAMuXcXWKryFI4pu4A==
-  dependencies:
-    lib0 "^0.2.94"
-    lodash.debounce "^4.0.8"
-    react "^18.2.0"
-    y-protocols "^1.0.6"
-    yjs "^13.6.16"
-
 y-prosemirror@^1.2.9:
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.2.9.tgz#0202b5f6b164fa35d80bdbcdc876d81fe6da7ac2"
@@ -10063,7 +10062,7 @@ yargs@^17.6.2:
     y18n "^5.0.5"
     yargs-parser "^21.1.1"
 
-yjs@^13.6.16, yjs@^13.6.18:
+yjs@^13.6.18:
   version "13.6.18"
   resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.18.tgz#d1575203478bc99ad1b89c098e7d4bacb7f91c3b"
   integrity sha512-GBTjO4QCmv2HFKFkYIJl7U77hIB1o22vSCSQD1Ge8ZxWbIbn8AltI4gyXbtL+g5/GJep67HCMq3Y5AmNwDSyEg==

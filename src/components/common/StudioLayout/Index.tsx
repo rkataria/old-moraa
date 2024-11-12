@@ -55,7 +55,7 @@ export function StudioLayout({ header }: StudioLayoutProps) {
   return (
     <BackgroundContainer
       animateLogo={false}
-      gradientStyle="#f5f5f5"
+      gradientStyle="#fff"
       showLogo={false}>
       <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden backdrop-blur-3xl">
         <div className="flex-none w-full sticky top-0 z-50">

@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
 } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoHappyOutline } from 'react-icons/io5'
+import { IoHappy, IoHappyOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -93,7 +93,7 @@ export function ReactWithEmojiToggle() {
             onClick={() => {
               setIsOpen((o) => !o)
             }}>
-            <IoHappyOutline size={20} />
+            {isOpen ? <IoHappy size={20} /> : <IoHappyOutline size={20} />}
           </ControlButton>
         </div>
       </PopoverTrigger>

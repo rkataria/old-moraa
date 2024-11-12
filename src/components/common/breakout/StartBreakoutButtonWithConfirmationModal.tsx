@@ -220,8 +220,7 @@ export function StartBreakoutButtonWithConfirmationModal({
         buttonProps={{
           size: 'sm',
           variant: 'solid',
-          // isIconOnly: true,
-          className: cn('gap-2 justify-between live-button'),
+          className: cn('gap-2 justify-between'),
         }}
         onClick={() => setOpen(true)}>
         {label}

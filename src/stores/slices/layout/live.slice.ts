@@ -8,7 +8,7 @@ export interface LiveLayoutState {
 }
 
 const initialState: LiveLayoutState = {
-  leftSidebarMode: 'collapsed',
+  leftSidebarMode: 'maximized',
   rightSidebarMode: null,
 }
 

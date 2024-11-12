@@ -56,7 +56,7 @@ export function PreviewFrame({ frame }: PreviewFrameProps) {
   const frameHasTitle = frameTypesWithTitle.includes(frame.type)
 
   return (
-    <div className="w-full h-full flex justify-start items-start">
+    <div className="w-full h-full flex justify-start items-center">
       <div
         className={cn('h-full w-auto aspect-video', {
           'flex flex-col gap-4': frameHasTitle,

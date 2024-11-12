@@ -15,10 +15,7 @@ export function EndBreakoutButton({
       buttonProps={{
         size: 'sm',
         variant: 'solid',
-        // isIconOnly: true,
-        className: cn(
-          'gap-2 justify-between live-button !text-white !bg-red-500 hover:!bg-red-500'
-        ),
+        className: cn('gap-2 justify-between bg-red-500 text-white'),
       }}
       onClick={() => onEndBreakoutClick?.()}>
       End planned breakout

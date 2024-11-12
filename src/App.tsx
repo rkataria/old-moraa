@@ -44,7 +44,7 @@ export function App() {
     const getSession = async () => {
       const session = await supabaseClient.auth.getSession()
 
-      updateUserOnUserflow(
+      await updateUserOnUserflow(
         session.data.session?.user.id as string,
         session.data.session?.user.email as string
       )
@@ -70,10 +70,10 @@ export function App() {
     })
   }, [])
 
-  const updateUserOnUserflow = (userId: string, email: string) => {
+  const updateUserOnUserflow = async (userId: string, email: string) => {
     if (userId) {
       // Initialize and update userflow
-      userflow.identify(userId)
+      await userflow.identify(userId)
       userflow.updateUser({
         email,
       })

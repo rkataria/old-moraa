@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { Badge } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { IoChatbubbles, IoChatbubblesOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -46,10 +47,11 @@ export function ChatsToggle({
       isInvisible={!newMessageReceived}>
       <ControlButton
         buttonProps={{
-          // isIconOnly: true,
-          size: 'sm',
+          size: 'md',
           variant: 'light',
-          className: cn('live-button', {
+          disableRipple: true,
+          disableAnimation: true,
+          className: cn('live-button -mx-2', {
             active: isChatsSidebarOpen,
           }),
         }}
@@ -58,8 +60,14 @@ export function ChatsToggle({
           actionKey: KeyboardShortcuts.Live.chats.key,
         }}
         onClick={handleChat}>
-        {/* <IoChatbubblesOutline size={20} /> */}
-        Chats
+        <div className="flex flex-col justify-center items-center py-1">
+          {isChatsSidebarOpen ? (
+            <IoChatbubbles size={20} />
+          ) : (
+            <IoChatbubblesOutline size={20} />
+          )}
+          Chats
+        </div>
       </ControlButton>
     </Badge>
   )

@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 
-// Load fonts
-import '@fontsource-variable/outfit'
+// // Load fonts
+import '@fontsource-variable/inter'
 
 import { App } from './App.tsx'
 

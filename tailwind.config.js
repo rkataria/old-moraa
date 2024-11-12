@@ -55,7 +55,7 @@ export default {
         background: '#FAFAFA',
       },
       fontFamily: {
-        outfit: ['Outfit Variable', 'sans-serif'],
+        inter: ['Inter Variable', 'sans-serif'],
       },
       keyframes: {
         typing: {

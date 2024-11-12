@@ -13,6 +13,7 @@ import { useEventContext } from '@/contexts/EventContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { IFrame } from '@/types/frame.type'
+import { getBreakoutFrames } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
@@ -34,7 +35,7 @@ export function FrameList({
   actionDisabled,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
-  const { sections, currentFrame, insertAfterFrameId, currentSectionId } =
+  const { currentFrame, insertAfterFrameId, currentSectionId } =
     useEventContext()
   const isAddFrameLoading = useStoreSelector(
     (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
@@ -45,30 +46,6 @@ export function FrameList({
   const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
 
   if (!showList) return null
-
-  const getBreakoutFrames = (frame: IFrame) => {
-    if (frame?.type === FrameType.BREAKOUT) {
-      if (frame.content?.breakoutRooms?.length) {
-        const breakoutActivityFramesId = frame.content?.breakoutRooms
-          .map((activity) => activity.activityId)
-          .filter(Boolean)
-
-        const tempFrames = sections.map((sec) => sec.frames).flat(2)
-
-        return breakoutActivityFramesId
-          .map((id) => tempFrames.find((tFrame) => tFrame.id === id))
-          .filter(Boolean) as IFrame[]
-      }
-      const tempFrames = sections.map((sec) => sec.frames).flat(2)
-      const breakoutFrames = tempFrames.filter(
-        (f) => f?.content?.breakoutFrameId === frame?.id
-      )
-
-      return breakoutFrames
-    }
-
-    return null
-  }
 
   const previousUnrenderedNestedBreakoutsCount = (frameId: string) => {
     const currentFrameIndex = frames.findIndex((f) => f.id === frameId)
@@ -124,16 +101,25 @@ export function FrameList({
                               currentFrame?.id === frame?.id) ||
                             (!!currentFrame &&
                               Boolean(
-                                getBreakoutFrames(frame)
-                                  ?.map((_frame) => _frame?.id)
+                                getBreakoutFrames({
+                                  frames,
+                                  breakoutFrame: frame,
+                                })
+                                  ?.map((_frame: IFrame) => _frame?.id)
                                   .includes(currentFrame?.id)
                               ))
                           }>
                           <div
                             className={cn('ml-6', {
-                              'my-2': getBreakoutFrames(frame)?.length,
+                              'my-2': getBreakoutFrames({
+                                frames,
+                                breakoutFrame: frame,
+                              })?.length,
                             })}>
-                            {getBreakoutFrames(frame)?.map((f) => (
+                            {getBreakoutFrames({
+                              frames,
+                              breakoutFrame: frame,
+                            })?.map((f: IFrame) => (
                               <div key={f?.id} className="flex w-full">
                                 <FrameItem
                                   frame={f}

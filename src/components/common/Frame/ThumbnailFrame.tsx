@@ -64,7 +64,7 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
   const renderer = renderersByFrameType[frame.type as FrameType]
 
   return (
-    <div className="w-full h-full flex justify-start items-start">
+    <div className="w-full h-full flex justify-start items-center">
       <div className="h-full w-auto aspect-video">{renderer}</div>
     </div>
   )

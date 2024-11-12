@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { useDebounce } from '@uidotdev/usehooks'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoHandRightOutline } from 'react-icons/io5'
+import { IoHandRight, IoHandRightOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -68,7 +68,7 @@ export function RaiseHandToggle() {
         size: 'sm',
         variant: 'flat',
         className: cn('live-button', {
-          '!bg-yellow-400 hover:!bg-yellow-400': isHandRaised,
+          '!text-yellow-500 hover:!text-yellow-500': isHandRaised,
         }),
       }}
       tooltipProps={{
@@ -76,7 +76,11 @@ export function RaiseHandToggle() {
         actionKey: KeyboardShortcuts.Live.raiseAndLowerHand.key,
       }}
       onClick={handleRaiseHand}>
-      <IoHandRightOutline size={20} />
+      {isHandRaised ? (
+        <IoHandRight size={20} />
+      ) : (
+        <IoHandRightOutline size={20} />
+      )}
     </ControlButton>
   )
 }

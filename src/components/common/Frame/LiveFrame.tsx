@@ -68,7 +68,7 @@ export function LiveFrame({ frame }: FrameContainerProps) {
   const frameHasTitle = frameTypesWithTitle.includes(frame.type)
 
   return (
-    <div className="w-full h-full flex justify-start items-start">
+    <div className="w-full h-full flex justify-start items-center">
       <div
         className={cn({
           'h-auto w-full aspect-video': isFrameHasVideoAspectRatio(frame?.type),

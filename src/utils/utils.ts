@@ -281,7 +281,6 @@ export const KeyboardShortcuts = {
       label: 'Reaction',
       key: 'alt + R',
     },
-
     participants: {
       label: 'Show / hide participants',
       key: 'P',
@@ -289,6 +288,10 @@ export const KeyboardShortcuts = {
     chats: {
       label: 'Show / hide Chats',
       key: 'C',
+    },
+    notes: {
+      label: 'Show / hide Notes',
+      key: 'N',
     },
   },
 }

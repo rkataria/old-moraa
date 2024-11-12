@@ -16,11 +16,16 @@ export function AgendaPanelToggle({
     <Tooltip
       label={!collapsed ? 'Collapse' : 'Expand'}
       actionKey={KeyboardShortcuts['Agenda Panel'].expandAndCollapse.key}>
-      <Button size="sm" isIconOnly variant="flat" onClick={onToggle}>
+      <Button
+        size="sm"
+        isIconOnly
+        className="live-button"
+        variant="light"
+        onClick={onToggle}>
         {!collapsed ? (
-          <LuPanelLeftClose size={18} strokeWidth={1.2} />
+          <LuPanelLeftClose size={20} strokeWidth={1.2} />
         ) : (
-          <LuPanelLeftOpen size={18} strokeWidth={1.2} />
+          <LuPanelLeftOpen size={20} strokeWidth={1.2} />
         )}
       </Button>
     </Tooltip>

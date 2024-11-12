@@ -229,8 +229,7 @@ export function BreakoutButton() {
         buttonProps={{
           size: 'sm',
           variant: 'solid',
-          // isIconOnly: true,
-          className: cn('gap-2 justify-between live-button', {
+          className: cn('gap-2 justify-between', {
             '!bg-green-500 !text-white': isBreakoutActive,
           }),
         }}
@@ -262,11 +261,11 @@ export function BreakoutButton() {
             buttonProps={{
               size: 'sm',
               variant: 'solid',
-              isIconOnly: true,
-              className: cn('gap-2 p-1 justify-between live-button'),
+              className: cn('gap-2 justify-between'),
+              startContent: <VscMultipleWindows size={22} />,
             }}
             onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}>
-            <VscMultipleWindows size={22} />
+            View Breakout
           </ControlButton>
         )
       }
