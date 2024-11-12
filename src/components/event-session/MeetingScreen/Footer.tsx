@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { LiveFrameActions } from './LiveFrameActions'
 import { MoreActions } from './MoreActions'
 import { LeaveMeetingToggle } from '../LeaveMeetingToggle'
 import { MeetingRecordingButton } from '../MeetingRecordingButton'
@@ -89,6 +90,7 @@ export function Footer() {
           )}
           <LeaveMeetingToggle />
         </div>
+        <LiveFrameActions />
       </div>
       <div className="flex-1 flex justify-end items-center gap-2 p-2">
         <HelpButton

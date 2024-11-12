@@ -237,7 +237,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           filter: `frame_id=eq.${currentFrame.id}`,
         },
         (payload) => {
-          if (['INSERT', 'UPDATE'].includes(payload.eventType)) {
+          if (['INSERT', 'UPDATE', 'DELETE'].includes(payload.eventType)) {
             fetchCurrentFrameResponses({
               shouldTriggerLoader: false,
             })
