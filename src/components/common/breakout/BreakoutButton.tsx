@@ -24,6 +24,7 @@ import {
 } from '@/utils/breakout-notify.utils'
 import { StartBreakoutConfig } from '@/utils/dyte-breakout'
 import { FrameType } from '@/utils/frame-picker.util'
+import { getCurrentTimestamp } from '@/utils/timer.utils'
 import { cn } from '@/utils/utils'
 
 export function BreakoutButton() {
@@ -128,6 +129,10 @@ export function BreakoutButton() {
           }),
           {}
         )
+      const currentTimeStamp = getCurrentTimestamp()
+      const timerDuration = breakoutConfig.breakoutDuration
+        ? breakoutConfig.breakoutDuration * 60
+        : null
       dispatch(
         updateMeetingSessionDataAction({
           breakoutFrameId:
@@ -135,21 +140,10 @@ export function BreakoutButton() {
               ? breakoutConfig.breakoutFrameId
               : null,
           connectedMeetingsToActivitiesMap,
+          timerStartedStamp: currentTimeStamp,
+          timerDuration,
         })
       )
-
-      if (breakoutConfig.breakoutDuration && realtimeChannel) {
-        realtimeChannel.send({
-          type: 'broadcast',
-          event: 'timer-start-event',
-          payload: {
-            duration: {
-              total: (breakoutConfig?.breakoutDuration as number) * 60,
-              remaining: (breakoutConfig?.breakoutDuration as number) * 60,
-            },
-          },
-        })
-      }
 
       SessionService.createSessionForBreakouts({
         dyteMeetings: dyteMeeting.meeting.connectedMeetings.meetings.map(
@@ -158,6 +152,8 @@ export function BreakoutButton() {
             data: {
               currentFrameId: connectedMeetingsToActivitiesMap[meet.id!],
               presentationStatus,
+              timerStartedStamp: currentTimeStamp,
+              timerDuration,
             },
             meeting_id: meetingId,
           })
@@ -174,13 +170,9 @@ export function BreakoutButton() {
       updateMeetingSessionDataAction({
         breakoutFrameId: null,
         connectedMeetingsToActivitiesMap: {},
+        timerStartedStamp: null,
       })
     )
-    realtimeChannel?.send({
-      type: 'broadcast',
-      event: 'timer-close-event',
-      payload: { remainingDuration: 0 },
-    })
   }
 
   const endBreakout = () => {

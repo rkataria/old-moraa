@@ -1,7 +1,5 @@
 import { useContext } from 'react'
 
-import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
-import { NumberInput } from '@/components/common/NumberInput'
 import { SwitchControl } from '@/components/common/SwitchControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
@@ -15,7 +13,7 @@ export function PdfSettings() {
 
   return (
     <div className="flex flex-col gap-4">
-      <LabelWithInlineControl
+      {/* <LabelWithInlineControl
         label="Initial Page"
         control={
           <NumberInput
@@ -34,7 +32,7 @@ export function PdfSettings() {
             }}
           />
         }
-      />
+      /> */}
       <SwitchControl
         label="Lanscape"
         checked={currentFrame.config.landcapeView}

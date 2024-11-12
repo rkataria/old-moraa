@@ -75,7 +75,10 @@ export function Live({ frame }: LiveProps) {
       'broadcast',
       { event: positionChangeEvent },
       ({ payload }) => {
-        setPosition(payload.position || 1)
+        if (payload.position) {
+          setPosition(payload.position)
+        }
+
         setUpdatePdfPayload(payload.pdfPages)
       }
     )
@@ -144,7 +147,7 @@ export function Live({ frame }: LiveProps) {
         onLoadSuccess={onDocumentLoadSuccess}
         className={cn('relative h-full ml-0 overflow-y-auto scrollbar-thin', {
           'w-full': frame.config.landcapeView,
-          'aspect-video': !pageView.isPortrait,
+          'aspect-auto': !pageView.isPortrait,
         })}
         loading={
           <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">

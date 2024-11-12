@@ -8,6 +8,7 @@ import { MicToggle } from '../MicToggle'
 import { RaiseHandToggle } from '../RaiseHandToggle'
 import { ReactWithEmojiToggle } from '../ReactWithEmojiToggle'
 import { ScreenShareToggle } from '../ScreenShareToggle'
+import { TimerToggle } from '../TimerToggle'
 import { VideoToggle } from '../VideoToggle'
 
 import { BreakoutButton } from '@/components/common/breakout/BreakoutButton'
@@ -84,7 +85,7 @@ export function Footer() {
           {isHost && (
             <>
               <MeetingRecordingButton />
-              {/* <TimerToggle /> */}
+              <TimerToggle />
               <BreakoutButton />
             </>
           )}
