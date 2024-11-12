@@ -8,6 +8,7 @@ import { Panel, PanelGroup } from 'react-resizable-panels'
 import { ContentContainer } from '../ContentContainer'
 import { ParticipantTiles } from '../ParticipantTiles'
 
+import { BreakoutMessageBroadcast } from '@/components/common/breakout/BreakoutMessageBroadcast'
 import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsWithParticipants'
 import { PanelResizer } from '@/components/common/PanelResizer'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -85,17 +86,17 @@ export function Content() {
     frame_breakout_view: (
       <PanelsContent panelRef={panelRef}>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
-          <h2 className="text-xl font-semibold my-4 mx-2">
+          <h2 className="text-xl font-semibold my-4 mx-2 flex items-center">
             Breakout{' '}
             <Button
               isIconOnly
-              size="sm"
-              style={{ background: 'transparent' }}
+              className="bg-transparent ml-4"
               onClick={() =>
                 dyteClient.meeting.connectedMeetings.getConnectedMeetings()
               }>
-              <IoReload />
+              <IoReload fontSize={18} />
             </Button>{' '}
+            <BreakoutMessageBroadcast />
           </h2>
           <BreakoutRoomsWithParticipants key="frame_breakout_view" />
         </div>

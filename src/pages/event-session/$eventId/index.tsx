@@ -10,8 +10,11 @@ import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScree
 import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContext'
 import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
+import { RealtimeChannelProvider } from '@/contexts/RealtimeChannelContext'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useTimer } from '@/hooks/use-timer'
+import { useAskForHelp } from '@/hooks/useAskForHelp'
+import { useBreakoutBroadcastMessage } from '@/hooks/useBreakoutBroadcastMessage'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useUserPreferences } from '@/hooks/userPreferences'
@@ -38,6 +41,8 @@ export const Route = createFileRoute('/event-session/$eventId/')({
 
 export function EventSessionPageInner() {
   useTimer()
+  useBreakoutBroadcastMessage()
+  useAskForHelp()
   const isRoomJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
@@ -225,15 +230,17 @@ function EventSessionPage() {
           />
         </div>
       }>
-      <BreakoutManagerContextProvider>
-        <EventProvider eventMode="present">
-          <EventSessionProvider>
-            <div ref={meetingEl}>
-              <EventSessionPageInner />
-            </div>
-          </EventSessionProvider>
-        </EventProvider>
-      </BreakoutManagerContextProvider>
+      <RealtimeChannelProvider>
+        <BreakoutManagerContextProvider>
+          <EventProvider eventMode="present">
+            <EventSessionProvider>
+              <div ref={meetingEl}>
+                <EventSessionPageInner />
+              </div>
+            </EventSessionProvider>
+          </EventProvider>
+        </BreakoutManagerContextProvider>
+      </RealtimeChannelProvider>
     </DyteProvider>
   )
 }

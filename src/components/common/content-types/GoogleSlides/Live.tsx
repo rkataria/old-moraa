@@ -21,7 +21,7 @@ export function Live({ frame }: LiveProps) {
     content: { startPosition },
   } = frame
   const { preview } = useEventContext()
-  const { isHost, realtimeChannel, activeSession, updateActiveSession } =
+  const { isHost, eventRealtimeChannel, activeSession, updateActiveSession } =
     useEventSession()
   const [position, setPosition] = useState<number>(startPosition || 1)
 
@@ -33,8 +33,8 @@ export function Live({ frame }: LiveProps) {
 
   useEffect(() => {
     if (!isHost) return
-    if (!realtimeChannel) return
-    realtimeChannel.on(
+    if (!eventRealtimeChannel) return
+    eventRealtimeChannel.on(
       'broadcast',
       { event: positionChangeEvent },
       ({ payload }) => {
@@ -46,12 +46,12 @@ export function Live({ frame }: LiveProps) {
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel])
+  }, [eventRealtimeChannel])
 
   const handleCurrentPageChange = (pageNumber: number) => {
     if (preview) return
 
-    realtimeChannel?.send({
+    eventRealtimeChannel?.send({
       type: 'broadcast',
       event: positionChangeEvent,
       payload: { position: pageNumber },

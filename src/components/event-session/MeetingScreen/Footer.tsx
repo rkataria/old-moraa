@@ -11,11 +11,13 @@ import { ScreenShareToggle } from '../ScreenShareToggle'
 import { TimerToggle } from '../TimerToggle'
 import { VideoToggle } from '../VideoToggle'
 
+import { AskForHelpButton } from '@/components/common/breakout/AskForHelpButton'
 import { BreakoutButton } from '@/components/common/breakout/BreakoutButton'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { HelpButton } from '@/components/common/HelpButton'
 import { PresentationControls } from '@/components/common/PresentationControls'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -24,6 +26,8 @@ import { cn } from '@/utils/utils'
 export function Footer() {
   const currentFrame = useCurrentFrame()
   const { isHost, presentationStatus, dyteStates } = useEventSession()
+  const { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom } =
+    useBreakoutRooms()
 
   return (
     <div className="h-full w-full flex justify-between items-center px-2">
@@ -89,6 +93,11 @@ export function Footer() {
               <BreakoutButton />
             </>
           )}
+          {!isHost &&
+          isBreakoutActive &&
+          isCurrentDyteMeetingInABreakoutRoom ? (
+            <AskForHelpButton />
+          ) : null}
           <LeaveMeetingToggle />
         </div>
         <LiveFrameActions />

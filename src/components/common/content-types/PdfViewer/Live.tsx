@@ -26,7 +26,7 @@ const positionChangeEvent = 'pdf-position-changed'
 export function Live({ frame }: LiveProps) {
   const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
   const [file, setFile] = useState<File | undefined>()
-  const { isHost, realtimeChannel, activeSession, updateActiveSession } =
+  const { isHost, eventRealtimeChannel, activeSession, updateActiveSession } =
     useEventSession()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
@@ -70,8 +70,8 @@ export function Live({ frame }: LiveProps) {
   }, [debouncedPayload])
 
   useEffect(() => {
-    if (!realtimeChannel) return
-    realtimeChannel.on(
+    if (!eventRealtimeChannel) return
+    eventRealtimeChannel.on(
       'broadcast',
       { event: positionChangeEvent },
       ({ payload }) => {
@@ -83,12 +83,12 @@ export function Live({ frame }: LiveProps) {
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel])
+  }, [eventRealtimeChannel])
 
   const handlePositionChange = (newPosition: number) => {
     if (newPosition < 1 || newPosition > totalPages) return
 
-    realtimeChannel?.send({
+    eventRealtimeChannel?.send({
       type: 'broadcast',
       event: positionChangeEvent,
       payload: {

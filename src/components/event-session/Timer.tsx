@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
+import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 import { cn, zeroPad } from '@/utils/utils'
 
 export function Timer() {
-  const { realtimeChannel } = useRealtimeChannel()
+  const { eventRealtimeChannel } = useRealtimeChannel()
   const { isHost } = useEventSession()
   const session = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.activeSession.data!
@@ -48,7 +48,7 @@ export function Timer() {
         })
       )
       if (isBreakoutActive) {
-        realtimeChannel?.send({
+        eventRealtimeChannel?.send({
           type: 'broadcast',
           event: 'time-out',
         })
@@ -60,7 +60,7 @@ export function Timer() {
       if (timer) clearInterval(timer)
     }
   }, [
-    realtimeChannel,
+    eventRealtimeChannel,
     isHost,
     dispatch,
     isBreakoutActive,

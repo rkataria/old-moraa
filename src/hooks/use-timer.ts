@@ -3,8 +3,8 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { useEventPermissions } from './useEventPermissions'
-import { useRealtimeChannel } from './useRealtimeChannel'
 
+import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import {
   setDurationAction,
@@ -28,12 +28,12 @@ export function useTimer() {
     (state) => state.event.currentEvent.liveTimer.updateTimerOnParticipantJoin
   )
 
-  const { realtimeChannel } = useRealtimeChannel()
+  const { eventRealtimeChannel } = useRealtimeChannel()
 
   useEffect(() => {
-    if (!realtimeChannel) return
+    if (!eventRealtimeChannel) return
 
-    realtimeChannel.on(
+    eventRealtimeChannel.on(
       'broadcast',
       { event: 'timer-start-event' },
       ({ payload }) => {
@@ -45,18 +45,18 @@ export function useTimer() {
       }
     )
 
-    realtimeChannel.on('broadcast', { event: 'timer-pause-event' }, () => {
+    eventRealtimeChannel.on('broadcast', { event: 'timer-pause-event' }, () => {
       if (!isTimerRunning) return
 
       dispatch(setTimerStateAction('paused'))
     })
 
-    realtimeChannel.on('broadcast', { event: 'timer-close-event' }, () => {
+    eventRealtimeChannel.on('broadcast', { event: 'timer-close-event' }, () => {
       if (!isTimerRunning) return
       dispatch(setTimerStateAction('stopped'))
     })
 
-    realtimeChannel.on(
+    eventRealtimeChannel.on(
       'broadcast',
       { event: 'timer-reset-event' },
       ({ payload }) => {
@@ -64,7 +64,7 @@ export function useTimer() {
       }
     )
 
-    realtimeChannel.on(
+    eventRealtimeChannel.on(
       'broadcast',
       { event: 'timer-update-event' },
       ({ payload }) => {
@@ -72,16 +72,16 @@ export function useTimer() {
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTimerRunning, realtimeChannel])
+  }, [isTimerRunning, eventRealtimeChannel])
 
   useEffect(() => {
-    if (!realtimeChannel) return () => {}
+    if (!eventRealtimeChannel) return () => {}
 
     let timer: NodeJS.Timeout | undefined
     if (isTimerRunning) {
       timer = setInterval(() => {
         if (duration.remaining <= 0) {
-          realtimeChannel.send({
+          eventRealtimeChannel.send({
             type: 'broadcast',
             event: 'time-out',
             payload: { duration },
@@ -95,7 +95,7 @@ export function useTimer() {
             })
           )
           if (updateTimerOnParticipantJoin === true) {
-            realtimeChannel?.send({
+            eventRealtimeChannel?.send({
               type: 'broadcast',
               event: 'updateTimerOnParticipantJoin',
               payload: { duration },
@@ -110,11 +110,16 @@ export function useTimer() {
       if (timer) clearInterval(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTimerRunning, realtimeChannel, duration, updateTimerOnParticipantJoin])
+  }, [
+    isTimerRunning,
+    eventRealtimeChannel,
+    duration,
+    updateTimerOnParticipantJoin,
+  ])
   if (isLoadingPermissions) return
   if (isHost) return
   // TODO: Fix this
-  realtimeChannel?.on(
+  eventRealtimeChannel?.on(
     'broadcast',
     { event: 'updateTimerOnParticipantJoin' },
     ({ payload }) => {
