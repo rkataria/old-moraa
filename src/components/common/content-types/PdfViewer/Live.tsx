@@ -26,7 +26,7 @@ const positionChangeEvent = 'pdf-position-changed'
 export function Live({ frame }: LiveProps) {
   const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
   const [file, setFile] = useState<File | undefined>()
-  const { isHost, realtimeChannel, activeSession, updateActiveSession } =
+  const { isHost, eventRealtimeChannel, activeSession, updateActiveSession } =
     useEventSession()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
@@ -70,22 +70,25 @@ export function Live({ frame }: LiveProps) {
   }, [debouncedPayload])
 
   useEffect(() => {
-    if (!realtimeChannel) return
-    realtimeChannel.on(
+    if (!eventRealtimeChannel) return
+    eventRealtimeChannel.on(
       'broadcast',
       { event: positionChangeEvent },
       ({ payload }) => {
-        setPosition(payload.position || 1)
+        if (payload.position) {
+          setPosition(payload.position)
+        }
+
         setUpdatePdfPayload(payload.pdfPages)
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel])
+  }, [eventRealtimeChannel])
 
   const handlePositionChange = (newPosition: number) => {
     if (newPosition < 1 || newPosition > totalPages) return
 
-    realtimeChannel?.send({
+    eventRealtimeChannel?.send({
       type: 'broadcast',
       event: positionChangeEvent,
       payload: {
@@ -144,7 +147,7 @@ export function Live({ frame }: LiveProps) {
         onLoadSuccess={onDocumentLoadSuccess}
         className={cn('relative h-full ml-0 overflow-y-auto scrollbar-thin', {
           'w-full': frame.config.landcapeView,
-          'aspect-video': !pageView.isPortrait,
+          'aspect-auto': !pageView.isPortrait,
         })}
         loading={
           <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">

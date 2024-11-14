@@ -36,7 +36,7 @@ export function CreateUnplannedBreakoutModal({
   open,
   setOpen,
 }: CreateUnplannedBreakoutModalProps) {
-  const { currentFrame, presentationStatus, realtimeChannel } =
+  const { currentFrame, presentationStatus, eventRealtimeChannel } =
     useEventSession()
   const dispatch = useStoreDispatch()
   const dyteMeeting = useDyteMeeting()
@@ -60,11 +60,11 @@ export function CreateUnplannedBreakoutModal({
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
   useEffect(() => {
-    if (!realtimeChannel || !breakoutRoomsInstance) return
-    realtimeChannel.on('broadcast', { event: 'timer-close-event' }, () => {
+    if (!eventRealtimeChannel || !breakoutRoomsInstance) return
+    eventRealtimeChannel.on('broadcast', { event: 'timer-close-event' }, () => {
       // breakoutRoomsInstance?.endBreakout()
     })
-  }, [breakoutRoomsInstance, realtimeChannel])
+  }, [breakoutRoomsInstance, eventRealtimeChannel])
 
   const startBreakoutRooms = async () => {
     try {
@@ -77,7 +77,7 @@ export function CreateUnplannedBreakoutModal({
         )
       }
       setTimeout(() => {
-        realtimeChannel?.send({
+        eventRealtimeChannel?.send({
           type: 'broadcast',
           event: 'timer-start-event',
           payload: { remainingDuration: breakoutDuration * 60 },

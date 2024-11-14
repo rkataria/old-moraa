@@ -53,7 +53,7 @@ export function PollVotes({
         <div
           key={option.name}
           className={cn(
-            'relative w-full z-0 flex justify-between  border border-[#ebebeb] items-center gap-2 p-4 h-12 rounded-lg overflow-hidden',
+            'relative w-full z-0 flex justify-between border border-[#ebebeb] bg-white items-center gap-2 p-4 h-12 rounded-lg overflow-hidden',
             {
               'cursor-default': voted || !canVote,
             },

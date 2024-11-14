@@ -50,7 +50,7 @@ export type EventSessionContextType = {
   activeSession: any
   videoMiddlewareConfig: VideoMiddlewareConfig | null
   frameReactions: FrameReaction[]
-  realtimeChannel?: RealtimeChannel | null
+  eventRealtimeChannel?: RealtimeChannel | null
   eventSessionMode: EventSessionMode
   dyteStates: DyteStates
   setDyteStates: Dispatch<SetStateAction<DyteStates>>

@@ -41,6 +41,10 @@ export type SessionState = {
   connectedMeetingsToActivitiesMap?: {
     [x: string]: string
   }
+  timerStartedStamp?: number | null
+  timerDuration?: number | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  framesConfig?: any
 }
 
 type SessionModelWithData = Omit<SessionModel, 'data'> & { data?: SessionState }
@@ -175,6 +179,37 @@ export const liveSessionSlice = createSlice({
       state.breakout.breakoutNotify = action.payload
     },
 
+    // FOR POLL AND REFLECTIONS
+    toggleStartAndStopActivity: (
+      state,
+      action: PayloadAction<{
+        activity: string
+        frameId: string | number
+      }>
+    ) => {
+      if (!state.activeSession.data || state.activeSession.isSuccess !== true) {
+        console.error('Session must be fetched before updating it.')
+
+        return
+      }
+      const activityKey = `${action.payload.activity}Started`
+
+      const framesConfig = state.activeSession.data?.data?.framesConfig || {}
+
+      state.activeSession.data.data = {
+        ...state.activeSession.data?.data,
+        framesConfig: {
+          ...framesConfig,
+          [action.payload.frameId]: {
+            [activityKey]:
+              !state.activeSession.data?.data?.framesConfig?.[
+                action.payload.frameId
+              ]?.[activityKey],
+          },
+        },
+      }
+    },
+
     resetLiveSession: () => initialState,
   },
   extraReducers: (builder) => {
@@ -199,6 +234,21 @@ export const liveSessionSlice = createSlice({
       builder,
       thunk: getEnrollmentThunk,
       getThunkState: (state) => state.enrollment,
+    })
+  },
+})
+
+attachStoreListener({
+  actionCreator: liveSessionSlice.actions.toggleStartAndStopActivity,
+  effect: (_, { getState }) => {
+    const sessionId =
+      getState().event.currentEvent.liveSessionState.activeSession.data!.id
+    const newSessionData =
+      getState().event.currentEvent.liveSessionState.activeSession.data?.data
+
+    SessionService.updateSession({
+      sessionPayload: { data: newSessionData },
+      sessionId,
     })
   },
 })
@@ -447,4 +497,5 @@ export const {
   setDyteClientAction,
   resetLiveSessionAction,
   setBreakoutNotifyAction,
+  toggleStartAndStopActivityAction,
 } = renameSliceActions(liveSessionSlice.actions)

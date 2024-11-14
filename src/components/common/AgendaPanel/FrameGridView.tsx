@@ -89,7 +89,7 @@ export function FrameGridView({
               <Tooltip label="Published">
                 <Button
                   isIconOnly
-                  className="absolute top-0 right-0 z-[99] m-1.5 w-auto h-auto min-w-[auto] rounded-full bg-transparent border-none">
+                  className="absolute top-0 right-0 z-[10] m-1.5 w-auto h-auto min-w-[auto] rounded-full bg-transparent border-none">
                   <IoCheckmarkCircle
                     className=" rounded-full text-green-500 shadow-[0_0_10px_-4px] bg-white"
                     size={18}

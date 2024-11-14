@@ -445,34 +445,34 @@
     "@babel/helper-validator-identifier" "^7.24.7"
     to-fast-properties "^2.0.0"
 
-"@dytesdk/react-ui-kit@^2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-ui-kit/-/react-ui-kit-2.0.5.tgz#f11a465a619308704edc640e68105ae31df56786"
-  integrity sha512-rFPx+Vx8Stk8i+HlQKpvM3hRovyJl/81ofzsILXuwuA8NXkcGiX8hf6Lgizw7200UT0YvhL1VhFaOunGj2+G1A==
+"@dytesdk/react-ui-kit@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-ui-kit/-/react-ui-kit-2.0.6.tgz#8bd7f641393355207114bd99d942a8c021353b33"
+  integrity sha512-Ixv/Bx9erFxd7pwQEQelYZ0fIjPKRCJq+fX9p6n5siiz7pCSIOtmvFK7Tzc6B7HPML8BvNlh8RvbBmptDu12Cw==
   dependencies:
-    "@dytesdk/ui-kit" "2.0.5"
+    "@dytesdk/ui-kit" "2.0.6"
 
-"@dytesdk/react-web-core@^2.1.9":
-  version "2.1.9"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-2.1.9.tgz#dfb02a566eaa2f27f9fd6877ac3493f342ba83dc"
-  integrity sha512-d2ypkznheh1GDplfy57BwOssMWpu0jlvu2t8RdXfxlTW5lwuQOgYTWmhryXgq5afR/TePXc1C7aOuzj13fTTCA==
+"@dytesdk/react-web-core@^2.1.10":
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-2.1.10.tgz#888b1c493e73d8c8828add902fe5aa8a99bf66cb"
+  integrity sha512-YFweqg0bmyYEGbM3XBTrgFaijm+gQPxHSJcQOmtVGph/DTk0lDk177OtXMhM1TuBWlR1yr3aLO8xoSq3leS6cA==
   dependencies:
-    "@dytesdk/web-core" "2.1.9"
+    "@dytesdk/web-core" "2.1.10"
 
-"@dytesdk/ui-kit@2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-2.0.5.tgz#131de5027f1f405a1ddbe63936a09eecda53e611"
-  integrity sha512-4ZCayGF1HkIWEQZ/Nl6Z/SIoFJLyyFmlr45sKBFqOPsD1NGlbyykaTF2lRB326j5cB6esU1fTBvpPw7Aep/jIw==
+"@dytesdk/ui-kit@2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-2.0.6.tgz#e6f979e068af18b2205e22d5736539b34a3f2266"
+  integrity sha512-sm9sl3YHvfHKjS1pzKf/Y/+VNQOKK/YRrawxpQzWz7xHKDLf4jrtRYLm34VqVqR9tK3B4uZfCM9JRqmmytR1Hg==
 
-"@dytesdk/video-background-transformer@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@dytesdk/video-background-transformer/-/video-background-transformer-2.0.3.tgz#0cdb1999d03b7af5a4d240ef65719a13f0c8f887"
-  integrity sha512-pFtGUDmrZw1UD3lwJxbEfFJ4IrhGbMyA8uA8kr5eJuB3V3lAWyXVvyIKqzuVDVkw5xslAj3YNZtwJSHFV+tRTQ==
+"@dytesdk/video-background-transformer@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@dytesdk/video-background-transformer/-/video-background-transformer-2.0.4.tgz#335154d6e5d27c7bb85d4b05ecc86e3f059e3554"
+  integrity sha512-zIEmniYvE3wsS76SiduH+3DbEx5Wci3JVbxkPeJukS/UKKkwCgxAKzUbf2BzDxyjAKdZIzhKnPjha/S4WOAAsw==
 
-"@dytesdk/web-core@2.1.9", "@dytesdk/web-core@^2.1.9":
-  version "2.1.9"
-  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-2.1.9.tgz#19813cdc8255d74adad31af07e1b4f25ec7f9e23"
-  integrity sha512-1m6WQoma2EA7+FMuk4Yet7omNNjuSZeJZIFmQ0QFTd7ihoTSLaZeqgHry3hU/0CtPYjORj1iWMH/oaLc88LcIw==
+"@dytesdk/web-core@2.1.10", "@dytesdk/web-core@^2.1.10":
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-2.1.10.tgz#c65574c4241c9f43cbb0aecdfece7feb519f0a23"
+  integrity sha512-JxJ04z8b9zzgbTTH6G35V9G+UzKzVxJKhOJXw16VLchtghvkyEh6UyajwufEGKz2b6g8sSy+Dv2WZ/kYkFjcYg==
   dependencies:
     "@protobuf-ts/runtime" "^2.7.0"
     bowser "^2.11.0"
@@ -682,11 +682,6 @@
   version "5.0.13"
   resolved "https://registry.yarnpkg.com/@fontsource-variable/outfit/-/outfit-5.0.13.tgz#c9ceb74ad88ab4277a20e08f7d5377476a12c619"
   integrity sha512-y5yl8YcLqoQghwLfPaM420PKxG0DMKmobryGptXmv7Q5CX8F1vg8h714qEptXdtyoS9rHIMwLl/hJYLzZgSE4w==
-
-"@fontsource/geist-sans@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@fontsource/geist-sans/-/geist-sans-5.1.0.tgz#5eacb9e8b3a264c2786314f13aa511bbd5075fbb"
-  integrity sha512-4AI/UxIcZiYgK6/cTo4R9oM4VHHLcFdHVv7m2+M42VyY16hhKJADrGe4HPjTxvolmce2IZX/jc6sFJ+GkLB64w==
 
 "@formatjs/ecma402-abstract@2.0.0":
   version "2.0.0"
@@ -9194,7 +9189,7 @@ string_decoder@^1.1.1:
   dependencies:
     safe-buffer "~5.2.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -9207,6 +9202,13 @@ strip-ansi@^5.2.0:
   integrity sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==
   dependencies:
     ansi-regex "^4.1.0"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
 
 strip-ansi@^7.0.1, strip-ansi@^7.1.0:
   version "7.1.0"
@@ -9961,7 +9963,16 @@ worker-timers@7.0.60:
     worker-timers-broker "^6.0.80"
     worker-timers-worker "^7.0.46"
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@7.0.0, wrap-ansi@^7.0.0, wrap-ansi@^8.1.0, wrap-ansi@^9.0.0:
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@7.0.0, wrap-ansi@^7.0.0, wrap-ansi@^8.1.0, wrap-ansi@^9.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==

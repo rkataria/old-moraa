@@ -6,7 +6,7 @@ import { PollFrame, PollOption, Vote } from '@/types/frame.type'
 
 interface PollProps {
   frame: PollFrame
-  votes?: Vote[]
+  votes: Vote[]
   disableAnimation?: boolean
 }
 

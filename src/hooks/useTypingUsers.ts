@@ -5,13 +5,13 @@ import uniqBy from 'lodash.uniqby'
 import { useEventSession } from '@/contexts/EventSessionContext'
 
 export const useTypingUsers = () => {
-  const { realtimeChannel } = useEventSession()
+  const { eventRealtimeChannel } = useEventSession()
   const [typingUsers, setTypingUsers] = useState<
     Array<{ participantId: string; participantName: string }>
   >([])
 
   useEffect(() => {
-    if (!realtimeChannel) return
+    if (!eventRealtimeChannel) return
 
     const removeTypingUser = (participantId: string) => {
       setTypingUsers((existingTypingUsers) => {
@@ -25,7 +25,7 @@ export const useTypingUsers = () => {
 
     let lastTimeoutId: null | NodeJS.Timeout = null
 
-    realtimeChannel.on(
+    eventRealtimeChannel.on(
       'broadcast',
       { event: 'user-started-typing' },
       ({ payload }) => {
@@ -44,7 +44,7 @@ export const useTypingUsers = () => {
         }, 4000)
       }
     )
-    realtimeChannel.on(
+    eventRealtimeChannel.on(
       'broadcast',
       { event: 'user-stopped-typing' },
       ({ payload }) => {
@@ -52,7 +52,7 @@ export const useTypingUsers = () => {
         removeTypingUser(participantId)
       }
     )
-  }, [realtimeChannel])
+  }, [eventRealtimeChannel])
 
   const updateTypingUsers = useCallback(
     async ({
@@ -64,10 +64,10 @@ export const useTypingUsers = () => {
       participantId: string
       participantName?: string
     }) => {
-      if (!realtimeChannel) return
+      if (!eventRealtimeChannel) return
 
       if (isTyping) {
-        realtimeChannel?.send({
+        eventRealtimeChannel?.send({
           type: 'broadcast',
           event: 'user-started-typing',
           payload: {
@@ -76,7 +76,7 @@ export const useTypingUsers = () => {
           },
         })
       } else {
-        realtimeChannel?.send({
+        eventRealtimeChannel?.send({
           type: 'broadcast',
           event: 'user-stopped-typing',
           payload: {
@@ -86,7 +86,7 @@ export const useTypingUsers = () => {
         })
       }
     },
-    [realtimeChannel]
+    [eventRealtimeChannel]
   )
 
   return { updateTypingUsers, typingUsers }

@@ -10,6 +10,7 @@ import { RenderIf } from '../../RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { Vote, type PollFrame } from '@/types/frame.type'
 import { cn } from '@/utils/utils'
 
@@ -41,6 +42,7 @@ export function Live({ frame }: LiveProps) {
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const { currentUser } = useAuth()
   const { onVote, currentFrameResponses, isHost } = useEventSession()
+
   const votes = currentFrameResponses || []
   const [makeMyVoteAnonymous, setMakeMyVoteAnonymous] = useState<boolean>(
     isVoteAnonymous(votes as Vote[], currentUser)
@@ -49,6 +51,12 @@ export function Live({ frame }: LiveProps) {
   const canVote = !isHost
 
   const voted = isCurrentUserVoted(votes as Vote[], currentUser)
+
+  const session = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.activeSession.data
+  )
+
+  const pollStarted = session?.data?.framesConfig?.[frame.id]?.pollStarted
 
   useEffect(() => {
     if (
@@ -66,7 +74,7 @@ export function Live({ frame }: LiveProps) {
   const showResponses = !canVote || voted
 
   const renderContent = () => {
-    if (showResponses) {
+    if (showResponses || !pollStarted) {
       return <PollResponse frame={frame} votes={votes as Vote[]} />
     }
 
@@ -85,7 +93,7 @@ export function Live({ frame }: LiveProps) {
   const showAnonymousToggle = canVote && frame.config.allowVoteAnonymously
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <FrameTitleDescriptionPreview frame={frame} />
       <div
         className={cn('w-full h-full rounded-md relative', {
@@ -115,7 +123,9 @@ export function Live({ frame }: LiveProps) {
             }}
           />
         </RenderIf>
-
+        <p className="mb-4 font-medium text-base">
+          {pollStarted ? 'Poll is open' : 'Poll is closed'}
+        </p>
         {renderContent()}
         <RenderIf isTrue={voteButtonVisible}>
           <div className="flex justify-end mt-4">
