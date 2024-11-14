@@ -32,7 +32,7 @@ export function HorizontalPreview({
             <p className="text-sm text-gray-400  w-[42px] font-medium">
               {option.percentage}%
             </p>
-            <div className="relative w-full min min-h-[60px]  border border-[#ebebeb] z-0 flex justify-between items-center gap-2 p-4 rounded-xl overflow-hidden">
+            <div className="relative w-full min min-h-[60px]  border border-[#ebebeb] bg-white z-0 flex justify-between items-center gap-2 p-4 rounded-xl overflow-hidden">
               <p
                 className={cn('font-bold z-[1]', {
                   'text-white':

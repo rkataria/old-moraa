@@ -36,7 +36,7 @@ export function PDFViewer({ frame }: PDFViewerProps) {
 
   const [file, setFile] = useState<File | undefined>()
   const { preview } = useContext(EventContext) as EventContextType
-  const { isHost, realtimeChannel, activeSession, updateActiveSession } =
+  const { isHost, eventRealtimeChannel, activeSession, updateActiveSession } =
     useContext(EventSessionContext) as EventSessionContextType
   const [totalPages, setTotalPages] = useState<number>(0)
   const [position, setPosition] = useState<number>(
@@ -80,8 +80,8 @@ export function PDFViewer({ frame }: PDFViewerProps) {
   }, [debouncedPayload])
 
   useEffect(() => {
-    if (!realtimeChannel) return
-    realtimeChannel.on(
+    if (!eventRealtimeChannel) return
+    eventRealtimeChannel.on(
       'broadcast',
       { event: positionChangeEvent },
       ({ payload }) => {
@@ -90,14 +90,14 @@ export function PDFViewer({ frame }: PDFViewerProps) {
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel])
+  }, [eventRealtimeChannel])
 
   const handlePositionChange = (newPosition: number) => {
     if (preview) return
 
     if (newPosition < 1 || newPosition > totalPages) return
 
-    realtimeChannel?.send({
+    eventRealtimeChannel?.send({
       type: 'broadcast',
       event: positionChangeEvent,
       payload: {

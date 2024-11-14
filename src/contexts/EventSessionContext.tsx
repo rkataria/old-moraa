@@ -12,6 +12,7 @@ import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
 
 import { useEventContext } from './EventContext'
+import { useRealtimeChannel } from './RealtimeChannelContext'
 
 import type {
   IPollResponse,
@@ -21,9 +22,7 @@ import type {
 } from '@/types/frame.type'
 
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useMeetingRealtimeChannel } from '@/hooks/useMeetingRealtimeChannel'
 import { useFrameReactions } from '@/hooks/useReactions'
-import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { useEventSelector } from '@/stores/hooks/useEventSections'
@@ -81,8 +80,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const participant = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.participant.data
   )
-  const { realtimeChannel } = useRealtimeChannel()
-  const { meetingRealtimeChannel } = useMeetingRealtimeChannel()
+  const { eventRealtimeChannel, meetingRealtimeChannel } = useRealtimeChannel()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const activeSession = session?.data
@@ -127,16 +125,24 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [dyteMeeting])
 
   useEffect(() => {
-    if (!realtimeChannel) return
+    if (!eventRealtimeChannel) return
 
-    realtimeChannel.on('broadcast', { event: 'start-breakout-notify' }, () => {
-      dispatch(setBreakoutNotifyAction(true))
-    })
+    eventRealtimeChannel.on(
+      'broadcast',
+      { event: 'start-breakout-notify' },
+      () => {
+        dispatch(setBreakoutNotifyAction(true))
+      }
+    )
 
-    realtimeChannel.on('broadcast', { event: 'stop-breakout-notify' }, () => {
-      dispatch(setBreakoutNotifyAction(false))
-    })
-  }, [realtimeChannel, dispatch])
+    eventRealtimeChannel.on(
+      'broadcast',
+      { event: 'stop-breakout-notify' },
+      () => {
+        dispatch(setBreakoutNotifyAction(false))
+      }
+    )
+  }, [eventRealtimeChannel, dispatch])
 
   useEffect(() => {
     if (!meetingRealtimeChannel) return
@@ -189,7 +195,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [fetchedFrameReactions])
 
   useEffect(() => {
-    if (!currentFrame || !realtimeChannel) return
+    if (!currentFrame || !eventRealtimeChannel) return
 
     if (!frameHasFrameResponses(currentFrame.type as FrameType)) {
       setCurrentFrameLoading(false)
@@ -242,7 +248,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           filter: `frame_id=eq.${currentFrame.id}`,
         },
         (payload) => {
-          if (['INSERT', 'UPDATE'].includes(payload.eventType)) {
+          if (['INSERT', 'UPDATE', 'DELETE'].includes(payload.eventType)) {
             fetchCurrentFrameResponses({
               shouldTriggerLoader: false,
             })
@@ -269,7 +275,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   }, [isHost, currentSectionId, dispatch, presentationStatus])
 
   const nextFrame = useCallback(() => {
-    if (!isHost || !realtimeChannel) return null
+    if (!isHost || !eventRealtimeChannel) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const nextFrame = getNextFrame({
       sections: sections as ISection[],
@@ -294,7 +300,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel, isHost, sections, currentFrame, eventMode])
+  }, [eventRealtimeChannel, isHost, sections, currentFrame, eventMode])
 
   const previousFrame = useCallback(() => {
     if (!isHost) return null
@@ -648,7 +654,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         videoMiddlewareConfig,
         activeSession,
         frameReactions,
-        realtimeChannel,
+        eventRealtimeChannel,
         eventSessionMode,
         dyteStates,
         setDyteStates,

@@ -40,7 +40,7 @@ export function StartBreakoutButtonWithConfirmationModal({
   participantPerGroup?: number
   breakoutDuration?: number
 }) {
-  const { realtimeChannel } = useEventSession()
+  const { eventRealtimeChannel } = useEventSession()
   const [isOpen, setOpen] = useState(false)
   const dyteMeeting = useDyteMeeting()
   const currentParticipantCount =
@@ -195,18 +195,18 @@ export function StartBreakoutButtonWithConfirmationModal({
       return
     }
 
-    if (!realtimeChannel) {
+    if (!eventRealtimeChannel) {
       setOpen(false)
       onStartBreakoutClick(breakoutConfig)
 
       return
     }
 
-    notifyBreakoutStart(realtimeChannel)
+    notifyBreakoutStart(eventRealtimeChannel)
     setOpen(false)
 
     setTimeout(() => {
-      notifyBreakoutEnd(realtimeChannel)
+      notifyBreakoutEnd(eventRealtimeChannel)
       onStartBreakoutClick(breakoutConfig)
     }, notificationDuration * 1000)
   }

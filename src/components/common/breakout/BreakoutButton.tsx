@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { useParams } from '@tanstack/react-router'
 import { VscMultipleWindows } from 'react-icons/vsc'
 
 import { EndBreakoutButton } from './EndBreakoutButton'
@@ -10,8 +11,9 @@ import { ControlButton } from '../ControlButton'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
-import { useRealtimeChannel } from '@/hooks/useRealtimeChannel'
+import { useEvent } from '@/hooks/useEvent'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
@@ -24,6 +26,7 @@ import {
 } from '@/utils/breakout-notify.utils'
 import { StartBreakoutConfig } from '@/utils/dyte-breakout'
 import { FrameType } from '@/utils/frame-picker.util'
+import { getCurrentTimestamp } from '@/utils/timer.utils'
 import { cn } from '@/utils/utils'
 
 export function BreakoutButton() {
@@ -35,7 +38,12 @@ export function BreakoutButton() {
     setCurrentFrame,
     setDyteStates,
   } = useEventSession()
-  const { realtimeChannel } = useRealtimeChannel()
+  const { getFrameById } = useEventContext()
+  const { eventId } = useParams({ strict: false })
+  const { event } = useEvent({
+    id: eventId as string,
+  })
+  const { eventRealtimeChannel } = useRealtimeChannel()
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
@@ -128,6 +136,20 @@ export function BreakoutButton() {
           }),
           {}
         )
+      const meetingTitles = Object.entries(
+        connectedMeetingsToActivitiesMap
+      ).map(([meetId, activityId], index) => ({
+        id: meetId,
+        title: `${event.name} - ${breakoutConfig.activityId ? `Group ${index + 1}` : getFrameById(activityId).content?.title}`,
+      }))
+
+      await dyteMeeting.meeting.connectedMeetings.updateMeetings(meetingTitles)
+      await dyteMeeting.meeting.connectedMeetings.getConnectedMeetings()
+
+      const currentTimeStamp = getCurrentTimestamp()
+      const timerDuration = breakoutConfig.breakoutDuration
+        ? breakoutConfig.breakoutDuration * 60
+        : null
       dispatch(
         updateMeetingSessionDataAction({
           breakoutFrameId:
@@ -135,21 +157,10 @@ export function BreakoutButton() {
               ? breakoutConfig.breakoutFrameId
               : null,
           connectedMeetingsToActivitiesMap,
+          timerStartedStamp: currentTimeStamp,
+          timerDuration,
         })
       )
-
-      if (breakoutConfig.breakoutDuration && realtimeChannel) {
-        realtimeChannel.send({
-          type: 'broadcast',
-          event: 'timer-start-event',
-          payload: {
-            duration: {
-              total: (breakoutConfig?.breakoutDuration as number) * 60,
-              remaining: (breakoutConfig?.breakoutDuration as number) * 60,
-            },
-          },
-        })
-      }
 
       SessionService.createSessionForBreakouts({
         dyteMeetings: dyteMeeting.meeting.connectedMeetings.meetings.map(
@@ -158,6 +169,8 @@ export function BreakoutButton() {
             data: {
               currentFrameId: connectedMeetingsToActivitiesMap[meet.id!],
               presentationStatus,
+              timerStartedStamp: currentTimeStamp,
+              timerDuration,
             },
             meeting_id: meetingId,
           })
@@ -174,38 +187,34 @@ export function BreakoutButton() {
       updateMeetingSessionDataAction({
         breakoutFrameId: null,
         connectedMeetingsToActivitiesMap: {},
+        timerStartedStamp: null,
       })
     )
-    realtimeChannel?.send({
-      type: 'broadcast',
-      event: 'timer-close-event',
-      payload: { remainingDuration: 0 },
-    })
   }
 
   const endBreakout = () => {
-    if (!realtimeChannel) {
+    if (!eventRealtimeChannel) {
       onBreakoutEnd()
 
       return
     }
-    notifyBreakoutStart(realtimeChannel)
+    notifyBreakoutStart(eventRealtimeChannel)
     setTimeout(() => {
-      notifyBreakoutEnd(realtimeChannel)
+      notifyBreakoutEnd(eventRealtimeChannel)
       onBreakoutEnd()
     }, notificationDuration * 1000)
   }
 
   useEffect(() => {
-    if (!realtimeChannel) return
+    if (!eventRealtimeChannel) return
 
-    realtimeChannel.on('broadcast', { event: 'time-out' }, () => {
+    eventRealtimeChannel.on('broadcast', { event: 'time-out' }, () => {
       if (isHost) {
         onBreakoutEnd()
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [realtimeChannel, isHost])
+  }, [eventRealtimeChannel, isHost])
 
   if (!isHost) return null
   if (isCurrentDyteMeetingInABreakoutRoom) return null
