@@ -154,7 +154,7 @@ function EventSessionPage() {
       },
       modules: {
         devTools: {
-          logs: true,
+          logs: false,
           plugins: [
             {
               name: 'Moraa Presentation',
