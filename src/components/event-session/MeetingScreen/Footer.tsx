@@ -1,3 +1,4 @@
+import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { LiveFrameActions } from './LiveFrameActions'
@@ -16,6 +17,7 @@ import { BreakoutButton } from '@/components/common/breakout/BreakoutButton'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { HelpButton } from '@/components/common/HelpButton'
 import { PresentationControls } from '@/components/common/PresentationControls'
+import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
@@ -24,6 +26,7 @@ import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function Footer() {
+  const dyteMeeting = useDyteMeeting()
   const currentFrame = useCurrentFrame()
   const { isHost, presentationStatus, dyteStates } = useEventSession()
   const { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom } =
@@ -99,6 +102,23 @@ export function Footer() {
             <AskForHelpButton />
           ) : null}
           <LeaveMeetingToggle />
+          {/* Test Button */}
+          <Button
+            onClick={async () => {
+              const plugin = dyteMeeting.meeting.plugins.all.get(
+                'b4118591-4af6-4093-86ac-a8ce216f430f'
+              )
+
+              if (!plugin?.active) {
+                await plugin?.activate()
+                // const iframe = document.createElement('iframe')
+                // plugin?.addPluginView(iframe)
+              } else {
+                await plugin?.deactivate()
+              }
+            }}>
+            Start
+          </Button>
         </div>
         <LiveFrameActions />
       </div>
