@@ -96,6 +96,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     (state) => state.event.currentEvent.eventState.currentSectionId
   )
 
+  // TODO: Test code for moraa presentation plugin
+  const moraaPresentationPlugin = dyteMeeting.plugins.all.get(
+    'b4118591-4af6-4093-86ac-a8ce216f430f'
+  )
+
   useEffect(() => {
     const handleParticipantJoined = (newParticipant: DyteParticipant) => {
       if (dyteMeeting.participants.count > 3) {
@@ -285,6 +290,15 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         currentFrameId: nextFrame.id,
       })
     )
+
+    if (moraaPresentationPlugin?.active) {
+      console.log('Emitting frame change event to plugin')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      moraaPresentationPlugin.room.emitEvent('frame-change', {
+        frameId: nextFrame.id,
+      })
+    }
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
