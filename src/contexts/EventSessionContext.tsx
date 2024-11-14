@@ -293,6 +293,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     if (moraaPresentationPlugin?.active) {
       console.log('Emitting frame change event to plugin')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       moraaPresentationPlugin.room.emitEvent('frame-change', {
         frameId: nextFrame.id,
       })
