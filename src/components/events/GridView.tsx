@@ -87,15 +87,16 @@ export function GridView({
                 classNames={{ base: 'text-center !text-[0.625rem]' }}>
                 {event.status}
               </Chip>
-
-              <div className="opacity-0 group-hover/card:opacity-100">
-                <EventActions
-                  as="dropdown"
-                  event={event}
-                  isOwner={event.owner_id === currentUserId}
-                  onDone={refetch}
-                />
-              </div>
+              <RenderIf isTrue={event.owner_id === currentUserId}>
+                <div className="opacity-0 group-hover/card:opacity-100">
+                  <EventActions
+                    as="dropdown"
+                    event={event}
+                    isOwner={event.owner_id === currentUserId}
+                    onDone={refetch}
+                  />
+                </div>
+              </RenderIf>
             </div>
 
             <p className="text-xl font-semibold text-black/80 mt-1 line-clamp-2">

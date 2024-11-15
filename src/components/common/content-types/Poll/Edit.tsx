@@ -7,6 +7,8 @@ import { BsTrash3 } from 'react-icons/bs'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 import { v4 as uuidv4 } from 'uuid'
 
+import { PollLayout } from './PollLayout'
+
 import { ColorPicker } from '@/components/common/ColorPicker'
 import { FrameText } from '@/components/event-content/FrameText'
 import { FrameTextBlock } from '@/components/event-content/FrameTextBlock'
@@ -19,7 +21,7 @@ type EditProps = {
   frame: PollFrame
 }
 
-export function Edit({ frame: frameFromRemote }: EditProps) {
+export function PollEditor({ frame: frameFromRemote }: EditProps) {
   const optionsRef = useRef<any>([])
 
   const { updateFrame } = useEventContext()
@@ -101,8 +103,10 @@ export function Edit({ frame: frameFromRemote }: EditProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [throttledOptions])
 
+  const withImage = frameFromRemote.config?.image?.position
+
   return (
-    <>
+    <div>
       <FrameText
         key={frameFromRemote.id}
         type="title"
@@ -111,7 +115,10 @@ export function Edit({ frame: frameFromRemote }: EditProps) {
       />
       <FrameTextBlock blockType="paragraph" />
       <div className={cn('w-full h-auto flex justify-start items-start mt-8')}>
-        <div className="w-[46rem]">
+        <div
+          className={cn('w-full', {
+            'w-[46rem]': !withImage,
+          })}>
           <ul className="mb-4 grid gap-4">
             {options.map(
               (option: { name: string; color: string }, index: number) => (
@@ -119,14 +126,17 @@ export function Edit({ frame: frameFromRemote }: EditProps) {
                   // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   className="relative flex items-center gap-4 text-foreground group/poll">
-                  <div className="w-full py-2.5 rounded-md bg-white">
+                  {/*  eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+                  <div
+                    className="w-full py-[1.125rem] rounded-2xl bg-[#F5F5F5] cursor-text"
+                    onClick={() => optionsRef.current[index].focus()}>
                     <ReactTextareaAutosize
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       ref={(el: any) => {
                         optionsRef.current[index] = el
                       }}
                       className={cn(
-                        'w-full text-md text-left pl-4 bg-transparent font-medium border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none'
+                        'w-full text-md text-left pl-6 bg-transparent font-medium border-0 outline-none focus:border-0 focus:ring-0 hover:outline-none resize-none'
                       )}
                       value={option.name}
                       placeholder={`Option ${index + 1}`}
@@ -134,7 +144,7 @@ export function Edit({ frame: frameFromRemote }: EditProps) {
                       onKeyDown={focusOnFirstEmptyOption}
                     />
                   </div>
-                  <div className="flex items-center gap-4 opacity-0 group-hover/poll:opacity-100 duration-100">
+                  <div className="flex items-center gap-4 opacity-100 group-hover/poll:opacity-100 duration-100">
                     <BsTrash3
                       onClick={() => deleteOption(index)}
                       className="text-black/25 hover:text-black/50 text-lg cursor-pointer"
@@ -158,6 +168,14 @@ export function Edit({ frame: frameFromRemote }: EditProps) {
           </Button>
         </div>
       </div>
-    </>
+    </div>
+  )
+}
+
+export function Edit({ frame }: { frame: PollFrame }) {
+  return (
+    <PollLayout imageConfig={frame.config.image}>
+      <PollEditor frame={frame} />
+    </PollLayout>
   )
 }

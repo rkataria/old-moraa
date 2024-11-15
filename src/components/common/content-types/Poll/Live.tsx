@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react'
 
+import { Chip } from '@nextui-org/react'
+
 import { AnonymousToggle } from './AnonymousToggle'
+import { PollLayout } from './PollLayout'
 import { PollResponse } from './PollResponse'
 import { PollVotes } from './PollVotes'
 import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
@@ -37,7 +40,7 @@ const isVoteAnonymous = (votes: Vote[], currentUser: any) => {
   )
 }
 
-export function Live({ frame }: LiveProps) {
+export function Polls({ frame }: LiveProps) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(false)
   const { currentUser } = useAuth()
@@ -92,15 +95,30 @@ export function Live({ frame }: LiveProps) {
 
   const showAnonymousToggle = canVote && frame.config.allowVoteAnonymously
 
+  const withImage = frame.config?.image?.url
+
   return (
     <div className="flex flex-col h-full">
-      <FrameTitleDescriptionPreview frame={frame} />
+      <FrameTitleDescriptionPreview
+        frame={frame}
+        afterTitle={
+          <Chip
+            variant="flat"
+            size="sm"
+            className="rounded-lg -translate-y-1.5 translate-x-4"
+            color={pollStarted ? 'success' : 'warning'}>
+            {pollStarted ? 'Poll is active' : 'Poll is closed'}
+          </Chip>
+        }
+      />
       <div
         className={cn('w-full h-full rounded-md relative', {
           'h-[31.875rem]':
             frame.config.visualization === 'vertical' && showResponses,
           'w-full max-w-[46rem]':
-            frame.config.visualization !== 'vertical' && showResponses,
+            frame.config.visualization !== 'vertical' &&
+            showResponses &&
+            !withImage,
           'mt-6':
             !showAnonymousToggle && frame.config.visualization !== 'vertical',
 
@@ -123,9 +141,7 @@ export function Live({ frame }: LiveProps) {
             }}
           />
         </RenderIf>
-        <p className="mb-4 font-medium text-base">
-          {pollStarted ? 'Poll is open' : 'Poll is closed'}
-        </p>
+
         {renderContent()}
         <RenderIf isTrue={voteButtonVisible}>
           <div className="flex justify-end mt-4">
@@ -145,5 +161,13 @@ export function Live({ frame }: LiveProps) {
         </RenderIf>
       </div>
     </div>
+  )
+}
+
+export function Live({ frame }: { frame: PollFrame }) {
+  return (
+    <PollLayout imageConfig={frame.config.image}>
+      <Polls frame={frame} />
+    </PollLayout>
   )
 }

@@ -469,8 +469,7 @@ export function EventsCreatePage() {
             WebkitTextFillColor: 'transparent',
           }}
           className="font-semibold">
-          {' '}
-          Course Creation tab.
+          Overview tab.
         </span>
       </p>
     </ThemeEffects>
