@@ -3,13 +3,18 @@ import { IoShareOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { cn } from '@/utils/utils'
 
 export function ScreenShareToggle() {
+  const { isHost } = useEventSession()
   const self = useDyteSelector((state) => state.self)
   const isScreenShared = useDyteSelector(
     (state) => state.self?.screenShareEnabled
   )
+
+  // ALlow only to share screen if the user is a host
+  if (!isHost) return null
 
   return (
     <ControlButton
@@ -17,10 +22,12 @@ export function ScreenShareToggle() {
         isIconOnly: true,
         radius: 'md',
         size: 'sm',
-        variant: 'flat',
+        variant: 'light',
         className: cn('live-button', {
           active: isScreenShared,
         }),
+        disableAnimation: true,
+        disableRipple: true,
       }}
       tooltipProps={{
         label: isScreenShared ? 'Stop Screen Share' : 'Start Screen Share',
@@ -34,7 +41,7 @@ export function ScreenShareToggle() {
 
         await self.enableScreenShare()
       }}>
-      <IoShareOutline size={20} />
+      <IoShareOutline size={18} />
     </ControlButton>
   )
 }

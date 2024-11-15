@@ -1,4 +1,4 @@
-import { LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu'
+import { AiOutlineMenu } from 'react-icons/ai'
 
 import { Tooltip } from '../ShortuctTooltip'
 
@@ -23,9 +23,9 @@ export function AgendaPanelToggle({
         variant="light"
         onClick={onToggle}>
         {!collapsed ? (
-          <LuPanelLeftClose size={20} strokeWidth={1.2} />
+          <AiOutlineMenu size={20} strokeWidth={1.2} />
         ) : (
-          <LuPanelLeftOpen size={20} strokeWidth={1.2} />
+          <AiOutlineMenu size={20} strokeWidth={1.2} />
         )}
       </Button>
     </Tooltip>

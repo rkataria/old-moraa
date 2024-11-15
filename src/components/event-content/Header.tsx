@@ -43,22 +43,12 @@ export function Header({
       <AIChatbotToggleButton />
       <PreviewSwitcher />
 
-      {/* <HelpButton /> */}
       <AddParticipantsButtonWithModal eventId={event.id} />
       <RenderIf
         isTrue={
           event.status !== EventStatus.DRAFT && permissions.canUpdateFrame
-        }>
-        {/* <ScheduleEventButtonWithModal
-          buttonProps={{
-            variant: 'bordered',
-            className: 'border-1',
-          }}
-          showLabel
-          id="re-schedule"
-          actionButtonLabel="Re-schedule"
-        /> */}
-      </RenderIf>
+        }
+      />
 
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
       <PublishButton

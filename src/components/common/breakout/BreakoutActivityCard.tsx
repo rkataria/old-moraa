@@ -103,10 +103,12 @@ export function BreakoutRoomActivityCard({
 
   return (
     <div
-      style={{
-        background: 'linear-gradient(123deg, #EBDFFF 0.31%, #F8F4FF 69.5%)',
-      }}
-      className="border rounded-xl"
+      style={
+        {
+          // background: 'linear-gradient(123deg, #EBDFFF 0.31%, #F8F4FF 69.5%)',
+        }
+      }
+      className="border rounded-xl bg-white"
       key={breakout?.name}>
       <div className="flex justify-between items-center gap-4 px-3">
         <EditableLabel
@@ -147,7 +149,7 @@ export function BreakoutRoomActivityCard({
       <RenderIf isTrue={!hideActivityCard}>
         <div
           className={cn(
-            'border border-gray-100 text-gray-400 m-1 bg-white rounded-xl aspect-video'
+            'border border-gray-100 text-gray-400 m-1 bg-[#f9f6ff] rounded-xl aspect-video'
           )}>
           <RenderIf isTrue={breakout?.activityId}>
             <div

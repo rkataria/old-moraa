@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux'
 import { ContentStudio } from './ContentStudio'
 import { Header } from './Header'
 import { LandingPage } from './LandingPage'
-import { BackgroundContainer } from '../BackgroundContainer'
 
 import { SessionPlanner } from '@/components/event-content/overview-frame/SessionPlanner/SessionPlanner'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -53,18 +52,11 @@ export function StudioLayout({ header }: StudioLayoutProps) {
   }
 
   return (
-    <BackgroundContainer
-      animateLogo={false}
-      gradientStyle="#fff"
-      showLogo={false}>
-      <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden backdrop-blur-3xl">
-        <div className="flex-none w-full sticky top-0 z-50">
-          <Header>{header}</Header>
-        </div>
-        <div className="flex-auto w-full overflow-hidden">
-          {renderContent()}
-        </div>
+    <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-live">
+      <div className="flex-none w-full sticky top-0 z-50">
+        <Header>{header}</Header>
       </div>
-    </BackgroundContainer>
+      <div className="flex-auto w-full overflow-hidden">{renderContent()}</div>
+    </div>
   )
 }

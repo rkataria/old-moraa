@@ -18,7 +18,7 @@
     @apply scroll-smooth;
   }
   body {
-    @apply bg-background text-foreground font-inter text-sm;
+    @apply bg-background text-foreground font-poppins text-sm;
   }
 }
 
@@ -85,6 +85,14 @@
 
   .live-button.active {
     @apply !text-primary !opacity-100;
+  }
+
+  .studio-button {
+    @apply !bg-gray-50 !border-1 !border-gray-200 hover:!bg-white !text-gray-500 !text-sm;
+  }
+
+  .studio-button.active {
+    @apply !bg-white !border-1 !border-primary !text-primary;
   }
 }
 
@@ -432,6 +440,14 @@ input[type='number']::-webkit-outer-spin-button {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 200 200'%3E%3Cpolygon fill='%23E9D5FF' fill-opacity='0.43' points='100 0 0 100 100 100 100 200 200 100 200 0'/%3E%3C/svg%3E");
 }
 
+.bg-live {
+  background: rgb(233,221,255);
+  background: -moz-linear-gradient(180deg, rgba(233,221,255,1) 0%, rgba(249,246,255,1) 100%);
+  background: -webkit-linear-gradient(180deg, rgba(233,221,255,1) 0%, rgba(249,246,255,1) 100%);
+  background: linear-gradient(180deg, rgba(233,221,255,1) 0%, rgba(249,246,255,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#e9ddff",endColorstr="#f9f6ff",GradientType=1);
+}
+
 /* Selection Color */
 *::selection {
   background: #7c3aed;
@@ -466,6 +482,12 @@ input[type='number']::-webkit-outer-spin-button {
   margin: 0 !important;
 }
 
+
+
+
+/****************************************/
+/* Dyte Custom Styles */
+/****************************************/
 
 /* Dyte Notification */
 dyte-notifications {

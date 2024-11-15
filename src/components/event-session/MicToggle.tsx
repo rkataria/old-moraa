@@ -42,13 +42,15 @@ export function MicToggle({ className = '' }: { className?: string }) {
         className: cn('live-button', className, {
           '!text-red-500 hover:!text-red-500': !isMicEnabled,
         }),
+        disableAnimation: true,
+        disableRipple: true,
       }}
       tooltipProps={{
         label: KeyboardShortcuts.Live.muteUnmute.label,
         actionKey: KeyboardShortcuts.Live.muteUnmute.key,
       }}
       onClick={handleMic}>
-      {isMicEnabled ? <IoMicOutline size={20} /> : <IoMicOff size={20} />}
+      {isMicEnabled ? <IoMicOutline size={18} /> : <IoMicOff size={18} />}
     </ControlButton>
   )
 }

@@ -57,6 +57,16 @@ export function ContentStudioContentContainer() {
       )
     }
 
+    if (permissions.canUpdateFrame) {
+      return (
+        <EmptyPlaceholder
+          icon={<GrEmptyCircle size={96} />}
+          title="No frame selected"
+          description="Select a frame to get started"
+        />
+      )
+    }
+
     if (publishedFrameCount === 0) {
       return (
         <EmptyPlaceholder

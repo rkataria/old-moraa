@@ -2,6 +2,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io'
 import { RiPlayCircleFill, RiStopCircleFill } from 'react-icons/ri'
 
+import { FrameSmartControlsPopover } from '../event-session/FrameSmartControlsPopover/FrameSmartControlsPopover'
 import { Button } from '../ui/Button'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -36,40 +37,53 @@ export function PresentationControls() {
     { enabled: isHost }
   )
 
-  if (!currentFrame) return <div />
+  // Allow only host to control the presentation
+  if (!isHost) return null
+
+  if (!currentFrame) return null
 
   const presentationStarted =
     presentationStatus === PresentationStatuses.STARTED
 
   return (
-    <div className="flex justify-end items-center gap-2">
+    <div className="flex justify-end items-center -mx-2">
       <Button
         isIconOnly
         size="sm"
         className="live-button"
         variant="light"
+        disableRipple
+        disableAnimation
         onClick={previousFrame}>
-        <IoIosArrowBack size={20} />
+        <IoIosArrowBack size={18} />
       </Button>
-      <Button
-        isIconOnly
-        size="sm"
-        className={cn('rounded-md bg-white scale-150 hover:bg-transparent')}
-        variant="light"
-        onClick={handlePresentationToggle}>
-        {presentationStarted ? (
-          <RiStopCircleFill size={28} className="text-red-500" />
-        ) : (
-          <RiPlayCircleFill size={28} className="text-green-500" />
-        )}
-      </Button>
+      <FrameSmartControlsPopover
+        trigger={
+          <Button
+            isIconOnly
+            size="md"
+            disableRipple
+            disableAnimation
+            className={cn('rounded-md bg-transparent hover:bg-transparent')}
+            variant="light"
+            onClick={handlePresentationToggle}>
+            {presentationStarted ? (
+              <RiStopCircleFill size={32} className="text-red-500" />
+            ) : (
+              <RiPlayCircleFill size={32} className="text-foreground" />
+            )}
+          </Button>
+        }
+      />
       <Button
         isIconOnly
         size="sm"
         className="live-button"
         variant="light"
+        disableRipple
+        disableAnimation
         onClick={nextFrame}>
-        <IoIosArrowForward size={20} />
+        <IoIosArrowForward size={18} />
       </Button>
     </div>
   )

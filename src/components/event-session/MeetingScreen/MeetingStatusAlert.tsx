@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
+import { motion } from 'framer-motion'
+
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
@@ -8,7 +10,6 @@ import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventSessionMode } from '@/types/event-session.type'
-import { FrameType } from '@/utils/frame-picker.util'
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 export function MeetingStatusAlert() {
@@ -34,128 +35,105 @@ export function MeetingStatusAlert() {
   const visibleBackToBreakout =
     sessionBreakoutFrameId && sessionBreakoutFrameId !== currentFrame?.id
 
-  const renderContent = () => {
-    if (isHost && isBreakoutStarted) {
-      return (
-        <div
-          className="flex items-center p-4 py-2 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
-          role="alert">
-          <svg
-            className="flex-shrink-0 inline w-4 h-4 me-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-          </svg>
-          <div>
-            You&apos;ve started <strong>breakout</strong> session.{' '}
-            <RenderIf isTrue={!!visibleBackToBreakout}>
-              <Button
-                className="bg-danger-500 text-white mx-2 h-6"
-                onClick={() => {
-                  setCurrentFrame(
-                    getFrameById(sessionBreakoutFrameId as string)
-                  )
-                }}>
-                View Breakout
-              </Button>
-            </RenderIf>
-          </div>
-        </div>
-      )
-    }
-    if (isInBreakoutMeeting) {
-      return (
-        <div
-          className="flex items-center p-4 py-2 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
-          role="alert">
-          <svg
-            className="flex-shrink-0 inline w-4 h-4 me-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-          </svg>
-          <div>
-            You are in <strong>breakout</strong> session.
-          </div>
-        </div>
-      )
-    }
-    if (eventSessionMode === EventSessionMode.PEEK) {
-      return (
-        <div
-          className="flex items-center p-4 py-2 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
-          role="alert">
-          <svg
-            className="flex-shrink-0 inline w-4 h-4 me-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-          </svg>
-          <span className="sr-only">Info</span>
-          <div>
-            You are in <strong>peek mode</strong>. Frames are not being shared
-            with participants.{' '}
-            <RenderIf isTrue={!currentFrame}>
-              Select a frame to start presentation.
-            </RenderIf>
-            <RenderIf isTrue={!!currentFrame}>
-              <Button
-                className="bg-primary text-white mx-2 h-6"
-                onClick={() => {
-                  if (!currentFrame) return
-                  startPresentation(currentFrame.id)
-                }}>
-                Share Frame
-              </Button>
-              or
-            </RenderIf>
+  if (isHost && isBreakoutStarted) {
+    return (
+      <MeetingStatusAlertContainer
+        title="Breakout Session"
+        description={
+          isHost
+            ? 'Breakout session started'
+            : 'Breakout session started by host'
+        }
+        actions={[
+          <RenderIf isTrue={!!visibleBackToBreakout}>
             <Button
-              className="bg-red-500 text-white mx-2 h-6"
+              className="bg-danger-500 text-white mx-2 h-6"
               onClick={() => {
-                dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
+                setCurrentFrame(getFrameById(sessionBreakoutFrameId as string))
               }}>
-              Go to Lobby
+              View Breakout
             </Button>
-          </div>
-        </div>
-      )
-    }
-
-    if (eventSessionMode === EventSessionMode.PRESENTATION) {
-      return (
-        <div
-          className="flex items-center p-4 py-2 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-          role="alert">
-          <svg
-            className="flex-shrink-0 inline w-4 h-4 me-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-          </svg>
-          <span className="sr-only">Info</span>
-          <div>
-            You are in <strong>presentation mode</strong>.{' '}
-            <RenderIf
-              isTrue={!!(currentFrame?.type === FrameType.BREAKOUT && isHost)}>
-              This is a breakout frame and you can{' '}
-              {isBreakoutStarted ? 'end' : 'start'} a breakout session from
-              bottom.
-            </RenderIf>
-          </div>
-        </div>
-      )
-    }
-
-    return null
+          </RenderIf>,
+        ]}
+      />
+    )
+  }
+  if (isInBreakoutMeeting) {
+    return (
+      <MeetingStatusAlertContainer
+        title="Breakout Session"
+        description="You are in a breakout session and you can see the shared frames."
+      />
+    )
+  }
+  if (eventSessionMode === EventSessionMode.PEEK) {
+    return (
+      <MeetingStatusAlertContainer
+        title="Peek Mode"
+        description="Frames are not being shared with participants."
+        actions={[
+          <RenderIf isTrue={!!currentFrame}>
+            <Button
+              variant="bordered"
+              color="primary"
+              onClick={() => {
+                if (!currentFrame) return
+                startPresentation(currentFrame.id)
+              }}>
+              Share Frame
+            </Button>
+          </RenderIf>,
+          <Button
+            color="danger"
+            onClick={() => {
+              dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
+            }}>
+            Go to Lobby
+          </Button>,
+        ]}
+      />
+    )
   }
 
-  return <div className="w-fit py-2 mx-auto">{renderContent()}</div>
+  return null
+}
+
+function MeetingStatusAlertContainer({
+  title,
+  description,
+  actions,
+}: {
+  title?: string
+  description?: string
+  actions?: React.ReactNode[]
+}) {
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: -20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      exit={{
+        opacity: 0,
+        y: -20,
+      }}
+      transition={{
+        duration: 0.3,
+      }}
+      className="w-fit max-w-[50vw] py-2 px-4 mt-1 mx-auto flex justify-start items-center gap-8 bg-white rounded-md">
+      <div className="flex flex-col gap-1 flex-auto">
+        {title && <span className="text-sm font-semibold">{title}</span>}
+        {description && (
+          <p className="text-xs text-gray-700 line-clamp-1">{description}</p>
+        )}
+      </div>
+      <div className="flex justify-end items-center gap-2 flex-1">
+        {actions}
+      </div>
+    </motion.div>
+  )
 }

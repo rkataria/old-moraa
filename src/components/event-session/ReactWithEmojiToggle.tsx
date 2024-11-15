@@ -79,12 +79,13 @@ export function ReactWithEmojiToggle() {
           <ControlButton
             buttonProps={{
               isIconOnly: true,
-              radius: 'md',
               size: 'sm',
               variant: 'flat',
               className: cn('live-button', {
                 active: isOpen,
               }),
+              disableAnimation: true,
+              disableRipple: true,
             }}
             tooltipProps={{
               label: KeyboardShortcuts.Live.emoji.label,
@@ -93,7 +94,7 @@ export function ReactWithEmojiToggle() {
             onClick={() => {
               setIsOpen((o) => !o)
             }}>
-            {isOpen ? <IoHappy size={20} /> : <IoHappyOutline size={20} />}
+            {isOpen ? <IoHappy size={18} /> : <IoHappyOutline size={18} />}
           </ControlButton>
         </div>
       </PopoverTrigger>

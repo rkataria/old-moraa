@@ -42,6 +42,8 @@ export function VideoToggle({ className = '' }: { className?: string }) {
         className: cn('live-button', className, {
           '!text-red-500 hover:!text-red-500': !isVideoEnabled,
         }),
+        disableAnimation: true,
+        disableRipple: true,
       }}
       tooltipProps={{
         label: KeyboardShortcuts.Live.startAndStopVideo.label,
@@ -49,9 +51,9 @@ export function VideoToggle({ className = '' }: { className?: string }) {
       }}
       onClick={handleVideo}>
       {isVideoEnabled ? (
-        <BsCameraVideo size={20} />
+        <BsCameraVideo size={18} />
       ) : (
-        <BsFillCameraVideoOffFill size={20} />
+        <BsFillCameraVideoOffFill size={18} />
       )}
     </ControlButton>
   )

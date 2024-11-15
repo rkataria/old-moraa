@@ -59,27 +59,25 @@ export function NoteToggle() {
     return (
       <ControlButton
         buttonProps={{
-          size: 'md',
+          size: 'sm',
           variant: 'light',
           disableRipple: true,
           disableAnimation: true,
-          className: cn('live-button -mx-2', {
+          className: cn('live-button', {
             active: isNotesSidebarOpen,
           }),
+          startContent: isNotesSidebarOpen ? (
+            <TbBubbleFilled size={18} />
+          ) : (
+            <TbBubbleText size={18} />
+          ),
         }}
         tooltipProps={{
           label: KeyboardShortcuts.Live.notes.label,
           actionKey: KeyboardShortcuts.Live.notes.key,
         }}
         onClick={handleNoteToggle}>
-        <div className="flex flex-col justify-center items-center py-1">
-          {isNotesSidebarOpen ? (
-            <TbBubbleFilled size={20} />
-          ) : (
-            <TbBubbleText size={20} />
-          )}
-          Note
-        </div>
+        Note
       </ControlButton>
     )
   }

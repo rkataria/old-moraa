@@ -60,10 +60,9 @@ export function PreviewSwitcher() {
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
     <div
       className={cn(
-        'flex items-center gap-1 h-8 bg-transparent border-1 p-2 rounded-md cursor-pointer',
+        'flex items-center gap-1 h-7 p-2 rounded-md cursor-pointer studio-button',
         {
-          'bg-primary-50 border-primary-300': !preview,
-          'bg-transparent border-gray-200': preview,
+          active: !preview,
         }
       )}
       onClick={handlePreviewSwitcher}>
@@ -82,13 +81,7 @@ export function PreviewSwitcher() {
           ),
         }}
       />
-      <p
-        className={cn({
-          'text-gray-500': preview,
-          'text-primary-500': !preview,
-        })}>
-        Editable
-      </p>
+      <p>Editable</p>
     </div>
   )
 }

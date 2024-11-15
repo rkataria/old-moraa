@@ -77,7 +77,7 @@ export function Live() {
   return (
     <>
       <FrameTitleDescriptionPreview frame={currentFrame as IFrame} />
-      <div className="w-full h-full flex justify-start items-start bg-white rounded-md">
+      <div className="w-full h-full flex justify-start items-start rounded-md">
         <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-4">
           {isHost ? <HostView /> : <ParticipantView />}
         </div>

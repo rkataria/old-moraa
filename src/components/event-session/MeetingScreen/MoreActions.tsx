@@ -56,7 +56,7 @@ export function MoreActions() {
 
   return (
     <>
-      <Dropdown offset={16} onOpenChange={setOpen}>
+      <Dropdown offset={10} onOpenChange={setOpen}>
         <DropdownTrigger>
           <Button
             variant="light"

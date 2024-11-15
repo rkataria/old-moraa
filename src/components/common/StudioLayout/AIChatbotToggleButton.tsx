@@ -38,8 +38,8 @@ export function ToggleButton() {
         isIconOnly
         onClick={toggleSidebar}
         variant="light"
-        className={cn('cursor-pointer', {
-          'text-primary': resizableRightSidebarVisibility === 'ai-chat',
+        className={cn('cursor-pointer studio-button', {
+          active: resizableRightSidebarVisibility === 'ai-chat',
         })}>
         <LuSparkles size={18} strokeWidth={1.2} />
       </Button>

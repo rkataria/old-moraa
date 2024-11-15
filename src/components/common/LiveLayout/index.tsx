@@ -22,15 +22,7 @@ export function LiveLayout({
   footer,
 }: LiveLayoutProps) {
   return (
-    <div
-      className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-white"
-      style={
-        {
-          // backgroundImage:
-          //   'radial-gradient(73% 147%, #EADFDF 59%, #ECE2DF 100%), radial-gradient(91% 146%, rgba(255,255,255,0.50) 47%, rgba(0,0,0,0.50) 100%)',
-          // backgroundBlendMode: 'screen',
-        }
-      }>
+    <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-live">
       <Header>{header}</Header>
       <div className="flex-auto flex justify-start items-start gap-4 w-full overflow-hidden pb-3">
         <LeftSidebar>{leftSidebar}</LeftSidebar>

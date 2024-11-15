@@ -11,9 +11,9 @@ export const Button = extendVariants(NextUIButton, {
       default: 'bg-gray-100 hover:bg-opacity-90',
     },
     size: {
-      sm: 'rounded-md text-md h-8',
-      md: 'rounded-md text-md h-10',
-      lg: 'rounded-md text-base h-12',
+      sm: 'rounded-md text-sm h-7',
+      md: 'rounded-md text-md h-9',
+      lg: 'rounded-md text-base h-11',
     },
   },
   defaultVariants: {

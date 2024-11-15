@@ -72,7 +72,7 @@ export function Header() {
             <Logo />
           )}
         </div>
-        <div className="pr-2 pl-1 w-32 text-ellipsis font-medium flex justify-start items-center line-clamp-1">
+        <div className="pr-2 pl-1 max-w-32 text-ellipsis font-medium flex justify-start items-center line-clamp-1">
           {dyteClient?.meta?.meetingTitle || event.name}
         </div>
         <DyteClock
@@ -85,21 +85,21 @@ export function Header() {
       </div>
       <div className="flex-1 flex justify-end items-center gap-2 h-full">
         <Timer />
-        <ChatsToggle
-          isChatsSidebarOpen={rightSidebarMode === 'chat'}
-          onClick={() => {
-            handleSidebarOpen({
-              activeSidebar: true,
-              sidebar: 'chat',
-            })
-          }}
-        />
         <ParticipantsToggle
           isParticipantsSidebarOpen={rightSidebarMode === 'participants'}
           onClick={() => {
             handleSidebarOpen({
               activeSidebar: true,
               sidebar: 'participants',
+            })
+          }}
+        />
+        <ChatsToggle
+          isChatsSidebarOpen={rightSidebarMode === 'chat'}
+          onClick={() => {
+            handleSidebarOpen({
+              activeSidebar: true,
+              sidebar: 'chat',
             })
           }}
         />

@@ -1,5 +1,5 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoPeople, IoPeopleOutline } from 'react-icons/io5'
+import { BsPeople, BsPeopleFill } from 'react-icons/bs'
 
 import { ControlButton } from '../common/ControlButton'
 
@@ -22,27 +22,25 @@ export function ParticipantsToggle({
   return (
     <ControlButton
       buttonProps={{
-        size: 'md',
+        size: 'sm',
         variant: 'light',
         disableRipple: true,
         disableAnimation: true,
-        className: cn('live-button -mx-2', {
+        className: cn('live-button', {
           active: isParticipantsSidebarOpen,
         }),
+        startContent: isParticipantsSidebarOpen ? (
+          <BsPeopleFill size={18} />
+        ) : (
+          <BsPeople size={18} />
+        ),
       }}
       tooltipProps={{
         label: KeyboardShortcuts.Live.participants.label,
         actionKey: KeyboardShortcuts.Live.participants.key,
       }}
       onClick={onClick}>
-      <div className="flex flex-col justify-center items-center py-1">
-        {isParticipantsSidebarOpen ? (
-          <IoPeople size={20} />
-        ) : (
-          <IoPeopleOutline size={20} />
-        )}
-        People
-      </div>
+      People
     </ControlButton>
   )
 }
