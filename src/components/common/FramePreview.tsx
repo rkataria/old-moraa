@@ -24,7 +24,7 @@ import { RoomProvider } from '@/contexts/RoomProvider'
 import { type MoraaBoardFrame } from '@/types/frame-picker.type'
 import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
-import { cn, getOjectPublicUrl } from '@/utils/utils'
+import { cn, getObjectPublicUrl } from '@/utils/utils'
 
 interface FrameProps {
   frame: IFrame
@@ -63,7 +63,7 @@ export function FramePreview({
     [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
     [FrameType.VIDEO_EMBED]: <VideoEmbedFrame frame={frame} asThumbnail />,
     [FrameType.IMAGE_VIEWER]: (
-      <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
+      <ImageViewer src={getObjectPublicUrl(frame.content?.path as string)} />
     ),
     [FrameType.RICH_TEXT]: (
       <RichTextFrame

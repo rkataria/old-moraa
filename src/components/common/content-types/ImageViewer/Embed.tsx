@@ -2,19 +2,20 @@ import { useState } from 'react'
 
 import { Image, Skeleton } from '@nextui-org/react'
 
-import { getOjectPublicUrl } from '@/utils/utils'
+import { getObjectPublicUrl } from '@/utils/utils'
 
 type EmbedProps = {
   path: string
+  publicUrl?: string
 }
 
-export function Embed({ path }: EmbedProps) {
+export function Embed({ path, publicUrl }: EmbedProps) {
   const [loading, setLoading] = useState(true)
 
   return (
     <div className="relative flex justify-center items-center aspect-video w-full">
       <Image
-        src={getOjectPublicUrl(path as string)}
+        src={publicUrl ?? getObjectPublicUrl(path as string)}
         loading="eager"
         className="w-full aspect-video z-0"
         classNames={{ wrapper: 'h-full' }}

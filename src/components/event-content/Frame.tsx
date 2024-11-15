@@ -26,7 +26,7 @@ import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
-import { cn, getOjectPublicUrl } from '@/utils/utils'
+import { cn, getObjectPublicUrl } from '@/utils/utils'
 
 interface FrameProps {
   frame: IFrame
@@ -53,7 +53,7 @@ export function Frame({ frame }: FrameProps) {
     [FrameType.REFLECTION]: <ReflectionEditor frame={frame} />,
     [FrameType.VIDEO_EMBED]: <VideoEmbedFrame frame={frame as any} />,
     [FrameType.IMAGE_VIEWER]: (
-      <ImageViewer src={getOjectPublicUrl(frame.content?.path as string)} />
+      <ImageViewer src={getObjectPublicUrl(frame.content?.path as string)} />
     ),
     [FrameType.RICH_TEXT]: <RichTextFrame frame={frame} />,
     [FrameType.MIRO_EMBED]: <MiroEmbedEditor frame={frame as any} />,

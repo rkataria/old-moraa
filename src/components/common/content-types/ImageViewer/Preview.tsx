@@ -7,5 +7,10 @@ type PreviewProps = {
 }
 
 export function Preview({ frame }: PreviewProps) {
-  return <Embed path={frame.config.path} />
+  return (
+    <Embed
+      path={frame.content?.path as string}
+      publicUrl={frame.content?.url as string}
+    />
+  )
 }

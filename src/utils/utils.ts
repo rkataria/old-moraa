@@ -28,7 +28,7 @@ const formatToPaddedString = (value: number) =>
   // eslint-disable-next-line no-bitwise
   (~~value).toString().padStart(2, '0')
 
-export const getOjectPublicUrl = (objectPath: string) =>
+export const getObjectPublicUrl = (objectPath: string) =>
   `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${objectPath}`
 
 export const getFrameCount = (sections: ISection[]) =>

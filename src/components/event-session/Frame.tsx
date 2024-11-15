@@ -25,7 +25,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { IPollResponse, IReflectionResponse, Vote } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
-import { getOjectPublicUrl } from '@/utils/utils'
+import { getObjectPublicUrl } from '@/utils/utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const checkVoted = (
@@ -75,7 +75,7 @@ export function Frame() {
     [FrameType.IMAGE_VIEWER]: (
       <ImageViewer
         key={currentFrame.id}
-        src={getOjectPublicUrl(currentFrame.content?.path as string)}
+        src={getObjectPublicUrl(currentFrame.content?.path as string)}
       />
     ),
     [FrameType.RICH_TEXT]: <RichTextLive frame={currentFrame} />,
