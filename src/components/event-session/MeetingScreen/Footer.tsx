@@ -10,6 +10,7 @@ import { ScreenShareToggle } from '../ScreenShareToggle'
 import { VideoToggle } from '../VideoToggle'
 
 import { AskForHelpButton } from '@/components/common/breakout/AskForHelpButton'
+import { BreakoutButton } from '@/components/common/breakout/BreakoutButton'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { PresentationControls } from '@/components/common/PresentationControls'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -78,12 +79,7 @@ export function Footer() {
           <ReactWithEmojiToggle />
           <RaiseHandToggle />
           <AppsToggle />
-          {/* {isHost && (
-            <>
-              <MeetingRecordingButton />
-              <BreakoutButton />
-            </>
-          )} */}
+          {isHost && <BreakoutButton />}
           {!isHost &&
           isBreakoutActive &&
           isCurrentDyteMeetingInABreakoutRoom ? (

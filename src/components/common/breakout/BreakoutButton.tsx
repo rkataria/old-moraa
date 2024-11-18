@@ -111,12 +111,6 @@ export function BreakoutButton() {
     if (!meetingId) return
 
     try {
-      await SessionService.deleteAllExistingBreakoutSessions({ meetingId })
-    } catch {
-      /* empty */
-    }
-
-    try {
       await breakoutRoomsInstance?.startBreakoutRooms({
         /*
          * Because the breakoutRooms array only exist on breakout room type so it won't get sent for a breakout group type

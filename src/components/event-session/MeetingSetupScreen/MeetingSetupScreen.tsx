@@ -21,10 +21,6 @@ import { useEvent } from '@/hooks/useEvent'
 import { useProfile } from '@/hooks/useProfile'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { getExistingOrCreateNewParticipantThunk } from '@/stores/thunks/participant.thunk'
-import {
-  getExistingOrCreateNewActiveSessionThunk,
-  getMeetingSessionThunk,
-} from '@/stores/thunks/session.thunk'
 
 export function MeetingSetupScreen() {
   const {
@@ -34,12 +30,6 @@ export function MeetingSetupScreen() {
     isRequiredNames,
   } = useProfile()
   const dispatch = useStoreDispatch()
-  const isMeetingOwner = useStoreSelector(
-    (state) => state.event.currentEvent.eventState.isCurrentUserOwnerOfEvent
-  )
-  const meetingId = useStoreSelector(
-    (state) => state.event.currentEvent.meetingState.meeting.data?.id
-  )
   const meetingSession = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.activeSession
   )
@@ -47,10 +37,6 @@ export function MeetingSetupScreen() {
   const { event } = useEvent({
     id: eventId as string,
   })
-  const isInBreakoutMeeting = useStoreSelector(
-    (state) =>
-      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
-  )
   const isParticipantLoading = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.participant.isLoading
   )
@@ -89,23 +75,6 @@ export function MeetingSetupScreen() {
       // selfParticipant.disableAudio()
     }
   }, [selfParticipant])
-
-  useEffect(() => {
-    if (!meetingId || isMeetingOwner === null) return
-    if (meetingSession.isLoading) return
-    if (meetingSession.isSuccess) return
-    if (isInBreakoutMeeting === true) return
-    if (isMeetingOwner) {
-      dispatch(getExistingOrCreateNewActiveSessionThunk(meetingId))
-    } else dispatch(getMeetingSessionThunk({ meetingId }))
-  }, [
-    dispatch,
-    isMeetingOwner,
-    meetingId,
-    meetingSession.isLoading,
-    meetingSession.isSuccess,
-    isInBreakoutMeeting,
-  ])
 
   const handleJoinMeeting = async () => {
     const response = await dispatch(
