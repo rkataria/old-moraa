@@ -19,7 +19,7 @@ export function PollLayout({
 
   if (imageConfig.position === 'left') {
     return (
-      <div className="grid grid-cols-[0.4fr_0.6fr] h-full gap-16 mr-2">
+      <div className="grid grid-cols-[0.4fr_0.6fr] h-full gap-16">
         <Image
           src={imageConfig.url}
           className="w-full h-full !rounded-r-none object-cover"
@@ -31,7 +31,7 @@ export function PollLayout({
   }
 
   return (
-    <div className="grid grid-cols-[0.6fr_0.4fr] h-full gap-16 mr-2">
+    <div className="grid grid-cols-[0.6fr_0.4fr] h-full gap-16">
       {children}
       <Image
         src={imageConfig.url}
