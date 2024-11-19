@@ -1,4 +1,5 @@
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { Chip } from '@nextui-org/react'
 import groupBy from 'lodash.groupby'
 
 import { Card } from './Card'
@@ -13,6 +14,7 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useProfile } from '@/hooks/useProfile'
+import { useStoreSelector } from '@/hooks/useRedux'
 
 const useParticipantName = () => {
   const { data: profile } = useProfile()
@@ -74,9 +76,31 @@ function HostView() {
 export function Live() {
   const { isHost, currentFrame } = useEventSession()
 
+  const session = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.activeSession.data
+  )
+
+  if (!currentFrame) return null
+
+  const reflectionStarted =
+    session?.data?.framesConfig?.[currentFrame.id]?.reflectionStarted
+
   return (
     <>
-      <FrameTitleDescriptionPreview frame={currentFrame as IFrame} />
+      <FrameTitleDescriptionPreview
+        frame={currentFrame as IFrame}
+        afterTitle={
+          <Chip
+            variant="flat"
+            size="sm"
+            className="rounded-lg -translate-y-1.5 translate-x-4"
+            color={reflectionStarted ? 'success' : 'warning'}>
+            {reflectionStarted
+              ? 'Reflection is active'
+              : 'Reflection is closed'}
+          </Chip>
+        }
+      />
       <div className="w-full h-full flex justify-start items-start rounded-md">
         <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-4">
           {isHost ? <HostView /> : <ParticipantView />}

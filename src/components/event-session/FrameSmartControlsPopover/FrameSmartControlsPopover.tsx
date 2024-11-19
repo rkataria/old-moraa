@@ -1,7 +1,5 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
-
 import { CommonControls } from './CommonControls'
 import { Controls, getControls } from './Controls'
 
@@ -10,31 +8,38 @@ import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { FrameType } from '@/utils/frame-picker.util'
 
-export function FrameSmartControlsPopover({
-  trigger,
-}: {
-  trigger: JSX.Element
-}) {
+export function FrameSmartControls() {
   const currentFrame = useCurrentFrame()
   const { presentationStatus } = useEventSession()
   const controls = getControls(currentFrame?.type as FrameType)
 
-  if (!controls) return trigger
+  if (!controls) return null
 
-  return (
-    <Popover
-      placement="bottom"
-      offset={12}
-      isOpen={presentationStatus === PresentationStatuses.STARTED}>
-      <PopoverTrigger>{trigger}</PopoverTrigger>
-      <PopoverContent className="p-0 w-fit">
-        <div className="p-2 h-11">
-          <div className="flex justify-start items-center gap-2">
-            <Controls />
-            <CommonControls />
-          </div>
+  if (presentationStatus === PresentationStatuses.STARTED) {
+    return (
+      <div className="p-2 h-11 absolute top-[-51px] left-[50%] translate-x-[-50%] bg-white rounded-lg">
+        <div className="flex justify-start items-center gap-2">
+          <Controls />
+          <CommonControls />
         </div>
-      </PopoverContent>
-    </Popover>
-  )
+      </div>
+    )
+  }
+
+  // return (
+  //   <Popover
+  //     placement="bottom"
+  //     offset={12}
+  //     isOpen={presentationStatus === PresentationStatuses.STARTED}>
+  //     <PopoverTrigger>{trigger}</PopoverTrigger>
+  //     <PopoverContent className="p-0 w-fit">
+  //       <div className="p-2 h-11">
+  //         <div className="flex justify-start items-center gap-2">
+  //           <Controls />
+  //           <CommonControls />
+  //         </div>
+  //       </div>
+  //     </PopoverContent>
+  //   </Popover>
+  // )
 }

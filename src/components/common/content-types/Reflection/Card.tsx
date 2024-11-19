@@ -10,16 +10,21 @@ import { AnimatePresence, motion } from 'framer-motion'
 import countBy from 'lodash.countby'
 import { VscReactions } from 'react-icons/vsc'
 
+import { RenderIf } from '../../RenderIf/RenderIf'
+
 import { EmojiPicker } from '@/components/common/EmojiPicker'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { FrameReaction } from '@/types/event-session.type'
 import { IReflectionResponse } from '@/types/frame.type'
 import { cn, getAvatarForName } from '@/utils/utils'
 
 type ReactionsProps = {
   responseId: CardProps['response']['id']
+  canReact: boolean
 }
-function Reactions({ responseId }: ReactionsProps) {
+function Reactions({ responseId, canReact }: ReactionsProps) {
   const { participant, emoteOnReflection, frameReactions } = useEventSession()
 
   // useEffect(() => {
@@ -94,23 +99,26 @@ function Reactions({ responseId }: ReactionsProps) {
           ))}
         </AnimatePresence>
       </div>
-
-      <div>
-        <EmojiPicker
-          triggerIcon={
-            <Button variant="light" className="w-[30px] h-[26px] p-0 min-w-fit">
-              <VscReactions
-                className="text-gray-400 mt-[0.0625rem]"
-                size={24}
-              />
-            </Button>
-          }
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onEmojiSelect={(selectedEmoji: any) =>
-            handleEmojiSelect(selectedEmoji.id)
-          }
-        />
-      </div>
+      <RenderIf isTrue={canReact}>
+        <div>
+          <EmojiPicker
+            triggerIcon={
+              <Button
+                variant="light"
+                className="w-[30px] h-[26px] p-0 min-w-fit">
+                <VscReactions
+                  className="text-gray-400 mt-[0.0625rem]"
+                  size={24}
+                />
+              </Button>
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onEmojiSelect={(selectedEmoji: any) =>
+              handleEmojiSelect(selectedEmoji.id)
+            }
+          />
+        </div>
+      </RenderIf>
     </div>
   )
 }
@@ -134,6 +142,7 @@ export function Card({
     anonymous: isAnonymous = false,
   } = response.response
   const responseId = response.id
+  const currentFrame = useCurrentFrame()
 
   const getAvatar = () => {
     if (isAnonymous) {
@@ -142,6 +151,15 @@ export function Card({
 
     return getAvatarForName(username, avatarUrl)
   }
+
+  const session = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.activeSession.data
+  )
+
+  const reflectionStarted =
+    session?.data?.framesConfig?.[currentFrame?.id || '']?.reflectionStarted
+
+  const editable = isOwner && reflectionStarted
 
   return (
     <NextUICard className="rounded-2xl shadow-md border border-gray-50">
@@ -162,18 +180,18 @@ export function Card({
       <CardBody className="pt-0 px-4 flex flex-col justify-between">
         <div className="w-full">
           <p className="text-base text-gray-800">{reflection}</p>
-          {isOwner && (
+          <RenderIf isTrue={editable}>
             <Button
               variant="light"
               onClick={enableEditReflection}
               className="w-auto p-0 min-w-fit mt-2.5 h-auto text-xs text-slate-400 hover:text-primary !bg-transparent">
               <span>Edit</span>
             </Button>
-          )}
+          </RenderIf>
         </div>
         <div className="mt-6">
           {/* <Divider className="my-3" /> */}
-          <Reactions responseId={responseId} />
+          <Reactions responseId={responseId} canReact={reflectionStarted} />
         </div>
       </CardBody>
     </NextUICard>

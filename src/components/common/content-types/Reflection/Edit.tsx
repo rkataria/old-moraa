@@ -12,7 +12,7 @@ interface EditProps {
 
 export function Edit({ frame }: EditProps) {
   return (
-    <div className="w-full h-full flex flex-col gap-20">
+    <div className="w-full h-full flex flex-col">
       <FrameTitleDescriptionPanel key={frame.id} />
 
       <Responses

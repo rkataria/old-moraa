@@ -2,7 +2,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io'
 import { RiPlayCircleFill, RiStopCircleFill } from 'react-icons/ri'
 
-import { FrameSmartControlsPopover } from '../event-session/FrameSmartControlsPopover/FrameSmartControlsPopover'
+import { FrameSmartControls } from '../event-session/FrameSmartControlsPopover/FrameSmartControlsPopover'
 import { Button } from '../ui/Button'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -46,7 +46,7 @@ export function PresentationControls() {
     presentationStatus === PresentationStatuses.STARTED
 
   return (
-    <div className="flex justify-end items-center -mx-2">
+    <div className="relative flex justify-end items-center -mx-2">
       <Button
         isIconOnly
         size="sm"
@@ -57,24 +57,21 @@ export function PresentationControls() {
         onClick={previousFrame}>
         <IoIosArrowBack size={18} />
       </Button>
-      <FrameSmartControlsPopover
-        trigger={
-          <Button
-            isIconOnly
-            size="md"
-            disableRipple
-            disableAnimation
-            className={cn('rounded-md bg-transparent hover:bg-transparent')}
-            variant="light"
-            onClick={handlePresentationToggle}>
-            {presentationStarted ? (
-              <RiStopCircleFill size={32} className="text-red-500" />
-            ) : (
-              <RiPlayCircleFill size={32} className="text-foreground" />
-            )}
-          </Button>
-        }
-      />
+      <Button
+        isIconOnly
+        size="md"
+        disableRipple
+        disableAnimation
+        className={cn('rounded-md bg-transparent hover:bg-transparent')}
+        variant="light"
+        onClick={handlePresentationToggle}>
+        {presentationStarted ? (
+          <RiStopCircleFill size={32} className="text-red-500" />
+        ) : (
+          <RiPlayCircleFill size={32} className="text-foreground" />
+        )}
+      </Button>
+      <FrameSmartControls />
       <Button
         isIconOnly
         size="sm"
