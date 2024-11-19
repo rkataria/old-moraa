@@ -8,14 +8,15 @@ import { SessionModel } from '@/types/models'
 
 export const getExistingOrCreateNewActiveSessionThunk = createAsyncThunk<
   SessionModel,
-  string
+  { dyteMeetingId?: string; meetingId?: string }
 >(
   'liveSession/getExistingOrCreateNewActiveSession',
-  async (meetingId: string) => {
+  async ({ meetingId, dyteMeetingId }) => {
     const defaultSessionData: SessionState = {
       presentationStatus: PresentationStatuses.STOPPED,
     }
     const session = await SessionService.getExistingOrCreateNewActiveSession({
+      dyteMeetingId,
       meetingId,
       defaultData: defaultSessionData,
     })
@@ -27,18 +28,15 @@ export const getExistingOrCreateNewActiveSessionThunk = createAsyncThunk<
 export const getMeetingSessionThunk = createAsyncThunk<
   SessionModel,
   {
-    meetingId: string
-    connectedDyteMeetingId?: string
+    meetingId?: string
+    dyteMeetingId?: string
   }
->(
-  'liveSession/getMeetingSession',
-  async ({ meetingId, connectedDyteMeetingId }) => {
-    const session = await SessionService.getActiveSession({
-      meetingId,
-      connectedDyteMeetingId,
-      status: 'LIVE',
-    })
+>('liveSession/getMeetingSession', async ({ meetingId, dyteMeetingId }) => {
+  const session = await SessionService.getActiveSession({
+    meetingId,
+    connectedDyteMeetingId: dyteMeetingId,
+    status: 'ACTIVE',
+  })
 
-    return session.data || null
-  }
-)
+  return (session.data as SessionModel) || null
+})
