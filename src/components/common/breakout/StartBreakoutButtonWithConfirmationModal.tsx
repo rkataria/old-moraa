@@ -12,16 +12,15 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react'
+import { VscMultipleWindows } from 'react-icons/vsc'
 
-import { ControlButton } from '../ControlButton'
-
+import { AppsDropdownMenuItem } from '@/components/event-session/AppsDropdownMenuItem'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import {
   notificationDuration,
   notifyBreakoutEnd,
   notifyBreakoutStart,
 } from '@/utils/breakout-notify.utils'
-import { cn } from '@/utils/utils'
 
 export function StartBreakoutButtonWithConfirmationModal({
   onStartBreakoutClick,
@@ -213,18 +212,12 @@ export function StartBreakoutButtonWithConfirmationModal({
 
   return (
     <div>
-      <ControlButton
-        tooltipProps={{
-          content: label,
-        }}
-        buttonProps={{
-          size: 'sm',
-          variant: 'solid',
-          className: cn('gap-2 justify-between'),
-        }}
-        onClick={() => setOpen(true)}>
-        {label}
-      </ControlButton>
+      <AppsDropdownMenuItem
+        icon={<VscMultipleWindows size={24} />}
+        title={label}
+        description="Start breakout session as planned."
+        onClick={() => setOpen(true)}
+      />
       <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
         <ModalContent>
           {(onClose) => (

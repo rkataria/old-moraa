@@ -52,7 +52,7 @@ export function StudioLayout({ header }: StudioLayoutProps) {
   }
 
   return (
-    <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-live">
+    <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-studio">
       <div className="flex-none w-full sticky top-0 z-50">
         <Header>{header}</Header>
       </div>

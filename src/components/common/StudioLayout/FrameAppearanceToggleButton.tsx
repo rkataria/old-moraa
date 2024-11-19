@@ -1,4 +1,4 @@
-import { HiOutlineColorSwatch } from 'react-icons/hi'
+import { HiColorSwatch, HiOutlineColorSwatch } from 'react-icons/hi'
 import { useDispatch } from 'react-redux'
 
 import { Tooltip } from '../ShortuctTooltip'
@@ -31,11 +31,15 @@ export function FrameAppearanceToggleButton() {
       <Button
         size="sm"
         isIconOnly
-        className={cn({
-          'bg-primary-100': isVisible,
+        className={cn('bg-transparent', {
+          'text-primary': isVisible,
         })}
         onClick={toggleSidebar}>
-        <HiOutlineColorSwatch size={18} />
+        {isVisible ? (
+          <HiColorSwatch size={18} />
+        ) : (
+          <HiOutlineColorSwatch size={18} />
+        )}
       </Button>
     </Tooltip>
   )

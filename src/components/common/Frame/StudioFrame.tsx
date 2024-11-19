@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from 'react'
+
+import ResizeObserver from 'rc-resize-observer'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from '../content-types/Breakout/Breakout'
+import { GoogleSlidesFrame } from '../content-types/GoogleSlides/GoogleSlides'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
 import { MiroEmbedFrame } from '../content-types/MiroEmbed/MiroEmbed'
 import { MoraaBoardFrame } from '../content-types/MoraaBoard/MoraaBoard'
+import { MoraaPadFrame } from '../content-types/MoraaPad/MoraaPad'
 import { MoraaSlideFrame } from '../content-types/MoraaSlide/MoraaSlide'
 import { PdfViewerFrame } from '../content-types/PdfViewer/PdfViewer'
 import { PollFrame } from '../content-types/Poll/Poll'
@@ -13,12 +18,13 @@ import { ReflectionFrame } from '../content-types/Reflection/Reflection'
 import { RichTextFrame } from '../content-types/RichText/RichText'
 import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
 
-import { GoogleSlidesFrame } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
-import { MoraaPadFrame } from '@/components/common/content-types/MoraaPad/MoraaPad'
 import { frameTypesWithTitle } from '@/components/event-content/FrameTitleDescriptionPanel'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { IFrame } from '@/types/frame.type'
-import { FrameType } from '@/utils/frame-picker.util'
+import {
+  FrameType,
+  isFrameHasVideoAspectRatio,
+} from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 type FrameContainerProps = {
@@ -26,6 +32,17 @@ type FrameContainerProps = {
 }
 
 export function StudioFrame({ frame }: FrameContainerProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerAspectRatio, setContainerAspectRatio] = useState(16 / 9)
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerAspectRatio(
+        containerRef.current.offsetWidth / containerRef.current.offsetHeight
+      )
+    }
+  }, [containerRef])
+
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.BREAKOUT]: <BreakoutFrame frame={frame as any} />,
     [FrameType.GOOGLE_SLIDES]: <GoogleSlidesFrame frame={frame as any} />,
@@ -33,7 +50,7 @@ export function StudioFrame({ frame }: FrameContainerProps) {
     [FrameType.MIRO_EMBED]: <MiroEmbedFrame frame={frame as any} />,
     [FrameType.MORAA_BOARD]: (
       <RoomProvider frameId={frame.id}>
-        <MoraaBoardFrame frame={frame as any} />
+        <MoraaBoardFrame frame={frame} />
       </RoomProvider>
     ),
     [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} />,
@@ -44,26 +61,41 @@ export function StudioFrame({ frame }: FrameContainerProps) {
       <PdfViewerFrame key={frame.id} frame={frame as any} />
     ),
     [FrameType.POLL]: <PollFrame frame={frame as any} />,
-    [FrameType.POWERPOINT]: <PowerPointFrame frame={frame as any} />,
+    [FrameType.POWERPOINT]: <PowerPointFrame frame={frame} />,
     [FrameType.Q_A]: null,
-    [FrameType.REFLECTION]: <ReflectionFrame frame={frame} key={frame.id} />,
+    [FrameType.REFLECTION]: <ReflectionFrame key={frame.id} frame={frame} />,
     [FrameType.RICH_TEXT]: <RichTextFrame frame={frame} />,
     [FrameType.VIDEO]: <VideoEmbedFrame frame={frame as any} />,
     [FrameType.VIDEO_EMBED]: <VideoEmbedFrame frame={frame as any} />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType]
-
   const frameHasTitle = frameTypesWithTitle.includes(frame.type)
 
   return (
-    <div className="w-full h-full flex justify-start items-center">
+    <ResizeObserver
+      onResize={({ width, height }) => {
+        if (isFrameHasVideoAspectRatio(frame.type)) {
+          setContainerAspectRatio(width / height)
+        }
+      }}>
       <div
-        className={cn('h-full w-auto aspect-video', {
-          'flex flex-col gap-4': frameHasTitle,
-        })}>
-        {renderer}
+        ref={containerRef}
+        className="w-full h-full flex justify-start items-center">
+        <div
+          className={cn({
+            'h-full w-auto aspect-video':
+              isFrameHasVideoAspectRatio(frame?.type) &&
+              containerAspectRatio > 16 / 9,
+            'h-auto w-full aspect-video':
+              isFrameHasVideoAspectRatio(frame?.type) &&
+              containerAspectRatio <= 16 / 9,
+            'h-full w-full': !isFrameHasVideoAspectRatio(frame?.type),
+            'flex flex-col gap-4': frameHasTitle,
+          })}>
+          {renderer}
+        </div>
       </div>
-    </div>
+    </ResizeObserver>
   )
 }

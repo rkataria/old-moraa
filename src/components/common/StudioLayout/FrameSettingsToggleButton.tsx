@@ -1,4 +1,4 @@
-import { FiSettings } from 'react-icons/fi'
+import { IoSettings, IoSettingsOutline } from 'react-icons/io5'
 import { useDispatch } from 'react-redux'
 
 import { Tooltip } from '../ShortuctTooltip'
@@ -29,11 +29,11 @@ export function FrameSettingsToggleButton() {
       <Button
         size="sm"
         isIconOnly
-        className={cn({
-          'bg-primary-100': isVisible,
+        className={cn('bg-transparent', {
+          'text-primary': isVisible,
         })}
         onClick={toggleSidebar}>
-        <FiSettings size={18} />
+        {isVisible ? <IoSettings size={20} /> : <IoSettingsOutline size={20} />}
       </Button>
     </Tooltip>
   )

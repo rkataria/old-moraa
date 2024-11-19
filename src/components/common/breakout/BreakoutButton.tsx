@@ -1,13 +1,12 @@
 import { useEffect } from 'react'
 
-import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from '@tanstack/react-router'
 import { VscMultipleWindows } from 'react-icons/vsc'
 
-import { EndBreakoutButton } from './EndBreakoutButton'
 import { StartBreakoutButtonWithConfirmationModal } from './StartBreakoutButtonWithConfirmationModal'
-import { ControlButton } from '../ControlButton'
 
+import { AppsDropdownMenuItem } from '@/components/event-session/AppsDropdownMenuItem'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -27,9 +26,8 @@ import {
 import { StartBreakoutConfig } from '@/utils/dyte-breakout'
 import { FrameType } from '@/utils/frame-picker.util'
 import { getCurrentTimestamp } from '@/utils/timer.utils'
-import { cn } from '@/utils/utils'
 
-export function BreakoutButton() {
+export function BreakoutButton({ onClick }: { onClick?: () => void }) {
   const dyteMeeting = useDyteMeeting()
   const {
     isHost,
@@ -47,9 +45,10 @@ export function BreakoutButton() {
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
-  const areParticipantsPresentInMeeting = useDyteSelector(
-    (state) => state.participants.joined.toArray().length
-  )
+  // const areParticipantsPresentInMeeting = useDyteSelector(
+  //   (state) => state.participants.joined.toArray().length
+  // )
+  const areParticipantsPresentInMeeting = true
 
   const sessionBreakoutFrameId = useStoreSelector(
     (store) =>
@@ -108,6 +107,7 @@ export function BreakoutButton() {
       activityId?: string
     } & StartBreakoutConfig
   ) => {
+    onClick?.()
     if (!meetingId) return
 
     try {
@@ -182,6 +182,7 @@ export function BreakoutButton() {
   }
 
   const onBreakoutEnd = () => {
+    onClick?.()
     breakoutRoomsInstance?.endBreakoutRooms()
     dispatch(
       updateMeetingSessionDataAction({
@@ -193,6 +194,7 @@ export function BreakoutButton() {
   }
 
   const endBreakout = () => {
+    onClick?.()
     if (!eventRealtimeChannel) {
       onBreakoutEnd()
 
@@ -229,20 +231,15 @@ export function BreakoutButton() {
     areParticipantsPresentInMeeting
   ) {
     return (
-      <ControlButton
-        tooltipProps={{
-          content: isBreakoutActive
-            ? 'Open breakout manager'
-            : 'Create breakout rooms',
-        }}
-        buttonProps={{
-          size: 'sm',
-          variant: 'solid',
-          className: cn('gap-2 justify-between', {
-            '!bg-green-500 !text-white': isBreakoutActive,
-          }),
-        }}
-        onClick={() =>
+      <AppsDropdownMenuItem
+        icon={<VscMultipleWindows size={24} />}
+        title={isBreakoutActive ? 'Open Manager' : 'Start Breakout'}
+        description={
+          isBreakoutActive
+            ? 'Manage breakout sessions and participants'
+            : 'Start a breakout for participants'
+        }
+        onClick={() => {
           setDyteStates((state) => ({
             ...state,
             activeBreakoutRoomsManager: {
@@ -250,10 +247,36 @@ export function BreakoutButton() {
               mode: 'create',
             },
           }))
-        }>
-        {isBreakoutActive ? 'Open breakout manager' : 'Create breakout rooms'}
-      </ControlButton>
+        }}
+      />
     )
+
+    // return (
+    //   <ControlButton
+    //     tooltipProps={{
+    //       content: isBreakoutActive
+    //         ? 'Open breakout manager'
+    //         : 'Create breakout rooms',
+    //     }}
+    //     buttonProps={{
+    //       size: 'sm',
+    //       variant: 'solid',
+    //       className: cn('gap-2 justify-between', {
+    //         '!bg-green-500 !text-white': isBreakoutActive,
+    //       }),
+    //     }}
+    //     onClick={() =>
+    //       setDyteStates((state) => ({
+    //         ...state,
+    //         activeBreakoutRoomsManager: {
+    //           active: true,
+    //           mode: 'create',
+    //         },
+    //       }))
+    //     }>
+    //     {isBreakoutActive ? 'Open breakout manager' : 'Create breakout rooms'}
+    //   </ControlButton>
+    // )
   }
 
   if (isBreakoutActive) {
@@ -263,26 +286,44 @@ export function BreakoutButton() {
     ) {
       if (sessionBreakoutFrameId && isBreakoutActive) {
         return (
-          <ControlButton
-            tooltipProps={{
-              content: 'View Breakout',
-            }}
-            buttonProps={{
-              size: 'sm',
-              variant: 'solid',
-              className: cn('gap-2 justify-between'),
-              startContent: <VscMultipleWindows size={22} />,
-            }}
-            onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}>
-            View Breakout
-          </ControlButton>
+          <AppsDropdownMenuItem
+            icon={<VscMultipleWindows size={24} />}
+            title="View Breakout"
+            description="View the breakout session"
+            onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}
+          />
         )
+
+        // return (
+        //   <ControlButton
+        //     tooltipProps={{
+        //       content: 'View Breakout',
+        //     }}
+        //     buttonProps={{
+        //       size: 'sm',
+        //       variant: 'solid',
+        //       className: cn('gap-2 justify-between'),
+        //       startContent: <VscMultipleWindows size={22} />,
+        //     }}
+        //     onClick={() => setCurrentFrame(sessionBreakoutFrame as IFrame)}>
+        //     View Breakout
+        //   </ControlButton>
+        // )
       }
     }
 
     return (
-      <EndBreakoutButton key="end-breakout" onEndBreakoutClick={endBreakout} />
+      <AppsDropdownMenuItem
+        icon={<VscMultipleWindows size={24} />}
+        title="End Breakout"
+        description="View the breakout session"
+        onClick={endBreakout}
+      />
     )
+
+    // return (
+    //   <EndBreakoutButton key="end-breakout" onEndBreakoutClick={endBreakout} />
+    // )
   }
 
   if (
@@ -297,14 +338,15 @@ export function BreakoutButton() {
         roomsCount={defaultRoomsCount}
         participantPerGroup={defaultParticipantsPerRoom}
         breakoutDuration={defaultBreakoutDuration}
-        onStartBreakoutClick={(breakoutConfig) =>
+        onStartBreakoutClick={(breakoutConfig) => {
+          onClick?.()
           onBreakoutStartOnBreakoutSlide({
             ...breakoutConfig,
             breakoutFrameId: currentFrame.id,
             activityId: currentFrame?.content?.groupActivityId,
             activities: currentFrame?.content?.breakoutRooms,
           })
-        }
+        }}
       />
     )
   }

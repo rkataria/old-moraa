@@ -10,6 +10,7 @@ import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventSessionMode } from '@/types/event-session.type'
+import { cn } from '@/utils/utils'
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 export function MeetingStatusAlert() {
@@ -34,6 +35,38 @@ export function MeetingStatusAlert() {
 
   const visibleBackToBreakout =
     sessionBreakoutFrameId && sessionBreakoutFrameId !== currentFrame?.id
+
+  // // TODO: This is only for demo purposes, remove once demo is done
+  // return (
+  //   <MeetingStatusAlertContainer
+  //     title="05:30"
+  //     styles={{
+  //       container: 'gap-2',
+  //       title: 'text-xl font-bold tracking-wide',
+  //     }}
+  //     actions={[
+  //       <RenderIf isTrue={!!currentFrame}>
+  //         <Button
+  //           variant="flat"
+  //           isIconOnly
+  //           onClick={() => {
+  //             if (!currentFrame) return
+  //             startPresentation(currentFrame.id)
+  //           }}>
+  //           <LuTimerReset size={18} />
+  //         </Button>
+  //       </RenderIf>,
+  //       <Button
+  //         variant="solid"
+  //         color="danger"
+  //         onClick={() => {
+  //           dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
+  //         }}>
+  //         Stop
+  //       </Button>,
+  //     ]}
+  //   />
+  // )
 
   if (isHost && isBreakoutStarted) {
     return (
@@ -69,13 +102,14 @@ export function MeetingStatusAlert() {
   if (eventSessionMode === EventSessionMode.PEEK) {
     return (
       <MeetingStatusAlertContainer
-        title="Peek Mode"
-        description="Frames are not being shared with participants."
+        description="Frames are not being shared with participants"
+        styles={{
+          description: 'text-sm font-medium',
+        }}
         actions={[
           <RenderIf isTrue={!!currentFrame}>
             <Button
-              variant="bordered"
-              color="primary"
+              variant="flat"
               onClick={() => {
                 if (!currentFrame) return
                 startPresentation(currentFrame.id)
@@ -102,10 +136,16 @@ function MeetingStatusAlertContainer({
   title,
   description,
   actions,
+  styles,
 }: {
-  title?: string
-  description?: string
+  title?: string | React.ReactNode
+  description?: string | React.ReactNode
   actions?: React.ReactNode[]
+  styles?: {
+    container?: string
+    title?: string
+    description?: string
+  }
 }) {
   return (
     <motion.div
@@ -124,11 +164,20 @@ function MeetingStatusAlertContainer({
       transition={{
         duration: 0.3,
       }}
-      className="w-fit max-w-[50vw] py-2 px-4 mt-1 mx-auto flex justify-start items-center gap-8 bg-white rounded-md">
+      className={cn(
+        'w-fit max-w-[50vw] py-2.5 px-6 mt-1 mx-auto flex justify-start items-center gap-8',
+        'bg-white rounded-full',
+        styles?.container
+        // 'bg-blury rounded-full'
+      )}>
       <div className="flex flex-col gap-1 flex-auto">
-        {title && <span className="text-sm font-semibold">{title}</span>}
+        {title && (
+          <span className={cn('text-sm font-semibold', styles?.title)}>
+            {title}
+          </span>
+        )}
         {description && (
-          <p className="text-xs text-gray-700 line-clamp-1">{description}</p>
+          <p className={cn('text-xs', styles?.description)}>{description}</p>
         )}
       </div>
       <div className="flex justify-end items-center gap-2 flex-1">

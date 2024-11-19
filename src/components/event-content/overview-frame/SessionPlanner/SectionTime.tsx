@@ -145,7 +145,7 @@ export function SectionTime({
           <Chip
             size="sm"
             radius="sm"
-            className="bg-gray-100 text-xs cursor-pointer gap-1"
+            className="bg-transparent text-xs cursor-pointer gap-1"
             startContent={
               editable ? <BiExpandAlt className="rotate-[-45deg]" /> : null
             }>
@@ -170,8 +170,7 @@ export function SectionTime({
       <Chip
         size="sm"
         radius="sm"
-        variant="bordered"
-        className="border-1 border-gray-200">
+        className="bg-transparent text-xs cursor-pointer gap-1">
         Calculated{' '}
         <span className="font-semibold ml-2">{`${timeofAllFrames.hours}h ${timeofAllFrames.minutes}m`}</span>
       </Chip>
