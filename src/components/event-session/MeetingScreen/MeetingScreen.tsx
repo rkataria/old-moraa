@@ -19,6 +19,7 @@ import { RightSidebar } from './RightSidebar'
 import { FlyingEmojisOverlay } from '../FlyingEmojisOverlay'
 import { IdleModeConfirmation } from '../IdleModeConfirmation'
 
+import { CreateUnplannedBreakoutModal } from '@/components/common/breakout/CreateBreakoutModal'
 import { Notify } from '@/components/common/breakout/Notify'
 import { LiveLayout } from '@/components/common/LiveLayout'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
@@ -26,7 +27,10 @@ import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
-import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
+import {
+  setIsCreateBreakoutOpenAction,
+  updateEventSessionModeAction,
+} from '@/stores/slices/event/current-event/live-session.slice'
 import { setUpdateTimerOnParticipantJoinAction } from '@/stores/slices/event/current-event/timers.slice'
 import {
   EventSessionMode,
@@ -50,6 +54,10 @@ export function MeetingScreen() {
   const { meeting } = useDyteMeeting()
   const { preview, sections, setCurrentFrame } = useEventContext()
   const dispatch = useStoreDispatch()
+  const isCreateBreakoutOpen = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isCreateBreakoutOpen
+  )
   const currentFrame = useCurrentFrame()
   const isBreakoutStartNotifyOpen = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.breakout.breakoutNotify
@@ -138,6 +146,10 @@ export function MeetingScreen() {
             ...e.detail,
           }))
         }}
+      />
+      <CreateUnplannedBreakoutModal
+        open={isCreateBreakoutOpen}
+        setOpen={() => dispatch(setIsCreateBreakoutOpenAction(false))}
       />
       <IdleModeConfirmation />
       <RenderIf isTrue={isBreakoutStartNotifyOpen}>

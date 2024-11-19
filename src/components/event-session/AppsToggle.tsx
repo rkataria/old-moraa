@@ -8,6 +8,7 @@ import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
 import { IoMdRadioButtonOn } from 'react-icons/io'
 import { TbApps, TbAppsFilled, TbClock } from 'react-icons/tb'
+import { VscMultipleWindows } from 'react-icons/vsc'
 
 import { TimerModal } from './TimerModal'
 import { RenderIf } from '../common/RenderIf/RenderIf'
@@ -114,6 +115,14 @@ export function AppsToggle() {
                   onClick={onRecordingToggle}
                 />
               </RenderIf>
+              <Tool
+                icon={<VscMultipleWindows size={24} />}
+                title="Start Breakout"
+                description="Start a breakout for participants"
+                onClick={() => {
+                  console.log('Start Breakout')
+                }}
+              />
             </div>
           </div>
         </PopoverContent>

@@ -316,7 +316,14 @@ attachStoreListener({
       dispatch(
         getMeetingSessionThunk({
           meetingId,
-          dyteMeetingId: dyteConnectedMeetingId,
+          connectedDyteMeetingId: dyteConnectedMeetingId,
+        })
+      )
+    } else {
+      dispatch(setIsBreakoutOverviewOpenAction(false))
+      dispatch(
+        getMeetingSessionThunk({
+          meetingId,
         })
       )
     }
@@ -344,29 +351,7 @@ attachStoreListener({
   effect: (action, { dispatch, getState }) => {
     const dyteClient = action.payload
     if (!dyteClient) return
-    const isMeetingOwner =
-      getState().event.currentEvent.eventState.isCurrentUserOwnerOfEvent
-    const meetingId =
-      getState().event.currentEvent.meetingState.meeting.data?.id
-
-    const dyteMeetingId = dyteClient.meta.meetingId
-
-    dispatch(setCurrentDyteMeetingIdAction(dyteMeetingId))
-    if (isMeetingOwner) {
-      dispatch(
-        getExistingOrCreateNewActiveSessionThunk({
-          dyteMeetingId,
-          meetingId,
-        })
-      )
-    } else {
-      dispatch(
-        getMeetingSessionThunk({
-          dyteMeetingId,
-          meetingId,
-        })
-      )
-    }
+    dispatch(setCurrentDyteMeetingIdAction(dyteClient.meta.meetingId))
 
     if (
       dyteClient.connectedMeetings?.parentMeeting &&
@@ -422,11 +407,14 @@ attachStoreListener({
   ),
   effect: (action, { dispatch, getState }) => {
     const meetingId =
-      getState().event.currentEvent.meetingState.meeting!.data!.id
+      action.type === getMeetingSessionThunk.fulfilled.type
+        ? getState().event.currentEvent.meetingState.meeting!.data!.id
+        : getState().event.currentEvent.liveSessionState.activeSession.data
+            ?.meeting_id
 
     const connectedDyteMeetingId =
-      getState().event.currentEvent.liveSessionState.dyte.dyteClient?.meta
-        .meetingId
+      getState().event.currentEvent.liveSessionState.activeSession.data
+        ?.connected_dyte_meeting_id
 
     const { eventId } = getState().event.currentEvent.eventState
 
@@ -438,8 +426,6 @@ attachStoreListener({
 
     getRealtimeChannelForEvent(`${eventId}-3`)?.unsubscribe()
 
-    if (!connectedDyteMeetingId) return
-
     supabaseClient
       .channel(`event:${eventId}-3`, { config: { broadcast: { self: false } } })
       .on(
@@ -448,7 +434,9 @@ attachStoreListener({
           event: '*',
           schema: 'public',
           table: 'session',
-          filter: `connected_dyte_meeting_id=eq.${connectedDyteMeetingId}`,
+          filter: connectedDyteMeetingId
+            ? `connected_dyte_meeting_id=eq.${connectedDyteMeetingId}`
+            : `meeting_id=eq.${meetingId}`,
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (
@@ -466,15 +454,9 @@ attachStoreListener({
             !getState().event.currentEvent.liveSessionState.breakout
               .isBreakoutActive &&
             !getState().event.currentEvent.liveSessionState.dyte
-              .isDyteMeetingLoading &&
-            connectedDyteMeetingId
+              .isDyteMeetingLoading
           ) {
-            dispatch(
-              getMeetingSessionThunk({
-                meetingId,
-                dyteMeetingId: connectedDyteMeetingId,
-              })
-            )
+            dispatch(getMeetingSessionThunk({ meetingId }))
 
             return
           }
