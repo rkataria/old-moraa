@@ -1,6 +1,6 @@
 import { Key, useState } from 'react'
 
-import { IconTrash } from '@tabler/icons-react'
+import { IconCopyPlus, IconTrash } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { toast } from 'react-hot-toast'
@@ -10,6 +10,7 @@ import { RxDotsVertical } from 'react-icons/rx'
 
 import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal'
 import { DropdownActions } from '../common/DropdownActions'
+import { DuplicateConfirmationModal } from '../common/DuplicateConfirmationModal'
 import { Button } from '../ui/Button'
 
 import { EventService } from '@/services/event/event-service'
@@ -30,6 +31,11 @@ const ownerActions = [
     key: 'delete-event',
     label: 'Delete',
     icon: <IconTrash className="text-red-500" size={18} />,
+  },
+  {
+    key: 'duplicate-event',
+    label: 'Duplicate',
+    icon: <IconCopyPlus size={18} />,
   },
 ]
 
@@ -63,6 +69,8 @@ export function EventActions({
 
   const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
     useState(false)
+  const [duplicateConfirmationVisible, setDuplicateConfirmationVisible] =
+    useState(false)
 
   const actions = isOwner ? ownerActions : participantActions
 
@@ -76,11 +84,25 @@ export function EventActions({
     onError: () => toast.success('Failed to delete event'),
   })
 
+  const duplicateEventMutation = useMutation({
+    mutationFn: () =>
+      EventService.duplicateEvent({ eventId: event.id }).then(() => {
+        onDone()
+        setDuplicateConfirmationVisible(false)
+      }),
+    onSuccess: () => toast.success('Event duplicated'),
+    onError: () => toast.success('Failed to duplicate event'),
+  })
+
   if (actions.length === 0) return null
 
   const actionHandler = (key: Key) => {
     if (key === 'delete-event') {
       setDeleteConfirmationVisible(true)
+    }
+
+    if (key === 'duplicate-event') {
+      setDuplicateConfirmationVisible(true)
     }
 
     if (key === 'edit') {
@@ -154,6 +176,17 @@ export function EventActions({
         }
         onClose={() => setDeleteConfirmationVisible(false)}
         onConfirm={() => deleteEventMutation.mutate()}
+      />
+      <DuplicateConfirmationModal
+        open={duplicateConfirmationVisible}
+        description={
+          <p>
+            Create new event with all the content inside this event{' '}
+            <span className="font-bold">{event.name}</span>?
+          </p>
+        }
+        onClose={() => setDuplicateConfirmationVisible(false)}
+        onConfirm={() => duplicateEventMutation.mutate()}
       />
     </>
   )
