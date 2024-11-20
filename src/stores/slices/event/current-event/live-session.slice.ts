@@ -41,6 +41,7 @@ export type SessionState = {
   connectedMeetingsToActivitiesMap?: {
     [x: string]: string
   }
+  meetingTitles?: { title: string; id: string }[]
   timerStartedStamp?: number | null
   timerDuration?: number | null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

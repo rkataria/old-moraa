@@ -21,6 +21,7 @@ import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { EventSessionMode } from '@/types/event-session.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 import { cn } from '@/utils/utils'
@@ -31,7 +32,7 @@ export function AppsToggle() {
   const [isContentVisible, setIsContentVisible] = useState(false)
   const { meeting } = useDyteMeeting()
   const { flags } = useFlags()
-  const { isHost } = useEventSession()
+  const { isHost, eventSessionMode } = useEventSession()
   const recordingState = useDyteSelector(
     (meet) => meet.recording.recordingState
   )
@@ -122,7 +123,10 @@ export function AppsToggle() {
                 />
               </RenderIf>
               <BreakoutButton
-                disabled={currentFrame?.type === FrameType.BREAKOUT}
+                disabled={
+                  eventSessionMode !== EventSessionMode.LOBBY &&
+                  currentFrame?.type === FrameType.BREAKOUT
+                }
                 onClick={() => setIsContentVisible(false)}
               />
             </div>

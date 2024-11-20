@@ -113,7 +113,7 @@ export function BreakoutRoomActivityCard({
       <div className="flex justify-between items-center gap-4 px-3">
         <EditableLabel
           readOnly={!editable || !updateBreakoutRoomName}
-          label={breakout?.name || breakout?.meetingName || ''}
+          label={breakout?.name || ''}
           className="text-sm line-clamp-1 my-2"
           onUpdate={(value) => {
             if (!editable) return

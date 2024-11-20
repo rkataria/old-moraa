@@ -8,7 +8,6 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react'
-import { useParams } from '@tanstack/react-router'
 
 import { NumberInput } from '../NumberInput'
 
@@ -16,7 +15,6 @@ import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useEvent } from '@/hooks/useEvent'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
@@ -61,10 +59,6 @@ export function StartPlannedBreakoutModal({
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
-  const { eventId } = useParams({ strict: false })
-  const { event } = useEvent({
-    id: eventId as string,
-  })
   const dispatch = useStoreDispatch()
   const { getFrameById } = useEventContext()
 
@@ -211,11 +205,10 @@ export function StartPlannedBreakoutModal({
         connectedMeetingsToActivitiesMap
       ).map(([meetId, activityId], index) => ({
         id: meetId,
-        title: `${event.name} - ${config.activityId ? `Group ${index + 1}` : getFrameById(activityId).content?.title}`,
+        title: config.activities
+          ? `${config.activities.find((activity) => activity.activityId === activityId)?.name}`
+          : `${getFrameById(activityId).content?.title} - Group ${index + 1}`,
       }))
-
-      await dyteMeeting.meeting.connectedMeetings.updateMeetings(meetingTitles)
-      await dyteMeeting.meeting.connectedMeetings.getConnectedMeetings()
 
       const currentTimeStamp = getCurrentTimestamp()
       const timerDuration = config.breakoutDuration
@@ -230,6 +223,7 @@ export function StartPlannedBreakoutModal({
           connectedMeetingsToActivitiesMap,
           timerStartedStamp: currentTimeStamp,
           timerDuration,
+          meetingTitles,
         })
       )
 
@@ -259,7 +253,12 @@ export function StartPlannedBreakoutModal({
 
     if (!eventRealtimeChannel) {
       setOpen(false)
-      startBreakoutSession(breakoutConfig)
+      startBreakoutSession({
+        ...breakoutConfig,
+        activities: currentFrame?.content?.breakoutRooms,
+        activityId: currentFrame?.content?.groupActivityId,
+        breakoutFrameId: currentFrame?.id,
+      })
 
       return
     }
@@ -269,7 +268,12 @@ export function StartPlannedBreakoutModal({
 
     setTimeout(() => {
       notifyBreakoutEnd(eventRealtimeChannel)
-      startBreakoutSession(breakoutConfig)
+      startBreakoutSession({
+        ...breakoutConfig,
+        activities: currentFrame?.content?.breakoutRooms,
+        activityId: currentFrame?.content?.groupActivityId,
+        breakoutFrameId: currentFrame?.id,
+      })
     }, notificationDuration * 1000)
   }
 
