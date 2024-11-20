@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import { motion } from 'framer-motion'
+import { MeetingStatusContainer } from './MeetingStatusContainer'
+import { Timer } from '../../Timer'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
@@ -10,10 +11,10 @@ import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventSessionMode } from '@/types/event-session.type'
-import { cn } from '@/utils/utils'
+import { getRemainingTimestamp } from '@/utils/timer.utils'
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-export function MeetingStatusAlert() {
+export function MeetingStatusBar() {
   const { eventSessionMode, startPresentation, isHost } = useEventSession()
   const { setCurrentFrame, getFrameById } = useEventContext()
   const dispatch = useStoreDispatch()
@@ -26,7 +27,9 @@ export function MeetingStatusAlert() {
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isBreakoutActive
   )
-
+  const session = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.activeSession.data!
+  )
   const sessionBreakoutFrameId = useStoreSelector(
     (store) =>
       store.event.currentEvent.liveSessionState.activeSession.data?.data
@@ -36,47 +39,24 @@ export function MeetingStatusAlert() {
   const visibleBackToBreakout =
     sessionBreakoutFrameId && sessionBreakoutFrameId !== currentFrame?.id
 
-  // // TODO: This is only for demo purposes, remove once demo is done
-  // return (
-  //   <MeetingStatusAlertContainer
-  //     title="05:30"
-  //     styles={{
-  //       container: 'gap-2',
-  //       title: 'text-xl font-bold tracking-wide',
-  //     }}
-  //     actions={[
-  //       <RenderIf isTrue={!!currentFrame}>
-  //         <Button
-  //           variant="flat"
-  //           isIconOnly
-  //           onClick={() => {
-  //             if (!currentFrame) return
-  //             startPresentation(currentFrame.id)
-  //           }}>
-  //           <LuTimerReset size={18} />
-  //         </Button>
-  //       </RenderIf>,
-  //       <Button
-  //         variant="solid"
-  //         color="danger"
-  //         onClick={() => {
-  //           dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
-  //         }}>
-  //         Stop
-  //       </Button>,
-  //     ]}
-  //   />
-  // )
+  const timerActive =
+    session?.data?.timerStartedStamp &&
+    session.data.timerDuration &&
+    getRemainingTimestamp(
+      session.data.timerStartedStamp,
+      session.data.timerDuration
+    ) > 0
 
+  if (timerActive) {
+    return <Timer />
+  }
   if (isHost && isBreakoutStarted) {
     return (
-      <MeetingStatusAlertContainer
-        title="Breakout Session"
-        description={
-          isHost
-            ? 'Breakout session started'
-            : 'Breakout session started by host'
-        }
+      <MeetingStatusContainer
+        description="Your planned breakout session is in progress."
+        styles={{
+          description: 'text-sm font-medium',
+        }}
         actions={[
           <RenderIf isTrue={!!visibleBackToBreakout}>
             <Button
@@ -93,15 +73,17 @@ export function MeetingStatusAlert() {
   }
   if (isInBreakoutMeeting) {
     return (
-      <MeetingStatusAlertContainer
-        title="Breakout Session"
+      <MeetingStatusContainer
         description="You are in a breakout session and you can see the shared frames."
+        styles={{
+          description: 'text-sm font-medium',
+        }}
       />
     )
   }
   if (eventSessionMode === EventSessionMode.PEEK) {
     return (
-      <MeetingStatusAlertContainer
+      <MeetingStatusContainer
         description="Frames are not being shared with participants"
         styles={{
           description: 'text-sm font-medium',
@@ -130,59 +112,4 @@ export function MeetingStatusAlert() {
   }
 
   return null
-}
-
-function MeetingStatusAlertContainer({
-  title,
-  description,
-  actions,
-  styles,
-}: {
-  title?: string | React.ReactNode
-  description?: string | React.ReactNode
-  actions?: React.ReactNode[]
-  styles?: {
-    container?: string
-    title?: string
-    description?: string
-  }
-}) {
-  return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: -20,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-      }}
-      exit={{
-        opacity: 0,
-        y: -20,
-      }}
-      transition={{
-        duration: 0.3,
-      }}
-      className={cn(
-        'w-fit max-w-[50vw] py-2.5 px-6 mt-1 mx-auto flex justify-start items-center gap-8',
-        'bg-white rounded-full',
-        styles?.container
-        // 'bg-blury rounded-full'
-      )}>
-      <div className="flex flex-col gap-1 flex-auto">
-        {title && (
-          <span className={cn('text-sm font-semibold', styles?.title)}>
-            {title}
-          </span>
-        )}
-        {description && (
-          <p className={cn('text-xs', styles?.description)}>{description}</p>
-        )}
-      </div>
-      <div className="flex justify-end items-center gap-2 flex-1">
-        {actions}
-      </div>
-    </motion.div>
-  )
 }

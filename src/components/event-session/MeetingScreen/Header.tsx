@@ -4,11 +4,10 @@ import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from '@tanstack/react-router'
 
-import { MeetingStatusAlert } from './MeetingStatusAlert'
+import { MeetingStatusBar } from './MeetingStatusBar/MeetingStatusBar'
 import { NoteToggle } from './NoteToggle'
 import { ChatsToggle } from '../ChatsToggle'
 import { ParticipantsToggle } from '../ParticipantsToggle'
-import { Timer } from '../Timer'
 
 import { AgendaPanelToggle } from '@/components/common/AgendaPanel/AgendaPanelToggle'
 import { Logo } from '@/components/common/Logo'
@@ -81,10 +80,9 @@ export function Header() {
         />
       </div>
       <div className="flex-auto">
-        <MeetingStatusAlert />
+        <MeetingStatusBar />
       </div>
       <div className="flex-1 flex justify-end items-center gap-2 h-full">
-        <Timer />
         <ParticipantsToggle
           isParticipantsSidebarOpen={rightSidebarMode === 'participants'}
           onClick={() => {

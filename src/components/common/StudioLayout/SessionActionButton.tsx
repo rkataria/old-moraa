@@ -75,6 +75,7 @@ function ActionButton({
     return (
       <div className="flex items-center">
         <Button
+          gradient="primary"
           color="primary"
           onClick={() => router.navigate({ to: `/event-session/${eventId}` })}
           size="sm"

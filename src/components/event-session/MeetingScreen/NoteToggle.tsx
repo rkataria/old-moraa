@@ -24,10 +24,10 @@ export function NoteToggle() {
   const currentFrame = useCurrentFrame()
 
   useEffect(() => {
-    if (currentFrame?.notes) {
+    if (currentFrame?.notes && isHost) {
       dispatch(setRightSidebarAction('frame-notes'))
     }
-  }, [currentFrame?.notes, dispatch])
+  }, [currentFrame?.notes, isHost, dispatch])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleNoteToggle = (e: any) => {

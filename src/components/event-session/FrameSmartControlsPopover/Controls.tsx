@@ -1,3 +1,4 @@
+import { BreakoutControls } from './BreakoutControls'
 import { PollControls } from './PollControls'
 import { ReflectionControls } from './ReflectionControls'
 
@@ -8,7 +9,7 @@ export const getControls = (frameType: FrameType) => {
   if (!frameType) return null
 
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
-    [FrameType.BREAKOUT]: null,
+    [FrameType.BREAKOUT]: <BreakoutControls />,
     [FrameType.GOOGLE_SLIDES]: null,
     [FrameType.IMAGE_VIEWER]: null,
     [FrameType.MIRO_EMBED]: null,

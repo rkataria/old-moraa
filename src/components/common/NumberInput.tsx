@@ -4,6 +4,7 @@ import { Button, ButtonGroup } from '@nextui-org/react'
 
 type NumberInputProps = {
   min?: number
+  max?: number
   number?: number
   allowNegative?: boolean
   onNumberChange: (number: number) => void
@@ -11,6 +12,7 @@ type NumberInputProps = {
 
 export function NumberInput({
   min = 0,
+  max = 100,
   number = 16,
   allowNegative = false,
   onNumberChange,
@@ -28,9 +30,10 @@ export function NumberInput({
         size="sm"
         variant="flat"
         className="flex-none"
-        disabled={value <= 0 && !allowNegative}
+        isIconOnly
+        disabled={value <= min && !allowNegative}
         onClick={() => {
-          if (value > 0 || allowNegative) {
+          if (value > min || allowNegative) {
             handleNumberChange(value - 1)
           }
         }}>
@@ -40,13 +43,25 @@ export function NumberInput({
         className="w-8 h-8 text-sm text-center border-y-2 border-gray-100 bg-white flex-none"
         value={value}
         min={allowNegative ? undefined : min}
-        onChange={(e) => handleNumberChange(+e.target.value)}
+        max={max}
+        onChange={(e) => {
+          if (/[^0-9]/.test(e.target.value)) return
+          if (+e.target.value > max) return
+          if (+e.target.value < min && !allowNegative) return
+
+          handleNumberChange(+e.target.value)
+        }}
       />
       <Button
         size="sm"
         variant="flat"
         className="flex-none"
-        onClick={() => handleNumberChange(value + 1)}>
+        isIconOnly
+        disabled={value >= max}
+        onClick={() => {
+          if (value >= max) return
+          handleNumberChange(value + 1)
+        }}>
         +
       </Button>
     </ButtonGroup>

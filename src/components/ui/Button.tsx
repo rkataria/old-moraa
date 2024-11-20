@@ -6,6 +6,10 @@ import {
 
 export const Button = extendVariants(NextUIButton, {
   variants: {
+    gradient: {
+      none: '',
+      primary: 'bg-gradient-to-r from-blue-500 to-primary-500 text-white',
+    },
     color: {
       brand: 'text-white bg-primary',
       default: 'bg-gray-100 hover:bg-opacity-90',
@@ -17,10 +21,13 @@ export const Button = extendVariants(NextUIButton, {
     },
   },
   defaultVariants: {
+    gradient: 'none',
     size: 'sm',
     color: 'default',
   },
-}) as React.FC<ButtonProps & { preventFocusOnPress?: boolean }>
+}) as React.FC<
+  ButtonProps & { preventFocusOnPress?: boolean; gradient?: 'none' | 'primary' }
+>
 
 Button.defaultProps = {
   preventFocusOnPress: true,

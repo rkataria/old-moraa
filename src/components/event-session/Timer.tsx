@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
 
+import { MeetingStatusContainer } from './MeetingScreen/MeetingStatusBar/MeetingStatusContainer'
+import { RenderIf } from '../common/RenderIf/RenderIf'
+import { Button } from '../ui/Button'
+
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -67,47 +71,43 @@ export function Timer() {
     remainingTimeInSeconds,
   ])
 
+  const stopTimer = () => {
+    dispatch(
+      updateMeetingSessionDataAction({
+        timerStartedStamp: null,
+      })
+    )
+  }
+
   if (!remainingTimeInSeconds || remainingTimeInSeconds <= 0) return null
   if (!session?.data?.timerDuration) return null
 
   return (
-    <div className="relative bg-gray-200 px-6 rounded-lg overflow-hidden w-30">
-      <div
-        style={{
-          width: `${(remainingTimeInSeconds / session.data.timerDuration) * 100}%`,
-        }}
-        className={cn(
-          'absolute w-full left-0 top-0 h-full bg-primary-100 duration-1000',
+    <MeetingStatusContainer
+      title={
+        <div className="flex justify-center items-center gap-2">
+          {zeroPad(Math.floor(remainingTimeInSeconds / 60), 2)}:
+          {zeroPad(remainingTimeInSeconds % 60, 2)}s
+        </div>
+      }
+      styles={{
+        container: cn('relative gap-2', {
+          'animate-pulse': remainingTimeInSeconds < 15,
+        }),
+        title: cn(
+          'text-xl font-semibold text-primary tracking-wide min-w-[5rem] text-center',
           {
-            'bg-red-400': remainingTimeInSeconds < 15,
+            'text-red-400': remainingTimeInSeconds < 15,
           }
-        )}
-      />
-      <TimerViewElement time={remainingTimeInSeconds} size="sm" />
-    </div>
-  )
-}
-
-function TimerViewElement({
-  time,
-  size = 'lg',
-}: {
-  time: number
-  size?: 'sm' | 'lg'
-}) {
-  return (
-    <h2 className="flex items-baseline text-md font-extrabold text-gray-700 relative">
-      <span
-        className={cn('inline-block text-center w-fit text-white-border', {
-          'text-4xl': size === 'lg',
-          'text-2xl': size === 'sm',
-        })}>
-        {zeroPad(Math.floor(time / 60), 2)}
-      </span>
-      :
-      <span className="inline-block text-center text-white-border">
-        {zeroPad(time % 60, 2)}s
-      </span>
-    </h2>
+        ),
+      }}
+      actions={[
+        <RenderIf isTrue={isHost}>
+          <Button className="bg-red-500 text-white" onClick={stopTimer}>
+            Stop
+          </Button>
+        </RenderIf>,
+      ]}
+    />
   )
 }

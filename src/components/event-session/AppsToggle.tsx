@@ -17,12 +17,16 @@ import { Button } from '../ui/Button'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useFlags } from '@/flags/client'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { FrameType } from '@/utils/frame-picker.util'
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 import { cn } from '@/utils/utils'
 
 export function AppsToggle() {
+  const currentFrame = useCurrentFrame()
   const [isTimerOpen, setIsTimerOpen] = useState(false)
   const [isContentVisible, setIsContentVisible] = useState(false)
   const { meeting } = useDyteMeeting()
@@ -35,6 +39,7 @@ export function AppsToggle() {
   const session = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.activeSession.data!
   )
+  const { isBreakoutActive } = useBreakoutRooms()
 
   const timerActive =
     session?.data?.timerStartedStamp &&
@@ -79,9 +84,20 @@ export function AppsToggle() {
             <div className="pt-2 flex flex-col justify-start items-center gap-2">
               <AppsDropdownMenuItem
                 icon={<TbClock size={24} />}
-                title={timerActive ? 'Stop Timer' : 'Start Timer'}
-                description={timerActive ? 'Stop the timer' : 'Start the timer'}
+                title={
+                  timerActive && !isBreakoutActive
+                    ? 'Stop Timer'
+                    : 'Start Timer'
+                }
+                description={
+                  timerActive && !isBreakoutActive
+                    ? 'Stop the timer'
+                    : 'Start the timer'
+                }
+                disabled={isBreakoutActive}
                 onClick={() => {
+                  if (isBreakoutActive) return
+
                   if (timerActive) {
                     dispatch(
                       updateMeetingSessionDataAction({
@@ -105,7 +121,10 @@ export function AppsToggle() {
                   onClick={onRecordingToggle}
                 />
               </RenderIf>
-              <BreakoutButton onClick={() => setIsContentVisible(false)} />
+              <BreakoutButton
+                disabled={currentFrame?.type === FrameType.BREAKOUT}
+                onClick={() => setIsContentVisible(false)}
+              />
             </div>
           </div>
         </PopoverContent>
