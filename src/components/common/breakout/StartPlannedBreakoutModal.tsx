@@ -13,7 +13,6 @@ import { NumberInput } from '../NumberInput'
 
 import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
-import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
@@ -60,7 +59,6 @@ export function StartPlannedBreakoutModal({
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
   const dispatch = useStoreDispatch()
-  const { getFrameById } = useEventContext()
 
   useEffect(() => {
     setBreakoutConfig({
@@ -207,7 +205,7 @@ export function StartPlannedBreakoutModal({
         id: meetId,
         title: config.activities
           ? `${config.activities.find((activity) => activity.activityId === activityId)?.name}`
-          : `${getFrameById(activityId).content?.title} - Group ${index + 1}`,
+          : `Breakout group ${index + 1}`,
       }))
 
       const currentTimeStamp = getCurrentTimestamp()
