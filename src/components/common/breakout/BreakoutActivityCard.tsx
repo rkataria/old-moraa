@@ -151,7 +151,8 @@ export function BreakoutRoomActivityCard({
           className={cn(
             'border border-gray-100 text-gray-400 m-1 bg-[#f9f6ff] rounded-xl aspect-video'
           )}>
-          <RenderIf isTrue={breakout?.activityId}>
+          <RenderIf
+            isTrue={breakout?.activityId && getFrameById(breakout?.activityId)}>
             <div
               ref={thumbnailContainerRef}
               className="relative w-full h-full cursor-pointer"

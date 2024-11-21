@@ -42,6 +42,7 @@ export type SessionState = {
     [x: string]: string
   } | null
   meetingTitles?: { title: string; id: string }[] | null
+  breakoutType?: 'planned' | 'unplanned' | null
   timerStartedStamp?: number | null
   timerDuration?: number | null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

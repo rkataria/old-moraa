@@ -100,11 +100,9 @@ function ActionButton({
   if (eventStatus === EventStatus.ACTIVE) {
     return (
       <Button
-        onClick={() => router.navigate({ to: `/event-session/${eventId}` })}
-        size="sm"
-        variant="solid"
-        color="primary"
-        title="Join live session">
+        gradient="primary"
+        title="Join live session"
+        onClick={() => router.navigate({ to: `/event-session/${eventId}` })}>
         Join live session
       </Button>
     )

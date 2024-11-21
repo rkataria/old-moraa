@@ -41,7 +41,11 @@ export function AppsToggle() {
     (store) => store.event.currentEvent.liveSessionState.activeSession.data!
   )
   const { isBreakoutActive } = useBreakoutRooms()
-
+  const breakoutType = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutType
+  )
   const timerActive =
     session?.data?.timerStartedStamp &&
     session.data.timerDuration &&
@@ -58,6 +62,8 @@ export function AppsToggle() {
       meeting.recording.start()
     }
   }
+
+  const isTimerDisabled = isBreakoutActive && breakoutType === 'planned'
 
   return (
     <>
@@ -87,18 +93,16 @@ export function AppsToggle() {
               <AppsDropdownMenuItem
                 icon={<TbClock size={24} />}
                 title={
-                  timerActive && !isBreakoutActive
-                    ? 'Stop Timer'
-                    : 'Start Timer'
+                  timerActive && !isTimerDisabled ? 'Stop Timer' : 'Start Timer'
                 }
                 description={
-                  timerActive && !isBreakoutActive
+                  timerActive && !isTimerDisabled
                     ? 'Stop the timer'
                     : 'Start the timer'
                 }
-                disabled={isBreakoutActive}
+                disabled={isTimerDisabled}
                 onClick={() => {
-                  if (isBreakoutActive) return
+                  if (isTimerDisabled) return
 
                   if (timerActive) {
                     dispatch(

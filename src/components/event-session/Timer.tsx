@@ -11,7 +11,13 @@ import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-ev
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 import { cn, zeroPad } from '@/utils/utils'
 
-export function Timer() {
+export function Timer({
+  showEndBreakout,
+  onEndBreakout,
+}: {
+  showEndBreakout?: boolean
+  onEndBreakout: () => void
+}) {
   const { eventRealtimeChannel } = useRealtimeChannel()
   const { isHost } = useEventSession()
   const session = useStoreSelector(
@@ -21,6 +27,11 @@ export function Timer() {
   const isBreakoutActive = useStoreSelector(
     (store) =>
       store.event.currentEvent.liveSessionState.breakout.isBreakoutActive
+  )
+  const breakoutType = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutType
   )
 
   const [remainingTimeInSeconds, setRemainingTimeInSeconds] = useState(0)
@@ -86,25 +97,40 @@ export function Timer() {
     <MeetingStatusContainer
       title={
         <div className="flex justify-center items-center gap-2">
-          {zeroPad(Math.floor(remainingTimeInSeconds / 60), 2)}:
-          {zeroPad(remainingTimeInSeconds % 60, 2)}s
+          <span>
+            {isBreakoutActive
+              ? `${breakoutType === 'planned' ? 'Planned breakout' : 'Breakout'} session is about to end in`
+              : 'Timer is about to end in'}
+          </span>
+          <div
+            className={cn(
+              'flex justify-center items-center gap-2 w-16 h-7 rounded-md font-semibold',
+              {
+                'bg-red-500 text-white': remainingTimeInSeconds < 15,
+                'bg-gray-100 text-gray-700': remainingTimeInSeconds >= 15,
+                'animate-pulse': remainingTimeInSeconds < 15,
+              }
+            )}>
+            {zeroPad(Math.floor(remainingTimeInSeconds / 60), 2)}:
+            {zeroPad(remainingTimeInSeconds % 60, 2)}s
+          </div>
         </div>
       }
       styles={{
-        container: cn('relative gap-2', {
-          'animate-pulse': remainingTimeInSeconds < 15,
+        container: cn('relative gap-2'),
+        title: cn('text-sm font-medium', {
+          'text-red-400': remainingTimeInSeconds < 15,
         }),
-        title: cn(
-          'text-xl font-semibold text-primary tracking-wide min-w-[5rem] text-center',
-          {
-            'text-red-400': remainingTimeInSeconds < 15,
-          }
-        ),
       }}
       actions={[
-        <RenderIf isTrue={isHost}>
+        <RenderIf isTrue={isHost && !isBreakoutActive}>
           <Button className="bg-red-500 text-white" onClick={stopTimer}>
             Stop
+          </Button>
+        </RenderIf>,
+        <RenderIf isTrue={!!showEndBreakout}>
+          <Button className="bg-red-500 text-white" onClick={onEndBreakout}>
+            End Breakout
           </Button>
         </RenderIf>,
       ]}

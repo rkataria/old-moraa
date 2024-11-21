@@ -12,6 +12,7 @@ import { VideoToggle } from '../VideoToggle'
 import { AskForHelpButton } from '@/components/common/breakout/AskForHelpButton'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { PresentationControls } from '@/components/common/PresentationControls'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
@@ -78,7 +79,9 @@ export function Footer() {
           <PresentationControls />
           <ReactWithEmojiToggle />
           <RaiseHandToggle />
-          <AppsToggle />
+          <RenderIf isTrue={isHost}>
+            <AppsToggle />
+          </RenderIf>
           {!isHost &&
           isBreakoutActive &&
           isCurrentDyteMeetingInABreakoutRoom ? (

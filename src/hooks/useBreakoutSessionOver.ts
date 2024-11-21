@@ -23,6 +23,7 @@ export const useBreakoutSessionOver = () => {
         timerStartedStamp: null,
         timerDuration: null,
         meetingTitles: null,
+        breakoutType: null,
       })
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps

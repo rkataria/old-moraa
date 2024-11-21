@@ -64,7 +64,10 @@ export function BreakoutControls() {
         </Button>
       </RenderIf>
       <RenderIf isTrue={showEndBreakoutButton}>
-        <Button title="End breakout" color="danger" onClick={handleBreakoutEnd}>
+        <Button
+          title="End breakout"
+          className="bg-red-500 text-white"
+          onClick={handleBreakoutEnd}>
           End Breakout
         </Button>
       </RenderIf>

@@ -18,6 +18,9 @@ export function MeetingStatusContainer({
     description?: string
   }
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const validActions = actions?.filter((action: any) => action?.props?.isTrue)
+
   return (
     <motion.div
       initial={{
@@ -36,7 +39,7 @@ export function MeetingStatusContainer({
         duration: 0.3,
       }}
       className={cn(
-        'w-fit max-w-[50vw] py-2.5 px-6 mt-1 mx-auto flex justify-start items-center gap-8',
+        'w-fit max-w-[50vw] py-2.5 px-6 mt-1 mx-auto flex justify-start items-center gap-5',
         'bg-white rounded-full',
         styles?.container
       )}>
@@ -50,9 +53,9 @@ export function MeetingStatusContainer({
           <p className={cn('text-xs', styles?.description)}>{description}</p>
         )}
       </div>
-      <RenderIf isTrue={Array.isArray(actions) && actions.length > 0}>
+      <RenderIf isTrue={!!(validActions?.length && validActions?.length > 0)}>
         <div className="flex justify-end items-center gap-2 flex-1">
-          {actions}
+          {validActions}
         </div>
       </RenderIf>
     </motion.div>

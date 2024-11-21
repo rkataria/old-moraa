@@ -6,23 +6,32 @@ import { VscMultipleWindows } from 'react-icons/vsc'
 import { AppsDropdownMenuItem } from '@/components/event-session/AppsDropdownMenuItem'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
-import { useStoreSelector } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
+import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 
 export const useOnUnplannedBreakoutSessionUpdate = () => {
   const dyteMeeting = useDyteMeeting()
   const { isBreakoutActive } = useBreakoutRooms()
+  const dispatch = useStoreDispatch()
   const { isHost, presentationStatus } = useEventSession()
 
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
+
   useEffect(() => {
     if (presentationStatus !== PresentationStatuses.STOPPED) return
     if (!isHost) return
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    dispatch(
+      updateMeetingSessionDataAction({
+        breakoutType: 'unplanned',
+      })
+    )
     dyteMeeting.meeting.connectedMeetings
       .getConnectedMeetings()
       .then(({ meetings }) => {

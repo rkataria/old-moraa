@@ -3,20 +3,27 @@
 import { MeetingStatusContainer } from './MeetingStatusContainer'
 import { Timer } from '../../Timer'
 
+import { AskForHelpButton } from '@/components/common/breakout/AskForHelpButton'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
-import { useEventContext } from '@/contexts/EventContext'
+import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventSessionMode } from '@/types/event-session.type'
+import {
+  notificationDuration,
+  notifyBreakoutEnd,
+  notifyBreakoutStart,
+} from '@/utils/breakout-notify.utils'
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 export function MeetingStatusBar() {
-  const { eventSessionMode, startPresentation, isHost } = useEventSession()
-  const { setCurrentFrame, getFrameById } = useEventContext()
+  const { eventSessionMode, startPresentation, isHost, setDyteStates } =
+    useEventSession()
   const dispatch = useStoreDispatch()
   const currentFrame = useCurrentFrame()
   const isInBreakoutMeeting = useStoreSelector(
@@ -30,14 +37,22 @@ export function MeetingStatusBar() {
   const session = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.activeSession.data!
   )
-  const sessionBreakoutFrameId = useStoreSelector(
+  const breakoutFrameId = useStoreSelector(
     (store) =>
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutFrameId || null
   )
-
-  const visibleBackToBreakout =
-    sessionBreakoutFrameId && sessionBreakoutFrameId !== currentFrame?.id
+  const isBreakoutActive = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.isBreakoutActive
+  )
+  const breakoutType = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutType
+  )
+  const { eventRealtimeChannel } = useRealtimeChannel()
+  const { breakoutRoomsInstance } = useBreakoutManagerContext()
 
   const timerActive =
     session?.data?.timerStartedStamp &&
@@ -47,24 +62,64 @@ export function MeetingStatusBar() {
       session.data.timerDuration
     ) > 0
 
+  const endBreakoutSession = () => {
+    breakoutRoomsInstance?.endBreakoutRooms()
+  }
+
+  const handleBreakoutEnd = () => {
+    if (!eventRealtimeChannel) {
+      endBreakoutSession()
+
+      return
+    }
+    notifyBreakoutStart(eventRealtimeChannel)
+    setTimeout(() => {
+      notifyBreakoutEnd(eventRealtimeChannel)
+      endBreakoutSession()
+    }, notificationDuration * 1000)
+  }
+
   if (timerActive) {
-    return <Timer />
+    return (
+      <Timer
+        showEndBreakout={
+          isHost && isBreakoutActive && currentFrame?.id !== breakoutFrameId
+        }
+        onEndBreakout={handleBreakoutEnd}
+      />
+    )
   }
   if (isHost && isBreakoutStarted) {
     return (
       <MeetingStatusContainer
-        description="Your planned breakout session is in progress."
+        description={
+          breakoutType === 'planned'
+            ? 'Your planned breakout session is in progress'
+            : 'Your breakout session is in progress'
+        }
         styles={{
           description: 'text-sm font-medium',
         }}
         actions={[
-          <RenderIf isTrue={!!visibleBackToBreakout}>
+          <RenderIf isTrue={breakoutType !== 'planned'}>
             <Button
-              className="bg-danger-500 text-white mx-2 h-6"
               onClick={() => {
-                setCurrentFrame(getFrameById(sessionBreakoutFrameId as string))
+                setDyteStates((state) => ({
+                  ...state,
+                  activeBreakoutRoomsManager: {
+                    active: true,
+                    mode: 'create',
+                  },
+                }))
               }}>
-              View Breakout
+              Manage
+            </Button>
+          </RenderIf>,
+          <RenderIf isTrue={isBreakoutActive}>
+            <Button
+              className="bg-red-500 text-white"
+              onClick={handleBreakoutEnd}>
+              End Breakout
             </Button>
           </RenderIf>,
         ]}
@@ -74,10 +129,15 @@ export function MeetingStatusBar() {
   if (isInBreakoutMeeting) {
     return (
       <MeetingStatusContainer
-        description="You are in a breakout session and you can see the shared frames."
+        description="You are in a breakout session."
         styles={{
           description: 'text-sm font-medium',
         }}
+        actions={[
+          <RenderIf isTrue={!isHost}>
+            <AskForHelpButton />
+          </RenderIf>,
+        ]}
       />
     )
   }

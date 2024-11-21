@@ -222,6 +222,7 @@ export function StartPlannedBreakoutModal({
           timerStartedStamp: currentTimeStamp,
           timerDuration,
           meetingTitles,
+          breakoutType: 'planned',
         })
       )
 
