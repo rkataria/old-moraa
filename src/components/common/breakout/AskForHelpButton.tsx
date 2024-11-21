@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
-import { Button } from '@nextui-org/button'
-
+import { Button } from '@/components/ui/Button'
 import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useProfile } from '@/hooks/useProfile'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -30,12 +29,11 @@ export function AskForHelpButton() {
 
   return (
     <Button
+      title="Ask for help"
       disabled={isButtonDisabled}
-      size="sm"
       variant={isButtonDisabled ? 'flat' : 'light'}
       color={isButtonDisabled ? 'success' : 'default'}
-      onClick={askForHelp}
-      title="Ask for help">
+      onClick={askForHelp}>
       Ask for help
     </Button>
   )

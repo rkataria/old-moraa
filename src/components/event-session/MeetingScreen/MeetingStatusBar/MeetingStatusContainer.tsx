@@ -1,6 +1,7 @@
+import { useRef } from 'react'
+
 import { motion } from 'framer-motion'
 
-import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { cn } from '@/utils/utils'
 
 export function MeetingStatusContainer({
@@ -18,8 +19,9 @@ export function MeetingStatusContainer({
     description?: string
   }
 }) {
+  const actionsContainerRef = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const validActions = actions?.filter((action: any) => action?.props?.isTrue)
+  const validActions = actions?.filter((action: any) => action)
 
   return (
     <motion.div
@@ -53,11 +55,13 @@ export function MeetingStatusContainer({
           <p className={cn('text-xs', styles?.description)}>{description}</p>
         )}
       </div>
-      <RenderIf isTrue={!!(validActions?.length && validActions?.length > 0)}>
-        <div className="flex justify-end items-center gap-2 flex-1">
-          {validActions}
-        </div>
-      </RenderIf>
+      <div
+        ref={actionsContainerRef}
+        className={cn('flex justify-end items-center gap-2 flex-1', {
+          hidden: actionsContainerRef.current?.children.length === 0,
+        })}>
+        {validActions}
+      </div>
     </motion.div>
   )
 }

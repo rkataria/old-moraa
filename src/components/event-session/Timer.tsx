@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 
 import { MeetingStatusContainer } from './MeetingScreen/MeetingStatusBar/MeetingStatusContainer'
+import { AskForHelpButton } from '../common/breakout/AskForHelpButton'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { Button } from '../ui/Button'
 
@@ -19,7 +20,7 @@ export function Timer({
   onEndBreakout: () => void
 }) {
   const { eventRealtimeChannel } = useRealtimeChannel()
-  const { isHost } = useEventSession()
+  const { isHost, setDyteStates } = useEventSession()
   const session = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.activeSession.data!
   )
@@ -33,7 +34,10 @@ export function Timer({
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutType
   )
-
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
   const [remainingTimeInSeconds, setRemainingTimeInSeconds] = useState(0)
   const dispatch = useStoreDispatch()
 
@@ -93,15 +97,23 @@ export function Timer({
   if (!remainingTimeInSeconds || remainingTimeInSeconds <= 0) return null
   if (!session?.data?.timerDuration) return null
 
+  const getMessage = () => {
+    if (isBreakoutActive) {
+      if (isInBreakoutMeeting) {
+        return `You are in a ${breakoutType === 'planned' ? 'planned breakout' : 'breakout'} session`
+      }
+
+      return `${breakoutType === 'planned' ? 'Planned breakout session is about to end in' : 'Breakout session is in progress'}`
+    }
+
+    return 'Timer is about to end in'
+  }
+
   return (
     <MeetingStatusContainer
       title={
         <div className="flex justify-center items-center gap-2">
-          <span>
-            {isBreakoutActive
-              ? `${breakoutType === 'planned' ? 'Planned breakout' : 'Breakout'} session is about to end in`
-              : 'Timer is about to end in'}
-          </span>
+          <span>{getMessage()}</span>
           <div
             className={cn(
               'flex justify-center items-center gap-2 w-16 h-7 rounded-md font-semibold',
@@ -123,9 +135,27 @@ export function Timer({
         }),
       }}
       actions={[
+        <RenderIf isTrue={!isHost}>
+          <AskForHelpButton />
+        </RenderIf>,
         <RenderIf isTrue={isHost && !isBreakoutActive}>
           <Button className="bg-red-500 text-white" onClick={stopTimer}>
             Stop
+          </Button>
+        </RenderIf>,
+        <RenderIf
+          isTrue={isHost && breakoutType !== 'planned' && !!showEndBreakout}>
+          <Button
+            onClick={() => {
+              setDyteStates((state) => ({
+                ...state,
+                activeBreakoutRoomsManager: {
+                  active: true,
+                  mode: 'create',
+                },
+              }))
+            }}>
+            Manage
           </Button>
         </RenderIf>,
         <RenderIf isTrue={!!showEndBreakout}>

@@ -89,6 +89,42 @@ export function MeetingStatusBar() {
       />
     )
   }
+  if (isInBreakoutMeeting) {
+    return (
+      <MeetingStatusContainer
+        description="You are in a breakout session"
+        styles={{
+          description: 'text-sm font-medium',
+        }}
+        actions={[
+          <RenderIf isTrue={!isHost}>
+            <AskForHelpButton />
+          </RenderIf>,
+          <RenderIf isTrue={isHost && breakoutType !== 'planned'}>
+            <Button
+              onClick={() => {
+                setDyteStates((state) => ({
+                  ...state,
+                  activeBreakoutRoomsManager: {
+                    active: true,
+                    mode: 'create',
+                  },
+                }))
+              }}>
+              Manage
+            </Button>
+          </RenderIf>,
+          <RenderIf isTrue={isHost && isBreakoutActive}>
+            <Button
+              className="bg-red-500 text-white"
+              onClick={handleBreakoutEnd}>
+              End Breakout
+            </Button>
+          </RenderIf>,
+        ]}
+      />
+    )
+  }
   if (isHost && isBreakoutStarted) {
     return (
       <MeetingStatusContainer
@@ -126,21 +162,7 @@ export function MeetingStatusBar() {
       />
     )
   }
-  if (isInBreakoutMeeting) {
-    return (
-      <MeetingStatusContainer
-        description="You are in a breakout session."
-        styles={{
-          description: 'text-sm font-medium',
-        }}
-        actions={[
-          <RenderIf isTrue={!isHost}>
-            <AskForHelpButton />
-          </RenderIf>,
-        ]}
-      />
-    )
-  }
+
   if (eventSessionMode === EventSessionMode.PEEK) {
     return (
       <MeetingStatusContainer
