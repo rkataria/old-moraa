@@ -32,7 +32,8 @@ export function AskForHelpButton() {
     <Button
       disabled={isButtonDisabled}
       size="sm"
-      variant="light"
+      variant={isButtonDisabled ? 'flat' : 'light'}
+      color={isButtonDisabled ? 'success' : 'default'}
       onClick={askForHelp}
       title="Ask for help">
       Ask for help
