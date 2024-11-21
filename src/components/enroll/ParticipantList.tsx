@@ -46,6 +46,7 @@ export function Participantslist({
       <div className="flex flex-wrap gap-6">
         {participantsWithoutHost.map((participant) => (
           <UserAvatar
+            tooltipProps={{ isDisabled: true }}
             profile={participant.profile as IUserProfile}
             withName
             nameClass="font-medium"

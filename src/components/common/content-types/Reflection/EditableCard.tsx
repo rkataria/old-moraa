@@ -112,13 +112,28 @@ export function EditableCard({
     (store) => store.event.currentEvent.liveSessionState.activeSession.data
   )
 
-  const reflectionStarted =
-    session?.data?.framesConfig?.[frame.id]?.reflectionStarted
+  const isInBreakoutMeeting = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
+
+  const getReflectionDisabled = () => {
+    const reflectionStartedInMainRoom =
+      session?.data?.framesConfig?.[frame.id]?.reflectionStarted
+
+    if (!isInBreakoutMeeting && !reflectionStartedInMainRoom) {
+      return true
+    }
+
+    return false
+  }
+
+  const shouldReflectionDisabled = getReflectionDisabled()
 
   return (
     <Card
       className={cn('rounded-2xl shadow-md border border-gray-50', {
-        'opacity-50 pointer-events-none': !reflectionStarted,
+        'opacity-50 pointer-events-none': shouldReflectionDisabled,
       })}>
       <CardHeader className="p-4">
         <div className="flex justify-start items-center gap-2">
@@ -137,7 +152,7 @@ export function EditableCard({
           placeholder="Enter your reflection here."
           value={reflection.value}
           onChange={onChangeReflection}
-          isDisabled={!reflectionStarted}
+          isDisabled={shouldReflectionDisabled}
         />
       </CardBody>
       <CardFooter className="pt-0">
@@ -147,7 +162,9 @@ export function EditableCard({
             'justify-end': !frame.config?.allowAnonymously,
           })}>
           <RenderIf
-            isTrue={frame.config?.allowAnonymously && reflectionStarted}>
+            isTrue={
+              frame.config?.allowAnonymously && !shouldReflectionDisabled
+            }>
             <div>
               <Checkbox
                 isSelected={anonymous}

@@ -42,6 +42,10 @@ export function FrameGridView({
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutFrameId
   )
+  const isBreakoutActive = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.isBreakoutActive
+  )
 
   const { permissions } = useEventPermissions()
 
@@ -49,6 +53,8 @@ export function FrameGridView({
     thumbnailContainerRef,
     sidebarExpanded
   )
+
+  const breakoutRunning = isBreakoutActive && breakoutFrameId === frame.id
 
   return (
     <ContextMenu
@@ -63,13 +69,13 @@ export function FrameGridView({
           {
             'border-primary border-2': frameActive,
             'border-transparent border-2': !frameActive,
-            'border border-green-400': breakoutFrameId === frame?.id,
+            'border border-green-400': breakoutRunning,
           }
         )}
         onClick={() => {
           onClick(frame)
         }}>
-        <RenderIf isTrue={breakoutFrameId === frame?.id}>
+        <RenderIf isTrue={breakoutRunning}>
           <ActiveBreakoutIndicator />
         </RenderIf>
 

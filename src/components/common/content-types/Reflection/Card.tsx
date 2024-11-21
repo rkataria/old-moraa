@@ -49,6 +49,8 @@ function Reactions({ responseId, canReact }: ReactionsProps) {
   }
 
   const handleEmojiSelect = (selectedEmojiId: string) => {
+    if (!canReact) return
+
     const participantEmote = reactions.find(
       (reaction: FrameReaction) => reaction.participant_id === participant.id
     )
@@ -83,12 +85,11 @@ function Reactions({ responseId, canReact }: ReactionsProps) {
               exit={{ scale: 0 }}>
               <Chip
                 onClick={() => handleEmojiSelect(reaction)}
-                className={cn(
-                  'font-bold hover:bg-primary group/item duration-300 cursor-pointer',
-                  {
-                    'bg-primary/20': participantEmotedOnReaction(reaction),
-                  }
-                )}
+                className={cn('font-bold duration-300', {
+                  'bg-primary/20': participantEmotedOnReaction(reaction),
+                  'group/item cursor-pointer hover:bg-primary': canReact,
+                  'cursor-not-allowed': !canReact,
+                })}
                 variant="flat"
                 avatar={<em-emoji set="apple" id={reaction} size={22} />}>
                 <span className="font-bold text-gray-600 group-hover/item:text-white ">
@@ -156,10 +157,25 @@ export function Card({
     (store) => store.event.currentEvent.liveSessionState.activeSession.data
   )
 
-  const reflectionStarted =
+  const reflectionStartedInMainRoom =
     session?.data?.framesConfig?.[currentFrame?.id || '']?.reflectionStarted
 
-  const editable = isOwner && reflectionStarted
+  const isInBreakoutMeeting = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
+
+  const canReact = () => {
+    if (isInBreakoutMeeting) return true
+
+    return reflectionStartedInMainRoom
+  }
+
+  const isEditable = () => {
+    if (isInBreakoutMeeting) return true
+
+    return isOwner && reflectionStartedInMainRoom
+  }
 
   return (
     <NextUICard className="rounded-2xl shadow-md border border-gray-50">
@@ -180,7 +196,7 @@ export function Card({
       <CardBody className="pt-0 px-4 flex flex-col justify-between">
         <div className="w-full">
           <p className="text-base text-gray-800">{reflection}</p>
-          <RenderIf isTrue={editable}>
+          <RenderIf isTrue={isEditable()}>
             <Button
               variant="light"
               onClick={enableEditReflection}
@@ -191,7 +207,7 @@ export function Card({
         </div>
         <div className="mt-6">
           {/* <Divider className="my-3" /> */}
-          <Reactions responseId={responseId} canReact={reflectionStarted} />
+          <Reactions responseId={responseId} canReact={canReact()} />
         </div>
       </CardBody>
     </NextUICard>

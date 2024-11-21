@@ -113,6 +113,7 @@ export function FrameDetailsView() {
               <Divider className="mt-2 mb-3" />
               <UserAvatar
                 profile={profile as IUserProfile}
+                tooltipProps={{ isDisabled: true }}
                 withName
                 nameClass="font-medium"
               />

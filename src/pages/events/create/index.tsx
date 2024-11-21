@@ -469,6 +469,7 @@ export function EventsCreatePage() {
             WebkitTextFillColor: 'transparent',
           }}
           className="font-semibold">
+          {' '}
           Overview tab.
         </span>
       </p>

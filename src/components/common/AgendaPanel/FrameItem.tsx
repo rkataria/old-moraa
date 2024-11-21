@@ -100,6 +100,11 @@ export function FrameItem({
         ?.presentationStatus
   )
 
+  const isBreakoutActive = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.isBreakoutActive
+  )
+
   const handleDelete = async (_frame: IFrame) => {
     if (_frame.type === FrameType.BREAKOUT) {
       deleteBreakoutFrames(_frame)
@@ -141,6 +146,8 @@ export function FrameItem({
 
   const frameActive = !currentSectionId && currentFrame?.id === frame?.id
 
+  const breakoutRunning = isBreakoutActive && breakoutFrameId === frame.id
+
   const renderFrameContent = () => {
     if (sidebarExpanded) {
       if (listDisplayMode === 'grid') {
@@ -164,13 +171,13 @@ export function FrameItem({
             {
               'bg-primary-100': frameActive,
               'border-transparent': currentFrame?.id !== frame?.id,
-              'border border-green-400': breakoutFrameId === frame?.id,
+              'border border-green-400': breakoutRunning,
             }
           )}
           onClick={() => {
             handleFrameItemClick(frame)
           }}>
-          <RenderIf isTrue={breakoutFrameId === frame?.id}>
+          <RenderIf isTrue={breakoutRunning}>
             <ActiveBreakoutIndicator />
           </RenderIf>
 
