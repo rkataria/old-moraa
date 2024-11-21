@@ -234,6 +234,7 @@ export function StartPlannedBreakoutModal({
               presentationStatus,
               timerStartedStamp: currentTimeStamp,
               timerDuration,
+              meetingTitles,
             },
             meeting_id: meetingId,
           })

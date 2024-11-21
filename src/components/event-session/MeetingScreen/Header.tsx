@@ -26,8 +26,10 @@ export function Header() {
   const { eventId } = useParams({ strict: false })
   const { event } = useEvent({ id: eventId as string })
   const { dyteStates, setDyteStates } = useEventSession()
-  const dyteClient = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState.dyte.dyteClient
+  const meetingTitles = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.meetingTitles
   )
   const { permissions } = useEventPermissions()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
@@ -72,7 +74,8 @@ export function Header() {
           )}
         </div>
         <div className="pr-2 pl-1 max-w-32 text-ellipsis font-medium flex justify-start items-center line-clamp-1">
-          {dyteClient?.meta?.meetingTitle || event.name}
+          {meetingTitles?.find((m) => m.id === dyetMeeting.meta.meetingId)
+            ?.title || event.name}
         </div>
         <DyteClock
           meeting={dyetMeeting}

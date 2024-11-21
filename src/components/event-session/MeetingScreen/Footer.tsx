@@ -24,6 +24,7 @@ export function Footer() {
   const { isHost, presentationStatus } = useEventSession()
   const { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom } =
     useBreakoutRooms()
+  console.log('🚀 ~ Footer ~ isBreakoutActive:', isBreakoutActive)
 
   return (
     <div className="h-full w-full flex justify-between items-center px-2">
@@ -78,12 +79,6 @@ export function Footer() {
           <ReactWithEmojiToggle />
           <RaiseHandToggle />
           <AppsToggle />
-          {/* {isHost && (
-            <>
-              <MeetingRecordingButton />
-              <BreakoutButton />
-            </>
-          )} */}
           {!isHost &&
           isBreakoutActive &&
           isCurrentDyteMeetingInABreakoutRoom ? (

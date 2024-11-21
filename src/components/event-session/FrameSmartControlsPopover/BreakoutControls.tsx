@@ -6,9 +6,8 @@ import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
-import { useStoreDispatch } from '@/hooks/useRedux'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
-import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import {
   notificationDuration,
   notifyBreakoutEnd,
@@ -23,20 +22,17 @@ export function BreakoutControls() {
   const { isBreakoutActive } = useBreakoutRooms()
   const { eventRealtimeChannel } = useRealtimeChannel()
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
-  const dispatch = useStoreDispatch()
+  const sessionBreakoutFrameId = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.breakoutFrameId || null
+  )
 
   if (!frame) return null
   if (frame.type !== FrameType.BREAKOUT) return null
 
   const endBreakoutSession = () => {
     breakoutRoomsInstance?.endBreakoutRooms()
-    dispatch(
-      updateMeetingSessionDataAction({
-        breakoutFrameId: null,
-        connectedMeetingsToActivitiesMap: {},
-        timerStartedStamp: null,
-      })
-    )
   }
 
   const handleBreakoutEnd = () => {
@@ -52,18 +48,22 @@ export function BreakoutControls() {
     }, notificationDuration * 1000)
   }
 
+  const showEndBreakoutButton =
+    isBreakoutActive && frame.id === sessionBreakoutFrameId
+
   return (
     <>
-      <RenderIf isTrue={!isBreakoutActive}>
+      <RenderIf isTrue={!showEndBreakoutButton}>
         <Button
           title="Start breakout"
+          disabled={isBreakoutActive}
           onClick={() => {
             setOpenStartBreakoutModal(true)
           }}>
           Start Planned Breakout
         </Button>
       </RenderIf>
-      <RenderIf isTrue={isBreakoutActive}>
+      <RenderIf isTrue={showEndBreakoutButton}>
         <Button title="End breakout" color="danger" onClick={handleBreakoutEnd}>
           End Breakout
         </Button>

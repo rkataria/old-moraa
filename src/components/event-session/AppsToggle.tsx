@@ -11,7 +11,10 @@ import { TbApps, TbAppsFilled, TbClock } from 'react-icons/tb'
 
 import { AppsDropdownMenuItem } from './AppsDropdownMenuItem'
 import { TimerModal } from './TimerModal'
-import { BreakoutButton } from '../common/breakout/BreakoutButton'
+import {
+  UnplannedBreakoutButton,
+  useOnUnplannedBreakoutSessionUpdate,
+} from '../common/breakout/UnplannedBreakoutButton'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { Button } from '../ui/Button'
 
@@ -19,20 +22,17 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { useFlags } from '@/flags/client'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
-import { EventSessionMode } from '@/types/event-session.type'
-import { FrameType } from '@/utils/frame-picker.util'
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 import { cn } from '@/utils/utils'
 
 export function AppsToggle() {
-  const currentFrame = useCurrentFrame()
+  useOnUnplannedBreakoutSessionUpdate()
   const [isTimerOpen, setIsTimerOpen] = useState(false)
   const [isContentVisible, setIsContentVisible] = useState(false)
   const { meeting } = useDyteMeeting()
   const { flags } = useFlags()
-  const { isHost, eventSessionMode } = useEventSession()
+  const { isHost } = useEventSession()
   const recordingState = useDyteSelector(
     (meet) => meet.recording.recordingState
   )
@@ -64,6 +64,7 @@ export function AppsToggle() {
       <Popover
         placement="bottom"
         offset={10}
+        isOpen={isContentVisible}
         onOpenChange={setIsContentVisible}>
         <PopoverTrigger>
           <Button
@@ -122,11 +123,7 @@ export function AppsToggle() {
                   onClick={onRecordingToggle}
                 />
               </RenderIf>
-              <BreakoutButton
-                disabled={
-                  eventSessionMode !== EventSessionMode.LOBBY &&
-                  currentFrame?.type === FrameType.BREAKOUT
-                }
+              <UnplannedBreakoutButton
                 onClick={() => setIsContentVisible(false)}
               />
             </div>

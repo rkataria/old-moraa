@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 
 import { Link } from '@nextui-org/react'
 import toast from 'react-hot-toast'
+import { IoClose } from 'react-icons/io5'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -23,23 +24,31 @@ export function useAskForHelp() {
       },
       (event) => {
         if (!event.payload.meetingId) return
-
         toast(
-          <div className="flex items-center justify-center">
-            <p>
-              {event.payload.userName} asked for help from breakout room,{' '}
-              <Link
-                href="#"
-                className="contents"
-                size="sm"
-                onClick={() =>
-                  breakoutRoomsInstance?.joinRoom(event.payload.meetingId)
-                }>
-                Join Room.
-              </Link>
-            </p>
-          </div>,
-          { duration: 1000 * 60 }
+          ({ id }) => (
+            <div className="flex items-center justify-center">
+              <p>
+                {event.payload.userName} asked for help from breakout room,{' '}
+                <Link
+                  href="#"
+                  className="contents"
+                  size="sm"
+                  onClick={() => {
+                    breakoutRoomsInstance?.joinRoom(event.payload.meetingId)
+                    setTimeout(() => {
+                      toast.dismiss(id)
+                    }, 3000)
+                  }}>
+                  Join Room.
+                </Link>
+              </p>
+              <IoClose
+                className="m-2 cursor-pointer text-xl"
+                onClick={() => toast.dismiss(id)}
+              />
+            </div>
+          ),
+          { duration: 1000 * 60, position: 'bottom-right' }
         )
       }
     )
