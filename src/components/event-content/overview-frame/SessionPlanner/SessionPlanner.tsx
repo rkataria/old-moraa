@@ -498,8 +498,7 @@ export function SessionPlanner({
                               />
                             </RenderIf>
 
-                            <RenderIf
-                              isTrue={editable && section.frames.length}>
+                            <RenderIf isTrue={editable && sections.length > 0}>
                               <div
                                 className={cn(
                                   'relative flex items-center w-full h-5 opacity-0 hover:opacity-100 cursor-pointer group/add-section duration-100',
