@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-
 import { Badge } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -22,12 +20,6 @@ export function NoteToggle() {
   const { isHost } = useEventSession()
   const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
   const currentFrame = useCurrentFrame()
-
-  useEffect(() => {
-    if (currentFrame?.notes && isHost) {
-      dispatch(setRightSidebarAction('frame-notes'))
-    }
-  }, [currentFrame?.notes, isHost, dispatch])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleNoteToggle = (e: any) => {

@@ -8,6 +8,8 @@
 :root {
   --event-patterns-theme-color: 0, 0, 0;
   --event-patterns-theme-background: #fafafa;
+
+  --dyte-participant-tile-bg-color: #3f3840;
 }
 
 @layer base {

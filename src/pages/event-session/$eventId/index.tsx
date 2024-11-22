@@ -152,18 +152,6 @@ function EventSessionPage() {
         audio: userPreferences?.meeting?.audio ?? true,
         video: userPreferences?.meeting?.video ?? true,
       },
-      modules: {
-        devTools: {
-          logs: false,
-          plugins: [
-            {
-              name: 'Moraa Presentation',
-              port: 3000,
-              id: 'b4118591-4af6-4093-86ac-a8ce216f430f',
-            },
-          ],
-        },
-      },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enrollment?.meeting_token])
