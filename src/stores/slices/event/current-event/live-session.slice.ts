@@ -4,6 +4,7 @@ import { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 
 import { setCurrentFrameIdAction } from './event.slice'
 
+import { USER_PREFERENCES_LOCAL_STORAGE_KEY } from '@/constants/common'
 import { getRealtimeChannelForEvent } from '@/services/realtime/supabase-realtime.service'
 import { SessionService } from '@/services/session.service'
 import {
@@ -333,6 +334,20 @@ attachStoreListener({
     const dyteClient = action.payload
     if (!dyteClient) return
     dispatch(setCurrentDyteMeetingIdAction(dyteClient.meta.meetingId))
+
+    const userPreferences = localStorage.getItem(
+      USER_PREFERENCES_LOCAL_STORAGE_KEY
+    )
+
+    if (userPreferences) {
+      const parsedPreferences = JSON.parse(userPreferences)
+
+      const isVideoEnabled = parsedPreferences.meeting.video
+
+      if (isVideoEnabled) {
+        dyteClient.self.enableVideo()
+      }
+    }
 
     if (
       dyteClient.connectedMeetings?.parentMeeting &&
