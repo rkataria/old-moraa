@@ -23,7 +23,13 @@ import {
   TLRecord,
   TLStoreEventInfo,
   TLStoreWithStatus,
+  TLAssetStore,
+  uniqueId,
 } from 'tldraw'
+
+import { uploadFile } from '@/services/storage.service'
+
+const ASSET_KEY_FAILED_TO_UPLOAD = 'failed-to-upload'
 
 export function useStorageStore({
   frameId,
@@ -41,11 +47,35 @@ export function useStorageStore({
   // Get Liveblocks room
   const room = useRoom()
 
+  const hostedAssetStore: TLAssetStore = {
+    async upload(asset, file) {
+      const id = uniqueId()
+
+      const objectName = `moraa-board-assets-${frameId}-${asset.id}-${id}`
+
+      const response = (await uploadFile({
+        fileName: objectName,
+        file,
+      })) as { url: string }
+
+      if (!response || !response.url) {
+        throw new Error(ASSET_KEY_FAILED_TO_UPLOAD)
+      }
+
+      return response.url
+    },
+
+    resolve(asset) {
+      return asset.props.src
+    },
+  }
+
   // Set up tldraw store and status
   const [store] = useState(() => {
     const store = createTLStore({
       id: frameId,
       shapeUtils: [...defaultShapeUtils, ...shapeUtils],
+      assets: hostedAssetStore,
     })
 
     return store
@@ -85,16 +115,46 @@ export function useStorageStore({
       unsubs.push(
         store.listen(
           ({ changes }: TLStoreEventInfo) => {
+            // const failedToUploadAssets: string[] = []
+            // console.log('store changes', changes)
+
             room.batch(() => {
               Object.values(changes.added).forEach((record) => {
+                // console.log('store added', record)
+
                 liveRecords.set(record.id, record)
               })
 
               Object.values(changes.updated).forEach(([_, record]) => {
+                // console.log('store updated', record)
+
+                // // Check if Image Asset has src value
+                // if (
+                //   record.typeName === 'asset' &&
+                //   ['image'].includes(record.type) &&
+                //   !record.props.src
+                // ) {
+                //   failedToUploadAssets.push(record.id)
+                //   store.remove([record.id])
+
+                //   return
+                // }
+
+                // // Remove shape for failed to upload assets
+                // if (
+                //   record.typeName === 'shape' &&
+                //   failedToUploadAssets.includes(record.props.assetId as string)
+                // ) {
+                //   store.remove([record.id])
+
+                //   return
+                // }
+
                 liveRecords.set(record.id, record)
               })
 
               Object.values(changes.removed).forEach((record) => {
+                // console.log('store removed', record)
                 liveRecords.delete(record.id)
               })
             })
