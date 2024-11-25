@@ -1,8 +1,5 @@
 import { PropsWithChildren, useEffect, useRef, useState } from 'react'
 
-import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { Button } from '@nextui-org/button'
-import { IoReload } from 'react-icons/io5'
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from '../ContentContainer'
@@ -18,7 +15,6 @@ import { EventSessionMode } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 export function Content() {
-  const dyteClient = useDyteMeeting()
   const { eventSessionMode, isHost } = useEventSession()
   const isBreakoutOverviewOpen = useStoreSelector(
     (state) =>
@@ -87,16 +83,7 @@ export function Content() {
       <PanelsContent panelRef={panelRef}>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
           <h2 className="text-xl font-semibold my-4 mx-2 flex items-center">
-            Breakout{' '}
-            <Button
-              isIconOnly
-              className="bg-transparent ml-4"
-              onClick={() =>
-                dyteClient.meeting.connectedMeetings.getConnectedMeetings()
-              }>
-              <IoReload fontSize={18} />
-            </Button>{' '}
-            <BreakoutMessageBroadcast />
+            Breakout <BreakoutMessageBroadcast />
           </h2>
           <BreakoutRoomsWithParticipants key="frame_breakout_view" />
         </div>

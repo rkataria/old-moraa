@@ -333,6 +333,7 @@ attachStoreListener({
     const dyteClient = action.payload
     if (!dyteClient) return
     dispatch(setCurrentDyteMeetingIdAction(dyteClient.meta.meetingId))
+    const { eventId } = getState().event.currentEvent.eventState
 
     if (
       dyteClient.connectedMeetings?.parentMeeting &&
@@ -368,6 +369,10 @@ attachStoreListener({
       }
     }
     const meetingChangedListener = () => {
+      getRealtimeChannelForEvent(`${eventId}`)?.send({
+        type: 'broadcast',
+        event: 'participant-room-changed',
+      })
       if (
         getState().event.currentEvent.liveSessionState.dyte.isDyteMeetingLoading
       ) {
