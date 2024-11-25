@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { StartPlannedBreakoutModal } from '@/components/common/breakout/StartPlannedBreakoutModal'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -17,6 +18,7 @@ import { FrameType } from '@/utils/frame-picker.util'
 
 export function BreakoutControls() {
   const [openStartBreakoutModal, setOpenStartBreakoutModal] = useState(false)
+  const { isHost } = useEventSession()
 
   const frame = useCurrentFrame()
   const { isBreakoutActive } = useBreakoutRooms()
@@ -27,13 +29,6 @@ export function BreakoutControls() {
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutFrameId || null
   )
-
-  if (!frame) return null
-  if (frame.type !== FrameType.BREAKOUT) return null
-
-  const endBreakoutSession = () => {
-    breakoutRoomsInstance?.endBreakoutRooms()
-  }
 
   const handleBreakoutEnd = () => {
     if (!eventRealtimeChannel) {
@@ -46,6 +41,27 @@ export function BreakoutControls() {
       notifyBreakoutEnd(eventRealtimeChannel)
       endBreakoutSession()
     }, notificationDuration * 1000)
+  }
+
+  useEffect(() => {
+    if (!eventRealtimeChannel) return
+
+    eventRealtimeChannel.on(
+      'broadcast',
+      { event: 'breakout-time-ended' },
+      () => {
+        if (!isHost) return
+        handleBreakoutEnd()
+      }
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHost, eventRealtimeChannel])
+
+  if (!frame) return null
+  if (frame.type !== FrameType.BREAKOUT) return null
+
+  const endBreakoutSession = () => {
+    breakoutRoomsInstance?.endBreakoutRooms()
   }
 
   const showEndBreakoutButton =
