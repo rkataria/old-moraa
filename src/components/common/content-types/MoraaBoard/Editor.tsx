@@ -40,7 +40,6 @@ export function Editor({
         SharePanel: NameEditor,
         DebugPanel: null,
       }}
-      // persistenceKey={frame.id}
       hideUi={isReadonly}
       onMount={(editor) => {
         editor.updateInstanceState({ isReadonly: !!isReadonly })
