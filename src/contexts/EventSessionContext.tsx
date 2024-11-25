@@ -112,7 +112,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         const newJoinedParticipant = dyteMeeting.participants.joined.get(
           newParticipant.id
         )
-        newJoinedParticipant?.disableAudio()
+        setTimeout(() => {
+          newJoinedParticipant?.disableAudio()
+        }, 1000)
       }
     }
     dyteMeeting.participants.joined.on(

@@ -69,7 +69,7 @@ export function Timer({
       if (isBreakoutActive) {
         eventRealtimeChannel?.send({
           type: 'broadcast',
-          event: 'time-out',
+          event: 'breakout-time-ended',
         })
       }
     }, 1000)
