@@ -5,6 +5,7 @@ import { useParams, useRouter } from '@tanstack/react-router'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
+import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { FrameService } from '@/services/frame.service'
@@ -14,6 +15,7 @@ import {
   useEventSelector,
 } from '@/stores/hooks/useEventSections'
 import {
+  setCurrentEventIdAction,
   setCurrentSectionIdAction,
   setIsOverviewOpenAction,
   setIsPreviewOpenAction,
@@ -83,7 +85,11 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const syncing = useStoreSelector(
     (state) => state.event.currentEvent.frameState.updateFrameThunk.isLoading
   )
-
+  useSyncValueInRedux({
+    value: eventId || null,
+    reduxStateSelector: (state) => state.event.currentEvent.eventState.eventId,
+    actionFn: setCurrentEventIdAction,
+  })
   const event = useStoreSelector(
     (state) => state.event.currentEvent.eventState.event.data
   )
