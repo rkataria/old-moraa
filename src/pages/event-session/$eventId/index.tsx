@@ -73,11 +73,7 @@ export function EventSessionPageInner() {
   const { isBreakoutActive } = useBreakoutRooms()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
-    debounce(() => {
-      console.log('List changed')
-
-      meeting.connectedMeetings.getConnectedMeetings()
-    }, 500),
+    debounce(() => meeting.connectedMeetings.getConnectedMeetings(), 500),
     [meeting.connectedMeetings]
   )
 
@@ -93,10 +89,7 @@ export function EventSessionPageInner() {
     eventRealtimeChannel?.on(
       'broadcast',
       { event: 'participant-room-changed' },
-      () => {
-        console.log('List changed 2')
-        debouncedSearch()
-      }
+      () => debouncedSearch()
     )
   }, [debouncedSearch, eventRealtimeChannel, isHost])
 
