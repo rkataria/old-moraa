@@ -11,7 +11,10 @@ import { TbApps, TbAppsFilled, TbClock } from 'react-icons/tb'
 
 import { AppsDropdownMenuItem } from './AppsDropdownMenuItem'
 import { TimerModal } from './TimerModal'
-import { useOnUnplannedBreakoutSessionUpdate } from '../common/breakout/UnplannedBreakoutButton'
+import {
+  UnplannedBreakoutButton,
+  useOnUnplannedBreakoutSessionUpdate,
+} from '../common/breakout/UnplannedBreakoutButton'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { Button } from '../ui/Button'
 
@@ -124,6 +127,9 @@ export function AppsToggle() {
                   onClick={onRecordingToggle}
                 />
               </RenderIf>
+              <UnplannedBreakoutButton
+                onClick={() => setIsContentVisible(false)}
+              />
             </div>
           </div>
         </PopoverContent>
