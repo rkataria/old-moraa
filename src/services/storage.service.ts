@@ -19,6 +19,8 @@ export const uploadFile = async ({
     data: { session },
   } = await supabaseClient.auth.getSession()
 
+  const _bucketName = bucketName ?? 'assets-uploads'
+
   return new Promise((resolve, reject) => {
     const upload = new Upload(file, {
       endpoint: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/upload/resumable`,
@@ -30,7 +32,7 @@ export const uploadFile = async ({
       uploadDataDuringCreation: true,
       removeFingerprintOnSuccess: true, // Important if you want to allow re-uploading the same file https://github.com/tus/tus-js-client/blob/main/docs/api.md#removefingerprintonsuccess
       metadata: {
-        bucketName: bucketName || 'assets-uploads',
+        bucketName: _bucketName,
         objectName: fileName,
       },
 
@@ -44,7 +46,7 @@ export const uploadFile = async ({
         onProgressChange?.(+percentage < 90 ? +percentage : 90) // Limit progress to 90% to avoid confusion as the signed url is not yet generated
       },
       onSuccess() {
-        getSignedUrl(bucketName!, fileName, neverExpire).then((data) => {
+        getSignedUrl(_bucketName, fileName, neverExpire).then((data) => {
           resolve({
             url: data.data?.signedUrl,
           })
