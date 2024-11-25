@@ -19,7 +19,10 @@ import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useBreakoutSessionOver } from '@/hooks/useBreakoutSessionOver'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useUserPreferences } from '@/hooks/userPreferences'
-import { resetEventAction } from '@/stores/slices/event/current-event/event.slice'
+import {
+  setCurrentEventIdAction,
+  resetEventAction,
+} from '@/stores/slices/event/current-event/event.slice'
 import { resetFrameAction } from '@/stores/slices/event/current-event/frame.slice'
 import {
   resetLiveSessionAction,
@@ -98,6 +101,12 @@ function EventSessionPage() {
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
   )
+  const isEventLoaded = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.event.isSuccess
+  )
+  const isMeetingLoaded = useStoreSelector(
+    (state) => state.event.currentEvent.meetingState.meeting.isSuccess
+  )
   const isMeetingJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
@@ -107,6 +116,11 @@ function EventSessionPage() {
     reduxStateSelector: (state) =>
       state.event.currentEvent.liveSessionState.dyte.dyteClient,
     actionFn: setDyteClientAction,
+  })
+  useSyncValueInRedux({
+    value: eventId || null,
+    reduxStateSelector: (state) => state.event.currentEvent.eventState.eventId,
+    actionFn: setCurrentEventIdAction,
   })
 
   const resetMeeting = useCallback(() => {
@@ -145,6 +159,7 @@ function EventSessionPage() {
 
   useEffect(() => {
     if (!enrollment?.meeting_token) return
+    if (!isEventLoaded || !isMeetingLoaded) return
 
     initDyteMeeting({
       authToken: enrollment.meeting_token,
@@ -154,7 +169,7 @@ function EventSessionPage() {
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enrollment?.meeting_token])
+  }, [enrollment?.meeting_token, isEventLoaded, isMeetingLoaded])
 
   useEffect(() => {
     if (!dyteClient) return () => null
