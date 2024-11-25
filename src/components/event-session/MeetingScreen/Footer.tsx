@@ -10,9 +10,9 @@ import { ScreenShareToggle } from '../ScreenShareToggle'
 import { VideoToggle } from '../VideoToggle'
 
 import { AskForHelpButton } from '@/components/common/breakout/AskForHelpButton'
-import { BreakoutButton } from '@/components/common/breakout/BreakoutButton'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { PresentationControls } from '@/components/common/PresentationControls'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
@@ -29,7 +29,11 @@ export function Footer() {
   return (
     <div className="h-full w-full flex justify-between items-center px-2">
       <div className="flex-1 flex justify-start items-center gap-2 p-2 h-12">
-        {currentFrame && (
+        <RenderIf
+          isTrue={
+            !!currentFrame &&
+            (isHost || presentationStatus === PresentationStatuses.STARTED)
+          }>
           <motion.div
             layout="size"
             layoutRoot
@@ -51,7 +55,7 @@ export function Footer() {
               transition={{ duration: 0.3 }}
               className="flex justify-start items-center gap-2">
               <ContentTypeIcon
-                frameType={currentFrame.type as FrameType}
+                frameType={currentFrame?.type as FrameType}
                 classNames="text-gray-600"
               />
               <span
@@ -62,12 +66,12 @@ export function Footer() {
                       presentationStatus === PresentationStatuses.STARTED,
                   }
                 )}
-                title={currentFrame.name as string}>
-                {currentFrame.name}
+                title={currentFrame?.name as string}>
+                {currentFrame?.name}
               </span>
             </motion.div>
           </motion.div>
-        )}
+        </RenderIf>
       </div>
       <div className="flex-auto flex justify-center items-center gap-2">
         <div className="flex justify-center items-center gap-2 p-2 h-11 rounded-[12px] border-1 border-gray-300 bg-white">
@@ -78,8 +82,9 @@ export function Footer() {
           <PresentationControls />
           <ReactWithEmojiToggle />
           <RaiseHandToggle />
-          <AppsToggle />
-          {isHost && <BreakoutButton />}
+          <RenderIf isTrue={isHost}>
+            <AppsToggle />
+          </RenderIf>
           {!isHost &&
           isBreakoutActive &&
           isCurrentDyteMeetingInABreakoutRoom ? (

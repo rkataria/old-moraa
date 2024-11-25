@@ -31,10 +31,6 @@ export function TimerModal({
   const session = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.activeSession.data!
   )
-  const isBreakoutActive = useStoreSelector(
-    (store) =>
-      store.event.currentEvent.liveSessionState.breakout.isBreakoutActive
-  )
 
   const timerActive =
     session?.data?.timerStartedStamp &&
@@ -76,8 +72,6 @@ export function TimerModal({
   useHotkeys('t', handleTimerToggle, { enabled: isHost })
 
   if (!isHost) return null
-
-  if (isBreakoutActive) return null
 
   return (
     <Modal size="sm" isOpen={open} onClose={() => setOpen(false)}>

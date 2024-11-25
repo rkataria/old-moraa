@@ -11,6 +11,7 @@ import { SectionOverview } from '../SectionOverview'
 import { Frame } from '@/components/common/Frame/Frame'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { isFrameHasVideoAspectRatio } from '@/utils/frame-picker.util'
 import { getFrameCount, getPublishedFrameCount } from '@/utils/utils'
 
 export function ContentStudioContentContainer() {
@@ -48,12 +49,14 @@ export function ContentStudioContentContainer() {
     }
 
     if (currentFrame) {
-      return (
+      return isFrameHasVideoAspectRatio(currentFrame.type) ? (
         <div className="relative w-full pt-[54.25%]">
           <div className="absolute top-0 left-0 right-0 bottom-0">
             <Frame frame={currentFrame} />
           </div>
         </div>
+      ) : (
+        <Frame frame={currentFrame} />
       )
     }
 

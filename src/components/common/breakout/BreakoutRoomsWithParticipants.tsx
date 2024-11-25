@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
+import { useEffect, useState } from 'react'
+
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteConnectedMeetings } from '@dytesdk/web-core'
 import { Button } from '@nextui-org/react'
@@ -10,6 +12,7 @@ import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
+import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 
 export function BreakoutRoomsWithParticipants({
@@ -17,6 +20,8 @@ export function BreakoutRoomsWithParticipants({
 }: {
   hideActivityCards?: boolean
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setCount] = useState(0)
   const { getFrameById } = useEventContext()
   const meeting = useDyteSelector((meet) => meet)
   const mainMeetingId = meeting.meta.meetingId
@@ -24,6 +29,7 @@ export function BreakoutRoomsWithParticipants({
   const mainMeetingParticipants =
     meeting.connectedMeetings?.parentMeeting?.participants || []
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
+  const { isBreakoutActive } = useBreakoutRooms()
   const breakoutFrameId = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.activeSession.data?.data
@@ -34,6 +40,20 @@ export function BreakoutRoomsWithParticipants({
       state.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.connectedMeetingsToActivitiesMap
   )
+  const meetingTitles = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.meetingTitles
+  )
+
+  useEffect(() => {
+    if (!isBreakoutActive) return () => null
+
+    const interval = setInterval(() => setCount((count) => count + 1), 2000)
+
+    return () => clearInterval(interval)
+  }, [isBreakoutActive])
+
   const joinRoom = (meetId: string) => {
     breakoutRoomsInstance?.joinRoom(meetId)
   }
@@ -109,15 +129,7 @@ export function BreakoutRoomsWithParticipants({
               breakout={{
                 activityId:
                   connectedMeetingsToActivitiesMap?.[meet.id as string],
-                name:
-                  breakoutRooms.find(
-                    (room) =>
-                      room.activityId ===
-                      connectedMeetingsToActivitiesMap?.[meet.id as string]
-                  )?.name ||
-                  getFrameById(breakoutFrame?.content?.groupActivityId || '')
-                    ?.content?.title,
-                meetingName: meet.title,
+                name: meetingTitles?.find((m) => m.id === meet.id)?.title,
               }}
               editable={false}
               roomId={meet.id}

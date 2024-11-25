@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from 'react'
+
+import ResizeObserver from 'rc-resize-observer'
+
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from '../content-types/Breakout/Breakout'
 import { GoogleSlidesFrame } from '../content-types/GoogleSlides/GoogleSlides'
@@ -28,6 +32,17 @@ type FrameContainerProps = {
 }
 
 export function LiveFrame({ frame }: FrameContainerProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerAspectRatio, setContainerAspectRatio] = useState(16 / 9)
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerAspectRatio(
+        containerRef.current.offsetWidth / containerRef.current.offsetHeight
+      )
+    }
+  }, [containerRef])
+
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
     [FrameType.BREAKOUT]: <BreakoutFrame frame={frame as any} isLiveSession />,
     [FrameType.GOOGLE_SLIDES]: (
@@ -68,15 +83,29 @@ export function LiveFrame({ frame }: FrameContainerProps) {
   const frameHasTitle = frameTypesWithTitle.includes(frame.type)
 
   return (
-    <div className="w-full h-full flex justify-start items-center">
+    <ResizeObserver
+      onResize={({ width, height }) => {
+        if (isFrameHasVideoAspectRatio(frame.type)) {
+          setContainerAspectRatio(width / height)
+        }
+      }}>
       <div
-        className={cn({
-          'h-auto w-full aspect-video': isFrameHasVideoAspectRatio(frame?.type),
-          'h-full w-full': !isFrameHasVideoAspectRatio(frame?.type),
-          'flex flex-col gap-4': frameHasTitle,
-        })}>
-        {renderer}
+        ref={containerRef}
+        className="w-full h-full flex justify-start items-center">
+        <div
+          className={cn({
+            'h-full w-auto aspect-video':
+              isFrameHasVideoAspectRatio(frame?.type) &&
+              containerAspectRatio > 16 / 9,
+            'h-auto w-full aspect-video':
+              isFrameHasVideoAspectRatio(frame?.type) &&
+              containerAspectRatio <= 16 / 9,
+            'h-full w-full': !isFrameHasVideoAspectRatio(frame?.type),
+            'flex flex-col gap-4': frameHasTitle,
+          })}>
+          {renderer}
+        </div>
       </div>
-    </div>
+    </ResizeObserver>
   )
 }

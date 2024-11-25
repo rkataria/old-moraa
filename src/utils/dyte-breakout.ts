@@ -6,7 +6,6 @@ import chunk from 'lodash.chunk'
 export type StartBreakoutConfig = {
   participantsPerRoom?: number
   roomsCount?: number
-  roomNames?: string[]
 }
 
 export class BreakoutRooms {

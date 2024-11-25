@@ -12,10 +12,13 @@ import {
 } from '@nextui-org/react'
 import { useDebounce } from '@uidotdev/usehooks'
 
+import { RenderIf } from '../../RenderIf/RenderIf'
+
 import type { IFrame, IReflectionResponse } from '@/types/frame.type'
 
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { useTypingUsers } from '@/hooks/useTypingUsers'
 import { cn, getAvatarForName } from '@/utils/utils'
 
@@ -105,8 +108,33 @@ export function EditableCard({
     setAnonymous(selfResponse?.response.anonymous ?? false)
   }
 
+  const session = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.activeSession.data
+  )
+
+  const isInBreakoutMeeting = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
+
+  const getReflectionDisabled = () => {
+    const reflectionStartedInMainRoom =
+      session?.data?.framesConfig?.[frame.id]?.reflectionStarted
+
+    if (!isInBreakoutMeeting && !reflectionStartedInMainRoom) {
+      return true
+    }
+
+    return false
+  }
+
+  const shouldReflectionDisabled = getReflectionDisabled()
+
   return (
-    <Card className="rounded-2xl shadow-md border border-gray-50">
+    <Card
+      className={cn('rounded-2xl shadow-md border border-gray-50', {
+        'opacity-50 pointer-events-none': shouldReflectionDisabled,
+      })}>
       <CardHeader className="p-4">
         <div className="flex justify-start items-center gap-2">
           <Avatar
@@ -124,6 +152,7 @@ export function EditableCard({
           placeholder="Enter your reflection here."
           value={reflection.value}
           onChange={onChangeReflection}
+          isDisabled={shouldReflectionDisabled}
         />
       </CardBody>
       <CardFooter className="pt-0">
@@ -132,7 +161,10 @@ export function EditableCard({
             'justify-between': frame.config?.allowAnonymously,
             'justify-end': !frame.config?.allowAnonymously,
           })}>
-          {frame.config?.allowAnonymously && (
+          <RenderIf
+            isTrue={
+              frame.config?.allowAnonymously && !shouldReflectionDisabled
+            }>
             <div>
               <Checkbox
                 isSelected={anonymous}
@@ -140,7 +172,8 @@ export function EditableCard({
                 <p className="text-xs">Anonymous</p>
               </Checkbox>
             </div>
-          )}
+          </RenderIf>
+
           <div className="flex items-center gap-2">
             {editEnabled && (
               <Button color="danger" variant="light" onClick={handleCancel}>

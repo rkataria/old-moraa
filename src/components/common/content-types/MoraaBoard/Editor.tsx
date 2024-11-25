@@ -35,6 +35,7 @@ export function Editor({
     <Tldraw
       autoFocus
       store={store}
+      className="z-[1]"
       components={{
         SharePanel: NameEditor,
         DebugPanel: null,

@@ -40,7 +40,9 @@ export type SessionState = {
   currentSectionId?: string | null
   connectedMeetingsToActivitiesMap?: {
     [x: string]: string
-  }
+  } | null
+  meetingTitles?: { title: string; id: string }[] | null
+  breakoutType?: 'planned' | 'unplanned' | null
   timerStartedStamp?: number | null
   timerDuration?: number | null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,7 +68,6 @@ type LiveSessionState = {
     isBreakoutActive: boolean
     isInBreakoutMeeting: boolean
     isBreakoutOverviewOpen: boolean
-    isCreateBreakoutOpen: boolean
     breakoutNotify: boolean
   }
 }
@@ -87,7 +88,6 @@ const initialState: LiveSessionState = {
     isBreakoutActive: false,
     isInBreakoutMeeting: false,
     isBreakoutOverviewOpen: false,
-    isCreateBreakoutOpen: false,
     breakoutNotify: false,
   },
 }
@@ -100,7 +100,7 @@ export const liveSessionSlice = createSlice({
      * Meeting session reducers
      */
     updateMeetingSessionData: (state, action: PayloadAction<SessionState>) => {
-      if (state.activeSession.isSuccess !== true) {
+      if (!state.activeSession.data || state.activeSession.isSuccess !== true) {
         console.error('Session must be fetched before updating it.')
 
         return
@@ -138,9 +138,6 @@ export const liveSessionSlice = createSlice({
     /**
      * Breakout reducers
      */
-    setIsCreateBreakoutOpen: (state, action: PayloadAction<boolean>) => {
-      state.breakout.isCreateBreakoutOpen = action.payload
-    },
     setIsBreakoutOverviewOpen: (state, action: PayloadAction<boolean>) => {
       state.breakout.isBreakoutOverviewOpen = action.payload
     },
@@ -324,22 +321,6 @@ attachStoreListener({
 })
 
 attachStoreListener({
-  actionCreator: liveSessionSlice.actions.setIsBreakoutActive,
-  effect: (action, { getState, dispatch }) => {
-    if (
-      action.payload === false &&
-      getState().event.currentEvent.eventState.isCurrentUserOwnerOfEvent
-    ) {
-      dispatch(
-        updateMeetingSessionDataAction({
-          breakoutFrameId: null,
-        })
-      )
-    }
-  },
-})
-
-attachStoreListener({
   actionCreator: liveSessionSlice.actions.setDyteClient,
   effect: (action, { dispatch, getState }) => {
     const dyteClient = action.payload
@@ -507,7 +488,6 @@ export const {
   updateMeetingSessionDataAction,
   setIsMeetingJoinedAction,
   setIsBreakoutOverviewOpenAction,
-  setIsCreateBreakoutOpenAction,
   setIsBreakoutActiveAction,
   setCurrentDyteMeetingIdAction,
   setIsDyteMeetingLoadingAction,

@@ -91,8 +91,8 @@ export function FrameStatusToggleButton() {
         <Button
           size="sm"
           isIconOnly
-          className={cn({
-            'bg-primary-100': false,
+          className={cn('bg-transparent', {
+            'text-primary': false,
           })}>
           <Tooltip
             label={KeyboardShortcuts['Studio Mode'].share.label}

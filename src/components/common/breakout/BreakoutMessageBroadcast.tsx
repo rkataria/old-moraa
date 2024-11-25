@@ -15,10 +15,16 @@ import toast from 'react-hot-toast'
 import { PiTelegramLogoLight } from 'react-icons/pi'
 
 import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 
 export function BreakoutMessageBroadcast() {
   const connectedMeetings = useDyteSelector(
     (state) => state.connectedMeetings.meetings
+  )
+  const meetingTitles = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.activeSession.data?.data
+        ?.meetingTitles
   )
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false)
   const [sendingMessageToRooms, setSendingMessageToRooms] = useState<
@@ -75,7 +81,7 @@ export function BreakoutMessageBroadcast() {
               {connectedMeetings.map((meet) =>
                 meet.id ? (
                   <Checkbox
-                    className="mr-2"
+                    className="mr-4 mb-4"
                     checked={sendingMessageToRooms.includes(meet.id)}
                     onChange={() =>
                       sendingMessageToRooms.includes(meet.id!)
@@ -89,7 +95,7 @@ export function BreakoutMessageBroadcast() {
                             meet.id!,
                           ])
                     }>
-                    {meet.title}
+                    {meetingTitles?.find((m) => m.id === meet.id)?.title}
                   </Checkbox>
                 ) : null
               )}

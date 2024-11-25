@@ -14,7 +14,6 @@ import uniqolor from 'uniqolor'
 
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
 
-import { useProfile } from '@/hooks/useProfile'
 import { cn } from '@/utils/utils'
 
 export function ParticipantTile({
@@ -24,12 +23,17 @@ export function ParticipantTile({
   participant: DyteParticipant | Readonly<DyteSelf>
   handRaised?: boolean
 }) {
-  const { data: user } = useProfile()
   const tileRef = useRef<HTMLDivElement>(null)
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
-  const tileBgColor = uniqolor(participant.id)
-  const avatarColor = uniqolor(user?.id as string)
+  const presenceColor = uniqolor(
+    participant.customParticipantId as string
+  )?.color
+  const selfPresenceColor = uniqolor(
+    selfParticipant?.customParticipantId as string
+  )?.color
+
+  const isSelfTile = participant.id === selfParticipant.id
 
   return (
     <div
@@ -50,23 +54,23 @@ export function ParticipantTile({
           meeting={meeting}
           participant={participant}
           nameTagPosition="bottom-right"
-          className="w-full h-full aspect-video"
-          style={{
-            backgroundColor: tileBgColor.color,
-          }}>
+          className="w-full h-full aspect-video bg-[var(--dyte-participant-tile-bg-color)]">
           <DyteAvatar
             size="md"
             participant={participant}
             className="min-w-12 min-h-12 max-w-28 max-h-28 w-full h-full text-lg"
             style={{
-              backgroundColor: avatarColor.color,
+              backgroundColor: isSelfTile ? selfPresenceColor : presenceColor,
             }}
           />
           <DyteNameTag
             meeting={meeting}
             participant={participant}
             size="sm"
-            className="left-3 w-fit">
+            className="left-3 w-fit text-white"
+            style={{
+              backgroundColor: isSelfTile ? selfPresenceColor : presenceColor,
+            }}>
             <DyteAudioVisualizer
               size="sm"
               slot="start"

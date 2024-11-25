@@ -54,6 +54,8 @@ export function PollSettings() {
   const removeImage = () => {
     if (!currentFrame) return
 
+    setUploadPercentage(0)
+
     updateFrame({
       framePayload: {
         config: {
@@ -104,8 +106,13 @@ export function PollSettings() {
       <RenderIf isTrue={!currentFrame.config?.image?.url}>
         <MediaPicker
           trigger={
-            <Button fullWidth className="relative" variant="light">
-              Add image {uploadPercentage || ''}
+            <Button
+              fullWidth
+              className="relative"
+              variant="light"
+              isDisabled={!!uploadPercentage}>
+              {uploadPercentage ? 'Uploading' : 'Add image'}{' '}
+              {uploadPercentage ? `${uploadPercentage}%` : null}
             </Button>
           }
           onSelectCallback={(img) => {

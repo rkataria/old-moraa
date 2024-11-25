@@ -45,6 +45,7 @@
     "@nextui-org/tooltip": "^2.0.37",
     "@reduxjs/toolkit": "^2.2.7",
     "@sentry/react": "^8.34.0",
+    "@sentry/vite-plugin": "^2.22.6",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "~2.46.1",

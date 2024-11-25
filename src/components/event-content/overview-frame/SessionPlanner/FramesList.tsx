@@ -101,7 +101,7 @@ export function FramesList({
                       </div>
                     </RenderIf>
                     <RenderIf isTrue={!parentBreakoutFrame}>
-                      <p className="p-2 text-center">Duration(min)</p>
+                      <p className="p-2 text-center">Duration(m)</p>
                     </RenderIf>
                     <RenderIf isTrue={!parentBreakoutFrame}>
                       <p className="p-2 text-center border-x">Category</p>

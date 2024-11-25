@@ -6,7 +6,7 @@ import 'tldraw/tldraw.css'
 
 import { useContext, useState } from 'react'
 
-import { HiOutlinePlus } from 'react-icons/hi2'
+import { GoPlusCircle } from 'react-icons/go'
 import { v4 as uuidv4 } from 'uuid'
 
 // eslint-disable-next-line import/no-cycle
@@ -306,15 +306,12 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
               isTrue={!isMeetingJoined && !preview && eventMode === 'edit'}>
               {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
               <div
-                className="relative grid place-items-center h-full w-full cursor-pointer border rounded-xl hover:bg-primary group/new-room duration-300 min-h-[200px]"
+                className="relative grid place-items-center h-full w-full cursor-pointer border rounded-xl bg-white min-h-[200px] p-1 duration-300 hover:shadow-xl"
                 onClick={addNewRoom}>
-                <HiOutlinePlus
-                  size={60}
-                  className="text-primary -mt-5 group-hover/new-room:text-white"
-                />
-                <p className="text-primary absolute bottom-4 w-full left-0 text-center group-hover/new-room:text-white">
-                  New Room
-                </p>
+                <div className="w-full h-full rounded-lg flex flex-col justify-center items-center gap-2 bg-[#f9f6ff]">
+                  <GoPlusCircle size={60} className="text-primary" />
+                  <p className="text-primary text-center">Add new room</p>
+                </div>
               </div>
             </RenderIf>
           </div>

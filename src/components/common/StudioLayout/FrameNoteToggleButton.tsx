@@ -1,7 +1,7 @@
 import { Badge } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { TbBubbleText } from 'react-icons/tb'
+import { TbBubbleFilled, TbBubbleText } from 'react-icons/tb'
 import { useDispatch } from 'react-redux'
 
 import { Tooltip } from '../ShortuctTooltip'
@@ -57,22 +57,30 @@ export function FrameNoteToggleButton() {
           <Button
             size="sm"
             isIconOnly
-            className={cn('relative', {
-              'bg-primary-100': isVisible,
+            className={cn('relative bg-transparent', {
+              'text-primary': isVisible,
             })}
             onClick={toggleSidebar}>
-            <TbBubbleText size={20} strokeWidth={1.5} />
+            {isVisible ? (
+              <TbBubbleFilled size={20} strokeWidth={1.5} />
+            ) : (
+              <TbBubbleText size={20} strokeWidth={1.5} />
+            )}
           </Button>
         </Badge>
       ) : (
         <Button
           size="sm"
           isIconOnly
-          className={cn('relative', {
-            'bg-primary-100': isVisible,
+          className={cn('relative bg-transparent', {
+            'text-primary': isVisible,
           })}
           onClick={toggleSidebar}>
-          <TbBubbleText size={20} strokeWidth={1.5} />
+          {isVisible ? (
+            <TbBubbleFilled size={20} strokeWidth={1.5} />
+          ) : (
+            <TbBubbleText size={20} strokeWidth={1.5} />
+          )}
         </Button>
       )}
     </Tooltip>

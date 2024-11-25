@@ -10,16 +10,21 @@ import { AnimatePresence, motion } from 'framer-motion'
 import countBy from 'lodash.countby'
 import { VscReactions } from 'react-icons/vsc'
 
+import { RenderIf } from '../../RenderIf/RenderIf'
+
 import { EmojiPicker } from '@/components/common/EmojiPicker'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { FrameReaction } from '@/types/event-session.type'
 import { IReflectionResponse } from '@/types/frame.type'
 import { cn, getAvatarForName } from '@/utils/utils'
 
 type ReactionsProps = {
   responseId: CardProps['response']['id']
+  canReact: boolean
 }
-function Reactions({ responseId }: ReactionsProps) {
+function Reactions({ responseId, canReact }: ReactionsProps) {
   const { participant, emoteOnReflection, frameReactions } = useEventSession()
 
   // useEffect(() => {
@@ -44,6 +49,8 @@ function Reactions({ responseId }: ReactionsProps) {
   }
 
   const handleEmojiSelect = (selectedEmojiId: string) => {
+    if (!canReact) return
+
     const participantEmote = reactions.find(
       (reaction: FrameReaction) => reaction.participant_id === participant.id
     )
@@ -78,12 +85,11 @@ function Reactions({ responseId }: ReactionsProps) {
               exit={{ scale: 0 }}>
               <Chip
                 onClick={() => handleEmojiSelect(reaction)}
-                className={cn(
-                  'font-bold hover:bg-primary group/item duration-300 cursor-pointer',
-                  {
-                    'bg-primary/20': participantEmotedOnReaction(reaction),
-                  }
-                )}
+                className={cn('font-bold duration-300', {
+                  'bg-primary/20': participantEmotedOnReaction(reaction),
+                  'group/item cursor-pointer hover:bg-primary': canReact,
+                  'cursor-not-allowed': !canReact,
+                })}
                 variant="flat"
                 avatar={<em-emoji set="apple" id={reaction} size={22} />}>
                 <span className="font-bold text-gray-600 group-hover/item:text-white ">
@@ -94,23 +100,26 @@ function Reactions({ responseId }: ReactionsProps) {
           ))}
         </AnimatePresence>
       </div>
-
-      <div>
-        <EmojiPicker
-          triggerIcon={
-            <Button variant="light" className="w-[30px] h-[26px] p-0 min-w-fit">
-              <VscReactions
-                className="text-gray-400 mt-[0.0625rem]"
-                size={24}
-              />
-            </Button>
-          }
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onEmojiSelect={(selectedEmoji: any) =>
-            handleEmojiSelect(selectedEmoji.id)
-          }
-        />
-      </div>
+      <RenderIf isTrue={canReact}>
+        <div>
+          <EmojiPicker
+            triggerIcon={
+              <Button
+                variant="light"
+                className="w-[30px] h-[26px] p-0 min-w-fit">
+                <VscReactions
+                  className="text-gray-400 mt-[0.0625rem]"
+                  size={24}
+                />
+              </Button>
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onEmojiSelect={(selectedEmoji: any) =>
+              handleEmojiSelect(selectedEmoji.id)
+            }
+          />
+        </div>
+      </RenderIf>
     </div>
   )
 }
@@ -134,6 +143,7 @@ export function Card({
     anonymous: isAnonymous = false,
   } = response.response
   const responseId = response.id
+  const currentFrame = useCurrentFrame()
 
   const getAvatar = () => {
     if (isAnonymous) {
@@ -141,6 +151,30 @@ export function Card({
     }
 
     return getAvatarForName(username, avatarUrl)
+  }
+
+  const session = useStoreSelector(
+    (store) => store.event.currentEvent.liveSessionState.activeSession.data
+  )
+
+  const reflectionStartedInMainRoom =
+    session?.data?.framesConfig?.[currentFrame?.id || '']?.reflectionStarted
+
+  const isInBreakoutMeeting = useStoreSelector(
+    (store) =>
+      store.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
+
+  const canReact = () => {
+    if (isInBreakoutMeeting) return true
+
+    return reflectionStartedInMainRoom
+  }
+
+  const isEditable = () => {
+    if (isInBreakoutMeeting) return true
+
+    return isOwner && reflectionStartedInMainRoom
   }
 
   return (
@@ -162,18 +196,18 @@ export function Card({
       <CardBody className="pt-0 px-4 flex flex-col justify-between">
         <div className="w-full">
           <p className="text-base text-gray-800">{reflection}</p>
-          {isOwner && (
+          <RenderIf isTrue={isEditable()}>
             <Button
               variant="light"
               onClick={enableEditReflection}
               className="w-auto p-0 min-w-fit mt-2.5 h-auto text-xs text-slate-400 hover:text-primary !bg-transparent">
               <span>Edit</span>
             </Button>
-          )}
+          </RenderIf>
         </div>
         <div className="mt-6">
           {/* <Divider className="my-3" /> */}
-          <Reactions responseId={responseId} />
+          <Reactions responseId={responseId} canReact={canReact()} />
         </div>
       </CardBody>
     </NextUICard>

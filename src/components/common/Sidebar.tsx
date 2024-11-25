@@ -23,10 +23,7 @@ export function SidebarComponent() {
       <div className="flex flex-col grow gap-y-4 overflow-y-auto pb-4">
         <RenderIf isTrue={isEducator()}>
           <Button
-            style={{
-              background:
-                'linear-gradient(107.56deg, rgb(181, 10, 193) 0%, rgb(137, 47, 255) 100%)',
-            }}
+            gradient="primary"
             size="md"
             onClick={() => navigate({ to: '/events/create' })}
             color="primary"

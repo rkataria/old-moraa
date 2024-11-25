@@ -12,7 +12,7 @@ interface EditProps {
 
 export function Edit({ frame }: EditProps) {
   return (
-    <div className="w-full h-full flex flex-col gap-20">
+    <div className="w-full h-full flex flex-col">
       <FrameTitleDescriptionPanel key={frame.id} />
 
       <Responses
@@ -30,7 +30,7 @@ export function Edit({ frame }: EditProps) {
                   participant_id: '',
                 },
               ]}
-              className="w-[323px] h-fit absolute top-[-38px] left-[-100px] z-[100] shadow-xl"
+              className="w-[323px] h-fit absolute top-[-38px] left-[-100px] z-[20] shadow-xl"
             />
             <Image src="/images/reflection/edit.svg" width={518} />
           </div>

@@ -21,6 +21,7 @@ import type {
   ISection,
 } from '@/types/frame.type'
 
+import { useEnrollment } from '@/hooks/useEnrollment'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useFrameReactions } from '@/hooks/useReactions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -60,8 +61,11 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { eventMode, setCurrentFrame } = useEventContext()
 
   const { permissions } = useEventPermissions()
+  const { enrollment } = useEnrollment()
 
-  const isHost = permissions.canAcessAllSessionControls
+  const isHost =
+    permissions.canAcessAllSessionControls ||
+    enrollment?.event_role === 'Co-creator'
 
   const session = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.activeSession.data

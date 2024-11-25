@@ -20,7 +20,13 @@ export function MeetingSetupParticipants() {
     getParticipants()
   }, [meeting])
 
-  if (joinedParticipants.length === 0) return null
+  if (joinedParticipants.length === 0) {
+    return (
+      <ParticipantsContainer>
+        Nobody has joined the meeting yet
+      </ParticipantsContainer>
+    )
+  }
 
   const participantFirstNames = joinedParticipants.map(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,44 +35,48 @@ export function MeetingSetupParticipants() {
 
   if (joinedParticipants.length === 1) {
     return (
-      <div className="pt-4">
+      <ParticipantsContainer>
         {participantFirstNames[0]} has already joined the meeting
-      </div>
+      </ParticipantsContainer>
     )
   }
 
   if (joinedParticipants.length === 2) {
     return (
-      <div className="pt-4">
+      <ParticipantsContainer>
         {participantFirstNames[0]} and {participantFirstNames[1]} have already
         joined the meeting
-      </div>
+      </ParticipantsContainer>
     )
   }
 
   if (joinedParticipants.length === 3) {
     return (
-      <div className="pt-4">
+      <ParticipantsContainer>
         {participantFirstNames[0]}, {participantFirstNames[1]} and{' '}
         {participantFirstNames[2]} have already joined the meeting
-      </div>
+      </ParticipantsContainer>
     )
   }
 
   if (joinedParticipants.length === 4) {
     return (
-      <div className="pt-4">
+      <ParticipantsContainer>
         {participantFirstNames[0]}, {participantFirstNames[1]},{' '}
         {participantFirstNames[2]} and one more have already joined the meeting
-      </div>
+      </ParticipantsContainer>
     )
   }
 
   return (
-    <div className="pt-4">
+    <ParticipantsContainer>
       {participantFirstNames[0]}, {participantFirstNames[1]},{' '}
       {participantFirstNames[2]} and {joinedParticipants.length - 3} others have
       already joined the meeting
-    </div>
+    </ParticipantsContainer>
   )
+}
+
+function ParticipantsContainer({ children }: { children: React.ReactNode }) {
+  return <div className="pt-4 text-gray-100 font-light">{children}</div>
 }

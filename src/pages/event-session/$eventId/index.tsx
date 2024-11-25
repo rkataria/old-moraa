@@ -16,12 +16,12 @@ import { useTimer } from '@/hooks/use-timer'
 import { useAskForHelp } from '@/hooks/useAskForHelp'
 import { useBreakoutBroadcastMessage } from '@/hooks/useBreakoutBroadcastMessage'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
+import { useBreakoutSessionOver } from '@/hooks/useBreakoutSessionOver'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useUserPreferences } from '@/hooks/userPreferences'
-import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import {
-  resetEventAction,
   setCurrentEventIdAction,
+  resetEventAction,
 } from '@/stores/slices/event/current-event/event.slice'
 import { resetFrameAction } from '@/stores/slices/event/current-event/frame.slice'
 import {
@@ -46,6 +46,7 @@ export function EventSessionPageInner() {
   useTimer()
   useBreakoutBroadcastMessage()
   useAskForHelp()
+  useBreakoutSessionOver()
   const isRoomJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
@@ -58,7 +59,6 @@ export function EventSessionPageInner() {
       state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
   )
   const { isBreakoutActive } = useBreakoutRooms()
-  const currentFrame = useCurrentFrame()
 
   useSyncValueInRedux({
     value: isBreakoutActive,
@@ -74,7 +74,7 @@ export function EventSessionPageInner() {
           message={
             isInBreakoutMeeting
               ? 'Exiting Breakout Room'
-              : `You are leaving main room to join ${currentFrame?.name}`
+              : 'You are leaving main room to join breakout room'
           }
         />
       </div>
@@ -166,18 +166,6 @@ function EventSessionPage() {
       defaults: {
         audio: userPreferences?.meeting?.audio ?? true,
         video: userPreferences?.meeting?.video ?? true,
-      },
-      modules: {
-        devTools: {
-          logs: false,
-          plugins: [
-            {
-              name: 'Moraa Presentation',
-              port: 3000,
-              id: 'b4118591-4af6-4093-86ac-a8ce216f430f',
-            },
-          ],
-        },
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

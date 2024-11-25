@@ -69,13 +69,13 @@ export function PublishButton({
 
   return (
     <>
-      <div className="flex justify-center items-center gap-0 border-1 overflow-hidden rounded-lg border-primary">
+      <div className="flex justify-center items-center gap-0 overflow-hidden">
         <Tooltip content="Publish">
           <Button
             size="sm"
-            color="primary"
             className="rounded-e-none"
             variant="solid"
+            gradient="primary"
             onClick={() => setShowConfirmationModal(true)}>
             Publish
           </Button>
@@ -132,7 +132,7 @@ export function PublishButton({
         size="5xl"
         isOpen={showConfirmationModal}
         onClose={() => setShowConfirmationModal(false)}>
-        <ModalContent>
+        <ModalContent className="overflow-hidden">
           {() => (
             <>
               <ModalHeader className="flex items-center justify-between gap-1 bg-primary text-white h-[9.125rem] p-6 pr-10">

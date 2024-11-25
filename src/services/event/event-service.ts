@@ -47,6 +47,13 @@ export class EventService extends APIService {
       return res
     })
   }
+  static async duplicateEvent({ eventId }: { eventId: string }) {
+    return this.supabaseClient.functions.invoke('duplicate-event', {
+      body: {
+        eventId,
+      },
+    })
+  }
 
   static async publishEvent({ eventId }: { eventId: string }) {
     const data = await this.supabaseClient

@@ -1,4 +1,6 @@
+import { BreakoutControls } from './BreakoutControls'
 import { PollControls } from './PollControls'
+import { ReflectionControls } from './ReflectionControls'
 
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -7,7 +9,7 @@ export const getControls = (frameType: FrameType) => {
   if (!frameType) return null
 
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
-    [FrameType.BREAKOUT]: null,
+    [FrameType.BREAKOUT]: <BreakoutControls />,
     [FrameType.GOOGLE_SLIDES]: null,
     [FrameType.IMAGE_VIEWER]: null,
     [FrameType.MIRO_EMBED]: null,
@@ -18,7 +20,7 @@ export const getControls = (frameType: FrameType) => {
     [FrameType.POLL]: <PollControls />,
     [FrameType.POWERPOINT]: null,
     [FrameType.Q_A]: null,
-    [FrameType.REFLECTION]: null,
+    [FrameType.REFLECTION]: <ReflectionControls />,
     [FrameType.RICH_TEXT]: null,
     [FrameType.VIDEO]: null,
     [FrameType.VIDEO_EMBED]: null,

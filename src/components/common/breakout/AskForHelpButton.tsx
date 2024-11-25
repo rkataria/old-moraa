@@ -1,5 +1,6 @@
-import { Button } from '@nextui-org/button'
+import { useState } from 'react'
 
+import { Button } from '@/components/ui/Button'
 import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useProfile } from '@/hooks/useProfile'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -9,10 +10,13 @@ export function AskForHelpButton() {
     (state) =>
       state.event.currentEvent.liveSessionState.dyte.currentDyteMeetingId
   )
+  const [isButtonDisabled, setButtonDisabled] = useState(false)
   const user = useProfile()
   const { eventRealtimeChannel } = useRealtimeChannel()
 
   const askForHelp = () => {
+    setButtonDisabled(true)
+    setTimeout(() => setButtonDisabled(false), 5000)
     eventRealtimeChannel?.send({
       type: 'broadcast',
       payload: {
@@ -24,7 +28,12 @@ export function AskForHelpButton() {
   }
 
   return (
-    <Button size="sm" variant="light" onClick={askForHelp} title="Ask for help">
+    <Button
+      title="Ask for help"
+      disabled={isButtonDisabled}
+      variant={isButtonDisabled ? 'flat' : 'light'}
+      color={isButtonDisabled ? 'success' : 'default'}
+      onClick={askForHelp}>
       Ask for help
     </Button>
   )

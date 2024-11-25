@@ -181,6 +181,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     type: FrameType.MIRO_EMBED,
     category: FrameCategory.COLLABORATION_TOOL,
     disabled: false,
+    isAvailableForBreakout: true,
   },
   {
     name: 'Breakout',
