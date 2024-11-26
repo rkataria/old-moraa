@@ -12,7 +12,7 @@ export class API {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: any = await uploadFile({
         file,
-        fileName: `tiptap-.${file.name.split('.').pop()}`,
+        fileName: `tiptap-${Date.now()}-${file.name}`,
         bucketName: 'image-uploads',
         onProgressChange: setLoadingPercentage,
       })

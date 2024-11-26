@@ -67,7 +67,7 @@ export function ImageUploader({
             console.log(file)
             const response = await uploadFile({
               file,
-              fileName: `tiptap-.${file.name.split('.').pop()}`,
+              fileName: `tiptap-${Date.now()}-${file.name}`,
               bucketName: 'image-uploads',
               onProgressChange: setImageUploadProgress,
             })

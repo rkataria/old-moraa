@@ -21,6 +21,7 @@ export const handlePasteAndDropImage = (
       .run()
 
     try {
+      // TODO: image inside meeting id folder
       const imageUrl = await API.uploadImage(file, (percentage) => {
         // Update the loading percentage as the upload progresses
         const { state, view } = currentEditor
