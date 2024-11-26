@@ -31,7 +31,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                   {children}
                 </main>
               </LiveblocksProvider>
-              <Toaster position="top-center" reverseOrder={false} />
+              <Toaster position="bottom-right" reverseOrder={false} />
             </MoraaSlideEditorContextProvider>
           </UserContextProvider>
         </QueryClientProvider>
