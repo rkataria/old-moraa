@@ -1,16 +1,28 @@
 import { useCallback, useEffect, useRef } from 'react'
 
 import { provideDyteDesignSystem } from '@dytesdk/react-ui-kit'
-import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
+import {
+  DyteProvider,
+  useDyteClient,
+  useDyteMeeting,
+} from '@dytesdk/react-web-core'
 import { createFileRoute, useParams } from '@tanstack/react-router'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { debounce } from 'lodash'
 
 import { Loading } from '@/components/common/Loading'
 import { MeetingScreen } from '@/components/event-session/MeetingScreen/MeetingScreen'
 import { MeetingSetupScreen } from '@/components/event-session/MeetingSetupScreen/MeetingSetupScreen'
 import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContext'
 import { EventProvider } from '@/contexts/EventContext'
-import { EventSessionProvider } from '@/contexts/EventSessionContext'
-import { RealtimeChannelProvider } from '@/contexts/RealtimeChannelContext'
+import {
+  EventSessionProvider,
+  useEventSession,
+} from '@/contexts/EventSessionContext'
+import {
+  RealtimeChannelProvider,
+  useRealtimeChannel,
+} from '@/contexts/RealtimeChannelContext'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useTimer } from '@/hooks/use-timer'
 import { useAskForHelp } from '@/hooks/useAskForHelp'
@@ -47,6 +59,8 @@ export function EventSessionPageInner() {
   useBreakoutBroadcastMessage()
   useAskForHelp()
   useBreakoutSessionOver()
+  const { meeting } = useDyteMeeting()
+  const { eventRealtimeChannel } = useRealtimeChannel()
   const isRoomJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
@@ -54,11 +68,17 @@ export function EventSessionPageInner() {
     (state) =>
       state.event.currentEvent.liveSessionState.dyte.isDyteMeetingLoading
   )
+  const { isHost } = useEventSession()
   const isInBreakoutMeeting = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
   )
   const { isBreakoutActive } = useBreakoutRooms()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const refetchConnectedMeetingsParticipants = useCallback(
+    debounce(() => meeting.connectedMeetings.getConnectedMeetings(), 500),
+    [meeting.connectedMeetings]
+  )
 
   useSyncValueInRedux({
     value: isBreakoutActive,
@@ -66,6 +86,15 @@ export function EventSessionPageInner() {
       state.event.currentEvent.liveSessionState.breakout.isBreakoutActive,
     actionFn: setIsBreakoutActiveAction,
   })
+
+  useEffect(() => {
+    if (!isHost) return
+    eventRealtimeChannel?.on(
+      'broadcast',
+      { event: 'participant-room-changed' },
+      () => refetchConnectedMeetingsParticipants()
+    )
+  }, [refetchConnectedMeetingsParticipants, eventRealtimeChannel, isHost])
 
   if (isBreakoutLoading) {
     return (
