@@ -9,9 +9,11 @@ import { DragDropContext } from 'react-beautiful-dnd'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 
@@ -23,6 +25,7 @@ export function BreakoutRoomsWithParticipants({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setCount] = useState(0)
   const { getFrameById } = useEventContext()
+  const { isHost } = useEventSession()
   const meeting = useDyteSelector((meet) => meet)
   const mainMeetingId = meeting.meta.meetingId
   const connectedMeetings = meeting.connectedMeetings?.meetings || []
@@ -140,7 +143,12 @@ export function BreakoutRoomsWithParticipants({
                 displayPictureUrl: p?.displayPictureUrl || '',
               }))}
               JoinRoomButton={
-                meet.id !== mainMeetingId ? (
+                <RenderIf
+                  isTrue={
+                    meet.id !== mainMeetingId &&
+                    (isHost ||
+                      breakoutFrame.config.breakoutJoinMethod === 'choose')
+                  }>
                   <Button
                     className="m-2 border-1"
                     size="sm"
@@ -148,7 +156,7 @@ export function BreakoutRoomsWithParticipants({
                     onClick={() => joinRoom(meet.id || '')}>
                     Join Room {index + 1}
                   </Button>
-                ) : undefined
+                </RenderIf>
               }
             />
           ))}

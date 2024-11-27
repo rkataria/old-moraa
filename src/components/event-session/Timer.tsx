@@ -135,7 +135,7 @@ export function Timer({
         }),
       }}
       actions={[
-        <RenderIf isTrue={!isHost}>
+        <RenderIf isTrue={!isHost && isInBreakoutMeeting}>
           <AskForHelpButton />
         </RenderIf>,
         <RenderIf isTrue={isHost && !isBreakoutActive}>

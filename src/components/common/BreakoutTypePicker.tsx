@@ -11,13 +11,17 @@ import {
   Card,
   CardBody,
   ModalFooter,
-  Button,
 } from '@nextui-org/react'
 import { BsCircleSquare } from 'react-icons/bs'
 import { FaPeopleGroup } from 'react-icons/fa6'
 import { LuSquareStack } from 'react-icons/lu'
 
-import { TwoWayNumberCounter } from './content-types/MoraaSlide/FontSizeControl'
+import {
+  BreakoutJoinMethod,
+  BreakoutJoinMethodSelector,
+} from './breakout/BreakoutJoinMethodSelector'
+import { NumberInput } from './NumberInput'
+import { Button } from '../ui/Button'
 
 import { cn } from '@/utils/utils'
 
@@ -45,13 +49,7 @@ export enum BREAKOUT_TYPES {
 export const breakoutTypes: IBreakoutType[] = [
   {
     name: 'Groups',
-    icon: (
-      <FaPeopleGroup
-        className="w-full h-full max-w-11 max-h-11"
-        width={60}
-        height={60}
-      />
-    ),
+    icon: <FaPeopleGroup size={32} />,
     description:
       'Split up participants into randomised groups automatically with no of participants per group',
     breakoutType: BREAKOUT_TYPES.GROUPS,
@@ -59,7 +57,7 @@ export const breakoutTypes: IBreakoutType[] = [
   },
   {
     name: 'Rooms',
-    icon: <LuSquareStack className="w-full h-full max-w-11 max-h-11" />,
+    icon: <LuSquareStack size={32} />,
     description:
       'You can allocate participants or let them choose based on the specific no of rooms',
     breakoutType: BREAKOUT_TYPES.ROOMS,
@@ -73,7 +71,8 @@ interface ChooseContentTypeProps {
   onChoose: (
     contentType: BREAKOUT_TYPES,
     breakoutRoomsGroupsCount?: number,
-    breakoutRoomsGroupsTime?: number
+    breakoutRoomsGroupsTime?: number,
+    breakoutJoinMethod?: BreakoutJoinMethod
   ) => void
 }
 
@@ -84,23 +83,24 @@ export function BreakoutTypePicker({
 }: ChooseContentTypeProps) {
   const [selectedBreakoutType, setSelectedBreakoutType] =
     useState<BREAKOUT_TYPES>(BREAKOUT_TYPES.GROUPS)
-
   const [breakoutRoomsGroupsCount, setBreakoutRoomsGroupsCount] =
     useState<number>(2)
-
   const [breakoutRoomsGroupsTime, setBreakoutRoomsGroupsTime] =
     useState<number>(5)
+  const [breakoutJoinMethod, setBreakoutJoinMethod] =
+    useState<BreakoutJoinMethod>('auto')
 
   const onSubmit = () => {
     onChoose(
       selectedBreakoutType,
       breakoutRoomsGroupsCount,
-      breakoutRoomsGroupsTime
+      breakoutRoomsGroupsTime,
+      breakoutJoinMethod
     )
   }
 
   return (
-    <Modal size="lg" isOpen={open} onClose={onClose} className="bg-white">
+    <Modal size="4xl" isOpen={open} onClose={onClose}>
       <ModalContent>
         {() => (
           <>
@@ -118,7 +118,7 @@ export function BreakoutTypePicker({
                 </div>
               </div>
             </ModalHeader>
-            <ModalBody className="p-6">
+            <ModalBody className="p-8">
               {/* New section for Cards */}
               <div className="w-full mt-2">
                 <div className="grid grid-cols-2 gap-4">
@@ -133,91 +133,107 @@ export function BreakoutTypePicker({
                         }
                       }}
                       className={cn(
-                        'hover:border hover:border-[#6947C3] border border-gray-100 flex-col items-start ',
+                        'flex-col items-start border-2 border-transparent bg-white ',
                         {
-                          'bg-[#E9D8FD]':
+                          'border-primary':
                             breakoutType.breakoutType === selectedBreakoutType,
-                          'bg-gray-100':
-                            breakoutType.breakoutType !== selectedBreakoutType,
                         }
                       )}>
                       <CardBody className="p-2.5 flex flex-col place-items-center justify-center w-full gap-4 text-center">
-                        <div className="w-full flex items-center justify-center">
-                          <span className="p-1 rounded-full bg-[#E9D8FD] flex items-center">
-                            <span className="flex items-center bg-[#B695F4] p-2 rounded-full text-[#E9D8FD]">
-                              {breakoutType.icon}
+                        <div className="flex flex-col gap-2">
+                          <div className="w-full flex items-center justify-center">
+                            <span className="p-1 rounded-full bg-[#E9D8FD] flex items-center">
+                              <span className="flex items-center bg-[#B695F4] p-2 rounded-full text-white">
+                                {breakoutType.icon}
+                              </span>
                             </span>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-lg w-full">
+                              {breakoutType.name}
+                            </h3>
+                            <p className="text-sm w-full font-normal">
+                              {breakoutType.description}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col justify-center items-center gap-1.5">
+                          <span className="font-semibold">
+                            {breakoutType.breakoutType === BREAKOUT_TYPES.ROOMS
+                              ? 'No of rooms'
+                              : 'No of participants per group'}
+                          </span>
+                          <span
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                            }}>
+                            <NumberInput
+                              min={2}
+                              max={30}
+                              allowNegative={false}
+                              number={breakoutRoomsGroupsCount}
+                              disabled={
+                                selectedBreakoutType !==
+                                breakoutType.breakoutType
+                              }
+                              onNumberChange={(count: number) =>
+                                setBreakoutRoomsGroupsCount(count)
+                              }
+                            />
                           </span>
                         </div>
-                        <h3 className="mt-2 font-semibold text-md w-full ">
-                          {breakoutType.name}
-                        </h3>
-                        <p className="text-sm mt-1 w-full font-normal">
-                          {breakoutType.description}
-                        </p>
-                        <span>
-                          {breakoutType.breakoutType === BREAKOUT_TYPES.ROOMS
-                            ? 'No of rooms'
-                            : 'No of participants per group'}
-                        </span>
-                        <span
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                          }}>
-                          <TwoWayNumberCounter
-                            defaultCount={breakoutRoomsGroupsCount}
-                            onCountChange={(count) =>
-                              setBreakoutRoomsGroupsCount(count)
-                            }
-                            isDisabled={
-                              selectedBreakoutType !== breakoutType.breakoutType
-                            }
-                            noNegative
-                            minCount={2}
-                          />
-                        </span>
-                        <span>Duration</span>
-                        <span
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                          }}>
-                          <TwoWayNumberCounter
-                            defaultCount={5}
-                            incrementStep={5}
-                            postfixLabel="min"
-                            onCountChange={(count) =>
-                              setBreakoutRoomsGroupsTime(count)
-                            }
-                            noNegative
-                            minCount={2}
-                            isDisabled={
-                              selectedBreakoutType !== breakoutType.breakoutType
-                            }
-                          />
-                        </span>
+                        <div className="flex flex-col justify-center items-center gap-1.5">
+                          <span className="font-semibold">
+                            Duration (in Min)
+                          </span>
+                          <span
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                            }}>
+                            <NumberInput
+                              min={2}
+                              max={30}
+                              allowNegative={false}
+                              number={breakoutRoomsGroupsTime}
+                              disabled={
+                                selectedBreakoutType !==
+                                breakoutType.breakoutType
+                              }
+                              onNumberChange={(count: number) =>
+                                setBreakoutRoomsGroupsTime(count)
+                              }
+                            />
+                          </span>
+                        </div>
+                        <div className="flex flex-col justify-center items-center gap-1.5 w-full">
+                          <span className="font-semibold">
+                            How participants can join
+                          </span>
+                          <div className="w-2/3">
+                            <BreakoutJoinMethodSelector
+                              breakoutJoinMethod={breakoutJoinMethod}
+                              onChange={setBreakoutJoinMethod}
+                            />
+                          </div>
+                        </div>
                       </CardBody>
                     </Card>
                   ))}
                 </div>
               </div>
             </ModalBody>
-            <ModalFooter className="flex !justify-center">
-              <div className="flex items-center justify-center">
-                <Button
-                  variant="bordered"
-                  color="default"
-                  className="mr-2"
-                  onClick={onClose}>
+            <ModalFooter>
+              <div className="flex items-end justify-center gap-4">
+                <Button variant="bordered" onClick={onClose}>
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   color="primary"
                   variant="solid"
-                  onClick={onSubmit}
-                  className="flex gap-2">
+                  onClick={onSubmit}>
                   Create
                 </Button>
               </div>

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext } from 'react'
 
+import { BreakoutJoinMethodSelector } from '@/components/common/breakout/BreakoutJoinMethodSelector'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
 import { EventContext } from '@/contexts/EventContext'
@@ -116,6 +117,23 @@ export function BreakoutSettings() {
           isDeleteModal={
             currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
           }
+        />
+      </span>
+      <span className="flex flex-col gap-1.5">
+        <span>How participants can join</span>
+        <BreakoutJoinMethodSelector
+          breakoutJoinMethod={currentFrame?.config?.breakoutJoinMethod}
+          onChange={(value) => {
+            updateFrame({
+              framePayload: {
+                config: {
+                  ...currentFrame?.config,
+                  breakoutJoinMethod: value,
+                },
+              },
+              frameId: currentFrame?.id,
+            })
+          }}
         />
       </span>
     </>

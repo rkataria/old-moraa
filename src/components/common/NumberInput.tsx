@@ -2,11 +2,19 @@ import { useState } from 'react'
 
 import { Button, ButtonGroup } from '@nextui-org/react'
 
+import { cn } from '@/utils/utils'
+
 type NumberInputProps = {
   min?: number
   max?: number
   number?: number
   allowNegative?: boolean
+  disabled?: boolean
+  classNames?: {
+    buttonGroup?: string
+    button?: string
+    input?: string
+  }
   onNumberChange: (number: number) => void
 }
 
@@ -15,6 +23,8 @@ export function NumberInput({
   max = 100,
   number = 16,
   allowNegative = false,
+  disabled = false,
+  classNames = {},
   onNumberChange,
 }: NumberInputProps) {
   const [value, setValue] = useState<number>(number)
@@ -25,14 +35,23 @@ export function NumberInput({
   }
 
   return (
-    <ButtonGroup radius="md">
+    <ButtonGroup
+      className={cn(
+        {
+          'opacity-80': disabled,
+        },
+        classNames.buttonGroup
+      )}>
       <Button
         size="sm"
         variant="flat"
         className="flex-none"
         isIconOnly
-        disabled={value <= min && !allowNegative}
+        disabled={disabled || (value <= min && !allowNegative)}
         onClick={() => {
+          if (disabled) return
+          if (value <= min && !allowNegative) return
+
           if (value > min || allowNegative) {
             handleNumberChange(value - 1)
           }
@@ -44,7 +63,9 @@ export function NumberInput({
         value={value}
         min={allowNegative ? undefined : min}
         max={max}
+        disabled={disabled}
         onChange={(e) => {
+          if (disabled) return
           if (/[^0-9]/.test(e.target.value)) return
           if (+e.target.value > max) return
           if (+e.target.value < min && !allowNegative) return
@@ -57,8 +78,9 @@ export function NumberInput({
         variant="flat"
         className="flex-none"
         isIconOnly
-        disabled={value >= max}
+        disabled={disabled || value >= max}
         onClick={() => {
+          if (disabled) return
           if (value >= max) return
           handleNumberChange(value + 1)
         }}>

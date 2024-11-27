@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useRef } from 'react'
 
+import { Avatar } from '@nextui-org/react'
 import { IconTrash } from '@tabler/icons-react'
 import { Draggable } from 'react-beautiful-dnd'
 import { IoEllipsisVerticalOutline } from 'react-icons/io5'
@@ -102,14 +103,7 @@ export function BreakoutRoomActivityCard({
   }
 
   return (
-    <div
-      style={
-        {
-          // background: 'linear-gradient(123deg, #EBDFFF 0.31%, #F8F4FF 69.5%)',
-        }
-      }
-      className="border rounded-xl bg-white"
-      key={breakout?.name}>
+    <div className="border rounded-xl bg-white" key={breakout?.name}>
       <div className="flex justify-between items-center gap-4 px-3">
         <EditableLabel
           readOnly={!editable || !updateBreakoutRoomName}
@@ -233,20 +227,11 @@ export function BreakoutRoomActivityCard({
                       {...sectionDraggableProvided.draggableProps}
                       {...sectionDraggableProvided.dragHandleProps}>
                       <Tooltip content={participant?.displayName || ''}>
-                        {participant?.displayPictureUrl ? (
-                          <img
-                            className="w-8 h-8 rounded-full"
-                            src={participant?.displayPictureUrl || ''}
-                            alt={participant?.id}
-                          />
-                        ) : (
-                          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300">
-                            <p className="text-sm">
-                              {participant?.displayName?.split(' ')[0]?.[0]}
-                              {participant?.displayName?.split(' ')[1]?.[0]}
-                            </p>
-                          </div>
-                        )}
+                        <Avatar
+                          src={participant?.displayPictureUrl}
+                          name={participant?.displayName}
+                          showFallback
+                        />
                       </Tooltip>
                     </div>
                   )}

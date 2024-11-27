@@ -9,10 +9,15 @@ import {
   ModalHeader,
 } from '@nextui-org/react'
 
+import {
+  BreakoutJoinMethod,
+  BreakoutJoinMethodSelector,
+} from './BreakoutJoinMethodSelector'
 import { NumberInput } from '../NumberInput'
 
 import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
@@ -35,6 +40,7 @@ export function StartPlannedBreakoutModal({
   open,
   setOpen,
 }: StartPlannedBreakoutModalProps) {
+  const { updateFrame } = useEventContext()
   const { eventRealtimeChannel, currentFrame, presentationStatus } =
     useEventSession()
   const dyteMeeting = useDyteMeeting()
@@ -43,6 +49,8 @@ export function StartPlannedBreakoutModal({
   const roomsCount = currentFrame?.content?.breakoutRooms?.length
   const participantsPerGroup = currentFrame?.config?.participantPerGroup
   const breakoutDuration = currentFrame?.config.breakoutDuration
+  const breakoutJoinMethod = currentFrame?.config
+    .breakoutJoinMethod as BreakoutJoinMethod
   const [breakoutConfig, setBreakoutConfig] = useState({
     participantPerGroup:
       participantsPerGroup ||
@@ -53,6 +61,7 @@ export function StartPlannedBreakoutModal({
         ? Math.floor(currentParticipantCount / participantsPerGroup)
         : 2),
     breakoutDuration: breakoutDuration || 5,
+    breakoutJoinMethod: breakoutJoinMethod || 'auto',
   })
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
   const meetingId = useStoreSelector(
@@ -71,12 +80,14 @@ export function StartPlannedBreakoutModal({
           ? Math.floor(currentParticipantCount / participantsPerGroup)
           : 2),
       breakoutDuration: breakoutDuration || 5,
+      breakoutJoinMethod: breakoutJoinMethod || 'auto',
     })
   }, [
     breakoutDuration,
     currentParticipantCount,
     participantsPerGroup,
     roomsCount,
+    breakoutJoinMethod,
   ])
 
   const isConfigAlreadyProvided =
@@ -84,9 +95,9 @@ export function StartPlannedBreakoutModal({
     typeof participantsPerGroup !== 'undefined'
 
   const DurationUI = (
-    <div className="grid grid-cols-[60%_40%] gap-4">
+    <div className="grid grid-cols-[50%_50%] gap-2">
       <p>Duration (mins):</p>
-      <div className="flex justify-center items-center">
+      <div className="flex justify-start items-center">
         <NumberInput
           min={1}
           max={30}
@@ -103,9 +114,37 @@ export function StartPlannedBreakoutModal({
     </div>
   )
 
+  const BreakoutJoinMethodUI = (
+    <BreakoutJoinMethodSelector
+      label="How participants can join"
+      layout="columns"
+      breakoutJoinMethod={breakoutConfig.breakoutJoinMethod}
+      onChange={(value) => {
+        if (!currentFrame) return
+
+        // Update the frame with the new breakout join method
+        updateFrame({
+          framePayload: {
+            config: {
+              ...currentFrame.config,
+              breakoutJoinMethod: value,
+            },
+          },
+          frameId: currentFrame.id,
+        })
+
+        // Update the local state
+        setBreakoutConfig((conf) => ({
+          ...conf,
+          breakoutJoinMethod: value,
+        }))
+      }}
+    />
+  )
+
   const ShowConfigurationsUI = {
     rooms: (
-      <div className="grid grid-cols-[60%_40%] gap-4">
+      <div className="grid grid-cols-[50%_50%] gap-2">
         <div>
           <p>Number of rooms:</p>{' '}
           <p className="text-xs text-gray-500">
@@ -113,11 +152,11 @@ export function StartPlannedBreakoutModal({
             participant(s) per room.
           </p>
         </div>
-        <div className="flex justify-center items-center">{roomsCount}</div>
+        <div className="flex justify-start items-center">{roomsCount}</div>
       </div>
     ),
     participants_per_room: (
-      <div className="grid grid-cols-[60%_40%] gap-4">
+      <div className="grid grid-cols-[50%_50%] gap-2">
         <div>
           <p>Max participants per room:</p>
           <p className="text-xs text-gray-500">
@@ -135,7 +174,7 @@ export function StartPlannedBreakoutModal({
   }
 
   const ConfigureRoomsUI = (
-    <div className="grid grid-cols-[60%_40%] gap-4">
+    <div className="grid grid-cols-[50%_50%] gap-2">
       <div>
         <p>Number of rooms:</p>{' '}
         <p className="text-xs text-gray-500">
@@ -146,7 +185,7 @@ export function StartPlannedBreakoutModal({
           participant(s) per room.
         </p>
       </div>
-      <div className="flex justify-center items-center">
+      <div className="flex justify-start items-center">
         <NumberInput
           min={1}
           max={currentParticipantCount}
@@ -181,6 +220,7 @@ export function StartPlannedBreakoutModal({
          */
         roomsCount: config.roomsCount,
         participantsPerRoom: config.participantsPerRoom,
+        breakoutJoinMethod: config.breakoutJoinMethod || 'auto',
       })
       const connectedMeetingsToActivitiesMap: { [x: string]: string } =
         dyteMeeting.meeting.connectedMeetings.meetings.reduce(
@@ -272,7 +312,7 @@ export function StartPlannedBreakoutModal({
   }
 
   return (
-    <Modal isOpen={open} onOpenChange={setOpen}>
+    <Modal size="lg" isOpen={open} onOpenChange={setOpen}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -287,6 +327,7 @@ export function StartPlannedBreakoutModal({
                     ]
                   : ConfigureRoomsUI}
                 {DurationUI}
+                {BreakoutJoinMethodUI}
               </div>
             </ModalBody>
             <ModalFooter>
