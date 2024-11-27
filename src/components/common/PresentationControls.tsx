@@ -6,7 +6,12 @@ import { FrameSmartControls } from '../event-session/FrameSmartControlsPopover/F
 import { Button } from '../ui/Button'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { PresentationStatuses } from '@/types/event-session.type'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
+import {
+  EventSessionMode,
+  PresentationStatuses,
+} from '@/types/event-session.type'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function PresentationControls() {
@@ -18,7 +23,9 @@ export function PresentationControls() {
     startPresentation,
     stopPresentation,
     presentationStatus,
+    eventSessionMode,
   } = useEventSession()
+  const dispatch = useStoreDispatch()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePresentationToggle = (e: any) => {
@@ -37,6 +44,22 @@ export function PresentationControls() {
     { enabled: isHost }
   )
 
+  const handlePreviousButton = () => {
+    if (eventSessionMode === EventSessionMode.LOBBY) {
+      dispatch(updateEventSessionModeAction(EventSessionMode.PEEK))
+    }
+
+    previousFrame()
+  }
+
+  const handleNextButton = () => {
+    if (eventSessionMode === EventSessionMode.LOBBY) {
+      dispatch(updateEventSessionModeAction(EventSessionMode.PEEK))
+    }
+
+    nextFrame()
+  }
+
   // Allow only host to control the presentation
   if (!isHost) return null
 
@@ -54,7 +77,7 @@ export function PresentationControls() {
         variant="light"
         disableRipple
         disableAnimation
-        onClick={previousFrame}>
+        onClick={handlePreviousButton}>
         <IoIosArrowBack size={18} />
       </Button>
       <Button
@@ -79,7 +102,7 @@ export function PresentationControls() {
         variant="light"
         disableRipple
         disableAnimation
-        onClick={nextFrame}>
+        onClick={handleNextButton}>
         <IoIosArrowForward size={18} />
       </Button>
     </div>
