@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext } from 'react'
 
-import { BreakoutJoinMethodSelector } from '@/components/common/breakout/BreakoutJoinMethodSelector'
+import { AssignmentOptionSelector } from '@/components/common/breakout/AssignmentOptionSelector'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
 import { EventContext } from '@/contexts/EventContext'
@@ -121,14 +121,14 @@ export function BreakoutSettings() {
       </span>
       <span className="flex flex-col gap-1.5">
         <span>How participants can join</span>
-        <BreakoutJoinMethodSelector
-          breakoutJoinMethod={currentFrame?.config?.breakoutJoinMethod}
+        <AssignmentOptionSelector
+          assignmentOption={currentFrame?.config?.assignmentOption}
           onChange={(value) => {
             updateFrame({
               framePayload: {
                 config: {
                   ...currentFrame?.config,
-                  breakoutJoinMethod: value,
+                  assignmentOption: value,
                 },
               },
               frameId: currentFrame?.id,

@@ -17,9 +17,9 @@ import { FaPeopleGroup } from 'react-icons/fa6'
 import { LuSquareStack } from 'react-icons/lu'
 
 import {
-  BreakoutJoinMethod,
-  BreakoutJoinMethodSelector,
-} from './breakout/BreakoutJoinMethodSelector'
+  AssignmentOption,
+  AssignmentOptionSelector,
+} from './breakout/AssignmentOptionSelector'
 import { NumberInput } from './NumberInput'
 import { Button } from '../ui/Button'
 
@@ -72,7 +72,7 @@ interface ChooseContentTypeProps {
     contentType: BREAKOUT_TYPES,
     breakoutRoomsGroupsCount?: number,
     breakoutRoomsGroupsTime?: number,
-    breakoutJoinMethod?: BreakoutJoinMethod
+    assignmentOption?: AssignmentOption
   ) => void
 }
 
@@ -87,15 +87,15 @@ export function BreakoutTypePicker({
     useState<number>(2)
   const [breakoutRoomsGroupsTime, setBreakoutRoomsGroupsTime] =
     useState<number>(5)
-  const [breakoutJoinMethod, setBreakoutJoinMethod] =
-    useState<BreakoutJoinMethod>('auto')
+  const [assignmentOption, setAssignmentOption] =
+    useState<AssignmentOption>('auto')
 
   const onSubmit = () => {
     onChoose(
       selectedBreakoutType,
       breakoutRoomsGroupsCount,
       breakoutRoomsGroupsTime,
-      breakoutJoinMethod
+      assignmentOption
     )
   }
 
@@ -212,9 +212,9 @@ export function BreakoutTypePicker({
                             How participants can join
                           </span>
                           <div className="w-2/3">
-                            <BreakoutJoinMethodSelector
-                              breakoutJoinMethod={breakoutJoinMethod}
-                              onChange={setBreakoutJoinMethod}
+                            <AssignmentOptionSelector
+                              assignmentOption={assignmentOption}
+                              onChange={setAssignmentOption}
                             />
                           </div>
                         </div>

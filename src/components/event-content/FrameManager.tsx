@@ -7,7 +7,7 @@ import { FaTableCellsRowLock } from 'react-icons/fa6'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Header } from './Header'
-import { BreakoutJoinMethod } from '../common/breakout/BreakoutJoinMethodSelector'
+import { AssignmentOption } from '../common/breakout/AssignmentOptionSelector'
 import {
   BREAKOUT_TYPES,
   BreakoutTypePicker,
@@ -65,7 +65,7 @@ export function FrameManager() {
     breakoutType?: BREAKOUT_TYPES,
     breakoutRoomsGroupsCount?: number,
     breakoutRoomsGroupsTime?: number,
-    breakoutJoinMethod?: BreakoutJoinMethod
+    assignmentOption?: AssignmentOption
   ) => {
     let currentSection
     const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
@@ -94,7 +94,7 @@ export function FrameManager() {
         breakoutType,
         [breakoutConfigKeyName]: breakoutRoomsGroupsCount,
         breakoutDuration: breakoutRoomsGroupsTime,
-        breakoutJoinMethod,
+        assignmentOption,
       }
       frameConfig = {
         ...frameConfig,
@@ -183,7 +183,7 @@ export function FrameManager() {
             contentType,
             breakoutRoomsGroupsCount,
             breakoutRoomsGroupsTime,
-            breakoutJoinMethod
+            assignmentOption
           ) => {
             if (selectedContentType) {
               handleAddNewFrame(
@@ -192,7 +192,7 @@ export function FrameManager() {
                 contentType,
                 breakoutRoomsGroupsCount,
                 breakoutRoomsGroupsTime,
-                breakoutJoinMethod
+                assignmentOption
               )
             }
           }}
