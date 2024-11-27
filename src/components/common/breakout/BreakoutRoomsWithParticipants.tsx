@@ -147,7 +147,7 @@ export function BreakoutRoomsWithParticipants({
                   isTrue={
                     meet.id !== mainMeetingId &&
                     (isHost ||
-                      breakoutFrame.config.breakoutJoinMethod === 'choose')
+                      breakoutFrame.config.assignmentOption === 'choose')
                   }>
                   <Button
                     className="m-2 border-1"

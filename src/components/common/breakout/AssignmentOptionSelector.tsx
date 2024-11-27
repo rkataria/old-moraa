@@ -2,7 +2,7 @@ import { Select, SelectItem } from '@nextui-org/react'
 
 import { cn } from '@/utils/utils'
 
-const BREAKOUT_JOIN_METHODS = [
+const ASSIGNMENT_OPTIONS = [
   {
     label: 'Automatically',
     value: 'auto',
@@ -17,21 +17,23 @@ const BREAKOUT_JOIN_METHODS = [
   },
 ]
 
-export type BreakoutJoinMethod = 'auto' | 'manual' | 'choose'
+export type AssignmentOption = 'auto' | 'manual' | 'choose'
 
-type BreakoutJoinMethodSelectorProps = {
-  breakoutJoinMethod?: string
+type AssignmentOptionSelectorProps = {
+  assignmentOption?: string
   layout?: 'rows' | 'columns'
   label?: string
-  onChange?: (value: BreakoutJoinMethod) => void
+  disabled?: boolean
+  onChange?: (value: AssignmentOption) => void
 }
 
-export function BreakoutJoinMethodSelector({
-  breakoutJoinMethod,
+export function AssignmentOptionSelector({
+  assignmentOption,
   layout,
   label,
+  disabled,
   onChange,
-}: BreakoutJoinMethodSelectorProps) {
+}: AssignmentOptionSelectorProps) {
   return (
     <div
       className={cn({
@@ -47,20 +49,22 @@ export function BreakoutJoinMethodSelector({
       <div className="flex justify-start items-center">
         <Select
           className="w-full flex-none text-xs"
-          value={breakoutJoinMethod}
+          value={assignmentOption}
           variant="bordered"
           size="sm"
+          isDisabled={disabled}
           classNames={{
             trigger: 'border-1 rounded-md shadow-none',
           }}
           aria-label="How participants can join"
           selectedKeys={
-            breakoutJoinMethod ? new Set([breakoutJoinMethod]) : new Set()
+            assignmentOption ? new Set([assignmentOption]) : new Set()
           }
           onChange={(e) => {
-            onChange?.(e.target.value as BreakoutJoinMethod)
+            if (disabled) return
+            onChange?.(e.target.value as AssignmentOption)
           }}>
-          {BREAKOUT_JOIN_METHODS.map((method) => (
+          {ASSIGNMENT_OPTIONS.map((method) => (
             <SelectItem key={method.value}>{method.label}</SelectItem>
           ))}
         </Select>

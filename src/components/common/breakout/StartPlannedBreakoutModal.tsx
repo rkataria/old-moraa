@@ -10,9 +10,10 @@ import {
 } from '@nextui-org/react'
 
 import {
-  BreakoutJoinMethod,
-  BreakoutJoinMethodSelector,
-} from './BreakoutJoinMethodSelector'
+  AssignmentOption,
+  AssignmentOptionSelector,
+} from './AssignmentOptionSelector'
+import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { NumberInput } from '../NumberInput'
 
 import { Button } from '@/components/ui/Button'
@@ -49,8 +50,8 @@ export function StartPlannedBreakoutModal({
   const roomsCount = currentFrame?.content?.breakoutRooms?.length
   const participantsPerGroup = currentFrame?.config?.participantPerGroup
   const breakoutDuration = currentFrame?.config.breakoutDuration
-  const breakoutJoinMethod = currentFrame?.config
-    .breakoutJoinMethod as BreakoutJoinMethod
+  const assignmentOption = currentFrame?.config
+    .assignmentOption as AssignmentOption
   const [breakoutConfig, setBreakoutConfig] = useState({
     participantPerGroup:
       participantsPerGroup ||
@@ -61,7 +62,7 @@ export function StartPlannedBreakoutModal({
         ? Math.floor(currentParticipantCount / participantsPerGroup)
         : 2),
     breakoutDuration: breakoutDuration || 5,
-    breakoutJoinMethod: breakoutJoinMethod || 'auto',
+    assignmentOption: assignmentOption || 'auto',
   })
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
   const meetingId = useStoreSelector(
@@ -80,14 +81,14 @@ export function StartPlannedBreakoutModal({
           ? Math.floor(currentParticipantCount / participantsPerGroup)
           : 2),
       breakoutDuration: breakoutDuration || 5,
-      breakoutJoinMethod: breakoutJoinMethod || 'auto',
+      assignmentOption: assignmentOption || 'auto',
     })
   }, [
     breakoutDuration,
     currentParticipantCount,
     participantsPerGroup,
     roomsCount,
-    breakoutJoinMethod,
+    assignmentOption,
   ])
 
   const isConfigAlreadyProvided =
@@ -114,11 +115,12 @@ export function StartPlannedBreakoutModal({
     </div>
   )
 
-  const BreakoutJoinMethodUI = (
-    <BreakoutJoinMethodSelector
+  const AssignmentOptionUI = (
+    <AssignmentOptionSelector
       label="How participants can join"
       layout="columns"
-      breakoutJoinMethod={breakoutConfig.breakoutJoinMethod}
+      assignmentOption={breakoutConfig.assignmentOption}
+      disabled={currentFrame?.config.breakoutType === BREAKOUT_TYPES.GROUPS}
       onChange={(value) => {
         if (!currentFrame) return
 
@@ -127,7 +129,7 @@ export function StartPlannedBreakoutModal({
           framePayload: {
             config: {
               ...currentFrame.config,
-              breakoutJoinMethod: value,
+              assignmentOption: value,
             },
           },
           frameId: currentFrame.id,
@@ -136,7 +138,7 @@ export function StartPlannedBreakoutModal({
         // Update the local state
         setBreakoutConfig((conf) => ({
           ...conf,
-          breakoutJoinMethod: value,
+          assignmentOption: value,
         }))
       }}
     />
@@ -220,7 +222,7 @@ export function StartPlannedBreakoutModal({
          */
         roomsCount: config.roomsCount,
         participantsPerRoom: config.participantsPerRoom,
-        breakoutJoinMethod: config.breakoutJoinMethod || 'auto',
+        assignmentOption: config.assignmentOption || 'auto',
       })
       const connectedMeetingsToActivitiesMap: { [x: string]: string } =
         dyteMeeting.meeting.connectedMeetings.meetings.reduce(
@@ -327,7 +329,7 @@ export function StartPlannedBreakoutModal({
                     ]
                   : ConfigureRoomsUI}
                 {DurationUI}
-                {BreakoutJoinMethodUI}
+                {AssignmentOptionUI}
               </div>
             </ModalBody>
             <ModalFooter>

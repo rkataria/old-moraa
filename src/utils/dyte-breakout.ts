@@ -3,12 +3,12 @@ import { BreakoutRoomsManager } from '@dytesdk/react-ui-kit'
 import DyteClient from '@dytesdk/web-core'
 import chunk from 'lodash.chunk'
 
-import { BreakoutJoinMethod } from '@/components/common/breakout/BreakoutJoinMethodSelector'
+import { AssignmentOption } from '@/components/common/breakout/AssignmentOptionSelector'
 
 export type StartBreakoutConfig = {
   participantsPerRoom?: number
   roomsCount?: number
-  breakoutJoinMethod: BreakoutJoinMethod
+  assignmentOption: AssignmentOption
 }
 
 export class BreakoutRooms {
@@ -76,7 +76,7 @@ export class BreakoutRooms {
   async startBreakoutRooms({
     participantsPerRoom,
     roomsCount,
-    breakoutJoinMethod,
+    assignmentOption,
   }: StartBreakoutConfig) {
     await this.cleanupBreakoutManagerInstance()
     if (participantsPerRoom === undefined && roomsCount === undefined) {
@@ -114,7 +114,7 @@ export class BreakoutRooms {
 
         if (
           breakoutRoomParticipants?.length > 0 &&
-          breakoutJoinMethod === 'auto'
+          assignmentOption === 'auto'
         ) {
           this.manager.assignParticipantsToMeeting(
             breakoutRoomParticipants.map((p) => p.customParticipantId!),
