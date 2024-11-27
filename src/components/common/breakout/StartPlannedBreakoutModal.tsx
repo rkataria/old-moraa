@@ -13,6 +13,7 @@ import {
   AssignmentOption,
   AssignmentOptionSelector,
 } from './AssignmentOptionSelector'
+import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { NumberInput } from '../NumberInput'
 
 import { Button } from '@/components/ui/Button'
@@ -119,6 +120,7 @@ export function StartPlannedBreakoutModal({
       label="How participants can join"
       layout="columns"
       assignmentOption={breakoutConfig.assignmentOption}
+      disabled={currentFrame?.config.breakoutType === BREAKOUT_TYPES.GROUPS}
       onChange={(value) => {
         if (!currentFrame) return
 

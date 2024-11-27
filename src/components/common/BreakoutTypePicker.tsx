@@ -213,6 +213,10 @@ export function BreakoutTypePicker({
                           </span>
                           <div className="w-2/3">
                             <AssignmentOptionSelector
+                              disabled={
+                                breakoutType.breakoutType ===
+                                BREAKOUT_TYPES.GROUPS
+                              }
                               assignmentOption={assignmentOption}
                               onChange={setAssignmentOption}
                             />

@@ -123,6 +123,9 @@ export function BreakoutSettings() {
         <span>How participants can join</span>
         <AssignmentOptionSelector
           assignmentOption={currentFrame?.config?.assignmentOption}
+          disabled={
+            currentFrame?.config?.breakoutType === BREAKOUT_TYPES.GROUPS
+          }
           onChange={(value) => {
             updateFrame({
               framePayload: {

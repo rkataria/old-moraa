@@ -23,6 +23,7 @@ type AssignmentOptionSelectorProps = {
   assignmentOption?: string
   layout?: 'rows' | 'columns'
   label?: string
+  disabled?: boolean
   onChange?: (value: AssignmentOption) => void
 }
 
@@ -30,6 +31,7 @@ export function AssignmentOptionSelector({
   assignmentOption,
   layout,
   label,
+  disabled,
   onChange,
 }: AssignmentOptionSelectorProps) {
   return (
@@ -50,6 +52,7 @@ export function AssignmentOptionSelector({
           value={assignmentOption}
           variant="bordered"
           size="sm"
+          isDisabled={disabled}
           classNames={{
             trigger: 'border-1 rounded-md shadow-none',
           }}
@@ -58,6 +61,7 @@ export function AssignmentOptionSelector({
             assignmentOption ? new Set([assignmentOption]) : new Set()
           }
           onChange={(e) => {
+            if (disabled) return
             onChange?.(e.target.value as AssignmentOption)
           }}>
           {ASSIGNMENT_OPTIONS.map((method) => (
