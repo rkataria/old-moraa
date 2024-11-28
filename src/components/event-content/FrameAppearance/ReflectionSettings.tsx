@@ -14,7 +14,7 @@ export function ReflectionSettings() {
   return (
     <SwitchControl
       label="User can reflect anonymously"
-      checked={currentFrame.config.allowVoteOnMultipleOptions}
+      checked={currentFrame.config.allowAnonymously}
       onChange={() =>
         updateFrame({
           framePayload: {
