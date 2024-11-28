@@ -35,7 +35,9 @@ export function ScheduleEventButtonWithModal({
   actionButtonLabel?: string | ReactNode
   showLabel?: boolean
   disclosure?: UseDisclosureReturn
-  buttonProps?: ButtonProps
+  buttonProps?: ButtonProps & {
+    gradient: 'none' | 'primary'
+  }
 }) {
   const { eventId }: { eventId: string } = useParams({ strict: false })
   const event = useEvent({ id: eventId })

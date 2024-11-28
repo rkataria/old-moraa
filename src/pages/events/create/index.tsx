@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -20,7 +21,7 @@ import { TbFileDescription } from 'react-icons/tb'
 import * as yup from 'yup'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
-import { LocalFilePicker } from '@/components/common/LocalFilePicker'
+import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
 import { MoraaLogo } from '@/components/common/MoraaLogo'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { ThemeEffects } from '@/components/events/ThemeEffects'
@@ -31,6 +32,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { EventService } from '@/services/event.service'
 import { MeetingService } from '@/services/meeting.service'
 import { SectionService } from '@/services/section.service'
+import { uploadFile } from '@/services/storage.service'
 import { ICreateEventPayload } from '@/types/event.type'
 import { cn } from '@/utils/utils'
 
@@ -201,14 +203,10 @@ export function EventsCreatePage() {
                   </div>
                 )}
 
-                <LocalFilePicker
-                  accept="image/png, image/jpeg, image/jpg"
-                  fileName={`event-image-${eventId}`}
-                  bucketName="image-uploads"
-                  uploadRemote
-                  crop
+                <MediaPicker
+                  ImageOrientation="squarish"
                   trigger={
-                    <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition-all duration-300 rounded-full cursor-pointer bottom-3 right-3 bg-black/40 hover:bg-black/50">
+                    <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition-all duration-300 rounded-full cursor-pointer bottom-2 right-2 bg-black/40 hover:bg-black/50">
                       <svg
                         className="mt-0.5 ml-0.5"
                         width="20"
@@ -223,15 +221,24 @@ export function EventsCreatePage() {
                       </svg>
                     </div>
                   }
-                  onSelect={(imageData) => {
+                  onSelect={async (file) => {
                     setImageUploading(true)
-                    setImageObject(imageData)
+                    const response: any = await uploadFile({
+                      file,
+                      fileName: `event-image-${eventId}-.${file.name.split('.').pop()}`,
+                      bucketName: 'image-uploads',
+                      onProgressChange: setImageUploadProgress,
+                    })
+
+                    if (response?.url) {
+                      handleFileUpload(response?.url)
+                      setImageUploading(false)
+                    }
                   }}
-                  onUpload={(response) => {
-                    setImageUploading(false)
-                    handleFileUpload(response?.url)
+                  onSelectCallback={(imageElement) => {
+                    setImageObject(imageElement.src)
+                    handleFileUpload(imageElement.src)
                   }}
-                  onProgressChange={setImageUploadProgress}
                 />
               </div>
             </div>

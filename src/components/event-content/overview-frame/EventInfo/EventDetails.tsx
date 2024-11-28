@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
@@ -17,6 +18,7 @@ import {
 } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
+import { useDebounce } from '@uidotdev/usehooks'
 import { Controller, useForm } from 'react-hook-form'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import { TbFileDescription, TbUserEdit } from 'react-icons/tb'
@@ -25,7 +27,7 @@ import * as yup from 'yup'
 import { BlurbEditor } from './BlurbEditor'
 
 import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
-import { LocalFilePicker } from '@/components/common/LocalFilePicker'
+import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { ScheduleEventButtonWithModal } from '@/components/common/ScheduleEventButtonWithModal'
 import { Dates } from '@/components/enroll/Date'
@@ -34,6 +36,7 @@ import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event.service'
+import { uploadFile } from '@/services/storage.service'
 import { EventStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
@@ -69,10 +72,16 @@ export function EventDetails() {
       imageUrl: event.image_url as string,
     },
   })
+  const debouncedValues = useDebounce(createEventForm.getValues(), 500)
 
   const updateEventMutation = useMutation({
     mutationFn: EventService.updateEvent,
   })
+
+  useEffect(() => {
+    onSubmit(debouncedValues)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(debouncedValues)])
 
   const onSubmit = async (values: CreateEventFormData) => {
     const payload = {
@@ -88,7 +97,7 @@ export function EventDetails() {
     return updateEventMutation.mutateAsync(payload, {
       onSuccess: () => {
         createEventForm.reset(createEventForm.getValues())
-        eventData.refetch()
+        // eventData.refetch()
       },
     })
   }
@@ -222,17 +231,6 @@ export function EventDetails() {
                   )}
                 </ModalContent>
               </Modal>
-
-              {createEventForm.formState.isDirty && (
-                <Button
-                  type="submit"
-                  color="primary"
-                  variant="solid"
-                  fullWidth
-                  isLoading={updateEventMutation.isPending}>
-                  Update
-                </Button>
-              )}
               <BlurbEditor
                 className={cn({
                   '-ml-8': !preview,
@@ -267,12 +265,8 @@ export function EventDetails() {
                   </div>
                 )}
                 <RenderIf isTrue={!preview}>
-                  <LocalFilePicker
-                    accept="image/png, image/jpeg, image/jpg"
-                    fileName={`event-image-${eventId}`}
-                    bucketName="image-uploads"
-                    uploadRemote
-                    crop
+                  <MediaPicker
+                    ImageOrientation="squarish"
                     trigger={
                       <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition-all duration-300 rounded-full cursor-pointer bottom-2 right-2 bg-black/40 hover:bg-black/50">
                         <svg
@@ -289,35 +283,40 @@ export function EventDetails() {
                         </svg>
                       </div>
                     }
-                    // eslint-disable-next-line @typescript-eslint/no-shadow
-                    onSelect={(imageObject) => {
+                    onSelect={async (file) => {
                       setImageUploading(true)
-                      setImageObject(imageObject)
+                      const response: any = await uploadFile({
+                        file,
+                        fileName: `event-image-${eventId}-.${file.name.split('.').pop()}`,
+                        bucketName: 'image-uploads',
+                        onProgressChange: setImageUploadProgress,
+                      })
+
+                      if (response?.url) {
+                        handleFileUpload(response?.url)
+                        setImageUploading(false)
+                      }
                     }}
-                    onUpload={(response) => {
-                      setImageUploading(false)
-                      handleFileUpload(response?.url)
+                    onSelectCallback={(imageElement) => {
+                      setImageObject(imageElement.src)
+                      handleFileUpload(imageElement.src)
                     }}
-                    onProgressChange={setImageUploadProgress}
                   />
                 </RenderIf>
               </div>
               <div>
-                <p className="flex items-center justify-between text-sm font-medium text-slate-500">
+                <div className="flex items-center justify-between text-sm font-medium text-slate-500">
                   Timeline
                   <ScheduleEventButtonWithModal
-                    actionButtonLabel={
-                      <span className="flex items-center gap-1 text-xs font-normal cursor-pointer">
-                        <MdOutlineEditCalendar size={16} />
-                        Edit
-                      </span>
-                    }
+                    actionButtonLabel="Edit"
                     buttonProps={{
-                      className:
-                        'bg-transparent text-gray-400 w-auto min-w-[auto] p-0',
+                      variant: 'light',
+                      color: 'primary',
+                      gradient: 'none',
+                      startContent: <MdOutlineEditCalendar size={16} />,
                     }}
                   />
-                </p>
+                </div>
                 <Divider
                   className={cn('mt-2 mb-3', {
                     'mb-0': event.status === EventStatus.DRAFT,
@@ -339,14 +338,11 @@ export function EventDetails() {
                   <AddParticipantsButtonWithModal
                     eventId={event.id}
                     triggerButtonProps={{
-                      children: (
-                        <span className="flex items-center gap-1 text-xs font-normal text-gray-400 cursor-pointer">
-                          <TbUserEdit size={16} />
-                          Edit
-                        </span>
-                      ),
-                      className:
-                        'bg-transparent text-gray-400 w-auto min-w-[auto] p-0',
+                      children: 'Edit',
+                      variant: 'light',
+                      color: 'primary',
+                      className: '!text-primary',
+                      startContent: <TbUserEdit size={16} />,
                     }}
                   />
                 }

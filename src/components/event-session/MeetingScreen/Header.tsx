@@ -73,9 +73,9 @@ export function Header() {
             <Logo />
           )}
         </div>
-        <div className="pr-2 pl-1 max-w-32 text-ellipsis font-medium flex justify-start items-center line-clamp-1">
+        <div className="pr-2 pl-1 min-w-fit max-w-32 text-ellipsis font-medium line-clamp-1">
           {meetingTitles?.find((m) => m.id === dyetMeeting.meta.meetingId)
-            ?.title || event.name}
+            ?.title || event.name}{' '}
         </div>
         <DyteClock
           meeting={dyetMeeting}
