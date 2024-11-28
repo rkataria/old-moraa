@@ -183,10 +183,13 @@ export function MeetingSetupScreen() {
                     meetingSession.isLoading ||
                     enrollmentQuery.isLoading ||
                     isFetchingProfile ||
-                    isParticipantLoading
+                    isParticipantLoading ||
+                    meeting.self.roomState === 'waitlisted'
                   }
                   onClick={handleJoinMeeting}>
-                  Join Meeting
+                  {meeting.self.roomState === 'waitlisted'
+                    ? 'Waiting to accept your request'
+                    : 'Join Meeting'}
                 </Button>
               </motion.div>
               <MeetingSetupParticipants />

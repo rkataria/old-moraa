@@ -10,6 +10,8 @@ import {
   DyteParticipantsAudio,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { Button } from '@nextui-org/button'
+import toast from 'react-hot-toast'
 
 import { Content } from './Content'
 import { Footer } from './Footer'
@@ -28,6 +30,7 @@ import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { setUpdateTimerOnParticipantJoinAction } from '@/stores/slices/event/current-event/timers.slice'
+import { setRightSidebarAction } from '@/stores/slices/layout/live.slice'
 import {
   EventSessionMode,
   PresentationStatuses,
@@ -112,6 +115,41 @@ export function MeetingScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting, isHost])
 
+  useEffect(() => {
+    const promptHostForPendingParticipants = () => {
+      toast(
+        ({ id }) => (
+          <div>
+            Someone is waiting to join.
+            <Button
+              size="sm"
+              variant="light"
+              onClick={() => {
+                setDyteStates({
+                  activeSidebar: true,
+                  sidebar: 'participants',
+                })
+                dispatch(setRightSidebarAction('participants'))
+                toast.remove(id)
+              }}>
+              View
+            </Button>
+          </div>
+        ),
+        {
+          duration: Infinity,
+        }
+      )
+    }
+
+    if (meeting.participants.waitlisted.size) promptHostForPendingParticipants()
+    meeting.participants.waitlisted.addListener(
+      'participantJoined',
+      promptHostForPendingParticipants
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <LiveLayout
       header={<Header />}
@@ -128,7 +166,16 @@ export function MeetingScreen() {
 
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
-      <DyteNotifications meeting={meeting} />
+      <DyteNotifications
+        meeting={meeting}
+        config={{
+          config: {
+            notifications: {
+              participant_joined_waitlist: false,
+            },
+          },
+        }}
+      />
       <DyteDialogManager
         meeting={meeting}
         states={dyteStates}
