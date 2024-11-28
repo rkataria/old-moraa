@@ -150,11 +150,16 @@ export function StartPlannedBreakoutModal({
         <div>
           <p>Number of rooms:</p>{' '}
           <p className="text-xs text-gray-500">
-            Approx {Math.ceil(currentParticipantCount / (roomsCount as number))}{' '}
+            Approx{' '}
+            {Math.ceil(
+              currentParticipantCount / (breakoutConfig.roomsCount as number)
+            )}{' '}
             participant(s) per room.
           </p>
         </div>
-        <div className="flex justify-start items-center">{roomsCount}</div>
+        <div className="flex justify-center items-center">
+          {breakoutConfig.roomsCount}
+        </div>
       </div>
     ),
     participants_per_room: (
@@ -163,13 +168,25 @@ export function StartPlannedBreakoutModal({
           <p>Max participants per room:</p>
           <p className="text-xs text-gray-500">
             {Math.ceil(
-              currentParticipantCount / (participantsPerGroup as number)
+              currentParticipantCount / breakoutConfig.participantPerGroup
             )}{' '}
             room(s) would be created.
           </p>
         </div>
         <div className="flex justify-center items-center">
-          {participantsPerGroup}
+          <NumberInput
+            min={1}
+            max={30}
+            allowNegative={false}
+            number={participantsPerGroup}
+            onNumberChange={(setNumber) =>
+              setBreakoutConfig((conf) => ({
+                ...conf,
+                participantPerGroup: setNumber,
+                roomsCount: Math.floor(currentParticipantCount / setNumber),
+              }))
+            }
+          />
         </div>
       </div>
     ),
@@ -319,7 +336,7 @@ export function StartPlannedBreakoutModal({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Start Planned Breakout
+              Start Breakout
             </ModalHeader>
             <ModalBody>
               <div className="flex flex-col gap-6">

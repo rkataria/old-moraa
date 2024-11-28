@@ -72,11 +72,12 @@ export function BreakoutControls() {
       <RenderIf isTrue={!showEndBreakoutButton}>
         <Button
           title="Start breakout"
+          color="primary"
           disabled={isBreakoutActive}
           onClick={() => {
             setOpenStartBreakoutModal(true)
           }}>
-          Start Planned Breakout
+          Start Breakout
         </Button>
       </RenderIf>
       <RenderIf isTrue={showEndBreakoutButton}>

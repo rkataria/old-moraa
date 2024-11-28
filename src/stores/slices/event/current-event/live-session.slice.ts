@@ -323,9 +323,23 @@ attachStoreListener({
 
 attachStoreListener({
   actionCreator: liveSessionSlice.actions.setDyteClient,
-  effect: (action, { dispatch, getState }) => {
+  effect: (action, { dispatch, getState, getOriginalState }) => {
     const dyteClient = action.payload
-    if (!dyteClient) return
+    if (!dyteClient) {
+      const existingClient =
+        getOriginalState().event.currentEvent.liveSessionState.dyte.dyteClient
+      if (existingClient) {
+        existingClient.connectedMeetings.removeAllListeners('*')
+        existingClient.connectedMeetings.removeAllListeners('changingMeeting')
+        existingClient.connectedMeetings.removeAllListeners('meetingChanged')
+        existingClient.connectedMeetings.removeAllListeners('stateUpdate')
+        existingClient.self.removeAllListeners('roomJoined')
+        existingClient.self.removeAllListeners('roomLeft')
+        existingClient.participants.removeAllListeners('broadcastedMessage')
+      }
+
+      return
+    }
     const { eventId } = getState().event.currentEvent.eventState
     const isMeetingOwner =
       getState().event.currentEvent.eventState.isCurrentUserOwnerOfEvent

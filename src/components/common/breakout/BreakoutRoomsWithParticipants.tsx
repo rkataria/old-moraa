@@ -154,7 +154,7 @@ export function BreakoutRoomsWithParticipants({
                     size="sm"
                     variant="ghost"
                     onClick={() => joinRoom(meet.id || '')}>
-                    Join Room {index + 1}
+                    Join
                   </Button>
                 </RenderIf>
               }
