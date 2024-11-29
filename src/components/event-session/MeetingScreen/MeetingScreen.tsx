@@ -10,7 +10,9 @@ import {
   DyteParticipantsAudio,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
+import { DyteParticipant, leaveRoomState } from '@dytesdk/web-core'
 import { Button } from '@nextui-org/button'
+import { useParams, useRouter } from '@tanstack/react-router'
 import toast from 'react-hot-toast'
 
 import { Content } from './Content'
@@ -50,6 +52,8 @@ export type DyteStates = {
 }
 
 export function MeetingScreen() {
+  const { eventId } = useParams({ strict: false })
+  const router = useRouter()
   const { meeting } = useDyteMeeting()
   const { preview, sections, setCurrentFrame } = useEventContext()
   const dispatch = useStoreDispatch()
@@ -114,6 +118,36 @@ export function MeetingScreen() {
     return onUnmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting, isHost])
+
+  useEffect(() => {
+    if (!meeting) return
+
+    const handleParticipantLeft = (
+      payload: { state: leaveRoomState } | DyteParticipant
+    ) => {
+      const { state } = payload as { state: leaveRoomState }
+
+      if (state === 'ended' || state === 'left') {
+        router.navigate({
+          to: `/events/${eventId}`,
+          search: { action: 'edit', tab: 'landing-page' },
+        })
+      }
+    }
+
+    meeting.self.on('roomLeft', handleParticipantLeft)
+
+    function onUnmount() {
+      meeting.participants.joined.off(
+        'participantJoined',
+        handleParticipantLeft
+      )
+    }
+
+    // eslint-disable-next-line consistent-return
+    return onUnmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meeting])
 
   useEffect(() => {
     const promptHostForPendingParticipants = () => {
