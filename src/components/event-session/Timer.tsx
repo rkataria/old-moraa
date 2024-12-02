@@ -12,6 +12,10 @@ import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-ev
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 import { cn, zeroPad } from '@/utils/utils'
 
+const audio = new Audio('/timer-end-tone.mp3')
+audio.preload = 'auto'
+audio.volume = 0.8
+
 export function Timer({
   showEndBreakout,
   onEndBreakout,
@@ -41,6 +45,14 @@ export function Timer({
   const [remainingTimeInSeconds, setRemainingTimeInSeconds] = useState(0)
   const dispatch = useStoreDispatch()
 
+  useEffect(
+    () => () => {
+      audio.pause()
+      audio.currentTime = 0
+    },
+    []
+  )
+
   useEffect(() => {
     if (!session?.data?.timerDuration) return
     const initialRemainingTime = session?.data?.timerStartedStamp
@@ -58,6 +70,7 @@ export function Timer({
 
     const timer = setInterval(() => {
       setRemainingTimeInSeconds(remainingTimeInSeconds - 1)
+      if (remainingTimeInSeconds === 10) audio.play()
       if (!isHost) return
       if (remainingTimeInSeconds - 1 !== 0) return
       // At last second
