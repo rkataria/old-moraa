@@ -19,11 +19,11 @@ function Detail({
   description: string
 }) {
   return (
-    <div className="flex items-start gap-4 bg-gradient-to-r from-white to-[#E4E0FF] p-3 rounded-xl w-[292px] shadow-2xl">
+    <div className="flex items-start gap-4 bg-gradient-to-r from-white to-[#E4E0FF] p-3 pt-4 rounded-xl w-[292px] shadow-2xl">
       {logo}
       <div className="-mt-[5px]">
-        <p className="font-medium text-sm">{title}</p>
-        <p className="text-xs mt-0.5">{description}</p>
+        <p className="font-medium text-xs">{title}</p>
+        <p className="text-[10px] mt-1 leading-4">{description}</p>
       </div>
     </div>
   )

@@ -1,9 +1,22 @@
-import path from 'path'
+import { createRequire } from 'node:module'
+import path from 'node:path'
 
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig, Plugin } from 'vite'
+import { defineConfig, normalizePath, Plugin } from 'vite'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+
+const require = createRequire(import.meta.url)
+const cMapsDir = normalizePath(
+  path.join(path.dirname(require.resolve('pdfjs-dist/package.json')), 'cmaps')
+)
+const standardFontsDir = normalizePath(
+  path.join(
+    path.dirname(require.resolve('pdfjs-dist/package.json')),
+    'standard_fonts'
+  )
+)
 
 const warningsToIgnore = [
   ['SOURCEMAP_ERROR', "Can't resolve original location of error"],
@@ -63,6 +76,12 @@ export default defineConfig({
       project: 'frontend-app-sentry',
     }),
     muteWarningsPlugin(),
+    viteStaticCopy({
+      targets: [
+        { src: cMapsDir, dest: '' },
+        { src: standardFontsDir, dest: '' },
+      ],
+    }),
   ],
 
   resolve: {

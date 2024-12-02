@@ -296,11 +296,6 @@
   @apply text-2xl font-bold;
 }
 
-/* PDF */
-.react-pdf__Page__canvas {
-  @apply mx-auto !w-full !h-auto;
-}
-
 .flying-emojis {
   position: fixed;
   top: 0px;

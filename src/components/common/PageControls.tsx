@@ -31,7 +31,7 @@ export function PageControls({
   const arrowRight = useHotkeys('ArrowRight', handleNext)
 
   return (
-    <div className={cn('absolute right-2 top-2 flex gap-1')}>
+    <div className={cn('absolute right-2 top-2 flex gap-1 z-[100]')}>
       <Tooltip content="Previous page" placement="top">
         <Button
           variant="flat"

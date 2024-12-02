@@ -1,128 +1,144 @@
-import { useEffect, useState } from 'react'
+import { useRef } from 'react'
 
 import { Skeleton } from '@nextui-org/react'
-import { useMutation } from '@tanstack/react-query'
-import { pdfjs, Document, Page } from 'react-pdf'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { LoadError } from './LoadError'
-import { PageControls } from '../../PageControls'
+import { PdfPage } from './PageViewer'
+import { PdfControls } from './PdfControls'
+import { RenderIf } from '../../RenderIf/RenderIf'
 
-import { ContentLoading } from '@/components/common/ContentLoading'
-import { Loading } from '@/components/common/Loading'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { downloadPDFFile } from '@/services/pdf.service'
+import { IPdfViewChangeEvent, usePdfControls } from '@/hooks/usePdfControls'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { useUserPreferences } from '@/hooks/userPreferences'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { PdfFrame } from '@/types/frame-picker.type'
-import { getLastVisitedPage, updateLastVisitedPage } from '@/utils/pdf.utils'
-import { cn, getFileObjectFromBlob } from '@/utils/utils'
+import { cn, copyToClipboard } from '@/utils/utils'
 
 type EmbedProps = {
   frame: PdfFrame
   hideControls?: boolean
 }
 
-pdfjs.GlobalWorkerOptions.workerSrc = '/scripts/pdf.worker.min.mjs'
-
 export function Embed({ frame, hideControls }: EmbedProps) {
-  const [pageView, setPageView] = useState({ isPortrait: false, maxWidth: 100 })
-  const [totalPages, setTotalPages] = useState<null | number>(null)
-  const [selectedPage, setSelectedPage] = useState<number>(
-    frame.content?.defaultPage || getLastVisitedPage(frame.id)
+  const currentFrame = useCurrentFrame()
+  const { permissions } = useEventPermissions()
+  const { userPreferences, userPreferencesPdf } = useUserPreferences()
+
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const initialDisplayConfig = hideControls
+    ? {}
+    : userPreferences?.pdf?.[frame.id]?.config || {}
+
+  const initialPage = hideControls
+    ? 1
+    : userPreferences?.pdf?.[frame.id]?.position || 1
+
+  const {
+    pdf,
+    isPending,
+    isError,
+    display,
+    selectedPage,
+    totalPages,
+    fitPageToContainer,
+    handleDisplayChange,
+    handlePageChange,
+    onDocumentLoadSuccess,
+    downloadPDF,
+  } = usePdfControls(
+    frame.content?.pdfPath,
+    containerRef,
+    initialDisplayConfig,
+    initialPage,
+    frame.config.allowedAutoScroll
   )
 
-  const [file, setFile] = useState<File | undefined>()
-  const { permissions } = useEventPermissions()
+  const { contentStudioRightSidebar } = useStoreSelector(
+    (state) => state.layout.studio
+  )
 
-  const downloadPDFMutation = useMutation({
-    mutationFn: () =>
-      downloadPDFFile(frame.content?.pdfPath).then((data) =>
-        getFileObjectFromBlob(
-          frame.content?.pdfPath,
-          data.data,
-          'application/pdf'
-        )
-      ),
-    onSuccess: (_file) => setFile(_file),
+  useHotkeys('c', () => copyToClipboard(containerRef), {
+    enabled: !hideControls,
   })
 
-  useEffect(() => {
-    downloadPDFMutation.mutate()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frame.content?.pdfPath])
-  useEffect(() => {
-    if (frame.content?.defaultPage) {
-      setSelectedPage(frame.content?.defaultPage)
-    }
-  }, [frame.content?.defaultPage])
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onDocumentLoadSuccess: any = ({ numPages: nextNumPages }: any) => {
-    setTotalPages(nextNumPages)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onLoadSuccess = (page: any) => {
-    const isPortraitPage = page.width < page.height
-    setPageView({
-      isPortrait: isPortraitPage,
-      maxWidth: page.width,
+  const updateStoreOnDisplayChange = (newDisplay: IPdfViewChangeEvent) => {
+    const updatedConfig = handleDisplayChange(newDisplay)
+    userPreferencesPdf({
+      frameId: frame.id,
+      data: {
+        config: updatedConfig,
+      },
     })
   }
-  if (downloadPDFMutation.isError) {
+
+  const updateStoreOnPageChange = (page: number) => {
+    handlePageChange(page)
+    userPreferencesPdf({
+      frameId: frame.id,
+      data: {
+        position: page,
+      },
+    })
+  }
+
+  const getDisplay = () => {
+    if (
+      !contentStudioRightSidebar ||
+      frame.id !== currentFrame?.id ||
+      hideControls
+    ) {
+      return display
+    }
+
+    return {
+      ...display,
+      width: display.width ? display.width - 300 : display.width,
+      height: display.height ? display.height - 300 : display.height,
+    }
+  }
+
+  if (isError) {
     return <LoadError invalidUrl canUpdateFrame={permissions.canUpdateFrame} />
   }
 
-  if (!downloadPDFMutation.isSuccess) {
+  if (isPending || !pdf) {
     return <Skeleton className="w-full h-full rounded-md" />
   }
 
   return (
     <div
-      className={cn('relative flex justify-start items-start gap-4 h-full', {
-        'w-[60%]': pageView.isPortrait && frame.config.landcapeView,
-        'mx-auto': pageView.isPortrait && !frame.config.landcapeView,
-        'w-full': !pageView.isPortrait,
-      })}
-      style={{
-        maxWidth:
-          pageView.isPortrait && !frame.config.landcapeView
-            ? pageView.maxWidth
-            : '',
-      }}>
-      <Document
-        file={file}
-        onLoadSuccess={onDocumentLoadSuccess}
-        className={cn('relative h-full ml-0 overflow-y-auto scrollbar-thin', {
-          'w-full': frame.config.landcapeView,
-          'aspect-video': !pageView.isPortrait,
-        })}
-        loading={
-          <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
-            <Loading />
-          </div>
-        }>
-        <Page
-          loading={<ContentLoading />}
+      className={cn('relative h-full overflow-hidden', {
+        'pt-12': !hideControls,
+      })}>
+      <div className="overflow-y-auto h-full scrollbar-none" ref={containerRef}>
+        <PdfPage
+          file={pdf}
           pageNumber={selectedPage}
-          renderAnnotationLayer={false}
-          renderTextLayer={false}
-          className="w-full"
-          devicePixelRatio={
-            (!pageView.isPortrait || frame.config.landcapeView ? 2.6 : 1) *
-            window.devicePixelRatio
+          onDocumentLoadSuccess={onDocumentLoadSuccess}
+          onPageLoadSuccess={fitPageToContainer}
+          fitDimensions={getDisplay()}
+          autoScroll={
+            frame.config.allowedAutoScroll &&
+            !hideControls &&
+            currentFrame?.id === frame.id
           }
-          onLoadSuccess={onLoadSuccess}
-        />
-      </Document>
-      {!hideControls && (
-        <PageControls
-          currentPage={selectedPage}
           totalPages={totalPages}
-          handleCurrentPageChange={(page: number) => {
-            setSelectedPage(page <= (totalPages || 1) ? page : totalPages || 1)
-            updateLastVisitedPage(frame.id, page)
-          }}
         />
-      )}
+
+        <RenderIf isTrue={!hideControls}>
+          <PdfControls
+            config={display}
+            totalPages={totalPages}
+            currentPage={selectedPage}
+            onDisplayChange={updateStoreOnDisplayChange}
+            downloadPdf={downloadPDF}
+            handleCurrentPageChange={updateStoreOnPageChange}
+          />
+        </RenderIf>
+      </div>
     </div>
   )
 }

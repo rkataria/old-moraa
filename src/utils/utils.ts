@@ -369,3 +369,28 @@ export const waitForMs = (ms: number) =>
       resolve(null)
     }, ms)
   })
+
+export const copyDivContent = (div: HTMLDivElement) => {
+  const range = document.createRange()
+  range.selectNodeContents(div)
+  const selection = window.getSelection()
+  selection?.removeAllRanges()
+  selection?.addRange(range)
+  document.execCommand('copy')
+  toast.success('Copied')
+  selection?.removeAllRanges()
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const copyToClipboard = (containerRef: any) => {
+  if (containerRef.current) {
+    const textDiv = containerRef.current.querySelector(
+      '.react-pdf__Page__textContent'
+    )
+    if (textDiv) {
+      copyDivContent(textDiv)
+    } else {
+      toast('Failed to copy')
+    }
+  }
+}

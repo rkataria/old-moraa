@@ -7,6 +7,14 @@ export type UserPreferences = {
     video: boolean
     audio: boolean
   }
+  pdf?: {
+    [key: string]: {
+      position: number
+      config: {
+        [key: string]: string
+      }
+    }
+  }
 }
 
 export enum UserType {

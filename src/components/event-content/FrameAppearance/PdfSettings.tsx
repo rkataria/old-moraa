@@ -13,35 +13,30 @@ export function PdfSettings() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* <LabelWithInlineControl
-        label="Initial Page"
-        control={
-          <NumberInput
-            min={1}
-            number={+(currentFrame?.config?.defaultPage || 1)}
-            onNumberChange={(updateValue) => {
-              updateFrame({
-                framePayload: {
-                  config: {
-                    ...currentFrame.config,
-                    defaultPage: updateValue,
-                  },
-                },
-                frameId: currentFrame.id,
-              })
-            }}
-          />
-        }
-      /> */}
       <SwitchControl
-        label="Lanscape"
-        checked={currentFrame.config.landcapeView}
+        label="Container scroll"
+        checked={currentFrame.config.allowedAutoScroll}
         onChange={() =>
           updateFrame({
             framePayload: {
               config: {
                 ...currentFrame.config,
-                landcapeView: !currentFrame.config.landcapeView,
+                allowedAutoScroll: !currentFrame.config.allowedAutoScroll,
+              },
+            },
+            frameId: currentFrame.id,
+          })
+        }
+      />
+      <SwitchControl
+        label="Allow participants to download"
+        checked={currentFrame.config.allowedDownloading}
+        onChange={() =>
+          updateFrame({
+            framePayload: {
+              config: {
+                ...currentFrame.config,
+                allowedDownloading: !currentFrame.config.allowedDownloading,
               },
             },
             frameId: currentFrame.id,

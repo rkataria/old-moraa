@@ -27,10 +27,40 @@ export function useUserPreferences() {
     }))
   }
 
+  const userPreferencesPdf = (payload: {
+    frameId: string
+    data: {
+      position?: number
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      config?: any
+    }
+  }) => {
+    setUserPreferences((prev) => {
+      const previousPdfPreferences = prev?.pdf || {}
+
+      const currentFramePreferences =
+        previousPdfPreferences[payload.frameId] || {}
+
+      const updatedFramePreferences = {
+        position: payload.data.position ?? currentFramePreferences.position,
+        config: payload.data.config ?? currentFramePreferences.config,
+      }
+
+      return {
+        ...prev,
+        pdf: {
+          ...previousPdfPreferences,
+          [payload.frameId]: updatedFramePreferences,
+        },
+      }
+    })
+  }
+
   return {
     userPreferences,
     setUserPreferences,
     userPreferencesMeetingVideo,
     userPreferencesMeetingAudio,
+    userPreferencesPdf,
   }
 }
