@@ -5,7 +5,7 @@ import { useRef, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { BiSolidImage, BiSolidVideos } from 'react-icons/bi'
 import { FaPhotoVideo, FaUnsplash } from 'react-icons/fa'
-import { SiIcons8 } from 'react-icons/si'
+import { SiGiphy, SiIcons8 } from 'react-icons/si'
 import { Orientation } from 'unsplash-js'
 
 import { MediaProviderContent, MediaProviderType } from './MediaProviderContent'
@@ -36,6 +36,11 @@ const MENU_OPTIONS = {
       icon: <SiIcons8 size={18} className="text-green-500" />,
       label: MediaProviderType.ICON8,
       disabled: true,
+    },
+    {
+      icon: <SiGiphy size={18} className="text-green-500" />,
+      label: MediaProviderType.GIPHY,
+      disabled: false,
     },
   ],
 }
