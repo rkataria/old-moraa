@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { Orientation } from 'unsplash-js'
 
+import { GiphyContent } from './GiphyContent'
 import { Icon8Content } from './Icon8Content'
 import { ImageCropper } from './ImageCropper'
 import { LibraryContent } from './LibraryContent'
@@ -14,6 +15,7 @@ export enum MediaProviderType {
   LIBRARY = 'Library',
   UNSPLASH = 'Unsplash',
   ICON8 = 'Icon8',
+  GIPHY = 'Giphy',
 }
 
 export function MediaProviderContent({
@@ -69,6 +71,9 @@ export function MediaProviderContent({
       />
     ),
     [MediaProviderType.ICON8]: <Icon8Content />,
+    [MediaProviderType.GIPHY]: (
+      <GiphyContent onImageSelect={handleImageSelect} />
+    ),
   }
 
   const renderer = renderersByMediaProvider[provider]
