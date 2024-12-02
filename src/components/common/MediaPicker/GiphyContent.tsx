@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 
 import {
   Grid,
@@ -22,7 +22,7 @@ function Components({
         columns={3}
         width={480}
         fetchGifs={fetchGifs}
-        onGifClick={(gif, e) => {
+        onGifClick={(_, e) => {
           const imageEle = document.createElement('img')
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           imageEle.src = (e.target as any).src
