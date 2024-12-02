@@ -6,6 +6,7 @@ Sentry.init({
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
   ],
+  environment: import.meta.env.VITE_ENVIRONMENT || 'local',
   // Tracing
   tracesSampleRate: 1.0, //  Capture 100% of the transactions
   // Session Replay

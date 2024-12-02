@@ -1,5 +1,6 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 
+import * as Sentry from '@sentry/react'
 import { useRouter } from '@tanstack/react-router'
 
 import { useStoreSelector } from './useRedux'
@@ -28,6 +29,14 @@ export function UserContextProvider({
 }: React.PropsWithChildren<object>) {
   const router = useRouter()
   const userState = useStoreSelector((state) => state.user.currentUser)
+
+  useEffect(() => {
+    if (userState.user?.email) {
+      Sentry.setUser({
+        email: userState.user?.email,
+      })
+    }
+  }, [userState.user?.email])
 
   const logout = async () => {
     await supabaseClient.auth.signOut()
