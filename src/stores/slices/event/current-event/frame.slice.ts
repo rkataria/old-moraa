@@ -13,7 +13,7 @@ import {
 } from '@/stores/helpers'
 import { attachStoreListener } from '@/stores/listener'
 import {
-  bulkUpdateFrameStatusThunk,
+  bulkUpdateFramesThunk,
   createFramesThunk,
   createFrameThunk,
   deleteFramesThunk,
@@ -56,6 +56,7 @@ export const frameSlice = createSlice({
           frame.id === action.payload.id ? action.payload : (frame as any)
         ) || null
     },
+
     deleteFrame: (state, action: PayloadAction<FrameModel['id']>) => {
       state.frame.data =
         state.frame.data?.filter((frame) => frame.id !== action.payload) || null
@@ -100,10 +101,10 @@ export const frameSlice = createSlice({
       },
     })
 
-    builder.addCase(bulkUpdateFrameStatusThunk.fulfilled, (state, action) => {
+    builder.addCase(bulkUpdateFramesThunk.fulfilled, (state, action) => {
       state.frame.data?.forEach((frame) => {
         if (action.payload.frameIds.includes(frame.id)) {
-          frame.status = action.payload.status
+          frame = { ...frame, ...action.payload }
         }
       })
     })

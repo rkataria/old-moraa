@@ -332,11 +332,7 @@ export function FrameItem({
               />
             </RenderIf>
             <RenderIf isTrue={!parentBreakoutFrame}>
-              <FrameColorCode
-                frameId={frame.id}
-                config={frame.config}
-                editable={editable}
-              />
+              <FrameColorCode frameId={frame.id} config={frame.config} />
             </RenderIf>
 
             <div

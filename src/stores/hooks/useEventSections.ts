@@ -52,7 +52,7 @@ export const useEventSelector = () => {
 const orderFramesByParent = (frames: Array<FrameModel>) => {
   const orderedFrames: Array<FrameModel> = []
 
-  frames.forEach((frame: any) => {
+  frames?.forEach((frame: any) => {
     if (frame.type === FrameType.BREAKOUT || frame.content?.breakoutFrameId) {
       // Order activity frames based on breakout frame
       if (frame.type === FrameType.BREAKOUT) {

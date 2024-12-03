@@ -10,6 +10,7 @@ import {
   ModalBody,
   ModalFooter,
 } from '@nextui-org/react'
+import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { AiOutlineClose } from 'react-icons/ai'
 import { BsTrash } from 'react-icons/bs'
@@ -18,12 +19,15 @@ import { MdOutlineUnpublished } from 'react-icons/md'
 import { RiShare2Line } from 'react-icons/ri'
 import { v4 as uuidv4 } from 'uuid'
 
+import { CategoryChange } from './CategoryChange'
+import { MoveToSection } from './MoveTo'
+
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import {
-  bulkUpdateFrameStatusThunk,
+  bulkUpdateFramesThunk,
   createFramesThunk,
 } from '@/stores/thunks/frame.thunks'
 import { FrameStatus } from '@/types/enums'
@@ -97,9 +101,11 @@ export function BottomBar({
   const changeFramesStatus = (status: FrameStatus) => {
     setActionRunning(false)
     dispatch(
-      bulkUpdateFrameStatusThunk({
+      bulkUpdateFramesThunk({
         frameIds: selectedFrameIds,
-        status,
+        payload: {
+          status,
+        },
       })
     )
     toast.success(
@@ -135,7 +141,14 @@ export function BottomBar({
 
   return (
     <>
-      <div className="flex items-center fixed left-[50%] translate-x-[-50%] bg-white w-fit border bottom-10 rounded-lg shadow-2xl h-[64px] overflow-hidden z-[100]">
+      <motion.div
+        initial={{ y: '6px', opacity: 0, x: '-50%' }}
+        animate={{ y: '0%', opacity: 1, x: '-50%' }}
+        transition={{
+          duration: 0.2,
+          ease: 'easeInOut',
+        }}
+        className="flex items-center fixed left-[50%] bg-white w-fit border bottom-10 rounded-lg shadow-2xl w-max h-[64px] overflow-hidden z-[100]">
         <p className="bg-primary text-white h-full aspect-square grid place-items-center text-4xl">
           {selectedFrameIds.length}
         </p>
@@ -145,34 +158,45 @@ export function BottomBar({
           </p>
           <RenderIf isTrue={!parentBreakoutFrame}>
             <div
-              className="grid place-items-center h-full py-2 cursor-pointer"
+              className="grid place-items-center h-full py-2 cursor-pointer gap-1"
               onClick={onDuplicate}>
               <IoDuplicateOutline size={22} className="hover:text-primary" />
-              <p>Duplicate</p>
+              <p className="text-xs">Duplicate</p>
             </div>
           </RenderIf>
 
           <div
-            className="grid place-items-center h-full py-2 cursor-pointer"
+            className="grid place-items-center h-full py-2 cursor-pointer gap-1"
             onClick={() => {
               setActionRunning(false)
               setShowDeleteModal(true)
             }}>
             <BsTrash size={20} className="hover:text-primary" />
-            <p>Delete</p>
+            <p className="text-xs">Delete</p>
           </div>
           <div
-            className="grid place-items-center h-full py-2 cursor-pointer"
+            className="grid place-items-center h-full py-2 cursor-pointer gap-1"
             onClick={() => changeFramesStatus(FrameStatus.PUBLISHED)}>
             <RiShare2Line size={22} className="hover:text-primary" />
-            <p>Share</p>
+            <p className="text-xs">Share</p>
           </div>
           <div
-            className="grid place-items-center h-full py-2 cursor-pointer"
+            className="grid place-items-center h-full py-2 cursor-pointer gap-1"
             onClick={() => changeFramesStatus(FrameStatus.DRAFT)}>
             <MdOutlineUnpublished size={22} className="hover:text-primary" />
-            <p>Unshare</p>
+            <p className="text-xs">Unshare</p>
           </div>
+
+          <CategoryChange
+            selectedFrameIds={selectedFrameIds}
+            setSelectedFrameIds={setSelectedFrameIds}
+          />
+
+          <MoveToSection
+            selectedFrameIds={selectedFrameIds}
+            setSelectedFrameIds={setSelectedFrameIds}
+          />
+
           <div
             className="grid place-items-center border-l aspect-square h-full hover:bg-default-50 cursor-pointer rounded-"
             onClick={() => {
@@ -181,7 +205,7 @@ export function BottomBar({
             <AiOutlineClose size={24} />
           </div>
         </div>
-      </div>
+      </motion.div>
       <Modal
         size="md"
         isOpen={

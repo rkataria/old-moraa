@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import { FrameService } from '@/services/frame.service'
-import { FrameStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 import { FrameModel } from '@/types/models'
 
@@ -97,20 +96,20 @@ export const deleteFramesThunk = createAsyncThunk<
   return response.data
 })
 
-type BulkUpdateFrameStatus = {
+type bulkUpdateFramesThunk = {
   frameIds: Array<FrameModel['id']>
-  status: FrameStatus
+  payload: Partial<IFrame>
 }
-export const bulkUpdateFrameStatusThunk = createAsyncThunk<
-  BulkUpdateFrameStatus,
-  BulkUpdateFrameStatus
->('event/bulkUpdateFrameStatus', async ({ frameIds, status }) => {
+export const bulkUpdateFramesThunk = createAsyncThunk<
+  bulkUpdateFramesThunk,
+  bulkUpdateFramesThunk
+>('event/bulkUpdateFrameStatus', async ({ frameIds, payload }) => {
   await FrameService.updateFrames({
     frameIds,
     framePayload: {
-      status,
+      ...payload,
     },
   })
 
-  return { frameIds, status }
+  return { frameIds, payload }
 })

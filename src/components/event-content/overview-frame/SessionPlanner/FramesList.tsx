@@ -4,7 +4,7 @@ import { Fragment, useState } from 'react'
 
 import { Checkbox } from '@nextui-org/react'
 
-import { BottomBar } from './BottomBar'
+import { BottomBar } from './BottomBar/BottomBar'
 // eslint-disable-next-line import/no-cycle
 import { FrameItem } from './FrameItem'
 import { NewFramePlaceholder } from './NewFramePlaceholder'

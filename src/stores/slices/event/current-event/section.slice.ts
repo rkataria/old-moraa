@@ -92,6 +92,44 @@ export const sectionSlice = createSlice({
         }
       })
     },
+    reorderFrames: (
+      state,
+      action: PayloadAction<{
+        frameIds: string[]
+        destinationSectionId: string
+        destinationIndex: number
+      }>
+    ) => {
+      const { frameIds, destinationSectionId, destinationIndex } =
+        action.payload
+
+      if (
+        !Array.isArray(frameIds) ||
+        frameIds.length === 0 ||
+        typeof destinationIndex !== 'number' ||
+        !destinationSectionId
+      ) {
+        return
+      }
+
+      // Remove frames from their current sections
+      state.section.data?.forEach((section) => {
+        if (section.frames) {
+          section.frames = section.frames.filter(
+            (frameId) => !frameIds.includes(frameId)
+          )
+        }
+      })
+
+      // Add frames to the destination section
+      state.section.data?.forEach((section) => {
+        if (section.id === destinationSectionId) {
+          section.frames = section.frames || []
+          section.frames.splice(destinationIndex, 0, ...frameIds)
+        }
+      })
+    },
+
     toggleSectionExpansionInPlanner: (
       state,
       action: PayloadAction<{
@@ -177,6 +215,22 @@ attachStoreListener({
 
 attachStoreListener({
   actionCreator: sectionSlice.actions.reorderFrame,
+  effect: (_, { dispatch, getOriginalState, getState }) => {
+    const originalSections =
+      getOriginalState().event.currentEvent.sectionState.section.data
+    const updatedSections =
+      getState().event.currentEvent.sectionState.section.data
+
+    dispatch(
+      updateSectionsFramesListThunk({
+        data: getUpdatedSections(originalSections || [], updatedSections || []),
+      })
+    )
+  },
+})
+
+attachStoreListener({
+  actionCreator: sectionSlice.actions.reorderFrames,
   effect: (_, { dispatch, getOriginalState, getState }) => {
     const originalSections =
       getOriginalState().event.currentEvent.sectionState.section.data
@@ -337,4 +391,5 @@ export const {
   setExpandedSectionsInPlannerAction,
   toggleSectionExpansionInPlannerAction,
   resetSectionAction,
+  reorderFramesAction,
 } = renameSliceActions(sectionSlice.actions)

@@ -16,7 +16,8 @@ import { Button, Image } from '@nextui-org/react'
 import differenceby from 'lodash.differenceby'
 import isEqual from 'lodash.isequal'
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
-import { BsTrash } from 'react-icons/bs'
+import { BiCollapseVertical } from 'react-icons/bi'
+import { BsChevronExpand, BsTrash } from 'react-icons/bs'
 import { IoChevronDown } from 'react-icons/io5'
 import { MdAdd, MdDragIndicator } from 'react-icons/md'
 
@@ -35,7 +36,10 @@ import { EventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setIsPreviewOpenAction } from '@/stores/slices/event/current-event/event.slice'
-import { toggleSectionExpansionInPlannerAction } from '@/stores/slices/event/current-event/section.slice'
+import {
+  setExpandedSectionsInPlannerAction,
+  toggleSectionExpansionInPlannerAction,
+} from '@/stores/slices/event/current-event/section.slice'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
 import { cn, sortByStatus } from '@/utils/utils'
@@ -82,6 +86,8 @@ export function SessionPlanner({
       state.event.currentEvent.sectionState.expandedSectionsInSessionPlanner
   )
 
+  const allSectionsCollapsed = expandedSections.length === 0
+
   const getNewlyAddedIds = (
     updatedSections: ISection[],
     previousSections: ISection[]
@@ -122,6 +128,19 @@ export function SessionPlanner({
 
       return
     }
+
+    if (key === 'toggle-expand-collapse') {
+      dispatch(
+        setExpandedSectionsInPlannerAction({
+          ids: allSectionsCollapsed
+            ? sections.map((section) => section.id)
+            : [],
+        })
+      )
+
+      return
+    }
+
     handleFramesSort(sectionId, key)
   }
 
@@ -256,11 +275,15 @@ export function SessionPlanner({
                                             />
                                           ),
                                         },
-                                        // {
-                                        //   key: 'published',
-                                        //   label: 'Move published frames at top',
-                                        //   icon: <IoIosArrowRoundUp size={18} />,
-                                        // },
+                                        {
+                                          key: 'toggle-expand-collapse',
+                                          label: `${allSectionsCollapsed ? 'Expand' : 'Collapse'} all sections`,
+                                          icon: allSectionsCollapsed ? (
+                                            <BsChevronExpand size={18} />
+                                          ) : (
+                                            <BiCollapseVertical size={18} />
+                                          ),
+                                        },
                                         // {
                                         //   key: 'unpublished',
                                         //   label:
