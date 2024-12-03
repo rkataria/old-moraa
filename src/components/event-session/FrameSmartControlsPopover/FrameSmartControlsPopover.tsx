@@ -17,7 +17,7 @@ export function FrameSmartControls() {
 
   if (presentationStatus === PresentationStatuses.STARTED) {
     return (
-      <div className="p-2 h-11 absolute top-[-51px] left-[50%] translate-x-[-50%] bg-white rounded-lg">
+      <div className="p-2 h-11 absolute top-[-51px] left-[50%] translate-x-[-50%] bg-white rounded-lg z-10">
         <div className="flex justify-start items-center gap-2">
           <Controls />
           <CommonControls />
@@ -25,21 +25,4 @@ export function FrameSmartControls() {
       </div>
     )
   }
-
-  // return (
-  //   <Popover
-  //     placement="bottom"
-  //     offset={12}
-  //     isOpen={presentationStatus === PresentationStatuses.STARTED}>
-  //     <PopoverTrigger>{trigger}</PopoverTrigger>
-  //     <PopoverContent className="p-0 w-fit">
-  //       <div className="p-2 h-11">
-  //         <div className="flex justify-start items-center gap-2">
-  //           <Controls />
-  //           <CommonControls />
-  //         </div>
-  //       </div>
-  //     </PopoverContent>
-  //   </Popover>
-  // )
 }

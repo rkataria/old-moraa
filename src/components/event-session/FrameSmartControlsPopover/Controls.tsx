@@ -1,4 +1,5 @@
 import { BreakoutControls } from './BreakoutControls'
+import { MCQControls } from './MCQControls'
 import { PollControls } from './PollControls'
 import { ReflectionControls } from './ReflectionControls'
 
@@ -24,6 +25,7 @@ export const getControls = (frameType: FrameType) => {
     [FrameType.RICH_TEXT]: null,
     [FrameType.VIDEO]: null,
     [FrameType.VIDEO_EMBED]: null,
+    [FrameType.MCQ]: <MCQControls />,
   }
 
   const renderer = renderersByFrameType[frameType]

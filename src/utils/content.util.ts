@@ -84,6 +84,29 @@ export const getDefaultContent = ({
         blocks: [paragraphBlock],
       }
 
+    case FrameType.MCQ:
+      return {
+        question: '',
+        options: [
+          {
+            name: '',
+            color: '#E7E0FF',
+            id: uuidv4(),
+          },
+          {
+            name: '',
+            color: '#E7E0FF',
+            id: uuidv4(),
+          },
+          {
+            name: '',
+            color: '#E7E0FF',
+            id: uuidv4(),
+          },
+        ],
+        blocks: [paragraphBlock],
+      }
+
     case FrameType.REFLECTION:
       return {
         blocks: [paragraphBlock],
@@ -182,6 +205,7 @@ export const getContentStudioRightSidebarControlKeys = (
       FrameType.REFLECTION,
       FrameType.MORAA_BOARD,
       FrameType.PDF_VIEWER,
+      FrameType.MCQ,
     ].includes(frame.type as FrameType)
   ) {
     return ['frame-settings', 'frame-notes', 'frame-status']

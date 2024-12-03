@@ -7,6 +7,7 @@ import {
   BsQuestion,
 } from 'react-icons/bs'
 import { FaFilePdf, FaFilePowerpoint } from 'react-icons/fa'
+import { LuListTodo } from 'react-icons/lu'
 import { RiSketching } from 'react-icons/ri'
 import { SiGoogleslides, SiMiro, SiSlides } from 'react-icons/si'
 import { TbTextWrap, TbTriangleSquareCircleFilled } from 'react-icons/tb'
@@ -63,6 +64,7 @@ export enum FrameType {
   POWERPOINT = 'Powerpoint',
   Q_A = 'Q/A',
   MORAA_PAD = 'Moraapad',
+  MCQ = 'MCQ',
 }
 
 export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
@@ -146,6 +148,16 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description:
       'Break ice, gauge opinions visually. Dive into dialogue effortlessly.',
     type: FrameType.POLL,
+    category: FrameCategory.INTERACTION,
+  },
+  {
+    name: 'MCQ',
+    icon: <LuListTodo className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <LuListTodo size={32} />,
+    iconSmall: <LuListTodo size={24} />,
+    description:
+      'Ask, choose, and learn: Simplify decision-making through interactive MCQs.',
+    type: FrameType.MCQ,
     category: FrameCategory.INTERACTION,
   },
   {

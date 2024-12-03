@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
+import { MCQFrame } from '../content-types/MCQ/MCQ'
 import { MiroEmbedFrame } from '../content-types/MiroEmbed/MiroEmbed'
 import { MoraaBoardFrame } from '../content-types/MoraaBoard/MoraaBoard'
 import { MoraaSlideFrame } from '../content-types/MoraaSlide/MoraaSlide'
@@ -59,6 +60,7 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
     [FrameType.VIDEO_EMBED]: (
       <VideoEmbedFrame frame={frame as any} asThumbnail />
     ),
+    [FrameType.MCQ]: <MCQFrame frame={frame as any} asThumbnail />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType]

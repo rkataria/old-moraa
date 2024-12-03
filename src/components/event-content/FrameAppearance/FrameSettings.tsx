@@ -1,6 +1,7 @@
 import { FiSettings } from 'react-icons/fi'
 
 import { BreakoutSettings } from './BreakoutSettings'
+import { MCQSettings } from './MCQSettings'
 import { MoraaBoardSettings } from './MoraaBoardSettings'
 import { PdfSettings } from './PdfSettings'
 import { PollSettings } from './PollSettings'
@@ -37,6 +38,7 @@ export function FrameSettings() {
     [FrameType.POWERPOINT]: null,
     [FrameType.Q_A]: null,
     [FrameType.MORAA_PAD]: null,
+    [FrameType.MCQ]: <MCQSettings />,
   }
 
   const renderer = renderersByContentType[currentFrame.type as FrameType]

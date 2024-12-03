@@ -42,7 +42,7 @@ import { FrameType } from '@/utils/frame-picker.util'
 import { supabaseClient } from '@/utils/supabase/client'
 
 const frameHasFrameResponses = (frameType: FrameType) =>
-  [FrameType.POLL, FrameType.REFLECTION].includes(frameType)
+  [FrameType.POLL, FrameType.REFLECTION, FrameType.MCQ].includes(frameType)
 
 const supabase = supabaseClient
 interface EventSessionProviderProps {

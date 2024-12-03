@@ -52,6 +52,7 @@ export function ContentStudioRightSidebarControls() {
         FrameType.REFLECTION,
         FrameType.MORAA_BOARD,
         FrameType.PDF_VIEWER,
+        FrameType.MCQ,
       ].includes(currentFrame.type as FrameType)
     ) {
       return [

@@ -7,6 +7,7 @@ import ResizeObserver from 'rc-resize-observer'
 import { BreakoutFrame } from '../content-types/Breakout/Breakout'
 import { GoogleSlidesFrame } from '../content-types/GoogleSlides/GoogleSlides'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
+import { MCQFrame } from '../content-types/MCQ/MCQ'
 import { MiroEmbedFrame } from '../content-types/MiroEmbed/MiroEmbed'
 import { MoraaBoardFrame } from '../content-types/MoraaBoard/MoraaBoard'
 import { MoraaPadFrame } from '../content-types/MoraaPad/MoraaPad'
@@ -77,6 +78,8 @@ export function LiveFrame({ frame }: FrameContainerProps) {
     [FrameType.VIDEO_EMBED]: (
       <VideoEmbedFrame frame={frame as any} isLiveSession />
     ),
+
+    [FrameType.MCQ]: <MCQFrame frame={frame as any} isLiveSession />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType]

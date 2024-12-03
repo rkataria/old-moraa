@@ -169,3 +169,13 @@ export type FrameAction = {
   label: string
   icon: ReactNode
 }
+
+export interface MCQOption extends PollOption {
+  selected?: boolean
+}
+export type MCQFrame = IFrame & {
+  content: {
+    question: string
+    options: MCQOption[]
+  }
+}
