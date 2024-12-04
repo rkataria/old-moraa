@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from 'react'
 
 import { useDyteMeeting } from '@dytesdk/react-web-core'
@@ -8,11 +9,13 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react'
+import toast from 'react-hot-toast'
 
 import {
   AssignmentOption,
   AssignmentOptionSelector,
 } from './AssignmentOptionSelector'
+import { AssignParticipantsModal } from './AssignParticipantsModal/AssignParticipantsModal'
 import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { NumberInput } from '../NumberInput'
 
@@ -41,6 +44,7 @@ export function StartPlannedBreakoutModal({
   open,
   setOpen,
 }: StartPlannedBreakoutModalProps) {
+  const [openAssignmentModal, setOpenAssignmentModal] = useState(false)
   const { updateFrame } = useEventContext()
   const { eventRealtimeChannel, currentFrame, presentationStatus } =
     useEventSession()
@@ -98,7 +102,7 @@ export function StartPlannedBreakoutModal({
   const DurationUI = (
     <div className="grid grid-cols-[50%_50%] gap-2">
       <p>Duration (mins):</p>
-      <div className="flex justify-start items-center">
+      <div className="flex justify-center items-center">
         <NumberInput
           min={1}
           max={30}
@@ -204,7 +208,7 @@ export function StartPlannedBreakoutModal({
           participant(s) per room.
         </p>
       </div>
-      <div className="flex justify-start items-center">
+      <div className="flex justify-center items-center">
         <NumberInput
           min={1}
           max={currentParticipantCount}
@@ -299,6 +303,11 @@ export function StartPlannedBreakoutModal({
     }
   }
 
+  const isParticipantJoined = (participantId: string) =>
+    dyteMeeting.meeting.participants.active
+      .toArray()
+      .some((p) => p.customParticipantId === participantId)
+
   const startBreakout = () => {
     if (!startBreakoutSession) {
       return
@@ -330,40 +339,143 @@ export function StartPlannedBreakoutModal({
     }, notificationDuration * 1000)
   }
 
+  const moveParticipantsToMainRoom = async (
+    newBreakoutRoomAssignments: Record<string, string[]>
+  ) => {
+    updateFrame({
+      framePayload: {
+        content: {
+          ...currentFrame?.content,
+          breakoutRoomAssignments: newBreakoutRoomAssignments,
+        },
+      },
+      frameId: currentFrame?.id as string,
+    })
+  }
+
+  const applyAssigParticipantsConfig = async () => {
+    const breakoutRoomAssignments = (currentFrame?.content
+      ?.breakoutRoomAssignments || {}) as Record<string, string[]>
+    const meetings = Array.from(dyteMeeting.meeting.connectedMeetings.meetings)
+    const newBreakoutRoomAssignments: Record<string, string[]> = JSON.parse(
+      JSON.stringify(breakoutRoomAssignments)
+    )
+
+    if (!breakoutRoomAssignments) return
+
+    Object.keys(breakoutRoomAssignments).forEach((roomId, index) => {
+      const participants = breakoutRoomAssignments[roomId] || []
+      const meetingToJoin = meetings[index]
+
+      if (!meetingToJoin?.id) return
+
+      if (participants.length === 0) return
+
+      participants.forEach((participantId: string) => {
+        if (!participantId) return
+
+        if (!isParticipantJoined(participantId)) {
+          newBreakoutRoomAssignments[roomId] = newBreakoutRoomAssignments[
+            roomId
+          ].filter((id) => id !== participantId)
+
+          return
+        }
+
+        breakoutRoomsInstance?.moveParticipantToAnotherRoom(
+          participantId,
+          meetingToJoin.id!
+        )
+      })
+    })
+
+    await moveParticipantsToMainRoom(newBreakoutRoomAssignments)
+
+    toast.success('Participants assigned successfully')
+  }
+
   return (
-    <Modal size="lg" isOpen={open} onOpenChange={setOpen}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Start Breakout
-            </ModalHeader>
-            <ModalBody>
-              <div className="flex flex-col gap-6">
-                {isConfigAlreadyProvided
-                  ? ShowConfigurationsUI[
-                      participantsPerGroup ? 'participants_per_room' : 'rooms'
-                    ]
-                  : ConfigureRoomsUI}
-                {DurationUI}
-                {AssignmentOptionUI}
-              </div>
-            </ModalBody>
-            <ModalFooter>
+    <>
+      <Modal size="lg" isOpen={open} onOpenChange={setOpen}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Start Breakout
+              </ModalHeader>
+              <ModalBody>
+                <div className="flex flex-col gap-6">
+                  {isConfigAlreadyProvided
+                    ? ShowConfigurationsUI[
+                        participantsPerGroup ? 'participants_per_room' : 'rooms'
+                      ]
+                    : ConfigureRoomsUI}
+                  {DurationUI}
+                  {AssignmentOptionUI}
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  variant="light"
+                  size="sm"
+                  onPress={onClose}>
+                  Close
+                </Button>
+                <Button
+                  color="primary"
+                  size="sm"
+                  onPress={() => {
+                    if (assignmentOption === 'manual') {
+                      setOpenAssignmentModal(true)
+
+                      return
+                    }
+
+                    startBreakout()
+                  }}>
+                  Start
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <AssignParticipantsModal
+        open={openAssignmentModal}
+        actions={
+          <div className="flex justify-between items-center w-full">
+            <p className="text-gray-600 text-xs">
+              Inactive participants will be moved to the main room if they are
+              assigned to any breakout room.
+            </p>
+            <div className="flex justify-end items-center gap-2">
               <Button
                 color="danger"
-                variant="light"
                 size="sm"
-                onPress={onClose}>
-                Close
+                onPress={() => {
+                  startBreakout()
+                  setOpenAssignmentModal(false)
+                }}>
+                Skip
               </Button>
-              <Button color="primary" size="sm" onPress={startBreakout}>
-                Start
+              <Button
+                color="primary"
+                size="sm"
+                onPress={() => {
+                  startBreakout()
+                  setTimeout(() => {
+                    applyAssigParticipantsConfig()
+                  }, 6000)
+                  setOpenAssignmentModal(false)
+                }}>
+                Use this configuration
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+            </div>
+          </div>
+        }
+        setOpen={setOpenAssignmentModal}
+      />
+    </>
   )
 }

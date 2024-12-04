@@ -9,12 +9,10 @@ import { ReactWithEmojiToggle } from '../ReactWithEmojiToggle'
 import { ScreenShareToggle } from '../ScreenShareToggle'
 import { VideoToggle } from '../VideoToggle'
 
-import { AskForHelpButton } from '@/components/common/breakout/AskForHelpButton'
 import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { PresentationControls } from '@/components/common/PresentationControls'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -23,8 +21,6 @@ import { cn } from '@/utils/utils'
 export function Footer() {
   const currentFrame = useCurrentFrame()
   const { isHost, presentationStatus } = useEventSession()
-  const { isBreakoutActive, isCurrentDyteMeetingInABreakoutRoom } =
-    useBreakoutRooms()
 
   return (
     <div className="h-full w-full flex justify-between items-center px-2">
@@ -85,11 +81,6 @@ export function Footer() {
           <RenderIf isTrue={isHost}>
             <AppsToggle />
           </RenderIf>
-          {!isHost &&
-          isBreakoutActive &&
-          isCurrentDyteMeetingInABreakoutRoom ? (
-            <AskForHelpButton />
-          ) : null}
           <LeaveMeetingToggle />
         </div>
       </div>

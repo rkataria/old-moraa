@@ -54,6 +54,7 @@ export interface ISection {
 export interface IbreakoutRooms {
   name: string
   activityId?: string
+  id: string
 }
 export interface ISectionConfig {
   time?: number

@@ -144,7 +144,7 @@ export const getDefaultContent = ({
             ? undefined
             : new Array(data?.breakoutRoomsCount)
                 .fill('')
-                .map((_, idx) => ({ name: `Room - ${idx + 1}` })),
+                .map((_, idx) => ({ name: `Room - ${idx + 1}`, id: uuidv4() })),
       }
 
     default:

@@ -4,7 +4,7 @@
 
 import 'tldraw/tldraw.css'
 
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { GoPlusCircle } from 'react-icons/go'
 import { v4 as uuidv4 } from 'uuid'
@@ -19,10 +19,9 @@ import { FrameTitleDescriptionPreview } from '../FrameTitleDescriptionPreview'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { FrameTitleDescriptionPanel } from '@/components/event-content/FrameTitleDescriptionPanel'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { FrameStatus } from '@/types/enums'
-import { EventContextType } from '@/types/event-context.type'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -55,7 +54,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     deleteFrame,
     getFrameById,
     eventMode,
-  } = useContext(EventContext) as EventContextType
+  } = useEventContext()
   const isMeetingJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
@@ -176,7 +175,10 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         ...frame.content,
         breakoutRooms: [
           ...(frame.content?.breakoutRooms?.slice(0, idx) || []),
-          { ...(frame.content?.breakoutRooms?.[idx] || {}), ...{ name } },
+          {
+            ...(frame.content?.breakoutRooms?.[idx] || {}),
+            ...{ name, id: frame.content?.breakoutRooms?.[idx].id as string },
+          },
           ...(frame.content?.breakoutRooms?.slice(idx + 1) || []),
         ],
       },
@@ -221,6 +223,18 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
     }
     let payload = {}
     if (frame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
+      // Remove assigned participants from the room
+      const breakoutRoomAssignments =
+        JSON.parse(JSON.stringify(frame.content?.breakoutRoomAssignments)) || {}
+      const deletingRoomId =
+        frame.content?.breakoutRooms?.[deletingRoomIndex]?.id
+
+      Object.keys(breakoutRoomAssignments).forEach((roomId: string) => {
+        if (roomId === deletingRoomId && breakoutRoomAssignments?.[roomId]) {
+          delete breakoutRoomAssignments[roomId]
+        }
+      })
+
       const filteredBreakoutRooms =
         frame.content?.breakoutRooms?.filter(
           (_, breakoutRoomIndex) => breakoutRoomIndex !== deletingRoomIndex
@@ -229,6 +243,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
         content: {
           ...frame.content,
           breakoutRooms: filteredBreakoutRooms,
+          breakoutRoomAssignments,
         },
         config: {
           ...frame.config,
@@ -263,6 +278,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
             ...(currentFrame?.content?.breakoutRooms || []),
             {
               name: `Room - ${nextRoomCount}`,
+              id: uuidv4(),
             },
           ],
         },

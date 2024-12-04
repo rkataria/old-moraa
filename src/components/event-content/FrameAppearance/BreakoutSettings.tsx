@@ -1,9 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext } from 'react'
 
+import { v4 as uuidv4 } from 'uuid'
+
 import { AssignmentOptionSelector } from '@/components/common/breakout/AssignmentOptionSelector'
+import { AssignParticipantsModalTrigger } from '@/components/common/breakout/AssignParticipantsModal/AssignParticipantsModalTrigger'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 
@@ -40,6 +44,7 @@ export function BreakoutSettings() {
               ...(currentFrame?.content?.breakoutRooms || []),
               {
                 name: `Room - ${count}`,
+                id: uuidv4(),
               },
             ],
           },
@@ -81,7 +86,7 @@ export function BreakoutSettings() {
 
   return (
     <>
-      <span className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <span>Duration</span>
         <TwoWayNumberCounter
           defaultCount={currentFrame?.config?.breakoutDuration as number}
@@ -99,8 +104,8 @@ export function BreakoutSettings() {
           noNegative
           postfixLabel="min"
         />
-      </span>
-      <span className="flex items-center justify-between">
+      </div>
+      <div className="flex items-center justify-between">
         <span>
           {currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
             ? 'No of rooms'
@@ -118,8 +123,8 @@ export function BreakoutSettings() {
             currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
           }
         />
-      </span>
-      <span className="flex flex-col gap-1.5">
+      </div>
+      <div className="flex flex-col gap-1.5">
         <span>How participants can join</span>
         <AssignmentOptionSelector
           assignmentOption={currentFrame?.config?.assignmentOption}
@@ -138,7 +143,13 @@ export function BreakoutSettings() {
             })
           }}
         />
-      </span>
+      </div>
+      <RenderIf isTrue={currentFrame?.config?.assignmentOption === 'manual'}>
+        <div className="flex items-center justify-between">
+          <span>Assign Participants</span>
+          <AssignParticipantsModalTrigger />
+        </div>
+      </RenderIf>
     </>
   )
 }

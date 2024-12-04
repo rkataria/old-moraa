@@ -217,7 +217,12 @@ export function BreakoutTypePicker({
                                 breakoutType.breakoutType ===
                                 BREAKOUT_TYPES.GROUPS
                               }
-                              assignmentOption={assignmentOption}
+                              assignmentOption={
+                                breakoutType.breakoutType ===
+                                BREAKOUT_TYPES.GROUPS
+                                  ? 'auto'
+                                  : assignmentOption
+                              }
                               onChange={setAssignmentOption}
                             />
                           </div>
