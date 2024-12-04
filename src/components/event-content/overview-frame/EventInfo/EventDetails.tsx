@@ -97,7 +97,7 @@ export function EventDetails() {
     return updateEventMutation.mutateAsync(payload, {
       onSuccess: () => {
         createEventForm.reset(createEventForm.getValues())
-        // eventData.refetch()
+        eventData.refetch()
       },
     })
   }
