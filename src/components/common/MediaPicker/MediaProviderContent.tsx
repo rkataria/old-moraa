@@ -37,6 +37,7 @@ export function MediaProviderContent({
   )
 
   const handleImageSelect = (imageElment: HTMLImageElement) => {
+    console.log('🚀 ~ handleImageSelect ~ imageElment:', imageElment)
     if (crop && fileType === 'images') {
       setIsCropOpen(true)
       setSelectedImage(imageElment)
