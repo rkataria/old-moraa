@@ -3,6 +3,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { TiptapCollabProvider, WebSocketStatus } from '@hocuspocus/provider'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
+import Youtube from '@tiptap/extension-youtube'
 import { Content, Editor, useEditor } from '@tiptap/react'
 import Ai from '@tiptap-pro/extension-ai'
 import uniqBy from 'lodash.uniqby'
@@ -106,6 +107,12 @@ export const useBlockEditor = ({
         }),
 
         ...collaboration(),
+
+        Youtube.configure({
+          addPasteHandler: true,
+          controls: false,
+          nocookie: true,
+        }),
 
         Ai.configure({
           appId: TIPTAP_AI_APP_ID,
