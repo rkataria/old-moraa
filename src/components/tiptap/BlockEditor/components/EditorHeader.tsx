@@ -27,7 +27,7 @@ export function EditorHeader({
   hideSideBar = false,
 }: EditorHeaderProps) {
   return (
-    <div className="flex flex-row items-center justify-between flex-none p-2 sticky top-0 z-[100] bg-white rounded-xl">
+    <div className="flex flex-row items-center justify-between flex-none p-2 sticky top-0 z-[50] bg-white rounded-xl">
       <div className="flex flex-row gap-x-1.5 items-center">
         <div className="flex items-center gap-x-1.5">
           <RenderIf isTrue={hideSideBar}>

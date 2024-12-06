@@ -99,6 +99,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
       'Insert PowerPoint slides, keeping your original formatting intact',
     type: FrameType.POWERPOINT,
     category: FrameCategory.DOCUMENT,
+    disabled: true,
   },
 
   {
@@ -191,7 +192,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description:
       'Embed Miro boards to collaborate and brainstorm with your audience',
     type: FrameType.MIRO_EMBED,
-    category: FrameCategory.COLLABORATION_TOOL,
+    category: FrameCategory.PRESENTATION,
     disabled: false,
     isAvailableForBreakout: true,
   },
