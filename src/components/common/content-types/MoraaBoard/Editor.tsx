@@ -1,7 +1,5 @@
 import { useSelf } from '@liveblocks/react/suspense'
-import { Tldraw } from 'tldraw'
-
-import { NameEditor } from './NameEditor'
+import { PeopleMenu, Tldraw } from 'tldraw'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { useStorageStore } from '@/hooks/useStorageStore'
@@ -37,7 +35,7 @@ export function Editor({
       store={store}
       className="z-[1]"
       components={{
-        SharePanel: NameEditor,
+        SharePanel: PeopleMenu,
         DebugPanel: null,
       }}
       hideUi={isReadonly}
