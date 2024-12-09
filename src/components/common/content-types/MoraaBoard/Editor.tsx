@@ -33,7 +33,7 @@ export function Editor({
     <Tldraw
       autoFocus
       store={store}
-      className="z-[1]"
+      className="z-[1] relative w-full h-full"
       components={{
         SharePanel: PeopleMenu,
         DebugPanel: null,

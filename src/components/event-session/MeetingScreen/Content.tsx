@@ -56,7 +56,7 @@ export function Content() {
 
   const ContentViewModes = {
     spotlight_mode_participants: (
-      <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-lg m-auto">
+      <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-xl m-auto">
         <ParticipantTiles spotlightMode />
       </div>
     ),
@@ -75,7 +75,7 @@ export function Content() {
       </PanelsContent>
     ),
     lobby_breakout_view: (
-      <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-lg m-auto">
+      <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-xl m-auto">
         <ParticipantTiles spotlightMode />
       </div>
     ),

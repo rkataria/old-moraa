@@ -45,7 +45,7 @@ export function MainContainer() {
       ref={mainContentRef}>
       {/* Sportlight View */}
       {spotlightMode && !isBreakoutOverviewOpen ? (
-        <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-lg m-auto">
+        <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-xl m-auto">
           <ParticipantTiles spotlightMode />
         </div>
       ) : (

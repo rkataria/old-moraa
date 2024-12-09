@@ -7,5 +7,10 @@ type ThumbnailProps = {
 }
 
 export function Thumbnail({ frame }: ThumbnailProps) {
-  return <Editor frame={frame} asThumbnail />
+  return (
+    <div className="relative w-full h-full p-4">
+      <div className="absolute left-0 top-0 w-full h-full bg-transparent z-[2]" />
+      <Editor frame={frame} asThumbnail />
+    </div>
+  )
 }

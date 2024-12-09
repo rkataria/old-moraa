@@ -20,7 +20,7 @@ export function VideoEmbedFrame({
 }: VideoEmbedFrameProps) {
   const { preview } = useEventContext()
   const { permissions } = useEventPermissions()
-  const showControls = permissions.canAccessSession
+  const showControls = permissions.canUpdateFrame
 
   if (isLiveSession) {
     return <Live frame={frame} showControls={showControls} />

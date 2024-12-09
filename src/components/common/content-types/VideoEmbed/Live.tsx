@@ -19,6 +19,7 @@ const playerStateChangeEvent = 'video-embed-option-changed'
 export function Live({ frame, showControls }: LiveProps) {
   const videoUrl = frame.content?.videoUrl
   const { meeting } = useDyteMeeting()
+
   const [playerState, setPlayerState] = useState<ResponsiveVideoPlayerState>({
     playing: false,
     loop: false,
@@ -88,7 +89,7 @@ export function Live({ frame, showControls }: LiveProps) {
   return (
     <Embed
       url={videoUrl as string}
-      showControls={showControls}
+      showControls={showControls || isInBreakoutMeeting}
       playerProps={{
         playerState,
         onPlayerStateChange: setPlayerState,
