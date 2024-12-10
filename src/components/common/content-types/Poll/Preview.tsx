@@ -2,10 +2,10 @@ import { cn } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 
 import { HorizontalPreview } from './HorizontalPreview'
-import { PollLayout } from './PollLayout'
 import { PollResponse } from './PollResponse'
 import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 import { RenderIf } from '../../RenderIf/RenderIf'
+import { SideImageLayout } from '../../SideImageLayout'
 
 import { FrameResponseService } from '@/services/frame-response.service'
 import { PollFrame, PollOption } from '@/types/frame.type'
@@ -75,8 +75,8 @@ export function PollPreview({
 
 export function Preview({ frame }: { frame: PollFrame }) {
   return (
-    <PollLayout imageConfig={frame.config.image}>
+    <SideImageLayout imageConfig={frame.config.image}>
       <PollPreview frame={frame} />
-    </PollLayout>
+    </SideImageLayout>
   )
 }

@@ -20,27 +20,32 @@ const MENU_OPTIONS = {
     {
       icon: <BiSolidImage size={18} className="text-secondary-400" />,
       label: 'Images',
+      allowCrop: true,
     },
     {
       icon: <BiSolidVideos size={18} className="text-secondary-200" />,
       label: 'Videos',
       disabled: true,
+      allowCrop: false,
     },
   ],
   integrations: [
     {
       icon: <FaUnsplash size={18} className="text-black" />,
       label: MediaProviderType.UNSPLASH,
+      allowCrop: false,
     },
     {
       icon: <SiIcons8 size={18} className="text-green-500" />,
       label: MediaProviderType.ICON8,
       disabled: true,
+      allowCrop: false,
     },
     {
       icon: <SiGiphy size={18} className="text-green-500" />,
       label: MediaProviderType.GIPHY,
       disabled: false,
+      allowCrop: false,
     },
   ],
 }
@@ -68,6 +73,7 @@ export function MediaPicker({
 }: MediaPickerProps) {
   const localFileInputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState(false)
+  const [isCropEnabled, setIsCropEnabled] = useState(crop)
   const [provider, setProvider] = useState<MediaProviderType>(
     MediaProviderType.UNSPLASH
   )
@@ -104,7 +110,7 @@ export function MediaPicker({
       </PopoverTrigger>
       <PopoverContent className="relative w-[672px] rounded-md p-0">
         <div className="h-96 flex justify-start items-stretch w-full">
-          <div className="w-48 h-full border-r-2 p-4 flex flex-col justify-between gap-8">
+          <div className="min-w-48 h-full border-r-2 p-4 flex flex-col justify-between gap-8">
             <div className="flex flex-col gap-4">
               <div>
                 <span className="text-sm text-gray-400 p-2">
@@ -123,6 +129,7 @@ export function MediaPicker({
                       disabled={option.disabled}
                       onClick={() => {
                         setProvider(MediaProviderType.LIBRARY)
+                        setIsCropEnabled(option.allowCrop)
                         setFileType(
                           option.label.toLowerCase() as 'images' | 'videos'
                         )
@@ -143,6 +150,7 @@ export function MediaPicker({
                       disabled={option.disabled}
                       onClick={() => {
                         setProvider(option.label as MediaProviderType)
+                        setIsCropEnabled(option.allowCrop)
                       }}
                     />
                   ))}
@@ -182,7 +190,7 @@ export function MediaPicker({
               ImageOrientation={ImageOrientation}
               provider={provider}
               fileType={fileType}
-              crop={crop}
+              crop={isCropEnabled}
               onSelectCallback={(imageElment) => {
                 onSelectCallback?.(imageElment)
                 setOpen(false)

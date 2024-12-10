@@ -16,11 +16,11 @@ function Components({
 
   return (
     <div className="w-full">
-      <SearchBar className="mb-4" />
+      <SearchBar className="mb-4 giphy-search-bar" />
       <Grid
         key={searchKey}
         columns={3}
-        width={480}
+        width={450}
         fetchGifs={fetchGifs}
         onGifClick={(_, e) => {
           const imageEle = document.createElement('img')

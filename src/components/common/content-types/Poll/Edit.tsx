@@ -7,7 +7,7 @@ import { BsTrash3 } from 'react-icons/bs'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 import { v4 as uuidv4 } from 'uuid'
 
-import { PollLayout } from './PollLayout'
+import { SideImageLayout } from '../../SideImageLayout'
 
 import { ColorPicker } from '@/components/common/ColorPicker'
 import { FrameText } from '@/components/event-content/FrameText'
@@ -174,8 +174,8 @@ export function PollEditor({ frame: frameFromRemote }: EditProps) {
 
 export function Edit({ frame }: { frame: PollFrame }) {
   return (
-    <PollLayout imageConfig={frame.config.image}>
+    <SideImageLayout imageConfig={frame.config.image}>
       <PollEditor frame={frame} />
-    </PollLayout>
+    </SideImageLayout>
   )
 }
