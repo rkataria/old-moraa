@@ -35,18 +35,7 @@ export function RecordingView() {
   }, [targetParticipants])
 
   return (
-    <main
-      style={{
-        display: 'flex',
-        position: 'relative',
-        paddingTop: '0rem',
-        flexWrap: 'wrap',
-        flexShrink: '0',
-        justifyContent: 'center',
-        alignContent: 'center',
-        width: '100vw',
-        height: '100vh',
-      }}>
+    <main className="bg-red-100 flex relative p-0 h-screen w-screen justify-center items-center">
       {hasScreenshare ? (
         <DyteMixedGrid
           participants={targetParticipants}

@@ -72,7 +72,13 @@ export function RecordPage() {
   if (!eventId) return <div>Event ID not found</div>
 
   return (
-    <DyteProvider value={meeting} fallback={<div>Loading...</div>}>
+    <DyteProvider
+      value={meeting}
+      fallback={
+        <div className="w-full h-screen flex justify-center items-center text-2xl">
+          Loading...
+        </div>
+      }>
       <RecordingView />
     </DyteProvider>
   )
