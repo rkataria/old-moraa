@@ -507,3 +507,7 @@ dyte-notification {
 dyte-clock dyte-icon {
   @apply !hidden;
 }
+
+.giphy-search-bar > div > div {
+  background: #7c3aed !important;
+}

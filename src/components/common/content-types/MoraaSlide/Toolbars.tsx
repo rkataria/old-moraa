@@ -22,15 +22,25 @@ export function Toolbars() {
         onSelectCallback={(img) => {
           if (!img) return
 
-          const fabricImg = new fabric.Image(img, {
-            left: 100,
-            top: 100,
-          })
+          const loadImageOnCanvas = () => {
+            const fabricImg = new fabric.Image(img, {
+              left: 100,
+              top: 100,
+            })
 
-          fabricImg.scaleToWidth(300)
-          fabricImg.set('centeredRotation', true)
-          canvas?.add(fabricImg)
-          canvas.setActiveObject(fabricImg)
+            fabricImg.scaleToWidth(300)
+            fabricImg.set('centeredRotation', true)
+            canvas?.add(fabricImg)
+            canvas.setActiveObject(fabricImg)
+          }
+
+          if (img.src.startsWith('data:')) {
+            loadImageOnCanvas()
+          }
+
+          img.onload = () => {
+            loadImageOnCanvas()
+          }
         }}
         onSelect={(file) => {
           const reader = new FileReader()

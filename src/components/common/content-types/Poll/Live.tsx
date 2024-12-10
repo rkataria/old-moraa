@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 import { Chip } from '@nextui-org/react'
 
 import { AnonymousToggle } from './AnonymousToggle'
-import { PollLayout } from './PollLayout'
 import { PollResponse } from './PollResponse'
 import { PollVotes } from './PollVotes'
 import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 import { RenderIf } from '../../RenderIf/RenderIf'
+import { SideImageLayout } from '../../SideImageLayout'
 
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -166,8 +166,8 @@ export function Polls({ frame }: LiveProps) {
 
 export function Live({ frame }: { frame: PollFrame }) {
   return (
-    <PollLayout imageConfig={frame.config.image}>
+    <SideImageLayout imageConfig={frame.config.image}>
       <Polls frame={frame} />
-    </PollLayout>
+    </SideImageLayout>
   )
 }
