@@ -5,7 +5,12 @@ import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
 import { DyteRecording } from '@dytesdk/recording-sdk'
 import { createFileRoute, useParams, useRouter } from '@tanstack/react-router'
 
+import { Loading } from '@/components/common/Loading'
 import { RecordingView } from '@/components/recording/RecordingView'
+import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContext'
+import { EventProvider } from '@/contexts/EventContext'
+import { EventSessionProvider } from '@/contexts/EventSessionContext'
+import { RealtimeChannelProvider } from '@/contexts/RealtimeChannelContext'
 import { supabaseClient } from '@/utils/supabase/client'
 
 export const Route = createFileRoute('/event-session/$eventId/record/')({
@@ -75,12 +80,21 @@ export function RecordPage() {
     <DyteProvider
       value={meeting}
       fallback={
-        <div className="w-full h-screen flex flex-col justify-center items-center">
-          <h1 className="text-2xl">Loading...</h1>
-          <p className="text-lg w-4/5">{JSON.stringify(searchParams)}</p>
+        <div className="h-screen flex flex-col justify-center items-center">
+          <Loading message="Setting up recording" />
         </div>
       }>
-      <RecordingView />
+      <RealtimeChannelProvider>
+        <BreakoutManagerContextProvider>
+          <EventProvider eventMode="present">
+            <EventSessionProvider>
+              <div>
+                <RecordingView />
+              </div>
+            </EventSessionProvider>
+          </EventProvider>
+        </BreakoutManagerContextProvider>
+      </RealtimeChannelProvider>
     </DyteProvider>
   )
 }
