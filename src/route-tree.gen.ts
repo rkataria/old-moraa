@@ -25,6 +25,7 @@ import { Route as EventSessionEventIdIndexImport } from './pages/event-session/$
 import { Route as EnrollEventIdIndexImport } from './pages/enroll/$eventId/index'
 import { Route as EventsEventIdLayoutImport } from './pages/events/$eventId/layout'
 import { Route as EventSessionEventIdLayoutImport } from './pages/event-session/$eventId/layout'
+import { Route as EventSessionEventIdRecordIndexImport } from './pages/event-session/$eventId/record/index'
 import { Route as dashboardLayoutWorkshopsIndexImport } from './pages/(dashboard)/_layout/workshops/index'
 import { Route as dashboardLayoutTemplatesIndexImport } from './pages/(dashboard)/_layout/templates/index'
 import { Route as dashboardLayoutLibraryIndexImport } from './pages/(dashboard)/_layout/library/index'
@@ -101,6 +102,12 @@ const EventSessionEventIdLayoutRoute = EventSessionEventIdLayoutImport.update({
   path: '/event-session/$eventId/layout',
   getParentRoute: () => rootRoute,
 } as any)
+
+const EventSessionEventIdRecordIndexRoute =
+  EventSessionEventIdRecordIndexImport.update({
+    path: '/event-session/$eventId/record/',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 const dashboardLayoutWorkshopsIndexRoute =
   dashboardLayoutWorkshopsIndexImport.update({
@@ -262,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardLayoutWorkshopsIndexImport
       parentRoute: typeof dashboardLayoutImport
     }
+    '/event-session/$eventId/record/': {
+      id: '/event-session/$eventId/record/'
+      path: '/event-session/$eventId/record'
+      fullPath: '/event-session/$eventId/record'
+      preLoaderRoute: typeof EventSessionEventIdRecordIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -288,6 +302,7 @@ export const routeTree = rootRoute.addChildren({
   EventsEventIdIndexRoute,
   EventsCreateIndexRoute,
   PresentationEventIdIndexRoute,
+  EventSessionEventIdRecordIndexRoute,
 })
 
 /* prettier-ignore-end */
@@ -309,7 +324,8 @@ export const routeTree = rootRoute.addChildren({
         "/event-session/$eventId/",
         "/events/$eventId/",
         "/events/create/",
-        "/presentation/$eventId/"
+        "/presentation/$eventId/",
+        "/event-session/$eventId/record/"
       ]
     },
     "/": {
@@ -378,6 +394,9 @@ export const routeTree = rootRoute.addChildren({
     "/_layout/workshops/": {
       "filePath": "(dashboard)/_layout/workshops/index.tsx",
       "parent": "/_layout"
+    },
+    "/event-session/$eventId/record/": {
+      "filePath": "event-session/$eventId/record/index.tsx"
     }
   }
 }
