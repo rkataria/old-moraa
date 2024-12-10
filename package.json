@@ -26,6 +26,7 @@
     "@ai-sdk/openai": "^0.0.13",
     "@dytesdk/react-ui-kit": "^2.0.6",
     "@dytesdk/react-web-core": "^2.1.10",
+    "@dytesdk/recording-sdk": "^2.0.0",
     "@dytesdk/video-background-transformer": "^2.0.4",
     "@dytesdk/web-core": "^2.1.10",
     "@emoji-mart/data": "^1.2.1",
