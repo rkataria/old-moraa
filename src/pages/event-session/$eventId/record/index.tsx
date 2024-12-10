@@ -75,8 +75,10 @@ export function RecordPage() {
     <DyteProvider
       value={meeting}
       fallback={
-        <div className="w-full h-screen flex justify-center items-center text-2xl">
-          Loading...
+        <div className="w-full h-screen flex flex-col justify-center items-center">
+          <h1 className="text-2xl">Loading...</h1>
+          <p className="text-lg">Please wait while we set up the meeting</p>
+          <p className="text-lg">{JSON.stringify(searchParams)}</p>
         </div>
       }>
       <RecordingView />
