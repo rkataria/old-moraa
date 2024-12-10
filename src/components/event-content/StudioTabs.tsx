@@ -71,7 +71,7 @@ export function StudioTabs() {
         classNames={{
           base: 'h-full',
           tabList: 'h-full p-0',
-          tab: '!outline-none h-full',
+          tab: '!outline-none h-full px-0',
           tabContent:
             'px-4 text-gray-600 h-full flex justify-center items-center font-medium',
         }}

@@ -11,6 +11,7 @@ import { ParticipantsToggle } from '../ParticipantsToggle'
 
 import { AgendaPanelToggle } from '@/components/common/AgendaPanel/AgendaPanelToggle'
 import { Logo } from '@/components/common/Logo'
+import { MoraaLogo } from '@/components/common/MoraaLogo'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -61,6 +62,7 @@ export function Header() {
   return (
     <div className="h-full w-full flex justify-between items-center gap-4 px-4">
       <div className="flex-1 flex justify-start items-center gap-2 h-full">
+        <MoraaLogo color="primary" filled className="mr-2" />
         <div className="pr-1">
           {permissions.canAcessAllSessionControls ? (
             <AgendaPanelToggle

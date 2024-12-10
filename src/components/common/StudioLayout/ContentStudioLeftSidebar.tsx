@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion'
+
 import { StudioAgendaPanel } from '../AgendaPanel/StudioAgendaPanel'
 
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -8,14 +10,22 @@ export function ContentStudioLeftSidebar() {
     (state) => state.layout.studio
   )
 
-  if (!contentStudioLeftSidebarVisible) return null
-
   return (
-    <div
+    <motion.div
+      initial={{ marginLeft: -224 }}
+      animate={{
+        marginLeft: contentStudioLeftSidebarVisible ? 0 : -240,
+      }}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
       className={cn(
-        'flex-none w-56 h-full rounded-md z-[2] bg-white border-1 border-gray-200'
+        'relative flex-none w-56 h-full rounded-md overflow-hidden bg-white border-1 border-gray-200'
       )}>
-      <StudioAgendaPanel />
-    </div>
+      <div
+        className={cn(
+          'flex-none w-56 h-full rounded-md z-[2] bg-white border-1 border-gray-200'
+        )}>
+        <StudioAgendaPanel />
+      </div>
+    </motion.div>
   )
 }
