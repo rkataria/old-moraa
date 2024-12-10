@@ -15,13 +15,21 @@ import { LuUserPlus2 } from 'react-icons/lu'
 import { AddParticipantsModal } from '@/components/common/AddParticipantsModal'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { DyteRecordingService } from '@/services/dyte-recording.service'
 import { cn } from '@/utils/utils'
 
 export function MoreActions() {
+  const [meetingRecordingId, setMeetingRecordingId] = useState<string | null>(
+    null
+  )
   const { setDyteStates, isHost } = useEventSession()
   const [open, setOpen] = useState(false)
   const [openAddParticipantsModal, setOpenAddParticipantsModal] =
     useState(false)
+  const enrollment = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.enrollment.data
+  )
 
   const { meeting } = useDyteMeeting()
 
@@ -36,6 +44,48 @@ export function MoreActions() {
     const items = []
 
     if (isHost) {
+      items.push(
+        <DropdownItem
+          key="record-meeting"
+          startContent={<LuUserPlus2 />}
+          onClick={async () => {
+            if (!enrollment?.meeting_token) return
+
+            if (meetingRecordingId) {
+              const response = await DyteRecordingService.stopMeeting({
+                recordingId: meetingRecordingId,
+                token: enrollment?.meeting_token,
+              })
+
+              const data = await response.json()
+
+              if (response.ok) {
+                setMeetingRecordingId(null)
+                toast.success('Recording stopped')
+              } else {
+                toast.error('Failed to stop recording', data)
+              }
+            } else {
+              const response = await DyteRecordingService.startMeeting({
+                token: enrollment?.meeting_token,
+                meetingId: meeting.connectedMeetings.currentMeetingId,
+                url: `https://dev.moraa.co/event-session/${enrollment?.event_id}/record`,
+              })
+
+              const data = await response.json()
+
+              if (response.ok) {
+                setMeetingRecordingId(data.id)
+                toast.success('Recording started')
+              } else {
+                toast.error('Failed to start recording', data)
+              }
+            }
+          }}>
+          {meetingRecordingId ? 'Stop recording' : 'Start recording'}
+        </DropdownItem>
+      )
+
       items.push(
         <DropdownItem
           key="add-participants"
