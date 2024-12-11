@@ -51,6 +51,7 @@ export function BlockEditor({
   startContent,
   hideSideBar,
   initialContent,
+  editorId,
 }: TiptapProps) {
   const aiState = useAIState()
   const menuContainerRef = useRef(null)
@@ -175,7 +176,7 @@ export function BlockEditor({
               words={characterCount.words()}
               isSidebarOpen={leftSidebar.isOpen}
               toggleSidebar={leftSidebar.toggle}
-              hideSidebar={hideSideBar}
+              hideSideBar={hideSideBar}
             />
           </RenderIf>
 
@@ -188,13 +189,15 @@ export function BlockEditor({
               classNames?.editor
             )}
           />
-          <ContentItemMenu editor={editor} classnames={classNames} />
-          <LinkMenu editor={editor} appendTo={menuContainerRef} />
-          <TextMenu editor={editor} />
-          <ColumnsMenu editor={editor} appendTo={menuContainerRef} />
-          <TableRowMenu editor={editor} appendTo={menuContainerRef} />
-          <TableColumnMenu editor={editor} appendTo={menuContainerRef} />
-          <ImageBlockMenu editor={editor} appendTo={menuContainerRef} />
+          <div key={editorId}>
+            <ContentItemMenu editor={editor} classnames={classNames} />
+            <LinkMenu editor={editor} appendTo={menuContainerRef} />
+            <TextMenu editor={editor} />
+            <ColumnsMenu editor={editor} appendTo={menuContainerRef} />
+            <TableRowMenu editor={editor} appendTo={menuContainerRef} />
+            <TableColumnMenu editor={editor} appendTo={menuContainerRef} />
+            <ImageBlockMenu editor={editor} appendTo={menuContainerRef} />
+          </div>
         </div>
       </div>
       {aiState.isAiLoading && aiLoaderPortal}

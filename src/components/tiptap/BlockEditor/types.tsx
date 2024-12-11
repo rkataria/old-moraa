@@ -22,6 +22,7 @@ export interface TiptapProps {
   startContent?: ReactNode
   hideSideBar?: boolean
   initialContent?: Content
+  editorId: string
 }
 
 export type EditorUser = {

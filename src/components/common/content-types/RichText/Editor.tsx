@@ -1,16 +1,14 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { ReactNode } from 'react'
 
-import { TiptapCollabProvider } from '@hocuspocus/provider'
 import 'iframe-resizer/js/iframeResizer.contentWindow'
 import { Content, Editor as TiptapEditor } from '@tiptap/core'
-import { Doc as YDoc } from 'yjs'
 
 import { Loading } from '../../Loading'
 import { getAvatar, getProfileName, IUserProfile } from '../../UserAvatar'
 
 import { BlockEditor } from '@/components/tiptap/BlockEditor'
 import { useProfile } from '@/hooks/useProfile'
-import { fetchTokens } from '@/services/tiptap.service'
+import { useRichText } from '@/hooks/useRichText'
 import { cn } from '@/utils/utils'
 
 export interface AiState {
@@ -24,11 +22,11 @@ type EditorProps = {
   showHeader?: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   classNames?: any
-  onEmptyContent?: (editor: TiptapEditor) => void
   startContent?: ReactNode
   hideSideBar?: boolean
   initalContent?: Content
   enableCollaboration?: boolean
+  onEmptyContent?: (editor: TiptapEditor) => void
 }
 
 export function Editor({
@@ -36,55 +34,21 @@ export function Editor({
   editable = true,
   showHeader = true,
   classNames,
-  onEmptyContent,
   startContent,
   hideSideBar,
   initalContent,
   enableCollaboration = false,
+  onEmptyContent,
 }: EditorProps) {
-  const [provider, setProvider] = useState<TiptapCollabProvider | null>(null)
-  const [collabToken, setCollabToken] = useState<string | null>(null)
-  const [aiToken, setAiToken] = useState<string | null>(null)
+  const room = editorId
+
+  const { provider, aiToken, collabToken, ydoc, setCollabToken, setAiToken } =
+    useRichText(room)
 
   const { data: profile, isLoading: isLoadingProfile } = useProfile()
 
   const name = getProfileName(profile as IUserProfile)
   const avatar = getAvatar(profile as IUserProfile)
-
-  const room = editorId
-
-  const ydoc = useMemo(() => new YDoc(), [])
-
-  const getTokens = async () => {
-    const tokenResponse = await fetchTokens()
-    setAiToken(tokenResponse.aiToken)
-    setCollabToken(tokenResponse.collabToken)
-  }
-
-  useEffect(() => {
-    const storedAiToken = localStorage.getItem('tiptap-ai-token')
-    const storedCollabToken = localStorage.getItem('tiptap-collab-token')
-    if (!storedAiToken || !storedCollabToken) {
-      getTokens()
-
-      return
-    }
-    setAiToken(storedAiToken)
-    setCollabToken(storedCollabToken)
-  }, [])
-
-  useEffect(() => {
-    if (collabToken) {
-      setProvider(
-        new TiptapCollabProvider({
-          name: `${import.meta.env.VITE_COLLAB_DOC_PREFIX}${room}`,
-          appId: import.meta.env.VITE_TIPTAP_COLLAB_APP_ID ?? '',
-          token: collabToken,
-          document: ydoc,
-        })
-      )
-    }
-  }, [setProvider, collabToken, ydoc, room])
 
   if (!collabToken || !provider || !aiToken) return null
 
@@ -109,6 +73,7 @@ export function Editor({
         startContent={startContent}
         hideSideBar={hideSideBar}
         initialContent={initalContent}
+        editorId={editorId}
       />
     </div>
   )

@@ -84,6 +84,8 @@ export const useBlockEditor = ({
 
   const editor = useEditor(
     {
+      immediatelyRender: true,
+      shouldRerenderOnTransaction: false,
       autofocus: false,
       // eslint-disable-next-line @typescript-eslint/no-shadow
       onCreate: ({ editor }) => {
@@ -147,8 +149,9 @@ export const useBlockEditor = ({
         },
       },
     },
+
     // removed provider dependency here, because it was causing error so found solution here https://github.com/ueberdosis/tiptap/issues/1451#issuecomment-1361417196
-    [ydoc]
+    [ydoc, provider]
   )
 
   const users = useMemo(() => {
@@ -185,5 +188,11 @@ export const useBlockEditor = ({
 
   window.editor = editor
 
-  return { editor, users, characterCount, collabState, leftSidebar }
+  return {
+    editor,
+    users,
+    characterCount,
+    collabState,
+    leftSidebar,
+  }
 }
