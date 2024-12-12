@@ -103,20 +103,6 @@ export function RecordPage() {
   }, [eventId, dyteClient?.self.roomState])
 
   useEffect(() => {
-    async function loginAnonymously() {
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: 'recording-bot@yopmail.com',
-        password: 'letmepass',
-      })
-
-      if (error) {
-        console.error(error)
-
-        return false
-      }
-
-      return true
-    }
     async function setupDyteMeeting() {
       const recordingSDK = new DyteRecording({
         devMode: false,
@@ -139,7 +125,7 @@ export function RecordPage() {
     if (!isEventLoaded || !isMeetingLoaded) return
 
     if (!dyteClient) {
-      loginAnonymously().then((loggedIn) => {
+      supabaseClient.auth.getSession().then((loggedIn) => {
         if (loggedIn) {
           setupDyteMeeting()
         }
