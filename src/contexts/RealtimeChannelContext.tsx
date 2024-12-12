@@ -73,7 +73,6 @@ export function RealtimeChannelProvider({
 
   return (
     <RealtimeChannelContext.Provider value={realtimeChannel}>
-      <h1>Hello World</h1>
       {children}
     </RealtimeChannelContext.Provider>
   )
