@@ -168,6 +168,10 @@ export function ParticipantsGrid({ participants }: ParticipantsGridProps) {
     }
   }
 
+  const handRaisedActiveParticipants = participants.filter((participant) =>
+    handRaised.includes(participant.id)
+  )
+
   return (
     <div className="relative w-full max-w-full h-full max-h-full overflow-hidden">
       <div
@@ -186,6 +190,11 @@ export function ParticipantsGrid({ participants }: ParticipantsGridProps) {
             <ParticipantTile
               participant={participant}
               handRaised={handRaised.includes(participant.id)}
+              handRaisedOrder={
+                handRaisedActiveParticipants.findIndex(
+                  (p) => p.id === participant.id
+                ) + 1
+              }
             />
           </div>
         ))}

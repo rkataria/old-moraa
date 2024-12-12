@@ -13,15 +13,18 @@ import ResizeObserver from 'rc-resize-observer'
 import uniqolor from 'uniqolor'
 
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
+import { RenderIf } from '../common/RenderIf/RenderIf'
 
 import { cn } from '@/utils/utils'
 
 export function ParticipantTile({
   participant,
   handRaised = false,
+  handRaisedOrder,
 }: {
   participant: DyteParticipant | Readonly<DyteSelf>
   handRaised?: boolean
+  handRaisedOrder?: number | null
 }) {
   const tileRef = useRef<HTMLDivElement>(null)
   const { meeting } = useDyteMeeting()
@@ -78,17 +81,31 @@ export function ParticipantTile({
             />
           </DyteNameTag>
           {handRaised && (
-            <motion.span
-              animate={{ scale: [0, 1.5, 1] }}
-              className={cn(
-                'absolute top-1 text-2xl flex justify-center items-center',
-                {
-                  '!right-12': participant.id === selfParticipant.id,
-                  'right-3': participant.id !== selfParticipant.id,
-                }
-              )}>
-              <em-emoji set="apple" id="hand" size={32} />
-            </motion.span>
+            <div>
+              <RenderIf isTrue={!!handRaisedOrder}>
+                <div
+                  className={cn(
+                    'absolute top-1 w-8 h-8 rounded-full bg-black/80 text-white flex justify-center items-center',
+                    {
+                      '!right-24': participant.id === selfParticipant.id,
+                      'right-14': participant.id !== selfParticipant.id,
+                    }
+                  )}>
+                  {handRaisedOrder}
+                </div>
+              </RenderIf>
+              <motion.span
+                animate={{ scale: [0, 1.5, 1] }}
+                className={cn(
+                  'absolute top-1 text-2xl flex justify-center items-center',
+                  {
+                    '!right-12': participant.id === selfParticipant.id,
+                    'right-3': participant.id !== selfParticipant.id,
+                  }
+                )}>
+                <em-emoji set="apple" id="hand" size={32} />
+              </motion.span>
+            </div>
           )}
           {participant.id === selfParticipant.id && (
             <VideoBackgroundSettingsButtonWithModal
