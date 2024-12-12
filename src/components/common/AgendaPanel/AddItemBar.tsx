@@ -28,6 +28,7 @@ type AddItemBarProps = {
   frameId: string
   hiddenActionKeys?: string[]
   trigger?: ReactNode
+  onAddFrame?: () => void
 }
 
 export function AddItemBar({
@@ -35,6 +36,7 @@ export function AddItemBar({
   frameId,
   hiddenActionKeys = [],
   trigger,
+  onAddFrame,
 }: AddItemBarProps) {
   const {
     setInsertInSectionId,
@@ -91,6 +93,11 @@ export function AddItemBar({
         }
 
         if (actionKey === 'new-frame') {
+          if (onAddFrame) {
+            onAddFrame()
+
+            return
+          }
           setInsertAfterFrameId(frameId || null)
           if (sectionId) setInsertInSectionId(sectionId)
           setOpenContentTypePicker(true)

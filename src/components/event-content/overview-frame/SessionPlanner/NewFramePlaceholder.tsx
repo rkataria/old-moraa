@@ -1,6 +1,8 @@
 import { Button, Checkbox, cn, Input } from '@nextui-org/react'
 
-export function NewFramePlaceholder() {
+import { Loading } from '@/components/common/Loading'
+
+export function NewFramePlaceholder({ isLoading }: { isLoading: boolean }) {
   return (
     <div className="relative w-full bg-white min-h-[40px] grid grid-cols-[40px_100px_120px_1fr_1fr_70px] hover:bg-gray-50 border-b last:border-none last:rounded-b-xl duration-300 opacity-50">
       <div className="grid place-items-center border-r">
@@ -50,7 +52,7 @@ export function NewFramePlaceholder() {
       <div
         className="relative rounded-md flex items-center gap-1 p-2 pl-6 min-w-[100px] group/frame-name cursor-pointer"
         style={{ flex: 3 }}>
-        <p>+ Add Frame</p>
+        <p>{isLoading ? <Loading /> : '+ Add Frame'}</p>
       </div>
 
       <p className="border-x-1 px-4 py-2 cursor-text" />

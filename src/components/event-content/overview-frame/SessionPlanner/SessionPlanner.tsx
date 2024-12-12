@@ -42,6 +42,7 @@ import {
 } from '@/stores/slices/event/current-event/section.slice'
 import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
+import { getBlankFrame } from '@/utils/content.util'
 import { cn, sortByStatus } from '@/utils/utils'
 
 export function SessionPlanner({
@@ -67,7 +68,7 @@ export function SessionPlanner({
     setInsertAfterFrameId,
     setInsertAfterSectionId,
     addSection,
-    setOpenContentTypePicker,
+    addFrameToSection,
   } = useContext(EventContext) as EventContextType
 
   const dispatch = useStoreDispatch()
@@ -493,7 +494,10 @@ export function SessionPlanner({
                                     <Button
                                       onClick={() => {
                                         dispatch(setIsPreviewOpenAction(false))
-                                        setOpenContentTypePicker(true)
+                                        addFrameToSection({
+                                          frame: getBlankFrame('Frame 1'),
+                                          section: sections[0],
+                                        })
                                       }}
                                       color="primary"
                                       startContent={<MdAdd size={28} />}>
@@ -513,7 +517,7 @@ export function SessionPlanner({
                                 )
                               }>
                               <FramesList
-                                sectionId={section.id}
+                                section={section}
                                 frames={section.frames.filter(
                                   (f) => !f?.content?.breakoutFrameId
                                 )}

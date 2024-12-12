@@ -23,6 +23,7 @@ import { ScheduleEventButtonWithModal } from '../common/ScheduleEventButtonWithM
 import { Tooltip } from '../common/ShortuctTooltip'
 import { Button } from '../ui/Button'
 
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventService } from '@/services/event.service'
 import { EventStatus } from '@/types/enums'
@@ -41,6 +42,7 @@ export function PublishButton({
   const router = useRouter()
   const { permissions } = useEventPermissions()
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+  const { sections } = useEventContext()
 
   const publishMutation = useMutation({
     mutationFn: async () => {
@@ -57,6 +59,23 @@ export function PublishButton({
       refetchEvent()
     },
   })
+
+  function validatePublish() {
+    return sections.every((section) =>
+      section.frames.every((frame) => frame.type)
+    )
+  }
+
+  const handlePublish = () => {
+    if (!validatePublish()) {
+      toast.error(
+        'Event cannot be published: Some frames have missing types. Please assign a type to all frames before publishing.'
+      )
+
+      return
+    }
+    publishMutation.mutate()
+  }
 
   if (
     eventStatus === EventStatus.ACTIVE ||
@@ -152,7 +171,7 @@ export function PublishButton({
                   variant="bordered"
                   className="text-sm"
                   isLoading={publishMutation.isPending}
-                  onClick={() => publishMutation.mutate()}>
+                  onClick={handlePublish}>
                   Yes , Publish
                 </Button>
               </ModalHeader>

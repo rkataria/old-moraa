@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { FrameType } from './frame-picker.util'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
+import { FrameStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 
 export const headerBlock = {
@@ -240,3 +241,12 @@ export const getBreakoutFrames = ({
 
   return null
 }
+
+export const getBlankFrame = (name: string) => ({
+  id: uuidv4(),
+  name,
+  config: {
+    time: 1,
+  },
+  status: FrameStatus.DRAFT,
+})

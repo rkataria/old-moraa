@@ -23,10 +23,12 @@ import { SyncingStatus } from '../common/SyncingStatus'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { FrameStatus, EventStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
+import { KeyboardShortcuts } from '@/utils/utils'
 
 export function FrameManager() {
   const { eventId } = useParams({ strict: false })
@@ -40,6 +42,8 @@ export function FrameManager() {
   const [selectedTemplateKey, setTemplateKey] = useState<string | undefined>(
     undefined
   )
+
+  const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
 
   const [openBreakoutSelectorModal, setOpenBreakoutSelectorModal] =
     useState<boolean>(false)
@@ -57,7 +61,11 @@ export function FrameManager() {
     addFrameToSection,
   } = useEventContext()
 
-  useHotkeys('f', () => !preview && setOpenContentTypePicker(true), [preview])
+  useHotkeys(
+    KeyboardShortcuts['Studio Mode'].newFrame.key,
+    () => setOpenContentTypePicker(true),
+    { enabled: !preview && activeTab === 'content-studio' }
+  )
 
   const handleAddNewFrame = (
     type: FrameType,

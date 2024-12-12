@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { BlankFrame } from '../BlankFrame'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
 import { MCQFrame } from '../content-types/MCQ/MCQ'
 import { MiroEmbedFrame } from '../content-types/MiroEmbed/MiroEmbed'
@@ -63,7 +64,9 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
     [FrameType.MCQ]: <MCQFrame frame={frame as any} asThumbnail />,
   }
 
-  const renderer = renderersByFrameType[frame.type as FrameType]
+  const renderer = renderersByFrameType[frame.type as FrameType] || (
+    <BlankFrame frame={frame} isThumbnail />
+  )
 
   return (
     <div className="w-full h-full flex justify-start items-center">

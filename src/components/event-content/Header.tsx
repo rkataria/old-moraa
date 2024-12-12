@@ -70,6 +70,7 @@ export function Header({
         <div className="pr-4 border-r-2 border-gray-200 flex items-center">
           <MoraaLogo
             color="primary"
+            className="cursor-pointer"
             filled
             onClick={() =>
               router.navigate({
