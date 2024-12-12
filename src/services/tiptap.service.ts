@@ -1,16 +1,15 @@
+const tiptapAuthUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tiptap-auth`
+
 const fetchAiToken = async () => {
   const data = await (
-    await fetch(
-      'https://pcwxaszjgtcbxjdlsguj.supabase.co/functions/v1/tiptap-auth',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ type: 'AI' }),
-      }
-    )
+    await fetch(tiptapAuthUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ type: 'AI' }),
+    })
   ).json()
 
   const { token } = data
@@ -21,17 +20,14 @@ const fetchAiToken = async () => {
 
 const fetchCollabToken = async () => {
   const data = await (
-    await fetch(
-      'https://pcwxaszjgtcbxjdlsguj.supabase.co/functions/v1/tiptap-auth',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ type: 'COLLAB' }),
-      }
-    )
+    await fetch(tiptapAuthUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ type: 'COLLAB' }),
+    })
   ).json()
 
   const { token } = data

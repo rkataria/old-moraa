@@ -13,35 +13,42 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { IFrame } from '@/types/frame.type'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { IFrame, ISection } from '@/types/frame.type'
+import { getBlankFrame } from '@/utils/content.util'
 import { cn } from '@/utils/utils'
 
 export function FramesList({
-  sectionId,
+  section,
   frames = [],
   frameIdToBeFocus,
   placeholder = true,
   className = '',
   parentBreakoutFrame,
 }: {
-  sectionId: string
+  section: ISection
   frames: IFrame[]
   frameIdToBeFocus?: string
   placeholder?: boolean
   className?: string
   parentBreakoutFrame?: IFrame | null
 }) {
+  const isLoadingAddFrame = useStoreSelector(
+    (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
+  )
+
   const {
     insertInSectionId,
-    setOpenContentTypePicker,
     setAddedFromSessionPlanner,
     setInsertInSectionId,
     setInsertAfterFrameId,
   } = useEventContext()
 
-  const { preview, eventMode } = useEventContext()
+  const { preview, eventMode, addFrameToSection } = useEventContext()
 
   const { permissions } = useEventPermissions()
+
+  const sectionId = section.id
 
   const editable =
     permissions.canUpdateFrame && !preview && eventMode === 'edit'
@@ -50,6 +57,17 @@ export function FramesList({
 
   const onChangeAll = (checked: boolean) => {
     setSelectedFrameIds(checked ? frames.map((f) => f.id) : [])
+  }
+
+  const addFrame = () => {
+    setAddedFromSessionPlanner(true)
+    setInsertAfterFrameId(frames[frames.length - 1]?.id)
+    setInsertInSectionId(sectionId)
+
+    addFrameToSection({
+      frame: getBlankFrame(`Frame ${(section?.frames?.length || 0) + 1}`),
+      section,
+    })
   }
 
   return (
@@ -126,7 +144,7 @@ export function FramesList({
                       // <RenderIf isTrue={!frame?.content?.breakoutFrameId}>
                       <Fragment key={frame.id}>
                         <FrameItem
-                          sectionId={sectionId}
+                          section={section}
                           frame={frame}
                           frameIndex={frameIndex}
                           frameIdToBeFocus={frameIdToBeFocus}
@@ -139,15 +157,12 @@ export function FramesList({
                       // </RenderIf>
                     ))}
                     <RenderIf isTrue={editable && placeholder}>
-                      <div
-                        className="w-full cursor-pointer"
-                        onClick={() => {
-                          setAddedFromSessionPlanner(true)
-                          setInsertAfterFrameId(frames[frames.length - 1]?.id)
-                          setInsertInSectionId(sectionId)
-                          setOpenContentTypePicker(true)
-                        }}>
-                        <NewFramePlaceholder />
+                      <div className="w-full cursor-pointer" onClick={addFrame}>
+                        <NewFramePlaceholder
+                          isLoading={
+                            insertInSectionId === sectionId && isLoadingAddFrame
+                          }
+                        />
                       </div>
                     </RenderIf>
                   </div>

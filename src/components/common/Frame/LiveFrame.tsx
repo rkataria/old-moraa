@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import ResizeObserver from 'rc-resize-observer'
 
+import { BlankFrame } from '../BlankFrame'
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from '../content-types/Breakout/Breakout'
 import { GoogleSlidesFrame } from '../content-types/GoogleSlides/GoogleSlides'
@@ -82,7 +83,9 @@ export function LiveFrame({ frame }: FrameContainerProps) {
     [FrameType.MCQ]: <MCQFrame frame={frame as any} isLiveSession />,
   }
 
-  const renderer = renderersByFrameType[frame.type as FrameType]
+  const renderer = renderersByFrameType[frame.type as FrameType] || (
+    <BlankFrame frame={frame} isLive />
+  )
   const frameHasTitle = frameTypesWithTitle.includes(frame.type)
 
   return (

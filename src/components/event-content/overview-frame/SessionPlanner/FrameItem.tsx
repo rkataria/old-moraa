@@ -34,13 +34,13 @@ import {
 import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus } from '@/types/enums'
 import { EventContextType } from '@/types/event-context.type'
-import { IFrame } from '@/types/frame.type'
-import { getBreakoutFrames } from '@/utils/content.util'
+import { IFrame, ISection } from '@/types/frame.type'
+import { getBlankFrame, getBreakoutFrames } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 export function FrameItem({
-  sectionId,
+  section,
   frame,
   frameIndex,
   frameIdToBeFocus,
@@ -50,7 +50,7 @@ export function FrameItem({
   className = '',
   parentBreakoutFrame,
 }: {
-  sectionId: string
+  section: ISection
   frame: IFrame
   frameIndex: number
   frameIdToBeFocus?: string
@@ -70,9 +70,12 @@ export function FrameItem({
     updateFrame,
     setAddedFromSessionPlanner,
     deleteFrame,
+    addFrameToSection,
   } = useContext(EventContext) as EventContextType
   const [visibleNestedList, setVisibleNestedList] = useState(false)
   const dispatch = useStoreDispatch()
+
+  const sectionId = section.id
 
   const onFrameTitleChange = (frameId: string, title: string) => {
     if (!editable) return
@@ -288,6 +291,15 @@ export function FrameItem({
                 <AddItemBar
                   sectionId={sectionId}
                   frameId={frame.id}
+                  onAddFrame={() => {
+                    addFrameToSection({
+                      frame: getBlankFrame(
+                        `Frame ${(section?.frames?.length || 0) + 1}`
+                      ),
+                      section,
+                      afterFrameId: frame.id,
+                    })
+                  }}
                   trigger={
                     <p
                       className="text-xl text-gray-400 cursor-pointer"
@@ -441,7 +453,7 @@ export function FrameItem({
       <RenderIf isTrue={!!breakoutFrames && visibleNestedList}>
         <RenderIf isTrue={!!breakoutFrames && breakoutFrames?.length > 0}>
           <FramesList
-            sectionId={sectionId}
+            section={section}
             frames={breakoutFrames || []}
             placeholder={false}
             className="px-8 w-[60%] my-4"
