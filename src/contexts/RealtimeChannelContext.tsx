@@ -28,7 +28,10 @@ export function RealtimeChannelProvider({
     meetingRealtimeChannel: null,
   })
 
+  console.log('Setting up realtime channel for event:', eventId)
+
   useEffect(() => {
+    console.log('Setting up realtime channel for event:', eventId)
     // Initialize the realtime channel with Supabase client and eventId
     const channel = supabaseClient
       .channel(`event:${eventId}`, {
@@ -45,6 +48,10 @@ export function RealtimeChannelProvider({
   }, [eventId])
 
   useEffect(() => {
+    console.log(
+      'Setting up realtime channel for dyte meeting:',
+      currentDyteMeetingId
+    )
     if (!currentDyteMeetingId) return () => null
     // Initialize the realtime channel with Supabase client and eventId
     const channel = supabaseClient
@@ -66,6 +73,7 @@ export function RealtimeChannelProvider({
 
   return (
     <RealtimeChannelContext.Provider value={realtimeChannel}>
+      <h1>Hello World</h1>
       {children}
     </RealtimeChannelContext.Provider>
   )
