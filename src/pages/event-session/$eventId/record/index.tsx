@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
+import { provideDyteDesignSystem } from '@dytesdk/react-ui-kit'
 import { DyteProvider, useDyteClient } from '@dytesdk/react-web-core'
 import { DyteRecording } from '@dytesdk/recording-sdk'
 import { createFileRoute, useParams, useRouter } from '@tanstack/react-router'
@@ -11,6 +12,21 @@ import { BreakoutManagerContextProvider } from '@/contexts/BreakoutManagerContex
 import { EventProvider } from '@/contexts/EventContext'
 import { EventSessionProvider } from '@/contexts/EventSessionContext'
 import { RealtimeChannelProvider } from '@/contexts/RealtimeChannelContext'
+import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import {
+  resetEventAction,
+  setCurrentEventIdAction,
+} from '@/stores/slices/event/current-event/event.slice'
+import { resetFrameAction } from '@/stores/slices/event/current-event/frame.slice'
+import {
+  resetLiveSessionAction,
+  setDyteClientAction,
+} from '@/stores/slices/event/current-event/live-session.slice'
+import { resetMeetingAction } from '@/stores/slices/event/current-event/meeting.slice'
+import { resetMoraaSlideAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
+import { resetSectionAction } from '@/stores/slices/event/current-event/section.slice'
+import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
 import { supabaseClient } from '@/utils/supabase/client'
 
 export const Route = createFileRoute('/event-session/$eventId/record/')({
@@ -18,7 +34,6 @@ export const Route = createFileRoute('/event-session/$eventId/record/')({
 })
 
 export function RecordPage() {
-  const [meeting, initMeeting] = useDyteClient()
   const { eventId } = useParams({
     strict: false,
   })
@@ -27,6 +42,65 @@ export function RecordPage() {
     authToken: string
   }
   const { authToken } = searchParams
+  const enrollment = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.enrollment.data
+  )
+  const meetingEl = useRef<HTMLDivElement>(null)
+  const [dyteClient, initDyteMeeting] = useDyteClient()
+  const dispatch = useStoreDispatch()
+
+  const isEventLoaded = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.event.isSuccess
+  )
+  const isMeetingLoaded = useStoreSelector(
+    (state) => state.event.currentEvent.meetingState.meeting.isSuccess
+  )
+
+  useSyncValueInRedux({
+    value: dyteClient,
+    reduxStateSelector: (state) =>
+      state.event.currentEvent.liveSessionState.dyte.dyteClient,
+    actionFn: setDyteClientAction,
+  })
+  useSyncValueInRedux({
+    value: eventId || null,
+    reduxStateSelector: (state) => state.event.currentEvent.eventState.eventId,
+    actionFn: setCurrentEventIdAction,
+  })
+
+  const resetMeeting = useCallback(() => {
+    dispatch(resetEventAction())
+    dispatch(resetMeetingAction())
+    dispatch(resetSectionAction())
+    dispatch(resetFrameAction())
+    dispatch(resetMoraaSlideAction())
+    dispatch(resetLiveSessionAction())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (!eventId) return
+
+    dispatch(
+      getEnrollmentThunk({
+        eventId,
+      })
+    )
+
+    // eslint-disable-next-line consistent-return
+    return resetMeeting
+  }, [dispatch, eventId, resetMeeting])
+
+  useEffect(() => {
+    if (eventId && dyteClient?.self.roomState === 'ended') {
+      resetMeeting()
+      dispatch(
+        getEnrollmentThunk({
+          eventId,
+        })
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventId, dyteClient?.self.roomState])
 
   useEffect(() => {
     async function loginAnonymously() {
@@ -47,7 +121,7 @@ export function RecordPage() {
       const recordingSDK = new DyteRecording({
         devMode: false,
       })
-      const meetingObj = await initMeeting({
+      const meetingObj = await initDyteMeeting({
         authToken,
         defaults: {
           video: false,
@@ -60,7 +134,11 @@ export function RecordPage() {
       await recordingSDK.init(meetingObj)
       recordingSDK.startRecording()
     }
-    if (!meeting) {
+
+    if (!enrollment?.meeting_token) return
+    if (!isEventLoaded || !isMeetingLoaded) return
+
+    if (!dyteClient) {
       loginAnonymously().then((loggedIn) => {
         if (loggedIn) {
           setupDyteMeeting()
@@ -68,7 +146,38 @@ export function RecordPage() {
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meeting, authToken])
+  }, [dyteClient, authToken, isEventLoaded, isMeetingLoaded])
+
+  if (!enrollment?.meeting_token) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        {/* Actual message: Generating meeting token */}
+        <Loading message="Finding your live session" />
+      </div>
+    )
+  }
+
+  if (meetingEl.current) {
+    provideDyteDesignSystem(meetingEl.current, {
+      googleFont: 'Outfit',
+      // sets light background colors
+      theme: 'light',
+      colors: {
+        danger: '#e40909',
+        brand: {
+          300: '#b089f4',
+          400: '#9661f1',
+          500: '#7c3aed',
+          600: '#632ebe',
+          700: '#4a238e',
+        },
+        text: '#000000',
+        'text-on-brand': '#ffffff',
+        'video-bg': '#0c0618',
+      },
+      borderRadius: 'rounded',
+    })
+  }
 
   if (!authToken) {
     return <div>Auth token not found</div>
@@ -78,7 +187,7 @@ export function RecordPage() {
 
   return (
     <DyteProvider
-      value={meeting}
+      value={dyteClient}
       fallback={
         <div className="h-screen flex flex-col justify-center items-center">
           <Loading message="Setting up recording" />
