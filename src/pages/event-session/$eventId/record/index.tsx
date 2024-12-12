@@ -27,10 +27,14 @@ import { resetMeetingAction } from '@/stores/slices/event/current-event/meeting.
 import { resetMoraaSlideAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
 import { resetSectionAction } from '@/stores/slices/event/current-event/section.slice'
 import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
+import { beforeLoad } from '@/utils/before-load'
 import { supabaseClient } from '@/utils/supabase/client'
 
 export const Route = createFileRoute('/event-session/$eventId/record/')({
   component: RecordPage,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  beforeLoad,
 })
 
 export function RecordPage() {
