@@ -27,30 +27,49 @@ import { resetMeetingAction } from '@/stores/slices/event/current-event/meeting.
 import { resetMoraaSlideAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
 import { resetSectionAction } from '@/stores/slices/event/current-event/section.slice'
 import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
-import { beforeLoad } from '@/utils/before-load'
 import { supabaseClient } from '@/utils/supabase/client'
 
 export const Route = createFileRoute('/event-session/$eventId/record/')({
   component: RecordPage,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  beforeLoad,
+  beforeLoad: async () => {
+    const session = await supabaseClient.auth.getSession()
+
+    if (!session.data?.session?.user?.id) {
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email: 'recording-bot@yopmail.com',
+        password: 'letmepass',
+      })
+
+      if (error) {
+        throw new Error('Failed to sign in with recording bot')
+      }
+    }
+  },
 })
 
 export function RecordPage() {
   const { eventId } = useParams({
     strict: false,
   })
+
   const router = useRouter()
   const searchParams = router.latestLocation.search as {
     authToken: string
   }
   const { authToken } = searchParams
+
   const enrollment = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.enrollment.data
   )
   const meetingEl = useRef<HTMLDivElement>(null)
+
   const [dyteClient, initDyteMeeting] = useDyteClient()
+  const recordingSDK = new DyteRecording({
+    devMode: false,
+  })
+
   const dispatch = useStoreDispatch()
 
   const isEventLoaded = useStoreSelector(
@@ -96,6 +115,7 @@ export function RecordPage() {
 
   useEffect(() => {
     if (eventId && dyteClient?.self.roomState === 'ended') {
+      recordingSDK.stopRecording()
       resetMeeting()
       dispatch(
         getEnrollmentThunk({
@@ -108,9 +128,6 @@ export function RecordPage() {
 
   useEffect(() => {
     async function setupDyteMeeting() {
-      const recordingSDK = new DyteRecording({
-        devMode: false,
-      })
       const meetingObj = await initDyteMeeting({
         authToken,
         defaults: {
@@ -170,10 +187,14 @@ export function RecordPage() {
   }
 
   if (!authToken) {
-    return <div>Auth token not found</div>
+    return (
+      <div className="p-4 border-4 border-red-500">Auth token not found</div>
+    )
   }
 
-  if (!eventId) return <div>Event ID not found</div>
+  if (!eventId) {
+    return <div className="p-4 border-4 border-red-500">Event ID not found</div>
+  }
 
   return (
     <DyteProvider
@@ -187,7 +208,7 @@ export function RecordPage() {
         <BreakoutManagerContextProvider>
           <EventProvider eventMode="present">
             <EventSessionProvider>
-              <div>
+              <div className="p-4 border-4 border-green-500">
                 <RecordingView />
               </div>
             </EventSessionProvider>
