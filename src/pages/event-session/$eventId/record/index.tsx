@@ -68,6 +68,7 @@ export function RecordPage() {
   const [dyteClient, initDyteMeeting] = useDyteClient()
   const recordingSDK = new DyteRecording({
     devMode: false,
+    autoStop: true,
   })
 
   const dispatch = useStoreDispatch()
@@ -115,7 +116,7 @@ export function RecordPage() {
 
   useEffect(() => {
     if (eventId && dyteClient?.self.roomState === 'ended') {
-      recordingSDK.stopRecording()
+      // recordingSDK.stopRecording()
       resetMeeting()
       dispatch(
         getEnrollmentThunk({
