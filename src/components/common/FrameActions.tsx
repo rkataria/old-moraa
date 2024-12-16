@@ -5,7 +5,7 @@ import {
   DropdownItem,
 } from '@nextui-org/react'
 import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
-import { IoDuplicateOutline } from 'react-icons/io5'
+import { IoDuplicateOutline, IoSaveOutline } from 'react-icons/io5'
 
 export const frameActions = [
   {
@@ -27,6 +27,11 @@ export const frameActions = [
     key: 'duplicate-frame',
     label: 'Duplicate frame',
     icon: <IoDuplicateOutline className="h-4 w-4 text-slate-500" />,
+  },
+  {
+    key: 'save-frame-in-library',
+    label: 'Save frame',
+    icon: <IoSaveOutline className="h-4 w-4 text-slate-500" />,
   },
 ]
 

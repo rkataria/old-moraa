@@ -1,7 +1,11 @@
 import { useLocation, useRouter } from '@tanstack/react-router'
 import { IconType } from 'react-icons'
 import { GoHome, GoHomeFill } from 'react-icons/go'
-import { IoHelpCircleOutline, IoHelpCircleSharp } from 'react-icons/io5'
+import {
+  IoHelpCircleOutline,
+  IoHelpCircleSharp,
+  IoLibrary,
+} from 'react-icons/io5'
 
 import { Button } from '../ui/Button'
 
@@ -26,11 +30,12 @@ const navigation: TNavigation[] = [
   //   href: '/workshops',
   //   icon: LuCalendarHeart,
   // },
-  // {
-  //   name: 'My Library',
-  //   href: '/library',
-  //   icon: LuLibrary,
-  // },
+  {
+    name: 'My Library',
+    href: '/library',
+    icon: IoLibrary,
+    filled: IoLibrary,
+  },
   // {
   //   name: 'Community templates',
   //   href: '/templates',

@@ -3,12 +3,14 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 import { useParams, useRouter } from '@tanstack/react-router'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
+import toast from 'react-hot-toast'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { FrameService } from '@/services/frame.service'
+import { LibraryService } from '@/services/library.service'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import {
   useEventLoadingSelector,
@@ -190,6 +192,24 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     router.navigate({
       search: { ...searchParams, frameId: frame.id },
     })
+  }
+
+  const saveFrameInLibrary = async (frame: Partial<IFrame>) => {
+    try {
+      await LibraryService.saveFrameInLibrary(
+        {
+          config: frame.config,
+          content: frame.content,
+          name: frame.name,
+          type: frame.type,
+        },
+        currentUser!.id
+      )
+      toast.success('Frame saved in library')
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to save frame in library')
+    }
   }
 
   const addSection = async ({
@@ -561,6 +581,7 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         insertInSectionId,
         selectedSectionId,
         setOpenContentTypePicker,
+        saveFrameInLibrary,
         setPreview: (preview) => dispatch(setIsPreviewOpenAction(preview)),
         setCurrentFrame: (frame) => {
           if (frame?.id === currentFrame?.id) return
