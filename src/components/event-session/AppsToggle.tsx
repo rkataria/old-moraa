@@ -7,9 +7,11 @@ import { useState } from 'react'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
 import { IoMdRadioButtonOn } from 'react-icons/io'
+import { IoMusicalNotesOutline } from 'react-icons/io5'
 import { TbApps, TbAppsFilled, TbClock } from 'react-icons/tb'
 
 import { AppsDropdownMenuItem } from './AppsDropdownMenuItem'
+import { MusicControls } from './Music/MusicControls'
 import { TimerModal } from './TimerModal'
 import {
   UnplannedBreakoutButton,
@@ -30,6 +32,7 @@ export function AppsToggle() {
   useOnUnplannedBreakoutSessionUpdate()
   const [isTimerOpen, setIsTimerOpen] = useState(false)
   const [isContentVisible, setIsContentVisible] = useState(false)
+  const [showAudioControlsState, setShowAudioControlsState] = useState(false)
   const { meeting } = useDyteMeeting()
   const { flags } = useFlags()
   const { isHost } = useEventSession()
@@ -53,6 +56,7 @@ export function AppsToggle() {
       session.data.timerStartedStamp,
       session.data.timerDuration
     ) > 0
+
   const isRecording = recordingState === 'RECORDING'
 
   const onRecordingToggle = () => {
@@ -64,6 +68,8 @@ export function AppsToggle() {
   }
 
   const isTimerDisabled = isBreakoutActive && breakoutType === 'planned'
+  const visibleMusicControls =
+    showAudioControlsState || session?.data?.music?.play
 
   return (
     <>
@@ -90,6 +96,23 @@ export function AppsToggle() {
           <div className="p-3">
             <h3 className="font-semibold">More Tools</h3>
             <div className="pt-2 flex flex-col justify-start items-center gap-2">
+              <div
+                className={cn('w-full', {
+                  'border-b pb-2': visibleMusicControls,
+                })}>
+                <AppsDropdownMenuItem
+                  icon={<IoMusicalNotesOutline size={24} />}
+                  title="Moraa FM"
+                  description="Play music while working!"
+                  onClick={() =>
+                    setShowAudioControlsState(!showAudioControlsState)
+                  }
+                />
+                <RenderIf isTrue={!!visibleMusicControls}>
+                  <MusicControls />
+                </RenderIf>
+              </div>
+
               <AppsDropdownMenuItem
                 icon={<TbClock size={24} />}
                 title={

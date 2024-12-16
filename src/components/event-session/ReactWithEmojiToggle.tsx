@@ -1,24 +1,65 @@
-import { useContext, useState } from 'react'
+import { Key, useContext, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import {
-  Button,
+  Kbd,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Tab,
+  Tabs,
 } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { IoHappy, IoHappyOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
+import { RenderIf } from '../common/RenderIf/RenderIf'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
+const enum TABS {
+  REACTIONS = 'reactions',
+  ECHOES = 'echoes',
+}
+
+const ECHOES = [
+  {
+    path: '/audios/echoes/applause.mp3',
+    name: 'Applause',
+    emoji: 'clap',
+  },
+  {
+    path: '/audios/echoes/buzzer.mp3',
+    name: 'Buzzer',
+    emoji: 'bee',
+  },
+  {
+    path: '/audios/echoes/cartoon-trombone.mp3',
+    name: 'Trombone',
+    emoji: 'white_frowning_face',
+  },
+  {
+    path: '/audios/echoes/rimshot.mp3',
+    name: 'Rimshot',
+    emoji: 'drum_with_drumsticks',
+  },
+  {
+    path: '/audios/echoes/success.mp3',
+    name: 'Success',
+    emoji: 'pray',
+  },
+  {
+    path: '/audios/echoes/train-bell.mp3',
+    name: 'Bell',
+    emoji: 'bell',
+  },
+]
+
 const EMOJIS = [
   '+1',
-  'heart',
+  'sparkling_heart',
   'tada',
   'clap',
   'joy',
@@ -26,14 +67,16 @@ const EMOJIS = [
   'disappointed_relieved',
   'thinking_face',
   '-1',
+  'fire',
 ]
 
 export function ReactWithEmojiToggle() {
   const [isOpen, setIsOpen] = useState(false)
+  const [selectedTab, setSelectedTab] = useState<Key>('reactions')
 
   const selfParticipant = useDyteSelector((m) => m.self)
 
-  const { flyEmoji } = useContext(
+  const { flyEmoji, sendSoundAlert } = useContext(
     EventSessionContext
   ) as EventSessionContextType
 
@@ -51,22 +94,35 @@ export function ReactWithEmojiToggle() {
   useHotkeys('ESC', () => setIsOpen(false), [])
 
   const handleEmoji = (emojiIndex: number) => {
-    if (!isOpen) return
     flyEmoji({
       emoji: EMOJIS[emojiIndex - 1],
       name: selfParticipant.name,
     })
   }
 
-  useHotkeys('1', () => handleEmoji(1))
-  useHotkeys('2', () => handleEmoji(2))
-  useHotkeys('3', () => handleEmoji(3))
-  useHotkeys('4', () => handleEmoji(4))
-  useHotkeys('5', () => handleEmoji(5))
-  useHotkeys('6', () => handleEmoji(6))
-  useHotkeys('7', () => handleEmoji(7))
-  useHotkeys('8', () => handleEmoji(8))
-  useHotkeys('9', () => handleEmoji(9))
+  const handleSound = (soundIndex: number) => {
+    sendSoundAlert({
+      sound: ECHOES[soundIndex - 1].path,
+    })
+  }
+
+  useHotkeys('r+1', () => handleEmoji(1))
+  useHotkeys('r+2', () => handleEmoji(2))
+  useHotkeys('r+3', () => handleEmoji(3))
+  useHotkeys('r+4', () => handleEmoji(4))
+  useHotkeys('r+5', () => handleEmoji(5))
+  useHotkeys('r+6', () => handleEmoji(6))
+  useHotkeys('r+7', () => handleEmoji(7))
+  useHotkeys('r+8', () => handleEmoji(8))
+  useHotkeys('r+9', () => handleEmoji(9))
+  useHotkeys('r+0', () => handleEmoji(10))
+
+  useHotkeys('e+1', () => handleSound(1))
+  useHotkeys('e+2', () => handleSound(2))
+  useHotkeys('e+3', () => handleSound(3))
+  useHotkeys('e+4', () => handleSound(4))
+  useHotkeys('e+5', () => handleSound(5))
+  useHotkeys('e+6', () => handleSound(6))
 
   return (
     <Popover
@@ -98,22 +154,82 @@ export function ReactWithEmojiToggle() {
           </ControlButton>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="rounded-full overflow-hidden shadow-xl">
-        <div className="bg-gray-100 flex items-center gap-2 py-[0.0625rem]">
-          {EMOJIS.map((emoji) => (
-            <Button
-              key={emoji}
-              isIconOnly
-              onClick={() =>
-                flyEmoji({
-                  emoji,
-                  name: selfParticipant.name,
-                })
+      <PopoverContent className="overflow-hidden shadow-xl bg-[#f7f7f7] pb-3 pt-0 w-[20rem]">
+        {/* <EmojiPicker triggerIcon="lll" onEmojiSelect={(e) => console.log(e)} /> */}
+        <div className="flex w-full flex-col bg-white pb-0 pl-2">
+          <Tabs
+            disableAnimation
+            color="primary"
+            variant="underlined"
+            classNames={{
+              tabList: 'pb-0 gap-6',
+              tab: 'max-w-fit px-0 h-10 !outline-none after:w-full',
+            }}
+            selectedKey={selectedTab as string}
+            onSelectionChange={setSelectedTab}>
+            <Tab
+              key={TABS.REACTIONS}
+              title={
+                <div className="flex items-center gap-2">
+                  Reactions
+                  <Kbd className="h-5 rounded-md text-xs">R</Kbd>
+                </div>
               }
-              className="!opacity-100 rounded-full grid place-items-center bg-transparent hover:bg-gray-200 duration-300">
-              <em-emoji set="apple" id={emoji} size={25} />
-            </Button>
-          ))}
+            />
+            <Tab
+              key={TABS.ECHOES}
+              title={
+                <div className="flex items-center gap-2">
+                  Echoes
+                  <Kbd className="h-5 rounded-md text-xs">E</Kbd>
+                </div>
+              }
+            />
+          </Tabs>
+        </div>
+        <div
+          className={cn('grid grid-cols-5 gap-2 gap-y-2 mt-2 w-full px-2', {
+            'grid-cols-2': selectedTab === TABS.ECHOES,
+          })}>
+          <RenderIf isTrue={selectedTab === TABS.REACTIONS}>
+            {EMOJIS.map((emoji, index) => (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+              <div
+                key={emoji}
+                onClick={() =>
+                  flyEmoji({
+                    emoji,
+                    name: selfParticipant.name,
+                  })
+                }
+                className="!opacity-100 rounded-lg grid gap-1.5 place-items-center bg-transparent hover:bg-gray-200 duration-300 w-full py-1.5 cursor-pointer bg-white">
+                <em-emoji set="apple" id={emoji} size={30} />
+                <Kbd className="h-4 rounded-md text-[11px]">
+                  {index === 9 ? 0 : index + 1}
+                </Kbd>
+              </div>
+            ))}
+          </RenderIf>
+          <RenderIf isTrue={selectedTab === TABS.ECHOES}>
+            {ECHOES.map((echo, index) => (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+              <div
+                key={echo.path}
+                onClick={() =>
+                  sendSoundAlert({
+                    sound: echo.path,
+                  })
+                }
+                className="!opacity-100 rounded-lg flex gap-2 place-items-center justify-between bg-transparent hover:bg-gray-200 duration-300 w-full p-2 cursor-pointer bg-white">
+                <div className="flex items-center gap-2">
+                  <em-emoji set="apple" id={echo.emoji} size={18} />
+                  <p className="text-xs font-medium">{echo.name}</p>
+                </div>
+
+                <Kbd className="h-4 rounded-md text-[11px]">{index + 1}</Kbd>
+              </div>
+            ))}
+          </RenderIf>
         </div>
       </PopoverContent>
     </Popover>

@@ -4,6 +4,8 @@ import { MoreActions } from './MoreActions'
 import { AppsToggle } from '../AppsToggle'
 import { LeaveMeetingToggle } from '../LeaveMeetingToggle'
 import { MicToggle } from '../MicToggle'
+import { EchoPlayer } from '../Music/EchoPlayer'
+import { MusicPlayer } from '../Music/MusicPlayer'
 import { RaiseHandToggle } from '../RaiseHandToggle'
 import { ReactWithEmojiToggle } from '../ReactWithEmojiToggle'
 import { ScreenShareToggle } from '../ScreenShareToggle'
@@ -84,6 +86,10 @@ export function Footer() {
           <LeaveMeetingToggle />
         </div>
       </div>
+
+      <MusicPlayer />
+      <EchoPlayer />
+
       <div className="flex-1 flex justify-end items-center gap-2 p-2">
         {/* <HelpButton
           buttonProps={{
