@@ -27,6 +27,7 @@ import {
   reorderFrameAction,
   toggleSectionExpansionInPlannerAction,
 } from '@/stores/slices/event/current-event/section.slice'
+import { setExpandedSectionsAction } from '@/stores/slices/layout/studio.slice'
 import {
   createFrameThunk,
   deleteFramesThunk,
@@ -55,6 +56,9 @@ export const EventContext = createContext<EventContextType | null>(null)
 export function EventProvider({ children, eventMode }: EventProviderProps) {
   const { eventId } = useParams({ strict: false })
   const currentFrame = useCurrentFrame()
+  const expandedSectionIds = useStoreSelector(
+    (state) => state.layout.studio.expandedSections
+  )
   const isOverviewOpen = useStoreSelector(
     (store) => store.event.currentEvent.eventState.isOverviewOpen
   )
@@ -559,18 +563,45 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
         setOpenContentTypePicker,
         setPreview: (preview) => dispatch(setIsPreviewOpenAction(preview)),
         setCurrentFrame: (frame) => {
-          dispatch(setCurrentFrameIdAction(frame?.id || null))
+          if (frame?.id === currentFrame?.id) return
+
           if (frame && isOverviewOpen) dispatch(setIsOverviewOpenAction(false))
+          dispatch(setCurrentFrameIdAction(frame?.id || null))
+          dispatch(setCurrentSectionIdAction(null))
+          dispatch(
+            setExpandedSectionsAction(
+              frame?.section_id &&
+                !expandedSectionIds.includes(frame?.section_id)
+                ? [...expandedSectionIds, frame?.section_id]
+                : expandedSectionIds
+            )
+          )
 
           if (!isMeetingJoined) return
           dispatch(
             updateMeetingSessionDataAction({
               currentFrameId: frame?.id,
+              currentSectionId: null,
             })
           )
         },
-        setCurrentSectionId: (sectionId) => {
+        setCurrentSectionId: (sectionId, { removeCurrentFrame } = {}) => {
           dispatch(setCurrentSectionIdAction(sectionId))
+
+          if (removeCurrentFrame) dispatch(setCurrentFrameIdAction(null))
+          if (!isMeetingJoined) return
+
+          const frameIdObject = removeCurrentFrame
+            ? {
+                currentFrameId: null,
+              }
+            : {}
+          dispatch(
+            updateMeetingSessionDataAction({
+              currentSectionId: sectionId,
+              ...frameIdObject,
+            })
+          )
         },
         setOverviewOpen: (open) => {
           dispatch(setCurrentFrameIdAction(null))

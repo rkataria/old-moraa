@@ -54,7 +54,7 @@ export type EventSessionContextType = {
   eventSessionMode: EventSessionMode
   dyteStates: DyteStates
   setDyteStates: Dispatch<SetStateAction<DyteStates>>
-  startPresentation: (frameId: string) => void
+  startPresentation: (frameId: string | null) => void
   stopPresentation: () => void
   pausePresentation: () => void
   setCurrentFrame: (frame: IFrame) => void

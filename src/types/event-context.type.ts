@@ -24,7 +24,10 @@ export type EventContextType = {
   selectedSectionId: string | null
   error: { frameId: string; message: string } | null
   currentSectionId: string | null
-  setCurrentSectionId: (sectionId: string | null) => void
+  setCurrentSectionId: (
+    sectionId: string | null,
+    opts?: { removeCurrentFrame?: boolean }
+  ) => void
   setInsertAfterFrameId: (frameId: string | null) => void
   setInsertAfterSectionId: (sectionId: string | null) => void
   setInsertInSectionId: (sectionId: string | null) => void

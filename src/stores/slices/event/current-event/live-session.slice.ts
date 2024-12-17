@@ -2,7 +2,10 @@ import DyteClient from '@dytesdk/web-core'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 
-import { setCurrentFrameIdAction } from './event.slice'
+import {
+  setCurrentFrameIdAction,
+  setCurrentSectionIdAction,
+} from './event.slice'
 
 import { USER_PREFERENCES_LOCAL_STORAGE_KEY } from '@/constants/common'
 import { getRealtimeChannelForEvent } from '@/services/realtime/supabase-realtime.service'
@@ -39,6 +42,7 @@ export type SessionState = {
   presentationStatus?: PresentationStatuses
   handsRaised?: string[]
   currentSectionId?: string | null
+  GSlideLastPosition?: number | null
   connectedMeetingsToActivitiesMap?: {
     [x: string]: string
   } | null
@@ -283,7 +287,8 @@ attachStoreListener({
         ?.data
     const newSessionData =
       getState().event.currentEvent.liveSessionState.activeSession.data?.data
-    const { currentFrameId } = getState().event.currentEvent.eventState
+    const { currentFrameId, currentSectionId } =
+      getState().event.currentEvent.eventState
 
     // If presentation status is changed
     if (
@@ -302,6 +307,11 @@ attachStoreListener({
 
     if (newSessionData?.currentFrameId !== currentFrameId) {
       dispatch(setCurrentFrameIdAction(newSessionData?.currentFrameId || null))
+    }
+    if (newSessionData?.currentSectionId !== currentSectionId) {
+      dispatch(
+        setCurrentSectionIdAction(newSessionData?.currentSectionId || null)
+      )
     }
   },
 })

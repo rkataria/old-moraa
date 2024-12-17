@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useMemo, useState } from 'react'
 
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useDispatch } from 'react-redux'
@@ -11,6 +11,7 @@ import {
   setAgendaPanelDisplayTypeAction,
   setExpandedSectionsAction,
 } from '@/stores/slices/layout/studio.slice'
+import { EventContextType } from '@/types/event-context.type'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 import { getFilteredFramesByStatus } from '@/utils/event.util'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -26,7 +27,7 @@ type AgendaPanelContextType = {
   toggleExpanded: () => void
   toggleExpandedSection: (sectionId: string) => void
   toggleListDisplayMode: () => void
-  setCurrentSectionId: (sectionId: string) => void
+  setCurrentSectionId: EventContextType['setCurrentSectionId']
 }
 
 const AgendaPanelContext = createContext<AgendaPanelContextType | undefined>(
@@ -412,22 +413,6 @@ export function AgendaPanelContextProvider({
     ],
     toggleView
   )
-
-  useEffect(() => {
-    if (!currentFrame) return
-
-    dispatch(
-      setExpandedSectionsAction(
-        currentFrame.section_id &&
-          !expandedSectionIds.includes(currentFrame.section_id)
-          ? [...expandedSectionIds, currentFrame.section_id]
-          : expandedSectionIds
-      )
-    )
-
-    setCurrentSectionId(null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame, expandedSectionIds])
 
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)

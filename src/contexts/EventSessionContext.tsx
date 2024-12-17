@@ -70,6 +70,9 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const session = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.activeSession.data
   )
+  const currentSectionId = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.currentSectionId
+  )
   const presentationStatus = useStoreSelector(
     (state) =>
       state.event.currentEvent.liveSessionState.activeSession.data?.data
@@ -95,9 +98,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const { data: fetchedFrameReactions } = useFrameReactions(currentFrame?.id)
   const eventSessionMode = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.eventSessionMode
-  )
-  const currentSectionId = useStoreSelector(
-    (state) => state.event.currentEvent.eventState.currentSectionId
   )
 
   // TODO: Test code for moraa presentation plugin
@@ -283,16 +283,6 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame, eventSessionMode])
 
-  useEffect(() => {
-    if (presentationStatus !== PresentationStatuses.STARTED) return
-    if (!isHost) return
-    dispatch(
-      updateMeetingSessionDataAction({
-        currentSectionId: currentSectionId || null,
-      })
-    )
-  }, [isHost, currentSectionId, dispatch, presentationStatus])
-
   const nextFrame = useCallback(() => {
     if (!isHost || !eventRealtimeChannel) return null
     // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -304,11 +294,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     if (!nextFrame) return null
 
-    dispatch(
-      updateMeetingSessionDataAction({
-        currentFrameId: nextFrame.id,
-      })
-    )
+    setCurrentFrame(nextFrame)
 
     if (moraaPresentationPlugin?.active) {
       console.log('Emitting frame change event to plugin')
@@ -336,21 +322,18 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
 
     if (!previousFrame) return null
 
-    dispatch(
-      updateMeetingSessionDataAction({
-        currentFrameId: previousFrame.id,
-      })
-    )
+    setCurrentFrame(previousFrame)
 
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFrame, eventSessionMode, isHost, sections, eventMode])
 
-  const startPresentation = (frameId: string) => {
+  const startPresentation = (frameId: string | null) => {
     dispatch(
       updateMeetingSessionDataAction({
         presentationStatus: PresentationStatuses.STARTED,
-        currentFrameId: frameId,
+        currentFrameId: frameId || currentFrame?.id,
+        currentSectionId,
       })
     )
   }

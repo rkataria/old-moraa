@@ -30,11 +30,10 @@ export function PresentationControls() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePresentationToggle = (e: any) => {
     if (e.target.localName.includes('dyte-sidebar')) return
-    if (!currentFrame) return
     if (presentationStarted) {
       stopPresentation()
     } else {
-      startPresentation(currentFrame.id)
+      startPresentation(currentFrame?.id || null)
     }
   }
 
@@ -62,8 +61,6 @@ export function PresentationControls() {
 
   // Allow only host to control the presentation
   if (!isHost) return null
-
-  if (!currentFrame) return null
 
   const presentationStarted =
     presentationStatus === PresentationStatuses.STARTED

@@ -45,7 +45,6 @@ export function SectionItem({
   const {
     setInsertAfterFrameId,
     setInsertInSectionId,
-    setCurrentFrame,
     updateSection,
     eventMode,
     overviewOpen,
@@ -91,8 +90,7 @@ export function SectionItem({
 
     setInsertInSectionId(section.id)
     setInsertAfterFrameId(null)
-    setCurrentSectionId(section.id)
-    setCurrentFrame(null)
+    setCurrentSectionId(section.id, { removeCurrentFrame: true })
 
     // Dispatch an action to update event session mode to 'Peek' if presentation is not started and user is the owner of the event
     if (

@@ -6,6 +6,8 @@ import { Preview } from './Preview'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { type GoogleSlidesFrame } from '@/types/frame-picker.type'
 import { isValidGoogleSlidesUrl } from '@/utils/utils'
 
@@ -17,12 +19,12 @@ type LiveProps = {
 
 export function Live({ frame }: LiveProps) {
   const { permissions } = useEventPermissions()
+  const dispatch = useStoreDispatch()
   const {
     content: { startPosition },
   } = frame
   const { preview } = useEventContext()
-  const { isHost, eventRealtimeChannel, activeSession, updateActiveSession } =
-    useEventSession()
+  const { isHost, eventRealtimeChannel, activeSession } = useEventSession()
   const [position, setPosition] = useState<number>(startPosition || 1)
 
   useEffect(() => {
@@ -40,9 +42,11 @@ export function Live({ frame }: LiveProps) {
       ({ payload }) => {
         setPosition(payload.position || 1)
 
-        updateActiveSession({
-          GSlideLastPosition: payload.position || 1,
-        })
+        dispatch(
+          updateMeetingSessionDataAction({
+            GSlideLastPosition: payload.position || 1,
+          })
+        )
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
