@@ -19,7 +19,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useDebounce } from '@uidotdev/usehooks'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import { TbFileDescription, TbUserEdit } from 'react-icons/tb'
 import * as yup from 'yup'
@@ -32,6 +32,8 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { ScheduleEventButtonWithModal } from '@/components/common/ScheduleEventButtonWithModal'
 import { Dates } from '@/components/enroll/Date'
 import { Participantslist } from '@/components/enroll/ParticipantList'
+import { theme } from '@/components/events/ThemeModal'
+import { ThemePicker } from '@/components/events/ThemePicker'
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { EventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
@@ -50,6 +52,7 @@ const createEventValidationSchema = yup.object({
   name: yup.string().label('Event name').max(80).required(),
   description: yup.string().label('Event description'),
   imageUrl: yup.string(),
+  theme: yup.mixed().optional().nullable(),
 })
 
 export function EventDetails() {
@@ -59,6 +62,7 @@ export function EventDetails() {
   const [imageUploading, setImageUploading] = useState<boolean>(false)
   const { eventId } = useParams({ strict: false })
   const eventData = useEvent({ id: eventId! })
+  const themeModalDisclosure = useDisclosure()
 
   const descriptionModalDisclosure = useDisclosure()
 
@@ -70,10 +74,15 @@ export function EventDetails() {
       name: event.name as string,
       description: event.description as string,
       imageUrl: event.image_url as string,
+      theme: event.theme || null,
     },
   })
-  const debouncedValues = useDebounce(createEventForm.getValues(), 500)
 
+  const watchedValues = useWatch({
+    control: createEventForm.control,
+  })
+
+  const debouncedValues: any = useDebounce(watchedValues, 500)
   const updateEventMutation = useMutation({
     mutationFn: EventService.updateEvent,
   })
@@ -90,6 +99,7 @@ export function EventDetails() {
         name: values.name,
         description: values.description || '',
         image_url: values.imageUrl,
+        theme: values.theme,
       },
     }
 
@@ -107,6 +117,12 @@ export function EventDetails() {
   }
 
   const description = createEventForm?.getValues?.('description')
+
+  const handleThemeChange = (selectedTheme: theme | null) => {
+    createEventForm.setValue('theme', selectedTheme)
+  }
+
+  const selectedTheme = createEventForm.watch('theme') as theme
 
   return (
     <div className="h-fit relative z-[50]">
@@ -304,6 +320,11 @@ export function EventDetails() {
                   />
                 </RenderIf>
               </div>
+              <ThemePicker
+                onThemeChange={handleThemeChange}
+                selectedTheme={selectedTheme}
+                disclosure={themeModalDisclosure}
+              />
               <div>
                 <div className="flex items-center justify-between text-sm font-medium text-slate-500">
                   Timeline

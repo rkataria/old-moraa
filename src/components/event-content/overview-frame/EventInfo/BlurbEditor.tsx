@@ -47,7 +47,7 @@ export function BlurbEditor({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4 h-8">
+      <div className="flex items-center justify-between mb-1 h-8">
         <div className="flex items-center gap-2 text-gray-500">
           <RiFileList3Line size={20} />
           <p className="text-sm font-medium">Detailed description</p>
@@ -91,8 +91,9 @@ export function BlurbEditor({
             setEditor(_editor)
           }}
           classNames={{
-            container: cn('border-none backdrop-blur-2xl pt-0 !rounded-lg'),
-
+            container: cn(
+              'border-none backdrop-blur-2xl pt-0 !rounded-lg py-4 bg-transparent'
+            ),
             menu: ' -mr-4',
             editor: 'overflow-visible p-0 h-auto',
             wrapper: 'h-auto',

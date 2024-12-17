@@ -27,22 +27,26 @@ export function FlyingEmojisOverlay() {
       const pElement = document.createElement('p')
       pElement.textContent = name
       pElement.style.cssText =
-        'color:white; font-size:14px; padding:8px; background:rgba(0,0,0,0.5); border-radius:8px; min-width:max-content; margin-top:4px'
+        'color:white; font-size:12px; padding:8px; background:rgba(0,0,0,0.3); border-radius:8px; min-width:max-content; margin-top:4px;backdrop-filter:blur(4px);'
 
       emojiDiv.appendChild(emojiElement)
       emojiDiv.appendChild(pElement)
 
-      emojiDiv.className =
-        Math.random() * 1 > 0.5 ? 'emoji wiggle-1' : 'emoji wiggle-2'
+      emojiDiv.className = 'emoji fire-up'
       emojiDiv.style.left = `${Math.floor(Math.random() * (80 - 20 + 1)) + 20}%`
       emojiDiv.style.display = 'grid'
       emojiDiv.style.textAlign = 'center'
 
       overlayRef.current.appendChild(emojiDiv)
 
-      emojiDiv.addEventListener('animationend', (event) =>
-        handleRemoveFlyingEmoji(event.target)
-      )
+      emojiDiv.addEventListener('animationend', (event) => {
+        if (
+          event.animationName === 'fadeaway' &&
+          overlayRef.current?.contains(event.target)
+        ) {
+          handleRemoveFlyingEmoji(event.target)
+        }
+      })
     }
 
     window.addEventListener('reaction_added', handleSendFlyingEmoji)

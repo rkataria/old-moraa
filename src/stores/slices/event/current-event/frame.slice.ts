@@ -216,13 +216,23 @@ attachStoreListener({
 
     if (!section) return
 
+    const updatedFrames = section.frames?.filter(
+      (frameId) => frameId !== deletedFrameId
+    )
+
+    const lastFrame: string = updatedFrames?.[updatedFrames.length - 1] || ''
+
+    if (!lastFrame) {
+      dispatch(setCurrentSectionIdAction(section.id))
+    } else {
+      dispatch(setCurrentFrameIdAction(lastFrame))
+    }
+
     dispatch(
       updateSectionThunk({
         sectionId: section.id,
         data: {
-          frames:
-            section.frames?.filter((frameId) => frameId !== deletedFrameId) ||
-            [],
+          frames: updatedFrames || [],
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any,
       })

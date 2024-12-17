@@ -16,16 +16,15 @@ import { createFileRoute, useParams, useRouter } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
-import { AiOutlineClose } from 'react-icons/ai'
 import { TbFileDescription } from 'react-icons/tb'
 import * as yup from 'yup'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
 import { MoraaLogo } from '@/components/common/MoraaLogo'
-import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { ThemeEffects } from '@/components/events/ThemeEffects'
-import { theme, ThemeModal, Themes } from '@/components/events/ThemeModal'
+import { theme } from '@/components/events/ThemeModal'
+import { ThemePicker } from '@/components/events/ThemePicker'
 import { Button } from '@/components/ui/Button'
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { useAuth } from '@/hooks/useAuth'
@@ -46,7 +45,7 @@ const createEventValidationSchema = yup.object({
   description: yup.string().label('Event description'),
   eventType: yup.string().required(),
   imageUrl: yup.string(),
-  theme: yup.mixed().optional(),
+  theme: yup.mixed().optional().nullable(),
 })
 
 export function EventsCreatePage() {
@@ -149,7 +148,7 @@ export function EventsCreatePage() {
     createEventForm.setValue('imageUrl', imageUrl)
   }
 
-  const handleThemeChange = (selectedTheme: theme) => {
+  const handleThemeChange = (selectedTheme: theme | null) => {
     createEventForm.setValue('theme', selectedTheme)
   }
 
@@ -313,40 +312,11 @@ export function EventsCreatePage() {
                   )}
                 />
               </div>
-              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-              <div
-                className="p-3 bg-default/30 backdrop-blur-xl rounded-lg cursor-pointer flex items-center justify-between"
-                onClick={themeModalDisclosure.onOpen}>
-                <div className="flex items-start gap-4 text-gray-400">
-                  <Image
-                    width={60}
-                    src={
-                      Themes.find(
-                        (_theme) => _theme.label === selectedTheme?.theme
-                      )?.image || '/images/invite/none-theme.png'
-                    }
-                    classNames={{ img: 'rounded-sm' }}
-                  />
-                  <div className="">
-                    <p className={cn('text-gray-600 font-medium')}>
-                      Page Theme
-                    </p>
-                    <p className={cn('text-sm text-gray-600 mt-1')}>
-                      {selectedTheme?.theme || 'None'}
-                    </p>
-                  </div>
-                </div>
-                <RenderIf isTrue={!!selectedTheme?.theme}>
-                  <AiOutlineClose
-                    size={20}
-                    className="text-gray-600"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      createEventForm.setValue('theme', undefined)
-                    }}
-                  />
-                </RenderIf>
-              </div>
+              <ThemePicker
+                selectedTheme={selectedTheme}
+                disclosure={themeModalDisclosure}
+                onThemeChange={handleThemeChange}
+              />
 
               {/* <div>
                 <div className="flex items-center gap-2">
@@ -444,10 +414,7 @@ export function EventsCreatePage() {
                   )}
                 </ModalContent>
               </Modal>
-              <ThemeModal
-                disclosure={themeModalDisclosure}
-                onChange={handleThemeChange}
-              />
+
               <Button
                 style={{
                   background:

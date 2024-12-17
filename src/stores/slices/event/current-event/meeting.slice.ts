@@ -125,12 +125,19 @@ attachStoreListener({
 
     if (response.type === 'event/updateMeeting/fulfilled') {
       if (deletedSectionIndex < 0) return
-
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const nextSectionId = response.payload.sections[deletedSectionIndex]
+      const sectionsInPayload = response.payload.sections
 
-      dispatch(setCurrentSectionIdAction(nextSectionId))
+      const nextSectionId = sectionsInPayload[deletedSectionIndex]
+      const previousSectionId = sectionsInPayload[deletedSectionIndex - 1]
+      // When last section is deleted
+      if (deletedSectionIndex === sectionsInPayload.length) {
+        dispatch(setCurrentSectionIdAction(previousSectionId))
+      } else {
+        // When in between section is deleted
+        dispatch(setCurrentSectionIdAction(nextSectionId))
+      }
     }
   },
 })

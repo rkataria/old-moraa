@@ -7,6 +7,7 @@ import { FaTableCellsRowLock } from 'react-icons/fa6'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Header } from './Header'
+import { SwitchToEditModal } from './SwitchToEditModal'
 import { AssignmentOption } from '../common/breakout/AssignmentOptionSelector'
 import {
   BREAKOUT_TYPES,
@@ -183,6 +184,7 @@ export function FrameManager() {
       />
       <SyncingStatus syncing={syncing} />
       <KeyboardShortcutsModal />
+      <SwitchToEditModal />
       <RenderIf isTrue={openBreakoutSelectorModal}>
         <BreakoutTypePicker
           open={openBreakoutSelectorModal}

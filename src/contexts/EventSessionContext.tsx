@@ -184,6 +184,19 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         )
       }
     )
+
+    meetingRealtimeChannel.on(
+      'broadcast',
+      { event: 'sound-alert' },
+      ({ payload, sessionId }) => {
+        const { sound } = payload
+        if (sessionId !== session?.id) return
+        if (!sound) return
+        window.dispatchEvent(
+          new CustomEvent('sound_added', { detail: { sound } })
+        )
+      }
+    )
   }, [meetingRealtimeChannel, session?.id])
 
   useEffect(() => {
@@ -646,6 +659,17 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     })
   }
 
+  const sendSoundAlert = ({ sound }: { sound: string }) => {
+    meetingRealtimeChannel?.send({
+      type: 'broadcast',
+      event: 'sound-alert',
+      payload: {
+        sound,
+        sessionId: session?.id,
+      },
+    })
+  }
+
   const updateActiveSession = async (data: object) => {
     if (!activeSession) return
     dispatch(updateMeetingSessionDataAction(data))
@@ -683,6 +707,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         setVideoMiddlewareConfig,
         flyEmoji,
         updateActiveSession,
+        sendSoundAlert,
       }}>
       {children}
     </EventSessionContext.Provider>

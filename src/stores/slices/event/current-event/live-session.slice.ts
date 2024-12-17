@@ -46,6 +46,12 @@ export type SessionState = {
   breakoutType?: 'planned' | 'unplanned' | null
   timerStartedStamp?: number | null
   timerDuration?: number | null
+  music?: {
+    track?: string
+    play?: boolean
+    volume?: number
+    mute?: boolean
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   framesConfig?: any
 }
