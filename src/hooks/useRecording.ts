@@ -28,7 +28,7 @@ export function useRecording() {
     ['IDLE', 'STARTING', 'RECORDING'].includes(r.state)
   )
 
-  const isHost = permissions.canAcessAllSessionControls()
+  const isHost = permissions.canAcessAllSessionControls
 
   useEffect(() => {
     if (!isRecording) return
