@@ -60,9 +60,6 @@ export function RecordPage() {
   }
   const { authToken } = searchParams
 
-  const enrollment = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState.enrollment.data
-  )
   const meetingEl = useRef<HTMLDivElement>(null)
 
   const [dyteClient, initDyteMeeting] = useDyteClient()
@@ -143,7 +140,6 @@ export function RecordPage() {
       recordingSDK.startRecording()
     }
 
-    if (!enrollment?.meeting_token) return
     if (!isEventLoaded || !isMeetingLoaded) return
 
     if (!dyteClient) {
@@ -156,19 +152,9 @@ export function RecordPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dyteClient, authToken, isEventLoaded, isMeetingLoaded])
 
-  if (!enrollment?.meeting_token) {
-    return (
-      <div className="w-full h-screen flex justify-center items-center">
-        {/* Actual message: Generating meeting token */}
-        <Loading message="Finding your live session" />
-      </div>
-    )
-  }
-
   if (meetingEl.current) {
     provideDyteDesignSystem(meetingEl.current, {
       googleFont: 'Outfit',
-      // sets light background colors
       theme: 'light',
       colors: {
         danger: '#e40909',
@@ -188,13 +174,11 @@ export function RecordPage() {
   }
 
   if (!authToken) {
-    return (
-      <div className="p-4 border-4 border-red-500">Auth token not found</div>
-    )
+    return <div className="outline-4 border-red-500">Auth token not found</div>
   }
 
   if (!eventId) {
-    return <div className="p-4 border-4 border-red-500">Event ID not found</div>
+    return <div className="outline-4 border-red-500">Event ID not found</div>
   }
 
   return (
@@ -209,7 +193,7 @@ export function RecordPage() {
         <BreakoutManagerContextProvider>
           <EventProvider eventMode="present">
             <EventSessionProvider>
-              <div className="p-4 border-4 border-green-500">
+              <div className="outline-4 border-green-500">
                 <RecordingView />
               </div>
             </EventSessionProvider>

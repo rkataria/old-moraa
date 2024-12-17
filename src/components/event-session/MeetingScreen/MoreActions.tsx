@@ -8,6 +8,8 @@ import {
   DropdownTrigger,
 } from '@nextui-org/react'
 import toast from 'react-hot-toast'
+import { BsRecord2 } from 'react-icons/bs'
+import { FaStopCircle } from 'react-icons/fa'
 import { HiDotsVertical } from 'react-icons/hi'
 import { IoSettingsOutline, IoVolumeMuteOutline } from 'react-icons/io5'
 import { LuUserPlus2 } from 'react-icons/lu'
@@ -15,23 +17,18 @@ import { LuUserPlus2 } from 'react-icons/lu'
 import { AddParticipantsModal } from '@/components/common/AddParticipantsModal'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useStoreSelector } from '@/hooks/useRedux'
-import { DyteRecordingService } from '@/services/dyte-recording.service'
+import { useRecording } from '@/hooks/useRecording'
 import { cn } from '@/utils/utils'
 
 export function MoreActions() {
-  const [meetingRecordingId, setMeetingRecordingId] = useState<string | null>(
-    null
-  )
   const { setDyteStates, isHost } = useEventSession()
   const [open, setOpen] = useState(false)
   const [openAddParticipantsModal, setOpenAddParticipantsModal] =
     useState(false)
-  const enrollment = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState.enrollment.data
-  )
 
   const { meeting } = useDyteMeeting()
+
+  const { isRecording, startRecording } = useRecording()
 
   const handleMicDisable = async () => {
     meeting.participants.joined.toArray().forEach((p) => {
@@ -47,42 +44,17 @@ export function MoreActions() {
       items.push(
         <DropdownItem
           key="record-meeting"
-          startContent={<LuUserPlus2 />}
+          startContent={isRecording ? <FaStopCircle /> : <BsRecord2 />}
           onClick={async () => {
-            if (!enrollment?.meeting_token) return
+            if (isRecording) {
+              meeting.recording.stop()
 
-            if (meetingRecordingId) {
-              const response = await DyteRecordingService.stopMeeting({
-                recordingId: meetingRecordingId,
-                token: enrollment?.meeting_token,
-              })
-
-              const data = await response.json()
-
-              if (response.ok) {
-                setMeetingRecordingId(null)
-                toast.success('Recording stopped')
-              } else {
-                toast.error('Failed to stop recording', data)
-              }
-            } else {
-              const response = await DyteRecordingService.startMeeting({
-                token: enrollment?.meeting_token,
-                meetingId: meeting.connectedMeetings.currentMeetingId,
-                url: `https://dev.moraa.co/event-session/${enrollment?.event_id}/record`,
-              })
-
-              const data = await response.json()
-
-              if (response.ok) {
-                setMeetingRecordingId(data.id)
-                toast.success('Recording started')
-              } else {
-                toast.error('Failed to start recording', data)
-              }
+              return
             }
+
+            startRecording()
           }}>
-          {meetingRecordingId ? 'Stop recording' : 'Start recording'}
+          {isRecording ? 'Stop recording' : 'Start recording'}
         </DropdownItem>
       )
 

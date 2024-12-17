@@ -12,6 +12,7 @@ import { EmbedEdit } from './EmbedEdit'
 import { IframeEdit } from './IframeEdit'
 import { ImportEdit } from './ImportEdit'
 
+import { useFlags } from '@/flags/client'
 import { type GoogleSlidesFrame } from '@/types/frame-picker.type'
 import { cn } from '@/utils/utils'
 
@@ -35,11 +36,7 @@ type EditProps = {
 
 export function Edit({ frame }: EditProps) {
   const [mode, setMode] = useState<'import' | 'embed' | null>(null)
-  const { flags } = {
-    flags: {
-      import_google_slides: true,
-    },
-  } // useFlags()
+  const { flags } = useFlags()
 
   // If frame has googleSlideUrl, allow to edit google slides content
   if (frame.content?.googleSlideUrl) {

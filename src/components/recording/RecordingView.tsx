@@ -54,8 +54,6 @@ export function RecordingView() {
       dispatch(updateEventSessionModeAction(EventSessionMode.PRESENTATION))
     }
 
-    // TODO: Move this code to right place.
-    // dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScreensharing, activePlugin, presentationStatus, preview, isHost])
 
