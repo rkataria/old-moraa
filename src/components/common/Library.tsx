@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from '@tanstack/react-query'
 
-import { Frame } from './Frame/Frame'
+import { FrameGridView } from './AgendaPanel/FrameGridView'
 
 import { useProfile } from '@/hooks/useProfile'
 import { LibraryService } from '@/services/library.service'
@@ -15,8 +16,14 @@ export function FrameLibrary() {
 
   return (
     <div className="grid grid-cols-5 gap-4 ">
-      {libraryQuery.data?.map((libraryItem) => (
-        <Frame frame={libraryItem.frame} isThumbnail />
+      {libraryQuery.data?.map((libraryItem: any) => (
+        <FrameGridView
+          frameActive={false}
+          frame={libraryItem.frame}
+          handleFrameAction={() => null}
+          onClick={() => null}
+          sidebarExpanded
+        />
       ))}
     </div>
   )

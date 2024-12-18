@@ -13,7 +13,7 @@ export const Route = createFileRoute('/(dashboard)/_layout/library/')({
 
 function Page() {
   return (
-    <EventProvider eventMode="edit">
+    <EventProvider eventMode="view">
       <FrameLibrary />
     </EventProvider>
   )

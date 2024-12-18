@@ -34,7 +34,7 @@ export type EventContextType = {
   setSelectedSectionId: (sectionId: string | null) => void
   setPreview: (preview: boolean) => void
   setCurrentFrame: (frame: IFrame | null) => void
-  saveFrameInLibrary: (frame: IFrame | null) => void
+  saveFrameInLibrary: (frame: Partial<IFrame>) => void
   setOverviewOpen: (open: boolean) => void
   openContentTypePicker: boolean
   setOpenContentTypePicker: Dispatch<SetStateAction<boolean>>
