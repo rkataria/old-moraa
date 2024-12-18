@@ -41,11 +41,13 @@ export function AssignmentOptionSelector({
         'grid grid-cols-[50%_50%] gap-2': label && layout === 'columns',
         'flex flex-col gap-2': label && layout === 'rows',
       })}>
-      {label && (
-        <div>
-          <p>{label}</p>
-        </div>
-      )}
+      <p className="flex items-center">
+        {label && (
+          <div>
+            <p>{label}</p>
+          </div>
+        )}
+      </p>
       <div className="flex justify-start items-center">
         <Select
           className="w-full flex-none text-xs"
