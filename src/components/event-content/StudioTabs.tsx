@@ -64,6 +64,7 @@ export function StudioTabs() {
   return (
     <div className="h-full">
       <Tabs
+        keyboardActivation="manual"
         variant="underlined"
         aria-label="Studio Tabs"
         color="primary"

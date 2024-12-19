@@ -8,7 +8,7 @@ export function TextBlockView({ block }: { block: TextBlock }) {
     <div
       style={{ wordBreak: 'break-word' }}
       key={`block-editor-${block.id}`}
-      className={cn('w-full text-base', {
+      className={cn('w-full text-base tiptap ProseMirror', {
         'block-content-header': block.type === 'header',
         'block-content-paragraph': block.type === 'paragraph',
       })}

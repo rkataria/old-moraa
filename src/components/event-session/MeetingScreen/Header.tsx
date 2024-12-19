@@ -10,8 +10,8 @@ import { ChatsToggle } from '../ChatsToggle'
 import { ParticipantsToggle } from '../ParticipantsToggle'
 
 import { AgendaPanelToggle } from '@/components/common/AgendaPanel/AgendaPanelToggle'
-import { Logo } from '@/components/common/Logo'
 import { MoraaLogo } from '@/components/common/MoraaLogo'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -63,18 +63,16 @@ export function Header() {
     <div className="h-full w-full flex justify-between items-center gap-4 px-4">
       <div className="flex-1 flex justify-start items-center gap-2 h-full">
         <MoraaLogo color="primary" filled className="mr-2" />
-        <div className="pr-1">
-          {permissions.canAcessAllSessionControls ? (
+        <RenderIf isTrue={permissions.canAcessAllSessionControls}>
+          <div className="pr-1">
             <AgendaPanelToggle
               collapsed={leftSidebarMode === 'collapsed'}
               onToggle={() => {
                 dispatch(toggleLeftSidebarAction())
               }}
             />
-          ) : (
-            <Logo />
-          )}
-        </div>
+          </div>
+        </RenderIf>
         <div className="pr-2 pl-1 min-w-fit max-w-32 text-ellipsis font-medium line-clamp-1">
           {meetingTitles?.find((m) => m.id === dyetMeeting.meta.meetingId)
             ?.title || event.name}{' '}
