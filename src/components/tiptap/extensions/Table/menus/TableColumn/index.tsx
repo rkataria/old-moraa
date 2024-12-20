@@ -42,8 +42,12 @@ export const TableColumnMenu = React.memo(
         tippyOptions={{
           appendTo: () => appendTo?.current,
           offset: [0, 15],
+          placement: 'auto-end',
           popperOptions: {
-            modifiers: [{ name: 'flip', enabled: false }],
+            modifiers: [
+              { name: 'flip', enabled: true },
+              { name: 'preventOverflow', options: { boundary: 'viewport' } },
+            ],
           },
         }}
         shouldShow={shouldShow}>

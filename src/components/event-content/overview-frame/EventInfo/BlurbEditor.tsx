@@ -76,7 +76,7 @@ export function BlurbEditor({
       </div>
 
       <div
-        className={cn('relative group/blurb', className, {
+        className={cn('relative group/blurb z-[11]', className, {
           'shadow-sm backdrop-blur-2xl rounded-lg': preview,
           'min-h-[300px]': !preview,
         })}>

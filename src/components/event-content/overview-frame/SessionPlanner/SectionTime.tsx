@@ -197,12 +197,7 @@ export function SectionTime({
           color="danger"
           content={`Calculated time is exceeding planned time by ${timeDifference.hours}h ${timeDifference.minutes}m. Please align the times correctly.`}
           radius="sm">
-          <Button
-            isIconOnly
-            className="w-6 h-6 min-w-6 hover:bg-transparent"
-            variant="light">
-            <IoCloseCircle className="text-xl text-red-500" />
-          </Button>
+          <IoCloseCircle className="text-xl text-red-500" />
         </Tooltip>
       </RenderIf>
     </div>

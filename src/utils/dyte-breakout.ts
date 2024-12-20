@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BreakoutRoomsManager } from '@dytesdk/react-ui-kit'
 import DyteClient from '@dytesdk/web-core'
-import chunk from 'lodash.chunk'
+// eslint-disable-next-line import/no-extraneous-dependencies
+
+import { shuffleAndGroup } from './shuffle-array'
 
 import { AssignmentOption } from '@/components/common/breakout/AssignmentOptionSelector'
 
@@ -92,12 +94,15 @@ export class BreakoutRooms {
     const getGroupSize = () => {
       if (participantsPerRoom) return participantsPerRoom
 
-      return Math.ceil(participants.length / roomsCount!)
+      return Math.floor(participants.length / roomsCount!)
     }
 
     const groupSize = getGroupSize()
 
-    const participantGroups = chunk(participants, groupSize)
+    const participantGroups = shuffleAndGroup(
+      participants.map((p) => p.customParticipantId!).sort(),
+      groupSize
+    )
 
     this.manager.addNewMeetings(roomsCount || participantGroups.length)
 
@@ -117,7 +122,7 @@ export class BreakoutRooms {
           assignmentOption === 'auto'
         ) {
           this.manager.assignParticipantsToMeeting(
-            breakoutRoomParticipants.map((p) => p.customParticipantId!),
+            breakoutRoomParticipants.map((p) => p),
             createdMeeting.id
           )
         }

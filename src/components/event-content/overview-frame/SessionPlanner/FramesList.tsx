@@ -3,6 +3,7 @@
 import { Fragment, useState } from 'react'
 
 import { Checkbox } from '@nextui-org/react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { BottomBar } from './BottomBar/BottomBar'
 // eslint-disable-next-line import/no-cycle
@@ -16,7 +17,7 @@ import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { IFrame, ISection } from '@/types/frame.type'
 import { getBlankFrame } from '@/utils/content.util'
-import { cn } from '@/utils/utils'
+import { cn, KeyboardShortcuts } from '@/utils/utils'
 
 export function FramesList({
   section,
@@ -69,6 +70,10 @@ export function FramesList({
       section,
     })
   }
+
+  useHotkeys(KeyboardShortcuts['Studio Mode'].newFrame.key, () => addFrame(), {
+    enabled: !preview && insertInSectionId === section.id,
+  })
 
   return (
     <>
