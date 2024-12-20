@@ -27,17 +27,17 @@ const saveFrameInLibrary = async (frameId: IFrame['id'], profileId: string) =>
   })
 
 const importFrameFromLibrary = async ({
-  libraryId,
+  frameId,
   meetingId,
   sectionId,
 }: {
-  libraryId: string
+  frameId: string
   sectionId: string
   meetingId: string
 }) =>
   supabaseClient.functions.invoke('import-from-library', {
     body: {
-      libraryId,
+      frameId,
       meetingId,
       sectionId,
     },

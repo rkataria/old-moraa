@@ -81,7 +81,7 @@ export function FramePicker({
 
   const onFrameImport = async (frame: IFrame) => {
     await LibraryService.importFrameFromLibrary({
-      libraryId: frame.id,
+      frameId: frame.id,
       meetingId: meeting?.id,
       sectionId: currentSectionId || sections[sections.length - 1]?.id,
     })
