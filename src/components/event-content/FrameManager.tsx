@@ -24,7 +24,8 @@ import { SyncingStatus } from '../common/SyncingStatus'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useStoreSelector } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { setExpandedSectionsAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus, EventStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
 import { getDefaultContent } from '@/utils/content.util'
@@ -46,6 +47,10 @@ export function FrameManager() {
 
   const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
 
+  const expandedSectionIds = useStoreSelector(
+    (state) => state.layout.studio.expandedSections
+  )
+
   const [openBreakoutSelectorModal, setOpenBreakoutSelectorModal] =
     useState<boolean>(false)
 
@@ -61,6 +66,8 @@ export function FrameManager() {
     insertInSectionId,
     addFrameToSection,
   } = useEventContext()
+
+  const dispatch = useStoreDispatch()
 
   useHotkeys(
     KeyboardShortcuts['Studio Mode'].newFrame.key,
@@ -143,6 +150,12 @@ export function FrameManager() {
     setContentType(null)
     setTemplateKey(undefined)
     setOpenBreakoutSelectorModal(false)
+
+    if (!expandedSectionIds.includes(insertInSection.id)) {
+      dispatch(
+        setExpandedSectionsAction([...expandedSectionIds, insertInSection.id])
+      )
+    }
   }
 
   if (eventLoading || loading) {

@@ -6,6 +6,7 @@ import { Chip } from '@nextui-org/react'
 import { IoChevronForward } from 'react-icons/io5'
 import { v4 as uuidv4 } from 'uuid'
 
+import { AddItemBar } from './AddItemBar'
 import { FrameList } from './FrameList'
 import { DeleteConfirmationModal } from '../DeleteConfirmationModal'
 import { EditableLabel } from '../EditableLabel'
@@ -236,6 +237,10 @@ export function SectionItem({
               sectionStartingIndex={startingIndex}
               actionDisabled={actionDisabled}
             />
+            <RenderIf isTrue={section.frames.length === 0}>
+              <AddItemBar sectionId={section.id!} frameId="" />
+            </RenderIf>
+
             <RenderIf
               isTrue={!sidebarExpanded && sectionExpanded && frames.length > 2}>
               <div
