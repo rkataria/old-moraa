@@ -49,12 +49,14 @@ type ParticipantsGridProps = {
   participants: (DyteParticipant | Readonly<DyteSelf>)[]
 }
 
+const BOX_WIDTH = 300
+
 export function ParticipantsGrid({ participants }: ParticipantsGridProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(0)
   const [rows, setRows] = useState(0)
   const [columns, setColumns] = useState(0)
-  const [boxWidth, setBoxWidth] = useState(300)
+  const [boxWidth, setBoxWidth] = useState(BOX_WIDTH)
   const gridRef = useRef<HTMLDivElement>(null)
   const { activeSession } = useEventSession()
 
@@ -77,7 +79,7 @@ export function ParticipantsGrid({ participants }: ParticipantsGridProps) {
       } = calculateMaxBoxes(
         gridRef.current?.clientWidth as number,
         gridRef.current?.clientHeight as number,
-        300
+        BOX_WIDTH
       )
 
       setItemsPerPage(maxBoxes || 0)
@@ -190,6 +192,7 @@ export function ParticipantsGrid({ participants }: ParticipantsGridProps) {
             <ParticipantTile
               participant={participant}
               handRaised={handRaised.includes(participant.id)}
+              showOrder={handRaisedActiveParticipants.length > 1}
               handRaisedOrder={
                 handRaisedActiveParticipants.findIndex(
                   (p) => p.id === participant.id

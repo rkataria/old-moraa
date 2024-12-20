@@ -4,6 +4,7 @@ import { IoMicOff, IoMicOutline } from 'react-icons/io5'
 
 import { ControlButton } from '../common/ControlButton'
 
+import { useDetectSpeaking } from '@/hooks/useDetectSpeaking'
 import { useUserPreferences } from '@/hooks/userPreferences'
 import { cn, KeyboardShortcuts } from '@/utils/utils'
 
@@ -11,6 +12,9 @@ export function MicToggle({ className = '' }: { className?: string }) {
   const { userPreferencesMeetingAudio } = useUserPreferences()
   const self = useDyteSelector((state) => state.self)
   const isMicEnabled = useDyteSelector((state) => state.self?.audioEnabled)
+  const { isSpeaking } = useDetectSpeaking({
+    detect: !self.audioEnabled,
+  })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleMic = (e?: any) => {
@@ -32,6 +36,22 @@ export function MicToggle({ className = '' }: { className?: string }) {
     isMicEnabled,
   ])
 
+  const getTooltipProps = () => {
+    if (isSpeaking) {
+      return {
+        label:
+          'Are you speaking? You are on mute. Clik the mic button or press the shortcut to unmute',
+        actionKey: KeyboardShortcuts.Live.muteUnmute.key,
+        isOpen: true,
+      }
+    }
+
+    return {
+      label: KeyboardShortcuts.Live.muteUnmute.label,
+      actionKey: KeyboardShortcuts.Live.muteUnmute.key,
+    }
+  }
+
   return (
     <ControlButton
       buttonProps={{
@@ -45,10 +65,7 @@ export function MicToggle({ className = '' }: { className?: string }) {
         disableAnimation: true,
         disableRipple: true,
       }}
-      tooltipProps={{
-        label: KeyboardShortcuts.Live.muteUnmute.label,
-        actionKey: KeyboardShortcuts.Live.muteUnmute.key,
-      }}
+      tooltipProps={getTooltipProps()}
       onClick={handleMic}>
       {isMicEnabled ? <IoMicOutline size={18} /> : <IoMicOff size={18} />}
     </ControlButton>

@@ -14,6 +14,7 @@ export type TooltipComponentProps = {
   label?: string | ReactNode
   actionKey?: string
   content?: ReactNode
+  isOpen?: boolean
 }
 
 export type TooltipProps = TooltipComponentProps &
@@ -52,7 +53,7 @@ export function Tooltip({
         )
       }
       radius="md"
-      className={cn('rounded-[4px] bg-gray-900 text-white', {
+      className={cn('rounded-[4px] bg-gray-900 text-white max-w-sm', {
         'pr-1 pl-2': !!actionKey,
       })}
       classNames={{ base: 'before:bg-gray-900' }}>
