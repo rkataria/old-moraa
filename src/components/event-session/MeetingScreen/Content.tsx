@@ -2,6 +2,7 @@ import { PropsWithChildren, useEffect, useRef, useState } from 'react'
 
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
+import { ZenModeView } from './ZenModeView'
 import { ContentContainer } from '../ContentContainer'
 import { ParticipantTiles } from '../ParticipantTiles'
 
@@ -9,12 +10,14 @@ import { BreakoutMessageBroadcast } from '@/components/common/breakout/BreakoutM
 import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsWithParticipants'
 import { PanelResizer } from '@/components/common/PanelResizer'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useAppContext } from '@/hooks/useApp'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { EventSessionMode } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 export function Content() {
+  const { isZenMode } = useAppContext()
   const { eventSessionMode, isHost } = useEventSession()
   const isBreakoutOverviewOpen = useStoreSelector(
     (state) =>
@@ -55,6 +58,7 @@ export function Content() {
     currentFrameId === sessionBreakoutFrameId
 
   const ContentViewModes = {
+    zen_mode_view: <ZenModeView />,
     spotlight_mode_participants: (
       <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-xl m-auto">
         <ParticipantTiles spotlightMode />
@@ -92,6 +96,7 @@ export function Content() {
   }
 
   const contentToShow = cn({
+    zen_mode_view: isZenMode && eventSessionMode === 'Presentation',
     lobby_breakout_view:
       isHost &&
       isBreakoutActive &&
@@ -132,8 +137,8 @@ function PanelsContent({
       <PanelResizer />
 
       <Panel
-        minSize={20}
-        collapsedSize={20}
+        minSize={15}
+        collapsedSize={15}
         defaultSize={20}
         maxSize={50}
         ref={panelRef}>

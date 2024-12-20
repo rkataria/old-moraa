@@ -13,14 +13,17 @@ import { FaStopCircle } from 'react-icons/fa'
 import { HiDotsVertical } from 'react-icons/hi'
 import { IoSettingsOutline, IoVolumeMuteOutline } from 'react-icons/io5'
 import { LuUserPlus2 } from 'react-icons/lu'
+import { RiFocus2Fill, RiFocus2Line } from 'react-icons/ri'
 
 import { AddParticipantsModal } from '@/components/common/AddParticipantsModal'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useAppContext } from '@/hooks/useApp'
 import { useRecording } from '@/hooks/useRecording'
 import { cn } from '@/utils/utils'
 
 export function MoreActions() {
+  const { isZenMode, toggleZenMode } = useAppContext()
   const { setDyteStates, isHost } = useEventSession()
   const [open, setOpen] = useState(false)
   const [openAddParticipantsModal, setOpenAddParticipantsModal] =
@@ -89,6 +92,15 @@ export function MoreActions() {
           }))
         }}>
         Video settings
+      </DropdownItem>
+    )
+
+    items.push(
+      <DropdownItem
+        key="zen-mode"
+        startContent={isZenMode ? <RiFocus2Fill /> : <RiFocus2Line />}
+        onClick={toggleZenMode}>
+        {isZenMode ? 'Disable' : 'Enable'} Zen Mode
       </DropdownItem>
     )
 
