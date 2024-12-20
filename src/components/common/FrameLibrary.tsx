@@ -10,6 +10,7 @@ import { RxDotsVertical } from 'react-icons/rx'
 
 // eslint-disable-next-line import/no-cycle
 import { FrameThumbnailCard } from './AgendaPanel/FrameThumbnailCard'
+import { ContentLoading } from './ContentLoading'
 import { DropdownActions } from './DropdownActions'
 
 import { RoomProvider } from '@/contexts/RoomProvider'
@@ -42,8 +43,16 @@ export function FrameLibrary({
     libraryQuery.refetch()
   }
 
+  if (libraryQuery.isLoading) {
+    return (
+      <div className="min-h-96 flex flex-col justify-center items-center">
+        <ContentLoading />
+      </div>
+    )
+  }
+
   return (
-    <div className="grid grid-cols-5 gap-4 ">
+    <div className="grid grid-cols-5 gap-4 min-h-96">
       {libraryQuery.data?.map((libraryItem: any) => (
         <div
           key={`frame-${libraryItem.id}`}

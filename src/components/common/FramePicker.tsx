@@ -83,7 +83,7 @@ export function FramePicker({
     await LibraryService.importFrameFromLibrary({
       libraryId: frame.id,
       meetingId: meeting?.id,
-      sectionId: currentSectionId || sections[0]?.id,
+      sectionId: currentSectionId || sections[sections.length - 1]?.id,
     })
 
     toast.success('Frame imported')
