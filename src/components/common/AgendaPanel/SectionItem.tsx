@@ -237,7 +237,7 @@ export function SectionItem({
               sectionStartingIndex={startingIndex}
               actionDisabled={actionDisabled}
             />
-            <RenderIf isTrue={section.frames.length === 0}>
+            <RenderIf isTrue={section.frames.length === 0 || !sectionExpanded}>
               <AddItemBar sectionId={section.id!} frameId="" />
             </RenderIf>
 
