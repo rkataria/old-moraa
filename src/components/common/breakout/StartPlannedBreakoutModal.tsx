@@ -101,8 +101,8 @@ export function StartPlannedBreakoutModal({
 
   const DurationUI = (
     <div className="grid grid-cols-[50%_50%] gap-2">
-      <p>Duration (mins):</p>
-      <div className="flex justify-center items-center">
+      <p className="flex items-center">Duration (mins):</p>
+      <div className="flex justify-end items-center">
         <NumberInput
           min={1}
           max={30}
@@ -152,7 +152,7 @@ export function StartPlannedBreakoutModal({
     rooms: (
       <div className="grid grid-cols-[50%_50%] gap-2">
         <div>
-          <p>Number of rooms:</p>{' '}
+          <p className="flex items-center">Number of rooms:</p>{' '}
           <p className="text-xs text-gray-500">
             Approx{' '}
             {Math.ceil(
@@ -161,7 +161,7 @@ export function StartPlannedBreakoutModal({
             participant(s) per room.
           </p>
         </div>
-        <div className="flex justify-center items-center">
+        <div className="flex justify-end px-11 items-center">
           {breakoutConfig.roomsCount}
         </div>
       </div>
@@ -169,7 +169,7 @@ export function StartPlannedBreakoutModal({
     participants_per_room: (
       <div className="grid grid-cols-[50%_50%] gap-2">
         <div>
-          <p>Max participants per room:</p>
+          <p className="flex items-center">Max participants per room:</p>
           <p className="text-xs text-gray-500">
             {Math.ceil(
               currentParticipantCount / breakoutConfig.participantPerGroup
@@ -199,7 +199,7 @@ export function StartPlannedBreakoutModal({
   const ConfigureRoomsUI = (
     <div className="grid grid-cols-[50%_50%] gap-2">
       <div>
-        <p>Number of rooms:</p>{' '}
+        <p className="flex items-center">Number of rooms:</p>{' '}
         <p className="text-xs text-gray-500">
           Approx{' '}
           {Math.ceil(

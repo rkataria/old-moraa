@@ -54,7 +54,7 @@ export function AddItemStickyDropdownActions({
     isOwner,
     eventMode,
     currentFrame,
-    selectedSectionId,
+    insertInSectionId,
     addSection,
     setInsertAfterFrameId,
     setInsertInSectionId,
@@ -80,7 +80,7 @@ export function AddItemStickyDropdownActions({
   const handleAddItem = (itemKey: any) => {
     const selectedOptionValue = Array.from(itemKey)[0]
 
-    if (selectedSectionId) {
+    if (insertInSectionId) {
       addItem(selectedOptionValue as string)
 
       return
