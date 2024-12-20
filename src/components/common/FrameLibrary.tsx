@@ -1,20 +1,32 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef } from 'react'
 
 import { Button } from '@nextui-org/button'
+import { IconTrash } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { IoTrashBin } from 'react-icons/io5'
+import { RxDotsVertical } from 'react-icons/rx'
 
+// eslint-disable-next-line import/no-cycle
 import { FrameThumbnailCard } from './AgendaPanel/FrameThumbnailCard'
+import { DropdownActions } from './DropdownActions'
 
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useProfile } from '@/hooks/useProfile'
 import { LibraryService } from '@/services/library.service'
+import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
-export function FrameLibrary() {
+export function FrameLibrary({
+  onFrameClick,
+  allowFrameDelete,
+}: {
+  onFrameClick?: (frame: IFrame) => void
+  allowFrameDelete?: boolean
+}) {
   const profile = useProfile()
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const libraryQuery = useQuery({
@@ -25,20 +37,47 @@ export function FrameLibrary() {
 
   const { width: containerWidth } = useDimensions(thumbnailContainerRef, [])
 
-  const onFrameDeleteClick = () => {}
+  const onFrameDeleteClick = (frameId: string) => async () => {
+    await LibraryService.deleteFrameFromLibrary(frameId)
+    libraryQuery.refetch()
+  }
 
   return (
     <div className="grid grid-cols-5 gap-4 ">
       {libraryQuery.data?.map((libraryItem: any) => (
         <div
           key={`frame-${libraryItem.id}`}
+          onClick={() => onFrameClick?.(libraryItem?.frame)}
           className={cn(
-            'relative mr-6 cursor-pointer overflow-hidden rounded-lg group/frame-item'
+            'cursor-pointer overflow-hidden rounded-lg group/frame-item shadow shadow-sm border border-gray-200 px-2 pb-2'
           )}>
-          <div
-            className={cn(
-              'relative flex flex-col transition-all duration-400 ease-in-out '
-            )}>
+          <div className="flex justify-between items-center py-1">
+            <p className="text-gray-600 text-xs font-medium">
+              {libraryItem.frame?.name}
+            </p>
+            {allowFrameDelete ? (
+              <DropdownActions
+                triggerIcon={
+                  <Button
+                    size="sm"
+                    isIconOnly
+                    variant="light"
+                    className="shrink-0">
+                    <RxDotsVertical size={18} />
+                  </Button>
+                }
+                actions={[
+                  {
+                    key: 'delete',
+                    label: 'Remove',
+                    icon: <IconTrash className="text-red-500" size={18} />,
+                  },
+                ]}
+                onAction={onFrameDeleteClick(libraryItem.frame.id)}
+              />
+            ) : null}
+          </div>
+          <div className="relative">
             <div
               className={cn(
                 'w-full rounded-lg border border-gray-300 overflow-hidden aspect-video bg-gray-100'
@@ -62,15 +101,6 @@ export function FrameLibrary() {
               </div>
             </div>
           </div>
-
-          <Button
-            className="absolute top-0 right-0"
-            isIconOnly
-            variant="light"
-            color="danger"
-            onClick={onFrameDeleteClick}>
-            <IoTrashBin />
-          </Button>
         </div>
       ))}
     </div>

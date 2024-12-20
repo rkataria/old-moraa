@@ -195,16 +195,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const saveFrameInLibrary = async (frame: Partial<IFrame>) => {
+    if (!frame.id) return
     try {
-      await LibraryService.saveFrameInLibrary(
-        {
-          config: frame.config,
-          content: frame.content,
-          name: frame.name,
-          type: frame.type,
-        },
-        currentUser!.id
-      )
+      await LibraryService.saveFrameInLibrary(frame.id, currentUser!.id)
       toast.success('Frame saved in library')
     } catch (err) {
       console.error(err)

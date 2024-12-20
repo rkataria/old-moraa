@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { FrameService } from './frame.service'
+
 import { IFrame } from '@/types/frame.type'
 import { supabaseClient } from '@/utils/supabase/client'
 
@@ -16,36 +18,38 @@ const getFrameFromLibrary = async (profileId: string) => {
   )
 }
 
-const saveFrameInLibrary = async (
-  framePayload: Partial<IFrame>,
-  profileId: string
-) => {
-  const newFrame = await supabaseClient
-    .from('frame')
-    .insert([framePayload])
-    .select('*')
-    .single()
+const saveFrameInLibrary = async (frameId: IFrame['id'], profileId: string) =>
+  supabaseClient.functions.invoke('save-to-library', {
+    body: {
+      frameId,
+      profileId,
+    },
+  })
 
-  const query = supabaseClient
-    .from('library')
-    .insert([
-      {
-        frame_id: newFrame.data?.id,
-        profile_id: profileId,
-      },
-    ])
-    .select('*')
-    .single()
+const importFrameFromLibrary = async ({
+  libraryId,
+  meetingId,
+  sectionId,
+}: {
+  libraryId: string
+  sectionId: string
+  meetingId: string
+}) =>
+  supabaseClient.functions.invoke('import-from-library', {
+    body: {
+      libraryId,
+      meetingId,
+      sectionId,
+    },
+  })
 
-  return query.then(
-    (res: any) => res,
-    (error: any) => {
-      throw error
-    }
-  )
+const deleteFrameFromLibrary = async (frameId: string) => {
+  await FrameService.deleteFrame(frameId)
 }
 
 export const LibraryService = {
   saveFrameInLibrary,
   getFrameFromLibrary,
+  deleteFrameFromLibrary,
+  importFrameFromLibrary,
 }

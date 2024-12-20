@@ -4,12 +4,25 @@
 
 import { useState } from 'react'
 
-import { Modal, ModalContent, ModalBody, ModalHeader } from '@nextui-org/react'
+import {
+  Modal,
+  ModalContent,
+  ModalBody,
+  ModalHeader,
+  Tabs,
+  Tab,
+} from '@nextui-org/react'
+import toast from 'react-hot-toast'
 import { IoArrowBack } from 'react-icons/io5'
 
+// eslint-disable-next-line import/no-cycle
+import { FrameLibrary } from './FrameLibrary'
 import { FramePickerCard } from './FramePickerCard'
 import { FramePickerTemplateCard } from './FramePickerTemplateCard'
 
+import { useEventContext } from '@/contexts/EventContext'
+import { LibraryService } from '@/services/library.service'
+import { IFrame } from '@/types/frame.type'
 import {
   FRAME_PICKER_FRAMES,
   FramePickerFrame,
@@ -51,6 +64,8 @@ export function FramePicker({
   onChoose,
   isBreakoutActivity = false,
 }: FramePickerProps) {
+  const { meeting, currentSectionId, sections, setOpenContentTypePicker } =
+    useEventContext()
   const [frameSelected, setFrameSelected] = useState<FramePickerFrame | null>(
     null
   )
@@ -62,6 +77,17 @@ export function FramePicker({
       setFrameSelected(null)
       onChoose(frame.type, frame.templateKey)
     }
+  }
+
+  const onFrameImport = async (frame: IFrame) => {
+    await LibraryService.importFrameFromLibrary({
+      libraryId: frame.id,
+      meetingId: meeting?.id,
+      sectionId: currentSectionId || sections[0]?.id,
+    })
+
+    toast.success('Frame imported')
+    setOpenContentTypePicker(false)
   }
 
   const renderHeaderContents = () => {
@@ -154,30 +180,39 @@ export function FramePicker({
     }
 
     return (
-      <div className="p-4 z-0 flex justify-start items-start gap-8 h-full">
-        {Object.entries(frames).map(([key, value], index) => (
-          <div key={key} className="flex-1 flex flex-col gap-8 pb-4">
-            <div className="flex flex-col gap-1">
-              <span className="text-lg font-semibold text-primary">
-                {value.title}
-              </span>
-              <span>{value.description}</span>
-            </div>
-            <div
-              className={cn('grid grid-cols-3 gap-4', {
-                'relative after:absolute after:content-[""] after:top-0 after:-right-4 after:w-0.5 after:h-full after:bg-gray-100':
-                  index === 0,
-              })}>
-              {value.frames.map((frame) => (
-                <FramePickerCard
-                  key={frame.type}
-                  frame={frame}
-                  onClick={handleChoose}
-                />
+      <div>
+        <Tabs>
+          <Tab title="Create Frame">
+            <div className="p-4 z-0 flex justify-start items-start gap-8 h-full">
+              {Object.entries(frames).map(([key, value], index) => (
+                <div key={key} className="flex-1 flex flex-col gap-8 pb-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-lg font-semibold text-primary">
+                      {value.title}
+                    </span>
+                    <span>{value.description}</span>
+                  </div>
+                  <div
+                    className={cn('grid grid-cols-3 gap-4', {
+                      'relative after:absolute after:content-[""] after:top-0 after:-right-4 after:w-0.5 after:h-full after:bg-gray-100':
+                        index === 0,
+                    })}>
+                    {value.frames.map((frame) => (
+                      <FramePickerCard
+                        key={frame.type}
+                        frame={frame}
+                        onClick={handleChoose}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-        ))}
+          </Tab>
+          <Tab title="Import From Library">
+            <FrameLibrary onFrameClick={onFrameImport} />
+          </Tab>
+        </Tabs>
       </div>
     )
   }

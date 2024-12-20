@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { FrameLibrary } from '@/components/common/Library'
+import { FrameLibrary } from '@/components/common/FrameLibrary'
 import { EventProvider } from '@/contexts/EventContext'
 import { beforeLoad } from '@/utils/before-load'
 
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/(dashboard)/_layout/library/')({
 function Page() {
   return (
     <EventProvider eventMode="view">
-      <FrameLibrary />
+      <FrameLibrary allowFrameDelete />
     </EventProvider>
   )
 }
