@@ -58,6 +58,7 @@ export function FloatingParticipantTiles() {
             key={participant.id}
             participant={participant}
             handRaised={handRaised.includes(participant.id)}
+            showOrder={handRaisedActiveParticipants.length > 1}
             handRaisedOrder={
               handRaisedActiveParticipants.findIndex(
                 (p) => p.id === participant.id

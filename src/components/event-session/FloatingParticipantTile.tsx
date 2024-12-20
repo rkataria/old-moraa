@@ -7,6 +7,7 @@ import {
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant, DyteSelf } from '@dytesdk/web-core'
 import { motion } from 'framer-motion'
+import { IoHandRight } from 'react-icons/io5'
 import uniqolor from 'uniqolor'
 
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
@@ -18,10 +19,12 @@ export function FloatingParticipantTile({
   participant,
   handRaised,
   handRaisedOrder,
+  showOrder,
 }: {
   participant: DyteParticipant | Readonly<DyteSelf>
   handRaised?: boolean
   handRaisedOrder?: number
+  showOrder?: boolean
 }) {
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
@@ -60,28 +63,21 @@ export function FloatingParticipantTile({
       </DyteNameTag>
       {handRaised && (
         <div>
-          <RenderIf isTrue={!!handRaisedOrder}>
-            <div
-              className={cn(
-                'absolute top-1 w-8 h-8 rounded-full bg-black/80 text-white flex justify-center items-center',
-                {
-                  '!right-24': participant.id === selfParticipant.id,
-                  'right-14': participant.id !== selfParticipant.id,
-                }
-              )}>
-              {handRaisedOrder}
-            </div>
-          </RenderIf>
           <motion.span
-            animate={{ scale: [0, 1.5, 1] }}
+            animate={{ scale: [0, 1.1, 1] }}
             className={cn(
-              'absolute top-1 text-2xl flex justify-center items-center',
+              'absolute top-2 h-8 flex justify-center items-center gap-2 bg-black/50 text-white rounded-md',
               {
                 '!right-12': participant.id === selfParticipant.id,
                 'right-3': participant.id !== selfParticipant.id,
+                'px-4': showOrder,
+                'w-8': !showOrder,
               }
             )}>
-            <em-emoji set="apple" id="hand" size={32} />
+            <RenderIf isTrue={!!handRaisedOrder && !!showOrder}>
+              <span>{handRaisedOrder}</span>
+            </RenderIf>
+            <IoHandRight size={20} className="text-yellow-500" />
           </motion.span>
         </div>
       )}
