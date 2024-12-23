@@ -1,14 +1,32 @@
+import { useEffect } from 'react'
+
 import { motion } from 'framer-motion'
 
 import { AgendaPanel } from '@/components/common/AgendaPanel'
 import { LiveAgendaHeader } from '@/components/common/AgendaPanel/LiveAgendaHeader'
 import { useEventContext } from '@/contexts/EventContext'
-import { useStoreSelector } from '@/hooks/useRedux'
+import { useAppContext } from '@/hooks/useApp'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import {
+  maximizeLeftSidebarAction,
+  minimizeLeftSidebarAction,
+} from '@/stores/slices/layout/live.slice'
 import { cn } from '@/utils/utils'
 
 export function LeftSidebar() {
+  const { isZenMode } = useAppContext()
   const { isOwner } = useEventContext()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
+  const dispatch = useStoreDispatch()
+
+  useEffect(() => {
+    if (isZenMode) {
+      dispatch(minimizeLeftSidebarAction())
+    } else {
+      dispatch(maximizeLeftSidebarAction())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isZenMode])
 
   if (!isOwner) return null
 

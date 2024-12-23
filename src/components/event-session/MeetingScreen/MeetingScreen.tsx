@@ -14,6 +14,7 @@ import { DyteParticipant, leaveRoomState } from '@dytesdk/web-core'
 import { Button } from '@nextui-org/button'
 import { useParams, useRouter } from '@tanstack/react-router'
 import toast from 'react-hot-toast'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Content } from './Content'
 import { Footer } from './Footer'
@@ -28,6 +29,7 @@ import { LiveLayout } from '@/components/common/LiveLayout'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useAppContext } from '@/hooks/useApp'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
@@ -52,6 +54,7 @@ export type DyteStates = {
 }
 
 export function MeetingScreen() {
+  const { isZenMode, setZenMode } = useAppContext()
   const { eventId } = useParams({ strict: false })
   const router = useRouter()
   const { meeting } = useDyteMeeting()
@@ -61,13 +64,29 @@ export function MeetingScreen() {
   const isBreakoutStartNotifyOpen = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.breakout.breakoutNotify
   )
-  const { isHost, presentationStatus, dyteStates, setDyteStates } =
-    useEventSession()
+  const {
+    isHost,
+    presentationStatus,
+    dyteStates,
+    setDyteStates,
+    eventSessionMode,
+  } = useEventSession()
   const activePlugin = useDyteSelector((m) => m.plugins.active.toArray()?.[0])
   const selfScreenShared = useDyteSelector((m) => m.self.screenShareEnabled)
   const screensharingParticipant = useDyteSelector((m) =>
     m.participants.joined.toArray().find((p) => p.screenShareEnabled)
   )
+
+  useHotkeys('esc', () => {
+    if (isZenMode) {
+      setZenMode(false)
+
+      return
+    }
+    if (eventSessionMode === EventSessionMode.PEEK) {
+      dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
+    }
+  })
 
   // Purpose of this useEffect is to set the current frame to the first frame of the first section when the meeting starts and there is no current frame.
   useEffect(() => {
