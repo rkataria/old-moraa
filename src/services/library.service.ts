@@ -4,14 +4,27 @@ import { FrameService } from './frame.service'
 import { IFrame } from '@/types/frame.type'
 import { supabaseClient } from '@/utils/supabase/client'
 
-const getFrameFromLibrary = async (profileId: string) => {
+const getFramesFromLibrary = async (profileId: string, page: number = 1) => {
+  const offset = (page - 1) * 10
+
   const framesQuery = supabaseClient
     .from('library')
-    .select('*, frame:frame_id (*)')
+    .select('*, frame:frame_id (*)', { count: 'exact' })
     .eq('profile_id', profileId)
+    .range(offset, 10 * page - 1)
 
   return framesQuery.then(
-    (res: any) => res.data,
+    (res: any) => {
+      if (res.error) {
+        throw res.error
+      }
+
+      return {
+        data: res.data,
+        count: res.count, // Optional if you modify the query to also fetch a count.
+        page,
+      }
+    },
     (error: any) => {
       throw error
     }
@@ -49,7 +62,7 @@ const deleteFrameFromLibrary = async (frameId: string) => {
 
 export const LibraryService = {
   saveFrameInLibrary,
-  getFrameFromLibrary,
+  getFrameFromLibrary: getFramesFromLibrary,
   deleteFrameFromLibrary,
   importFrameFromLibrary,
 }
