@@ -85,7 +85,6 @@ export const useBlockEditor = ({
   const editor = useEditor(
     {
       immediatelyRender: true,
-      shouldRerenderOnTransaction: false,
       autofocus: false,
       // eslint-disable-next-line @typescript-eslint/no-shadow
       onCreate: ({ editor }) => {
