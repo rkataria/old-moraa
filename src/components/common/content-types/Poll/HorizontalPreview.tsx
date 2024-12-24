@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 
-import { VotedUsers } from '@/components/event-session/content-types/Poll/VotedUsers'
+import { VotedUsers } from './VotedUsers'
+
 import { PollPreviewOption } from '@/types/frame.type'
 import { cn, isColorDark } from '@/utils/utils'
 
