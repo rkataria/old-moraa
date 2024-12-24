@@ -14,6 +14,11 @@ export function FrameTitleDescription({
   afterTitle?: ReactNode
 }) {
   const frameTitle = frame.content?.title || frame.content?.question
+  const paragraph = frame.content?.blocks?.find(
+    (block) => block.type === 'paragraph'
+  ) as TextBlock
+
+  if (!frameTitle && !paragraph?.data?.html) return null
 
   return (
     <div className="flex flex-col gap-2">
@@ -22,13 +27,7 @@ export function FrameTitleDescription({
         afterTitle={afterTitle}
       />
 
-      <TextBlockView
-        block={
-          frame.content?.blocks?.find(
-            (block) => block.type === 'paragraph'
-          ) as TextBlock
-        }
-      />
+      <TextBlockView block={paragraph} />
     </div>
   )
 }

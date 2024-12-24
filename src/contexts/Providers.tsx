@@ -12,6 +12,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { LiveblocksProvider } from './LiveblocksProvider'
 import { MoraaSlideEditorContextProvider } from './MoraaSlideEditorContext'
 
+import { AppContextProvider } from '@/hooks/useApp'
 import { UserContextProvider } from '@/hooks/useAuth'
 import { store } from '@/stores/store'
 
@@ -25,14 +26,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <NextUIProvider>
         <QueryClientProvider client={queryClient}>
           <UserContextProvider>
-            <MoraaSlideEditorContextProvider>
-              <LiveblocksProvider>
-                <main className="moraa-light text-foreground bg-background">
-                  {children}
-                </main>
-              </LiveblocksProvider>
-              <Toaster position="bottom-right" reverseOrder={false} />
-            </MoraaSlideEditorContextProvider>
+            <AppContextProvider>
+              <MoraaSlideEditorContextProvider>
+                <LiveblocksProvider>
+                  <main className="moraa-light text-foreground bg-background">
+                    {children}
+                  </main>
+                </LiveblocksProvider>
+                <Toaster position="bottom-right" reverseOrder={false} />
+              </MoraaSlideEditorContextProvider>
+            </AppContextProvider>
           </UserContextProvider>
         </QueryClientProvider>
       </NextUIProvider>

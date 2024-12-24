@@ -23,6 +23,10 @@ export function SwitchToEditModal() {
         [
           KeyboardShortcuts['Studio Mode'].notes.key.toLowerCase(),
           KeyboardShortcuts['Studio Mode'].edit.key.toLowerCase(),
+          KeyboardShortcuts['Studio Mode'].overviewTab.key,
+          KeyboardShortcuts['Studio Mode'].contentTab.key,
+          KeyboardShortcuts['Studio Mode'].planTab.key,
+
           KeyboardShortcuts[
             'Agenda Panel'
           ].expandAndCollapse.key.toLocaleLowerCase(),

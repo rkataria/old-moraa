@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react'
+
 import {
   DyteAudioVisualizer,
   DyteNameTag,
@@ -5,23 +7,21 @@ import {
   DyteScreenshareView,
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Frame } from '../common/Frame/Frame'
 import { SectionOverview } from '../common/SectionOverview'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { useStoreSelector } from '@/hooks/useRedux'
 import {
   EventSessionMode,
   PresentationStatuses,
 } from '@/types/event-session.type'
 
 export function ContentContainer() {
+  const dyteScreenshareViewRef = useRef<HTMLDyteScreenshareViewElement>(null)
   const { currentFrame, presentationStatus, isHost, eventSessionMode } =
     useEventSession()
-  const dispatch = useStoreDispatch()
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
   const activePlugins = useDyteSelector((m) => m.plugins.active.toArray())
@@ -33,20 +33,27 @@ export function ContentContainer() {
     (state) => state.event.currentEvent.eventState.currentSectionId
   )
 
-  useHotkeys('esc', () => {
-    if (eventSessionMode === EventSessionMode.PEEK) {
-      dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
-    }
-  })
-
   const recentActivePlugin = activePlugins?.[activePlugins.length - 1]
+
+  useEffect(() => {
+    if (!dyteScreenshareViewRef.current) return
+
+    setTimeout(() => {
+      dyteScreenshareViewRef.current?.shadowRoot
+        ?.querySelector('div#video-container')
+        ?.setAttribute(
+          'style',
+          'position: absolute; width: 100%; max-width: 100%;'
+        )
+    }, 1000)
+  }, [dyteScreenshareViewRef])
 
   if (screensharingParticipant) {
     return (
       <DyteScreenshareView
+        ref={dyteScreenshareViewRef}
         meeting={meeting}
-        participant={screensharingParticipant}
-        className="h-full">
+        participant={screensharingParticipant}>
         <DyteNameTag participant={screensharingParticipant}>
           <DyteAudioVisualizer
             slot="start"
@@ -60,9 +67,9 @@ export function ContentContainer() {
   if (selfScreenShared) {
     return (
       <DyteScreenshareView
+        ref={dyteScreenshareViewRef}
         meeting={meeting}
-        participant={selfParticipant}
-        className="h-full">
+        participant={selfParticipant}>
         <DyteNameTag participant={selfParticipant}>
           <DyteAudioVisualizer slot="start" participant={selfParticipant} />
         </DyteNameTag>

@@ -24,7 +24,7 @@ export function LiveLayout({
   return (
     <div className="flex flex-col justify-start items-start w-full h-screen overflow-hidden bg-live">
       <Header>{header}</Header>
-      <div className="flex-auto flex justify-start items-start gap-4 w-full overflow-hidden pb-3">
+      <div className="flex-auto flex justify-start items-start gap-4 w-full overflow-hidden py-3 z-0">
         <LeftSidebar>{leftSidebar}</LeftSidebar>
         <Content>{children}</Content>
         <RightSidebar>{rightSidebar}</RightSidebar>
