@@ -54,6 +54,7 @@ export function Live({ frame }: LiveProps) {
 
   const handleCurrentPageChange = (pageNumber: number) => {
     if (preview) return
+    if (!permissions.canAcessAllSessionControls) return
 
     eventRealtimeChannel?.send({
       type: 'broadcast',
