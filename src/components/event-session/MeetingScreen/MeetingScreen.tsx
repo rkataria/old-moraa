@@ -169,7 +169,11 @@ export function MeetingScreen() {
   }, [meeting])
 
   useEffect(() => {
+    let isWaitingRoomTostOpen = false
+
     const promptHostForPendingParticipants = () => {
+      if (isWaitingRoomTostOpen) return
+      isWaitingRoomTostOpen = true
       toast(
         ({ id }) => (
           <div>
@@ -184,6 +188,7 @@ export function MeetingScreen() {
                 })
                 dispatch(setRightSidebarAction('participants'))
                 toast.remove(id)
+                isWaitingRoomTostOpen = false
               }}>
               View
             </Button>
@@ -191,11 +196,16 @@ export function MeetingScreen() {
         ),
         {
           duration: Infinity,
+          id: 'watchlist-update-toast',
         }
       )
     }
 
-    if (meeting.participants.waitlisted.size) promptHostForPendingParticipants()
+    if (meeting.participants.waitlisted.size && !isWaitingRoomTostOpen) {
+      promptHostForPendingParticipants()
+    } else {
+      toast.remove('watchlist-update-toast')
+    }
     meeting.participants.waitlisted.addListener(
       'participantJoined',
       promptHostForPendingParticipants

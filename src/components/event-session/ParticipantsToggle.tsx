@@ -1,3 +1,4 @@
+import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { BsPeople, BsPeopleFill } from 'react-icons/bs'
 
@@ -12,6 +13,9 @@ export function ParticipantsToggle({
   isParticipantsSidebarOpen: boolean
   onClick: () => void
 }) {
+  const areParticipantsWaitingInLobby = useDyteSelector(
+    (state) => !!state.participants.waitlisted.size
+  )
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleShortCut = (e: any) => {
     if (e.target.localName.includes('dyte-sidebar')) return
@@ -32,7 +36,12 @@ export function ParticipantsToggle({
         startContent: isParticipantsSidebarOpen ? (
           <BsPeopleFill size={18} />
         ) : (
-          <BsPeople size={18} />
+          <BsPeople
+            size={18}
+            className={cn({
+              'animate-pulse fill-red-500': areParticipantsWaitingInLobby,
+            })}
+          />
         ),
       }}
       tooltipProps={{
