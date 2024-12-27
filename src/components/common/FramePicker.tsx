@@ -90,6 +90,10 @@ export function FramePicker({
     setOpenContentTypePicker(false)
   }
 
+  const onBreakoutActivityFrame = (frame: IFrame) => {
+    console.log('🚀 ~ onBreakoutActivityFrame ~ frame:', frame)
+  }
+
   const renderHeaderContents = () => {
     if (isBreakoutActivity) {
       return (
@@ -157,16 +161,28 @@ export function FramePicker({
   const renderContents = () => {
     if (isBreakoutActivity) {
       return (
-        <div className="p-4 z-0 flex justify-start items-start gap-8 h-full">
-          <div className={cn('grid grid-cols-6 gap-4 w-full')}>
-            {breakoutFrames.map((frame) => (
-              <FramePickerCard
-                key={frame.type}
-                frame={frame}
-                onClick={handleChoose}
+        <div>
+          <Tabs>
+            <Tab title="Create Frame">
+              <div className="z-0 flex justify-start items-start gap-8 h-full">
+                <div className={cn('grid grid-cols-6 gap-4 w-full')}>
+                  {breakoutFrames.map((frame) => (
+                    <FramePickerCard
+                      key={frame.type}
+                      frame={frame}
+                      onClick={handleChoose}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Tab>
+            <Tab title="Import From Library">
+              <FrameLibrary
+                onFrameClick={onBreakoutActivityFrame}
+                frameTypes={breakoutFrames.map((f) => f.type)}
               />
-            ))}
-          </div>
+            </Tab>
+          </Tabs>
         </div>
       )
     }

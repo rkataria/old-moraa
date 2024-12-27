@@ -25,16 +25,23 @@ import { cn } from '@/utils/utils'
 export function FrameLibrary({
   onFrameClick,
   allowFrameDelete,
+  frameTypes,
 }: {
   onFrameClick?: (frame: IFrame) => void
   allowFrameDelete?: boolean
+  frameTypes?: string[]
 }) {
   const [page, setPage] = useState(1)
   const profile = useProfile()
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const libraryQuery = useQuery({
-    queryKey: ['library-frames', page],
-    queryFn: () => LibraryService.getFrameFromLibrary(profile!.data!.id, page),
+    queryKey: ['library-frames', page, frameTypes],
+    queryFn: () =>
+      LibraryService.getFrameFromLibrary({
+        profileId: profile!.data!.id,
+        page,
+        frameTypes,
+      }),
     enabled: !!profile?.data?.id,
   })
 
