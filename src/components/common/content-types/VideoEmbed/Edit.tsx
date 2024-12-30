@@ -1,73 +1,117 @@
-import { useRef, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import { useEffect, useState } from 'react'
 
-import { Input } from '@nextui-org/react'
-import { FaYoutube } from 'react-icons/fa6'
+import { FaYoutube } from 'react-icons/fa'
 
 import { Embed } from './Embed'
+import { LocalVideoEdit } from './LocalVideoEdit'
+import { VimeoVideoEdit } from './VimeoVideoEdit'
+import { YoutubeVideoEdit } from './YoutubeVideoEdit'
 
-import { FrameFormContainer } from '@/components/event-content/FrameFormContainer'
-import { Button } from '@/components/ui/Button'
-import { useEventContext } from '@/contexts/EventContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { IFrame } from '@/types/frame.type'
+import { cn } from '@/utils/utils'
 
 type EditProps = {
-  frame: IFrame
-  showControls?: boolean
+  frame: IFrame & {
+    content: {
+      videoUrl: string
+      provider: VideoProvider
+    }
+  }
 }
 
-export function Edit({ frame, showControls }: EditProps) {
-  const [loading, setLoading] = useState(false)
-  const videoInputRef = useRef<HTMLInputElement>(null)
-  const { updateFrame } = useEventContext()
+type VideoProvider = 'local' | 'youtube' | 'vimeo'
 
-  const videoUrl = frame.content?.videoUrl
-
-  if (videoUrl) {
-    return <Embed url={videoUrl as string} showControls={showControls} />
-  }
-
-  const updateVideoUrl = () => {
-    const url = videoInputRef.current?.value
-    if (!url) return
-
-    setLoading(true)
-
-    updateFrame({
-      framePayload: {
-        content: {
-          ...frame.content,
-          videoUrl: url,
-        },
-      },
-      frameId: frame.id,
-    })
-
-    setLoading(false)
-  }
-
-  return (
-    <FrameFormContainer
-      headerIcon={<FaYoutube size={72} className="text-primary" />}
-      headerTitle="Embed Youtube Video"
-      headerDescription="Easily embed Youtube video into Moraa Frame for smooth playing."
-      footerNote="Make sure the Youtube video is publically accessible or shared with participants.">
-      <Input
-        ref={videoInputRef}
-        variant="bordered"
-        color="primary"
-        label="Youtube Video URL"
-        className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
-        placeholder="Enter youtube video url"
-        disabled={loading}
-      />
-      <Button
-        color="primary"
-        variant="ghost"
-        fullWidth
-        disabled={loading}
-        onClick={updateVideoUrl}>
-        {loading ? 'Embeding...' : 'Embed Video'}
-      </Button>
-    </FrameFormContainer>
+export function Edit({ frame }: EditProps) {
+  const [provider, setProvider] = useState<VideoProvider | null>(null)
+  const showForm = useStoreSelector(
+    (store) => store.layout.studio.frameSettings.view === 'form'
   )
+  const videoUrl = frame.content?.videoUrl
+  const videoProvider = frame.content?.provider as VideoProvider | null
+
+  useEffect(() => {
+    if (videoProvider) {
+      setProvider(videoProvider)
+    }
+  }, [videoProvider])
+
+  if (showForm || !videoUrl) {
+    if (provider === 'local') {
+      return (
+        <LocalVideoEdit
+          frame={frame as any}
+          onProviderChange={() => setProvider(null)}
+        />
+      )
+    }
+
+    if (provider === 'youtube') {
+      return (
+        <YoutubeVideoEdit
+          frame={frame as any}
+          onProviderChange={() => setProvider(null)}
+        />
+      )
+    }
+
+    if (provider === 'vimeo') {
+      return (
+        <VimeoVideoEdit
+          frame={frame as any}
+          onProviderChange={() => setProvider(null)}
+        />
+      )
+    }
+
+    return (
+      <div className="relative flex justify-center items-center gap-10 w-full h-full pt-10 rounded-md">
+        <div className="flex flex-col gap-4 w-full max-w-2xl">
+          <div className="flex flex-col justify-center items-center gap-4 pb-8 w-full m-auto">
+            <FaYoutube size={72} className="text-primary" />
+            <h2 className="subheading-1 text-primary">
+              How would you like to embed video
+            </h2>
+            <p className="text-center text-foreground">
+              Choose an option to start embeding video
+            </p>
+          </div>
+          <div className="flex justify-center items-center gap-8">
+            <div
+              className={cn(
+                'font-semibold aspect-video bg-gray-100 rounded-md p-8 flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
+              )}
+              onClick={() => setProvider('local')}>
+              Local
+            </div>
+            <div
+              className={cn(
+                'font-semibold aspect-video bg-gray-100 rounded-md p-8 flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
+              )}
+              onClick={() => setProvider('youtube')}>
+              Youtube
+            </div>
+            <div
+              className={cn(
+                'font-semibold aspect-video bg-gray-100 rounded-md p-8 flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
+              )}
+              onClick={() => setProvider('vimeo')}>
+              Vimeo
+            </div>
+          </div>
+          <p className="text-sm font-[300] text-gray-400 text-center pt-4">
+            If you want to use local video, please choose "Local Video" option
+            to upload your video. If you want to embed from Youtube or Vimeo,
+            please choose respective option.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  return <Embed url={videoUrl} />
 }

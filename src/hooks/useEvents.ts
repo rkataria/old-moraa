@@ -18,6 +18,7 @@ export const useEvents = (range: { from: number; to: number }) => {
     queryKey: ['events', range],
     queryFn: () => EventService.getEvents(range),
     enabled: !!currentUser?.id,
+    refetchOnWindowFocus: false,
   })
 
   return {

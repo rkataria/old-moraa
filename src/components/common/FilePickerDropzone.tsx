@@ -15,6 +15,7 @@ export type FilePickerDropzoneType = {
     wrapper: string
   }
   label?: string
+  multiple?: boolean
   onUpload: (files: File[] | null) => void
 }
 
@@ -25,6 +26,7 @@ export function FilePickerDropzone({
   classNames,
   uploadProgress,
   label,
+  multiple = false,
 }: FilePickerDropzoneType) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -35,6 +37,7 @@ export function FilePickerDropzone({
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: supportedFormats,
+    multiple,
   })
 
   return (

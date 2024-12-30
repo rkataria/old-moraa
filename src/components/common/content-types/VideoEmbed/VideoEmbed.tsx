@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Edit } from './Edit'
 import { Live } from './Live'
 import { Preview } from './Preview'
@@ -20,7 +21,8 @@ export function VideoEmbedFrame({
 }: VideoEmbedFrameProps) {
   const { preview } = useEventContext()
   const { permissions } = useEventPermissions()
-  const showControls = permissions.canUpdateFrame
+  const showControls =
+    permissions.canUpdateFrame || (!isLiveSession && !asThumbnail)
 
   if (isLiveSession) {
     return <Live frame={frame} showControls={showControls} />
@@ -31,7 +33,7 @@ export function VideoEmbedFrame({
   }
 
   if (!preview && permissions.canUpdateFrame) {
-    return <Edit frame={frame} showControls={showControls} />
+    return <Edit frame={frame as any} />
   }
 
   return <Preview frame={frame} showControls={showControls} />

@@ -53,6 +53,8 @@ export function ContentStudioRightSidebarControls() {
         FrameType.MORAA_BOARD,
         FrameType.PDF_VIEWER,
         FrameType.MCQ,
+        FrameType.MIRO_EMBED,
+        FrameType.VIDEO_EMBED,
       ].includes(currentFrame.type as FrameType)
     ) {
       return [

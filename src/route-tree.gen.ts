@@ -23,8 +23,6 @@ import { Route as EventsCreateIndexImport } from './pages/events/create/index'
 import { Route as EventsEventIdIndexImport } from './pages/events/$eventId/index'
 import { Route as EventSessionEventIdIndexImport } from './pages/event-session/$eventId/index'
 import { Route as EnrollEventIdIndexImport } from './pages/enroll/$eventId/index'
-import { Route as EventsEventIdLayoutImport } from './pages/events/$eventId/layout'
-import { Route as EventSessionEventIdLayoutImport } from './pages/event-session/$eventId/layout'
 import { Route as EventSessionEventIdRecordIndexImport } from './pages/event-session/$eventId/record/index'
 import { Route as dashboardLayoutWorkshopsIndexImport } from './pages/(dashboard)/_layout/workshops/index'
 import { Route as dashboardLayoutTemplatesIndexImport } from './pages/(dashboard)/_layout/templates/index'
@@ -90,16 +88,6 @@ const EventSessionEventIdIndexRoute = EventSessionEventIdIndexImport.update({
 
 const EnrollEventIdIndexRoute = EnrollEventIdIndexImport.update({
   path: '/enroll/$eventId/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const EventsEventIdLayoutRoute = EventsEventIdLayoutImport.update({
-  path: '/events/$eventId/layout',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const EventSessionEventIdLayoutRoute = EventSessionEventIdLayoutImport.update({
-  path: '/event-session/$eventId/layout',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -183,20 +171,6 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/event-session/$eventId/layout': {
-      id: '/event-session/$eventId/layout'
-      path: '/event-session/$eventId/layout'
-      fullPath: '/event-session/$eventId/layout'
-      preLoaderRoute: typeof EventSessionEventIdLayoutImport
-      parentRoute: typeof rootRoute
-    }
-    '/events/$eventId/layout': {
-      id: '/events/$eventId/layout'
-      path: '/events/$eventId/layout'
-      fullPath: '/events/$eventId/layout'
-      preLoaderRoute: typeof EventsEventIdLayoutImport
       parentRoute: typeof rootRoute
     }
     '/enroll/$eventId/': {
@@ -295,8 +269,6 @@ export const routeTree = rootRoute.addChildren({
   LoginMessagesRoute,
   LoginIndexRoute,
   OnboardingIndexRoute,
-  EventSessionEventIdLayoutRoute,
-  EventsEventIdLayoutRoute,
   EnrollEventIdIndexRoute,
   EventSessionEventIdIndexRoute,
   EventsEventIdIndexRoute,
@@ -318,8 +290,6 @@ export const routeTree = rootRoute.addChildren({
         "/login/messages",
         "/login/",
         "/onboarding/",
-        "/event-session/$eventId/layout",
-        "/events/$eventId/layout",
         "/enroll/$eventId/",
         "/event-session/$eventId/",
         "/events/$eventId/",
@@ -353,12 +323,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/onboarding/": {
       "filePath": "onboarding/index.tsx"
-    },
-    "/event-session/$eventId/layout": {
-      "filePath": "event-session/$eventId/layout.tsx"
-    },
-    "/events/$eventId/layout": {
-      "filePath": "events/$eventId/layout.tsx"
     },
     "/enroll/$eventId/": {
       "filePath": "enroll/$eventId/index.tsx"
