@@ -4,6 +4,7 @@ import { ReactNode } from 'react'
 
 import { type AgendaFrameDisplayType } from './event.type'
 
+import { IUserProfile } from '@/components/common/UserAvatar'
 import { FrameType } from '@/utils/frame-picker.util'
 
 export type FrameMode = 'edit' | 'present'
@@ -98,6 +99,7 @@ export interface IReflectionResponse {
   participant: {
     enrollment: {
       user_id: string
+      profile: IUserProfile
     }
   }
   response: {

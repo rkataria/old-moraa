@@ -4,6 +4,7 @@ import { Card } from './Card'
 import { EditableCard } from './EditableCard'
 
 import { type IReflectionResponse } from '@/types/frame.type'
+import { getAvatarForName } from '@/utils/utils'
 
 type SelfCardProps = {
   username: string
@@ -38,7 +39,8 @@ export function SelfCard({ username, selfResponse, avatarUrl }: SelfCardProps) {
     <Card
       response={selfResponse}
       isOwner
-      avatarUrl={avatarUrl}
+      userName={username}
+      avatarUrl={getAvatarForName(username, avatarUrl)}
       enableEditReflection={() => {
         setEditEnabled((v) => !v)
       }}

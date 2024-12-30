@@ -1,8 +1,6 @@
-import { Card, cn, CardHeader, Avatar, CardBody, Chip } from '@nextui-org/react'
-import uniqBy from 'lodash.uniqby'
-import { VscReactions } from 'react-icons/vsc'
+import { Card, cn, CardHeader, Avatar, CardBody } from '@nextui-org/react'
 
-import { RenderIf } from '../../RenderIf/RenderIf'
+import { Emojis } from './Emojis'
 
 import { FrameReaction } from '@/types/event-session.type'
 import { getAvatarForName } from '@/utils/utils'
@@ -14,7 +12,6 @@ export function PreviewCard({
   reactions,
   className,
   style = {},
-  visibleAddReaction = true,
 }: {
   isAnonymous?: boolean
   username: string
@@ -22,17 +19,7 @@ export function PreviewCard({
   reactions: FrameReaction[]
   className?: string
   style?: React.CSSProperties
-  visibleAddReaction?: boolean
 }) {
-  const distinctReactions = uniqBy(
-    reactions,
-    (reaction: FrameReaction) => reaction.reaction
-  )
-
-  const getReactionCount = (emojiId: string) =>
-    reactions.filter((reaction: FrameReaction) => reaction.reaction === emojiId)
-      .length
-
   return (
     <Card
       shadow="none"
@@ -56,26 +43,7 @@ export function PreviewCard({
         <div className="w-full">
           <p className="text-base text-gray-800">{reflection}</p>
         </div>
-        <div className="flex items-center gap-1 justify-between mt-4">
-          <div className="flex flex-wrap gap-1">
-            {distinctReactions.map((reaction: FrameReaction) => (
-              <Chip
-                className={cn('font-bold')}
-                variant="flat"
-                color="primary"
-                avatar={
-                  <em-emoji set="apple" id={reaction.reaction} size={20} />
-                }>
-                <span className="font-bold text-primary-600">
-                  {getReactionCount(reaction.reaction)}
-                </span>
-              </Chip>
-            ))}
-          </div>
-          <RenderIf isTrue={visibleAddReaction}>
-            <VscReactions className="text-gray-400" size={24} />
-          </RenderIf>
-        </div>
+        <Emojis reactions={reactions} canReact={false} className="mt-4" />
       </CardBody>
     </Card>
   )

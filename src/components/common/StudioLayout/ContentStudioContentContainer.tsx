@@ -32,7 +32,7 @@ export function ContentStudioContentContainer() {
       if (permissions.canUpdateFrame) {
         return (
           <EmptyPlaceholder
-            icon={<LuPlusCircle />}
+            icon={<LuPlusCircle size={80} />}
             title="No frames"
             description="Add a frame to get started"
           />
