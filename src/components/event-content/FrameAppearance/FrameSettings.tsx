@@ -2,11 +2,13 @@ import { FiSettings } from 'react-icons/fi'
 
 import { BreakoutSettings } from './BreakoutSettings'
 import { MCQSettings } from './MCQSettings'
+import { MiroEmbedSettings } from './MiroEmbedSettings'
 import { MoraaBoardSettings } from './MoraaBoardSettings'
 import { PdfSettings } from './PdfSettings'
 import { PollSettings } from './PollSettings'
 import { ReflectionSettings } from './ReflectionSettings'
 import { RichTextSettings } from './RichTextSettings'
+import { VideoEmbedSettings } from './VideoEmbedSettings'
 
 import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { useEventContext } from '@/contexts/EventContext'
@@ -24,10 +26,10 @@ export function FrameSettings() {
     [FrameType.GOOGLE_SLIDES]: null,
     [FrameType.PDF_VIEWER]: <PdfSettings />,
     [FrameType.REFLECTION]: <ReflectionSettings />,
-    [FrameType.VIDEO_EMBED]: null,
+    [FrameType.VIDEO_EMBED]: <VideoEmbedSettings />,
     [FrameType.IMAGE_VIEWER]: null,
     [FrameType.RICH_TEXT]: <RichTextSettings />,
-    [FrameType.MIRO_EMBED]: null,
+    [FrameType.MIRO_EMBED]: <MiroEmbedSettings />,
     [FrameType.MORAA_BOARD]: (
       <RoomProvider frameId={currentFrame.id}>
         <MoraaBoardSettings key={currentFrame.id} />

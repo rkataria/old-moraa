@@ -1,15 +1,13 @@
 import {
-  Avatar,
   Button,
   Card as NextUICard,
   CardBody,
   CardHeader,
-  Chip,
+  Avatar,
 } from '@nextui-org/react'
-import { AnimatePresence, motion } from 'framer-motion'
-import countBy from 'lodash.countby'
 import { VscReactions } from 'react-icons/vsc'
 
+import { Emojis } from './Emojis'
 import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { EmojiPicker } from '@/components/common/EmojiPicker'
@@ -18,25 +16,25 @@ import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { FrameReaction } from '@/types/event-session.type'
 import { IReflectionResponse } from '@/types/frame.type'
-import { cn, getAvatarForName } from '@/utils/utils'
+import { getAvatarForName } from '@/utils/utils'
 
 type ReactionsProps = {
   responseId: CardProps['response']['id']
   canReact: boolean
+  userName: string
+  avatarUrl: string
 }
-function Reactions({ responseId, canReact }: ReactionsProps) {
+function Reactions({
+  responseId,
+  canReact,
+  userName,
+  avatarUrl,
+}: ReactionsProps) {
   const { participant, emoteOnReflection, frameReactions } = useEventSession()
-
-  // useEffect(() => {
-  //   console.log('frameReactions', frameReactions)
-  // }, [frameReactions])
 
   const reactions = frameReactions.filter(
     (reaction) => reaction.frame_response_id === responseId
   )
-
-  const countsByReaction = countBy(reactions, 'reaction')
-  const distinctReactions = Object.keys(countsByReaction)
 
   const participantEmotedOnReaction = (emojiId: string) => {
     if (!participant) return false
@@ -70,36 +68,21 @@ function Reactions({ responseId, canReact }: ReactionsProps) {
       frameResponseId: responseId,
       reactionId: participantEmote?.id,
       action: emoteAction,
+      details: {
+        name: userName,
+        avatar_url: avatarUrl,
+      },
     })
   }
 
   return (
     <div className="flex items-start gap-1 justify-between">
-      <div className="flex flex-wrap gap-1.5">
-        <AnimatePresence initial={false}>
-          {distinctReactions.map((reaction: string) => (
-            <motion.div
-              key={reaction}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}>
-              <Chip
-                onClick={() => handleEmojiSelect(reaction)}
-                className={cn('font-bold duration-300', {
-                  'bg-primary/20': participantEmotedOnReaction(reaction),
-                  'group/item cursor-pointer hover:bg-primary': canReact,
-                  'cursor-not-allowed': !canReact,
-                })}
-                variant="flat"
-                avatar={<em-emoji set="apple" id={reaction} size={22} />}>
-                <span className="font-bold text-gray-600 group-hover/item:text-white ">
-                  {countsByReaction[reaction]}
-                </span>
-              </Chip>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      <Emojis
+        reactions={reactions}
+        canReact={canReact}
+        handleEmojiSelect={handleEmojiSelect}
+        participantEmotedOnReaction={participantEmotedOnReaction}
+      />
       <RenderIf isTrue={canReact}>
         <div>
           <EmojiPicker
@@ -127,18 +110,22 @@ function Reactions({ responseId, canReact }: ReactionsProps) {
 type CardProps = {
   response: IReflectionResponse
   isOwner: boolean
-  avatarUrl?: string
+  userName: string
+  avatarUrl: string
   enableEditReflection?: () => void
 }
 
 export function Card({
   response,
   isOwner,
+  userName,
   avatarUrl,
   enableEditReflection,
 }: CardProps) {
+  const reflectedUserAvatarUrl =
+    response.participant.enrollment?.profile?.avatar_url
   const {
-    username,
+    username: reflectedUsername,
     reflection,
     anonymous: isAnonymous = false,
   } = response.response
@@ -150,7 +137,7 @@ export function Card({
       return 'https://github.com/shadcn.png'
     }
 
-    return getAvatarForName(username, avatarUrl)
+    return getAvatarForName(reflectedUsername, reflectedUserAvatarUrl)
   }
 
   const session = useStoreSelector(
@@ -184,11 +171,11 @@ export function Card({
           <Avatar
             radius="full"
             size="sm"
-            className="min-w-fit w-6 h-6"
+            className="min-w-6 w-6 h-6"
             src={getAvatar()}
           />
           <h4 className="text-sm text-black/70">
-            {isAnonymous ? 'Anonymous' : username}
+            {isAnonymous ? 'Anonymous' : reflectedUsername}
             {isOwner && ' (you)'}
           </h4>
         </div>
@@ -206,8 +193,12 @@ export function Card({
           </RenderIf>
         </div>
         <div className="mt-6">
-          {/* <Divider className="my-3" /> */}
-          <Reactions responseId={responseId} canReact={canReact()} />
+          <Reactions
+            responseId={responseId}
+            userName={userName}
+            avatarUrl={avatarUrl}
+            canReact={canReact()}
+          />
         </div>
       </CardBody>
     </NextUICard>

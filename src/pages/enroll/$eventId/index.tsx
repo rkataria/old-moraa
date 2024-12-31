@@ -53,7 +53,6 @@ export function Visit() {
   const [showEditor, setShowEditor] = useState(true)
   const useEventData = useEvent({
     id: eventId as string,
-    validateWithUser: false,
   })
   const eventPageUrl = `/events/${eventId}`
 

@@ -29,7 +29,6 @@ export function FrameDetailsView() {
 
   const useEventData = useEvent({
     id: eventId as string,
-    validateWithUser: false,
   })
   const { event, participants, profile } = useEventData
 

@@ -89,9 +89,5 @@ export const getSignedUrl = async (
 
   return supabaseClient.storage
     .from(bucketName)
-    .createSignedUrl(objectName as string, expireInSeconds, {
-      transform: {
-        quality: 50,
-      },
-    })
+    .createSignedUrl(objectName as string, expireInSeconds)
 }

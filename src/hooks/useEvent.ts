@@ -1,23 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useAuth } from './useAuth'
-
 import { EventService } from '@/services/event.service'
 import { EventModel } from '@/types/models'
 
 export const useEvent = ({
   id,
   fetchActiveSession = false,
-  validateWithUser = true,
 }: {
   id: string
   fetchActiveSession?: boolean
-  validateWithUser?: boolean
 }) => {
-  const { currentUser, isLoading: isUserLoading } = useAuth()
-
-  const isEnabled = !validateWithUser ? !!id : !!currentUser?.id && !!id
-
   const eventQuery = useQuery({
     queryKey: ['event', id],
     queryFn: () =>
@@ -25,7 +17,7 @@ export const useEvent = ({
         eventId: id,
         fetchActiveSession,
       }),
-    enabled: isEnabled,
+    enabled: !!id,
     refetchOnWindowFocus: false,
   })
 
@@ -35,7 +27,7 @@ export const useEvent = ({
     participants: eventQuery.data?.participants,
     profile: eventQuery.data?.profile,
     activeSession: eventQuery.data?.session,
-    isLoading: eventQuery.isLoading || isUserLoading,
+    isLoading: eventQuery.isLoading,
     isFetching: eventQuery.isFetching,
     error: eventQuery.error,
     isError: eventQuery.isError,

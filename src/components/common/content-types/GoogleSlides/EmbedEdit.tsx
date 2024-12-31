@@ -4,7 +4,7 @@
 import { useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Button, Input } from '@nextui-org/react'
+import { Input } from '@nextui-org/react'
 import { Controller, useForm } from 'react-hook-form'
 import { SiGoogleslides } from 'react-icons/si'
 import * as yup from 'yup'
@@ -13,6 +13,7 @@ import { IframeEdit } from './IframeEdit'
 import { ContentLoading } from '../../ContentLoading'
 
 import { FrameFormContainer } from '@/components/event-content/FrameFormContainer'
+import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
 import { type GoogleSlidesFrame } from '@/types/frame-picker.type'
 
@@ -99,10 +100,9 @@ export function EmbedEdit({
           render={({ field, fieldState }) => (
             <Input
               {...field}
-              variant="bordered"
+              variant="faded"
               color="primary"
               label="Google Slides URL"
-              className="focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
               placeholder="Paste google slides url"
               isInvalid={!!fieldState.error?.message}
               errorMessage={fieldState.error?.message}
@@ -114,7 +114,7 @@ export function EmbedEdit({
         />
         <Button
           size="md"
-          variant="ghost"
+          variant="flat"
           color="primary"
           isLoading={googleSlideEmbedForm.formState.isSubmitting}
           type="submit"

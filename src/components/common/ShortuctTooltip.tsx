@@ -25,6 +25,8 @@ export function Tooltip({
   label,
   actionKey,
   content,
+  className,
+  classNames,
   ...rest
 }: TooltipProps) {
   const keysArray = actionKey?.split(' + ') || []
@@ -32,6 +34,7 @@ export function Tooltip({
   return (
     <NextUiTooltip
       {...rest}
+      delay={1000}
       content={
         content || (
           <div className="flex items-center gap-2 text-xs">
@@ -53,10 +56,14 @@ export function Tooltip({
         )
       }
       radius="md"
-      className={cn('rounded-[4px] bg-gray-900 text-white max-w-sm', {
-        'pr-1 pl-2': !!actionKey,
-      })}
-      classNames={{ base: 'before:bg-gray-900' }}>
+      className={cn(
+        'rounded-[4px] bg-gray-900 text-white max-w-sm',
+        {
+          'pr-1 pl-2': !!actionKey,
+        },
+        className
+      )}
+      classNames={{ base: 'before:bg-gray-900', ...classNames }}>
       {children}
     </NextUiTooltip>
   )

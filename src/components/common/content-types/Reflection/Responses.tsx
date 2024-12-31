@@ -61,7 +61,6 @@ export function Responses({
             username={frameResponse.response.username}
             reflection={frameResponse.response.reflection}
             reactions={frameResponse.reaction}
-            visibleAddReaction={false}
           />
         ))}
       </div>

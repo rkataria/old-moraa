@@ -207,6 +207,8 @@ export const getContentStudioRightSidebarControlKeys = (
       FrameType.MORAA_BOARD,
       FrameType.PDF_VIEWER,
       FrameType.MCQ,
+      FrameType.MIRO_EMBED,
+      FrameType.VIDEO_EMBED,
     ].includes(frame.type as FrameType)
   ) {
     return ['frame-settings', 'frame-notes', 'frame-status']

@@ -545,12 +545,17 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     frameResponseId,
     reactionId,
     action,
+    details,
   }: {
     participantId: string
     reaction: string
     frameResponseId?: string
     reactionId?: string
     action: string
+    details: {
+      name: string
+      avatar_url: string
+    }
   }) => {
     try {
       let reactionQueryResponse
@@ -561,6 +566,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           frame_response_id: frameResponseId,
           participant_id: participantId,
           dyte_meeting_id: dyteMeeting.meta.meetingId,
+          details,
         })
       }
       if (action === 'UPDATE') {
