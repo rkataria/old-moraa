@@ -34,6 +34,10 @@ export type FrameReaction = {
   reaction: string
   frame_response_id: string
   participant_id: string
+  details: {
+    name: string
+    avatar_url: string
+  }
 }
 
 export type DyteStates = {
@@ -107,12 +111,17 @@ export type EventSessionContextType = {
     frameResponseId,
     reactionId,
     action,
+    details,
   }: {
     participantId: string
     reaction: string
     frameResponseId?: string
     reactionId?: string
     action: string
+    details: {
+      name: string
+      avatar_url: string
+    }
   }) => void
   onToggleHandRaised: ({
     handRaise,

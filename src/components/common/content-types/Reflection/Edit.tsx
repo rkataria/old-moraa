@@ -28,6 +28,7 @@ export function Edit({ frame }: EditProps) {
                   reaction: 'fire',
                   frame_response_id: '',
                   participant_id: '',
+                  details: { name: 'Host', avatar_url: '' },
                 },
               ]}
               className="w-[323px] h-fit absolute top-[-38px] left-[-100px] z-[20] shadow-xl"

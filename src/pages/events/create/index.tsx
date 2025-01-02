@@ -67,7 +67,7 @@ export function EventsCreatePage() {
       name: '',
       description: '',
       eventType: 'workshop',
-      imageUrl: '' || defaultImage,
+      imageUrl: defaultImage,
     },
   })
 
@@ -174,8 +174,8 @@ export function EventsCreatePage() {
         aria-label="new-event">
         <div className="max-w-[990px] mx-auto py-4 pt-8">
           <div className="grid grid-cols-[40%_60%] items-start gap-8">
-            <div>
-              <div className="relative aspect-square rounded-lg border overflow-hidden min-w-[24.625rem]">
+            <div className="h-full w-full">
+              <div className="relative aspect-square rounded-lg border overflow-hidden">
                 <Controller
                   control={createEventForm.control}
                   name="imageUrl"
@@ -242,7 +242,7 @@ export function EventsCreatePage() {
               </div>
             </div>
 
-            <div className="h-full flex flex-col justify-between gap-4">
+            <div className="h-full flex flex-col justify-between gap-4 mr-16">
               <Controller
                 control={createEventForm.control}
                 name="name"

@@ -1,5 +1,7 @@
 import { Avatar, AvatarGroup } from '@nextui-org/react'
 
+import { Tooltip } from '../../ShortuctTooltip'
+
 interface IVotedUser {
   name: string
   avatar_url: string
@@ -33,7 +35,9 @@ export function VotedUsers({ users }: { users: IVotedUser[] }) {
           }
 
           return (
-            <Avatar src={user.avatar_url} classNames={{ base: 'w-6 h-6' }} />
+            <Tooltip label={user.name}>
+              <Avatar src={user.avatar_url} classNames={{ base: 'w-6 h-6' }} />
+            </Tooltip>
           )
         })}
       </AvatarGroup>

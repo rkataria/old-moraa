@@ -11,6 +11,7 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { IReflectionResponse } from '@/types/frame.type'
+import { getAvatarForName } from '@/utils/utils'
 
 export function ParticipantView() {
   const { currentFrameResponses = [] } = useEventSession()
@@ -50,9 +51,19 @@ export function ParticipantView() {
 
   return (
     <Fragment key={key}>
-      <SelfCard username={username} selfResponse={selfResponse} />
+      <SelfCard
+        username={username}
+        selfResponse={selfResponse}
+        avatarUrl={getAvatarForName(username, user.user_metadata.avatar_url)}
+      />
       {otherResponses.map((res) => (
-        <Card key={res.id} response={res} isOwner={false} />
+        <Card
+          key={res.id}
+          response={res}
+          isOwner={false}
+          userName={username}
+          avatarUrl={getAvatarForName(username, user.user_metadata.avatar_url)}
+        />
       ))}
       <TypingUserCards />
     </Fragment>

@@ -322,9 +322,8 @@
   position: absolute;
   bottom: 0;
   animation:
-     fire-up 3s cubic-bezier(0.24, 1.26, 0.89, 1.09) forwards,
-     fadeaway 1s ease 2s forwards
-  
+    fire-up 3s cubic-bezier(0.24, 1.26, 0.89, 1.09) forwards,
+    fadeaway 1s ease 2s forwards;
 }
 
 @keyframes fire-up {
@@ -335,14 +334,12 @@
   100% {
     transform: translateY(-50vh);
   }
-
 }
 
 @keyframes fadeaway {
-  to{
+  to {
     opacity: 0;
   }
-
 }
 
 /* Participant Tiles  */

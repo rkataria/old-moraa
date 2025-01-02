@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useProfile } from '@/hooks/useProfile'
 import { useStoreSelector } from '@/hooks/useRedux'
+import { getAvatarForName } from '@/utils/utils'
 
 const useParticipantName = () => {
   const { data: profile } = useProfile()
@@ -62,11 +63,17 @@ function HostView() {
     <>
       <SelfCard
         username={username}
-        avatarUrl={user.avatar_url}
+        avatarUrl={user.user_metadata.avatar_url}
         selfResponse={selfResponse}
       />
       {otherResponses.map((res) => (
-        <Card key={res.id} response={res} isOwner={false} />
+        <Card
+          key={res.id}
+          response={res}
+          isOwner={false}
+          userName={username}
+          avatarUrl={getAvatarForName(username, user.user_metadata.avatar_url)}
+        />
       ))}
       <TypingUserCards />
     </>

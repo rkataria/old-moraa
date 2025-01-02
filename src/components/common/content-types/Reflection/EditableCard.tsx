@@ -140,7 +140,7 @@ export function EditableCard({
           <Avatar
             radius="full"
             size="sm"
-            className="min-w-fit w-6 h-6"
+            className="min-w-6 w-6 h-6"
             src={getAvatarForName(username, avatarUrl)}
           />
           <h4 className="text-sm text-black/70">{username}</h4>

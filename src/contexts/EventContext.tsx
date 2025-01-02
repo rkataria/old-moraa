@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-shadow */
+
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import { useParams, useRouter } from '@tanstack/react-router'
@@ -45,6 +47,11 @@ import { EventContextType, EventModeType } from '@/types/event-context.type'
 import { ISection, IFrame } from '@/types/frame.type'
 import { FrameModel } from '@/types/models'
 import { Json } from '@/types/supabase-db'
+import { getFrameActivities } from '@/utils/breakout.utils'
+import {
+  getAllNestedBreakoutActivities,
+  getSectionByFrameId,
+} from '@/utils/drag.utils'
 import { withPermissionCheck } from '@/utils/permissions'
 import { supabaseClient } from '@/utils/supabase/client'
 
@@ -415,7 +422,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       reorderFrameAction({
         destinationSectionId: section!.id,
         destinationIndex: index - 1,
-        frameId: frame.id,
+        frameIds: [frame.id],
+        nestedActivities: getAllNestedBreakoutActivities(
+          sections as ISection[]
+        ),
       })
     )
   }
@@ -453,7 +463,10 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       reorderFrameAction({
         destinationSectionId: section!.id,
         destinationIndex: index + 1,
-        frameId: frame.id,
+        frameIds: [frame.id],
+        nestedActivities: getAllNestedBreakoutActivities(
+          sections as ISection[]
+        ),
       })
     )
   }
@@ -462,17 +475,26 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const reorderFrame = async (result: OnDragEndResponder | any) => {
     const { destination, draggableId } = result
     const frameId = draggableId.split('frame-draggable-frameId-')[1]
+
     const destinationSectionId = destination.droppableId.split(
       'frame-droppable-sectionId-'
     )[1]
 
     if (!destination) return null
 
+    const section = getSectionByFrameId(sections as ISection[], frameId)
+
     dispatch(
       reorderFrameAction({
-        frameId,
+        frameIds: [
+          frameId,
+          ...getFrameActivities(section as ISection, frameId),
+        ],
         destinationSectionId,
         destinationIndex: result.destination.index,
+        nestedActivities: getAllNestedBreakoutActivities(
+          sections as ISection[]
+        ),
       })
     )
 

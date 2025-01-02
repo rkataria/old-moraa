@@ -7,7 +7,7 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
-import { notificationDuration } from '@/utils/breakout-notify.utils'
+import { notificationDuration } from '@/utils/breakout.utils'
 import { cn } from '@/utils/utils'
 
 export function Notify() {

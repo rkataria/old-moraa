@@ -99,6 +99,10 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   const eventSessionMode = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.eventSessionMode
   )
+  const isBreakoutActive = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isBreakoutActive
+  )
 
   // TODO: Test code for moraa presentation plugin
   const moraaPresentationPlugin = dyteMeeting.plugins.all.get(
@@ -106,6 +110,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
   )
 
   useEffect(() => {
+    if (!isHost) return
+    if (isBreakoutActive) return
     const handleParticipantJoined = (newParticipant: DyteParticipant) => {
       if (dyteMeeting.participants.count > 3) {
         // joinedParticipant is the newly joined participant in the meet.
@@ -128,7 +134,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         handleParticipantJoined
       )
     }
-  }, [dyteMeeting])
+  }, [dyteMeeting, isHost, isBreakoutActive])
 
   useEffect(() => {
     if (!eventRealtimeChannel) return
@@ -539,12 +545,17 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     frameResponseId,
     reactionId,
     action,
+    details,
   }: {
     participantId: string
     reaction: string
     frameResponseId?: string
     reactionId?: string
     action: string
+    details: {
+      name: string
+      avatar_url: string
+    }
   }) => {
     try {
       let reactionQueryResponse
@@ -555,6 +566,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           frame_response_id: frameResponseId,
           participant_id: participantId,
           dyte_meeting_id: dyteMeeting.meta.meetingId,
+          details,
         })
       }
       if (action === 'UPDATE') {

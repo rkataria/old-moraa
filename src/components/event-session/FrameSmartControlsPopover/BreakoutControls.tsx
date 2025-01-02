@@ -13,7 +13,7 @@ import {
   notificationDuration,
   notifyBreakoutEnd,
   notifyBreakoutStart,
-} from '@/utils/breakout-notify.utils'
+} from '@/utils/breakout.utils'
 import { FrameType } from '@/utils/frame-picker.util'
 
 export function BreakoutControls() {

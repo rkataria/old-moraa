@@ -7,6 +7,7 @@ export function useGlobalState<T>(key: Array<string>, defaultValue?: T) {
     queryKey: key,
     queryFn: () => defaultValue,
     enabled: defaultValue !== undefined,
+    refetchOnWindowFocus: false,
     // initialData: defaultValue,
     // staleTime: Infinity,
   })

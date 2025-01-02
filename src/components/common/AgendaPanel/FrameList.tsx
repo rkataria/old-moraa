@@ -10,6 +10,7 @@ import { FramePlaceholder } from '../FramePlaceholder'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useEventContext } from '@/contexts/EventContext'
+import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { IFrame } from '@/types/frame.type'
@@ -45,6 +46,8 @@ export function FrameList({
     (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
   )
 
+  const { listDisplayMode } = useAgendaPanel()
+
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
   const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
@@ -58,20 +61,25 @@ export function FrameList({
     return prevIds.filter((f) => f?.content?.breakoutFrameId).length
   }
 
+  const framesExcludingNestedBreakouts = frames.filter(
+    (f) => !f?.content?.breakoutFrameId
+  )
+
   return (
     <div
       className={cn('relative flex flex-col gap-1', {
         'p-2 pl-6 pr-0': sidebarExpanded,
         'py-1': !sidebarExpanded,
+        'pr-6': listDisplayMode === 'grid',
       })}>
       {showList &&
-        frames?.map(
+        framesExcludingNestedBreakouts?.map(
           (frame, frameIndex) =>
             frame && (
               <RenderIf
                 key={frame.id}
                 isTrue={!frame?.content?.breakoutFrameId}>
-                <div className="relative flex flex-col  group/agenda-frame">
+                <div className="relative flex flex-col group/agenda-frame">
                   <Draggable
                     isDragDisabled={actionDisabled}
                     key={`frame-draggable-${frame?.id}`}

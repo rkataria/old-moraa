@@ -20,10 +20,7 @@ export function ContentStudioLeftSidebar() {
       className={cn(
         'relative flex-none w-56 h-full rounded-md overflow-hidden bg-white border-1 border-gray-200'
       )}>
-      <div
-        className={cn(
-          'flex-none w-56 h-full rounded-md z-[2] bg-white border-1 border-gray-200'
-        )}>
+      <div className={cn('flex-none w-56 h-full rounded-md z-[2]')}>
         <StudioAgendaPanel />
       </div>
     </motion.div>

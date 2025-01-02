@@ -62,32 +62,54 @@ export const sectionSlice = createSlice({
     reorderFrame: (
       state,
       action: PayloadAction<{
-        frameId: string
+        frameIds: string[]
         destinationSectionId: string
         destinationIndex: number
+        nestedActivities: string[]
       }>
     ) => {
       if (
         typeof action.payload.destinationIndex !== 'number' ||
         !action.payload.destinationSectionId ||
-        !action.payload.frameId
+        !action.payload.frameIds.length
       ) {
         return
       }
+
+      const frameIdSet = new Set(action.payload.frameIds) // Convert frameIds to a Set for faster lookups
+
       state.section.data?.forEach((section) => {
-        if (section.frames?.includes(action.payload.frameId)) {
+        if (section.frames) {
+          section.frames = [
+            ...section.frames.filter(
+              (frameId) =>
+                frameId &&
+                !frameIdSet.has(frameId) &&
+                !action.payload.nestedActivities.includes(frameId)
+            ),
+            ...section.frames.filter((frameId) =>
+              action.payload.nestedActivities.includes(frameId)
+            ),
+          ]
+        }
+      })
+
+      state.section.data?.forEach((section) => {
+        if (section.frames) {
+          // Filter out frames that are either in the frameIdSet or are blank (falsy values)
           section.frames = section.frames.filter(
-            (frameId) => frameId !== action.payload.frameId
+            (frameId) => frameId && !frameIdSet.has(frameId)
           )
         }
       })
 
       state.section.data?.forEach((section) => {
         if (section.id === action.payload.destinationSectionId) {
-          section.frames?.splice(
+          section.frames = section.frames || [] // Ensure frames is initialized as an array
+          section.frames.splice(
             action.payload.destinationIndex,
             0,
-            action.payload.frameId
+            ...action.payload.frameIds
           )
         }
       })

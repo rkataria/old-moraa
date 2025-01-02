@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
+import { Badge } from '@nextui-org/react'
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { RxDotsVertical } from 'react-icons/rx'
 
@@ -63,6 +64,12 @@ export function FrameItem({
     setInsertInSectionId,
   } = useEventContext()
   const navigate = useNavigate()
+  const { selectedFrameIds, draggingFrameId, onMultiSelect, resetMultiSelect } =
+    useAgendaPanel()
+
+  const isPreviewOpen = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.isPreviewOpen
+  )
 
   const router = useRouter()
   const searches = router.latestLocation.search as {
@@ -121,8 +128,16 @@ export function FrameItem({
     }
     setIsDeleteModalOpen(false)
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFrameItemClick = (e: any, clickedFrame: IFrame) => {
+    if ((e.metaKey || e.ctrlKey) && !isPreviewOpen) {
+      onMultiSelect(clickedFrame.id)
 
-  const handleFrameItemClick = (clickedFrame: IFrame) => {
+      return
+    }
+
+    resetMultiSelect()
+
     if (!permissions.canUpdateFrame && eventMode === 'present') {
       return
     }
@@ -152,7 +167,13 @@ export function FrameItem({
 
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
-  const frameActive = !currentSectionId && currentFrame?.id === frame?.id
+  const isBulkSelected =
+    selectedFrameIds.includes(frame.id) && selectedFrameIds.length > 1
+
+  const isCurrentFrameActive =
+    !currentSectionId && currentFrame?.id === frame?.id
+
+  const frameActive = isBulkSelected || isCurrentFrameActive
 
   const breakoutRunning = isBreakoutActive && breakoutFrameId === frame.id
 
@@ -182,8 +203,8 @@ export function FrameItem({
               'border border-green-400': breakoutRunning,
             }
           )}
-          onClick={() => {
-            handleFrameItemClick(frame)
+          onClick={(e) => {
+            handleFrameItemClick(e, frame)
           }}>
           <RenderIf isTrue={breakoutRunning}>
             <ActiveBreakoutIndicator />
@@ -264,8 +285,8 @@ export function FrameItem({
                 'bg-primary/30': frameActive,
               }
             )}
-            onClick={() => {
-              handleFrameItemClick(frame)
+            onClick={(e) => {
+              handleFrameItemClick(e, frame)
             }}>
             <ContentTypeIcon
               frameType={frame.type}
@@ -282,12 +303,52 @@ export function FrameItem({
     )
   }
 
+  const shouldHideFrameOnDrag = () => {
+    const isDragging = !!draggingFrameId
+    const _isBulkSelected = selectedFrameIds.includes(frame.id)
+    const isNotDraggingFrame = draggingFrameId !== frame.id
+
+    return isDragging && _isBulkSelected && isNotDraggingFrame
+  }
+
+  const displayMultiDragPlaceholder = () => {
+    if (draggingFrameId === frame.id && selectedFrameIds.length > 1) {
+      return (
+        <>
+          <div className="absolute -top-3 left-6">
+            <Badge
+              color="primary"
+              size="md"
+              content={selectedFrameIds.length}
+              className="bg-primary-600 text-[10px] font-medium shadow-lg">
+              <div />
+            </Badge>
+          </div>
+          {selectedFrameIds.slice(0, 4).map((_, index: number) => (
+            <div
+              style={{
+                transform: `rotate(-${index === 0 ? 0.3 : index * 3}deg)`,
+                transformOrigin: 'right top',
+                zIndex: `-${index + 1}`,
+              }}
+              className="absolute w-full h-full rounded-lg border-2 border-primary-400 bg-primary-100 border-primary border-1 top-0 left-0"
+            />
+          ))}
+        </>
+      )
+    }
+
+    return null
+  }
+
   return (
     <div
       className={cn('relative w-full', {
         'w-fit': !sidebarExpanded,
+        'opacity-0': shouldHideFrameOnDrag(),
       })}>
       {renderFrameContent()}
+      {displayMultiDragPlaceholder()}
       {sidebarExpanded && (
         <RenderIf isTrue={sidebarExpanded && !frame?.content?.breakoutFrameId}>
           <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />

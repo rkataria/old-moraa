@@ -31,7 +31,7 @@ import {
   notificationDuration,
   notifyBreakoutEnd,
   notifyBreakoutStart,
-} from '@/utils/breakout-notify.utils'
+} from '@/utils/breakout.utils'
 import { StartBreakoutConfig } from '@/utils/dyte-breakout'
 import { getCurrentTimestamp } from '@/utils/timer.utils'
 

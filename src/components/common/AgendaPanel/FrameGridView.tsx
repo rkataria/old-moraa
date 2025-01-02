@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useRef } from 'react'
+import { MouseEvent, useRef } from 'react'
 
 import { Button } from '@nextui-org/button'
 import { IoCheckmarkCircle } from 'react-icons/io5'
@@ -23,17 +23,20 @@ import { cn } from '@/utils/utils'
 
 export function FrameGridView({
   frame,
-  handleFrameAction,
   sidebarExpanded,
   frameActive,
   onClick,
+  handleFrameAction,
 }: {
   frame: IFrame
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleFrameAction: (item: any) => void
   sidebarExpanded: boolean
   frameActive: boolean
-  onClick: (frame: IFrame) => void
+  onClick: (
+    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+    frame: IFrame
+  ) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleFrameAction: (item: any) => void
 }) {
   const { preview } = useEventContext()
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
@@ -65,15 +68,15 @@ export function FrameGridView({
         key={`frame-${frame?.id}`}
         data-miniframe-id={frame?.id}
         className={cn(
-          'relative mr-6 cursor-pointer overflow-hidden rounded-lg group/frame-item',
+          'relative cursor-pointer overflow-hidden rounded-lg group/frame-item',
           {
             'border-primary border-2': frameActive,
             'border-transparent border-2': !frameActive,
             'border border-green-400': breakoutRunning,
           }
         )}
-        onClick={() => {
-          onClick(frame)
+        onClick={(e) => {
+          onClick(e, frame)
         }}>
         <RenderIf isTrue={breakoutRunning}>
           <ActiveBreakoutIndicator />

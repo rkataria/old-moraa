@@ -1,8 +1,10 @@
+import { ReactNode } from '@tanstack/react-router'
+
 type FrameFormContainerProps = {
   headerIcon?: React.ReactNode
   headerTitle?: string
   headerDescription?: string
-  footerNote?: string
+  footerNote?: ReactNode | string
   children: React.ReactNode
 }
 

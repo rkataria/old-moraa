@@ -24,9 +24,14 @@ type AgendaPanelContextType = {
   listDisplayMode: ListDisplayMode
   currentSectionId: string | null
   expanded: boolean
+  draggingFrameId: string
+  selectedFrameIds: string[]
   toggleExpanded: () => void
   toggleExpandedSection: (sectionId: string) => void
   toggleListDisplayMode: () => void
+  onMultiSelect: (frameId: string) => void
+  resetMultiSelect: () => void
+  setDraggingFrameId: (frameId: string) => void
   setCurrentSectionId: EventContextType['setCurrentSectionId']
 }
 
@@ -50,6 +55,8 @@ export function AgendaPanelContextProvider({
     setOverviewOpen,
   } = useEventContext()
   const { permissions } = useEventPermissions()
+  const [selectedFrameIds, setSelectedFrameIds] = useState<string[]>([])
+  const [draggingFrameId, setDraggingFrameId] = useState('')
 
   const dispatch = useDispatch()
   const listDisplayMode = useStoreSelector(
@@ -439,6 +446,21 @@ export function AgendaPanelContextProvider({
       )
     )
   }
+  const onMultiSelect = (frameId: string) => {
+    const previousFrames = selectedFrameIds.length
+      ? [...selectedFrameIds]
+      : [currentFrame?.id || '']
+
+    const updatedFrameIds = previousFrames.includes(frameId)
+      ? previousFrames.filter((id) => id !== frameId)
+      : [...previousFrames, frameId]
+
+    setSelectedFrameIds(updatedFrameIds)
+  }
+
+  const resetMultiSelect = () => {
+    setSelectedFrameIds([])
+  }
 
   return (
     <AgendaPanelContext.Provider
@@ -448,10 +470,15 @@ export function AgendaPanelContextProvider({
         listDisplayMode,
         currentSectionId,
         expanded,
+        draggingFrameId,
+        selectedFrameIds,
         toggleExpanded,
         toggleExpandedSection,
         toggleListDisplayMode,
         setCurrentSectionId,
+        onMultiSelect,
+        resetMultiSelect,
+        setDraggingFrameId,
       }}>
       {children}
     </AgendaPanelContext.Provider>

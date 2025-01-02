@@ -44,15 +44,15 @@ export function SectionItem({
   sectionCount,
 }: SectionItemProps) {
   const {
+    eventMode,
+    overviewOpen,
+    insertInSectionId,
     setInsertAfterFrameId,
     setInsertInSectionId,
     updateSection,
-    eventMode,
-    overviewOpen,
     deleteSection,
     setOverviewOpen,
     addFrameToSection,
-    insertInSectionId,
   } = useContext(EventContext) as EventContextType
   const { permissions } = useEventPermissions()
   const {
@@ -106,6 +106,8 @@ export function SectionItem({
   const sectionExpanded = expandedSectionIds.includes(section.id)
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
   const sectionActive = !overviewOpen && currentSectionId === section.id
+  const isSectionEmptyOrCollapsed =
+    !sectionExpanded || section.frames.length === 0
 
   const duplicateFrame = (frame: IFrame) => {
     const newFrame = {
@@ -126,7 +128,7 @@ export function SectionItem({
     })
   }
 
-  const renderItem = () => {
+  const renderItem = ({ className }: { className: string }) => {
     if (sidebarExpanded) {
       return (
         <div
@@ -134,7 +136,8 @@ export function SectionItem({
             'flex justify-between items-center rounded-md px-2 group/section-item hover:bg-gray-200 hover:border-gray-200',
             {
               'bg-primary-100': sectionActive,
-            }
+            },
+            className
           )}>
           <div
             className="flex justify-start items-center flex-auto gap-2 h-8 border-0 rounded-md"
@@ -144,7 +147,6 @@ export function SectionItem({
                 'rotate-90': sectionExpanded,
               })}
             />
-
             <EditableLabel
               readOnly={actionDisabled}
               label={section.name}
@@ -217,18 +219,22 @@ export function SectionItem({
 
   return (
     <div>
-      {renderItem()}
       <StrictModeDroppable
         droppableId={`frame-droppable-sectionId-${section.id}`}
+        direction={isSectionEmptyOrCollapsed ? 'horizontal' : 'vertical'}
         type="frame">
         {(frameDroppableProvided, snapshot) => (
           <div
             key={`frame-draggable-${section.id}`}
             ref={frameDroppableProvided.innerRef}
             className={cn('relative rounded-sm transition-all w-full', {
-              'bg-gray-50': snapshot.isDraggingOver,
+              '!bg-green-100': snapshot.isDraggingOver,
             })}
             {...frameDroppableProvided.droppableProps}>
+            {renderItem({
+              className: snapshot.isDraggingOver ? 'bg-green-100' : '',
+            })}
+
             <FrameList
               frames={frames}
               showList={sectionExpanded}
