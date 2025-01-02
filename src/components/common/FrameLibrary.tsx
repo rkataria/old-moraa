@@ -4,7 +4,7 @@
 import { useRef, useState } from 'react'
 
 import { Button } from '@nextui-org/button'
-import { Pagination } from '@nextui-org/react'
+import { Pagination, Select, SelectItem } from '@nextui-org/react'
 import { IconTrash } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { RxDotsVertical } from 'react-icons/rx'
@@ -34,13 +34,18 @@ export function FrameLibrary({
   const [page, setPage] = useState(1)
   const profile = useProfile()
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
+  const [frameType, setFrameType] = useState('All Frames')
   const libraryQuery = useQuery({
-    queryKey: ['library-frames', page, frameTypes],
+    queryKey: [
+      'library-frames',
+      page,
+      frameTypes || frameType !== 'All Frames' ? [frameType] : [],
+    ],
     queryFn: () =>
       LibraryService.getFrameFromLibrary({
         profileId: profile!.data!.id,
         page,
-        frameTypes,
+        frameTypes: frameTypes || frameType !== 'All Frames' ? [frameType] : [],
       }),
     enabled: !!profile?.data?.id,
   })
@@ -55,77 +60,105 @@ export function FrameLibrary({
     libraryQuery.refetch()
   }
 
-  if (libraryQuery.isLoading) {
-    return (
-      <div className="min-h-48 flex flex-col justify-center items-center">
-        <ContentLoading />
-      </div>
-    )
-  }
-
   return (
     <div>
-      <div className="grid grid-cols-5 gap-4 py-4">
-        {libraryQuery.data?.data?.map((libraryItem: any) => (
-          <div
-            key={`frame-${libraryItem.id}`}
-            onClick={() => onFrameClick?.(libraryItem?.frame)}
-            className={cn(
-              'cursor-pointer overflow-hidden rounded-lg group/frame-item shadow shadow-sm border border-gray-200 px-2 pb-2'
-            )}>
-            <div className="flex justify-between items-center py-1">
-              <p className="text-gray-600 text-xs font-medium text-ellipsis max-w-32 whitespace-nowrap overflow-hidden">
-                {libraryItem.frame?.name}
-              </p>
-              {allowFrameDelete ? (
-                <DropdownActions
-                  triggerIcon={
-                    <Button
-                      size="sm"
-                      isIconOnly
-                      variant="light"
-                      className="shrink-0">
-                      <RxDotsVertical size={18} />
-                    </Button>
-                  }
-                  actions={[
-                    {
-                      key: 'delete',
-                      label: 'Remove',
-                      icon: <IconTrash className="text-red-500" size={18} />,
-                    },
-                  ]}
-                  onAction={onFrameDeleteClick(libraryItem.frame.id)}
-                />
-              ) : null}
+      <div className="flex justify-end">
+        <div>
+          <Select
+            className="flex-none text-xs w-60"
+            value={frameType}
+            variant="bordered"
+            size="sm"
+            classNames={{
+              trigger: 'border-1 rounded-md shadow-none',
+            }}
+            aria-label="How participants can join"
+            onChange={(e) => {
+              setFrameType(e.target.value)
+            }}>
+            {['All Frames', ...Object.values(FrameType)].map((label) => (
+              <SelectItem key={label}>{label}</SelectItem>
+            ))}
+          </Select>
+        </div>
+      </div>
+
+      {libraryQuery.isLoading ? (
+        <div className="min-h-48 flex flex-col justify-center items-center">
+          <ContentLoading />
+        </div>
+      ) : (
+        <div>
+          {libraryQuery.data?.data.length === 0 && (
+            <div className="flex justify-center text-sm text-gray-400 m-4">
+              It&apos;s empty here.
             </div>
-            <div className="relative">
+          )}
+          <div className="grid grid-cols-5 gap-4 py-4">
+            {libraryQuery.data?.data?.map((libraryItem: any) => (
               <div
+                key={`frame-${libraryItem.id}`}
+                onClick={() => onFrameClick?.(libraryItem?.frame)}
                 className={cn(
-                  'w-full rounded-lg border border-gray-300 overflow-hidden aspect-video bg-gray-100'
+                  'cursor-pointer overflow-hidden rounded-lg group/frame-item shadow shadow-sm border border-gray-200 px-2 pb-2'
                 )}>
-                <div
-                  ref={thumbnailContainerRef}
-                  className="relative w-full h-full">
-                  {libraryItem.frame.type === FrameType.MORAA_BOARD ? (
-                    <RoomProvider frameId={libraryItem.frame.id}>
-                      <FrameThumbnailCard
-                        frame={libraryItem.frame}
-                        containerWidth={containerWidth}
-                      />
-                    </RoomProvider>
-                  ) : (
-                    <FrameThumbnailCard
-                      frame={libraryItem.frame}
-                      containerWidth={containerWidth}
+                <div className="flex justify-between items-center py-1">
+                  <p className="text-gray-600 text-xs font-medium text-ellipsis max-w-32 whitespace-nowrap overflow-hidden">
+                    {libraryItem.frame?.name}
+                  </p>
+                  {allowFrameDelete ? (
+                    <DropdownActions
+                      triggerIcon={
+                        <Button
+                          size="sm"
+                          isIconOnly
+                          variant="light"
+                          className="shrink-0">
+                          <RxDotsVertical size={18} />
+                        </Button>
+                      }
+                      actions={[
+                        {
+                          key: 'delete',
+                          label: 'Remove',
+                          icon: (
+                            <IconTrash className="text-red-500" size={18} />
+                          ),
+                        },
+                      ]}
+                      onAction={onFrameDeleteClick(libraryItem.frame.id)}
                     />
-                  )}
+                  ) : null}
+                </div>
+                <div className="relative">
+                  <div
+                    className={cn(
+                      'w-full rounded-lg border border-gray-300 overflow-hidden aspect-video bg-gray-100'
+                    )}>
+                    <div
+                      ref={thumbnailContainerRef}
+                      className="relative w-full h-full">
+                      {libraryItem.frame.type === FrameType.MORAA_BOARD ? (
+                        <RoomProvider frameId={libraryItem.frame.id}>
+                          <FrameThumbnailCard
+                            frame={libraryItem.frame}
+                            containerWidth={containerWidth}
+                          />
+                        </RoomProvider>
+                      ) : (
+                        <FrameThumbnailCard
+                          frame={libraryItem.frame}
+                          containerWidth={containerWidth}
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
       <div className="my-2 flex justify-center">
         <Pagination
           total={Math.ceil((libraryQuery.data?.count || 10) / 10)}

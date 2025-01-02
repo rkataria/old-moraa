@@ -30,7 +30,7 @@ export const frameActions = [
   },
   {
     key: 'save-frame-in-library',
-    label: 'Save frame',
+    label: 'Save to library',
     icon: <IoSaveOutline className="h-4 w-4 text-slate-500" />,
   },
 ]

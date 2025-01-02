@@ -13,8 +13,11 @@ export const Route = createFileRoute('/(dashboard)/_layout/library/')({
 
 function Page() {
   return (
-    <EventProvider eventMode="view">
-      <FrameLibrary allowFrameDelete />
-    </EventProvider>
+    <div>
+      <p className="text-2xl font-medium text-black/80">My Library</p>
+      <EventProvider eventMode="view">
+        <FrameLibrary allowFrameDelete />
+      </EventProvider>
+    </div>
   )
 }
