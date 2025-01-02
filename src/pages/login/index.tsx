@@ -1,4 +1,6 @@
-import { Suspense, useEffect, useRef } from 'react'
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import { Suspense, useEffect, useRef, useState } from 'react'
 
 import { Card, CardBody, CardHeader } from '@nextui-org/react'
 import { Auth } from '@supabase/auth-ui-react'
@@ -8,6 +10,7 @@ import { motion } from 'framer-motion'
 
 import { Loading } from '@/components/common/Loading'
 import { MoraaLogo } from '@/components/common/MoraaLogo'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useAuth } from '@/hooks/useAuth'
 import { supabaseClient } from '@/utils/supabase/client'
 
@@ -19,6 +22,7 @@ function Login() {
   const user = useAuth()
   const router = useRouter()
   const location = useLocation()
+  const [showTerms, setShowTerms] = useState(false)
   const { redirectTo, action } = location.search as {
     redirectTo: string
     action: string
@@ -93,8 +97,25 @@ function Login() {
       )
       if (!element) return
       element!.click()
+      setShowTerms(true)
     }
   }, [action])
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleClick = (e: any) => {
+      const text = e?.target?.textContent.toLowerCase()
+      if (text.includes('sign up') || text.includes('sign in')) {
+        setShowTerms(text.includes('sign up'))
+      }
+    }
+
+    document.addEventListener('click', handleClick)
+
+    return () => {
+      document.removeEventListener('click', handleClick)
+    }
+  }, [])
 
   return (
     <div
@@ -125,6 +146,18 @@ function Login() {
             <MoraaLogo color="primary" />
           </CardHeader>
           <CardBody onClick={() => addPasswordToggle()}>
+            <RenderIf isTrue={showTerms}>
+              <p className="mt-0 mb-2 text-[11px] text-center leading-5">
+                By signing up for Moraa you acknowledge that you agree to
+                Moraa&apos;s{' '}
+                <span
+                  className="text-primary cursor-pointer"
+                  onClick={() => window.open('/terms', '_blank')}>
+                  Terms of Service and Privacy
+                </span>
+              </p>
+            </RenderIf>
+
             <Auth
               supabaseClient={supabaseClient}
               redirectTo={getRedirectUrl()}
