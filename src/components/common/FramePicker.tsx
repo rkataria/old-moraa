@@ -12,6 +12,7 @@ import {
   Tabs,
   Tab,
 } from '@nextui-org/react'
+import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { IoArrowBack } from 'react-icons/io5'
 
@@ -39,6 +40,8 @@ type FramePickerProps = {
   onClose: () => void
   onChoose: (contentType: FrameType, templateKey?: string) => void
   isBreakoutActivity?: boolean
+  breakoutFrameId?: string
+  onBreakoutFrameImport?: (frame: IFrame) => void
 }
 
 const frames = {
@@ -63,12 +66,19 @@ export function FramePicker({
   onClose,
   onChoose,
   isBreakoutActivity = false,
+  breakoutFrameId,
+  onBreakoutFrameImport,
 }: FramePickerProps) {
   const { meeting, currentSectionId, sections, setOpenContentTypePicker } =
     useEventContext()
   const [frameSelected, setFrameSelected] = useState<FramePickerFrame | null>(
     null
   )
+  const importFrameMutation = useMutation({
+    mutationFn: (
+      data: Parameters<typeof LibraryService.importFrameFromLibrary>[0]
+    ) => LibraryService.importFrameFromLibrary(data),
+  })
 
   const handleChoose = (frame: FramePickerFrame) => {
     if (frame.hasTemplates) {
@@ -80,18 +90,40 @@ export function FramePicker({
   }
 
   const onFrameImport = async (frame: IFrame) => {
-    await LibraryService.importFrameFromLibrary({
-      frameId: frame.id,
-      meetingId: meeting?.id,
-      sectionId: currentSectionId || sections[sections.length - 1]?.id,
-    })
-
-    toast.success('Frame imported')
-    setOpenContentTypePicker(false)
+    const loadingToast = toast.loading('Importing the frame...')
+    await importFrameMutation.mutate(
+      {
+        frameId: frame.id,
+        meetingId: meeting?.id,
+        sectionId: currentSectionId || sections[sections.length - 1]?.id,
+      },
+      {
+        onSuccess: () => {
+          toast.dismiss(loadingToast)
+          toast.success('Frame imported')
+          setOpenContentTypePicker(false)
+        },
+      }
+    )
   }
 
-  const onBreakoutActivityFrame = (frame: IFrame) => {
-    console.log('🚀 ~ onBreakoutActivityFrame ~ frame:', frame)
+  const onBreakoutActivityFrameImport = async (frame: IFrame) => {
+    const loadingToast = toast.loading('Importing the frame...')
+    await importFrameMutation.mutate(
+      {
+        frameId: frame.id,
+        meetingId: meeting?.id,
+        sectionId: currentSectionId || sections[sections.length - 1]?.id,
+        breakoutFrameId,
+      },
+      {
+        onSuccess(data) {
+          toast.dismiss(loadingToast)
+          toast.success('Frame imported')
+          onBreakoutFrameImport?.(data.frame)
+        },
+      }
+    )
   }
 
   const renderHeaderContents = () => {
@@ -178,7 +210,11 @@ export function FramePicker({
             </Tab>
             <Tab title="Import From Library">
               <FrameLibrary
-                onFrameClick={onBreakoutActivityFrame}
+                onFrameClick={
+                  importFrameMutation.isPending
+                    ? () => null
+                    : onBreakoutActivityFrameImport
+                }
                 frameTypes={breakoutFrames.map((f) => f.type)}
               />
             </Tab>
@@ -226,7 +262,11 @@ export function FramePicker({
             </div>
           </Tab>
           <Tab title="Import From Library">
-            <FrameLibrary onFrameClick={onFrameImport} />
+            <FrameLibrary
+              onFrameClick={
+                importFrameMutation.isPending ? () => null : onFrameImport
+              }
+            />
           </Tab>
         </Tabs>
       </div>

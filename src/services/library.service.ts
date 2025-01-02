@@ -55,18 +55,23 @@ const importFrameFromLibrary = async ({
   frameId,
   meetingId,
   sectionId,
+  breakoutFrameId,
 }: {
   frameId: string
   sectionId: string
   meetingId: string
-}) =>
-  supabaseClient.functions.invoke('import-from-library', {
-    body: {
-      frameId,
-      meetingId,
-      sectionId,
-    },
-  })
+  breakoutFrameId?: string
+}): Promise<{ success: boolean; frame: IFrame }> =>
+  supabaseClient.functions
+    .invoke('import-from-library', {
+      body: {
+        frameId,
+        meetingId,
+        sectionId,
+        breakoutFrameId,
+      },
+    })
+    .then((res) => JSON.parse(res.data))
 
 const deleteFrameFromLibrary = async (frameId: string) => {
   await FrameService.deleteFrame(frameId)
