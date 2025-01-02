@@ -17,7 +17,7 @@ import {
   notificationDuration,
   notifyBreakoutEnd,
   notifyBreakoutStart,
-} from '@/utils/breakout-notify.utils'
+} from '@/utils/breakout.utils'
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
