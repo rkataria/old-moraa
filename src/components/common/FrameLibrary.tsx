@@ -158,11 +158,12 @@ export function FrameLibrary({
           </div>
         ) : (
           <div>
-            {libraryQuery.data?.data.length === 0 && (
-              <div className="flex justify-center text-sm text-gray-400 m-4">
-                It&apos;s empty here.
-              </div>
-            )}
+            {libraryQuery.data?.data.length === 0 &&
+              listDisplayMode === 'grid' && (
+                <div className="flex justify-center text-sm text-gray-400 m-4">
+                  It&apos;s empty here.
+                </div>
+              )}
             {listDisplayMode === 'list' ? (
               <div className="p-1 mt-4">
                 <Table
