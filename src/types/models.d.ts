@@ -7,3 +7,4 @@ export type FrameModel = Tables<{ schema: 'public' }, 'frame'>
 export type SessionModel = Tables<{ schema: 'public' }, 'session'>
 export type ParticipantModel = Tables<{ schema: 'public' }, 'participant'>
 export type EnrollmentModel = Tables<{ schema: 'public' }, 'enrollment'>
+export type LibraryModel = Tables<{ schema: 'public' }, 'library'>
