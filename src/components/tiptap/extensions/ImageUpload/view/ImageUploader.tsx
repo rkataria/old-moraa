@@ -65,9 +65,10 @@ export function ImageUploader({
           }}
           onSelect={async (file) => {
             console.log(file)
+            const sanitizedName = file.name.replace(/[^a-zA-Z0-9.]/g, '')
             const response = await uploadFile({
               file,
-              fileName: `tiptap-${Date.now()}-${file.name}`,
+              fileName: `tiptap-${Date.now()}-${sanitizedName}`,
               bucketName: 'image-uploads',
               onProgressChange: setImageUploadProgress,
             })
