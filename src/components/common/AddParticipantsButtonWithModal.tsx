@@ -20,7 +20,7 @@ import {
   AddParticipantsForm,
   ParticipantsFormData,
 } from './AddParticipantsForm'
-import { Tooltip } from './ShortuctTooltip'
+import { ControlButton } from './ControlButton'
 import { Button } from '../ui/Button'
 
 import { useEvent } from '@/hooks/useEvent'
@@ -80,21 +80,25 @@ export function ButtonWithModal({
 
   return (
     <>
-      <Tooltip label="Invite and include participants">
-        <Button
-          size="sm"
-          className={cn('studio-button', {
+      <ControlButton
+        buttonProps={{
+          size: 'sm',
+          variant: 'light',
+          disableRipple: true,
+          disableAnimation: true,
+          className: cn('live-button', {
             active: open,
-          })}
-          {...buttonProps}
-          onClick={() => setOpen(true)}>
-          {buttonProps.children || (
-            <>
-              <LuUserPlus size={20} /> Invite
-            </>
-          )}
-        </Button>
-      </Tooltip>
+          }),
+          startContent: (
+            <LuUserPlus size={20} className={open ? 'text-primary' : ''} />
+          ),
+        }}
+        tooltipProps={{
+          label: 'Invite and include participants',
+        }}
+        onClick={() => setOpen(true)}>
+        {buttonProps.children || <>Invite</>}
+      </ControlButton>
 
       <Modal size="2xl" isOpen={open} onClose={() => setOpen(false)}>
         <ModalContent>

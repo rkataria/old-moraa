@@ -7,6 +7,7 @@ import { Header } from './Header'
 import { LandingPage } from './LandingPage'
 
 import { SessionPlanner } from '@/components/event-content/overview-frame/SessionPlanner/SessionPlanner'
+import { WithAIChatPanel } from '@/components/event-content/WithAIChatPanel'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { resetStudioLayoutStateAction } from '@/stores/slices/layout/studio.slice'
 
@@ -28,19 +29,19 @@ export function StudioLayout({ header }: StudioLayoutProps) {
   const renderContent = () => {
     if (activeTab === 'landing-page') {
       return (
-        <div className="w-full h-full py-2 px-6">
-          <div className="w-full h-full bg-transparent rounded-md">
+        <div className="w-full h-full p-4 bg-transparent rounded-md">
+          <WithAIChatPanel>
             <LandingPage />
-          </div>
+          </WithAIChatPanel>
         </div>
       )
     }
     if (activeTab === 'session-planner') {
       return (
-        <div className="w-full h-full py-2 px-6">
-          <div className="h-full max-w-screen-3xl pb-10 pt-4 overflow-y-auto scrollbar-none bg-transparent rounded-md">
+        <div className="w-full h-full p-4 max-w-screen-3xl overflow-y-auto scrollbar-none bg-transparent rounded-md">
+          <WithAIChatPanel>
             <SessionPlanner />
-          </div>
+          </WithAIChatPanel>
         </div>
       )
     }

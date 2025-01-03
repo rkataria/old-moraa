@@ -1,17 +1,13 @@
-import { useContext } from 'react'
-
 import { useHotkeys } from 'react-hotkeys-hook'
 import { LuSparkles } from 'react-icons/lu'
 
 import { Tooltip } from '../ShortuctTooltip'
 
 import { Button } from '@/components/ui/Button'
-import { EventContext } from '@/contexts/EventContext'
 import { useFlags } from '@/flags/client'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setContentStudioRightResizableSidebarAction } from '@/stores/slices/layout/studio.slice'
-import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export function ToggleButton() {
@@ -48,22 +44,15 @@ export function ToggleButton() {
 }
 
 export function AIChatbotToggleButton() {
-  const { preview } = useContext(EventContext) as EventContextType
-
   const { flags } = useFlags()
 
   const { permissions } = useEventPermissions()
-
-  const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
 
   if (!flags?.show_ai_panel) return null
 
   if (!permissions.canUpdateFrame) {
     return null
   }
-
-  if (preview) return null
-  if (activeTab !== 'content-studio') return null
 
   return <ToggleButton />
 }

@@ -34,6 +34,13 @@ export function AIChat({ onClose }: { onClose: () => void }) {
   const { messages, input } = useStoreSelector(
     (state: RootState) => state.ai.chat
   )
+  const isPreviewOpen = useStoreSelector(
+    (state) => state.event.currentEvent.eventState.isPreviewOpen
+  )
+
+  const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
+  const visibleToolingButtons =
+    !isPreviewOpen && ['session-planner', 'content-studio'].includes(activeTab)
 
   const { eventId } = useParams({ strict: false })
   const { event, meeting } = useEvent({ id: eventId! })
@@ -225,29 +232,31 @@ export function AIChat({ onClose }: { onClose: () => void }) {
                 presentations shine.
               </p>
             </div>
-            <div className="grid gap-3">
-              <Button
-                variant="bordered"
-                className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
-                onClick={handleGeneratePoll}
-                startContent={
-                  <HiOutlineChartBarSquare className="text-[1.5rem] shrink-0" />
-                }>
-                Generate{' '}
-                {overviewOpen ? 'a poll in 1st section' : 'interactive poll'}
-              </Button>
-              <RenderIf isTrue={sectionFrames?.length !== 0}>
+            <RenderIf isTrue={visibleToolingButtons}>
+              <div className="grid gap-3">
                 <Button
                   variant="bordered"
                   className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
-                  onClick={handleSummarizeSection}
+                  onClick={handleGeneratePoll}
                   startContent={
-                    <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
+                    <HiOutlineChartBarSquare className="text-[1.5rem] shrink-0" />
                   }>
-                  Summarize {overviewOpen ? '1st' : ''} section
+                  Generate{' '}
+                  {overviewOpen ? 'a poll in 1st section' : 'interactive poll'}
                 </Button>
-              </RenderIf>
-            </div>
+                <RenderIf isTrue={sectionFrames?.length !== 0}>
+                  <Button
+                    variant="bordered"
+                    className="justify-start h-[2.0625rem] px-2 text-black/80 border-1 border-primary-400 bg-primary-100"
+                    onClick={handleSummarizeSection}
+                    startContent={
+                      <HiOutlineDocumentText className="text-[1.5rem] shrink-0" />
+                    }>
+                    Summarize {overviewOpen ? '1st' : ''} section
+                  </Button>
+                </RenderIf>
+              </div>
+            </RenderIf>
           </div>
         </div>
       )
@@ -276,7 +285,7 @@ export function AIChat({ onClose }: { onClose: () => void }) {
         {/* TODO: use roles from enum */}
       </div>
       <div className="p-1 border-1 border-gray-300 bg-white rounded-md mx-4 mb-2">
-        <RenderIf isTrue={messages.length > 0}>
+        <RenderIf isTrue={messages.length > 0 && visibleToolingButtons}>
           <div className="flex items-center gap-2 p-2">
             <Button
               variant="bordered"

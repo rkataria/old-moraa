@@ -48,9 +48,6 @@ export function Header({
 
   const renderActionButtons = () => (
     <>
-      <AIChatbotToggleButton />
-      <PreviewSwitcher />
-
       <AddParticipantsButtonWithModal eventId={event.id} />
 
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
@@ -59,6 +56,8 @@ export function Header({
         eventId={event.id}
         refetchEvent={refetchEvent}
       />
+      <AIChatbotToggleButton />
+      <PreviewSwitcher />
     </>
   )
 
