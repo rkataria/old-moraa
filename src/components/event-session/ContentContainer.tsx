@@ -43,10 +43,10 @@ export function ContentContainer() {
         ?.querySelector('div#video-container')
         ?.setAttribute(
           'style',
-          'position: absolute; width: 100%; max-width: 100%;'
+          'position: absolute !important; width: 100% !important; max-width: 100% !important;'
         )
-    }, 1000)
-  }, [dyteScreenshareViewRef])
+    }, 2000)
+  }, [dyteScreenshareViewRef, screensharingParticipant, selfScreenShared])
 
   if (screensharingParticipant) {
     return (
