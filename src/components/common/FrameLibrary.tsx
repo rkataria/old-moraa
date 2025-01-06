@@ -113,9 +113,6 @@ export function FrameLibrary({
     <div>
       <div className="flex mt-4 items-center justify-between">
         <div>
-          <div className="mr-4 text-foreground-500 font-normal">
-            Frame Type:
-          </div>
           <Select
             className="flex-none text-xs w-60"
             value={frameType}
@@ -174,7 +171,7 @@ export function FrameLibrary({
                     <TableColumn>Type</TableColumn>
                     <TableColumn>Category</TableColumn>
                     <TableColumn>Saved On</TableColumn>
-                    <TableColumn>Action</TableColumn>
+                    <TableColumn hidden={!allowFrameDelete}>Action</TableColumn>
                   </TableHeader>
                   <TableBody>
                     {(libraryQuery.data?.data || []).map((item) => (
@@ -217,20 +214,18 @@ export function FrameLibrary({
                             )}
                           </p>
                         </TableCell>
-                        <TableCell>
-                          {allowFrameDelete && (
-                            <Button
-                              size="sm"
-                              isIconOnly
-                              variant="light"
-                              isLoading={
-                                deleteFrameMutation.isPending &&
-                                deleteFrameMutation.variables === item.frame.id
-                              }
-                              onClick={onFrameDeleteClick(item.frame.id)}>
-                              <IconTrash className="text-red-500" size={18} />
-                            </Button>
-                          )}
+                        <TableCell hidden={!allowFrameDelete}>
+                          <Button
+                            size="sm"
+                            isIconOnly
+                            variant="light"
+                            isLoading={
+                              deleteFrameMutation.isPending &&
+                              deleteFrameMutation.variables === item.frame.id
+                            }
+                            onClick={onFrameDeleteClick(item.frame.id)}>
+                            <IconTrash className="text-red-500" size={18} />
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
