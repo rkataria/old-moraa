@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 
 import {
   Button,
-  Divider,
   Image,
   Modal,
   ModalBody,
@@ -25,12 +24,11 @@ import { Editor as RichTextEditor } from '@/components/common/content-types/Rich
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { LogoWithName } from '@/components/common/Logo'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { UserAvatar } from '@/components/common/UserAvatar'
 import { Dates } from '@/components/enroll/Date'
 import { Participantslist } from '@/components/enroll/ParticipantList'
 import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { useAuth } from '@/hooks/useAuth'
-import { useEvent } from '@/hooks/useEvent'
+import { usePublicEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event/event-service'
 import { EventStatus } from '@/types/enums'
 import { cn } from '@/utils/utils'
@@ -51,20 +49,24 @@ export function Visit() {
   const descriptionModalDisclosure = useDisclosure()
 
   const [showEditor, setShowEditor] = useState(true)
-  const useEventData = useEvent({
+  const useEventData = usePublicEvent({
     id: eventId as string,
   })
+
   const eventPageUrl = `/events/${eventId}`
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const event = useEventData.event as any
-  const { profile } = useEventData
+
   const participants =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useEventData?.participants?.map((p: any) => ({
       email: p.email,
       role: p.event_role,
+      profile: p.profile,
     })) || []
+
+  const isEventOwner = user?.currentUser?.id === event?.owner_id
 
   const isLoggedIn = user?.currentUser?.id
   const isEnrolled = !!useEventData.participants?.find(
@@ -276,20 +278,10 @@ export function Visit() {
                 </div>
               </RenderIf>
 
-              <div>
-                <p className="text-sm font-medium text-slate-500">Hosted by</p>
-                <Divider className="mt-2 mb-3" />
-                <UserAvatar
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  profile={profile as any}
-                  withName
-                  nameClass="font-medium"
-                />
-              </div>
-
               <Participantslist
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 participants={useEventData.participants as any}
+                visibleInvitedTab={isEventOwner}
               />
             </div>
           </div>

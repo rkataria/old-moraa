@@ -113,6 +113,40 @@ const getEvent = async ({
   }
 }
 
+const getPublicEvent = async ({ eventId }: GetEventParams) => {
+  const { data: meeting, error } = await supabaseClient
+    .from('meeting')
+    .select('*, event:event_id(*)')
+    .eq('event_id', eventId)
+    .eq('type', 'MAIN')
+    .single()
+
+  if (error) {
+    console.error('error while fetching meeting and event: ', error)
+
+    return {
+      event: null,
+      contents: null,
+      error,
+    }
+  }
+
+  let participants
+
+  if (eventId) {
+    const data = await supabaseClient.functions.invoke('get-enrollments', {
+      body: { eventId },
+    })
+    participants = JSON.parse(data.data).enrollments
+  }
+
+  return {
+    event: meeting.event,
+    participants,
+    meeting,
+  }
+}
+
 const getEventPermissions = async ({
   eventId,
   userId,
@@ -200,6 +234,7 @@ const scheduleEvent = async (scheduleInfo: {
 export const EventService = {
   getEvents,
   getEvent,
+  getPublicEvent,
   getEventPermissions,
   createEvent,
   updateEvent,

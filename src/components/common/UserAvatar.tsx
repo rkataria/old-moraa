@@ -10,6 +10,7 @@ export interface IUserProfile {
 
 interface IUserAvatar {
   profile: IUserProfile
+  name?: string
   withName?: boolean
   description?: string
   avatarProps?: AvatarProps
@@ -17,6 +18,7 @@ interface IUserAvatar {
   descriptionClass?: string
   tooltipProps?: TooltipProps
 }
+
 export const getProfileName = (profile: IUserProfile) => {
   if (!profile) {
     return 'Moraa User'
@@ -28,6 +30,7 @@ export const getProfileName = (profile: IUserProfile) => {
 
   return 'Moraa User'
 }
+
 export const getAvatar = (profile: IUserProfile) => {
   if (!profile) {
     return ''
@@ -42,6 +45,7 @@ export const getAvatar = (profile: IUserProfile) => {
 
 export function UserAvatar({
   profile,
+  name,
   withName,
   description,
   avatarProps,
@@ -53,7 +57,7 @@ export function UserAvatar({
     return (
       <Tooltip {...tooltipProps}>
         <User
-          name={getProfileName(profile)}
+          name={name || getProfileName(profile)}
           description={description}
           avatarProps={{
             ...avatarProps,

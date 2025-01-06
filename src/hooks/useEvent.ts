@@ -34,3 +34,26 @@ export const useEvent = ({
     refetch: eventQuery.refetch,
   }
 }
+
+export const usePublicEvent = ({ id }: { id: string }) => {
+  const eventQuery = useQuery({
+    queryKey: ['event', id],
+    queryFn: () =>
+      EventService.getPublicEvent({
+        eventId: id,
+      }),
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+  })
+
+  return {
+    event: eventQuery.data?.event as unknown as EventModel,
+    meeting: eventQuery.data?.meeting,
+    participants: eventQuery.data?.participants,
+    isLoading: eventQuery.isLoading,
+    isFetching: eventQuery.isFetching,
+    error: eventQuery.error,
+    isError: eventQuery.isError,
+    refetch: eventQuery.refetch,
+  }
+}

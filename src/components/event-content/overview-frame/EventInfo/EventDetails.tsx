@@ -352,6 +352,7 @@ export function EventDetails() {
               </div>
 
               <Participantslist
+                visibleHostBy={false}
                 hideOnEmptyList={false}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 participants={participants as any}
