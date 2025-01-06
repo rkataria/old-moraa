@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { GiAirBalloon } from 'react-icons/gi'
 
-import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
+import { FrameLibrary } from '@/components/common/FrameLibrary'
+import { EventProvider } from '@/contexts/EventContext'
 import { beforeLoad } from '@/utils/before-load'
 
 export const Route = createFileRoute('/(dashboard)/_layout/library/')({
@@ -13,10 +13,11 @@ export const Route = createFileRoute('/(dashboard)/_layout/library/')({
 
 function Page() {
   return (
-    <EmptyPlaceholder
-      title="Library coming soon!"
-      description="Under development!"
-      icon={<GiAirBalloon className=" text-[200px] text-gray-200" />}
-    />
+    <div>
+      <p className="text-2xl font-medium text-black/80">My Library</p>
+      <EventProvider eventMode="view">
+        <FrameLibrary allowFrameDelete />
+      </EventProvider>
+    </div>
   )
 }

@@ -34,14 +34,21 @@ import { cn } from '@/utils/utils'
 type FrameItemProps = {
   frame: IFrame
   duplicateFrame: (frame: IFrame) => void
+  saveFrameInLibrary: (frame: IFrame) => void
   actionDisabled: boolean
 }
 
-type FrameActionKey = 'delete' | 'move-up' | 'move-down' | 'duplicate-frame'
+type FrameActionKey =
+  | 'delete'
+  | 'move-up'
+  | 'move-down'
+  | 'duplicate-frame'
+  | 'save-frame-in-library'
 
 export function FrameItem({
   frame,
   duplicateFrame,
+  saveFrameInLibrary,
   actionDisabled,
 }: FrameItemProps) {
   const {
@@ -90,6 +97,7 @@ export function FrameItem({
       'move-up': () => moveUpFrame(frame),
       'move-down': () => moveDownFrame(frame),
       'duplicate-frame': () => duplicateFrame(frame),
+      'save-frame-in-library': () => saveFrameInLibrary(frame),
     }
 
     actions[action.key]()

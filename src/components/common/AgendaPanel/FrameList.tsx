@@ -36,8 +36,12 @@ export function FrameList({
   actionDisabled,
 }: FrameListProps) {
   const { leftSidebarVisiblity } = useStudioLayout()
-  const { currentFrame, insertAfterFrameId, currentSectionId } =
-    useEventContext()
+  const {
+    currentFrame,
+    insertAfterFrameId,
+    currentSectionId,
+    saveFrameInLibrary,
+  } = useEventContext()
   const isAddFrameLoading = useStoreSelector(
     (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
   )
@@ -91,6 +95,7 @@ export function FrameList({
                         <FrameItem
                           frame={frame}
                           duplicateFrame={duplicateFrame}
+                          saveFrameInLibrary={saveFrameInLibrary}
                           actionDisabled={actionDisabled}
                         />
                         <Badge
@@ -131,6 +136,7 @@ export function FrameList({
                               <div key={f?.id} className="flex w-full">
                                 <FrameItem
                                   frame={f}
+                                  saveFrameInLibrary={saveFrameInLibrary}
                                   duplicateFrame={duplicateFrame}
                                   actionDisabled={actionDisabled}
                                 />

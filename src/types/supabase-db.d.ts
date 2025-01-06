@@ -231,12 +231,50 @@ export type Database = {
           },
         ]
       }
+      library: {
+        Row: {
+          created_at: string
+          frame_id: string | null
+          id: number
+          profile_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          frame_id?: string | null
+          id?: number
+          profile_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          frame_id?: string | null
+          id?: number
+          profile_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'library_frame_id_fkey'
+            columns: ['frame_id']
+            isOneToOne: false
+            referencedRelation: 'frame'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'library_profile_id_fkey'
+            columns: ['profile_id']
+            isOneToOne: false
+            referencedRelation: 'profile'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       meeting: {
         Row: {
           created_at: string
           dyte_meeting_id: string | null
           event_id: string | null
-          frames: string[] | null
           id: string
           sections: string[] | null
           type: string | null
@@ -246,7 +284,6 @@ export type Database = {
           created_at?: string
           dyte_meeting_id?: string | null
           event_id?: string | null
-          frames?: string[] | null
           id?: string
           sections?: string[] | null
           type?: string | null
@@ -256,7 +293,6 @@ export type Database = {
           created_at?: string
           dyte_meeting_id?: string | null
           event_id?: string | null
-          frames?: string[] | null
           id?: string
           sections?: string[] | null
           type?: string | null
@@ -268,38 +304,6 @@ export type Database = {
             columns: ['event_id']
             isOneToOne: false
             referencedRelation: 'event'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      notes: {
-        Row: {
-          content: string | null
-          created_at: string
-          frame_id: string | null
-          id: string
-          updated_at: string | null
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string
-          frame_id?: string | null
-          id?: string
-          updated_at?: string | null
-        }
-        Update: {
-          content?: string | null
-          created_at?: string
-          frame_id?: string | null
-          id?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'notes_frame_id_fkey'
-            columns: ['frame_id']
-            isOneToOne: true
-            referencedRelation: 'frame'
             referencedColumns: ['id']
           },
         ]
@@ -351,6 +355,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          presence_color: string | null
           updated_at: string | null
           user_type: string | null
         }
@@ -361,6 +366,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          presence_color?: string | null
           updated_at?: string | null
           user_type?: string | null
         }
@@ -371,6 +377,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          presence_color?: string | null
           updated_at?: string | null
           user_type?: string | null
         }
@@ -384,7 +391,6 @@ export type Database = {
           id: string
           participant_id: string | null
           reaction: string | null
-          slide_response_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -394,7 +400,6 @@ export type Database = {
           id?: string
           participant_id?: string | null
           reaction?: string | null
-          slide_response_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -404,7 +409,6 @@ export type Database = {
           id?: string
           participant_id?: string | null
           reaction?: string | null
-          slide_response_id?: string | null
           updated_at?: string | null
         }
         Relationships: [

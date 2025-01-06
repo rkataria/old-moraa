@@ -4,12 +4,26 @@
 
 import { useState } from 'react'
 
-import { Modal, ModalContent, ModalBody, ModalHeader } from '@nextui-org/react'
+import {
+  Modal,
+  ModalContent,
+  ModalBody,
+  ModalHeader,
+  Tabs,
+  Tab,
+} from '@nextui-org/react'
+import { useMutation } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { IoArrowBack } from 'react-icons/io5'
 
+// eslint-disable-next-line import/no-cycle
+import { FrameLibrary } from './FrameLibrary'
 import { FramePickerCard } from './FramePickerCard'
 import { FramePickerTemplateCard } from './FramePickerTemplateCard'
 
+import { useEventContext } from '@/contexts/EventContext'
+import { LibraryService } from '@/services/library.service'
+import { IFrame } from '@/types/frame.type'
 import {
   FRAME_PICKER_FRAMES,
   FramePickerFrame,
@@ -26,6 +40,8 @@ type FramePickerProps = {
   onClose: () => void
   onChoose: (contentType: FrameType, templateKey?: string) => void
   isBreakoutActivity?: boolean
+  breakoutFrameId?: string
+  onBreakoutFrameImport?: (frame: IFrame) => void
 }
 
 const frames = {
@@ -50,10 +66,19 @@ export function FramePicker({
   onClose,
   onChoose,
   isBreakoutActivity = false,
+  breakoutFrameId,
+  onBreakoutFrameImport,
 }: FramePickerProps) {
+  const { meeting, currentSectionId, sections, setOpenContentTypePicker } =
+    useEventContext()
   const [frameSelected, setFrameSelected] = useState<FramePickerFrame | null>(
     null
   )
+  const importFrameMutation = useMutation({
+    mutationFn: (
+      data: Parameters<typeof LibraryService.importFrameFromLibrary>[0]
+    ) => LibraryService.importFrameFromLibrary(data),
+  })
 
   const handleChoose = (frame: FramePickerFrame) => {
     if (frame.hasTemplates) {
@@ -62,6 +87,43 @@ export function FramePicker({
       setFrameSelected(null)
       onChoose(frame.type, frame.templateKey)
     }
+  }
+
+  const onFrameImport = async (frame: IFrame) => {
+    const loadingToast = toast.loading('Importing the frame...')
+    await importFrameMutation.mutate(
+      {
+        frameId: frame.id,
+        meetingId: meeting?.id,
+        sectionId: currentSectionId || sections[sections.length - 1]?.id,
+      },
+      {
+        onSuccess: () => {
+          toast.dismiss(loadingToast)
+          toast.success('Frame imported')
+          setOpenContentTypePicker(false)
+        },
+      }
+    )
+  }
+
+  const onBreakoutActivityFrameImport = async (frame: IFrame) => {
+    const loadingToast = toast.loading('Importing the frame...')
+    await importFrameMutation.mutate(
+      {
+        frameId: frame.id,
+        meetingId: meeting?.id,
+        sectionId: currentSectionId || sections[sections.length - 1]?.id,
+        breakoutFrameId,
+      },
+      {
+        onSuccess(data) {
+          toast.dismiss(loadingToast)
+          toast.success('Frame imported')
+          onBreakoutFrameImport?.(data.frame)
+        },
+      }
+    )
   }
 
   const renderHeaderContents = () => {
@@ -131,16 +193,32 @@ export function FramePicker({
   const renderContents = () => {
     if (isBreakoutActivity) {
       return (
-        <div className="p-4 z-0 flex justify-start items-start gap-8 h-full">
-          <div className={cn('grid grid-cols-6 gap-4 w-full')}>
-            {breakoutFrames.map((frame) => (
-              <FramePickerCard
-                key={frame.type}
-                frame={frame}
-                onClick={handleChoose}
+        <div>
+          <Tabs>
+            <Tab title="Create Frame">
+              <div className="z-0 flex justify-start items-start gap-8 h-full">
+                <div className={cn('grid grid-cols-6 gap-4 w-full')}>
+                  {breakoutFrames.map((frame) => (
+                    <FramePickerCard
+                      key={frame.type}
+                      frame={frame}
+                      onClick={handleChoose}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Tab>
+            <Tab title="Import From Library">
+              <FrameLibrary
+                onFrameClick={
+                  importFrameMutation.isPending
+                    ? () => null
+                    : onBreakoutActivityFrameImport
+                }
+                frameTypes={breakoutFrames.map((f) => f.type)}
               />
-            ))}
-          </div>
+            </Tab>
+          </Tabs>
         </div>
       )
     }
@@ -154,30 +232,43 @@ export function FramePicker({
     }
 
     return (
-      <div className="p-4 z-0 flex justify-start items-start gap-8 h-full">
-        {Object.entries(frames).map(([key, value], index) => (
-          <div key={key} className="flex-1 flex flex-col gap-8 pb-4">
-            <div className="flex flex-col gap-1">
-              <span className="text-lg font-semibold text-primary">
-                {value.title}
-              </span>
-              <span>{value.description}</span>
-            </div>
-            <div
-              className={cn('grid grid-cols-3 gap-4', {
-                'relative after:absolute after:content-[""] after:top-0 after:-right-4 after:w-0.5 after:h-full after:bg-gray-100':
-                  index === 0,
-              })}>
-              {value.frames.map((frame) => (
-                <FramePickerCard
-                  key={frame.type}
-                  frame={frame}
-                  onClick={handleChoose}
-                />
+      <div>
+        <Tabs>
+          <Tab title="Create Frame">
+            <div className="p-4 z-0 flex justify-start items-start gap-8 h-full">
+              {Object.entries(frames).map(([key, value], index) => (
+                <div key={key} className="flex-1 flex flex-col gap-8 pb-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-lg font-semibold text-primary">
+                      {value.title}
+                    </span>
+                    <span>{value.description}</span>
+                  </div>
+                  <div
+                    className={cn('grid grid-cols-3 gap-4', {
+                      'relative after:absolute after:content-[""] after:top-0 after:-right-4 after:w-0.5 after:h-full after:bg-gray-100':
+                        index === 0,
+                    })}>
+                    {value.frames.map((frame) => (
+                      <FramePickerCard
+                        key={frame.type}
+                        frame={frame}
+                        onClick={handleChoose}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-        ))}
+          </Tab>
+          <Tab title="Import From Library">
+            <FrameLibrary
+              onFrameClick={
+                importFrameMutation.isPending ? () => null : onFrameImport
+              }
+            />
+          </Tab>
+        </Tabs>
       </div>
     )
   }

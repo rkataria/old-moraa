@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './pages/__root'
 import { Route as IndexImport } from './pages/index'
+import { Route as TermsIndexImport } from './pages/terms/index'
 import { Route as OnboardingIndexImport } from './pages/onboarding/index'
 import { Route as LoginIndexImport } from './pages/login/index'
 import { Route as LoginMessagesImport } from './pages/login/messages'
@@ -43,6 +44,11 @@ const dashboardRoute = dashboardImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TermsIndexRoute = TermsIndexImport.update({
+  path: '/terms/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -173,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingIndexImport
       parentRoute: typeof rootRoute
     }
+    '/terms/': {
+      id: '/terms/'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/enroll/$eventId/': {
       id: '/enroll/$eventId/'
       path: '/enroll/$eventId'
@@ -269,6 +282,7 @@ export const routeTree = rootRoute.addChildren({
   LoginMessagesRoute,
   LoginIndexRoute,
   OnboardingIndexRoute,
+  TermsIndexRoute,
   EnrollEventIdIndexRoute,
   EventSessionEventIdIndexRoute,
   EventsEventIdIndexRoute,
@@ -290,6 +304,7 @@ export const routeTree = rootRoute.addChildren({
         "/login/messages",
         "/login/",
         "/onboarding/",
+        "/terms/",
         "/enroll/$eventId/",
         "/event-session/$eventId/",
         "/events/$eventId/",
@@ -323,6 +338,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/onboarding/": {
       "filePath": "onboarding/index.tsx"
+    },
+    "/terms/": {
+      "filePath": "terms/index.tsx"
     },
     "/enroll/$eventId/": {
       "filePath": "enroll/$eventId/index.tsx"

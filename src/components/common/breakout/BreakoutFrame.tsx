@@ -71,7 +71,8 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
 
   const handleAddNewFrame = (
     contentType: FrameType,
-    templateKey?: string
+    templateKey?: string,
+    existingFrame?: IFrame
   ): void => {
     let currentSection
     const _insertAfterFrameId = currentFrame?.id
@@ -93,7 +94,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       frameConfig.allowToCollaborate = true
     }
 
-    const newFrame: IFrame = {
+    const newFrame: IFrame = existingFrame || {
       id: uuidv4(),
       name: `Frame ${(insertInSection?.frames?.length || 0) + 1}`,
       config: frameConfig,
@@ -157,14 +158,16 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
       }
     }
 
-    addFrameToSection({
-      frame: newFrame,
-      section: insertInSection,
-      afterFrameId: _insertAfterFrameId!,
-    })
+    if (!existingFrame) {
+      addFrameToSection({
+        frame: newFrame,
+        section: insertInSection,
+        afterFrameId: _insertAfterFrameId!,
+      })
+    }
     setTimeout(
       () => updateFrame({ framePayload: payload, frameId: frame.id }),
-      1000
+      existingFrame ? 0 : 1000
     )
     setOpenContentTypePicker(false)
   }
@@ -364,6 +367,10 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
             handleAddNewFrame(content, templateType)
           }}
           isBreakoutActivity
+          breakoutFrameId={currentFrame?.id}
+          onBreakoutFrameImport={(importedFrame) =>
+            handleAddNewFrame(importedFrame.type, '', importedFrame)
+          }
         />
         <DeleteFrameModal
           isModalOpen={deletingActivityFrameIndex !== -1}
