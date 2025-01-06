@@ -357,7 +357,6 @@ export function EventDetails() {
                 participants={participants as any}
                 rightLabelContent={
                   <AddParticipantsButtonWithModal
-                    eventId={event.id}
                     triggerButtonProps={{
                       children: 'Edit',
                       variant: 'light',

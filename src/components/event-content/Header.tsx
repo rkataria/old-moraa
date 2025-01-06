@@ -48,7 +48,7 @@ export function Header({
 
   const renderActionButtons = () => (
     <>
-      <AddParticipantsButtonWithModal eventId={event.id} />
+      <AddParticipantsButtonWithModal />
 
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
       <PublishButton

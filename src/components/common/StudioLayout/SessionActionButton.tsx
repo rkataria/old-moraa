@@ -5,7 +5,6 @@ import {
   DropdownItem,
   useDisclosure,
 } from '@nextui-org/react'
-import { useRouter } from '@tanstack/react-router'
 import { ChevronDownIcon } from 'lucide-react'
 import { RiCalendarScheduleLine } from 'react-icons/ri'
 
@@ -64,7 +63,6 @@ function ActionButton({
   eventStatus: string
 }) {
   const scheduleModal = useDisclosure()
-  const router = useRouter()
 
   const { permissions } = useEventPermissions()
 
@@ -77,7 +75,7 @@ function ActionButton({
         <Button
           gradient="primary"
           color="primary"
-          onClick={() => router.navigate({ to: `/event-session/${eventId}` })}
+          onClick={() => window.open(`/event-session/${eventId}`, '__blank')}
           size="sm"
           title="Start session"
           className="rounded-r-none">
@@ -102,7 +100,7 @@ function ActionButton({
       <Button
         gradient="primary"
         title="Join live session"
-        onClick={() => router.navigate({ to: `/event-session/${eventId}` })}>
+        onClick={() => window.open(`/event-session/${eventId}`, '__blank')}>
         Join live session
       </Button>
     )

@@ -6,6 +6,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  useDisclosure,
 } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { BsRecord2 } from 'react-icons/bs'
@@ -15,7 +16,7 @@ import { IoSettingsOutline, IoVolumeMuteOutline } from 'react-icons/io5'
 import { LuUserPlus2 } from 'react-icons/lu'
 import { RiFocus2Fill, RiFocus2Line } from 'react-icons/ri'
 
-import { AddParticipantsModal } from '@/components/common/AddParticipantsModal'
+import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAppContext } from '@/hooks/useApp'
@@ -26,8 +27,8 @@ export function MoreActions() {
   const { isZenMode, toggleZenMode } = useAppContext()
   const { setDyteStates, isHost } = useEventSession()
   const [open, setOpen] = useState(false)
-  const [openAddParticipantsModal, setOpenAddParticipantsModal] =
-    useState(false)
+
+  const addParticipantsDisclosure = useDisclosure()
 
   const { meeting } = useDyteMeeting()
 
@@ -66,7 +67,7 @@ export function MoreActions() {
           key="add-participants"
           startContent={<LuUserPlus2 />}
           onClick={() => {
-            setOpenAddParticipantsModal(true)
+            addParticipantsDisclosure.onOpen()
           }}>
           Add new participant
         </DropdownItem>
@@ -123,9 +124,9 @@ export function MoreActions() {
         <DropdownMenu>{renderMenuItems()}</DropdownMenu>
       </Dropdown>
       {isHost && (
-        <AddParticipantsModal
-          open={openAddParticipantsModal}
-          setOpen={setOpenAddParticipantsModal}
+        <AddParticipantsButtonWithModal
+          showLabel={false}
+          disclosure={addParticipantsDisclosure}
         />
       )}
     </>

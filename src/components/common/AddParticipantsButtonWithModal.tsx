@@ -11,6 +11,7 @@ import {
   ButtonProps,
 } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
 import { FaLink } from 'react-icons/fa'
@@ -21,7 +22,10 @@ import {
   ParticipantsFormData,
 } from './AddParticipantsForm'
 import { ControlButton } from './ControlButton'
+import { RenderIf } from './RenderIf/RenderIf'
 import { Button } from '../ui/Button'
+
+import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -33,12 +37,16 @@ type addParticipant = ParticipantsFormData & {
 }
 
 export function ButtonWithModal({
-  eventId,
+  showLabel = true,
   buttonProps = {},
+  disclosure,
 }: {
-  eventId: string
+  showLabel?: boolean
   buttonProps?: ButtonProps
+  disclosure?: UseDisclosureReturn
 }) {
+  const { eventId = '' } = useParams({ strict: false })
+
   const [open, setOpen] = useState<boolean>(false)
   const { participants, refetch } = useEvent({
     id: eventId,
@@ -69,7 +77,7 @@ export function ButtonWithModal({
 
         toast.success('Participants updated successfully.')
         if (closeonSave) {
-          setOpen(false)
+          closeModal()
         }
       } catch (err) {
         console.error(err)
@@ -78,29 +86,39 @@ export function ButtonWithModal({
     },
   })
 
+  const closeModal = () => {
+    setOpen(false)
+    disclosure?.onClose()
+  }
+
   return (
     <>
-      <ControlButton
-        buttonProps={{
-          size: 'sm',
-          variant: 'light',
-          disableRipple: true,
-          disableAnimation: true,
-          className: cn('live-button', {
-            active: open,
-          }),
-          startContent: (
-            <LuUserPlus size={20} className={open ? 'text-primary' : ''} />
-          ),
-        }}
-        tooltipProps={{
-          label: 'Invite and include participants',
-        }}
-        onClick={() => setOpen(true)}>
-        {buttonProps.children || <>Invite</>}
-      </ControlButton>
+      <RenderIf isTrue={showLabel}>
+        <ControlButton
+          buttonProps={{
+            size: 'sm',
+            variant: 'light',
+            disableRipple: true,
+            disableAnimation: true,
+            className: cn('live-button', {
+              active: open,
+            }),
+            startContent: (
+              <LuUserPlus size={20} className={open ? 'text-primary' : ''} />
+            ),
+          }}
+          tooltipProps={{
+            label: 'Invite and include participants',
+          }}
+          onClick={() => setOpen(true)}>
+          {buttonProps.children || <>Invite</>}
+        </ControlButton>
+      </RenderIf>
 
-      <Modal size="2xl" isOpen={open} onClose={() => setOpen(false)}>
+      <Modal
+        size="2xl"
+        isOpen={open || disclosure?.isOpen}
+        onClose={closeModal}>
         <ModalContent>
           {() => (
             <>
@@ -120,6 +138,7 @@ export function ButtonWithModal({
                       isHost: participant.event_role === 'Host',
                       participantId: participant.id,
                       role: participant.event_role,
+                      profile: participant.profile,
                     })) || []
                   }
                   onSubmit={addParticipantsMutation.mutate}
@@ -131,11 +150,18 @@ export function ButtonWithModal({
                     <div className="flex justify-between pt-3 my-4 border-t">
                       <CopyToClipboard
                         text={`${window.location.origin}/enroll/${eventId}`}
-                        onCopy={() => toast.success('Copied')}>
+                        onCopy={() =>
+                          toast.success(
+                            'Event link copied! Share this link to allow others to enroll, view details, and join the event.',
+                            {
+                              duration: 4000,
+                            }
+                          )
+                        }>
                         <Button
                           size="sm"
                           variant="light"
-                          className="px-0 text-blue-400 hover:bg-transparent"
+                          className="px-0 text-blue-400 !bg-transparent"
                           startContent={<FaLink />}
                           disableAnimation
                           disableRipple>
@@ -150,7 +176,7 @@ export function ButtonWithModal({
                             variant="bordered"
                             color="default"
                             className="mr-2"
-                            onClick={() => setOpen(false)}>
+                            onClick={closeModal}>
                             Close
                           </Button>
                           <Button
@@ -176,11 +202,13 @@ export function ButtonWithModal({
 }
 
 export function AddParticipantsButtonWithModal({
-  eventId,
+  showLabel = true,
   triggerButtonProps,
+  disclosure,
 }: {
-  eventId: string
+  showLabel?: boolean
   triggerButtonProps?: ButtonProps
+  disclosure?: UseDisclosureReturn
 }) {
   const { permissions } = useEventPermissions()
 
@@ -188,5 +216,11 @@ export function AddParticipantsButtonWithModal({
     return null
   }
 
-  return <ButtonWithModal eventId={eventId} buttonProps={triggerButtonProps} />
+  return (
+    <ButtonWithModal
+      buttonProps={triggerButtonProps}
+      disclosure={disclosure}
+      showLabel={showLabel}
+    />
+  )
 }

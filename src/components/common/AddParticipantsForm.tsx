@@ -17,6 +17,7 @@ import * as yup from 'yup'
 
 import { DropdownActions } from './DropdownActions'
 import { EmailInput } from './EmailInput'
+import { UserAvatar } from './UserAvatar'
 
 import { useUserContext } from '@/hooks/useAuth'
 import { roles } from '@/utils/roles'
@@ -48,6 +49,7 @@ const participantsListValidationSchema = yup
       isHost: yup.boolean(),
       role: yup.string().required(),
       inQueue: yup.boolean().optional(),
+      isDeleted: yup.boolean().optional(),
       email: yup
         .string()
         .email()
@@ -151,16 +153,18 @@ export function AddParticipantsForm<
   useEffect(() => {
     if (isEqual(defaultValue, prevDefaultValue.current)) return
 
-    const newArray = participantsFieldArray.fields.map((emailItem) => {
-      const isInDefaultValue = defaultValue?.find(
-        (e) => e.email === emailItem.email
-      )
-      if (isInDefaultValue) {
-        return isInDefaultValue
-      }
+    const newArray = participantsFieldArray.fields
+      .filter((emailItem) => !emailItem.isDeleted)
+      .map((emailItem) => {
+        const isInDefaultValue = defaultValue?.find(
+          (e) => e.email === emailItem.email
+        )
+        if (isInDefaultValue) {
+          return isInDefaultValue
+        }
 
-      return emailItem
-    })
+        return emailItem
+      })
 
     participantsForm.reset({
       participants: newArray,
@@ -179,9 +183,14 @@ export function AddParticipantsForm<
     isHost: boolean
     index: number
   }) => {
+    participantsFieldArray.update(index, {
+      ...participantsFieldArray.fields[index],
+      isDeleted: true,
+    })
     if (participantId && !isHost) {
       await fakeDeleteParticipantMutation.mutateAsync(participantId)
     }
+
     participantsFieldArray.remove(index)
   }
 
@@ -200,6 +209,17 @@ export function AddParticipantsForm<
               <Input
                 disabled={arrayField.isHost}
                 value={field.value}
+                startContent={
+                  <UserAvatar
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    profile={(arrayField as any).profile}
+                    avatarProps={{
+                      size: 'sm',
+                      className: 'min-w-8',
+                      radius: 'sm',
+                    }}
+                  />
+                }
                 onChange={(e) => {
                   field.onChange(e)
                   setShowActions(true)
@@ -209,6 +229,7 @@ export function AddParticipantsForm<
                 classNames={{
                   base: 'flex-1 max-w-[76%] !opacity-100',
                   inputWrapper: 'bg-transparent shadow-none',
+                  innerWrapper: 'gap-2',
                   input: 'font-medium',
                 }}
                 errorMessage={fieldState.error?.message}
@@ -289,16 +310,29 @@ export function AddParticipantsForm<
   return (
     <div>
       <EmailInput
-        // isInviteLoading={addParticipantsMutation.isPending && !showActions}
-        onEnter={(email: string, role: string) => {
-          participantsFieldArray.append({ email, role })
+        onEnter={(emails: string[], role: string) => {
+          const newParticipants = emails.map((email) => ({
+            email,
+            role,
+          }))
+          participantsFieldArray.append(newParticipants)
+
           setShowActions(true)
         }}
-        onInvite={(email: string, role: string) => {
-          participantsFieldArray.append({ email, role, inQueue: true })
+        onInvite={(emails: string[], role: string) => {
+          const newParticipants = emails.map((email) => ({
+            email,
+            role,
+            inQueue: true,
+          }))
+
+          participantsFieldArray.append(newParticipants)
 
           addParticipantsMutation.mutate({
-            participants: [...participantsFieldArray.fields, { email, role }],
+            participants: [
+              ...participantsFieldArray.fields,
+              ...newParticipants,
+            ],
             closeonSave: false,
           })
         }}

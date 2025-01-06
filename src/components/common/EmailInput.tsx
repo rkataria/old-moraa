@@ -12,14 +12,23 @@ import { DropdownActions } from './DropdownActions'
 import { roles } from '@/utils/roles'
 
 const schema = yup.object().shape({
-  email: yup.string().email(),
+  email: yup.string(),
   role: yup.string().required(),
 })
 
 interface EmailInputProps {
-  onEnter: (email: string, role: string) => void
-  onInvite: (email: string, role: string) => void
+  onEnter: (email: string[], role: string) => void
+  onInvite: (email: string[], role: string) => void
   isInviteLoading?: boolean
+}
+
+const getEmailsList = (emailString: string) => {
+  const emailList = emailString.split(',').map((email) => email.trim())
+  const invalidEmails = emailList.filter(
+    (email) => !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+$/.test(email)
+  )
+
+  return { emailList, invalidEmails }
 }
 
 export function EmailInput({
@@ -40,7 +49,17 @@ export function EmailInput({
 
       handleSubmit(({ email, role }: { email?: string; role: string }) => {
         if (email) {
-          onEnter(email, role)
+          const { emailList, invalidEmails } = getEmailsList(email)
+
+          if (invalidEmails.length > 0) {
+            setError('email', {
+              type: 'manual',
+              message: `Invalid email(s): ${invalidEmails.join(', ')}`,
+            })
+
+            return
+          }
+          onEnter(emailList, role)
           setValue('email', '')
         }
       })()
@@ -64,15 +83,26 @@ export function EmailInput({
 
       return
     }
+    const { emailList, invalidEmails } = getEmailsList(email)
+
+    if (invalidEmails.length > 0) {
+      setError('email', {
+        type: 'manual',
+        message: `Invalid email(s): ${invalidEmails.join(', ')}`,
+      })
+
+      return
+    }
+
     if (email) {
-      onInvite(email, role)
+      onInvite(emailList, role)
       setValue('email', '')
     }
   }
 
   return (
     <div className="flex items-start justify-between gap-3 mb-4">
-      <div className="flex items-start w-full border pr-[0.375rem]">
+      <div className="flex items-start w-full border rounded-lg pr-[0.375rem]">
         <Controller
           name="email"
           control={control}
@@ -80,7 +110,7 @@ export function EmailInput({
             <Input
               {...field}
               type="email"
-              placeholder="Enter email address here"
+              placeholder="Enter emails (comma-separated)"
               labelPlacement="outside"
               variant="flat"
               startContent={
@@ -124,11 +154,12 @@ export function EmailInput({
         color="primary"
         variant="solid"
         isLoading={isInviteLoading}
+        className="min-w-fit"
         onClick={() => {
           setShowError(true)
           handleSubmit(onInviteSubmit)()
         }}>
-        Invite People
+        Invite
       </Button>
     </div>
   )
