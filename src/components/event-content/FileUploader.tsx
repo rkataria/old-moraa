@@ -200,9 +200,11 @@ export function FileUploader({
     }
   }, [useTUS, uppyInstance, bucketName])
 
-  const getObjectName = (file: File) =>
-    `${folderName ? `${folderName}/${uuidv4()}-${file.name}` : `${uuidv4()}${uuidv4()}-${file.name}`}`
+  const getObjectName = (file: File) => {
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.]/g, '')
 
+    return `${folderName ? `${folderName}/${uuidv4()}-${sanitizedName}` : `${uuidv4()}${uuidv4()}-${sanitizedName}`}`
+  }
   const getFilesWithSignedUrls = async (files: File[]) => {
     const filesWithSignedUrl: FileWithSignedUrl[] = []
 
