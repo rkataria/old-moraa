@@ -2,17 +2,9 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable react/no-danger */
-import {
-  useContext,
-  useState,
-  Fragment,
-  ReactNode,
-  useRef,
-  Key,
-  useEffect,
-} from 'react'
+import { useState, Fragment, ReactNode, useRef, Key, useEffect } from 'react'
 
-import { Button, Image } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import differenceby from 'lodash.differenceby'
 import isEqual from 'lodash.isequal'
 import { DragDropContext, Draggable } from 'react-beautiful-dnd'
@@ -23,26 +15,23 @@ import { MdAdd, MdDragIndicator } from 'react-icons/md'
 
 import { SessionColorTracker } from './ColorTracker'
 import { FramesList } from './FramesList'
+import { GetStartedPlaceholder } from './GetStartedPlaceholder'
 import { SectionTime } from './SectionTime'
 
 import { AddItemBar } from '@/components/common/AgendaPanel/AddItemBar'
 import { DropdownActions } from '@/components/common/DropdownActions'
 import { EditableLabel } from '@/components/common/EditableLabel'
-import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
 import { Loading } from '@/components/common/Loading'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StrictModeDroppable } from '@/components/common/StrictModeDroppable'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { setIsPreviewOpenAction } from '@/stores/slices/event/current-event/event.slice'
 import {
   setExpandedSectionsInPlannerAction,
   toggleSectionExpansionInPlannerAction,
 } from '@/stores/slices/event/current-event/section.slice'
-import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
-import { getBlankFrame } from '@/utils/content.util'
 import { cn, sortByStatus } from '@/utils/utils'
 
 export function SessionPlanner({
@@ -68,8 +57,7 @@ export function SessionPlanner({
     setInsertAfterFrameId,
     setInsertAfterSectionId,
     addSection,
-    addFrameToSection,
-  } = useContext(EventContext) as EventContextType
+  } = useEventContext()
 
   const dispatch = useStoreDispatch()
 
@@ -480,32 +468,7 @@ export function SessionPlanner({
                                 sections.length === 1 &&
                                 section.frames.length === 0
                               }>
-                              <div className="mt-16">
-                                <EmptyPlaceholder
-                                  icon={
-                                    <Image
-                                      src="/images/empty-section.svg"
-                                      width={400}
-                                    />
-                                  }
-                                  title="Get Started with Frames"
-                                  description="Your space is blank right now. Add some frames to visualize your event and take the first step in your planning journey"
-                                  actionButton={
-                                    <Button
-                                      onClick={() => {
-                                        dispatch(setIsPreviewOpenAction(false))
-                                        addFrameToSection({
-                                          frame: getBlankFrame('Frame 1'),
-                                          section: sections[0],
-                                        })
-                                      }}
-                                      color="primary"
-                                      startContent={<MdAdd size={28} />}>
-                                      Add frame
-                                    </Button>
-                                  }
-                                />
-                              </div>
+                              <GetStartedPlaceholder />
                             </RenderIf>
 
                             <RenderIf

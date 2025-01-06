@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { GrEmptyCircle } from 'react-icons/gr'
-import { LuPlusCircle } from 'react-icons/lu'
 
+import { ContentLoading } from '../ContentLoading'
 import { EmptyPlaceholder } from '../EmptyPlaceholder'
 import { SectionOverview } from '../SectionOverview'
 
 import { Frame } from '@/components/common/Frame/Frame'
+import { GetStartedPlaceholder } from '@/components/event-content/overview-frame/SessionPlanner/GetStartedPlaceholder'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { isFrameHasVideoAspectRatio } from '@/utils/frame-picker.util'
@@ -16,12 +17,20 @@ import { getFrameCount, getPublishedFrameCount } from '@/utils/utils'
 
 export function ContentStudioContentContainer() {
   const { permissions } = useEventPermissions()
-  const { currentFrame, currentSectionId, sections } = useEventContext()
+  const { currentFrame, currentSectionId, sections, setCurrentFrame } =
+    useEventContext()
   const frameCount = useMemo(() => getFrameCount(sections), [sections])
   const publishedFrameCount = useMemo(
     () => getPublishedFrameCount(sections),
     [sections]
   )
+
+  useEffect(() => {
+    if (!currentFrame && !currentSectionId) {
+      setCurrentFrame(sections[0]?.frames[0])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFrame, currentSectionId, sections])
 
   const renderContent = () => {
     if (currentSectionId) {
@@ -31,11 +40,7 @@ export function ContentStudioContentContainer() {
     if (frameCount === 0) {
       if (permissions.canUpdateFrame) {
         return (
-          <EmptyPlaceholder
-            icon={<LuPlusCircle size={80} />}
-            title="No frames"
-            description="Add a frame to get started"
-          />
+          <GetStartedPlaceholder className="h-full mt-0 flex justify-center items-center" />
         )
       }
 
@@ -61,13 +66,7 @@ export function ContentStudioContentContainer() {
     }
 
     if (permissions.canUpdateFrame) {
-      return (
-        <EmptyPlaceholder
-          icon={<GrEmptyCircle size={96} />}
-          title="No frame selected"
-          description="Select a frame to get started"
-        />
-      )
+      return <ContentLoading />
     }
 
     if (publishedFrameCount === 0) {
