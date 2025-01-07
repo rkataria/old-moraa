@@ -4,23 +4,23 @@ import { cn } from '@/utils/utils'
 
 type MoraaLogoProps = {
   color?: 'primary' | 'default'
-  filled?: boolean
+  logoOnly?: boolean
   className?: string
   onClick?: () => void
 }
 
 export function MoraaLogo({
   color = 'default',
-  filled = false,
+  logoOnly = false,
   className,
   onClick,
 }: MoraaLogoProps) {
   const getLogo = () => {
-    if (filled) {
+    if (logoOnly) {
       return (
         <img
-          className="h-6 w-auto"
-          src="/moraa-logo-lowercase.svg"
+          className="h-6 w-auto scale-125"
+          src={color === 'default' ? '/logo-only-white.svg' : '/logo-only.svg'}
           alt="Moraa Logo"
           onClick={onClick}
         />

@@ -1,15 +1,12 @@
-import {
-  DyteAudioVisualizer,
-  DyteAvatar,
-  DyteNameTag,
-  DyteParticipantTile,
-} from '@dytesdk/react-ui-kit'
+import { DyteAvatar, DyteParticipantTile } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant, DyteSelf } from '@dytesdk/web-core'
 import { motion } from 'framer-motion'
 import { IoHandRight } from 'react-icons/io5'
 import uniqolor from 'uniqolor'
 
+import { ParticipantAudioStatus } from './ParticipantAudioStatus'
+import { ParticipantTagName } from './ParticipantTagName'
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 
@@ -51,28 +48,14 @@ export function FloatingParticipantTile({
           backgroundColor: isSelfTile ? selfPresenceColor : presenceColor,
         }}
       />
-      <DyteNameTag
-        meeting={meeting}
-        participant={participant}
-        size="md"
-        className="left-3 w-full text-white"
-        style={{
-          backgroundColor: isSelfTile ? selfPresenceColor : presenceColor,
-        }}>
-        <DyteAudioVisualizer size="md" slot="start" participant={participant} />
-      </DyteNameTag>
-      {handRaised && (
+      <ParticipantAudioStatus participant={participant} isTileSmall />
+      <ParticipantTagName participant={participant} />
+      <RenderIf isTrue={!!handRaised}>
         <div>
           <motion.span
             animate={{ scale: [0, 1.1, 1] }}
             className={cn(
-              'absolute top-2 h-8 flex justify-center items-center gap-2 bg-black/50 text-white rounded-md',
-              {
-                '!right-12': participant.id === selfParticipant.id,
-                'right-3': participant.id !== selfParticipant.id,
-                'px-4': showOrder,
-                'w-8': !showOrder,
-              }
+              'absolute right-2 top-2 w-6 h-6 p-1 flex justify-center items-center gap-2 bg-black/50 text-white rounded-full'
             )}>
             <RenderIf isTrue={!!handRaisedOrder && !!showOrder}>
               <span>{handRaisedOrder}</span>
@@ -80,14 +63,16 @@ export function FloatingParticipantTile({
             <IoHandRight size={20} className="text-yellow-500" />
           </motion.span>
         </div>
-      )}
-      {participant.id === selfParticipant.id && (
+      </RenderIf>
+      <RenderIf isTrue={participant.id === selfParticipant.id}>
         <VideoBackgroundSettingsButtonWithModal
           buttonProps={{
-            className: 'absolute top-2 right-2 w-8 h-8 flex-none',
+            className: cn(
+              'absolute bottom-2 right-2 flex-none !w-6 !h-6 !min-w-6 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover/tile:opacity-100 transition-all duration-300'
+            ),
           }}
         />
-      )}
+      </RenderIf>
     </DyteParticipantTile>
   )
 }

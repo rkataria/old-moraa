@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { AgendaPanel } from '@/components/common/AgendaPanel'
 import { LiveAgendaHeader } from '@/components/common/AgendaPanel/LiveAgendaHeader'
 import { useEventContext } from '@/contexts/EventContext'
-import { useAppContext } from '@/hooks/useApp'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import {
   maximizeLeftSidebarAction,
@@ -14,19 +13,21 @@ import {
 import { cn } from '@/utils/utils'
 
 export function LeftSidebar() {
-  const { isZenMode } = useAppContext()
   const { isOwner } = useEventContext()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
   const dispatch = useStoreDispatch()
+  const layout = useStoreSelector(
+    (state) => state.layout.live.contentTilesLayoutConfig.layout
+  )
 
   useEffect(() => {
-    if (isZenMode) {
+    if (layout === 'spotlight') {
       dispatch(minimizeLeftSidebarAction())
     } else {
       dispatch(maximizeLeftSidebarAction())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isZenMode])
+  }, [layout])
 
   if (!isOwner) return null
 

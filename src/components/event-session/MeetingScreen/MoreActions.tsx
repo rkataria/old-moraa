@@ -14,17 +14,16 @@ import { FaStopCircle } from 'react-icons/fa'
 import { HiDotsVertical } from 'react-icons/hi'
 import { IoSettingsOutline, IoVolumeMuteOutline } from 'react-icons/io5'
 import { LuUserPlus2 } from 'react-icons/lu'
-import { RiFocus2Fill, RiFocus2Line } from 'react-icons/ri'
 
 import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useAppContext } from '@/hooks/useApp'
 import { useRecording } from '@/hooks/useRecording'
+import { useStoreDispatch } from '@/hooks/useRedux'
+import { openChangeContentTilesLayoutModalAction } from '@/stores/slices/layout/live.slice'
 import { cn } from '@/utils/utils'
 
 export function MoreActions() {
-  const { isZenMode, toggleZenMode } = useAppContext()
   const { setDyteStates, isHost } = useEventSession()
   const [open, setOpen] = useState(false)
 
@@ -33,6 +32,7 @@ export function MoreActions() {
   const { meeting } = useDyteMeeting()
 
   const { isRecording, startRecording } = useRecording()
+  const dispatch = useStoreDispatch()
 
   const handleMicDisable = async () => {
     meeting.participants.joined.toArray().forEach((p) => {
@@ -84,6 +84,17 @@ export function MoreActions() {
 
     items.push(
       <DropdownItem
+        key="change-layout"
+        startContent={<IoSettingsOutline />}
+        onClick={() => {
+          dispatch(openChangeContentTilesLayoutModalAction())
+        }}>
+        Change Layout
+      </DropdownItem>
+    )
+
+    items.push(
+      <DropdownItem
         key="settings"
         startContent={<IoSettingsOutline />}
         onClick={() => {
@@ -93,15 +104,6 @@ export function MoreActions() {
           }))
         }}>
         Video settings
-      </DropdownItem>
-    )
-
-    items.push(
-      <DropdownItem
-        key="zen-mode"
-        startContent={isZenMode ? <RiFocus2Fill /> : <RiFocus2Line />}
-        onClick={toggleZenMode}>
-        {isZenMode ? 'Disable' : 'Enable'} Zen Mode
       </DropdownItem>
     )
 

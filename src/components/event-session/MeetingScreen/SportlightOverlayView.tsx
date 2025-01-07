@@ -1,25 +1,17 @@
 import { useRef } from 'react'
 
-import { Switch } from '@nextui-org/react'
 import { motion } from 'framer-motion'
-import { useHotkeys } from 'react-hotkeys-hook'
 
+import { ContentTilesLayoutDropdown } from './ContentTilesLayoutDropdown'
 import { ContentContainer } from '../ContentContainer'
 import { FloatingParticipantTiles } from '../FloatingParticipantTiles'
 import { MicToggle } from '../MicToggle'
 import { VideoToggle } from '../VideoToggle'
 
-import { useAppContext } from '@/hooks/useApp'
 import { cn } from '@/utils/utils'
 
-export function ZenModeView() {
+export function SportlightOverlayView() {
   const constraintsRef = useRef<HTMLDivElement>(null)
-
-  const { isZenMode, toggleZenMode } = useAppContext()
-
-  useHotkeys('ctrl+shift+f', () => {
-    toggleZenMode()
-  })
 
   return (
     <motion.div
@@ -35,14 +27,9 @@ export function ZenModeView() {
         drag
         dragConstraints={constraintsRef}>
         <FloatingParticipantTiles />
-        <div className="w-full h-10 rounded-md text-white flex justify-between items-center p-2 bg-[var(--dyte-participant-tile-bg-color)]">
+        <div className="w-full rounded-md text-white flex justify-between items-center p-2 bg-[var(--dyte-participant-tile-bg-color)]">
           <div>
-            <Switch
-              defaultSelected={isZenMode}
-              size="sm"
-              onValueChange={toggleZenMode}>
-              <span className="text-white">Zen Mode</span>
-            </Switch>
+            <ContentTilesLayoutDropdown />
           </div>
           <div>
             <MicToggle />

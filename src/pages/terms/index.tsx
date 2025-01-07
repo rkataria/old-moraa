@@ -89,7 +89,7 @@ function TermsAndConditions() {
 
   return (
     <div>
-      <MoraaLogo filled className="p-4 fixed top-0 left-0" />
+      <MoraaLogo color="primary" className="p-4 fixed top-0 left-0" />
       <div className="px-10 mx-auto py-10 grid grid-cols-[0.2fr_1fr] items-start gap-40 pt-[6rem]">
         <div className="sticky top-20 grid">
           {termsData.slice(1).map((section) => (

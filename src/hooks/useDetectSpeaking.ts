@@ -18,8 +18,8 @@ export function useDetectSpeaking({ detect }: { detect: boolean }) {
 
       const speechEvents = hark(stream, {
         interval: 500,
-        // threshold: -65,
-        // play: false,
+        threshold: -40,
+        play: false,
       })
 
       speechEvents.on('speaking', () => {

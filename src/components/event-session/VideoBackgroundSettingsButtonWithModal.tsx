@@ -150,7 +150,6 @@ export function VideoBackgroundSettingsButtonWithModal({
           isIconOnly={!label}
           size="sm"
           radius="full"
-          color="primary"
           className={cn('flex justify-center items-center shrink-0')}
           {...buttonProps}
           onClick={() => setOpen(true)}>

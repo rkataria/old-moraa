@@ -70,7 +70,7 @@ export function Header({
           <MoraaLogo
             color="primary"
             className="cursor-pointer"
-            filled
+            logoOnly
             onClick={() =>
               router.navigate({
                 to: '/events',

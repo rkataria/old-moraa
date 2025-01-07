@@ -10,6 +10,7 @@ type NumberInputProps = {
   number?: number
   allowNegative?: boolean
   disabled?: boolean
+  numbers?: number[]
   classNames?: {
     buttonGroup?: string
     button?: string
@@ -24,6 +25,7 @@ export function NumberInput({
   number = 16,
   allowNegative = false,
   disabled = false,
+  numbers = [],
   classNames = {},
   onNumberChange,
 }: NumberInputProps) {
@@ -33,6 +35,8 @@ export function NumberInput({
     setValue(newSize)
     onNumberChange(newSize)
   }
+
+  const pickFromNumbers = numbers.length > 0
 
   return (
     <ButtonGroup
@@ -51,6 +55,15 @@ export function NumberInput({
         onClick={() => {
           if (disabled) return
           if (value <= min && !allowNegative) return
+
+          if (pickFromNumbers) {
+            const index = numbers.indexOf(value)
+            if (index > 0) {
+              handleNumberChange(numbers[index - 1])
+            }
+
+            return
+          }
 
           if (value > min || allowNegative) {
             handleNumberChange(value - 1)
@@ -82,6 +95,16 @@ export function NumberInput({
         onClick={() => {
           if (disabled) return
           if (value >= max) return
+
+          if (pickFromNumbers) {
+            const index = numbers.indexOf(value)
+            if (index < numbers.length - 1) {
+              handleNumberChange(numbers[index + 1])
+            }
+
+            return
+          }
+
           handleNumberChange(value + 1)
         }}>
         +

@@ -13,7 +13,7 @@ export function MicToggle({ className = '' }: { className?: string }) {
   const self = useDyteSelector((state) => state.self)
   const isMicEnabled = useDyteSelector((state) => state.self?.audioEnabled)
   const { isSpeaking } = useDetectSpeaking({
-    detect: !self.audioEnabled,
+    detect: !isMicEnabled,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,7 +37,7 @@ export function MicToggle({ className = '' }: { className?: string }) {
   ])
 
   const getTooltipProps = () => {
-    if (isSpeaking) {
+    if (isSpeaking && !isMicEnabled) {
       return {
         label:
           'Are you speaking? You are on mute. Clik the mic button or press the shortcut to unmute',

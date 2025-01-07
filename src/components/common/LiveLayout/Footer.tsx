@@ -1,6 +1,6 @@
 import { ReactNode } from '@tanstack/react-router'
 
-import { useAppContext } from '@/hooks/useApp'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
 
 type FooterProps = {
@@ -8,13 +8,15 @@ type FooterProps = {
 }
 
 export function Footer({ children }: FooterProps) {
-  const { isZenMode } = useAppContext()
+  const layout = useStoreSelector(
+    (state) => state.layout.live.contentTilesLayoutConfig.layout
+  )
 
   return (
     <div
       className={cn('h-16 w-full flex-none', {
         'fixed -bottom-14 left-0 w-full hover:bottom-0 transition-all duration-300':
-          isZenMode,
+          layout === 'spotlight',
       })}>
       {children}
     </div>

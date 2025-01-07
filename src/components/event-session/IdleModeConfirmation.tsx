@@ -6,8 +6,6 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
 import { useIdle } from '@uidotdev/usehooks'
 import useSound from 'use-sound'
 
-import switchOnSound from '../../../public/switch-on.mp3?url'
-
 import { useEventSession } from '@/contexts/EventSessionContext'
 import useCountdown from '@/hooks/useCountdown'
 
@@ -15,7 +13,7 @@ export function IdleModeConfirmation() {
   const { isHost } = useEventSession()
   const { meeting } = useDyteMeeting()
   const joinedParticipants = useDyteSelector((m) => m.participants.joined)
-  const [playSwitchOnSound] = useSound(switchOnSound, {
+  const [playSwitchOnSound] = useSound('/switch-on.mp3', {
     volume: 1,
   })
   const [open, setOpen] = useState(true)

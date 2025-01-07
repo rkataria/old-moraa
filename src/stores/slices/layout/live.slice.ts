@@ -2,14 +2,26 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { renameSliceActions } from '@/stores/helpers'
 
+export type ContentTilesLayout = 'default' | 'spotlight' | 'sidebar' | 'topbar'
+export type MaxTilesPerPage = 6 | 9 | 12 | 18 | 27 | 36
+
 export interface LiveLayoutState {
   leftSidebarMode: 'maximized' | 'minimized' | 'collapsed'
   rightSidebarMode: 'participants' | 'chat' | 'plugins' | 'frame-notes' | null
+  changeContentTilesLayoutModalOpen: boolean
+  contentTilesLayoutConfig: {
+    layout: ContentTilesLayout
+    hideSelfTile?: boolean
+    maxTilesPerPage: MaxTilesPerPage
+    hideTilesWithNoVideo?: boolean
+  }
 }
 
 const initialState: LiveLayoutState = {
   leftSidebarMode: 'maximized',
   rightSidebarMode: null,
+  changeContentTilesLayoutModalOpen: false,
+  contentTilesLayoutConfig: { layout: 'default', maxTilesPerPage: 6 },
 }
 
 export const layoutLiveSlice = createSlice({
@@ -39,6 +51,22 @@ export const layoutLiveSlice = createSlice({
     closeRightSidebar(state) {
       state.rightSidebarMode = null
     },
+
+    // Change content tiles layout modal
+    openChangeContentTilesLayoutModal(state) {
+      state.changeContentTilesLayoutModalOpen = true
+    },
+    closeChangeContentTilesLayoutModal(state) {
+      state.changeContentTilesLayoutModalOpen = false
+    },
+
+    // Change content tiles layout
+    changeContentTilesLayoutConfig(state, action) {
+      state.contentTilesLayoutConfig = {
+        ...state.contentTilesLayoutConfig,
+        ...action.payload,
+      }
+    },
   },
 })
 
@@ -49,4 +77,7 @@ export const {
   toggleLeftSidebarAction,
   setRightSidebarAction,
   closeRightSidebarAction,
+  openChangeContentTilesLayoutModalAction,
+  closeChangeContentTilesLayoutModalAction,
+  changeContentTilesLayoutConfigAction,
 } = renameSliceActions(layoutLiveSlice.actions)

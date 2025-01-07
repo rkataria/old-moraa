@@ -1,8 +1,8 @@
-import { PropsWithChildren, useEffect, useRef, useState } from 'react'
+import { PropsWithChildren, useRef } from 'react'
 
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
-import { ZenModeView } from './ZenModeView'
+import { SportlightOverlayView } from './SportlightOverlayView'
 import { ContentContainer } from '../ContentContainer'
 import { ParticipantTiles } from '../ParticipantTiles'
 
@@ -10,14 +10,14 @@ import { BreakoutMessageBroadcast } from '@/components/common/breakout/BreakoutM
 import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsWithParticipants'
 import { PanelResizer } from '@/components/common/PanelResizer'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useAppContext } from '@/hooks/useApp'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { EventSessionMode } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
+export const TOPBAR_PARTICIPANT_TILES_HEIGHT = 128
+
 export function Content() {
-  const { isZenMode } = useAppContext()
   const { eventSessionMode, isHost } = useEventSession()
   const isBreakoutOverviewOpen = useStoreSelector(
     (state) =>
@@ -31,25 +31,12 @@ export function Content() {
   const currentFrameId = useStoreSelector(
     (state) => state.event.currentEvent.eventState.currentFrameId
   )
-  const [panelSize, setPanelSize] = useState(18) // Initial default size
+  const layout = useStoreSelector(
+    (state) => state.layout.live.contentTilesLayoutConfig.layout
+  )
 
   const mainContentRef = useRef<HTMLDivElement>(null)
-  const panelRef = useRef(null)
   const { isBreakoutActive } = useBreakoutRooms()
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (panelRef.current) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const newSize = (panelRef.current as any).getSize() // Get current size as percentage
-        if (newSize !== panelSize) {
-          setPanelSize(newSize)
-        }
-      }
-    }, 100) // Polling interval
-
-    return () => clearInterval(intervalId)
-  }, [panelSize])
 
   const spotlightMode = eventSessionMode === EventSessionMode.LOBBY
 
@@ -58,21 +45,21 @@ export function Content() {
     currentFrameId === sessionBreakoutFrameId
 
   const ContentViewModes = {
-    zen_mode_view: <ZenModeView />,
+    spotlight_overlay_view: <SportlightOverlayView />,
     spotlight_mode_participants: (
       <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-xl m-auto">
         <ParticipantTiles spotlightMode />
       </div>
     ),
     frame_presentation_view: (
-      <PanelsContent panelRef={panelRef}>
+      <PanelsContent>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none">
           <ContentContainer />
         </div>
       </PanelsContent>
     ),
     frame_peek_view: (
-      <PanelsContent panelRef={panelRef}>
+      <PanelsContent>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-none">
           <ContentContainer />
         </div>
@@ -84,7 +71,7 @@ export function Content() {
       </div>
     ),
     frame_breakout_view: (
-      <PanelsContent panelRef={panelRef}>
+      <PanelsContent>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
           <h2 className="text-xl font-semibold my-4 mx-2 flex items-center">
             Breakout <BreakoutMessageBroadcast />
@@ -96,7 +83,8 @@ export function Content() {
   }
 
   const contentToShow = cn({
-    zen_mode_view: isZenMode && eventSessionMode === 'Presentation',
+    spotlight_overlay_view:
+      layout === 'spotlight' && eventSessionMode === 'Presentation',
     lobby_breakout_view:
       isHost &&
       isBreakoutActive &&
@@ -125,23 +113,36 @@ export function Content() {
 
 function PanelsContent({
   children,
-  panelRef,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-}: PropsWithChildren<{ panelRef: any }>) {
+}: PropsWithChildren) {
+  const contentTilesLayout = useStoreSelector(
+    (store) => store.layout.live.contentTilesLayoutConfig.layout
+  )
+
+  if (contentTilesLayout === 'topbar') {
+    return (
+      <div className="flex flex-col gap-2 h-full w-full">
+        <div
+          className="flex-none w-full"
+          style={{
+            height: `${TOPBAR_PARTICIPANT_TILES_HEIGHT}px`,
+          }}>
+          <ParticipantTiles spotlightMode={false} />
+        </div>
+        <div className="flex-auto h-full w-full">{children}</div>
+      </div>
+    )
+  }
+
   return (
-    <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
+    <PanelGroup direction="horizontal" autoSaveId="contentTilesLayout">
       <Panel minSize={30} maxSize={100} defaultSize={80} collapsedSize={50}>
         {children}
       </Panel>
 
       <PanelResizer />
 
-      <Panel
-        minSize={15}
-        collapsedSize={15}
-        defaultSize={20}
-        maxSize={50}
-        ref={panelRef}>
+      <Panel minSize={15} collapsedSize={15} defaultSize={20} maxSize={50}>
         <div className="flex flex-col overflow-auto h-full flex-1">
           <ParticipantTiles spotlightMode={false} />
         </div>

@@ -3,192 +3,134 @@ import { useEffect, useRef, useState } from 'react'
 
 import { DyteParticipant, DyteSelf } from '@dytesdk/web-core'
 import { ButtonGroup } from '@nextui-org/button'
+import { motion } from 'framer-motion'
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
+
+import { RenderIf } from '../RenderIf/RenderIf'
 
 import { ParticipantTile } from '@/components/event-session/ParticipantTile'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
+import { PresentationStatuses } from '@/types/event-session.type'
+import { calculateTileDimensions } from '@/utils/participant-tile.util'
 import { cn } from '@/utils/utils'
-
-function calculateMaxBoxes(
-  containerWidth: number,
-  containerHeight: number,
-  boxWidth: number,
-  boxSpacingX: number = 0,
-  boxSpacingY: number = 0
-) {
-  // Ensure the box maintains a 16:9 aspect ratio
-  const boxHeight = Math.round((boxWidth / 16) * 9)
-
-  // Adjust dimensions to include spacing
-  const effectiveBoxWidth = boxWidth + boxSpacingX
-  const effectiveBoxHeight = boxHeight + boxSpacingY
-
-  // Ensure the box dimensions fit within the container
-  if (
-    effectiveBoxWidth > containerWidth ||
-    effectiveBoxHeight > containerHeight
-  ) {
-    return calculateMaxBoxes(
-      containerWidth,
-      containerHeight,
-      boxWidth - 50,
-      boxSpacingX,
-      boxSpacingY
-    )
-  }
-
-  const boxesPerRow = Math.floor(containerWidth / effectiveBoxWidth)
-  const boxesPerColumn = Math.floor(containerHeight / effectiveBoxHeight)
-  const totalBoxes = boxesPerRow * boxesPerColumn
-
-  return { totalBoxes, rows: boxesPerColumn, columns: boxesPerRow, boxWidth }
-}
 
 type ParticipantsGridProps = {
   participants: (DyteParticipant | Readonly<DyteSelf>)[]
 }
 
-const BOX_WIDTH = 300
+const BOX_WIDTH = 1200
 
-export function ParticipantsGrid({ participants }: ParticipantsGridProps) {
+export function ParticipantsGrid({
+  participants: dyteParticipanrs,
+}: ParticipantsGridProps) {
+  const maxTilesPerPage = useStoreSelector(
+    (store) => store.layout.live.contentTilesLayoutConfig.maxTilesPerPage
+  )
+  const layout = useStoreSelector(
+    (store) => store.layout.live.contentTilesLayoutConfig.layout
+  )
+  const [tilesPerPage, setTilesPerPage] = useState<number>(maxTilesPerPage)
+  const [participants, setParticipants] =
+    useState<(DyteParticipant | Readonly<DyteSelf>)[]>(dyteParticipanrs)
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState<number>(0)
-  const [rows, setRows] = useState(0)
-  const [columns, setColumns] = useState(0)
   const [boxWidth, setBoxWidth] = useState(BOX_WIDTH)
   const gridRef = useRef<HTMLDivElement>(null)
-  const { activeSession } = useEventSession()
+  const { activeSession, presentationStatus } = useEventSession()
 
   const handRaised = activeSession?.handsRaised || []
 
   const participantCount = participants.length
 
+  const isLayoutTopbar =
+    layout === 'topbar' && presentationStatus !== PresentationStatuses.STOPPED
+
+  useEffect(() => {
+    if (layout !== 'topbar') {
+      setTilesPerPage(maxTilesPerPage)
+    }
+  }, [maxTilesPerPage, layout])
+
   useEffect(() => {
     if (!gridRef.current) return
     if (!gridRef.current?.clientWidth || !gridRef.current?.clientHeight) return
 
-    const observer = new ResizeObserver(updateGrid)
+    const observer = new ResizeObserver(calculateDimention)
 
-    function updateGrid() {
-      const {
-        totalBoxes: maxBoxes,
-        rows: itemsInRow,
-        columns: itemsInColumn,
-        boxWidth: itemBoxWidth,
-      } = calculateMaxBoxes(
-        gridRef.current?.clientWidth as number,
-        gridRef.current?.clientHeight as number,
-        BOX_WIDTH
-      )
+    function calculateDimention() {
+      const dimension = calculateTileDimensions({
+        containerWidth: gridRef.current?.clientWidth as number,
+        containerHeight: gridRef.current?.clientHeight as number,
+        aspectRatio: 16 / 9,
+        boxCount:
+          participantCount > tilesPerPage ? tilesPerPage : participantCount,
+        maxRows: isLayoutTopbar ? 1 : 9,
+      })
 
-      setItemsPerPage(maxBoxes || 0)
-      setRows(itemsInRow)
-      setColumns(itemsInColumn)
-      setBoxWidth(itemBoxWidth)
+      setBoxWidth(dimension.boxWidth)
+
+      if (dimension.tilesInRowForTopbar && isLayoutTopbar) {
+        setTilesPerPage(dimension.tilesInRowForTopbar)
+      }
     }
 
     observer.observe(gridRef.current)
-    updateGrid()
+    calculateDimention()
 
     return () => {
       observer.disconnect()
     }
-  }, [gridRef, participantCount])
+  }, [gridRef, participantCount, tilesPerPage, isLayoutTopbar])
 
-  const totalPages = Math.ceil(participantCount / itemsPerPage)
+  const totalPages = Math.ceil(participantCount / tilesPerPage)
   const participantsInCurrentPage = participants.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    (currentPage - 1) * tilesPerPage,
+    currentPage * tilesPerPage
   )
-
-  const getGridTemplate = () => {
-    if (participantCount > itemsPerPage) {
-      return {
-        columnTemplate: `repeat(${columns}, ${boxWidth}px)`,
-        rowTemplate: 'auto',
-      }
-    }
-
-    if (columns === 1) {
-      return {
-        columnTemplate:
-          participantsInCurrentPage.length === 1
-            ? `repeat(1, minmax(${boxWidth}px, 600px))`
-            : `repeat(1, ${boxWidth}px)`,
-        rowTemplate: 'auto',
-      }
-    }
-
-    if (columns === 2 && participantsInCurrentPage.length === 1) {
-      return {
-        columnTemplate: `repeat(1, minmax(${boxWidth}px, 600px))`,
-        rowTemplate: 'auto',
-      }
-    }
-
-    if (columns === 2 && participantsInCurrentPage.length < 3) {
-      return {
-        columnTemplate: `repeat(2, minmax(${boxWidth}px, 600px))`,
-        rowTemplate: 'auto',
-      }
-    }
-
-    if (
-      participantsInCurrentPage.length > 2 &&
-      participantsInCurrentPage.length < 5
-    ) {
-      return {
-        columnTemplate: `repeat(2, minmax(${boxWidth}px, 500px))`,
-        rowTemplate: 'auto',
-      }
-    }
-
-    if (
-      participantsInCurrentPage.length > 4 &&
-      participantsInCurrentPage.length < 10
-    ) {
-      return {
-        columnTemplate:
-          columns === 2
-            ? `repeat(2, ${boxWidth}px)`
-            : `repeat(3, minmax(${boxWidth}px, 400px))`,
-        rowTemplate: 'auto',
-      }
-    }
-
-    if (columns > participantsInCurrentPage.length) {
-      return {
-        columnTemplate: `repeat(${participantsInCurrentPage.length}, minmax(${boxWidth}px, 1000px))`,
-        rowTemplate: 'auto',
-      }
-    }
-
-    return {
-      columnTemplate: `repeat(${columns}, ${boxWidth}px)`,
-      rowTemplate: `repeat(${rows}, 1fr)`,
-    }
-  }
 
   const handRaisedActiveParticipants = participants.filter((participant) =>
     handRaised.includes(participant.id)
   )
 
   return (
-    <div className="relative w-full max-w-full h-full max-h-full overflow-hidden">
+    <div className="relative w-full max-w-full h-full max-h-full overflow-hidden group/participants-grid">
+      <RenderIf isTrue={process.env.NODE_ENV === 'development'}>
+        <div className="fixed bottom-0 right-0 flex justify-center items-center gap-2 p-4 bg-white shadow-md">
+          <Button
+            onClick={() => {
+              setParticipants((p) => p.slice(1))
+            }}>
+            Remove Participant
+          </Button>
+          <Button
+            onClick={() => {
+              setParticipants((p) => [...p, participants[0]])
+            }}>
+            Add Participant
+          </Button>
+        </div>
+      </RenderIf>
       <div
         ref={gridRef}
-        className="w-full h-full grid place-content-center place-items-center justify-center items-center gap-0"
-        style={{
-          gridTemplateColumns: getGridTemplate().columnTemplate,
-          gridTemplateRows: getGridTemplate().rowTemplate,
-        }}>
+        className={cn(
+          'w-full h-full flex justify-center flex-wrap items-center content-center gap-0',
+          {
+            'flex-nowrap w-full overflow-x-auto scrollbar-none': isLayoutTopbar,
+          }
+        )}>
         {participantsInCurrentPage.map((participant) => (
-          <div
+          <motion.div
             key={participant.id}
-            className={cn(
-              'w-full h-auto aspect-video p-2 border-2 border-transparent'
-            )}>
+            layout
+            className={cn('aspect-video p-1 border-2 border-transparent', {
+              'h-full': isLayoutTopbar,
+            })}
+            style={{
+              flexBasis: isLayoutTopbar
+                ? undefined
+                : `${boxWidth > BOX_WIDTH ? BOX_WIDTH : boxWidth}px`,
+            }}>
             <ParticipantTile
               participant={participant}
               handRaised={handRaised.includes(participant.id)}
@@ -199,11 +141,15 @@ export function ParticipantsGrid({ participants }: ParticipantsGridProps) {
                 ) + 1
               }
             />
-          </div>
+          </motion.div>
         ))}
       </div>
       {totalPages > 1 && (
-        <ButtonGroup className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1]">
+        <ButtonGroup
+          className={cn('absolute bottom-4 left-1/2 -translate-x-1/2 z-[1]', {
+            'bottom-1 opacity-0 transition-all duration-300 group-hover/participants-grid:opacity-100':
+              isLayoutTopbar,
+          })}>
           <Button
             isIconOnly
             onClick={() => {

@@ -160,7 +160,6 @@ export function EventsCreatePage() {
       selectedTheme={selectedTheme}>
       <MoraaLogo
         color="primary"
-        filled
         onClick={() => router.navigate({ to: '/events' })}
         className="fixed left-0 top-0 m-8 cursor-pointer"
       />

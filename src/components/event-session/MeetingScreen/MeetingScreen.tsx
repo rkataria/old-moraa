@@ -21,6 +21,7 @@ import { Footer } from './Footer'
 import { Header } from './Header'
 import { LeftSidebar } from './LeftSidebar'
 import { RightSidebar } from './RightSidebar'
+import { ChangeLayoutModal } from '../ChangeLayoutModal'
 import { FlyingEmojisOverlay } from '../FlyingEmojisOverlay'
 import { IdleModeConfirmation } from '../IdleModeConfirmation'
 
@@ -29,12 +30,14 @@ import { LiveLayout } from '@/components/common/LiveLayout'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useAppContext } from '@/hooks/useApp'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { setUpdateTimerOnParticipantJoinAction } from '@/stores/slices/event/current-event/timers.slice'
-import { setRightSidebarAction } from '@/stores/slices/layout/live.slice'
+import {
+  changeContentTilesLayoutConfigAction,
+  setRightSidebarAction,
+} from '@/stores/slices/layout/live.slice'
 import {
   EventSessionMode,
   PresentationStatuses,
@@ -54,7 +57,6 @@ export type DyteStates = {
 }
 
 export function MeetingScreen() {
-  const { isZenMode, setZenMode } = useAppContext()
   const { eventId } = useParams({ strict: false })
   const router = useRouter()
   const { meeting } = useDyteMeeting()
@@ -63,6 +65,9 @@ export function MeetingScreen() {
   const currentFrame = useCurrentFrame()
   const isBreakoutStartNotifyOpen = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.breakout.breakoutNotify
+  )
+  const layout = useStoreSelector(
+    (state) => state.layout.live.contentTilesLayoutConfig.layout
   )
   const {
     isHost,
@@ -78,8 +83,8 @@ export function MeetingScreen() {
   )
 
   useHotkeys('esc', () => {
-    if (isZenMode) {
-      setZenMode(false)
+    if (layout === 'spotlight') {
+      dispatch(changeContentTilesLayoutConfigAction({ layout: 'sidebar' }))
 
       return
     }
@@ -226,7 +231,6 @@ export function MeetingScreen() {
       </div>
       {/* Emoji Overlay */}
       <FlyingEmojisOverlay />
-
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
       <DyteNotifications
@@ -253,6 +257,7 @@ export function MeetingScreen() {
       <RenderIf isTrue={isBreakoutStartNotifyOpen}>
         <Notify />
       </RenderIf>
+      <ChangeLayoutModal />
     </LiveLayout>
   )
 }

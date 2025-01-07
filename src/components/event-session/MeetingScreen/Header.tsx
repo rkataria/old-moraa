@@ -4,6 +4,7 @@ import { DyteClock } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { useParams } from '@tanstack/react-router'
 
+import { ContentTilesLayoutDropdown } from './ContentTilesLayoutDropdown'
 import { MeetingStatusBar } from './MeetingStatusBar/MeetingStatusBar'
 import { NoteToggle } from './NoteToggle'
 import { ChatsToggle } from '../ChatsToggle'
@@ -62,7 +63,7 @@ export function Header() {
   return (
     <div className="h-full w-full flex justify-between items-center gap-4 px-4">
       <div className="flex-1 flex justify-start items-center gap-2 h-full">
-        <MoraaLogo color="primary" filled className="mr-2" />
+        <MoraaLogo color="primary" logoOnly className="mr-2" />
         <RenderIf isTrue={permissions.canAcessAllSessionControls}>
           <div className="pr-1">
             <AgendaPanelToggle
@@ -86,6 +87,7 @@ export function Header() {
         <MeetingStatusBar />
       </div>
       <div className="flex-1 flex justify-end items-center gap-2 h-full">
+        <ContentTilesLayoutDropdown />
         <ParticipantsToggle
           isParticipantsSidebarOpen={rightSidebarMode === 'participants'}
           onClick={() => {
