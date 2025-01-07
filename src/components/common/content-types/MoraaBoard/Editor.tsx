@@ -1,5 +1,5 @@
 import { useSelf } from '@liveblocks/react/suspense'
-import { PeopleMenu, Tldraw } from 'tldraw'
+import { PeopleMenu, Tldraw, TLTextShapeProps } from 'tldraw'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { useStorageStore } from '@/hooks/useStorageStore'
@@ -42,6 +42,29 @@ export function Editor({
       onMount={(editor) => {
         editor.updateInstanceState({ isReadonly: !!isReadonly })
         editor.zoomOut(editor.getViewportScreenCenter())
+        const shapes = editor.getCurrentPageShapes()
+        editor.updateShapes(
+          shapes.map((shape) => {
+            const currentWidth = (shape.props as TLTextShapeProps).w
+            const widthStr = currentWidth.toString()
+            const decimalPart = widthStr.split('.')[1]
+            const lastDecimalDigit = parseInt(decimalPart.slice(-1), 10)
+            const decimalPlaces = decimalPart.length
+            const adjustment = 1 / 10 ** decimalPlaces
+            const newWidth =
+              lastDecimalDigit % 2 === 0
+                ? currentWidth + adjustment
+                : currentWidth - adjustment
+
+            return {
+              ...shape,
+              props: {
+                ...shape.props,
+                w: parseFloat(newWidth.toFixed(decimalPlaces)),
+              },
+            }
+          })
+        )
       }}
     />
   )
