@@ -4,16 +4,17 @@ import { motion } from 'framer-motion'
 
 import { AgendaPanel } from '@/components/common/AgendaPanel'
 import { LiveAgendaHeader } from '@/components/common/AgendaPanel/LiveAgendaHeader'
-import { useEventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import {
+  ContentTilesLayout,
   maximizeLeftSidebarAction,
   minimizeLeftSidebarAction,
 } from '@/stores/slices/layout/live.slice'
 import { cn } from '@/utils/utils'
 
 export function LeftSidebar() {
-  const { isOwner } = useEventContext()
+  const { permissions } = useEventPermissions()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
   const dispatch = useStoreDispatch()
   const layout = useStoreSelector(
@@ -21,15 +22,15 @@ export function LeftSidebar() {
   )
 
   useEffect(() => {
-    if (layout === 'spotlight') {
+    if (layout === ContentTilesLayout.Spotlight) {
       dispatch(minimizeLeftSidebarAction())
-    } else {
+    } else if (permissions.canAcessAllSessionControls) {
       dispatch(maximizeLeftSidebarAction())
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layout])
 
-  if (!isOwner) return null
+  if (!permissions.canAcessAllSessionControls) return null
 
   return (
     <motion.div

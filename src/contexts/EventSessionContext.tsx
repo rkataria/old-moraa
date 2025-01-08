@@ -31,7 +31,10 @@ import {
   setBreakoutNotifyAction,
   updateMeetingSessionDataAction,
 } from '@/stores/slices/event/current-event/live-session.slice'
-import { changeContentTilesLayoutConfigAction } from '@/stores/slices/layout/live.slice'
+import {
+  changeContentTilesLayoutConfigAction,
+  ContentTilesLayout,
+} from '@/stores/slices/layout/live.slice'
 import {
   type EventSessionContextType,
   type VideoMiddlewareConfig,
@@ -355,7 +358,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     // Check if layout is topbar and if so change it to default
     dispatch(
       changeContentTilesLayoutConfigAction({
-        layout: 'default',
+        layout: ContentTilesLayout.Default,
       })
     )
   }

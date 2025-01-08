@@ -14,6 +14,7 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import {
   changeContentTilesLayoutConfigAction,
+  ContentTilesLayout,
   openChangeContentTilesLayoutModalAction,
 } from '@/stores/slices/layout/live.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
@@ -21,10 +22,10 @@ import { cn } from '@/utils/utils'
 
 export function ContentTilesLayoutDropdown() {
   const { presentationStatus } = useEventSession()
+  const dispatch = useStoreDispatch()
   const layout = useStoreSelector(
     (store) => store.layout.live.contentTilesLayoutConfig.layout
   )
-  const dispatch = useStoreDispatch()
 
   if (presentationStatus === PresentationStatuses.STOPPED) return null
 
@@ -34,10 +35,12 @@ export function ContentTilesLayoutDropdown() {
         <Button
           isIconOnly
           gradient="primary"
-          color={layout === 'spotlight' ? 'default' : 'primary'}
+          color={
+            layout === ContentTilesLayout.Spotlight ? 'default' : 'primary'
+          }
           className={cn({
             'bg-black/20 text-white hover:bg-opacity-10':
-              layout === 'spotlight',
+              layout === ContentTilesLayout.Spotlight,
           })}>
           <TbLayoutGridFilled size={20} />
         </Button>
@@ -50,11 +53,14 @@ export function ContentTilesLayoutDropdown() {
             // shortcut="⌘N"
             startContent={<TbLayoutGridFilled size={48} />}
             className={cn('mb-2', {
-              'bg-primary-100 border-primary-200': layout === 'spotlight',
+              'bg-primary-100 border-primary-200':
+                layout === ContentTilesLayout.Spotlight,
             })}
             onClick={() => {
               dispatch(
-                changeContentTilesLayoutConfigAction({ layout: 'spotlight' })
+                changeContentTilesLayoutConfigAction({
+                  layout: ContentTilesLayout.Spotlight,
+                })
               )
             }}>
             Spotlight
@@ -66,11 +72,14 @@ export function ContentTilesLayoutDropdown() {
             startContent={<BsLayoutSidebarInsetReverse size={48} />}
             className={cn('mb-2', {
               'bg-primary-100 border-primary-200':
-                layout === 'sidebar' || layout === 'default',
+                layout === ContentTilesLayout.Sidebar ||
+                layout === ContentTilesLayout.Default,
             })}
             onClick={() => {
               dispatch(
-                changeContentTilesLayoutConfigAction({ layout: 'sidebar' })
+                changeContentTilesLayoutConfigAction({
+                  layout: ContentTilesLayout.Sidebar,
+                })
               )
             }}>
             Sidebar
@@ -83,11 +92,14 @@ export function ContentTilesLayoutDropdown() {
               <BsLayoutSidebarInsetReverse className="-rotate-90" size={48} />
             }
             className={cn({
-              'bg-primary-100 border-primary-200': layout === 'topbar',
+              'bg-primary-100 border-primary-200':
+                layout === ContentTilesLayout.Topbar,
             })}
             onClick={() => {
               dispatch(
-                changeContentTilesLayoutConfigAction({ layout: 'topbar' })
+                changeContentTilesLayoutConfigAction({
+                  layout: ContentTilesLayout.Topbar,
+                })
               )
             }}>
             Topbar

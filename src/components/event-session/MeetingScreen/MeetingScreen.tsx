@@ -36,6 +36,7 @@ import { updateEventSessionModeAction } from '@/stores/slices/event/current-even
 import { setUpdateTimerOnParticipantJoinAction } from '@/stores/slices/event/current-event/timers.slice'
 import {
   changeContentTilesLayoutConfigAction,
+  ContentTilesLayout,
   setRightSidebarAction,
 } from '@/stores/slices/layout/live.slice'
 import {
@@ -83,8 +84,12 @@ export function MeetingScreen() {
   )
 
   useHotkeys('esc', () => {
-    if (layout === 'spotlight') {
-      dispatch(changeContentTilesLayoutConfigAction({ layout: 'sidebar' }))
+    if (layout === ContentTilesLayout.Spotlight) {
+      dispatch(
+        changeContentTilesLayoutConfigAction({
+          layout: ContentTilesLayout.Sidebar,
+        })
+      )
 
       return
     }

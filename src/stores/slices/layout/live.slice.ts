@@ -2,7 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { renameSliceActions } from '@/stores/helpers'
 
-export type ContentTilesLayout = 'default' | 'spotlight' | 'sidebar' | 'topbar'
+export enum ContentTilesLayout {
+  Default = 'default',
+  Spotlight = 'spotlight',
+  Sidebar = 'sidebar',
+  Topbar = 'topbar',
+}
+
 export type MaxTilesPerPage = 6 | 9 | 12 | 18 | 27 | 36
 
 export interface LiveLayoutState {
@@ -18,10 +24,13 @@ export interface LiveLayoutState {
 }
 
 const initialState: LiveLayoutState = {
-  leftSidebarMode: 'maximized',
+  leftSidebarMode: 'collapsed',
   rightSidebarMode: null,
   changeContentTilesLayoutModalOpen: false,
-  contentTilesLayoutConfig: { layout: 'default', maxTilesPerPage: 6 },
+  contentTilesLayoutConfig: {
+    layout: ContentTilesLayout.Default,
+    maxTilesPerPage: 6,
+  },
 }
 
 export const layoutLiveSlice = createSlice({

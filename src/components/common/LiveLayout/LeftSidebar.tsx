@@ -2,7 +2,7 @@ import { ReactNode } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useDispatch } from 'react-redux'
 
-import { useEventContext } from '@/contexts/EventContext'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreSelector } from '@/hooks/useRedux'
 import {
   collapseLeftSidebarAction,
@@ -15,14 +15,14 @@ type LeftSidebarProps = {
 }
 
 export function LeftSidebar({ children }: LeftSidebarProps) {
-  const { isOwner } = useEventContext()
   const dispatch = useDispatch()
+  const { permissions } = useEventPermissions()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
 
   useHotkeys(
     KeyboardShortcuts['Agenda Panel'].expandAndCollapse.keyWithCode,
     () => {
-      if (!isOwner) return
+      if (!permissions.canAcessAllSessionControls) return
 
       if (leftSidebarMode === 'maximized') {
         dispatch(collapseLeftSidebarAction())

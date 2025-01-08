@@ -12,6 +12,7 @@ import { ParticipantTile } from '@/components/event-session/ParticipantTile'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
+import { ContentTilesLayout } from '@/stores/slices/layout/live.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { calculateTileDimensions } from '@/utils/participant-tile.util'
 import { cn } from '@/utils/utils'
@@ -44,10 +45,11 @@ export function ParticipantsGrid({
   const participantCount = participants.length
 
   const isLayoutTopbar =
-    layout === 'topbar' && presentationStatus !== PresentationStatuses.STOPPED
+    layout === ContentTilesLayout.Topbar &&
+    presentationStatus !== PresentationStatuses.STOPPED
 
   useEffect(() => {
-    if (layout !== 'topbar') {
+    if (layout !== ContentTilesLayout.Topbar) {
       setTilesPerPage(maxTilesPerPage)
     }
   }, [maxTilesPerPage, layout])

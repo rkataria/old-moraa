@@ -12,6 +12,7 @@ import { PanelResizer } from '@/components/common/PanelResizer'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
+import { ContentTilesLayout } from '@/stores/slices/layout/live.slice'
 import { EventSessionMode } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
@@ -84,7 +85,8 @@ export function Content() {
 
   const contentToShow = cn({
     spotlight_overlay_view:
-      layout === 'spotlight' && eventSessionMode === 'Presentation',
+      layout === ContentTilesLayout.Spotlight &&
+      eventSessionMode === 'Presentation',
     lobby_breakout_view:
       isHost &&
       isBreakoutActive &&
@@ -103,7 +105,13 @@ export function Content() {
 
   return (
     <div
-      className="relative flex justify-start items-start flex-1 w-full h-[calc(100vh_-_120px)] overflow-hidden overflow-y-auto"
+      className={cn(
+        'relative flex justify-start items-start flex-1 w-full h-[calc(100vh_-_120px)] overflow-hidden overflow-y-auto',
+        {
+          'max-h-[calc(100vh_-_120px)] overflow-hidden':
+            layout === ContentTilesLayout.Topbar,
+        }
+      )}
       ref={mainContentRef}>
       {/* Sportlight View */}
       {ContentViewModes[contentToShow]}
@@ -119,7 +127,7 @@ function PanelsContent({
     (store) => store.layout.live.contentTilesLayoutConfig.layout
   )
 
-  if (contentTilesLayout === 'topbar') {
+  if (contentTilesLayout === ContentTilesLayout.Topbar) {
     return (
       <div className="flex flex-col gap-2 h-full w-full">
         <div

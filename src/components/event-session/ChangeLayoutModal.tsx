@@ -27,7 +27,7 @@ import { PresentationStatuses } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
 type Layout = {
-  name: 'Default' | 'Spotlight' | 'Sidebar' | 'Topbar'
+  name: keyof typeof ContentTilesLayout
   value: ContentTilesLayout
   src: string
 }
@@ -35,22 +35,22 @@ type Layout = {
 const LVE_LAYOUTS: Layout[] = [
   {
     name: 'Default',
-    value: 'default',
+    value: ContentTilesLayout.Default,
     src: 'https://www.gstatic.com/meet/layout_v2_tiled_b81dc04cf1f16260f8dc9b727c03a14e.svg',
   },
   {
     name: 'Spotlight',
-    value: 'spotlight',
+    value: ContentTilesLayout.Spotlight,
     src: 'https://www.gstatic.com/meet/layout_v2_fullscreen_9175b2e94ac960de3a29a4c5e4c32ab6.svg',
   },
   {
     name: 'Sidebar',
-    value: 'sidebar',
+    value: ContentTilesLayout.Sidebar,
     src: 'https://www.gstatic.com/meet/layout_v2_sidebar_8dea1e0cfa750f5b3dc5b666daf8178d.svg',
   },
   {
     name: 'Topbar',
-    value: 'topbar',
+    value: ContentTilesLayout.Topbar,
     src: 'https://www.gstatic.com/meet/layout_v2_sidebar_8dea1e0cfa750f5b3dc5b666daf8178d.svg',
   },
 ]
@@ -68,7 +68,11 @@ export function ChangeLayoutModal() {
 
   const disabledLayouts =
     presentationStatus === PresentationStatuses.STOPPED
-      ? ['spotlight', 'sidebar', 'topbar']
+      ? [
+          ContentTilesLayout.Spotlight,
+          ContentTilesLayout.Sidebar,
+          ContentTilesLayout.Topbar,
+        ]
       : []
 
   const dispatch = useStoreDispatch()

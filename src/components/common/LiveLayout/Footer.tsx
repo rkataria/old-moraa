@@ -1,6 +1,7 @@
 import { ReactNode } from '@tanstack/react-router'
 
 import { useStoreSelector } from '@/hooks/useRedux'
+import { ContentTilesLayout } from '@/stores/slices/layout/live.slice'
 import { cn } from '@/utils/utils'
 
 type FooterProps = {
@@ -16,7 +17,7 @@ export function Footer({ children }: FooterProps) {
     <div
       className={cn('h-16 w-full flex-none', {
         'fixed -bottom-14 left-0 w-full hover:bottom-0 transition-all duration-300':
-          layout === 'spotlight',
+          layout === ContentTilesLayout.Spotlight,
       })}>
       {children}
     </div>
