@@ -17,6 +17,7 @@ export const beforeLoad = async ({
   }
 }) => {
   const session = await supabaseClient.auth.getSession()
+
   if (context.auth.loading) return
 
   if (!context.auth.isAuthenticated) {
@@ -38,7 +39,7 @@ export const beforeLoad = async ({
     throw redirect({
       to: '/login',
       search: {
-        redirect: location.href,
+        redirectTo: location.href,
       },
     })
   }

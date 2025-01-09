@@ -29,6 +29,7 @@ import { useAskForHelp } from '@/hooks/useAskForHelp'
 import { useBreakoutBroadcastMessage } from '@/hooks/useBreakoutBroadcastMessage'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useBreakoutSessionOver } from '@/hooks/useBreakoutSessionOver'
+import { useEnsureEventEnrollment } from '@/hooks/useEnsureEventEnrollment'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useUserPreferences } from '@/hooks/userPreferences'
 import {
@@ -160,6 +161,8 @@ function EventSessionPage() {
     dispatch(resetMoraaSlideAction())
     dispatch(resetLiveSessionAction())
   }, [dispatch])
+
+  useEnsureEventEnrollment()
 
   useEffect(() => {
     if (!eventId) return

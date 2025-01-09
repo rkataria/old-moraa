@@ -17,7 +17,8 @@ export function WithAIChatPanel({ children }: { children: ReactNode }) {
     <PanelGroup direction="horizontal">
       <Panel
         defaultSize={resizableRightSidebarVisible ? 60 : 100}
-        minSize={resizableRightSidebarVisible ? 40 : 100}>
+        minSize={resizableRightSidebarVisible ? 40 : 100}
+        className="!overflow-y-auto">
         {children}
       </Panel>
       {resizableRightSidebarVisible && (

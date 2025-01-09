@@ -22,6 +22,7 @@ import { StudioLayout } from '../common/StudioLayout/Index'
 import { SyncingStatus } from '../common/SyncingStatus'
 
 import { useEventContext } from '@/contexts/EventContext'
+import { useEnsureEventEnrollment } from '@/hooks/useEnsureEventEnrollment'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -40,6 +41,7 @@ export function FrameManager() {
     isLoading: eventLoading,
     refetch: refetchEvent,
   } = useEvent({ id: eventId as string })
+
   const [selectedContentType, setContentType] = useState<FrameType | null>(null)
   const [selectedTemplateKey, setTemplateKey] = useState<string | undefined>(
     undefined
@@ -61,10 +63,10 @@ export function FrameManager() {
     currentFrame,
     sections,
     openContentTypePicker,
-    setOpenContentTypePicker,
     insertAfterFrameId,
     insertInSectionId,
     addFrameToSection,
+    setOpenContentTypePicker,
   } = useEventContext()
 
   const dispatch = useStoreDispatch()
@@ -74,6 +76,8 @@ export function FrameManager() {
     () => setOpenContentTypePicker(true),
     { enabled: !preview && activeTab === 'content-studio' }
   )
+
+  useEnsureEventEnrollment()
 
   const handleAddNewFrame = (
     type: FrameType,
@@ -165,6 +169,7 @@ export function FrameManager() {
       </div>
     )
   }
+
   if (!permissions.canUpdateFrame && event.status !== EventStatus.ACTIVE) {
     return (
       <div className="w-screen h-screen grid place-items-center bg-primary-50">

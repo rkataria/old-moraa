@@ -188,213 +188,212 @@ export function SessionPlanner({
       ref={plannerRef}
       className={cn('flex flex-col flex-1 w-full px-10', className)}>
       {header}
-      <div className="scrollbar-none">
-        <DragDropContext
-          onDragEnd={(result, provide) => {
-            if (!editable) return
-            if (!result.destination) return
-            if (result.type === 'section') reorderSection(result, provide)
-            if (result.type === 'frame') reorderFrame(result, provide)
-          }}>
-          <StrictModeDroppable droppableId="section-droppable" type="section">
-            {(sectionDroppableProvided) => (
-              <div
-                className={cn(
-                  'flex flex-col justify-start items-center w-full flex-nowrap',
-                  {
-                    'gap-5': !editable,
-                  }
-                )}
-                ref={sectionDroppableProvided.innerRef}
-                {...sectionDroppableProvided.droppableProps}>
-                {filteredSections.map((section, sectionIndex) => (
-                  <Draggable
-                    key={`section-draggable-${section.id}`}
-                    draggableId={`section-draggable-sectionId-${section.id}`}
-                    isDragDisabled={!editable}
-                    index={sectionIndex}>
-                    {(sectionDraggableProvided) => (
-                      <div
-                        className="w-full rounded-lg"
-                        ref={sectionDraggableProvided.innerRef}
-                        onClick={(e) => handleSectionClick(e, section.id)}
-                        {...sectionDraggableProvided.draggableProps}>
-                        <Fragment key={section.id}>
-                          <div>
+      <DragDropContext
+        onDragEnd={(result, provide) => {
+          if (!editable) return
+          if (!result.destination) return
+          if (result.type === 'section') reorderSection(result, provide)
+          if (result.type === 'frame') reorderFrame(result, provide)
+        }}>
+        <StrictModeDroppable droppableId="section-droppable" type="section">
+          {(sectionDroppableProvided) => (
+            <div
+              className={cn(
+                'flex flex-col justify-start items-center w-full flex-nowrap',
+                {
+                  'gap-5': !editable,
+                }
+              )}
+              ref={sectionDroppableProvided.innerRef}
+              {...sectionDroppableProvided.droppableProps}>
+              {filteredSections.map((section, sectionIndex) => (
+                <Draggable
+                  key={`section-draggable-${section.id}`}
+                  draggableId={`section-draggable-sectionId-${section.id}`}
+                  isDragDisabled={!editable}
+                  index={sectionIndex}>
+                  {(sectionDraggableProvided) => (
+                    <div
+                      className="w-full rounded-lg"
+                      ref={sectionDraggableProvided.innerRef}
+                      onClick={(e) => handleSectionClick(e, section.id)}
+                      {...sectionDraggableProvided.draggableProps}>
+                      <Fragment key={section.id}>
+                        <div>
+                          <div
+                            className={cn(
+                              'flex w-full items-center gap-2 p-2 group/section',
+                              {
+                                'rounded-lg border bg-white':
+                                  !expandedSections.includes(section.id),
+                                'pb-0': editable,
+                                'bg-transparent': expandedSections.includes(
+                                  section.id
+                                ),
+                              }
+                            )}>
                             <div
                               className={cn(
-                                'flex w-full items-center gap-2 p-2 group/section',
+                                'flex flex-col items-center justify-center -ml-[38px] -mr-[12px] w-[2.5rem] opacity-0 group-hover/section:opacity-100',
                                 {
-                                  'rounded-lg border bg-white':
+                                  '-ml-[39px] -mr-2':
                                     !expandedSections.includes(section.id),
-                                  'pb-0': editable,
-                                  'bg-transparent': expandedSections.includes(
-                                    section.id
-                                  ),
                                 }
                               )}>
-                              <div
+                              <RenderIf isTrue={!preview}>
+                                <div className="relative h-[18px]">
+                                  <DropdownActions
+                                    triggerIcon={
+                                      <Button
+                                        isIconOnly
+                                        variant="light"
+                                        className="w-auto h-auto min-w-1"
+                                        {...sectionDraggableProvided.dragHandleProps}>
+                                        <MdDragIndicator className="text-base text-gray-400" />
+                                      </Button>
+                                    }
+                                    actions={[
+                                      {
+                                        key: 'delete',
+                                        label: 'Delete section',
+                                        icon: (
+                                          <BsTrash
+                                            className="text-red-500"
+                                            size={16}
+                                          />
+                                        ),
+                                      },
+                                      {
+                                        key: 'toggle-expand-collapse',
+                                        label: `${allSectionsCollapsed ? 'Expand' : 'Collapse'} all sections`,
+                                        icon: allSectionsCollapsed ? (
+                                          <BsChevronExpand size={18} />
+                                        ) : (
+                                          <BiCollapseVertical size={18} />
+                                        ),
+                                      },
+                                      // {
+                                      //   key: 'unpublished',
+                                      //   label:
+                                      //     'Move Unpublished frames at top',
+                                      //   icon: (
+                                      //     <IoIosArrowRoundUp
+                                      //       className="rotate-180"
+                                      //       size={18}
+                                      //     />
+                                      //   ),
+                                      // },
+                                      // {
+                                      //   key: 'reset',
+                                      //   label: 'Reset ordering of frames',
+                                      //   icon: <RxReset size={16} />,
+                                      // },
+                                    ]}
+                                    onAction={(key) =>
+                                      handleSectionDropdownActions(
+                                        section.id,
+                                        key
+                                      )
+                                    }
+                                  />
+                                </div>
+                              </RenderIf>
+
+                              <AddItemBar
+                                sectionId={section.id}
+                                frameId={
+                                  section.frames?.[section.frames.length - 1]
+                                    ?.id
+                                }
+                                trigger={
+                                  <p
+                                    className="text-xl text-gray-400 cursor-pointer"
+                                    onClick={() =>
+                                      setAddedFromSessionPlanner(true)
+                                    }>
+                                    +
+                                  </p>
+                                }
+                              />
+                            </div>
+
+                            <div
+                              style={{ flex: 2 }}
+                              className="flex items-start gap-2">
+                              <IoChevronDown
                                 className={cn(
-                                  'flex flex-col items-center justify-center -ml-[38px] -mr-[12px] w-[2.5rem] opacity-0 group-hover/section:opacity-100',
+                                  'text-xl duration-300 cursor-pointer text-black/50 -rotate-90 mt-1',
                                   {
-                                    '-ml-[39px] -mr-2':
-                                      !expandedSections.includes(section.id),
+                                    'rotate-0': expandedSections.includes(
+                                      section.id
+                                    ),
                                   }
-                                )}>
-                                <RenderIf isTrue={!preview}>
-                                  <div className="relative h-[18px]">
-                                    <DropdownActions
-                                      triggerIcon={
-                                        <Button
-                                          isIconOnly
-                                          variant="light"
-                                          className="w-auto h-auto min-w-1"
-                                          {...sectionDraggableProvided.dragHandleProps}>
-                                          <MdDragIndicator className="text-base text-gray-400" />
-                                        </Button>
-                                      }
-                                      actions={[
-                                        {
-                                          key: 'delete',
-                                          label: 'Delete section',
-                                          icon: (
-                                            <BsTrash
-                                              className="text-red-500"
-                                              size={16}
-                                            />
-                                          ),
-                                        },
-                                        {
-                                          key: 'toggle-expand-collapse',
-                                          label: `${allSectionsCollapsed ? 'Expand' : 'Collapse'} all sections`,
-                                          icon: allSectionsCollapsed ? (
-                                            <BsChevronExpand size={18} />
-                                          ) : (
-                                            <BiCollapseVertical size={18} />
-                                          ),
-                                        },
-                                        // {
-                                        //   key: 'unpublished',
-                                        //   label:
-                                        //     'Move Unpublished frames at top',
-                                        //   icon: (
-                                        //     <IoIosArrowRoundUp
-                                        //       className="rotate-180"
-                                        //       size={18}
-                                        //     />
-                                        //   ),
-                                        // },
-                                        // {
-                                        //   key: 'reset',
-                                        //   label: 'Reset ordering of frames',
-                                        //   icon: <RxReset size={16} />,
-                                        // },
-                                      ]}
-                                      onAction={(key) =>
-                                        handleSectionDropdownActions(
-                                          section.id,
-                                          key
-                                        )
-                                      }
-                                    />
-                                  </div>
-                                </RenderIf>
-
-                                <AddItemBar
-                                  sectionId={section.id}
-                                  frameId={
-                                    section.frames?.[section.frames.length - 1]
-                                      ?.id
+                                )}
+                                onClick={() =>
+                                  dispatch(
+                                    toggleSectionExpansionInPlannerAction({
+                                      id: section.id,
+                                    })
+                                  )
+                                }
+                              />
+                              <div>
+                                <EditableLabel
+                                  autoFocus={
+                                    editable && itemIdToBeFocus === section.id
                                   }
-                                  trigger={
-                                    <p
-                                      className="text-xl text-gray-400 cursor-pointer"
-                                      onClick={() =>
-                                        setAddedFromSessionPlanner(true)
-                                      }>
-                                      +
-                                    </p>
-                                  }
-                                />
-                              </div>
-
-                              <div
-                                style={{ flex: 2 }}
-                                className="flex items-start gap-2">
-                                <IoChevronDown
+                                  showTooltip={false}
                                   className={cn(
-                                    'text-xl duration-300 cursor-pointer text-black/50 -rotate-90 mt-1',
+                                    'text-base font-semibold tracking-tight max-w-[31.25rem] text-black/70',
                                     {
-                                      'rotate-0': expandedSections.includes(
-                                        section.id
-                                      ),
+                                      'border border-transparent hover:border-default':
+                                        editable,
                                     }
                                   )}
-                                  onClick={() =>
-                                    dispatch(
-                                      toggleSectionExpansionInPlannerAction({
-                                        id: section.id,
-                                      })
-                                    )
-                                  }
+                                  label={section.name}
+                                  readOnly={preview}
+                                  onUpdate={(value: string) => {
+                                    updateSection({
+                                      sectionPayload: { name: value },
+                                      sectionId: section.id,
+                                    })
+                                  }}
                                 />
-                                <div>
-                                  <EditableLabel
-                                    autoFocus={
-                                      editable && itemIdToBeFocus === section.id
-                                    }
-                                    showTooltip={false}
-                                    className={cn(
-                                      'text-base font-semibold tracking-tight max-w-[31.25rem] text-black/70',
-                                      {
-                                        'border border-transparent hover:border-default':
-                                          editable,
-                                      }
-                                    )}
-                                    label={section.name}
-                                    readOnly={preview}
-                                    onUpdate={(value: string) => {
-                                      updateSection({
-                                        sectionPayload: { name: value },
-                                        sectionId: section.id,
-                                      })
-                                    }}
+                                <RenderIf
+                                  isTrue={
+                                    !expandedSections.includes(section.id)
+                                  }>
+                                  <SectionTime
+                                    sectionId={section.id}
+                                    frames={section.frames}
+                                    config={section.config}
+                                    editable={editable}
+                                    className="mt-1 mb-2"
                                   />
-                                  <RenderIf
-                                    isTrue={
-                                      !expandedSections.includes(section.id)
-                                    }>
-                                    <SectionTime
-                                      sectionId={section.id}
-                                      frames={section.frames}
-                                      config={section.config}
-                                      editable={editable}
-                                      className="mt-1 mb-2"
-                                    />
-                                  </RenderIf>
-                                </div>
+                                </RenderIf>
                               </div>
-                              <RenderIf
-                                isTrue={!expandedSections.includes(section.id)}>
-                                <p className="w-24">
-                                  {section.frames.length} Frames
-                                </p>
-                              </RenderIf>
-                              <div
-                                className={cn(
-                                  'flex justify-between items-center gap-4 w-[18.75rem]',
-                                  {
-                                    'justify-end w-[16rem]': !editable,
-                                  }
-                                )}>
-                                <SessionColorTracker
-                                  colorCodes={section.frames.map((frame) => ({
-                                    colorCode: frame?.config?.colorCode,
-                                    timeSpan: frame?.config?.time,
-                                  }))}
-                                  className="h-5 w-full"
-                                />
-                                {/* <RenderIf isTrue={editable}>
+                            </div>
+                            <RenderIf
+                              isTrue={!expandedSections.includes(section.id)}>
+                              <p className="w-24">
+                                {section.frames.length} Frames
+                              </p>
+                            </RenderIf>
+                            <div
+                              className={cn(
+                                'flex justify-between items-center gap-4 w-[18.75rem]',
+                                {
+                                  'justify-end w-[16rem]': !editable,
+                                }
+                              )}>
+                              <SessionColorTracker
+                                colorCodes={section.frames.map((frame) => ({
+                                  colorCode: frame?.config?.colorCode,
+                                  timeSpan: frame?.config?.time,
+                                }))}
+                                className="h-5 w-full"
+                              />
+                              {/* <RenderIf isTrue={editable}>
                                   <div
                                     className={cn(
                                       'flex items-center justify-center',
@@ -449,95 +448,94 @@ export function SessionPlanner({
                                     </Tooltip>
                                   </div>
                                 </RenderIf> */}
-                              </div>
                             </div>
+                          </div>
 
-                            <RenderIf
-                              isTrue={expandedSections.includes(section.id)}>
-                              <SectionTime
-                                sectionId={section.id}
-                                frames={section.frames}
-                                config={section.config}
-                                editable={editable}
-                                className="mb-3 pl-2"
-                              />
-                            </RenderIf>
+                          <RenderIf
+                            isTrue={expandedSections.includes(section.id)}>
+                            <SectionTime
+                              sectionId={section.id}
+                              frames={section.frames}
+                              config={section.config}
+                              editable={editable}
+                              className="mb-3 pl-2"
+                            />
+                          </RenderIf>
 
-                            <RenderIf
-                              isTrue={
+                          <RenderIf
+                            isTrue={
+                              sections.length === 1 &&
+                              section.frames.length === 0
+                            }>
+                            <GetStartedPlaceholder />
+                          </RenderIf>
+
+                          <RenderIf
+                            isTrue={
+                              expandedSections.includes(section.id) &&
+                              !(
                                 sections.length === 1 &&
                                 section.frames.length === 0
-                              }>
-                              <GetStartedPlaceholder />
-                            </RenderIf>
+                              )
+                            }>
+                            <FramesList
+                              section={section}
+                              frames={section.frames.filter(
+                                (f) => !f?.content?.breakoutFrameId
+                              )}
+                              frameIdToBeFocus={itemIdToBeFocus}
+                            />
+                          </RenderIf>
 
-                            <RenderIf
-                              isTrue={
-                                expandedSections.includes(section.id) &&
-                                !(
-                                  sections.length === 1 &&
-                                  section.frames.length === 0
-                                )
-                              }>
-                              <FramesList
-                                section={section}
-                                frames={section.frames.filter(
-                                  (f) => !f?.content?.breakoutFrameId
+                          <RenderIf isTrue={editable && sections.length > 0}>
+                            <div
+                              className={cn(
+                                'relative flex items-center w-full h-5 opacity-0 hover:opacity-100 cursor-pointer group/add-section duration-100',
+                                {
+                                  'translate-y-[10px]':
+                                    expandedSections.includes(
+                                      sections[sectionIndex + 1]?.id
+                                    ),
+                                }
+                              )}
+                              onClick={() => {
+                                setInsertInSectionId(section.id)
+                                setInsertAfterSectionId(section.id)
+                                addSection({
+                                  afterSectionId: section.id,
+                                })
+                              }}>
+                              <div className="w-full h-[1px] bg-primary-200" />
+                              <div className="flex items-center px-4 gap-2 text-gray-400">
+                                {isAddSectionLoading ? (
+                                  <Loading />
+                                ) : (
+                                  <MdAdd
+                                    size={24}
+                                    className="shrink-0 text-primary"
+                                  />
                                 )}
-                                frameIdToBeFocus={itemIdToBeFocus}
-                              />
-                            </RenderIf>
 
-                            <RenderIf isTrue={editable && sections.length > 0}>
-                              <div
-                                className={cn(
-                                  'relative flex items-center w-full h-5 opacity-0 hover:opacity-100 cursor-pointer group/add-section duration-100',
-                                  {
-                                    'translate-y-[10px]':
-                                      expandedSections.includes(
-                                        sections[sectionIndex + 1]?.id
-                                      ),
-                                  }
-                                )}
-                                onClick={() => {
-                                  setInsertInSectionId(section.id)
-                                  setInsertAfterSectionId(section.id)
-                                  addSection({
-                                    afterSectionId: section.id,
-                                  })
-                                }}>
-                                <div className="w-full h-[1px] bg-primary-200" />
-                                <div className="flex items-center px-4 gap-2 text-gray-400">
-                                  {isAddSectionLoading ? (
-                                    <Loading />
-                                  ) : (
-                                    <MdAdd
-                                      size={24}
-                                      className="shrink-0 text-primary"
-                                    />
-                                  )}
-
-                                  <p className="min-w-max text-xs text-primary font-medium">
-                                    Add Section
-                                  </p>
-                                </div>
-                                <div className="w-full h-[1px] bg-primary-200" />
-
-                                <div />
+                                <p className="min-w-max text-xs text-primary font-medium">
+                                  Add Section
+                                </p>
                               </div>
-                            </RenderIf>
-                          </div>
-                        </Fragment>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {sectionDroppableProvided.placeholder}
-              </div>
-            )}
-          </StrictModeDroppable>
-        </DragDropContext>
-      </div>
+                              <div className="w-full h-[1px] bg-primary-200" />
+
+                              <div />
+                            </div>
+                          </RenderIf>
+                        </div>
+                      </Fragment>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {sectionDroppableProvided.placeholder}
+            </div>
+          )}
+        </StrictModeDroppable>
+      </DragDropContext>
     </div>
   )
 }

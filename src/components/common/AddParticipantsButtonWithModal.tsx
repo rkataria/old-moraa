@@ -47,6 +47,8 @@ export function ButtonWithModal({
 }) {
   const { eventId = '' } = useParams({ strict: false })
 
+  const currentPageUrl = window.location.pathname + window.location.search
+
   const [open, setOpen] = useState<boolean>(false)
   const { participants, refetch } = useEvent({
     id: eventId,
@@ -149,7 +151,7 @@ export function ButtonWithModal({
                   renderAction={({ showActions = false }) => (
                     <div className="flex justify-between pt-3 my-4 border-t">
                       <CopyToClipboard
-                        text={`${window.location.origin}/enroll/${eventId}`}
+                        text={`${window.location.origin}/enroll/${eventId}?redirectTo=${currentPageUrl}`}
                         onCopy={() =>
                           toast.success(
                             'Event link copied! Share this link to allow others to enroll, view details, and join the event.',

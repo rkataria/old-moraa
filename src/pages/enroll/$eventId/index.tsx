@@ -41,9 +41,11 @@ export function Visit() {
   const router = useRouter()
   const location = useLocation()
   const { eventId } = useParams({ strict: false })
-  const { autoEnroll } = location.search as {
-    autoEnroll: string
+  const { redirectTo, ...restParams } = location.search as {
+    redirectTo: string
+    [key: string]: string
   }
+
   const user = useAuth()
 
   const descriptionModalDisclosure = useDisclosure()
@@ -52,8 +54,6 @@ export function Visit() {
   const useEventData = usePublicEvent({
     id: eventId as string,
   })
-
-  const eventPageUrl = `/events/${eventId}`
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const event = useEventData.event as any
@@ -85,15 +85,9 @@ export function Visit() {
         })
 
         if (JSON.parse(addResponse?.data || '')?.success) {
-          if (isLoggedIn) {
-            router.navigate({
-              to: eventPageUrl,
-            })
-
-            return
-          }
-
-          router.navigate({ to: `/login?redirectTo=/events/${eventId}` })
+          router.navigate({
+            to: redirectTo,
+          })
         }
 
         toast.success('Enrolled successfully.')
@@ -105,7 +99,7 @@ export function Visit() {
   })
 
   useEffect(() => {
-    if (autoEnroll && !isEnrolled && !useEventData.isFetching) {
+    if (restParams.autoEnroll && !isEnrolled && !useEventData.isFetching) {
       addParticipantsMutation.mutate({
         participants: [
           ...participants,
@@ -114,16 +108,19 @@ export function Visit() {
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoEnroll, isEnrolled, useEventData.isFetching])
+  }, [restParams.autoEnroll, isEnrolled, useEventData.isFetching])
+
+  useEffect(() => {
+    if (isLoggedIn && isEnrolled) {
+      router.navigate({ to: redirectTo })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, isEnrolled])
 
   const handleEnrollClick = () => {
     if (isEnrolled) {
       router.navigate({
-        to: `/events/${eventId}`,
-        search: (prev) => ({
-          ...prev,
-          action: 'view',
-        }),
+        to: redirectTo,
       })
 
       return
@@ -132,7 +129,11 @@ export function Visit() {
     if (!isLoggedIn) {
       router.navigate({
         to: '/login',
-        search: { redirectTo: `/enroll/${event.id}?autoEnroll=true` },
+        search: {
+          redirectTo: `/enroll/${event.id}`,
+          originalUrl: redirectTo,
+          autoEnroll: true,
+        },
       })
 
       return

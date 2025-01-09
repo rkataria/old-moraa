@@ -14,6 +14,16 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useAuth } from '@/hooks/useAuth'
 import { supabaseClient } from '@/utils/supabase/client'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const buildRedirectUrl = (params: Record<string, any>) => {
+  const updatedParams = new URLSearchParams(params)
+  updatedParams.set('redirectTo', params.originalUrl)
+  const baseUrl = params.redirectTo || '/events'
+  const queryString = updatedParams.toString()
+
+  return queryString ? `${baseUrl}?${queryString}` : baseUrl
+}
+
 export const Route = createFileRoute('/login/')({
   component: LoginPage,
 })
@@ -23,15 +33,15 @@ function Login() {
   const router = useRouter()
   const location = useLocation()
   const [showTerms, setShowTerms] = useState(false)
-  const { redirectTo, action } = location.search as {
+  const params = location.search as {
     redirectTo: string
-    action: string
+    [key: string]: string
   }
   const loginRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (user.currentUser && redirectTo) {
-      router.history.push(`${redirectTo}`)
+    if (user.currentUser && params.redirectTo) {
+      router.history.push(buildRedirectUrl(params))
 
       return
     }
@@ -40,11 +50,11 @@ function Login() {
       router.history.push('/events')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.currentUser, redirectTo])
+  }, [user.currentUser])
 
   const getRedirectUrl = () => {
-    if (redirectTo) {
-      return `${window.location.origin}${redirectTo}`
+    if (params.redirectTo) {
+      return `${window.location.origin}${buildRedirectUrl(params)}`
     }
 
     return `${window.location.origin}/events`
@@ -91,7 +101,7 @@ function Login() {
 
   useEffect(() => {
     if (!loginRef.current) return
-    if (action === 'signup') {
+    if (params.action === 'signup') {
       const element: HTMLAnchorElement | null = loginRef.current!.querySelector(
         'a[href="#auth-sign-up"]'
       )
@@ -99,7 +109,7 @@ function Login() {
       element!.click()
       setShowTerms(true)
     }
-  }, [action])
+  }, [params.action])
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

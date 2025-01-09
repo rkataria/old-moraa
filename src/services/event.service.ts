@@ -134,10 +134,7 @@ const getPublicEvent = async ({ eventId }: GetEventParams) => {
   let participants
 
   if (eventId) {
-    const data = await supabaseClient.functions.invoke('get-enrollments', {
-      body: { eventId },
-    })
-    participants = JSON.parse(data.data).enrollments
+    participants = await getPublicEnrollments({ eventId })
   }
 
   return {
@@ -145,6 +142,37 @@ const getPublicEvent = async ({ eventId }: GetEventParams) => {
     participants,
     meeting,
   }
+}
+
+const getPublicEnrollments = async ({ eventId }: { eventId: string }) => {
+  const data = await supabaseClient.functions.invoke('get-enrollments', {
+    body: { eventId },
+  })
+
+  return JSON.parse(data.data).enrollments
+}
+
+const isUserEnrolledInEvent = async ({
+  userId,
+  eventId,
+}: {
+  userId: string
+  eventId: string
+}) => {
+  const { data: isEnrolled, error } = await supabaseClient
+    .from('enrollment')
+    .select('id')
+    .eq('event_id', eventId)
+    .eq('user_id', userId)
+    .maybeSingle()
+
+  if (error) {
+    console.error('Error checking enrollment:', error)
+
+    return false
+  }
+
+  return !!isEnrolled
 }
 
 const getEventPermissions = async ({
@@ -241,4 +269,6 @@ export const EventService = {
   deleteEventParticipant,
   scheduleEvent,
   publishEvent,
+  getPublicEnrollments,
+  isUserEnrolledInEvent,
 }

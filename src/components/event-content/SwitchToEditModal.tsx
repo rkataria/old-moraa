@@ -26,7 +26,6 @@ export function SwitchToEditModal() {
           KeyboardShortcuts['Studio Mode'].overviewTab.key,
           KeyboardShortcuts['Studio Mode'].contentTab.key,
           KeyboardShortcuts['Studio Mode'].planTab.key,
-
           KeyboardShortcuts[
             'Agenda Panel'
           ].expandAndCollapse.key.toLocaleLowerCase(),
@@ -37,6 +36,10 @@ export function SwitchToEditModal() {
           'ctrl',
           'cmd',
           'meta',
+          'arrowup',
+          'arrowdown',
+          'arrowleft',
+          'arrowright',
         ].includes(e.key.toLowerCase())
       ) {
         setOpen(false)

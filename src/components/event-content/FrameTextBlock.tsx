@@ -114,6 +114,7 @@ export function FrameTextBlock({
   return (
     <div onClick={() => onClick?.(block.id)} className={className}>
       <TextBlockEditor
+        className="w-full"
         fillAvailableHeight={fillAvailableHeight}
         block={block}
         editable={editableId === block.id}
