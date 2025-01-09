@@ -181,7 +181,7 @@ export function MeetingScreen() {
   useEffect(() => {
     let isWaitingRoomTostOpen = false
 
-    const promptHostForPendingParticipants = () => {
+    const onParticipantJoinedWaitlist = () => {
       if (isWaitingRoomTostOpen) return
       isWaitingRoomTostOpen = true
       toast(
@@ -212,14 +212,21 @@ export function MeetingScreen() {
     }
 
     if (meeting.participants.waitlisted.size && !isWaitingRoomTostOpen) {
-      promptHostForPendingParticipants()
+      onParticipantJoinedWaitlist()
     } else {
       toast.remove('watchlist-update-toast')
     }
     meeting.participants.waitlisted.addListener(
       'participantJoined',
-      promptHostForPendingParticipants
+      onParticipantJoinedWaitlist
     )
+
+    return () => {
+      meeting.participants.waitlisted.removeListener(
+        'participantJoined',
+        onParticipantJoinedWaitlist
+      )
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -244,6 +251,9 @@ export function MeetingScreen() {
           config: {
             notifications: {
               participant_joined_waitlist: false,
+            },
+            notification_sounds: {
+              participant_joined: false,
             },
           },
         }}
