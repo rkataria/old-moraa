@@ -42,10 +42,14 @@ export function Editor({
       onMount={(editor) => {
         editor.updateInstanceState({ isReadonly: !!isReadonly })
         editor.zoomOut(editor.getViewportScreenCenter())
-        const shapes = editor.getCurrentPageShapes()
+        const shapes = editor
+          .getCurrentPageShapes()
+          .filter((shape) => shape.type === 'text')
+
         editor.updateShapes(
           shapes.map((shape) => {
             const currentWidth = (shape.props as TLTextShapeProps).w
+            if (!currentWidth) return shape
             const widthStr = currentWidth.toString()
             const decimalPart = widthStr.split('.')[1]
             const lastDecimalDigit = parseInt(decimalPart.slice(-1), 10)
