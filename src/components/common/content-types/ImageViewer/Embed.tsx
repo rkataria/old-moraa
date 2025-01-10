@@ -2,30 +2,53 @@ import { useState } from 'react'
 
 import { Image, Skeleton } from '@nextui-org/react'
 
-import { getObjectPublicUrl } from '@/utils/utils'
+import { Hotspot, HotspotImageWrapper } from '../../HotspotImageWrapper'
 
 type EmbedProps = {
   path: string
-  publicUrl?: string
+  disableHotspot?: boolean
+  hotspots?: Hotspot[]
+  onHotspotCreate?: (hotspot: Hotspot) => void
+  onHotspotDelete?: (hotspot: Hotspot) => void
+  hideExistingHotspots?: boolean
+  disableAddHotspot?: boolean
 }
 
-export function Embed({ path, publicUrl }: EmbedProps) {
+export function Embed({
+  path,
+  disableHotspot,
+  hotspots,
+  onHotspotCreate,
+  onHotspotDelete,
+  hideExistingHotspots,
+  disableAddHotspot,
+}: EmbedProps) {
   const [loading, setLoading] = useState(true)
 
   return (
-    <div className="relative flex justify-center items-center aspect-video w-full">
-      <Image
-        src={publicUrl ?? getObjectPublicUrl(path as string)}
-        loading="eager"
-        className="w-full aspect-video z-0"
-        classNames={{ wrapper: 'h-full' }}
-        onLoad={() => {
-          setLoading(false)
-        }}
-        onError={() => console.log('error')}
-      />
+    <div
+      className="relative flex justify-center items-center aspect-video overflow-hidden"
+      style={{ maxHeight: '100%', maxWidth: '100%' }}>
+      <HotspotImageWrapper
+        hotspots={hotspots || []}
+        disableAddHotspot={disableAddHotspot || disableHotspot}
+        hideExistingHotspots={hideExistingHotspots || disableHotspot}
+        onHotspotDelete={onHotspotDelete}
+        onHotspotCreate={onHotspotCreate}>
+        {({ handleImageClick }) => (
+          <Image
+            src={path}
+            removeWrapper
+            loading="eager"
+            className="object-contain w-[-webkit-fill-available] h-[-webkit-fill-available]"
+            onClick={handleImageClick}
+            onLoad={() => setLoading(false)}
+            onError={() => console.error('Error loading image')}
+          />
+        )}
+      </HotspotImageWrapper>
       {loading && (
-        <div className="absolute left-0 top-0 w-full h-full rounded-md overflow-hidden">
+        <div className="absolute inset-0 flex justify-center items-center bg-gray-100">
           <Skeleton className="w-full h-full" />
         </div>
       )}

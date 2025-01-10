@@ -138,7 +138,6 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     iconSmall: <IconPhoto size={24} />,
     description: 'Upload and display images on your frames',
     type: FrameType.IMAGE_VIEWER,
-    disabled: true, // TODO: Enable this frame when Image Viewer Frame is implemented
     category: FrameCategory.MEDIA,
   },
   {

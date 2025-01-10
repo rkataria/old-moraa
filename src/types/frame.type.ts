@@ -71,7 +71,7 @@ export interface IFrame {
     breakoutRooms?: IbreakoutRooms[]
     activityId?: string
     groupActivityId?: string
-    [key: string]: unknown
+    [key: string]: any
   }
   created_at?: string
   updated_at?: string
