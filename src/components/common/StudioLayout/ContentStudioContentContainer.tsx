@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { GrEmptyCircle } from 'react-icons/gr'
 
@@ -17,20 +17,20 @@ import { getFrameCount, getPublishedFrameCount } from '@/utils/utils'
 
 export function ContentStudioContentContainer() {
   const { permissions } = useEventPermissions()
-  const { currentFrame, currentSectionId, sections, setCurrentFrame } =
-    useEventContext()
+  const { currentFrame, currentSectionId, sections } = useEventContext()
   const frameCount = useMemo(() => getFrameCount(sections), [sections])
   const publishedFrameCount = useMemo(
     () => getPublishedFrameCount(sections),
     [sections]
   )
 
-  useEffect(() => {
-    if (!currentFrame && !currentSectionId) {
-      setCurrentFrame(sections[0]?.frames[0])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFrame, currentSectionId, sections])
+  // TODO: Fix this logic later
+  // useEffect(() => {
+  //   if (!currentFrame && !currentSectionId) {
+  //     setCurrentFrame(sections[0]?.frames[0])
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentFrame, currentSectionId, sections])
 
   const renderContent = () => {
     if (currentSectionId) {
