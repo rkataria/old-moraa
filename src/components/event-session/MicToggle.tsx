@@ -8,12 +8,18 @@ import { useDetectSpeaking } from '@/hooks/useDetectSpeaking'
 import { useUserPreferences } from '@/hooks/userPreferences'
 import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
-export function MicToggle({ className = '' }: { className?: string }) {
+export function MicToggle({
+  className = '',
+  hideSpeakingAlert = false,
+}: {
+  className?: string
+  hideSpeakingAlert?: boolean
+}) {
   const { userPreferencesMeetingAudio } = useUserPreferences()
   const self = useDyteSelector((state) => state.self)
   const isMicEnabled = useDyteSelector((state) => state.self?.audioEnabled)
   const { isSpeaking } = useDetectSpeaking({
-    detect: !isMicEnabled,
+    detect: !isMicEnabled && !hideSpeakingAlert,
   })
 
   const handleMic = () => {
@@ -36,10 +42,10 @@ export function MicToggle({ className = '' }: { className?: string }) {
   )
 
   const getTooltipProps = () => {
-    if (isSpeaking && !isMicEnabled) {
+    if (isSpeaking && !isMicEnabled && !hideSpeakingAlert) {
       return {
         label:
-          'Are you speaking? You are on mute. Clik the mic button or press the shortcut to unmute',
+          "You're on mute! Click the mic button or use the shortcut to unmute.",
         actionKey: KeyboardShortcuts.Live.muteUnmute.key,
         isOpen: true,
       }

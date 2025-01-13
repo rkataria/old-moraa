@@ -8,6 +8,7 @@ import { ContentTilesLayoutDropdown } from './ContentTilesLayoutDropdown'
 import { MeetingStatusBar } from './MeetingStatusBar/MeetingStatusBar'
 import { NoteToggle } from './NoteToggle'
 import { ChatsToggle } from '../ChatsToggle'
+import { MeetingRecordingIndicator } from '../MeetingRecordingIndicator'
 import { ParticipantsToggle } from '../ParticipantsToggle'
 
 import { AgendaPanelToggle } from '@/components/common/AgendaPanel/AgendaPanelToggle'
@@ -82,6 +83,7 @@ export function Header() {
           meeting={dyetMeeting}
           className="m-0 px-2 h-8 mr-2 font-thin"
         />
+        <MeetingRecordingIndicator />
       </div>
       <div className="flex-auto">
         <MeetingStatusBar />

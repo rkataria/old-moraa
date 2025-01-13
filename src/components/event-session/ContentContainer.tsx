@@ -32,6 +32,8 @@ export function ContentContainer() {
   const currentSectionId = useStoreSelector(
     (state) => state.event.currentEvent.eventState.currentSectionId
   )
+  const isParticipantScreenShared =
+    !!screensharingParticipant?.screenShareEnabled
 
   const recentActivePlugin = activePlugins?.[activePlugins.length - 1]
 
@@ -48,7 +50,7 @@ export function ContentContainer() {
     }, 2000)
   }, [dyteScreenshareViewRef, screensharingParticipant, selfScreenShared])
 
-  if (screensharingParticipant) {
+  if (isParticipantScreenShared) {
     return (
       <DyteScreenshareView
         ref={dyteScreenshareViewRef}

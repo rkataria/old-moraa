@@ -20,7 +20,10 @@ export function VideoControls({ onOpenSettings }: VideoControlsProps) {
         onClick={onOpenSettings}
       />
       <div className="flex justify-center items-center gap-2">
-        <MicToggle className="!bg-black/10 !text-white hover:!bg-black/20 hover:!text-gray-100" />
+        <MicToggle
+          className="!bg-black/10 !text-white hover:!bg-black/20 hover:!text-gray-100"
+          hideSpeakingAlert
+        />
         <VideoToggle className="!bg-black/10 !text-white hover:!bg-black/20 hover:!text-gray-100" />
       </div>
       <VideoBackgroundSettingsButtonWithModal
