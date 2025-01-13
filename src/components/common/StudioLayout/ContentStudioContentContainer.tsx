@@ -12,6 +12,7 @@ import { Frame } from '@/components/common/Frame/Frame'
 import { GetStartedPlaceholder } from '@/components/event-content/overview-frame/SessionPlanner/GetStartedPlaceholder'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { getFirstFrame } from '@/utils/event.util'
 import { isFrameHasVideoAspectRatio } from '@/utils/frame-picker.util'
 import { getFrameCount, getPublishedFrameCount } from '@/utils/utils'
 
@@ -42,7 +43,7 @@ export function ContentStudioContentContainer() {
       return
     }
 
-    setCurrentFrame(sections[0]?.frames?.[0])
+    setCurrentFrame(getFirstFrame(sections))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     currentFrame,

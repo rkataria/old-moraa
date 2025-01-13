@@ -43,6 +43,7 @@ import {
   EventSessionMode,
   PresentationStatuses,
 } from '@/types/event-session.type'
+import { getFirstFrame } from '@/utils/event.util'
 import { getFrameCount } from '@/utils/utils'
 
 export type RightSiderbar =
@@ -105,8 +106,7 @@ export function MeetingScreen() {
       return
     }
 
-    // TODO: Write a util to get the first frame
-    setCurrentFrame(sections[0].frames[0])
+    setCurrentFrame(getFirstFrame(sections))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

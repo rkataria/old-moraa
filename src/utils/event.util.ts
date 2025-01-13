@@ -1,4 +1,4 @@
-import { IFrame } from '@/types/frame.type'
+import { IFrame, ISection } from '@/types/frame.type'
 
 export type FrameStatusType = 'PUBLISHED' | 'DRAFT' | null
 
@@ -94,3 +94,6 @@ export const PatternStyles = {
 }
 
 export type PatternKeys = keyof typeof PatternStyles
+
+export const getFirstFrame = (sections: ISection[]) =>
+  sections?.find((section) => section.frames.length > 0)?.frames[0] || null

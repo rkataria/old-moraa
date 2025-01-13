@@ -13,6 +13,7 @@ import {
   setIsOverviewOpenAction,
 } from '@/stores/slices/event/current-event/event.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
+import { getFirstFrame } from '@/utils/event.util'
 import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function PresentationToggle() {
@@ -34,7 +35,7 @@ export function PresentationToggle() {
 
       const frameToStart = frameSelected
         ? currentFrame.id
-        : sections[0].frames[0].id
+        : (getFirstFrame(sections)?.id as string)
 
       startPresentation(frameToStart)
       dispatch(setIsOverviewOpenAction(false))
