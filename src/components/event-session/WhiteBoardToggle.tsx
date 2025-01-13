@@ -9,7 +9,7 @@ import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { cn } from '@/utils/utils'
+import { cn, liveHotKeyProps } from '@/utils/utils'
 
 const DYTE_WHITEBOARD_PLUGIN_ID = 'ae79b269-24ca-4f8a-8112-f96084c8c19a'
 
@@ -22,10 +22,7 @@ export function WhiteBoardToggle() {
 
   const isWhiteboardActive = whiteboardPlugin?.active
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleWhiteBoard = async (e: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
-
+  const handleWhiteBoard = async () => {
     if (!whiteboardPlugin) return
 
     if (whiteboardPlugin.active) {
@@ -37,7 +34,7 @@ export function WhiteBoardToggle() {
     await whiteboardPlugin.activate()
   }
 
-  useHotkeys('w', handleWhiteBoard, [whiteboardPlugin])
+  useHotkeys('w', handleWhiteBoard, [whiteboardPlugin], liveHotKeyProps)
 
   if (!isHost) return null
 

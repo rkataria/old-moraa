@@ -9,7 +9,7 @@ import { ControlButton } from '../common/ControlButton'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function RaiseHandToggle() {
   const { meeting } = useDyteMeeting()
@@ -42,10 +42,7 @@ export function RaiseHandToggle() {
     meeting.participants.on('activeSpeaker', handleActiveSpeaker)
   }, [meeting.participants, isHandRaised, selfParticipant.id])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleRaiseHand = (e: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
-
+  const handleRaiseHand = () => {
     onToggleHandRaised({
       handRaise: !isHandRaised,
       participantId: selfParticipant.id,
@@ -53,10 +50,12 @@ export function RaiseHandToggle() {
     })
   }
 
-  useHotkeys(KeyboardShortcuts.Live.raiseAndLowerHand.key, handleRaiseHand, [
-    isHandRaised,
-    selfParticipant,
-  ])
+  useHotkeys(
+    KeyboardShortcuts.Live.raiseAndLowerHand.key,
+    handleRaiseHand,
+    [isHandRaised, selfParticipant],
+    liveHotKeyProps
+  )
 
   if (!participant) return null
 

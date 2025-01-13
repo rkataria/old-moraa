@@ -13,7 +13,7 @@ import {
   setIsOverviewOpenAction,
 } from '@/stores/slices/event/current-event/event.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function PresentationToggle() {
   const dispatch = useStoreDispatch()
@@ -28,10 +28,7 @@ export function PresentationToggle() {
   const presentationStarted =
     presentationStatus && presentationStatus !== PresentationStatuses.STOPPED
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handlePresentationToggle = (e: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
-
+  const handlePresentationToggle = () => {
     if (presentationStatus === PresentationStatuses.STOPPED) {
       const frameSelected = !overviewOpen && !currentSectionId && currentFrame
 
@@ -50,7 +47,12 @@ export function PresentationToggle() {
     stopPresentation()
   }
 
-  useHotkeys('s', handlePresentationToggle, [presentationStatus])
+  useHotkeys(
+    's',
+    handlePresentationToggle,
+    [presentationStatus],
+    liveHotKeyProps
+  )
 
   if (presentationStarted) {
     return <PresentationControls />

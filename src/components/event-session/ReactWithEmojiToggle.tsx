@@ -17,7 +17,7 @@ import { RenderIf } from '../common/RenderIf/RenderIf'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 const enum TABS {
   REACTIONS = 'reactions',
@@ -80,9 +80,7 @@ export function ReactWithEmojiToggle() {
     EventSessionContext
   ) as EventSessionContextType
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleEmojiShortcut = (e: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
+  const handleEmojiShortcut = () => {
     setIsOpen(!isOpen)
   }
 
@@ -91,7 +89,7 @@ export function ReactWithEmojiToggle() {
     setIsOpen,
   ])
 
-  useHotkeys('ESC', () => setIsOpen(false), [])
+  useHotkeys('ESC', () => setIsOpen(false), [], liveHotKeyProps)
 
   const handleEmoji = (emojiIndex: number) => {
     flyEmoji({
@@ -106,23 +104,23 @@ export function ReactWithEmojiToggle() {
     })
   }
 
-  useHotkeys('r+1', () => handleEmoji(1))
-  useHotkeys('r+2', () => handleEmoji(2))
-  useHotkeys('r+3', () => handleEmoji(3))
-  useHotkeys('r+4', () => handleEmoji(4))
-  useHotkeys('r+5', () => handleEmoji(5))
-  useHotkeys('r+6', () => handleEmoji(6))
-  useHotkeys('r+7', () => handleEmoji(7))
-  useHotkeys('r+8', () => handleEmoji(8))
-  useHotkeys('r+9', () => handleEmoji(9))
-  useHotkeys('r+0', () => handleEmoji(10))
+  useHotkeys('r+1', () => handleEmoji(1), liveHotKeyProps)
+  useHotkeys('r+2', () => handleEmoji(2), liveHotKeyProps)
+  useHotkeys('r+3', () => handleEmoji(3), liveHotKeyProps)
+  useHotkeys('r+4', () => handleEmoji(4), liveHotKeyProps)
+  useHotkeys('r+5', () => handleEmoji(5), liveHotKeyProps)
+  useHotkeys('r+6', () => handleEmoji(6), liveHotKeyProps)
+  useHotkeys('r+7', () => handleEmoji(7), liveHotKeyProps)
+  useHotkeys('r+8', () => handleEmoji(8), liveHotKeyProps)
+  useHotkeys('r+9', () => handleEmoji(9), liveHotKeyProps)
+  useHotkeys('r+0', () => handleEmoji(10), liveHotKeyProps)
 
-  useHotkeys('e+1', () => handleSound(1))
-  useHotkeys('e+2', () => handleSound(2))
-  useHotkeys('e+3', () => handleSound(3))
-  useHotkeys('e+4', () => handleSound(4))
-  useHotkeys('e+5', () => handleSound(5))
-  useHotkeys('e+6', () => handleSound(6))
+  useHotkeys('e+1', () => handleSound(1), liveHotKeyProps)
+  useHotkeys('e+2', () => handleSound(2), liveHotKeyProps)
+  useHotkeys('e+3', () => handleSound(3), liveHotKeyProps)
+  useHotkeys('e+4', () => handleSound(4), liveHotKeyProps)
+  useHotkeys('e+5', () => handleSound(5), liveHotKeyProps)
+  useHotkeys('e+6', () => handleSound(6), liveHotKeyProps)
 
   return (
     <Popover

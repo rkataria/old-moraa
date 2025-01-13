@@ -3,7 +3,7 @@ import { TbBubbleText } from 'react-icons/tb'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function NotesToggle({
   isNotesSidebarOpen,
@@ -12,12 +12,10 @@ export function NotesToggle({
   isNotesSidebarOpen: boolean
   onClick: () => void
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleShortCut = (e: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
+  const handleShortCut = () => {
     onClick()
   }
-  useHotkeys('n', handleShortCut)
+  useHotkeys('n', handleShortCut, liveHotKeyProps)
 
   return (
     <ControlButton

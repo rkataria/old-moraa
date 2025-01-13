@@ -81,7 +81,11 @@ export function SideImageLayout({
   }
 
   return (
-    <div className="grid grid-cols-[0.4fr_0.6fr] h-full gap-16">
+    <div
+      className={cn('grid h-full gap-16', {
+        'grid-cols-[0.6fr_0.4fr]': LeftChild,
+        'grid-cols-[0.4fr_0.6fr]': RightChild,
+      })}>
       {LeftChild}
       <div className="overflow-hidden h-full w-full">
         <Draggable

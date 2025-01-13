@@ -120,7 +120,7 @@ export function Visit() {
   const handleEnrollClick = () => {
     if (isEnrolled) {
       router.navigate({
-        to: redirectTo,
+        to: redirectTo || `/events/${eventId}`,
       })
 
       return

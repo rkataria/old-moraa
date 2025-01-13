@@ -5,17 +5,14 @@ import { BsCameraVideo, BsFillCameraVideoOffFill } from 'react-icons/bs'
 import { ControlButton } from '../common/ControlButton'
 
 import { useUserPreferences } from '@/hooks/userPreferences'
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function VideoToggle({ className = '' }: { className?: string }) {
   const { userPreferencesMeetingVideo } = useUserPreferences()
   const self = useDyteSelector((state) => state.self)
   const isVideoEnabled = useDyteSelector((state) => state.self?.videoEnabled)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleVideo = (e?: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
-
+  const handleVideo = () => {
     if (isVideoEnabled) {
       self.disableVideo()
       userPreferencesMeetingVideo(false)
@@ -27,10 +24,12 @@ export function VideoToggle({ className = '' }: { className?: string }) {
     userPreferencesMeetingVideo(true)
   }
 
-  useHotkeys(KeyboardShortcuts.Live.startAndStopVideo.key, handleVideo, [
-    self,
-    isVideoEnabled,
-  ])
+  useHotkeys(
+    KeyboardShortcuts.Live.startAndStopVideo.key,
+    handleVideo,
+    [self, isVideoEnabled],
+    liveHotKeyProps
+  )
 
   return (
     <ControlButton

@@ -44,8 +44,6 @@ export function BlankFrame({
     null
   )
 
-  const isUnsupportedFrameType = Object.values(FrameType).includes(frame.type)
-
   const [openBreakoutSelectorModal, setOpenBreakoutSelectorModal] =
     useState<boolean>(false)
 
@@ -238,7 +236,7 @@ export function BlankFrame({
         <div className="h-fit flex flex-col gap-2">
           {renderTitleDescription()}
         </div>
-        <RenderIf isTrue={isUnsupportedFrameType}>
+        <RenderIf isTrue={!frame.type}>
           <div className="w-full h-full  backdrop-blur-sm grid place-items-center">
             <div className="flex justify-start items-start gap-8 w-[51.25rem]">
               {renderChooseFrame()}

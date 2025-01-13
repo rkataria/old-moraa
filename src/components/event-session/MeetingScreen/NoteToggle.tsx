@@ -13,7 +13,7 @@ import {
   closeRightSidebarAction,
   setRightSidebarAction,
 } from '@/stores/slices/layout/live.slice'
-import { KeyboardShortcuts } from '@/utils/utils'
+import { KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function NoteToggle() {
   const dispatch = useDispatch()
@@ -21,9 +21,7 @@ export function NoteToggle() {
   const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
   const currentFrame = useCurrentFrame()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleNoteToggle = (e: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
+  const handleNoteToggle = () => {
     if (rightSidebarMode === 'frame-notes') {
       dispatch(closeRightSidebarAction())
     } else {
@@ -38,6 +36,7 @@ export function NoteToggle() {
   }
 
   useHotkeys(KeyboardShortcuts['Studio Mode'].notes.key, handleNoteToggle, {
+    ...liveHotKeyProps,
     enabled: isHost,
   })
 

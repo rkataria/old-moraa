@@ -4,7 +4,7 @@ import { BsPeople, BsPeopleFill } from 'react-icons/bs'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function ParticipantsToggle({
   isParticipantsSidebarOpen,
@@ -16,12 +16,11 @@ export function ParticipantsToggle({
   const areParticipantsWaitingInLobby = useDyteSelector(
     (state) => !!state.participants.waitlisted.size
   )
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleShortCut = (e: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
+  const handleShortCut = () => {
     onClick()
   }
-  useHotkeys('p', handleShortCut)
+
+  useHotkeys('p', handleShortCut, liveHotKeyProps)
 
   return (
     <ControlButton

@@ -7,6 +7,11 @@ import { twMerge } from 'tailwind-merge'
 import { FrameStatus } from '@/types/enums'
 import { ISection } from '@/types/frame.type'
 
+export const liveHotKeyProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ignoreEventWhen: (e: any) => e.target.localName.includes('dyte-sidebar'),
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

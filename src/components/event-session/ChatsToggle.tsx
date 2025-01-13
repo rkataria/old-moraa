@@ -7,7 +7,7 @@ import { BsChatRightText, BsChatRightTextFill } from 'react-icons/bs'
 
 import { ControlButton } from '../common/ControlButton'
 
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function ChatsToggle({
   isChatsSidebarOpen,
@@ -28,15 +28,12 @@ export function ChatsToggle({
     })
   }, [meeting, selfParticipant.userId])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleChat = (e: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
-
+  const handleChat = () => {
     setNewMessageReceived(false)
     onClick()
   }
 
-  useHotkeys('c', handleChat)
+  useHotkeys('c', handleChat, liveHotKeyProps)
 
   return (
     <Badge

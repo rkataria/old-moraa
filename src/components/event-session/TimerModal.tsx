@@ -15,6 +15,7 @@ import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { getCurrentTimestamp, getRemainingTimestamp } from '@/utils/timer.utils'
+import { liveHotKeyProps } from '@/utils/utils'
 
 export function TimerModal({
   open,
@@ -58,7 +59,6 @@ export function TimerModal({
       })
     )
   }
-
   const handleTimerToggle = () => {
     if (timerActive) {
       closeTimer()
@@ -69,7 +69,10 @@ export function TimerModal({
     setOpen(true)
   }
 
-  useHotkeys('t', handleTimerToggle, { enabled: isHost })
+  useHotkeys('t', handleTimerToggle, {
+    ...liveHotKeyProps,
+    enabled: isHost,
+  })
 
   if (!isHost) return null
 

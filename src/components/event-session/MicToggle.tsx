@@ -6,7 +6,7 @@ import { ControlButton } from '../common/ControlButton'
 
 import { useDetectSpeaking } from '@/hooks/useDetectSpeaking'
 import { useUserPreferences } from '@/hooks/userPreferences'
-import { cn, KeyboardShortcuts } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 export function MicToggle({ className = '' }: { className?: string }) {
   const { userPreferencesMeetingAudio } = useUserPreferences()
@@ -16,10 +16,7 @@ export function MicToggle({ className = '' }: { className?: string }) {
     detect: !isMicEnabled,
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleMic = (e?: any) => {
-    if (e.target.localName.includes('dyte-sidebar')) return
-
+  const handleMic = () => {
     if (isMicEnabled) {
       self.disableAudio()
       userPreferencesMeetingAudio(false)
@@ -31,10 +28,12 @@ export function MicToggle({ className = '' }: { className?: string }) {
     userPreferencesMeetingAudio(true)
   }
 
-  useHotkeys(KeyboardShortcuts.Live.muteUnmute.key, handleMic, [
-    self,
-    isMicEnabled,
-  ])
+  useHotkeys(
+    KeyboardShortcuts.Live.muteUnmute.key,
+    handleMic,
+    [self, isMicEnabled],
+    liveHotKeyProps
+  )
 
   const getTooltipProps = () => {
     if (isSpeaking && !isMicEnabled) {
