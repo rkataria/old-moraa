@@ -20,44 +20,51 @@ export type TYPOGRAPHY = {
   name: string
   fontSize: number
   fontWeight: number
+  fontFamily: string
   content?: string
 }
 
 export const TYPOGRAPHY_LIST: TYPOGRAPHY[] = [
   {
     name: 'Title',
-    fontSize: 48,
+    fontSize: 72,
     fontWeight: 700,
+    fontFamily: 'Poppins',
     content: 'Title Here',
   },
   {
     name: 'Subtitle',
-    fontSize: 36,
+    fontSize: 40,
     fontWeight: 500,
-    content: 'Title Here',
+    fontFamily: 'Poppins',
+    content: 'Subtitle Here',
   },
   {
     name: 'Heading',
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 500,
+    fontFamily: 'Poppins',
     content: 'Heading Here',
   },
   {
     name: 'Subheading',
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 400,
+    fontFamily: 'Poppins',
     content: 'Subheading Here',
   },
   {
     name: 'Body Text',
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: 400,
+    fontFamily: 'Poppins',
     content: 'Body Text Here',
   },
   {
     name: 'Small Text',
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: 400,
+    fontFamily: 'Poppins',
     content: 'Small Text Here',
   },
 ]
@@ -79,6 +86,7 @@ export function TextBox({
       name,
       fontFamily: DEFAULT_FONT_FAMILY,
       fontSize,
+      lineHeight: 1.5,
       width: canvas.getWidth() * 0.3,
       fill: '#000',
       padding: 5,

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   Dropdown,
@@ -53,6 +53,10 @@ export function NumberInputCaret({
   const [value, setValue] = useState<number>(number)
   const [open, setOpen] = useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    setValue(number)
+  }, [number])
 
   const handleNumberChange = (newSize: number) => {
     if (newSize < 0 && !allowNegative) return

@@ -74,13 +74,10 @@ export function Toolbars() {
       />
       <ShapePicker
         onSelectCallback={(svg) => {
-          fabric.loadSVGFromString(svg, (objects) => {
-            // Add without grouping
-            const obj = objects[0]
-            obj.set('left', 100)
-            obj.set('top', 100)
-            obj.scaleToWidth(200)
-            obj.set('centeredRotation', true)
+          fabric.loadSVGFromURL(svg, (objects, options) => {
+            const obj = fabric.util.groupSVGElements(objects, options)
+
+            obj.scaleToWidth(300)
 
             canvas.add(obj)
             canvas.setActiveObject(obj)

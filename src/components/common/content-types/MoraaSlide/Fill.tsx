@@ -29,7 +29,18 @@ export function Fill() {
             className="border-1 border-black/50"
             defaultColor={fill as string}
             onchange={(color) => {
-              activeObject.set('fill', color)
+              const { type } = activeObject
+              if (type === 'group') {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                const objects = activeObject.getObjects()
+                objects.forEach((object: fabric.Object) =>
+                  object.set('fill', color)
+                )
+              } else {
+                activeObject.set('fill', color)
+              }
+
               canvas.renderAll()
               canvas.fire('object:modified', { target: activeObject })
             }}
@@ -44,7 +55,19 @@ export function Fill() {
             className="border-1 border-black/50"
             defaultColor={strokeColor as string}
             onchange={(color) => {
-              activeObject.set('stroke', color)
+              const { type } = activeObject
+
+              if (type === 'group') {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                const objects = activeObject.getObjects()
+                objects.forEach((object: fabric.Object) =>
+                  object.set('stroke', color)
+                )
+              } else {
+                activeObject.set('stroke', color)
+              }
+
               canvas.renderAll()
             }}
           />
@@ -64,7 +87,19 @@ export function Fill() {
             className="w-full"
             value={strokeWidth}
             onChange={(value) => {
-              activeObject.set('strokeWidth', value as number)
+              const { type } = activeObject
+
+              if (type === 'group') {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                const objects = activeObject.getObjects()
+                objects.forEach((object: fabric.Object) =>
+                  object.set('strokeWidth', value as number)
+                )
+              } else {
+                activeObject.set('strokeWidth', value as number)
+              }
+
               canvas.renderAll()
             }}
           />

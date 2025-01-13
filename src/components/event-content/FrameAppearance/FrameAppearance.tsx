@@ -40,7 +40,7 @@ export function FrameAppearance() {
   const renderer = renderersByContentType[currentFrame.type as FrameType]
 
   return (
-    <div>
+    <div className="h-full max-h-full overflow-y-auto scrollbar-hide">
       <RightSidebarHeader
         icon={<FaWandMagicSparkles size={18} />}
         title={activeObject?.type ? activeObject.type : currentFrame.type}

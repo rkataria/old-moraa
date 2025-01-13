@@ -71,7 +71,7 @@ export function FrameGridView({
           'relative cursor-pointer overflow-hidden rounded-lg group/frame-item',
           {
             'border-primary border-2': frameActive,
-            'border-transparent border-2': !frameActive,
+            'border-gray-200 border-2': !frameActive,
             'border border-green-400': breakoutRunning,
           }
         )}
@@ -88,7 +88,7 @@ export function FrameGridView({
           )}>
           <div
             className={cn(
-              'w-full rounded-lg border border-gray-300 overflow-hidden aspect-video bg-gray-100'
+              'w-full rounded-md overflow-hidden aspect-video bg-white'
             )}>
             <RenderIf
               isTrue={

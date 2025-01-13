@@ -34,16 +34,22 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
   if (!activeObjectState || !activeObjectState.fontSize) return null
 
   const updateTypography = async (typography: TYPOGRAPHY) => {
-    const fontLoaded = await loadFont(typography.name, typography.fontWeight)
+    const fontLoaded = await loadFont(
+      typography.fontFamily,
+      typography.fontWeight
+    )
 
     if (!fontLoaded) return
 
     const _activeObject = canvas.getActiveObject() as fabric.Textbox
 
     _activeObject.set('name', typography.name)
+    _activeObject.set('fontFamily', typography.fontFamily)
     _activeObject.set('fontSize', typography.fontSize)
     _activeObject.set('fontWeight', typography.fontWeight)
+
     canvas.renderAll()
+    canvas.fire('object:modified', { target: _activeObject })
 
     setTypographyName(typography.name)
   }
@@ -120,6 +126,7 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
 
           _activeObject.set('fontSize', Number(value))
           canvas.renderAll()
+          canvas.fire('object:modified', { target: _activeObject })
         }}
       />
 
@@ -159,6 +166,7 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
             activeObjectState.fontWeight === 700 ? 400 : 700
           )
           canvas.renderAll()
+          canvas.fire('object:modified', { target: _activeObject })
         }}>
         <BsTypeBold size={16} />
       </Button>
@@ -182,6 +190,7 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
             activeObjectState.fontStyle === 'italic' ? 'normal' : 'italic'
           )
           canvas.renderAll()
+          canvas.fire('object:modified', { target: _activeObject })
         }}>
         <BsTypeItalic size={16} />
       </Button>

@@ -29,7 +29,6 @@ import {
 import { useMoraaSlideStore } from '@/stores/moraa-slide.store'
 import { setActiveObjectAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
 import { MORAA_SLIDE_TEMPLATES } from '@/utils/moraa-slide-templates'
-import { cn } from '@/utils/utils'
 
 interface MoraaSlideEditorProps {
   frameId: string
@@ -191,18 +190,13 @@ export function MoraaSlideEditor({
   }, [frameBackgroundColor])
 
   return (
-    <div className="w-full h-full">
+    <div className="relative flex-auto h-full w-auto aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-md overflow-hidden border-gray-100 border-1">
       <LoadFonts />
       <ResizeObserver
         onResize={() => {
           resizeCanvas({ fabricRef, canvasContainerRef })
         }}>
-        <div
-          ref={canvasContainerRef}
-          className={cn(
-            'relative flex-auto h-full w-auto aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-md overflow-hidden',
-            'border-1.5 border-primary-100'
-          )}>
+        <div ref={canvasContainerRef} className="w-full h-full">
           <canvas ref={canvasRef} id={`canvas-${frameId}`} />
           <BubbleMenu canvas={fabricRef.current!} />
         </div>

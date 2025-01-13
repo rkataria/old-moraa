@@ -44,8 +44,11 @@ export function ShapePickerContent({
                 <div
                   key={`${shape.label}-${shapeIndex}`}
                   onClick={() => onSelect(shape.svg)}>
-                  <div dangerouslySetInnerHTML={{ __html: shape.svg }} />
-                  {/* <p>{shape.label}</p> */}
+                  <img
+                    src={shape.svg}
+                    alt={shape.label}
+                    className="w-12 h-12"
+                  />
                 </div>
               ))}
             </div>
