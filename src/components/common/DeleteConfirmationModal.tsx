@@ -14,16 +14,18 @@ type DeleteConfirmationModalProps = {
   open: boolean
   title?: string | React.ReactNode
   description?: string | React.ReactNode
+  confirmButtonLabel?: React.ReactNode
   onClose: () => void
   onConfirm: () => void
 }
 
 export function DeleteConfirmationModal({
   open,
-  onClose,
-  onConfirm,
   title,
   description,
+  confirmButtonLabel = 'Yes, Delete',
+  onClose,
+  onConfirm,
 }: DeleteConfirmationModalProps) {
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -52,7 +54,7 @@ export function DeleteConfirmationModal({
                   setLoading(true)
                   onConfirm()
                 }}>
-                Yes, Delete
+                {confirmButtonLabel}
               </Button>
             </ModalFooter>
           </>

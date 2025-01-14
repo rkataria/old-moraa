@@ -61,6 +61,7 @@ export function EventSessionPageInner() {
   useAskForHelp()
   useBreakoutSessionOver()
   const { meeting } = useDyteMeeting()
+
   const { eventRealtimeChannel } = useRealtimeChannel()
   const isRoomJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined

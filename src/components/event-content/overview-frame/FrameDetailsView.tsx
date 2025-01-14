@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
 import {
@@ -12,6 +14,8 @@ import {
 } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
 
+import { RecordingsOverview } from './RecordingsOverview'
+
 import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Dates } from '@/components/enroll/Date'
@@ -21,6 +25,7 @@ import { cn } from '@/utils/utils'
 
 export function FrameDetailsView() {
   const { eventId }: { eventId: string } = useParams({ strict: false })
+
   const [showEditor, setShowEditor] = useState(true)
 
   const descriptionModalDisclosure = useDisclosure()
@@ -98,6 +103,7 @@ export function FrameDetailsView() {
               img: 'w-full object-cover rounded-lg shadow-xl aspect-square',
             }}
           />
+          <RecordingsOverview />
           <Dates
             startDate={event?.start_date as string}
             endDate={event?.end_date as string}

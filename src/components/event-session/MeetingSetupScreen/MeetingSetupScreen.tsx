@@ -29,6 +29,7 @@ export function MeetingSetupScreen() {
     isFetching: isFetchingProfile,
     isRequiredNames,
   } = useProfile()
+
   const dispatch = useStoreDispatch()
   const meetingSession = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.activeSession
@@ -37,12 +38,14 @@ export function MeetingSetupScreen() {
   const { event } = useEvent({
     id: eventId as string,
   })
+
   const isParticipantLoading = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.participant.isLoading
   )
   const enrollmentQuery = useEnrollment()
   const selfParticipant = useDyteSelector((meeting) => meeting.self)
   const { meeting } = useDyteMeeting()
+
   const [name, setName] = useState<string>('')
   const [isHost, setIsHost] = useState<boolean>(false)
 

@@ -81,6 +81,10 @@ type LiveSessionState = {
     isBreakoutOverviewOpen: boolean
     breakoutNotify: boolean
   }
+
+  recording: {
+    notify: boolean
+  }
 }
 
 const initialState: LiveSessionState = {
@@ -100,6 +104,9 @@ const initialState: LiveSessionState = {
     isInBreakoutMeeting: false,
     isBreakoutOverviewOpen: false,
     breakoutNotify: false,
+  },
+  recording: {
+    notify: false,
   },
 }
 
@@ -185,6 +192,13 @@ export const liveSessionSlice = createSlice({
         return
       }
       state.breakout.breakoutNotify = action.payload
+    },
+
+    setRecordingLaunchModal: (state, action: PayloadAction<boolean>) => {
+      if (!state.dyte.isMeetingJoined) {
+        return
+      }
+      state.recording.notify = action.payload
     },
 
     // FOR POLL AND REFLECTIONS
@@ -545,5 +559,6 @@ export const {
   setDyteClientAction,
   resetLiveSessionAction,
   setBreakoutNotifyAction,
+  setRecordingLaunchModalAction,
   toggleStartAndStopActivityAction,
 } = renameSliceActions(liveSessionSlice.actions)

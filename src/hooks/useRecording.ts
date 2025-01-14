@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useParams } from '@tanstack/react-router'
@@ -6,13 +6,17 @@ import { useParams } from '@tanstack/react-router'
 import { useEventPermissions } from './useEventPermissions'
 import { useStoreSelector } from './useRedux'
 
+import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useFlags } from '@/flags/client'
 import { DyteRecordingService } from '@/services/dyte-recording.service'
 
 export function useRecording() {
+  const { eventRealtimeChannel } = useRealtimeChannel()
+
   const { eventId } = useParams({
     strict: false,
   })
+  const [requestedForRecording, setRequestedForRecording] = useState(false)
   const { flags } = useFlags()
   const { permissions } = useEventPermissions()
   const enrollment = useStoreSelector(
@@ -23,7 +27,6 @@ export function useRecording() {
   )
   const connectedMeetings = useDyteSelector((m) => m.connectedMeetings.meetings)
   const recordings = useDyteSelector((m) => m.recording.recordings)
-
   const isRecording = recordings.some((r) =>
     ['IDLE', 'STARTING', 'RECORDING'].includes(r.state)
   )
@@ -48,16 +51,42 @@ export function useRecording() {
   const startRecordingForMeeting = async (meetingId: string) => {
     if (!enrollment?.meeting_token) return
 
-    await DyteRecordingService.startMeeting({
+    const startRecordingResponse = await DyteRecordingService.startMeeting({
       token: enrollment.meeting_token,
       meetingId,
       eventId: eventId!,
     })
+
+    if (startRecordingResponse.status === 201) {
+      eventRealtimeChannel?.send({
+        type: 'broadcast',
+        event: 'recording-about-to-start',
+        payload: {},
+      })
+    }
+  }
+
+  const stopRecordingForMeeting = async ({
+    recordingId,
+  }: {
+    recordingId: string
+  }) => {
+    if (!enrollment?.meeting_token) return
+
+    const startRecordingResponse = await DyteRecordingService.stopMeeting({
+      token: enrollment.meeting_token,
+      recordingId,
+    })
+    if (startRecordingResponse.status === 200) {
+      setRequestedForRecording(true)
+    }
   }
 
   return {
     recordings,
     isRecording,
+    requestedForRecording,
     startRecording,
+    stopRecordingForMeeting,
   }
 }

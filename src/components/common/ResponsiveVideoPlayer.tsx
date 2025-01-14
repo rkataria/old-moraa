@@ -34,6 +34,8 @@ type ResponsiveVideoPlayerProps = {
   showControls?: boolean
   light?: boolean
   playerState?: ResponsiveVideoPlayerState
+  showViewMode?: boolean
+  className?: string
   onPlayerStateChange?: React.Dispatch<
     React.SetStateAction<ResponsiveVideoPlayerState>
   >
@@ -46,6 +48,8 @@ export function ResponsiveVideoPlayer({
   showControls = true,
   light = false,
   playerState,
+  showViewMode = true,
+  className = '',
   onPlayerStateUpdate,
   onPlayerStateChange,
 }: ResponsiveVideoPlayerProps) {
@@ -176,7 +180,10 @@ export function ResponsiveVideoPlayer({
 
   return (
     <div
-      className="relative w-full pt-[56.25%] rounded-md overflow-hidden"
+      className={cn(
+        'relative w-full pt-[56.25%] rounded-md overflow-hidden',
+        className
+      )}
       onMouseMove={handleMouseMove}>
       <ReactPlayer
         ref={playerRef}
@@ -276,7 +283,7 @@ export function ResponsiveVideoPlayer({
         </div>
       )}
 
-      {!showControls && (
+      {!showControls && showViewMode && (
         <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
           <span className="absolute right-2 bottom-2 py-2 px-4 bg-black/80 text-white text-xs rounded-full flex justify-center items-center">
             View Mode

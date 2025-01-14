@@ -29,6 +29,7 @@ import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { useEventSelector } from '@/stores/hooks/useEventSections'
 import {
   setBreakoutNotifyAction,
+  setRecordingLaunchModalAction,
   updateMeetingSessionDataAction,
 } from '@/stores/slices/event/current-event/live-session.slice'
 import {
@@ -156,6 +157,18 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       { event: 'stop-breakout-notify' },
       () => {
         dispatch(setBreakoutNotifyAction(false))
+      }
+    )
+  }, [eventRealtimeChannel, dispatch])
+
+  useEffect(() => {
+    if (!eventRealtimeChannel) return
+
+    eventRealtimeChannel.on(
+      'broadcast',
+      { event: 'recording-about-to-start' },
+      () => {
+        dispatch(setRecordingLaunchModalAction(true))
       }
     )
   }, [eventRealtimeChannel, dispatch])

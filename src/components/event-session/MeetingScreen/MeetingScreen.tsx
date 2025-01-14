@@ -24,6 +24,7 @@ import { RightSidebar } from './RightSidebar'
 import { ChangeLayoutModal } from '../ChangeLayoutModal'
 import { FlyingEmojisOverlay } from '../FlyingEmojisOverlay'
 import { IdleModeConfirmation } from '../IdleModeConfirmation'
+import { RecordingLaunchModal } from '../RecordingLaunchModal'
 
 import { Notify } from '@/components/common/breakout/Notify'
 import { LiveLayout } from '@/components/common/LiveLayout'
@@ -272,6 +273,7 @@ export function MeetingScreen() {
       <RenderIf isTrue={isBreakoutStartNotifyOpen}>
         <Notify />
       </RenderIf>
+      <RecordingLaunchModal />
       <ChangeLayoutModal />
     </LiveLayout>
   )
