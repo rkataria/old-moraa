@@ -38,8 +38,8 @@ export const Route = createFileRoute('/event-session/$eventId/record/')({
 
     if (!session.data?.session?.user?.id) {
       const { error } = await supabaseClient.auth.signInWithPassword({
-        email: 'recording-bot@yopmail.com',
-        password: 'letmepass',
+        email: import.meta.env.VITE_RECORDER_BOT_EMAIL,
+        password: import.meta.env.VITE_RECORDER_BOT_PASSWORD,
       })
 
       if (error) {

@@ -1,7 +1,20 @@
-import { useSelf } from '@liveblocks/react/suspense'
-import { PeopleMenu, Tldraw, TLTextShapeProps } from 'tldraw'
+import { useEffect, useRef } from 'react'
+
+import {
+  useOthers,
+  useSelf,
+  useUpdateMyPresence,
+} from '@liveblocks/react/suspense'
+import {
+  type Editor as TldrawEditor,
+  PeopleMenu,
+  Tldraw,
+  TLTextShapeProps,
+} from 'tldraw'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useProfile } from '@/hooks/useProfile'
 import { useStorageStore } from '@/hooks/useStorageStore'
 import { IFrame } from '@/types/frame.type'
 
@@ -18,12 +31,26 @@ export function Editor({
   readOnly = false,
   asThumbnail = false,
 }: EditorProps) {
+  const { data: userProfile } = useProfile()
+  const editorRef = useRef<TldrawEditor | null>(null)
+  const { permissions } = useEventPermissions()
   const id = useSelf((me) => me.id)
   const info = useSelf((me) => me.info)
+  const updateMyPresence = useUpdateMyPresence()
+  updateMyPresence({ isHost: permissions.canUpdateFrame })
+  const hostPresence = useOthers((others) =>
+    others.find((other) => other.presence.isHost)
+  )
   const store = useStorageStore({
     frameId: frame.id,
     user: { id, color: info?.color, name: info?.name },
   })
+
+  useEffect(() => {
+    if (!hostPresence) return
+    if (userProfile?.email !== import.meta.env.VITE_RECORDER_BOT_EMAIL) return
+    editorRef.current?.startFollowingUser(hostPresence.id)
+  }, [hostPresence, userProfile])
 
   if (store.status !== 'synced-remote') return <ContentLoading />
 
@@ -40,7 +67,11 @@ export function Editor({
       }}
       hideUi={isReadonly}
       onMount={(editor) => {
-        editor.updateInstanceState({ isReadonly: !!isReadonly })
+        editorRef.current = editor
+
+        editor.updateInstanceState({
+          isReadonly: !!isReadonly,
+        })
         editor.zoomOut(editor.getViewportScreenCenter())
         const shapes = editor
           .getCurrentPageShapes()

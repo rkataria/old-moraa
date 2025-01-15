@@ -21,21 +21,6 @@ export const beforeLoad = async ({
   if (context.auth.loading) return
 
   if (!context.auth.isAuthenticated) {
-    // TODO: Test Logic
-    if (location.href?.includes('/record')) {
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: 'recording-bot@yopmail.com',
-        password: 'letmepass',
-      })
-
-      if (error) {
-        console.error(error)
-
-        return
-      }
-
-      return
-    }
     throw redirect({
       to: '/login',
       search: {

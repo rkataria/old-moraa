@@ -9,6 +9,7 @@ declare global {
     Presence: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       presence: any // Used by tldraw
+      isHost: boolean
     }
     Storage: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

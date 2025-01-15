@@ -20,7 +20,7 @@ export function RoomProvider({ children, frameId }: RoomProviderProps) {
   return (
     <LBRoomProvider
       id={`moraaboard:${frameId}`}
-      initialPresence={{ presence: undefined }}
+      initialPresence={{ presence: undefined, isHost: false }}
       initialStorage={{ records: new LiveMap() }}>
       <ClientSideSuspense
         fallback={
