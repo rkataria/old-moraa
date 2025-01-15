@@ -24,14 +24,13 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.13",
-    "@dytesdk/react-ui-kit": "^2.0.6",
-    "@dytesdk/react-web-core": "^2.1.10",
+    "@dytesdk/react-ui-kit": "^2.1.5",
+    "@dytesdk/react-web-core": "^2.2.1",
     "@dytesdk/recording-sdk": "^2.0.0",
-    "@dytesdk/video-background-transformer": "^2.0.4",
-    "@dytesdk/web-core": "^2.1.10",
+    "@dytesdk/video-background-transformer": "^2.0.5",
+    "@dytesdk/web-core": "^2.2.1",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
-
     "@giphy/react-components": "^9.8.0",
     "@happykit/flags": "^3.3.0",
     "@headlessui/react": "^2.1.2",

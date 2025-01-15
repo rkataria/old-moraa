@@ -586,39 +586,39 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
-"@dytesdk/react-ui-kit@^2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-ui-kit/-/react-ui-kit-2.0.6.tgz#8bd7f641393355207114bd99d942a8c021353b33"
-  integrity sha512-Ixv/Bx9erFxd7pwQEQelYZ0fIjPKRCJq+fX9p6n5siiz7pCSIOtmvFK7Tzc6B7HPML8BvNlh8RvbBmptDu12Cw==
+"@dytesdk/react-ui-kit@^2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-ui-kit/-/react-ui-kit-2.1.5.tgz#59d6a5ce9610aa32c36cd385e1b57e842c6c62d8"
+  integrity sha512-3quvDD2IogyMBLTRBJ4KPrUQzBtMI9UnIN/PiLJ/o5h/9k0qwPu8BwBlt5/CVDyJdZdGke5VcR7kP4F2PYZXAA==
   dependencies:
-    "@dytesdk/ui-kit" "2.0.6"
+    "@dytesdk/ui-kit" "2.1.5"
 
-"@dytesdk/react-web-core@^2.1.10":
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-2.1.10.tgz#888b1c493e73d8c8828add902fe5aa8a99bf66cb"
-  integrity sha512-YFweqg0bmyYEGbM3XBTrgFaijm+gQPxHSJcQOmtVGph/DTk0lDk177OtXMhM1TuBWlR1yr3aLO8xoSq3leS6cA==
+"@dytesdk/react-web-core@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-2.2.1.tgz#38d5b9f15ea01e24b3e27e79a6dca232a66ff2fd"
+  integrity sha512-fD7E01fk0v4dtXI2215TCjuWTqW/EH/kFoEnTvCmNau7tP267OI59DiaIObSsE7FleB+3u0rvmA8bQqzN42k6Q==
   dependencies:
-    "@dytesdk/web-core" "2.1.10"
+    "@dytesdk/web-core" "2.2.1"
 
 "@dytesdk/recording-sdk@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@dytesdk/recording-sdk/-/recording-sdk-2.0.0.tgz#ad0d60b218d28dc20f861c745562ac338b74ff92"
   integrity sha512-tkY8Qng+4x//eYJIen/6lWp1SolT3sMev71NSz9DeEGTSs6Fm1g69ME3LA+rkcRBYYlGwCa5oWQdbC+i+Wxy+w==
 
-"@dytesdk/ui-kit@2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-2.0.6.tgz#e6f979e068af18b2205e22d5736539b34a3f2266"
-  integrity sha512-sm9sl3YHvfHKjS1pzKf/Y/+VNQOKK/YRrawxpQzWz7xHKDLf4jrtRYLm34VqVqR9tK3B4uZfCM9JRqmmytR1Hg==
+"@dytesdk/ui-kit@2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@dytesdk/ui-kit/-/ui-kit-2.1.5.tgz#d114d785a11fafae16dd2ab539b8ced70a8ed52a"
+  integrity sha512-kIxv108UADTwbP6JY/343VAESMKhyD3PDxj63Ln7YySA7mBugg2uW/mbE6NHphNDJoFEyLp2VRi3+Gly3/asMQ==
 
-"@dytesdk/video-background-transformer@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@dytesdk/video-background-transformer/-/video-background-transformer-2.0.4.tgz#335154d6e5d27c7bb85d4b05ecc86e3f059e3554"
-  integrity sha512-zIEmniYvE3wsS76SiduH+3DbEx5Wci3JVbxkPeJukS/UKKkwCgxAKzUbf2BzDxyjAKdZIzhKnPjha/S4WOAAsw==
+"@dytesdk/video-background-transformer@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@dytesdk/video-background-transformer/-/video-background-transformer-2.0.5.tgz#111484c1e64dc69376f5d8f1e568fa15daf25f69"
+  integrity sha512-emC4RlZRLbTUJGgEvS9hQZV9q9sXnhU9kZ8jBZB2UXM2VbCjGDs4uA2Rq0FYoVIPUbX+toR37si1MIZh/k35XQ==
 
-"@dytesdk/web-core@2.1.10", "@dytesdk/web-core@^2.1.10":
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-2.1.10.tgz#c65574c4241c9f43cbb0aecdfece7feb519f0a23"
-  integrity sha512-JxJ04z8b9zzgbTTH6G35V9G+UzKzVxJKhOJXw16VLchtghvkyEh6UyajwufEGKz2b6g8sSy+Dv2WZ/kYkFjcYg==
+"@dytesdk/web-core@2.2.1", "@dytesdk/web-core@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-2.2.1.tgz#c1b05452e5be1ca148165837c5007a350b237c98"
+  integrity sha512-fIpDt6DZw9/obvA3dpAWWVrpqmaROgoAkjRkwMWcXMJu1vNWelxNZKeswzr77A6AqngOcAeVDFWBRVkxeR/jYw==
   dependencies:
     "@protobuf-ts/runtime" "^2.7.0"
     bowser "^2.11.0"
