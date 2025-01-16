@@ -121,13 +121,11 @@ function RecordingDetails() {
     }
 
     return (
-      <div className="grid gap-6 bg-white p-4 rounded-sm mt-2">
+      <div className="grid gap-6 bg-white p-4 rounded-sm mt-2 overflow-y-auto max-h-[84vh] scrollbar-none">
         {transcriptsData.map((transcript) => (
           <div className="">
-            <p className="font-medium">{Object.keys(transcript)[4]}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              {Object.keys(transcript)[5]}
-            </p>
+            <p className="font-medium">{transcript[4]}</p>
+            <p className="text-xs text-gray-500 mt-1">{transcript[5]}</p>
           </div>
         ))}
       </div>
@@ -136,7 +134,7 @@ function RecordingDetails() {
 
   return (
     <div className="grid grid-cols-[1fr_0.3fr] items-start w-full gap-4 overflow-hidden h-[calc(100vh_-_56px)]">
-      <div className="grid gap-4 px-40 pt-4 h-full pb-[5rem] overflow-y-auto scrollbar-none">
+      <div className="flex flex-col gap-4 px-40 pt-4 h-full pb-[5rem] overflow-y-auto scrollbar-none max-h-[calc(100vh_-_56px)]">
         <p className="text-2xl">{event.name}</p>
         <div className="aspect-video w-full bg-gray-400 rounded-lg grid place-items-center">
           <ResponsiveVideoPlayer url={recording.download_url} />

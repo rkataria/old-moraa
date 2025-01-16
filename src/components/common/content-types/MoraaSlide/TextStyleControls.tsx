@@ -10,6 +10,7 @@ import { ControlButton } from '../../ControlButton'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { useStoreSelector } from '@/hooks/useRedux'
+import { changeTextStyles } from '@/utils/moraa-slide'
 
 export function TextStyleControls() {
   const { canvas } = useMoraaSlideEditorContext()
@@ -37,38 +38,54 @@ export function TextStyleControls() {
   if (!activeObject) return null
 
   const handleBold = () => {
-    if (activeObjectState.fontWeight === 'bold') {
-      activeObject.set('fontWeight', 'normal')
-      canvas.renderAll()
-
-      return
-    }
-
-    activeObject.set('fontWeight', 'bold')
-    canvas.renderAll()
+    changeTextStyles({
+      canvas,
+      activeObject,
+      styles: {
+        fontWeight: activeObjectState.fontWeight === 'bold' ? 'normal' : 'bold',
+      },
+      applyToSelection: true,
+    })
   }
 
   const handleItalic = () => {
-    if (activeObjectState.fontStyle === 'italic') {
-      activeObject.set('fontStyle', 'normal')
-      canvas.renderAll()
-
-      return
-    }
-
-    activeObject.set('fontStyle', 'italic')
-    canvas.renderAll()
+    changeTextStyles({
+      canvas,
+      activeObject,
+      styles: {
+        fontStyle:
+          activeObjectState.fontStyle === 'italic' ? 'normal' : 'italic',
+      },
+      applyToSelection: true,
+    })
   }
 
   const handleUnderline = () => {
-    activeObject.set('underline', !activeObject.underline)
-    canvas.renderAll()
+    changeTextStyles({
+      canvas,
+      activeObject,
+      styles: {
+        underline: !activeObject.underline,
+      },
+      applyToSelection: true,
+    })
   }
 
   const handleStrikethrough = () => {
-    activeObject.set('linethrough', !activeObject.linethrough)
-    canvas.renderAll()
+    changeTextStyles({
+      canvas,
+      activeObject,
+      styles: {
+        linethrough: !activeObject.linethrough,
+      },
+      applyToSelection: true,
+    })
   }
+
+  const fontWeight =
+    activeObjectState.getSelectedText()?.length > 0
+      ? activeObjectState.getSelectionStyles().find((style) => style.fontWeight)
+      : activeObjectState.fontWeight
 
   return (
     <>
@@ -77,7 +94,7 @@ export function TextStyleControls() {
           content: 'Bold',
         }}
         buttonProps={{
-          variant: activeObjectState.fontWeight === 'bold' ? 'solid' : 'light',
+          variant: fontWeight === 'bold' ? 'solid' : 'light',
           size: 'sm',
           className: 'flex-none flex-grow bg-gray-100 hover:bg-gray-200',
           isIconOnly: true,

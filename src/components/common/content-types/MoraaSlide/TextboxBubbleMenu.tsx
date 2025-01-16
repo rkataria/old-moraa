@@ -16,22 +16,20 @@ import { TYPOGRAPHY, TYPOGRAPHY_LIST } from './TextBox'
 import { ColorPicker } from '../../ColorPicker'
 import { NumberInputCaret } from '../../NumberInputCaret'
 
-import { useStoreSelector } from '@/hooks/useRedux'
+import { changeTextStyles } from '@/utils/moraa-slide'
 import { loadFont } from '@/utils/utils'
 
 export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
+  const activeObject = canvas.getActiveObject() as fabric.Textbox
   const [typographyName, setTypographyName] = useState<string>('')
-  const activeObjectState = useStoreSelector(
-    (state) => state.event.currentEvent.moraaSlideState.activeObject
-  ) as fabric.Textbox
 
   useEffect(() => {
-    if (!activeObjectState?.name) return
+    if (!activeObject?.name) return
 
-    setTypographyName(activeObjectState.name)
-  }, [activeObjectState?.name])
+    setTypographyName(activeObject.name)
+  }, [activeObject?.name])
 
-  if (!activeObjectState || !activeObjectState.fontSize) return null
+  if (!activeObject || !activeObject.fontSize) return null
 
   const updateTypography = async (typography: TYPOGRAPHY) => {
     const fontLoaded = await loadFont(
@@ -63,7 +61,7 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
             size="sm"
             variant="light"
             className="h-7 text-sm flex justify-center items-center gap-1 px-1">
-            <span>{typographyName || activeObjectState.name}</span>
+            <span>{typographyName || activeObject.name}</span>
             <RiArrowDownSLine size={16} />
           </Button>
         </DropdownTrigger>
@@ -83,7 +81,7 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
 
       {/* Font Size */}
       <NumberInputCaret
-        number={activeObjectState.fontSize}
+        number={activeObject.fontSize}
         min={10}
         selectOnFocus
         dropdownItems={[
@@ -120,13 +118,13 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
             value: 128,
           },
         ]}
-        selectedKeys={[activeObjectState.fontSize.toString()]}
+        selectedKeys={[activeObject.fontSize.toString()]}
         onChange={(value: number) => {
-          const _activeObject = canvas.getActiveObject() as fabric.Textbox
-
-          _activeObject.set('fontSize', Number(value))
-          canvas.renderAll()
-          canvas.fire('object:modified', { target: _activeObject })
+          changeTextStyles({
+            canvas,
+            activeObject,
+            styles: { fontSize: Number(value) },
+          })
         }}
       />
 
@@ -134,13 +132,14 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
       <div className="px-2 py-1.5 hover:bg-gray-100 rounded-sm">
         <ColorPicker
           className="h-4 w-4 border-2 border-black/20"
-          defaultColor={activeObjectState.fill as string}
+          defaultColor={activeObject.fill as string}
           onchange={(color) => {
-            const _activeObject = canvas.getActiveObject() as fabric.Textbox
-
-            _activeObject.set('fill', color)
-            canvas.renderAll()
-            canvas.fire('object:modified', { target: _activeObject })
+            changeTextStyles({
+              canvas,
+              activeObject,
+              styles: { fill: color },
+              applyToSelection: true,
+            })
           }}
         />
       </div>
@@ -148,7 +147,7 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
       {/* Bold & Italic */}
       <Button
         size="sm"
-        variant={activeObjectState.fontWeight === 700 ? 'flat' : 'light'}
+        variant={activeObject.fontWeight === 700 ? 'flat' : 'light'}
         isIconOnly
         className="h-7 text-sm flex justify-center items-center gap-1 px-1"
         onClick={async () => {
@@ -161,18 +160,20 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
 
           if (!fontLoaded) return
 
-          _activeObject.set(
-            'fontWeight',
-            activeObjectState.fontWeight === 700 ? 400 : 700
-          )
-          canvas.renderAll()
-          canvas.fire('object:modified', { target: _activeObject })
+          changeTextStyles({
+            canvas,
+            activeObject: _activeObject,
+            styles: {
+              fontWeight: _activeObject.fontWeight === 700 ? 400 : 700,
+            },
+            applyToSelection: true,
+          })
         }}>
         <BsTypeBold size={16} />
       </Button>
       <Button
         size="sm"
-        variant={activeObjectState.fontStyle === 'italic' ? 'flat' : 'light'}
+        variant={activeObject.fontStyle === 'italic' ? 'flat' : 'light'}
         isIconOnly
         className="h-7 text-sm flex justify-center items-center gap-1 px-1"
         onClick={async () => {
@@ -185,12 +186,15 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
 
           if (!fontLoaded) return
 
-          _activeObject.set(
-            'fontStyle',
-            activeObjectState.fontStyle === 'italic' ? 'normal' : 'italic'
-          )
-          canvas.renderAll()
-          canvas.fire('object:modified', { target: _activeObject })
+          changeTextStyles({
+            canvas,
+            activeObject: _activeObject,
+            styles: {
+              fontStyle:
+                _activeObject.fontStyle === 'italic' ? 'normal' : 'italic',
+            },
+            applyToSelection: true,
+          })
         }}>
         <BsTypeItalic size={16} />
       </Button>

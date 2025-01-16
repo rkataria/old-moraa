@@ -9,6 +9,47 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      asset_library: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          file_type: string | null
+          id: string
+          is_deleted: boolean | null
+          path: string | null
+          profile_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          file_type?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          path?: string | null
+          profile_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          file_type?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          path?: string | null
+          profile_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'asset_library_profile_id_fkey'
+            columns: ['profile_id']
+            isOneToOne: false
+            referencedRelation: 'profile'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       enrollment: {
         Row: {
           created_at: string
@@ -386,27 +427,33 @@ export type Database = {
       reaction: {
         Row: {
           created_at: string
+          details: Json | null
           dyte_meeting_id: string | null
           frame_response_id: string | null
           id: string
+          name: string | null
           participant_id: string | null
           reaction: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string
+          details?: Json | null
           dyte_meeting_id?: string | null
           frame_response_id?: string | null
           id?: string
+          name?: string | null
           participant_id?: string | null
           reaction?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string
+          details?: Json | null
           dyte_meeting_id?: string | null
           frame_response_id?: string | null
           id?: string
+          name?: string | null
           participant_id?: string | null
           reaction?: string | null
           updated_at?: string | null

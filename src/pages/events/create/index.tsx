@@ -226,7 +226,7 @@ export function EventsCreatePage() {
                       fileName: `event-image-${eventId}-.${file.name.split('.').pop()}`,
                       bucketName: 'image-uploads',
                       onProgressChange: setImageUploadProgress,
-                    })
+                    }).promise
 
                     if (response?.url) {
                       handleFileUpload(response?.url)

@@ -10,12 +10,21 @@ import { Icon8Content } from './Icon8Content'
 import { ImageCropper } from './ImageCropper'
 import { LibraryContent } from './LibraryContent'
 import { UnsplashContent } from './UnsplashContent'
+import { MediaTypeNames } from '../Library/MediaLibrary'
 
 export enum MediaProviderType {
   LIBRARY = 'Library',
   UNSPLASH = 'Unsplash',
   ICON8 = 'Icon8',
   GIPHY = 'Giphy',
+}
+type FileTypes = 'images' | 'videos'
+type MediaProviderContentProps = {
+  ImageOrientation?: Orientation
+  provider: MediaProviderType
+  fileType?: FileTypes
+  crop?: boolean
+  onSelectCallback?: (imageElment: HTMLImageElement) => void
 }
 
 export function MediaProviderContent({
@@ -24,13 +33,7 @@ export function MediaProviderContent({
   fileType,
   crop,
   onSelectCallback,
-}: {
-  ImageOrientation?: Orientation
-  provider: MediaProviderType
-  fileType?: 'images' | 'videos'
-  crop?: boolean
-  onSelectCallback?: (imageElment: HTMLImageElement) => void
-}) {
+}: MediaProviderContentProps) {
   const [isCropOpen, setIsCropOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(
     null
@@ -62,8 +65,19 @@ export function MediaProviderContent({
       />
     )
   }
+
+  const fileTypeToMediaTypeMap: Record<FileTypes, MediaTypeNames> = {
+    images: MediaTypeNames.Image,
+    videos: MediaTypeNames.Video,
+  }
+
   const renderersByMediaProvider: Record<MediaProviderType, React.ReactNode> = {
-    [MediaProviderType.LIBRARY]: <LibraryContent />,
+    [MediaProviderType.LIBRARY]: (
+      <LibraryContent
+        mediaType={fileTypeToMediaTypeMap[fileType!]}
+        onSelect={handleImageSelect}
+      />
+    ),
     [MediaProviderType.UNSPLASH]: (
       <UnsplashContent
         orientation={ImageOrientation}

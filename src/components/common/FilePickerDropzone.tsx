@@ -14,7 +14,7 @@ export type FilePickerDropzoneType = {
   classNames?: {
     wrapper: string
   }
-  label?: string
+  label?: React.ReactNode
   multiple?: boolean
   onUpload: (files: File[] | null) => void
 }

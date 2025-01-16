@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Key, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Button } from '@nextui-org/button'
 import {
@@ -9,25 +9,23 @@ import {
   Pagination,
   Select,
   SelectItem,
-  Tab,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  Tabs,
 } from '@nextui-org/react'
 import { IconTrash } from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
-import { BsGrid, BsList } from 'react-icons/bs'
 import { RxDotsVertical } from 'react-icons/rx'
 
 // eslint-disable-next-line import/no-cycle
-import { FrameThumbnailCard } from './AgendaPanel/FrameThumbnailCard'
-import { ContentLoading } from './ContentLoading'
-import { DropdownActions } from './DropdownActions'
+import { FrameThumbnailCard } from '../AgendaPanel/FrameThumbnailCard'
+import { ContentLoading } from '../ContentLoading'
+import { DropdownActions } from '../DropdownActions'
+import { ViewSwitcher } from '../ViewSwitcher'
 
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { useDimensions } from '@/hooks/useDimensions'
@@ -83,7 +81,7 @@ export function FrameLibrary({
   const profile = useProfile()
 
   const [frameType, setFrameType] = useState(AllFrameTypes[0])
-  const [listDisplayMode, toggleListDisplayMode] = useState('grid' as Key)
+  const [listDisplayMode, toggleListDisplayMode] = useState<string>('grid')
   const libraryQuery = useQuery({
     queryKey: [
       'library-frames',
@@ -118,7 +116,6 @@ export function FrameLibrary({
             value={frameType}
             selectedKeys={[frameType]}
             variant="bordered"
-            size="sm"
             classNames={{
               trigger: 'border-1 rounded-md shadow-none',
             }}
@@ -134,18 +131,10 @@ export function FrameLibrary({
           </Select>
         </div>
 
-        <Tabs
-          onSelectionChange={toggleListDisplayMode}
-          size="sm"
-          classNames={{
-            tabList: 'p-0 border gap-0 bg-white',
-            cursor: 'w-full bg-primary-100 rounded-none',
-            tabContent: 'group-data-[selected=true]:text-primary',
-            tab: 'p-2.5',
-          }}>
-          <Tab key="grid" title={<BsGrid size={16} />} />
-          <Tab key="list" title={<BsList size={16} />} />
-        </Tabs>
+        <ViewSwitcher
+          onViewChange={toggleListDisplayMode}
+          currentView={listDisplayMode}
+        />
       </div>
 
       <div className="overflow overflow-y-auto">

@@ -15,8 +15,6 @@ export function MoraaSlideActiveObjectCommonAppearance() {
 
   const activeObject = canvas.getActiveObject() as fabric.Object
 
-  // if (!activeObject) return null
-
   return (
     <div className="flex flex-col gap-2">
       <Position />

@@ -53,3 +53,7 @@
   font-size: 1rem;
   font-family: 'Outfit Variable';
 }
+
+.capitalize-first-letter::first-letter {
+  text-transform: uppercase;
+}

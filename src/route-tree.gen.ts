@@ -27,10 +27,11 @@ import { Route as EnrollEventIdIndexImport } from './pages/enroll/$eventId/index
 import { Route as EventSessionEventIdRecordIndexImport } from './pages/event-session/$eventId/record/index'
 import { Route as dashboardLayoutWorkshopsIndexImport } from './pages/(dashboard)/_layout/workshops/index'
 import { Route as dashboardLayoutTemplatesIndexImport } from './pages/(dashboard)/_layout/templates/index'
-import { Route as dashboardLayoutLibraryIndexImport } from './pages/(dashboard)/_layout/library/index'
 import { Route as dashboardLayoutHelpIndexImport } from './pages/(dashboard)/_layout/help/index'
 import { Route as dashboardLayoutEventsIndexImport } from './pages/(dashboard)/_layout/events/index'
 import { Route as EventsEventIdRecordingsLayoutImport } from './pages/events/$eventId/recordings/_layout'
+import { Route as dashboardLayoutLibraryMediaImport } from './pages/(dashboard)/_layout/library/media'
+import { Route as dashboardLayoutLibraryFramesImport } from './pages/(dashboard)/_layout/library/frames'
 import { Route as EventsEventIdRecordingsLayoutIndexImport } from './pages/events/$eventId/recordings/_layout/index'
 import { Route as EventsEventIdRecordingsLayoutRecordingIdIndexImport } from './pages/events/$eventId/recordings/_layout/$recordingId/index'
 
@@ -126,12 +127,6 @@ const dashboardLayoutTemplatesIndexRoute =
     getParentRoute: () => dashboardLayoutRoute,
   } as any)
 
-const dashboardLayoutLibraryIndexRoute =
-  dashboardLayoutLibraryIndexImport.update({
-    path: '/library/',
-    getParentRoute: () => dashboardLayoutRoute,
-  } as any)
-
 const dashboardLayoutHelpIndexRoute = dashboardLayoutHelpIndexImport.update({
   path: '/help/',
   getParentRoute: () => dashboardLayoutRoute,
@@ -148,6 +143,18 @@ const EventsEventIdRecordingsLayoutRoute =
   EventsEventIdRecordingsLayoutImport.update({
     id: '/_layout',
     getParentRoute: () => EventsEventIdRecordingsRoute,
+  } as any)
+
+const dashboardLayoutLibraryMediaRoute =
+  dashboardLayoutLibraryMediaImport.update({
+    path: '/library/media',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
+
+const dashboardLayoutLibraryFramesRoute =
+  dashboardLayoutLibraryFramesImport.update({
+    path: '/library/frames',
+    getParentRoute: () => dashboardLayoutRoute,
   } as any)
 
 const EventsEventIdRecordingsLayoutIndexRoute =
@@ -250,6 +257,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PresentationEventIdIndexImport
       parentRoute: typeof rootRoute
     }
+    '/(dashboard)/_layout/library/frames': {
+      id: '/_layout/library/frames'
+      path: '/library/frames'
+      fullPath: '/library/frames'
+      preLoaderRoute: typeof dashboardLayoutLibraryFramesImport
+      parentRoute: typeof dashboardLayoutImport
+    }
+    '/(dashboard)/_layout/library/media': {
+      id: '/_layout/library/media'
+      path: '/library/media'
+      fullPath: '/library/media'
+      preLoaderRoute: typeof dashboardLayoutLibraryMediaImport
+      parentRoute: typeof dashboardLayoutImport
+    }
     '/events/$eventId/recordings': {
       id: '/events/$eventId/recordings'
       path: '/events/$eventId/recordings'
@@ -276,13 +297,6 @@ declare module '@tanstack/react-router' {
       path: '/help'
       fullPath: '/help'
       preLoaderRoute: typeof dashboardLayoutHelpIndexImport
-      parentRoute: typeof dashboardLayoutImport
-    }
-    '/(dashboard)/_layout/library/': {
-      id: '/_layout/library/'
-      path: '/library'
-      fullPath: '/library'
-      preLoaderRoute: typeof dashboardLayoutLibraryIndexImport
       parentRoute: typeof dashboardLayoutImport
     }
     '/(dashboard)/_layout/templates/': {
@@ -329,9 +343,10 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   dashboardRoute: dashboardRoute.addChildren({
     dashboardLayoutRoute: dashboardLayoutRoute.addChildren({
+      dashboardLayoutLibraryFramesRoute,
+      dashboardLayoutLibraryMediaRoute,
       dashboardLayoutEventsIndexRoute,
       dashboardLayoutHelpIndexRoute,
-      dashboardLayoutLibraryIndexRoute,
       dashboardLayoutTemplatesIndexRoute,
       dashboardLayoutWorkshopsIndexRoute,
     }),
@@ -388,9 +403,10 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "(dashboard)/_layout.tsx",
       "parent": "/",
       "children": [
+        "/_layout/library/frames",
+        "/_layout/library/media",
         "/_layout/events/",
         "/_layout/help/",
-        "/_layout/library/",
         "/_layout/templates/",
         "/_layout/workshops/"
       ]
@@ -422,6 +438,14 @@ export const routeTree = rootRoute.addChildren({
     "/presentation/$eventId/": {
       "filePath": "presentation/$eventId/index.tsx"
     },
+    "/_layout/library/frames": {
+      "filePath": "(dashboard)/_layout/library/frames.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/library/media": {
+      "filePath": "(dashboard)/_layout/library/media.tsx",
+      "parent": "/_layout"
+    },
     "/events/$eventId/recordings": {
       "filePath": "events/$eventId/recordings",
       "children": [
@@ -442,10 +466,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_layout/help/": {
       "filePath": "(dashboard)/_layout/help/index.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/library/": {
-      "filePath": "(dashboard)/_layout/library/index.tsx",
       "parent": "/_layout"
     },
     "/_layout/templates/": {

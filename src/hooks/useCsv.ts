@@ -19,7 +19,6 @@ export const useCsvData = (csvUrl: string) => {
         const csvText = await response.text()
 
         Papa.parse(csvText, {
-          header: true,
           skipEmptyLines: true,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           complete: (result: any) => {

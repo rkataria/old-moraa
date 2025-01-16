@@ -76,3 +76,33 @@ export const dupliacateObjects = (
     callback?.()
   })
 }
+
+export const changeTextStyles = ({
+  canvas,
+  styles,
+  applyToSelection = false,
+  callback,
+}: {
+  canvas: fabric.Canvas
+  activeObject?: fabric.Textbox
+  styles: fabric.TextOptions
+  applyToSelection?: boolean
+  callback?: () => void
+}) => {
+  const _activeObject = canvas.getActiveObject() as fabric.Textbox
+
+  if (_activeObject.type !== 'textbox') return
+
+  if (_activeObject.getSelectedText()?.length > 0 && applyToSelection) {
+    _activeObject.setSelectionStyles({
+      ...styles,
+    })
+  } else {
+    _activeObject.set({ ...styles })
+  }
+
+  canvas.renderAll()
+  canvas.fire('object:modified', { target: _activeObject })
+
+  callback?.()
+}

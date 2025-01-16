@@ -61,3 +61,9 @@ export type CanvasSelectionCleared = {
   options: fabric.IEvent
   dispatch: Dispatch
 }
+
+export type CanvasTextSelectionChanged = {
+  options: fabric.IEvent
+  canvas: fabric.Canvas
+  dispatch: Dispatch
+}

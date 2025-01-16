@@ -7,6 +7,7 @@ import { TextStyleControls } from './TextStyleControls'
 import { NumberInputCaret } from '../../NumberInputCaret'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { changeTextStyles } from '@/utils/moraa-slide'
 
 export function TextboxSettings() {
   const { canvas } = useMoraaSlideEditorContext()
@@ -16,11 +17,6 @@ export function TextboxSettings() {
   const activeObject = canvas.getActiveObject() as fabric.Textbox
 
   if (!activeObject) return null
-
-  const handleFontSizeChange = (size: number) => {
-    activeObject.set('fontSize', size)
-    canvas.renderAll()
-  }
 
   return (
     <div>
@@ -37,7 +33,13 @@ export function TextboxSettings() {
                 selectedKeys={[
                   (activeObject as fabric.Textbox).fontSize!.toString(),
                 ]}
-                onChange={handleFontSizeChange}
+                onChange={(size) =>
+                  changeTextStyles({
+                    canvas,
+                    activeObject,
+                    styles: { fontSize: size },
+                  })
+                }
               />
             </div>
             <FontWeight />

@@ -71,7 +71,7 @@ export function ImageUploader({
               fileName: `tiptap-${Date.now()}-${sanitizedName}`,
               bucketName: 'image-uploads',
               onProgressChange: setImageUploadProgress,
-            })
+            }).promise
             if (response?.url) {
               onUpload(response.url)
             }

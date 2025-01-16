@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { FrameLibrary } from '@/components/common/FrameLibrary'
+import { FrameLibrary } from '@/components/common/Library/FrameLibrary'
 import { EventProvider } from '@/contexts/EventContext'
 import { beforeLoad } from '@/utils/before-load'
 
-export const Route = createFileRoute('/(dashboard)/_layout/library/')({
+export const Route = createFileRoute('/(dashboard)/_layout/library/frames')({
   component: () => <Page />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

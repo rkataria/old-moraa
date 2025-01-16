@@ -17,9 +17,10 @@ import toast from 'react-hot-toast'
 import { IoArrowBack } from 'react-icons/io5'
 
 // eslint-disable-next-line import/no-cycle
-import { FrameLibrary } from './FrameLibrary'
 import { FramePickerCard } from './FramePickerCard'
 import { FramePickerTemplateCard } from './FramePickerTemplateCard'
+// eslint-disable-next-line import/no-cycle
+import { FrameLibrary } from './Library/FrameLibrary'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { LibraryService } from '@/services/library.service'
