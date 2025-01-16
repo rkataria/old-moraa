@@ -37,7 +37,6 @@ export const framesWithBorder = [
   FrameType.MORAA_SLIDE,
   FrameType.POLL,
   FrameType.MCQ,
-  FrameType.REFLECTION,
   FrameType.VIDEO,
   FrameType.VIDEO_EMBED,
   FrameType.POWERPOINT,
@@ -110,7 +109,7 @@ export function LiveFrame({ frame }: FrameContainerProps) {
       }}>
       <div
         ref={containerRef}
-        className={cn('w-full h-full flex justify-start items-center', {
+        className={cn('w-full h-full flex justify-start items-start', {
           'border border-gray-200 rounded-md': framesWithBorder.includes(
             frame.type
           ),

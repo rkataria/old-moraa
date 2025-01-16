@@ -88,7 +88,7 @@ export function PreviewFrame({ frame }: PreviewFrameProps) {
       }}>
       <div
         ref={containerRef}
-        className="w-full h-full flex justify-start items-center">
+        className="w-full h-full flex justify-start items-start">
         <div
           className={cn(
             {

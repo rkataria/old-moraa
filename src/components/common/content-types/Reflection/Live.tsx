@@ -108,7 +108,7 @@ export function Live() {
           </Chip>
         }
       />
-      <div className="w-full h-full flex justify-start items-start rounded-md">
+      <div className="w-full h-full flex justify-start items-start rounded-md border border-gray-200 p-4">
         <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-4">
           {isHost ? <HostView /> : <ParticipantView />}
         </div>

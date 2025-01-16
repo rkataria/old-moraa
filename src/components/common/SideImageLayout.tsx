@@ -82,7 +82,7 @@ export function SideImageLayout({
 
   return (
     <div
-      className={cn('grid h-full gap-16', {
+      className={cn('grid h-full gap-4', {
         'grid-cols-[0.6fr_0.4fr]': LeftChild,
         'grid-cols-[0.4fr_0.6fr]': RightChild,
       })}>

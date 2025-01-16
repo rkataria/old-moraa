@@ -167,7 +167,9 @@ export function Polls({ frame }: LiveProps) {
 export function Live({ frame }: { frame: PollFrame }) {
   return (
     <SideImageLayout imageConfig={frame.config.image}>
-      <Polls frame={frame} />
+      <div className="p-4">
+        <Polls frame={frame} />
+      </div>
     </SideImageLayout>
   )
 }

@@ -166,7 +166,9 @@ export function MCQs({ frame }: LiveProps) {
 export function Live({ frame }: { frame: PollFrame }) {
   return (
     <SideImageLayout imageConfig={frame.config.image}>
-      <MCQs frame={frame} />
+      <div className="p-4">
+        <MCQs frame={frame} />
+      </div>
     </SideImageLayout>
   )
 }
