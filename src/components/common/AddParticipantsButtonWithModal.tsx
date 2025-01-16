@@ -107,11 +107,15 @@ export function ButtonWithModal({
               onClick={() => setOpen(true)}
               disableAnimation
               variant="light"
-              className="p-0 border border-gray-300 border-white bg-white hover:bg-gray-300 rounded-full -mr-4 z-10 w-7 h-7 min-w-7 grid place-items-center"
+              className="p-0 border border-white bg-white hover:bg-gray-300 rounded-full -mr-4 z-10 w-7 h-7 min-w-7 grid place-items-center"
               {...buttonProps}>
-              <div className="border rounded-full min-w-full">
-                <IoIosAdd size={22} />
-              </div>
+              {buttonProps.children ? (
+                buttonProps.children
+              ) : (
+                <div className="border rounded-full min-w-full">
+                  <IoIosAdd size={22} />
+                </div>
+              )}
             </Button>
 
             <Avatar

@@ -22,8 +22,12 @@ export function EventTimeline({
 }) {
   const host = hosts?.[0]
 
+  if (!event.start_date || !event.end_date) {
+    return null
+  }
+
   return (
-    <Card shadow="none">
+    <Card shadow="none" className="bg-default/30 backdrop-blur-xl">
       <CardBody className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <RenderIf isTrue={!!event?.start_date && !!event?.timezone}>

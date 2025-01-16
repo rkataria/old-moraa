@@ -33,6 +33,19 @@ type FrameContainerProps = {
   frame: IFrame
 }
 
+export const framesWithBorder = [
+  FrameType.MORAA_SLIDE,
+  FrameType.POLL,
+  FrameType.MCQ,
+  FrameType.REFLECTION,
+  FrameType.VIDEO,
+  FrameType.VIDEO_EMBED,
+  FrameType.POWERPOINT,
+  FrameType.GOOGLE_SLIDES,
+  FrameType.BREAKOUT,
+  FrameType.IMAGE_VIEWER,
+]
+
 export function LiveFrame({ frame }: FrameContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerAspectRatio, setContainerAspectRatio] = useState(16 / 9)
@@ -97,7 +110,11 @@ export function LiveFrame({ frame }: FrameContainerProps) {
       }}>
       <div
         ref={containerRef}
-        className="w-full h-full flex justify-start items-center">
+        className={cn('w-full h-full flex justify-start items-center', {
+          'border border-gray-200 rounded-md': framesWithBorder.includes(
+            frame.type
+          ),
+        })}>
         <div
           className={cn({
             'h-full w-auto aspect-video':

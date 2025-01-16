@@ -102,7 +102,7 @@ export function ContentStudioRightSidebarControls() {
 
   return (
     <div className="p-4 pb-0">
-      <p className="text-gray-400 text-xs">{currentFrame?.name}</p>
+      <p className="text-gray-400 text-sm">{currentFrame?.type}</p>
 
       <Tabs
         key="underlined"

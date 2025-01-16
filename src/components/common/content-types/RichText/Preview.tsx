@@ -15,7 +15,10 @@ export function Preview({ frame }: PreviewProps) {
       <Editor
         editorId={frame.id}
         editable={false}
-        classNames={{ wrapper: 'overflow-hidden' }}
+        classNames={{
+          wrapper:
+            'overflow-hidden border border-gray-200 bg-[#FEFEFE] rounded-md',
+        }}
         hideSideBar
         enableCollaboration={false}
       />

@@ -14,6 +14,7 @@ export function Embed({ frame }: EmbedProps) {
       title="miro-embed"
       width="100%"
       height="100%"
+      className="border border-gray-200 bg-[#FEFEFE] rounded-md"
       src={`https://miro.com/app/live-embed/${frame.content.boardId}`}
       allowFullScreen
     />

@@ -113,7 +113,9 @@ export function Embed({ frame, hideControls }: EmbedProps) {
       className={cn('relative h-full overflow-hidden', {
         'pt-12': !hideControls,
       })}>
-      <div className="overflow-y-auto h-full scrollbar-none" ref={containerRef}>
+      <div
+        className="overflow-y-auto h-full scrollbar-none border border-gray-200 bg-[#FEFEFE] rounded-md"
+        ref={containerRef}>
         <PdfPage
           file={pdf}
           pageNumber={selectedPage}

@@ -60,7 +60,7 @@ export function Editor({
     <Tldraw
       autoFocus
       store={store}
-      className="z-[1] relative w-full h-full"
+      className="z-[1] relative w-full h-full border border-gray-200 bg-[#FEFEFE] rounded-md"
       components={{
         SharePanel: PeopleMenu,
         DebugPanel: null,

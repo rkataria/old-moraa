@@ -103,7 +103,9 @@ export function Live({ frame }: LiveProps) {
 
   return (
     <div className="relative h-full overflow-hidden pt-12">
-      <div className="overflow-y-auto h-full scrollbar-none" ref={containerRef}>
+      <div
+        className="overflow-y-auto h-full scrollbar-none border border-gray-200 bg-[#FEFEFE] rounded-md"
+        ref={containerRef}>
         <PdfPage
           file={pdf}
           pageNumber={currentPage}

@@ -40,7 +40,7 @@ export function Embed({
             src={path}
             removeWrapper
             loading="eager"
-            className="object-contain w-[-webkit-fill-available] h-[-webkit-fill-available]"
+            className="rounded-md object-contain w-[-webkit-fill-available] h-[-webkit-fill-available]"
             onClick={handleImageClick}
             onLoad={() => setLoading(false)}
             onError={() => console.error('Error loading image')}
