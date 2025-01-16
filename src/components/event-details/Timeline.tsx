@@ -12,11 +12,13 @@ export function EventTimeline({
   event,
   hosts,
   canUpdateDate = false,
+  hideHostInfo = true,
 }: {
   event: EventModel
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   hosts: any
   canUpdateDate?: boolean
+  hideHostInfo?: boolean
 }) {
   const host = hosts?.[0]
 
@@ -44,7 +46,7 @@ export function EventTimeline({
             />
           </RenderIf>
         </div>
-        <RenderIf isTrue={!!host?.profile}>
+        <RenderIf isTrue={!!host?.profile && !hideHostInfo}>
           <div className="flex justify-between items-center border-t pt-2">
             <span className="font-semibold">Hosted by</span>
             <UserAvatar
