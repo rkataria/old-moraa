@@ -4,6 +4,7 @@ import { ColorPicker } from '../../ColorPicker'
 import { LabelWithInlineControl } from '../../LabelWithInlineControl'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
+import { changeTextStyles } from '@/utils/moraa-slide'
 
 export function Fill() {
   const { canvas } = useMoraaSlideEditorContext()
@@ -22,7 +23,7 @@ export function Fill() {
   return (
     <div className="flex flex-col gap-3 pt-4">
       <LabelWithInlineControl
-        label="Fill Color"
+        label={activeObject.type === 'textbox' ? 'Text Color' : 'Fill Color'}
         className="items-center"
         control={
           <ColorPicker
@@ -30,7 +31,13 @@ export function Fill() {
             defaultColor={fill as string}
             onchange={(color) => {
               const { type } = activeObject
-              if (type === 'group') {
+              if (type === 'textbox') {
+                changeTextStyles({
+                  canvas,
+                  styles: { fill: color },
+                  applyToSelection: true,
+                })
+              } else if (type === 'group') {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 const objects = activeObject.getObjects()

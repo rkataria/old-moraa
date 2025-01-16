@@ -22,6 +22,7 @@ import {
   handleCanvasSelectionCleared,
   handleCanvasSelectionCreated,
   handleCanvasSelectionUpdated,
+  handleCanvasTextSelectionChanged,
   initializeFabric,
   initialSetup,
   resizeCanvas,
@@ -57,7 +58,7 @@ export function MoraaSlideEditor({
   const canvasContainerRef = useRef<HTMLDivElement | null>(null)
 
   const { setCanvas } = useMoraaSlideEditorContext()
-  const { setHistory, setActiveObject } = useMoraaSlideStore()
+  const { setHistory } = useMoraaSlideStore()
   useMoraaSlideShortcuts()
   const dispatch = useStoreDispatch()
 
@@ -136,30 +137,15 @@ export function MoraaSlideEditor({
     })
     canvas.on('selection:created', async (options) => {
       handleCanvasSelectionCreated({ options, canvas, dispatch })
-
-      const activeObject = canvas.getActiveObject()
-
-      if (activeObject) {
-        setActiveObject(activeObject)
-      }
     })
     canvas.on('selection:updated', async (options) => {
       handleCanvasSelectionUpdated({ options, canvas, dispatch })
-
-      const activeObject = canvas.getActiveObject()
-
-      if (activeObject) {
-        setActiveObject(activeObject)
-      }
     })
     canvas.on('selection:cleared', async (options) => {
       handleCanvasSelectionCleared({ options, dispatch })
-
-      const activeObject = canvas.getActiveObject()
-
-      if (activeObject) {
-        setActiveObject(activeObject)
-      }
+    })
+    canvas.on('text:selection:changed', async (options) => {
+      handleCanvasTextSelectionChanged({ options, canvas, dispatch })
     })
 
     setCanvas(canvas)
@@ -201,11 +187,6 @@ export function MoraaSlideEditor({
           <BubbleMenu canvas={fabricRef.current!} />
         </div>
       </ResizeObserver>
-      {/* <motion.div>
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-          <Toolbars />
-        </div>
-      </motion.div> */}
     </div>
   )
 }

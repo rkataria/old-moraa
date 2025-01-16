@@ -16,26 +16,13 @@ import {
   CanvasSelectionCleared,
   CanvasSelectionCreated,
   CanvasSelectionUpdated,
+  CanvasTextSelectionChanged,
 } from '@/types/moraa-slide.type'
 import { loadCustomFabricObjects } from '@/utils/custom-fabric-objects'
 import { supabaseClient } from '@/utils/supabase/client'
 
 export const initialSetup = () => {
   loadCustomFabricObjects()
-
-  // eslint-disable-next-line wrap-iife, func-names
-  // fabric.Textbox.prototype.toObject = function () {
-  //   console.log('toObject', this.type, this.text)
-  //   // if (['BulletList', 'NumberList'].includes(this.type!)) {
-  //   //   return this.toObject
-  //   // }
-
-  //   // eslint-disable-next-line func-names
-  //   // @ts-expect-error silence!
-  //   return fabric.util.object.extend(this.callSuper('toObject'), {
-  //     name: this.name,
-  //   })
-  // }
 
   fabric.Object.prototype.transparentCorners = false
   fabric.Object.prototype.cornerColor = '#7C3AED'
@@ -85,18 +72,6 @@ export const initializeFabric = ({
 }
 
 export const enableGuidelines = (canvas: fabric.Canvas) => {
-  // // Add a transparent rect to the canvas to enable guidelines
-  // const rect = new fabric.Rect({
-  //   width: canvas.width,
-  //   height: canvas.height,
-  //   fill: 'transparent',
-  //   selectable: false,
-  //   evented: false,
-  // })
-
-  // canvas.add(rect)
-  // canvas.renderAll()
-
   const guideline = new AlignGuidelines({
     canvas,
   })
@@ -126,18 +101,6 @@ export const resizeCanvas = ({
   )
 
   fabricRef.current?.renderAll()
-
-  // const scale = container.width / fabricRef.current.getWidth()
-  // const zoom = fabricRef.current.getZoom() * scale
-
-  // fabricRef.current?.setDimensions({
-  //   width: container?.width || 0,
-  //   height: container?.height || 0,
-  // })
-
-  // fabricRef.current.setViewportTransform([zoom, 0, 0, zoom, 0, 0])
-
-  // fabricRef.current.renderAll()
 }
 
 export const renderCanvas = ({
@@ -317,6 +280,25 @@ export const handleCanvasSelectionCleared = ({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dispatch(setActiveObjectAction(undefined))
+}
+
+export const handleCanvasTextSelectionChanged = ({
+  options,
+  canvas,
+  dispatch,
+}: CanvasTextSelectionChanged) => {
+  console.log('handleCanvasTextSelectionChanged', options)
+
+  setObjectControlsVisibility(canvas)
+
+  const activeObject = canvas.getActiveObject()
+
+  console.log('handleCanvasTextSelectionChanged activeObject', activeObject)
+
+  if (!activeObject) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch(setActiveObjectAction(activeObject))
 }
 
 export const handleDeleteObjects = (canvas: fabric.Canvas) => {
