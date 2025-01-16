@@ -56,7 +56,7 @@ export function useStorageStore({
       const response = (await uploadFile({
         fileName: objectName,
         file,
-      })) as { url: string }
+      }).promise) as { url: string }
 
       if (!response || !response.url) {
         throw new Error(ASSET_KEY_FAILED_TO_UPLOAD)

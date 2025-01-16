@@ -35,7 +35,7 @@ export function Edit({ frame }: EditProps) {
         file,
         neverExpire: false,
         onProgressChange: setUploadProgress,
-      }),
+      }).promise,
     onSuccess: () => {
       toast.success('Image uploaded successfully.')
     },

@@ -49,7 +49,7 @@ export function LocalFilePicker({
       fileName,
       bucketName,
       onProgressChange,
-    })
+    }).promise
 
     onUpload?.(response)
   }

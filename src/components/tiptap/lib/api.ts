@@ -15,7 +15,7 @@ export class API {
         fileName: `tiptap-${Date.now()}-${file.name}`,
         bucketName: 'image-uploads',
         onProgressChange: setLoadingPercentage,
-      })
+      }).promise
 
       if (response?.url) {
         setLoadingPercentage?.(null)

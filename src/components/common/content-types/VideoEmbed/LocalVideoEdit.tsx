@@ -46,7 +46,7 @@ export function LocalVideoEdit({
             setProgress(Math.ceil(p))
           }
         },
-      })
+      }).promise
 
       return response
     },

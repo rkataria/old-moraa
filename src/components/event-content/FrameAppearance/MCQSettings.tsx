@@ -101,7 +101,7 @@ export function MCQSettings() {
               fileName: `tiptap-.${file.name.split('.').pop()}`,
               bucketName: 'image-uploads',
               onProgressChange: setUploadPercentage,
-            })
+            }).promise
             if (response?.url) {
               onUpload(response.url)
             }
@@ -133,7 +133,7 @@ export function MCQSettings() {
                       fileName: `tiptap-.${file.name.split('.').pop()}`,
                       bucketName: 'image-uploads',
                       onProgressChange: setUploadPercentage,
-                    })
+                    }).promise
                     if (response?.url) {
                       onUpload(response.url)
                     }
