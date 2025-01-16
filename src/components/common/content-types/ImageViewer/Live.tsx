@@ -11,16 +11,16 @@ type LiveProps = {
 
 export function Live({ frame }: LiveProps) {
   const signedURLQuery = useQuery({
-    queryKey: ['image-slide', frame.content?.imagePath],
+    queryKey: ['image-frame', frame.content?.imagePath],
     queryFn: () => getSignedUrl('assets-uploads', frame.content?.imagePath),
-    enabled: !!frame.content?.imagePath,
+    enabled: !!frame.content?.imagePath && !frame.content?.url,
     refetchOnMount: false,
     staleTime: Infinity,
   })
 
   return (
     <Embed
-      path={signedURLQuery.data?.data?.signedUrl || ''}
+      path={frame.content?.url || signedURLQuery.data?.data?.signedUrl || ''}
       hotspots={frame.content?.hotspots}
       disableAddHotspot
     />

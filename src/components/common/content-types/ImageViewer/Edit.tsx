@@ -54,9 +54,9 @@ export function Edit({ frame }: EditProps) {
   })
 
   const signedURLQuery = useQuery({
-    queryKey: ['image-slide', frame.content?.imagePath],
+    queryKey: ['image-frame', frame.content?.imagePath],
     queryFn: () => getSignedUrl('assets-uploads', frame.content?.imagePath),
-    enabled: !!frame.content?.imagePath,
+    enabled: !!frame.content?.imagePath && !frame.content?.url,
     refetchOnMount: false,
     staleTime: Infinity,
   })
@@ -84,7 +84,7 @@ export function Edit({ frame }: EditProps) {
         return <ContentLoading />
 
       case uploadImageMutation.isPending:
-      case !signedURLQuery.data?.data?.signedUrl:
+      case !signedURLQuery.data?.data?.signedUrl && !frame.content?.url:
         return (
           <FrameFormContainer
             headerIcon={<FaImage size={72} className="text-primary" />}
@@ -115,10 +115,11 @@ export function Edit({ frame }: EditProps) {
           </FrameFormContainer>
         )
 
-      case !!frame.content?.imagePath && !!signedURLQuery.data?.data?.signedUrl:
+      case !!frame.content?.url ||
+        (!!frame.content?.imagePath && !!signedURLQuery.data?.data?.signedUrl):
         return (
           <Embed
-            path={signedURLQuery.data?.data?.signedUrl}
+            path={frame.content?.url || signedURLQuery.data?.data?.signedUrl}
             hotspots={frame.content.hotspots || []}
             onHotspotDelete={(hotspot) => {
               updateFrame({
