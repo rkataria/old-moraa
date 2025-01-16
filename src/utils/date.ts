@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon'
+import { DateTime, Interval, DurationUnit } from 'luxon'
 
 export const getIsoDateString = (date: string) => new Date(date).toISOString()
 
@@ -144,4 +144,19 @@ export const nextRoundedHour = (addMinutes?: number) => {
   const formattedNextHour = nextHour.toFormat('HH:mm')
 
   return formattedNextHour
+}
+
+export const getDateDifferenceHumanize = ({
+  startDate,
+  endDate,
+  durationUnit = ['hours', 'minutes'],
+}: {
+  startDate: string
+  endDate: string
+  durationUnit?: DurationUnit[]
+}) => {
+  const start = DateTime.fromISO(startDate)
+  const finish = DateTime.fromISO(endDate)
+
+  return Interval.fromDateTimes(start, finish).toDuration(durationUnit)
 }

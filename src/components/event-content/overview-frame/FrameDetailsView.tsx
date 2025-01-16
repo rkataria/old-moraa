@@ -18,8 +18,8 @@ import { RecordingsOverview } from './RecordingsOverview'
 
 import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { Dates } from '@/components/enroll/Date'
 import { Participantslist } from '@/components/enroll/ParticipantList'
+import { EventTimeline } from '@/components/event-details/Timeline'
 import { useEvent } from '@/hooks/useEvent'
 import { cn } from '@/utils/utils'
 
@@ -33,7 +33,7 @@ export function FrameDetailsView() {
   const useEventData = useEvent({
     id: eventId as string,
   })
-  const { event, participants } = useEventData
+  const { event, participants, hosts } = useEventData
 
   if (!event) return null
 
@@ -104,14 +104,8 @@ export function FrameDetailsView() {
             }}
           />
           <RecordingsOverview />
-          <Dates
-            startDate={event?.start_date as string}
-            endDate={event?.end_date as string}
-            timeZone={event?.timezone as string}
-            className="pl-1"
-          />
-
-          <Participantslist participants={participants as any} />
+          <EventTimeline event={event} hosts={hosts} />
+          <Participantslist participants={participants as any} hosts={hosts} />
         </div>
       </div>
 
