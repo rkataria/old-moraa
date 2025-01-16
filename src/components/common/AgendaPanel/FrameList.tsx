@@ -2,7 +2,6 @@
 /* eslint-disable array-callback-return */
 import { ReactNode } from 'react'
 
-import { Badge } from '@nextui-org/react'
 import { Draggable } from 'react-beautiful-dnd'
 
 import { FrameItem } from './FrameItem'
@@ -10,7 +9,6 @@ import { FramePlaceholder } from '../FramePlaceholder'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useEventContext } from '@/contexts/EventContext'
-import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { IFrame } from '@/types/frame.type'
@@ -46,8 +44,6 @@ export function FrameList({
     (state) => state.event.currentEvent.frameState.addFrameThunk.isLoading
   )
 
-  const { listDisplayMode } = useAgendaPanel()
-
   const sidebarExpanded = leftSidebarVisiblity === 'maximized'
 
   const _insertAfterFrameId = insertAfterFrameId || currentFrame?.id
@@ -68,9 +64,8 @@ export function FrameList({
   return (
     <div
       className={cn('relative flex flex-col gap-1', {
-        'p-2 pl-6 pr-0': sidebarExpanded,
+        'p-2 pl-1': sidebarExpanded,
         'py-1': !sidebarExpanded,
-        'pr-6': listDisplayMode === 'grid',
       })}>
       {showList &&
         framesExcludingNestedBreakouts?.map(
@@ -97,17 +92,12 @@ export function FrameList({
                           duplicateFrame={duplicateFrame}
                           saveFrameInLibrary={saveFrameInLibrary}
                           actionDisabled={actionDisabled}
-                        />
-                        <Badge
-                          color="default"
-                          className="absolute !-left-6 !top-[-1.625rem] hidden scale-[0.8] bg-gray-100 !border-gray-300 !w-fit !right-0 !translate-x-0 !translate-y-0 border text-gray-800  group-hover/agenda-frame:flex"
-                          content={
+                          framePosition={
                             sectionStartingIndex +
                             frameIndex -
                             previousUnrenderedNestedBreakoutsCount(frame.id)
-                          }>
-                          {' '}
-                        </Badge>
+                          }
+                        />
                         <RenderIf
                           isTrue={
                             (currentFrame?.type === FrameType.BREAKOUT &&

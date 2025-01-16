@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux'
 
+import { ContentStudioRightSidebarControls } from './ContentStudioRightSidebarControls'
 import { NoteOverlay } from '../NotesOverlay'
 
 import { FrameAppearance } from '@/components/event-content/FrameAppearance/FrameAppearance'
@@ -10,7 +11,10 @@ import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { setContentStudioRightSidebarAction } from '@/stores/slices/layout/studio.slice'
 import { IFrame } from '@/types/frame.type'
 import { getContentStudioRightSidebarControlKeys } from '@/utils/content.util'
+import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
+
+export const framesWithAppearance = [FrameType.MORAA_SLIDE]
 
 export function ContentStudioRightSidebar() {
   const { preview } = useEventContext()
@@ -21,14 +25,13 @@ export function ContentStudioRightSidebar() {
   const dispatch = useDispatch()
 
   if (!currentFrame) return null
-  if (!contentStudioRightSidebar) return null
 
   const controls = getContentStudioRightSidebarControlKeys(
     currentFrame as IFrame,
     preview
   )
 
-  if (!controls.includes(contentStudioRightSidebar)) return null
+  console.log(controls)
 
   const renderContent = () => {
     switch (contentStudioRightSidebar) {
@@ -43,17 +46,19 @@ export function ContentStudioRightSidebar() {
           />
         )
       default:
-        return null
+        return <FrameSettings />
     }
   }
 
   return (
     <div
       className={cn(
-        'flex-none w-72 h-full rounded-md mr-0 z-[2] bg-white border-1 border-gray-200',
-        contentStudioRightSidebar ? 'visible' : 'hidden'
+        'flex flex-col w-[16.75rem] flex-shrink-0 h-full rounded-lg mr-0 z-[2] bg-white border-1 border-gray-200'
       )}>
-      {renderContent()}
+      <ContentStudioRightSidebarControls />
+      <div className="h-full max-h-full p-4 pt-6 overflow-y-auto scrollbar-hide">
+        {renderContent()}
+      </div>
     </div>
   )
 }

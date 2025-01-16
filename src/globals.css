@@ -76,7 +76,7 @@
   }
 
   .live-button {
-    @apply !bg-transparent !text-black hover:!text-primary;
+    @apply !bg-transparent !text-black hover:!text-primary !gap-1;
   }
 
   .live-button.active {
@@ -420,16 +420,17 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 .bg-studio {
-  /* background: rgb(235,224,255); */
-  background-image: url('/images/background.svg');
+  background: #fcfcfd;
+  /* background-image: url('/images/background.svg');
   background-size: cover;
-  background-position: center;
+  background-position: center; */
 }
 
 .bg-live {
-  background: rgba(235, 224, 255, 0.4) url('/images/background.svg');
+  /* background: rgba(235, 224, 255, 0.4) url('/images/background.svg');
   background-size: cover;
-  background-position: center;
+  background-position: center; */
+  background: #fcfcfd;
 }
 
 .bg-blury {

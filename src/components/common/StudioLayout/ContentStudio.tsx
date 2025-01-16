@@ -2,7 +2,6 @@ import { ContentStudioBottomOverlay } from './ContentStudioButtomOverlay'
 import { ContentStudioContentContainer } from './ContentStudioContentContainer'
 import { ContentStudioLeftSidebar } from './ContentStudioLeftSidebar'
 import { ContentStudioRightSidebar } from './ContentStudioRightSidebar'
-import { ContentStudioRightSidebarControls } from './ContentStudioRightSidebarControls'
 
 import { WithAIChatPanel } from '@/components/event-content/WithAIChatPanel'
 
@@ -23,7 +22,7 @@ export function ContentStudio() {
         </WithAIChatPanel>
       </div>
       <ContentStudioRightSidebar />
-      <ContentStudioRightSidebarControls />
+      {/* <ContentStudioRightSidebarControls /> */}
     </div>
   )
 }

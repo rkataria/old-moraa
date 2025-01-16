@@ -14,9 +14,7 @@ import { DeleteFrameModal } from '../DeleteFrameModal'
 import { EditableLabel } from '../EditableLabel'
 import { FrameActions } from '../FrameActions'
 import { RenderIf } from '../RenderIf/RenderIf'
-import { Tooltip } from '../ShortuctTooltip'
 
-import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -36,6 +34,7 @@ type FrameItemProps = {
   duplicateFrame: (frame: IFrame) => void
   saveFrameInLibrary: (frame: IFrame) => void
   actionDisabled: boolean
+  framePosition?: number
 }
 
 type FrameActionKey =
@@ -50,6 +49,7 @@ export function FrameItem({
   duplicateFrame,
   saveFrameInLibrary,
   actionDisabled,
+  framePosition,
 }: FrameItemProps) {
   const {
     currentFrame,
@@ -84,6 +84,7 @@ export function FrameItem({
   const { permissions } = useEventPermissions()
 
   const { listDisplayMode, currentSectionId } = useAgendaPanel()
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const { leftSidebarVisiblity } = useStudioLayout()
 
@@ -178,128 +179,91 @@ export function FrameItem({
   const breakoutRunning = isBreakoutActive && breakoutFrameId === frame.id
 
   const renderFrameContent = () => {
-    if (sidebarExpanded) {
-      if (listDisplayMode === 'grid') {
-        return (
-          <FrameGridView
-            frame={frame}
-            handleFrameAction={handleFrameAction}
-            sidebarExpanded={sidebarExpanded}
-            frameActive={frameActive}
-            onClick={handleFrameItemClick}
-          />
-        )
-      }
-
+    if (listDisplayMode === 'grid') {
       return (
-        <div
-          key={`frame-${frame?.id}`}
-          data-miniframe-id={frame?.id}
-          className={cn(
-            'relative cursor-pointer rounded-md overflow-hidden hover:bg-gray-200',
-            {
-              'bg-primary-100': frameActive,
-              'border-transparent': currentFrame?.id !== frame?.id,
-              'border border-green-400': breakoutRunning,
-            }
-          )}
-          onClick={(e) => {
-            handleFrameItemClick(e, frame)
-          }}>
-          <RenderIf isTrue={breakoutRunning}>
-            <ActiveBreakoutIndicator />
-          </RenderIf>
-
-          <div
-            className={cn(
-              'relative flex flex-col transition-all duration-400 ease-in-out group/frame-item'
-            )}>
-            <div
-              className={cn(
-                'flex justify-between items-center px-2 h-8 hover:bg-gray-200 group-hover/frame-item:bg-gray-200',
-                {
-                  'bg-primary-100': frameActive,
-                  'border-gray-100': currentFrame?.id !== frame?.id,
-                }
-              )}>
-              <div className="flex items-center justify-start flex-auto gap-2">
-                <ContentTypeIcon
-                  frameType={frame.type}
-                  classNames="text-gray-800"
-                />
-                <EditableLabel
-                  readOnly={actionDisabled}
-                  label={frame.name}
-                  className="text-sm tracking-tight"
-                  onUpdate={(value) => {
-                    if (actionDisabled) return
-                    if (frame.name === value) return
-
-                    updateFrame({
-                      framePayload: { name: value },
-                      frameId: frame?.id,
-                    })
-                  }}
-                />
-              </div>
-              <RenderIf
-                isTrue={
-                  !actionDisabled &&
-                  !frame?.content?.breakoutFrameId &&
-                  !frame?.content?.processing
-                }>
-                <div className={cn('hidden group-hover/frame-item:block')}>
-                  <FrameActions
-                    triggerIcon={
-                      <div className="cursor-pointer">
-                        <RxDotsVertical />
-                      </div>
-                    }
-                    handleActions={handleFrameAction}
-                  />
-                </div>
-              </RenderIf>
-            </div>
-          </div>
-        </div>
+        <FrameGridView
+          frame={frame}
+          handleFrameAction={handleFrameAction}
+          sidebarExpanded={sidebarExpanded}
+          frameActive={frameActive}
+          onClick={handleFrameItemClick}
+          framePosition={framePosition}
+        />
       )
     }
 
     return (
-      <Tooltip label={frame.name} placement="right" showArrow>
-        <div
-          data-miniframe-id={frame?.id}
-          className={cn(
-            'relative flex justify-center items-center pl-[1.375rem]',
-            {
-              '!pl-1': frame?.content?.breakoutFrameId,
-            }
-          )}>
-          <Button
-            variant="light"
-            size="sm"
-            isIconOnly
-            className={cn(
-              'm-auto py-1 !min-w-auto w-auto h-auto bg-transparent',
-              {
-                'bg-primary/30': frameActive,
-              }
-            )}
-            onClick={(e) => {
-              handleFrameItemClick(e, frame)
-            }}>
+      <div
+        key={`frame-${frame?.id}`}
+        data-miniframe-id={frame?.id}
+        className={cn(
+          'relative flex items-center h-8 px-2 gap-2.5 rounded-md overflow-hidden hover:bg-gray-200 group/frame-item cursor-pointer',
+          {
+            'bg-primary/10': frameActive,
+            'border-transparent': currentFrame?.id !== frame?.id,
+            'border border-green-400': breakoutRunning,
+          }
+        )}
+        onClick={(e) => {
+          handleFrameItemClick(e, frame)
+        }}>
+        <RenderIf isTrue={breakoutRunning}>
+          <ActiveBreakoutIndicator />
+        </RenderIf>
+
+        <RenderIf isTrue={!!framePosition}>
+          <p
+            className={cn('text-xs text-black/60', {
+              'text-primary': frameActive,
+            })}>
+            {framePosition}
+          </p>
+        </RenderIf>
+
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center justify-start gap-2">
             <ContentTypeIcon
               frameType={frame.type}
-              classNames={cn('h-[1.375rem] w-[1.375rem] text-gray-500', {
+              classNames={cn('text-gray-800', {
                 'text-primary': frameActive,
               })}
-              tooltipProps={{
-                isDisabled: true,
+            />
+            <EditableLabel
+              readOnly={actionDisabled}
+              label={frame.name}
+              className={cn('text-sm tracking-tight', {
+                'text-primary': frameActive,
+              })}
+              onUpdate={(value) => {
+                if (actionDisabled) return
+                if (frame.name === value) return
+
+                updateFrame({
+                  framePayload: { name: value },
+                  frameId: frame?.id,
+                })
               }}
             />
-          </Button>
+          </div>
+          <RenderIf
+            isTrue={
+              !actionDisabled &&
+              !frame?.content?.breakoutFrameId &&
+              !frame?.content?.processing
+            }>
+            <div className="hidden group-hover/frame-item:block">
+              <FrameActions
+                triggerIcon={
+                  <div className="cursor-pointer">
+                    <RxDotsVertical />
+                  </div>
+                }
+                handleActions={handleFrameAction}
+              />
+            </div>
+          </RenderIf>
         </div>
-      </Tooltip>
+      </div>
     )
   }
 

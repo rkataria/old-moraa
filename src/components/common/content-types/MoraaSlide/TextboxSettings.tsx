@@ -4,6 +4,7 @@ import { LetterSpacing } from './LetterSpacing'
 import { LineHeight } from './LineHeight'
 import { TextAlignControls } from './TextAlignControls'
 import { TextStyleControls } from './TextStyleControls'
+import { LabelWithInlineControl } from '../../LabelWithInlineControl'
 import { NumberInputCaret } from '../../NumberInputCaret'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
@@ -46,19 +47,27 @@ export function TextboxSettings() {
           </div>
         </div>
       </div>
-      <LetterSpacing />
-      <LineHeight />
-      <div className="py-2">
-        <h3 className="font-semibold">Alignment</h3>
-        <div className="pt-2 flex gap-2">
-          <TextAlignControls />
-        </div>
-      </div>
-      <div className="py-2">
-        <h3 className="font-semibold">Text Style</h3>
-        <div className="pt-2 flex gap-2">
-          <TextStyleControls />
-        </div>
+      <div className="grid gap-4 py-4">
+        <LetterSpacing />
+        <LineHeight />
+        <LabelWithInlineControl
+          label="Alignment"
+          className="flex-col items-start w-full"
+          control={
+            <div className="pt-2 flex gap-2 w-full">
+              <TextAlignControls />
+            </div>
+          }
+        />
+        <LabelWithInlineControl
+          label="Text Style"
+          className="flex-col items-start w-full"
+          control={
+            <div className="pt-2 flex gap-2 w-full">
+              <TextStyleControls />
+            </div>
+          }
+        />
       </div>
     </div>
   )

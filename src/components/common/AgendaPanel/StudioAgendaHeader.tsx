@@ -17,14 +17,8 @@ export function StudioAgendaHeader() {
       }}>
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-medium">Agenda</span>
+          <span className="text-black/80">Frames</span>
           <ListViewToggle />
-          {/* <div className={cn('flex justify-end items-center gap-2')}>
-            <AgendaPanelToggle
-              collapsed={!contentStudioLeftSidebarVisible}
-              onToggle={toggleLeftSidebar}
-            />
-          </div> */}
         </div>
         <AddContentButton className="flex-auto" />
       </div>

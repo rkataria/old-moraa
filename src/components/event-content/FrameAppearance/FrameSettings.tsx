@@ -1,5 +1,3 @@
-import { FiSettings } from 'react-icons/fi'
-
 import { BreakoutSettings } from './BreakoutSettings'
 import { MCQSettings } from './MCQSettings'
 import { MiroEmbedSettings } from './MiroEmbedSettings'
@@ -10,7 +8,6 @@ import { ReflectionSettings } from './ReflectionSettings'
 import { RichTextSettings } from './RichTextSettings'
 import { VideoEmbedSettings } from './VideoEmbedSettings'
 
-import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { useEventContext } from '@/contexts/EventContext'
 import { RoomProvider } from '@/contexts/RoomProvider'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -47,11 +44,11 @@ export function FrameSettings() {
 
   return (
     <div>
-      <RightSidebarHeader
+      {/* <RightSidebarHeader
         icon={<FiSettings size={18} />}
         title="Frame Settings"
-      />
-      <div className="p-4 flex flex-col gap-4">{renderer}</div>
+      /> */}
+      <div className="flex flex-col gap-4">{renderer}</div>
     </div>
   )
 }

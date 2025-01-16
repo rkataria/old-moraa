@@ -3,7 +3,6 @@ import { useContext } from 'react'
 import { Switch } from '@nextui-org/react'
 import { useRouter } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { MdOutlineModeEditOutline } from 'react-icons/md'
 import { useDispatch } from 'react-redux'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -61,7 +60,7 @@ export function PreviewSwitcher() {
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
     <div
       className={cn(
-        'flex items-center gap-1 h-7 p-2 rounded-md cursor-pointer studio-button',
+        'flex items-center gap-1 h-7 p-2 rounded-md cursor-pointer',
         {
           active: !preview,
         }
@@ -72,25 +71,11 @@ export function PreviewSwitcher() {
         onValueChange={handlePreviewSwitcher}
         isSelected={!preview}
         size="sm"
-        // eslint-disable-next-line react/no-unstable-nested-components
-        thumbIcon={({ isSelected, className }) => (
-          <MdOutlineModeEditOutline
-            size={10}
-            className={cn(className, {
-              'text-primary': isSelected,
-            })}
-          />
-        )}
         classNames={{
-          base: cn('data-[selected=true]:border-primary'),
-          wrapper: 'p-0 h-4 w-8 overflow-visible mr-0',
-          thumb: cn(
-            'w-4 h-4 border-1',
-            'group-data-[hover=true]:border-primary',
-            'group-data-[selected=true]:ml-4'
-          ),
-        }}
-      />
+          base: 'data-[selected=true]:border-primary gap-0.5',
+        }}>
+        <p className="text-default-600">Editable</p>
+      </Switch>
     </div>
   )
 }

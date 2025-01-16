@@ -1,3 +1,4 @@
+import { LabelWithInlineControl } from '../../LabelWithInlineControl'
 import { NumberInputCaret } from '../../NumberInputCaret'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
@@ -12,9 +13,9 @@ export function LetterSpacing() {
   if (!activeObject) return null
 
   return (
-    <div>
-      <div className="py-2 flex justify-between items-center">
-        <h3>Letter Spacing</h3>
+    <LabelWithInlineControl
+      label="Letter Spacing"
+      control={
         <NumberInputCaret
           number={activeObject.charSpacing}
           onChange={(value: number) => {
@@ -22,7 +23,7 @@ export function LetterSpacing() {
             canvas.renderAll()
           }}
         />
-      </div>
-    </div>
+      }
+    />
   )
 }

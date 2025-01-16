@@ -83,6 +83,7 @@ export function RightSidebar({ dyteStates, setDyteStates }: RightSidebarProps) {
             />
           </div>
           <NoteOverlay
+            className="p-4"
             editable={false}
             onClose={() => {
               dispatch(closeRightSidebarAction())

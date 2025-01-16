@@ -1,9 +1,6 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import { TbBubbleText } from 'react-icons/tb'
-
 import { Note } from './Note'
-import { RightSidebarHeader } from './StudioLayout/RightSidebarHeader'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
@@ -14,10 +11,10 @@ function NoteOverlaySidebarWrapper({ contentClass, children }: any) {
   return (
     <div className={cn('w-full h-full')}>
       <div className="flex items-center justify-between w-full p-0">
-        <RightSidebarHeader
+        {/* <RightSidebarHeader
           icon={<TbBubbleText size={20} strokeWidth={1.5} />}
           title="Notes"
-        />
+        /> */}
       </div>
       <div className={cn(contentClass)}>{children}</div>
     </div>
@@ -25,9 +22,11 @@ function NoteOverlaySidebarWrapper({ contentClass, children }: any) {
 }
 
 export function NoteOverlay({
+  className = '',
   editable = true,
   onClose,
 }: {
+  className?: string
   editable?: boolean
   onClose: () => void
 }) {
@@ -48,7 +47,10 @@ export function NoteOverlay({
 
   return (
     <NoteOverlaySidebarWrapper
-      contentClass="relative flex flex-col w-full h-[calc(100%_-_48px)] p-4"
+      contentClass={cn(
+        'relative flex flex-col w-full h-[calc(100%_-_48px)]',
+        className
+      )}
       onClose={onClose}>
       <Note
         frameId={currentFrame.id}

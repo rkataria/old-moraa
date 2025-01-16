@@ -1,5 +1,5 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { LuSparkles } from 'react-icons/lu'
+import { IoSparklesSharp } from 'react-icons/io5'
 
 import { Tooltip } from '../ShortuctTooltip'
 
@@ -8,7 +8,6 @@ import { useFlags } from '@/flags/client'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setContentStudioRightResizableSidebarAction } from '@/stores/slices/layout/studio.slice'
-import { cn } from '@/utils/utils'
 
 export function ToggleButton() {
   const dispatch = useStoreDispatch()
@@ -33,11 +32,10 @@ export function ToggleButton() {
         size="sm"
         isIconOnly
         onClick={toggleSidebar}
-        variant="light"
-        className={cn('cursor-pointer studio-button', {
-          active: resizableRightSidebarVisibility === 'ai-chat',
-        })}>
-        <LuSparkles size={18} strokeWidth={1.2} />
+        variant="bordered"
+        color="primary"
+        className="cursor-pointer active !bg-gradient-to-br from-primary/10 to-white border-1">
+        <IoSparklesSharp size={18} strokeWidth={1.2} />
       </Button>
     </Tooltip>
   )

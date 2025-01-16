@@ -65,16 +65,16 @@ export function StudioTabs() {
     <div className="h-full">
       <Tabs
         keyboardActivation="manual"
-        variant="underlined"
         aria-label="Studio Tabs"
-        color="primary"
         selectedKey={activeTab}
+        variant="light"
         classNames={{
           base: 'h-full',
-          tabList: 'h-full p-0',
-          tab: '!outline-none h-full px-0',
+          tabList: 'h-full p-0 rounded-none gap-4',
+          tab: '!outline-none h-full px-0 data-[selected=true]:!bg-primary/10',
+          cursor: 'hidden',
           tabContent:
-            'px-4 text-gray-600 h-full flex justify-center items-center font-medium',
+            'px-4 text-gray-600 h-full flex justify-center bg-transparent items-center font-medium group-data-[selected=true]:text-primary px-2',
         }}
         onSelectionChange={handleTabChange}>
         <Tab key="landing-page" title="Overview" />

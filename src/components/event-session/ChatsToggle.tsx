@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { Badge } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { BsChatRightText, BsChatRightTextFill } from 'react-icons/bs'
 
 import { ControlButton } from '../common/ControlButton'
+import { ChatIcon } from '../svg'
 
 import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
@@ -51,10 +51,12 @@ export function ChatsToggle({
           className: cn('live-button', {
             active: isChatsSidebarOpen,
           }),
-          startContent: isChatsSidebarOpen ? (
-            <BsChatRightTextFill size={16} />
-          ) : (
-            <BsChatRightText size={16} />
+          startContent: (
+            <ChatIcon
+              className={cn({
+                'text-primary': isChatsSidebarOpen,
+              })}
+            />
           ),
         }}
         tooltipProps={{
@@ -62,7 +64,7 @@ export function ChatsToggle({
           actionKey: KeyboardShortcuts.Live.chats.key,
         }}
         onClick={handleChat}>
-        Chats
+        Chat
       </ControlButton>
     </Badge>
   )

@@ -7,6 +7,7 @@ import { AssignmentOptionSelector } from '@/components/common/breakout/Assignmen
 import { AssignParticipantsModalTrigger } from '@/components/common/breakout/AssignParticipantsModal/AssignParticipantsModalTrigger'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
+import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
@@ -86,64 +87,73 @@ export function BreakoutSettings() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <span>Duration</span>
-        <TwoWayNumberCounter
-          defaultCount={currentFrame?.config?.breakoutDuration as number}
-          onCountChange={(count) => {
-            updateFrame({
-              framePayload: {
-                config: {
-                  ...currentFrame?.config,
-                  breakoutDuration: count,
+      <LabelWithInlineControl
+        label="Duration"
+        control={
+          <TwoWayNumberCounter
+            defaultCount={currentFrame?.config?.breakoutDuration as number}
+            onCountChange={(count) => {
+              updateFrame({
+                framePayload: {
+                  config: {
+                    ...currentFrame?.config,
+                    breakoutDuration: count,
+                  },
                 },
-              },
-              frameId: currentFrame?.id,
-            })
-          }}
-          noNegative
-          postfixLabel="min"
-        />
-      </div>
-      <div className="flex items-center justify-between">
-        <span>
-          {currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
+                frameId: currentFrame?.id,
+              })
+            }}
+            noNegative
+            postfixLabel="min"
+          />
+        }
+      />
+
+      <LabelWithInlineControl
+        label={
+          currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
             ? 'No of rooms'
-            : 'No of participants per group'}
-        </span>
-        <TwoWayNumberCounter
-          defaultCount={
-            currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
-              ? currentFrame?.config?.breakoutRoomsCount
-              : currentFrame?.config?.participantPerGroup
-          }
-          noNegative
-          onCountChange={(count) => updateBreakout(count)}
-          isDeleteModal={
-            currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
-          }
-        />
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <span>How participants can join</span>
-        <AssignmentOptionSelector
-          assignmentOption={currentFrame?.config?.assignmentOption}
-          disabled={
-            currentFrame?.config?.breakoutType === BREAKOUT_TYPES.GROUPS
-          }
-          onChange={(value) => {
-            updateFrame({
-              framePayload: {
-                config: {
-                  ...currentFrame?.config,
-                  assignmentOption: value,
+            : 'No of participants per group'
+        }
+        control={
+          <TwoWayNumberCounter
+            defaultCount={
+              currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
+                ? currentFrame?.config?.breakoutRoomsCount
+                : currentFrame?.config?.participantPerGroup
+            }
+            noNegative
+            onCountChange={(count) => updateBreakout(count)}
+            isDeleteModal={
+              currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
+            }
+          />
+        }
+      />
+
+      <LabelWithInlineControl
+        label="How participants can join"
+        className="flex-col items-start"
+        control={
+          <AssignmentOptionSelector
+            assignmentOption={currentFrame?.config?.assignmentOption}
+            disabled={
+              currentFrame?.config?.breakoutType === BREAKOUT_TYPES.GROUPS
+            }
+            onChange={(value) => {
+              updateFrame({
+                framePayload: {
+                  config: {
+                    ...currentFrame?.config,
+                    assignmentOption: value,
+                  },
                 },
-              },
-              frameId: currentFrame?.id,
-            })
-          }}
-        />
-      </div>
+                frameId: currentFrame?.id,
+              })
+            }}
+          />
+        }
+      />
       <RenderIf isTrue={currentFrame?.config?.assignmentOption === 'manual'}>
         <div className="flex items-center justify-between">
           <span>Assign Participants</span>

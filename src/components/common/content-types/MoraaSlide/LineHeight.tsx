@@ -1,3 +1,4 @@
+import { LabelWithInlineControl } from '../../LabelWithInlineControl'
 import { NumberInputCaret } from '../../NumberInputCaret'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
@@ -12,9 +13,9 @@ export function LineHeight() {
   if (!activeObject) return null
 
   return (
-    <div>
-      <div className="py-2 flex justify-between items-center">
-        <h3>Line Height</h3>
+    <LabelWithInlineControl
+      label="Line Height"
+      control={
         <NumberInputCaret
           number={activeObject.lineHeight}
           min={0.1}
@@ -24,7 +25,7 @@ export function LineHeight() {
             canvas.renderAll()
           }}
         />
-      </div>
-    </div>
+      }
+    />
   )
 }

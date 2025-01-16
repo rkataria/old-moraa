@@ -2,7 +2,6 @@ import { FaWandMagicSparkles } from 'react-icons/fa6'
 
 import { MoraaSlideAppearance } from './MoraaSlideAppearance'
 
-import { MCQFrame } from '@/components/common/content-types/MCQ/MCQ'
 import { RightSidebarHeader } from '@/components/common/StudioLayout/RightSidebarHeader'
 import { useEventContext } from '@/contexts/EventContext'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
@@ -34,7 +33,7 @@ export function FrameAppearance() {
     [FrameType.POWERPOINT]: null,
     [FrameType.Q_A]: null,
     [FrameType.MORAA_PAD]: null,
-    [FrameType.MCQ]: <MCQFrame frame={currentFrame} />,
+    [FrameType.MCQ]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type as FrameType]
@@ -45,7 +44,7 @@ export function FrameAppearance() {
         icon={<FaWandMagicSparkles size={18} />}
         title={activeObject?.type ? activeObject.type : currentFrame.type}
       />
-      <div className="p-4 flex flex-col gap-4">{renderer}</div>
+      <div className="flex flex-col gap-4">{renderer}</div>
     </div>
   )
 }

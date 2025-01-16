@@ -152,7 +152,7 @@ export function SectionList() {
           {(sectionDroppableProvided) => (
             <div
               className={cn(
-                'flex flex-col justify-start items-center gap-2 w-full flex-nowrap overflow-auto !scroll-auto pb-[10rem]'
+                'flex flex-col justify-start items-center gap-2 w-full flex-nowrap overflow-auto !scroll-auto pb-[10rem] scrollbar-none'
               )}
               ref={sectionDroppableProvided.innerRef}
               {...sectionDroppableProvided.droppableProps}>

@@ -1,29 +1,49 @@
+import { Tab, Tabs } from '@nextui-org/react'
 import { BsGrid, BsList } from 'react-icons/bs'
 
 import { Tooltip } from '../ShortuctTooltip'
 
-import { Button } from '@/components/ui/Button'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
+import { KeyboardShortcuts } from '@/utils/utils'
 
 export function ListViewToggle() {
   const { listDisplayMode, toggleListDisplayMode } = useAgendaPanel()
 
   return (
-    <Tooltip
-      label={listDisplayMode === 'list' ? 'Grid View' : 'List View'}
-      actionKey={listDisplayMode === 'list' ? 'G' : 'L'}
-      placement="bottom">
-      <Button
-        size="sm"
-        variant="flat"
-        isIconOnly
-        onClick={toggleListDisplayMode}>
-        {listDisplayMode === 'list' ? (
-          <BsGrid size={16} />
-        ) : (
-          <BsList size={16} />
-        )}
-      </Button>
-    </Tooltip>
+    <Tabs
+      selectedKey={listDisplayMode}
+      onSelectionChange={() => toggleListDisplayMode()}
+      size="sm"
+      classNames={{
+        tabList: 'p-0 border gap-0 bg-white h-8 bg-gray-100 p-[4px] rounded-lg',
+        cursor: 'w-full bg-primary-100 rounded bg-white',
+        tab: 'p-0 w-6 h-6',
+        tabContent: 'w-full h-full',
+      }}>
+      <Tab
+        key="grid"
+        title={
+          <Tooltip
+            label={KeyboardShortcuts['Agenda Panel'].grid.label}
+            actionKey={KeyboardShortcuts['Agenda Panel'].grid.key}>
+            <div className="h-full grid place-items-center">
+              <BsGrid size={12} />
+            </div>
+          </Tooltip>
+        }
+      />
+      <Tab
+        key="list"
+        title={
+          <Tooltip
+            label={KeyboardShortcuts['Agenda Panel'].list.label}
+            actionKey={KeyboardShortcuts['Agenda Panel'].list.key}>
+            <div className="h-full grid place-items-center">
+              <BsList size={12} />
+            </div>
+          </Tooltip>
+        }
+      />
+    </Tabs>
   )
 }

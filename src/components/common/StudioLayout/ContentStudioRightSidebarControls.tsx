@@ -1,21 +1,25 @@
+import { Tabs, Tab, Divider } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useDispatch } from 'react-redux'
 
 import { FrameAppearanceToggleButton } from './FrameAppearanceToggleButton'
 import { FrameNoteToggleButton } from './FrameNoteToggleButton'
 import { FrameSettingsToggleButton } from './FrameSettingsToggleButton'
-import { FrameStatusToggleButton } from './FrameStatusToggleButton'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { setContentStudioRightSidebarAction } from '@/stores/slices/layout/studio.slice'
 import { FrameType } from '@/utils/frame-picker.util'
-import { cn } from '@/utils/utils'
 
 export function ContentStudioRightSidebarControls() {
   const dispatch = useDispatch()
   const { eventMode, currentFrame, preview } = useEventContext()
   const { permissions } = useEventPermissions()
+
+  const { contentStudioRightSidebar } = useStoreSelector(
+    (state) => state.layout.studio
+  )
 
   useHotkeys(
     ']',
@@ -34,14 +38,27 @@ export function ContentStudioRightSidebarControls() {
     if (!currentFrame) return []
 
     if (preview) {
-      return [<FrameNoteToggleButton />]
+      return [
+        {
+          key: 'frame-notes',
+          title: 'Notes',
+          content: <FrameNoteToggleButton />,
+        },
+      ]
     }
 
     if ([FrameType.MORAA_SLIDE].includes(currentFrame.type as FrameType)) {
       return [
-        <FrameAppearanceToggleButton />,
-        <FrameNoteToggleButton />,
-        <FrameStatusToggleButton />,
+        {
+          key: 'frame-appearance',
+          title: 'Appearance',
+          content: <FrameAppearanceToggleButton />,
+        },
+        {
+          key: 'frame-notes',
+          title: 'Notes',
+          content: <FrameNoteToggleButton />,
+        },
       ]
     }
 
@@ -58,23 +75,55 @@ export function ContentStudioRightSidebarControls() {
       ].includes(currentFrame.type as FrameType)
     ) {
       return [
-        <FrameSettingsToggleButton />,
-        <FrameNoteToggleButton />,
-        <FrameStatusToggleButton />,
+        {
+          key: 'frame-settings',
+          title: 'Settings',
+          content: <FrameSettingsToggleButton />,
+        },
+        {
+          key: 'frame-notes',
+          title: 'Notes',
+          content: <FrameNoteToggleButton />,
+        },
       ]
     }
 
-    return [<FrameNoteToggleButton />, <FrameStatusToggleButton />]
+    return [
+      {
+        key: 'frame-notes',
+        title: 'Notes',
+        content: <FrameNoteToggleButton />,
+      },
+    ]
   }
 
-  if (renderContent().length === 0) return null
+  const tabsContent = renderContent()
+  if (tabsContent.length === 0) return null
 
   return (
-    <div
-      className={cn(
-        'flex-none flex flex-col justify-center items-center gap-2 p-2 rounded-md bg-white border-1 border-gray-200'
-      )}>
-      {renderContent()}
+    <div className="p-4 pb-0">
+      <p className="text-gray-400 text-xs">{currentFrame?.name}</p>
+
+      <Tabs
+        key="underlined"
+        aria-label="Sidebar Tabs"
+        variant="underlined"
+        selectedKey={contentStudioRightSidebar}
+        onSelectionChange={(key) =>
+          dispatch(setContentStudioRightSidebarAction(key))
+        }
+        classNames={{
+          tabList: 'gap-6 w-full relative rounded-none p-0',
+          cursor: 'w-full bg-primary',
+          tab: 'max-w-fit px-0 h-10 pt-0',
+          tabContent: 'group-data-[selected=true]:text-primary',
+          base: 'mt-1',
+        }}>
+        {tabsContent.map((tab) => (
+          <Tab key={tab.key} title={tab.title} />
+        ))}
+      </Tabs>
+      <Divider className="-mt-[1px] mb-0 w-[80%]" />
     </div>
   )
 }

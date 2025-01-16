@@ -1,59 +1,49 @@
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  useDisclosure,
-} from '@nextui-org/react'
-import { ChevronDownIcon } from 'lucide-react'
-import { RiCalendarScheduleLine } from 'react-icons/ri'
+import { useDisclosure } from '@nextui-org/react'
 
 import { ScheduleEventButtonWithModal } from '../ScheduleEventButtonWithModal'
-
-import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
 import { Button } from '@/components/ui/Button'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventStatus } from '@/types/enums'
 
-function ScheduleSessionButton({
-  scheduleModal,
-}: {
-  scheduleModal: UseDisclosureReturn
-}) {
-  const { permissions } = useEventPermissions()
+// function ScheduleSessionButton({
+//   scheduleModal,
+// }: {
+//   scheduleModal: UseDisclosureReturn
+// }) {
+//   const { permissions } = useEventPermissions()
 
-  if (!permissions.canUpdateMeeting) {
-    return null
-  }
+//   if (!permissions.canUpdateMeeting) {
+//     return null
+//   }
 
-  return (
-    <Dropdown placement="bottom-end" className="rounded-md">
-      <DropdownTrigger>
-        <Button color="primary" size="sm" isIconOnly className="rounded-s-none">
-          <ChevronDownIcon />
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        className="p-0"
-        onAction={(key) => {
-          if (key === 're-schedule') {
-            scheduleModal.onOpen()
-          }
-        }}>
-        <DropdownItem
-          key="re-schedule"
-          className="p-2 rounded-md h-8 bg-gray-100 hover:bg-gray-200"
-          closeOnSelect>
-          <div className="flex items-center gap-3">
-            <RiCalendarScheduleLine size={19} className="text-gray-600" />
-            Re-schedule event
-          </div>
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
-  )
-}
+//   return (
+//     <Dropdown placement="bottom-end" className="rounded-md">
+//       <DropdownTrigger>
+//         <Button color="primary" size="sm" isIconOnly className="rounded-s-none">
+//           <ChevronDownIcon />
+//         </Button>
+//       </DropdownTrigger>
+//       <DropdownMenu
+//         className="p-0"
+//         onAction={(key) => {
+//           if (key === 're-schedule') {
+//             scheduleModal.onOpen()
+//           }
+//         }}>
+//         <DropdownItem
+//           key="re-schedule"
+//           className="p-2 rounded-md h-8 bg-gray-100 hover:bg-gray-200"
+//           closeOnSelect>
+//           <div className="flex items-center gap-3">
+//             <RiCalendarScheduleLine size={19} className="text-gray-600" />
+//             Re-schedule event
+//           </div>
+//         </DropdownItem>
+//       </DropdownMenu>
+//     </Dropdown>
+//   )
+// }
 
 function ActionButton({
   eventId,
@@ -77,11 +67,9 @@ function ActionButton({
           color="primary"
           onClick={() => window.open(`/event-session/${eventId}`, '__blank')}
           size="sm"
-          title="Start session"
-          className="rounded-r-none">
-          Start live session
+          title="Start session">
+          Start Live session
         </Button>
-        <ScheduleSessionButton scheduleModal={scheduleModal} />
         <ScheduleEventButtonWithModal
           id="re-schedule"
           showLabel={false}

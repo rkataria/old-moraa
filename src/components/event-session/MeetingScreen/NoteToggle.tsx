@@ -5,6 +5,7 @@ import { TbBubbleFilled, TbBubbleText } from 'react-icons/tb'
 import { useDispatch } from 'react-redux'
 
 import { ControlButton } from '@/components/common/ControlButton'
+import { NotesIcon } from '@/components/svg'
 import { cn } from '@/components/tiptap/lib/utils'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -57,10 +58,12 @@ export function NoteToggle() {
           className: cn('live-button', {
             active: isNotesSidebarOpen,
           }),
-          startContent: isNotesSidebarOpen ? (
-            <TbBubbleFilled size={18} />
-          ) : (
-            <TbBubbleText size={18} />
+          startContent: (
+            <NotesIcon
+              className={cn({
+                'text-primary': isNotesSidebarOpen,
+              })}
+            />
           ),
         }}
         tooltipProps={{
@@ -68,7 +71,7 @@ export function NoteToggle() {
           actionKey: KeyboardShortcuts.Live.notes.key,
         }}
         onClick={handleNoteToggle}>
-        Note
+        Notes
       </ControlButton>
     )
   }

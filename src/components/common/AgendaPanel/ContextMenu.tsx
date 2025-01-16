@@ -6,16 +6,19 @@ import { ReactNode } from '@tanstack/react-router'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { FrameAction } from '@/types/frame.type'
+import { cn } from '@/utils/utils'
 
 export function ContextMenu({
   children,
   items,
   disabled,
+  className = '',
   handleActions,
 }: {
   children: ReactNode
   items: FrameAction[]
   disabled?: boolean
+  className?: string
   handleActions: (item: FrameAction) => void
 }) {
   const [visible, setVisible] = useState(false)
@@ -56,7 +59,7 @@ export function ContextMenu({
     <div
       onContextMenu={handleContextMenu}
       ref={menuRef}
-      className="relative inline-block w-full h-full">
+      className={cn('relative inline-block w-full h-full', className)}>
       {children}
       <RenderIf isTrue={visible && !disabled}>
         <Listbox

@@ -10,7 +10,7 @@ import {
 } from '@nextui-org/react'
 import { ChevronDownIcon } from 'lucide-react'
 import { BsCardText, BsCollection } from 'react-icons/bs'
-import { LuPlusCircle } from 'react-icons/lu'
+import { GoPlus } from 'react-icons/go'
 
 import { Button } from '../ui/Button'
 
@@ -39,7 +39,7 @@ const labelMap: {
   'new-frame': string
 } = {
   'new-section': 'New Section',
-  'new-frame': 'New Frame',
+  'new-frame': 'Add Frame',
 }
 
 export function AddItemStickyDropdownActions({
@@ -100,27 +100,32 @@ export function AddItemStickyDropdownActions({
   return (
     <ButtonGroup
       size="sm"
-      variant="solid"
-      color="primary"
+      variant="bordered"
       className={cn(
-        'bg-primary max-w-[300px] rounded-md overflow-hidden mt-2',
+        'rounded-lg overflow-hidden mt-2 border justify-between',
         className
       )}
       isDisabled={isAddSectionLoading || isAddFrameLoading}>
       <Button
+        variant="light"
         disableRipple
-        color="primary"
-        startContent={<LuPlusCircle />}
-        onClick={() => handleAddItem(new Set(['new-frame']))}>
+        startContent={<GoPlus size={18} />}
+        onClick={() => handleAddItem(new Set(['new-frame']))}
+        className="bg-transparent w-full text-xs font-medium">
         {labelMap['new-frame']}
       </Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
-          <Button isIconOnly color="primary" disableRipple>
-            <ChevronDownIcon />
+          <Button
+            variant="light"
+            isIconOnly
+            disableRipple
+            className="bg-transparent w-[50px]">
+            <ChevronDownIcon size={16} />
           </Button>
         </DropdownTrigger>
         <DropdownMenu
+          variant="light"
           disallowEmptySelection
           selectionMode="single"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

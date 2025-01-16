@@ -9,28 +9,29 @@ import {
   ModalHeader,
   Modal,
   ButtonProps,
+  Avatar,
 } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
 import { FaLink } from 'react-icons/fa'
-import { LuUserPlus } from 'react-icons/lu'
+import { IoIosAdd } from 'react-icons/io'
 
 import {
   AddParticipantsForm,
   ParticipantsFormData,
 } from './AddParticipantsForm'
-import { ControlButton } from './ControlButton'
 import { RenderIf } from './RenderIf/RenderIf'
+import { Tooltip } from './ShortuctTooltip'
 import { Button } from '../ui/Button'
 
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
 
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { EventService } from '@/services/event/event-service'
-import { cn } from '@/utils/utils'
 
 type addParticipant = ParticipantsFormData & {
   closeonSave?: boolean
@@ -45,6 +46,8 @@ export function ButtonWithModal({
   buttonProps?: ButtonProps
   disclosure?: UseDisclosureReturn
 }) {
+  const user = useStoreSelector((state) => state.user.currentUser.user)
+  console.log('user', user)
   const { eventId = '' } = useParams({ strict: false })
 
   const currentPageUrl = window.location.pathname + window.location.search
@@ -96,25 +99,28 @@ export function ButtonWithModal({
   return (
     <>
       <RenderIf isTrue={showLabel}>
-        <ControlButton
-          buttonProps={{
-            size: 'sm',
-            variant: 'light',
-            disableRipple: true,
-            disableAnimation: true,
-            className: cn('live-button', {
-              active: open,
-            }),
-            startContent: (
-              <LuUserPlus size={20} className={open ? 'text-primary' : ''} />
-            ),
-          }}
-          tooltipProps={{
-            label: 'Invite and include participants',
-          }}
-          onClick={() => setOpen(true)}>
-          {buttonProps.children || <>Invite</>}
-        </ControlButton>
+        <Tooltip label="Invite and include participants">
+          <div className="flex items-center gap-1.5">
+            <Button
+              size="sm"
+              color="default"
+              onClick={() => setOpen(true)}
+              disableAnimation
+              variant="light"
+              className="p-0 border border-gray-300 border-white bg-white hover:bg-gray-300 rounded-full -mr-4 z-10 w-7 h-7 min-w-7 grid place-items-center"
+              {...buttonProps}>
+              <div className="border rounded-full min-w-full">
+                <IoIosAdd size={22} />
+              </div>
+            </Button>
+
+            <Avatar
+              size="sm"
+              className="min-w-6 w-6 h-6"
+              src={user?.user_metadata.avatar_url}
+            />
+          </div>
+        </Tooltip>
       </RenderIf>
 
       <Modal

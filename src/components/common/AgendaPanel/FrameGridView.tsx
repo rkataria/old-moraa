@@ -25,12 +25,14 @@ export function FrameGridView({
   frame,
   sidebarExpanded,
   frameActive,
+  framePosition,
   onClick,
   handleFrameAction,
 }: {
   frame: IFrame
   sidebarExpanded: boolean
   frameActive: boolean
+  framePosition?: number
   onClick: (
     e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
     frame: IFrame
@@ -63,15 +65,22 @@ export function FrameGridView({
     <ContextMenu
       items={frameActions}
       handleActions={handleFrameAction}
-      disabled={!permissions.canUpdateFrame || preview}>
+      disabled={!permissions.canUpdateFrame || preview}
+      className={cn('flex items-start gap-2 p-0.5 pl-2 rounded-lg', {
+        'bg-primary/10': frameActive,
+      })}>
+      <RenderIf isTrue={!!framePosition}>
+        <p className="text-xs text-black/60 mt-1">{framePosition}</p>
+      </RenderIf>
+
       <div
         key={`frame-${frame?.id}`}
         data-miniframe-id={frame?.id}
         className={cn(
-          'relative cursor-pointer overflow-hidden rounded-lg group/frame-item',
+          'relative cursor-pointer overflow-hidden rounded-md group/frame-item w-full',
           {
-            'border-primary border-2': frameActive,
-            'border-gray-200 border-2': !frameActive,
+            'border-primary border-1': frameActive,
+            'border-gray-200 border-1': !frameActive,
             'border border-green-400': breakoutRunning,
           }
         )}

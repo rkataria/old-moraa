@@ -1,8 +1,8 @@
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { BsPeople, BsPeopleFill } from 'react-icons/bs'
 
 import { ControlButton } from '../common/ControlButton'
+import { UsersIcon } from '../svg'
 
 import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
@@ -32,13 +32,11 @@ export function ParticipantsToggle({
         className: cn('live-button', {
           active: isParticipantsSidebarOpen,
         }),
-        startContent: isParticipantsSidebarOpen ? (
-          <BsPeopleFill size={18} />
-        ) : (
-          <BsPeople
-            size={18}
+        startContent: (
+          <UsersIcon
+            filled={isParticipantsSidebarOpen || areParticipantsWaitingInLobby}
             className={cn({
-              'animate-pulse fill-red-500': areParticipantsWaitingInLobby,
+              'animate-pulse text-red-500': areParticipantsWaitingInLobby,
             })}
           />
         ),
