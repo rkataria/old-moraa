@@ -24,8 +24,8 @@ import { Editor as RichTextEditor } from '@/components/common/content-types/Rich
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { LogoWithName } from '@/components/common/Logo'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { Dates } from '@/components/enroll/Date'
 import { Participantslist } from '@/components/enroll/ParticipantList'
+import { EventTimeline } from '@/components/event-details/Timeline'
 import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { useAuth } from '@/hooks/useAuth'
 import { usePublicEvent } from '@/hooks/useEvent'
@@ -262,11 +262,7 @@ export function Visit() {
                   {addParticipantsMutation.isPending ? 'Enrolling' : 'Enroll'}
                 </Button>
               </RenderIf>
-              <Dates
-                startDate={event?.start_date}
-                endDate={event?.end_date}
-                timeZone={event?.timezone}
-              />
+              <EventTimeline event={event} hosts={useEventData.hosts} />
               <RenderIf isTrue={visibleEventButton()}>
                 <div className="flex items-center gap-2">
                   <Button
@@ -282,6 +278,7 @@ export function Visit() {
               <Participantslist
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 participants={useEventData.participants as any}
+                hosts={useEventData.hosts}
                 visibleInvitedTab={isEventOwner}
               />
             </div>

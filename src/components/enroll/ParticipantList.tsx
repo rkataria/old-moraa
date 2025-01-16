@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode, useState } from 'react'
 
 import { Divider, Tab, Tabs } from '@nextui-org/react'
@@ -7,6 +8,7 @@ import { IUserProfile, UserAvatar } from '../common/UserAvatar'
 
 export function Participantslist({
   participants = [],
+  hosts = [],
   rightLabelContent,
   hideOnEmptyList = true,
   visibleInvitedTab = true,
@@ -21,7 +23,7 @@ export function Participantslist({
       }[]
     | null
     | undefined
-
+  hosts: any
   rightLabelContent?: ReactNode
   hideOnEmptyList?: boolean
   visibleInvitedTab?: boolean
@@ -30,7 +32,7 @@ export function Participantslist({
   const [selected, setSelected] = useState('going')
   if (!participants) return null
 
-  const host = participants.find((p) => p.event_role === 'Host')
+  const host = hosts?.[0]
 
   const registeredUsers = participants.filter(
     (p) => p.profile && p.event_role !== 'Host'

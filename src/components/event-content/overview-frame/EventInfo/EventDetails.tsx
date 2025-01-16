@@ -2,12 +2,11 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Button,
-  Divider,
   Image,
   Modal,
   ModalBody,
@@ -20,7 +19,6 @@ import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useDebounce } from '@uidotdev/usehooks'
 import { Controller, useForm, useWatch } from 'react-hook-form'
-import { MdOutlineEditCalendar } from 'react-icons/md'
 import { TbFileDescription, TbUserEdit } from 'react-icons/tb'
 import * as yup from 'yup'
 
@@ -30,18 +28,16 @@ import { RecordingsOverview } from '../RecordingsOverview'
 import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
 import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { ScheduleEventButtonWithModal } from '@/components/common/ScheduleEventButtonWithModal'
-import { Dates } from '@/components/enroll/Date'
 import { Participantslist } from '@/components/enroll/ParticipantList'
+import { EventTimeline } from '@/components/event-details/Timeline'
 import { theme } from '@/components/events/ThemeModal'
 import { ThemePicker } from '@/components/events/ThemePicker'
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { EventService } from '@/services/event.service'
 import { uploadFile } from '@/services/storage.service'
-import { EventStatus } from '@/types/enums'
-import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
 
 export type CreateEventFormData = yup.InferType<
@@ -57,7 +53,8 @@ const createEventValidationSchema = yup.object({
 })
 
 export function EventDetails() {
-  const { preview } = useContext(EventContext) as EventContextType
+  const { permissions } = useEventPermissions()
+  const { preview } = useEventContext()
   const [imageObject, setImageObject] = useState<string | undefined>(undefined)
   const [imageUploadProgress, setImageUploadProgress] = useState<number>(0)
   const [imageUploading, setImageUploading] = useState<boolean>(false)
@@ -67,7 +64,7 @@ export function EventDetails() {
 
   const descriptionModalDisclosure = useDisclosure()
 
-  const { event, participants } = eventData
+  const { event, participants, hosts } = eventData
 
   const createEventForm = useForm<CreateEventFormData>({
     resolver: yupResolver(createEventValidationSchema),
@@ -124,6 +121,7 @@ export function EventDetails() {
   }
 
   const selectedTheme = createEventForm.watch('theme') as theme
+  const canUpdateDate = permissions.canManageEnrollment && !preview
 
   return (
     <div className="h-fit relative z-[50]">
@@ -327,37 +325,18 @@ export function EventDetails() {
                 selectedTheme={selectedTheme}
                 disclosure={themeModalDisclosure}
               />
-              <div>
-                <div className="flex items-center justify-between text-sm font-medium text-slate-500">
-                  Timeline
-                  <ScheduleEventButtonWithModal
-                    actionButtonLabel="Edit"
-                    buttonProps={{
-                      variant: 'light',
-                      color: 'primary',
-                      gradient: 'none',
-                      startContent: <MdOutlineEditCalendar size={16} />,
-                    }}
-                  />
-                </div>
-                <Divider
-                  className={cn('mt-2 mb-3', {
-                    'mb-0': event.status === EventStatus.DRAFT,
-                  })}
-                />
-                <Dates
-                  startDate={event?.start_date as string}
-                  endDate={event?.end_date as string}
-                  timeZone={event?.timezone as string}
-                  className="pl-1"
-                />
-              </div>
+              <EventTimeline
+                event={event}
+                hosts={hosts}
+                canUpdateDate={canUpdateDate}
+              />
 
               <Participantslist
                 visibleHostBy={false}
                 hideOnEmptyList={false}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 participants={participants as any}
+                hosts={hosts}
                 rightLabelContent={
                   <AddParticipantsButtonWithModal
                     triggerButtonProps={{

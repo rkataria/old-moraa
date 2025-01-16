@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from '@tanstack/react-query'
 
 import { EventService } from '@/services/event.service'
@@ -21,10 +22,16 @@ export const useEvent = ({
     refetchOnWindowFocus: false,
   })
 
+  const hosts =
+    eventQuery.data?.participants?.filter(
+      (p: any) => p.event_role === 'Host'
+    ) || []
+
   return {
     event: eventQuery.data?.event as unknown as EventModel,
     meeting: eventQuery.data?.meeting,
     participants: eventQuery.data?.participants,
+    hosts,
     profile: eventQuery.data?.profile,
     activeSession: eventQuery.data?.session,
     isLoading: eventQuery.isLoading,
@@ -46,10 +53,16 @@ export const usePublicEvent = ({ id }: { id: string }) => {
     refetchOnWindowFocus: false,
   })
 
+  const hosts =
+    eventQuery.data?.participants?.filter(
+      (p: any) => p.event_role === 'Host'
+    ) || []
+
   return {
     event: eventQuery.data?.event as unknown as EventModel,
     meeting: eventQuery.data?.meeting,
     participants: eventQuery.data?.participants,
+    hosts,
     isLoading: eventQuery.isLoading,
     isFetching: eventQuery.isFetching,
     error: eventQuery.error,
