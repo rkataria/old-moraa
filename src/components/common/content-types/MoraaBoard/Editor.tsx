@@ -67,12 +67,6 @@ export function Editor({
       }}
       hideUi={isReadonly}
       onMount={(editor) => {
-        editorRef.current = editor
-
-        editor.updateInstanceState({
-          isReadonly: !!isReadonly,
-        })
-        editor.zoomOut(editor.getViewportScreenCenter())
         const shapes = editor
           .getCurrentPageShapes()
           .filter((shape) => shape.type === 'text')
@@ -80,6 +74,7 @@ export function Editor({
         editor.updateShapes(
           shapes.map((shape) => {
             const currentWidth = (shape.props as TLTextShapeProps).w
+
             if (!currentWidth) return shape
             const widthStr = currentWidth.toString()
             const decimalPart = widthStr.split('.')[1]
@@ -100,6 +95,13 @@ export function Editor({
             }
           })
         )
+
+        editorRef.current = editor
+
+        editor.updateInstanceState({
+          isReadonly: !!isReadonly,
+        })
+        editor.zoomOut(editor.getViewportScreenCenter())
       }}
     />
   )
