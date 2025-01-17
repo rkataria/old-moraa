@@ -1,10 +1,14 @@
 import { Button } from '@nextui-org/react'
 import { BiDotsHorizontalRounded } from 'react-icons/bi'
 
-import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { setContentStudioRightSidebarAction } from '@/stores/slices/layout/studio.slice'
 
 export function BubbleMenuMoreOptions() {
-  const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
+  const { contentStudioRightSidebar } = useStoreSelector(
+    (store) => store.layout.studio
+  )
+  const dispatch = useStoreDispatch()
 
   return (
     <Button
@@ -14,13 +18,13 @@ export function BubbleMenuMoreOptions() {
       radius="md"
       className="h-7 text-sm flex justify-center items-center gap-1 px-1"
       onClick={() => {
-        if (rightSidebarVisiblity === 'frame-appearance') {
-          setRightSidebarVisiblity(null)
+        if (contentStudioRightSidebar === 'frame-appearance') {
+          dispatch(setContentStudioRightSidebarAction(null))
 
           return
         }
 
-        setRightSidebarVisiblity('frame-appearance')
+        dispatch(setContentStudioRightSidebarAction('frame-appearance'))
       }}>
       <BiDotsHorizontalRounded size={16} />
     </Button>

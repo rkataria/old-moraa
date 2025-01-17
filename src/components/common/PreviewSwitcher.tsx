@@ -11,7 +11,6 @@ import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { setIsPreviewOpenAction } from '@/stores/slices/event/current-event/event.slice'
 import { EventContextType } from '@/types/event-context.type'
-import { cn } from '@/utils/utils'
 
 export function PreviewSwitcher() {
   const router = useRouter()
@@ -57,25 +56,18 @@ export function PreviewSwitcher() {
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-    <div
-      className={cn(
-        'flex items-center gap-1 h-7 p-2 rounded-md cursor-pointer',
-        {
-          active: !preview,
-        }
-      )}
-      onClick={handlePreviewSwitcher}>
-      <Switch
-        readOnly
-        onValueChange={handlePreviewSwitcher}
-        isSelected={!preview}
-        size="sm"
-        classNames={{
-          base: 'data-[selected=true]:border-primary gap-0.5',
-        }}>
-        <p className="text-default-600">Editable</p>
-      </Switch>
-    </div>
+    <Switch
+      readOnly
+      onValueChange={handlePreviewSwitcher}
+      isSelected={!preview}
+      size="sm"
+      onChange={(e) => e.currentTarget.blur()}
+      className="mr-2"
+      classNames={{
+        label: 'data-[focus-visible=true]:ring-0',
+        wrapper: 'group-data-[focus-visible=true]:ring-0',
+      }}>
+      Editable
+    </Switch>
   )
 }

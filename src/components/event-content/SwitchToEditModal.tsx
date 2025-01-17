@@ -40,6 +40,15 @@ export function SwitchToEditModal() {
           'arrowdown',
           'arrowleft',
           'arrowright',
+          'shift',
+          'tab',
+          'esc',
+          'escape',
+          'delete',
+          'backspace',
+          'enter',
+          'space',
+          'caplock',
         ].includes(e.key.toLowerCase())
       ) {
         setOpen(false)
@@ -51,6 +60,9 @@ export function SwitchToEditModal() {
     },
     {
       enabled: isPreview || open,
+      ignoreModifiers: true,
+      ignoreEventWhen: (e) =>
+        e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.key === ' ',
     }
   )
 

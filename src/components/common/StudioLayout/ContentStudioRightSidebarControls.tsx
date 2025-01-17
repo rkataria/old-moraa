@@ -1,6 +1,5 @@
 import { Tabs, Tab, Divider } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { useDispatch } from 'react-redux'
 
 import { FrameAppearanceToggleButton } from './FrameAppearanceToggleButton'
 import { FrameNoteToggleButton } from './FrameNoteToggleButton'
@@ -8,12 +7,12 @@ import { FrameSettingsToggleButton } from './FrameSettingsToggleButton'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useStoreSelector } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setContentStudioRightSidebarAction } from '@/stores/slices/layout/studio.slice'
 import { FrameType } from '@/utils/frame-picker.util'
 
 export function ContentStudioRightSidebarControls() {
-  const dispatch = useDispatch()
+  const dispatch = useStoreDispatch()
   const { eventMode, currentFrame, preview } = useEventContext()
   const { permissions } = useEventPermissions()
 
