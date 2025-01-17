@@ -7,6 +7,8 @@ import {
 import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
 import { IoDuplicateOutline, IoSaveOutline } from 'react-icons/io5'
 
+import { FrameType } from '@/utils/frame-picker.util'
+
 export const frameActions = [
   {
     key: 'delete',
@@ -32,21 +34,28 @@ export const frameActions = [
     key: 'save-frame-in-library',
     label: 'Save to library',
     icon: <IoSaveOutline className="h-4 w-4 text-slate-500" />,
+    disableForFrames: [FrameType.BREAKOUT],
   },
 ]
 
 export function FrameActions({
   triggerIcon,
+  frameType,
   handleActions,
 }: {
   triggerIcon: React.ReactNode
+  frameType: FrameType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleActions: (item: any) => void
 }) {
   return (
     <Dropdown placement="bottom-start">
       <DropdownTrigger>{triggerIcon}</DropdownTrigger>
-      <DropdownMenu aria-label="Dropdown menu with icons" items={frameActions}>
+      <DropdownMenu
+        aria-label="Dropdown menu with icons"
+        items={frameActions.filter(
+          (action) => !action.disableForFrames?.includes(frameType)
+        )}>
         {(item) => (
           <DropdownItem
             key={item.key}

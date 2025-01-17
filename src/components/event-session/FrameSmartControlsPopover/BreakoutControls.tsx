@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 
+import { useDyteSelector } from '@dytesdk/react-web-core'
+import { Tooltip } from '@nextui-org/tooltip'
+
 import { StartPlannedBreakoutModal } from '@/components/common/breakout/StartPlannedBreakoutModal'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
@@ -24,6 +27,7 @@ export function BreakoutControls() {
   const { isBreakoutActive } = useBreakoutRooms()
   const { eventRealtimeChannel } = useRealtimeChannel()
   const { breakoutRoomsInstance } = useBreakoutManagerContext()
+  const participants = useDyteSelector((state) => state.participants.joined)
   const sessionBreakoutFrameId = useStoreSelector(
     (store) =>
       store.event.currentEvent.liveSessionState.activeSession.data?.data
@@ -70,15 +74,21 @@ export function BreakoutControls() {
   return (
     <>
       <RenderIf isTrue={!showEndBreakoutButton}>
-        <Button
-          title="Start breakout"
-          color="primary"
-          disabled={isBreakoutActive}
-          onClick={() => {
-            setOpenStartBreakoutModal(true)
-          }}>
-          Start Breakout
-        </Button>
+        <Tooltip
+          content="Cannot start the breakout without participants."
+          hidden={!!participants.toArray().length}>
+          <Button
+            title="Start breakout"
+            color="primary"
+            disabled={isBreakoutActive || !participants.toArray().length}
+            disableRipple={!participants.toArray().length}
+            disableAnimation={!participants.toArray().length}
+            onClick={() => {
+              setOpenStartBreakoutModal(true)
+            }}>
+            Start Breakout
+          </Button>
+        </Tooltip>
       </RenderIf>
       <RenderIf isTrue={showEndBreakoutButton}>
         <Button

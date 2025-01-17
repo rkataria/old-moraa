@@ -47,7 +47,6 @@ export function ButtonWithModal({
   disclosure?: UseDisclosureReturn
 }) {
   const user = useStoreSelector((state) => state.user.currentUser.user)
-  console.log('user', user)
   const { eventId = '' } = useParams({ strict: false })
 
   const currentPageUrl = window.location.pathname + window.location.search

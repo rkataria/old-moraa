@@ -253,6 +253,7 @@ export function FrameItem({
             }>
             <div className="hidden group-hover/frame-item:block">
               <FrameActions
+                frameType={frame.type}
                 triggerIcon={
                   <div className="cursor-pointer">
                     <RxDotsVertical />

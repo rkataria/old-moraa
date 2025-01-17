@@ -63,7 +63,9 @@ export function FrameGridView({
 
   return (
     <ContextMenu
-      items={frameActions}
+      items={frameActions.filter(
+        (action) => !action.disableForFrames?.includes(frame.type)
+      )}
       handleActions={handleFrameAction}
       disabled={!permissions.canUpdateFrame || preview}
       className={cn('flex items-start gap-2 p-0.5 pl-2 rounded-lg', {

@@ -125,6 +125,10 @@ export const MediaLibrary = withSelectable<string>(
 
     const onAddMediaClick = () => setIsFilePickerModalOpen(true)
 
+    const totalPages = Math.ceil(
+      (libraryQuery.data?.count || pageSize) / pageSize
+    )
+
     return (
       <div>
         <div className="mt-4 flex justify-between align-center">
@@ -293,12 +297,14 @@ export const MediaLibrary = withSelectable<string>(
         />
 
         <div className="my-4 flex justify-center">
-          <Pagination
-            key={libraryQuery.dataUpdatedAt}
-            total={Math.ceil((libraryQuery.data?.count || pageSize) / pageSize)}
-            page={page}
-            onChange={setPage}
-          />
+          {totalPages !== 1 && (
+            <Pagination
+              key={libraryQuery.dataUpdatedAt}
+              total={totalPages}
+              page={page}
+              onChange={setPage}
+            />
+          )}
         </div>
       </div>
     )

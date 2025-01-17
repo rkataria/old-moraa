@@ -12,6 +12,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import {
   createFileRoute,
+  Link,
   useLocation,
   useParams,
   useRouter,
@@ -183,7 +184,9 @@ export function Visit() {
 
   return (
     <ThemeEffects selectedTheme={event.theme} className="h-screen">
-      <LogoWithName primary className="m-4" />
+      <Link to="/">
+        <LogoWithName primary className="m-4" />
+      </Link>
       <div className="overflow-y-scroll h-full relative z-[50] pb-40">
         <div className="max-w-[76.25rem] mx-auto py-4 pt-8">
           <div className="grid grid-cols-[60%_27%] items-start gap-6">

@@ -169,7 +169,7 @@ export function PublishButton({
                   size="sm"
                   color="default"
                   variant="bordered"
-                  className="text-sm"
+                  className="text-sm text-white"
                   isLoading={publishMutation.isPending}
                   onClick={handlePublish}>
                   Yes , Publish

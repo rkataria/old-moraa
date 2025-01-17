@@ -81,19 +81,20 @@ export function FrameLibrary({
   const profile = useProfile()
 
   const [frameType, setFrameType] = useState(AllFrameTypes[0])
+
   const [listDisplayMode, toggleListDisplayMode] = useState<string>('grid')
   const libraryQuery = useQuery({
     queryKey: [
       'library-frames',
       page,
-      frameTypes || frameType !== AllFrameTypes[0] ? [frameType] : [],
+      frameTypes || (frameType !== AllFrameTypes[0] ? [frameType] : []),
     ],
     queryFn: () =>
       LibraryService.getFrameFromLibrary({
         profileId: profile!.data!.id,
         page,
         frameTypes:
-          frameTypes || frameType !== AllFrameTypes[0] ? [frameType] : [],
+          frameTypes || (frameType !== AllFrameTypes[0] ? [frameType] : []),
       }),
     enabled: !!profile?.data?.id,
   })
@@ -106,6 +107,8 @@ export function FrameLibrary({
   const onFrameDeleteClick = (frameId: string) => async () => {
     await deleteFrameMutation.mutate(frameId)
   }
+
+  const totalPages = Math.ceil((libraryQuery.data?.count || 8) / 10)
 
   return (
     <div>
@@ -273,12 +276,14 @@ export function FrameLibrary({
           </div>
         )}
         <div className="my-4 flex justify-center">
-          <Pagination
-            key={libraryQuery.dataUpdatedAt}
-            total={Math.ceil((libraryQuery.data?.count || 8) / 10)}
-            page={page}
-            onChange={setPage}
-          />
+          {totalPages !== 1 && (
+            <Pagination
+              key={libraryQuery.dataUpdatedAt}
+              total={totalPages}
+              page={page}
+              onChange={setPage}
+            />
+          )}
         </div>
       </div>
     </div>

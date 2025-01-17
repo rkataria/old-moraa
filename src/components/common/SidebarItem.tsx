@@ -78,6 +78,9 @@ export function SidebarItem() {
             title={item.name}
             indicator={<div />}
             className="ml-2"
+            classNames={{
+              title: 'text-sm',
+            }}
             startContent={
               location.pathname.startsWith(item.href) ? (
                 <item.filled
@@ -92,10 +95,10 @@ export function SidebarItem() {
             {item.submenu.map((submenu) => (
               <Button
                 key={submenu.name}
-                size="md"
+                size="sm"
                 fullWidth
                 className={cn(
-                  'flex justify-start items-center gap-3 bg-transparent hover:bg-gray-200 py-5',
+                  'flex justify-start items-center gap-3 bg-transparent hover:bg-gray-200 py-5 pl-8',
                   {
                     'bg-primary/15 text-primary font-medium':
                       submenu.href === location.pathname,
