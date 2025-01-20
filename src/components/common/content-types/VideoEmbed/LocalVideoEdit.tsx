@@ -8,7 +8,9 @@ import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { FaVideo } from 'react-icons/fa'
 
+import { ContentLoading } from '../../ContentLoading'
 import { FilePickerDropzone } from '../../FilePickerDropzone'
+import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { FrameFormContainer } from '@/components/event-content/FrameFormContainer'
 import { useEventContext } from '@/contexts/EventContext'
@@ -128,6 +130,10 @@ export function LocalVideoEdit({
           }
         }}
       />
+
+      <RenderIf isTrue={uploadMutation.isPending}>
+        <ContentLoading fullPage transparent />
+      </RenderIf>
     </FrameFormContainer>
   )
 }

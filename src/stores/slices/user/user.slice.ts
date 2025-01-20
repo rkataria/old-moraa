@@ -48,6 +48,10 @@ attachStoreListener({
   actionCreator: getUserThunk.fulfilled,
   effect: (_, { dispatch, getState }) => {
     const userId = getState().user.currentUser.user?.id
+    const gettingProfile = getState().user.profile.isLoading
+
+    if (gettingProfile) return
+
     dispatch(getProfileThunk(userId as string))
   },
 })

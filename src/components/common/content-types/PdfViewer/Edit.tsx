@@ -8,6 +8,8 @@ import { FaFilePdf } from 'react-icons/fa'
 import { pdfjs } from 'react-pdf'
 
 import { Embed } from './Embed'
+import { ContentLoading } from '../../ContentLoading'
+import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { FilePickerDropzone } from '@/components/common/FilePickerDropzone'
 import { Loading } from '@/components/common/Loading'
@@ -107,33 +109,38 @@ export function Edit({ frame }: EditProps) {
       case uploadPDFMutation.isPending:
       case !fileUrl:
         return (
-          <FrameFormContainer
-            headerIcon={<FaFilePdf size={72} className="text-primary" />}
-            headerTitle="Embed PDF"
-            headerDescription="Easily embed PDF file into Moraa Frame."
-            footerNote="Uploading password protected PDF file won't be accessible by Participants">
-            <div className="w-full">
-              <FilePickerDropzone
-                fullWidth
-                label="Drag & drop pdf file here or click here to upload file"
-                supportedFormats={{ 'application/pdf': ['.pdf'] }}
-                uploadProgress={
-                  uploadPDFMutation.isPending || downloadPDFQuery.isPending
-                    ? uploadProgress
-                    : 0
-                }
-                onUpload={(files) => {
-                  const fileList = []
-                  if (files) {
-                    for (const file of files) {
-                      fileList.push(file)
-                    }
-                    uploadAndSetFile(fileList[0])
+          <>
+            <FrameFormContainer
+              headerIcon={<FaFilePdf size={72} className="text-primary" />}
+              headerTitle="Embed PDF"
+              headerDescription="Easily embed PDF file into Moraa Frame."
+              footerNote="Uploading password protected PDF file won't be accessible by Participants">
+              <div className="w-full">
+                <FilePickerDropzone
+                  fullWidth
+                  label="Drag & drop pdf file here or click here to upload file"
+                  supportedFormats={{ 'application/pdf': ['.pdf'] }}
+                  uploadProgress={
+                    uploadPDFMutation.isPending || downloadPDFQuery.isPending
+                      ? uploadProgress
+                      : 0
                   }
-                }}
-              />
-            </div>
-          </FrameFormContainer>
+                  onUpload={(files) => {
+                    const fileList = []
+                    if (files) {
+                      for (const file of files) {
+                        fileList.push(file)
+                      }
+                      uploadAndSetFile(fileList[0])
+                    }
+                  }}
+                />
+              </div>
+            </FrameFormContainer>
+            <RenderIf isTrue={uploadPDFMutation.isPending}>
+              <ContentLoading fullPage transparent />
+            </RenderIf>
+          </>
         )
 
       case !!downloadPDFQuery.data:

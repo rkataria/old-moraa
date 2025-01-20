@@ -10,7 +10,7 @@ const initialState: {
 } = {
   profile: null,
   isError: false,
-  isLoading: true,
+  isLoading: false,
 }
 
 export const profileSlice = createSlice({

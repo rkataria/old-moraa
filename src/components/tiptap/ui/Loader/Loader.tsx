@@ -2,9 +2,11 @@ import { createPortal } from 'react-dom'
 
 import { LoaderProps, LoadingWrapperProps } from './types'
 
+import { cn } from '@/utils/utils'
+
 function LoadingWrapper({ label }: LoadingWrapperProps) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 p-4 text-white bg-black rounded-lg shadow-2xl dark:text-black dark:bg-white">
+    <div className="flex flex-col items-center justify-center gap-2 p-4 text-white bg-primary rounded-lg shadow-2xl dark:text-black dark:bg-white">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -25,11 +27,15 @@ function LoadingWrapper({ label }: LoadingWrapperProps) {
   )
 }
 
-export function Loader({ hasOverlay = true, label }: LoaderProps) {
+export function Loader({ hasOverlay = true, label, classNames }: LoaderProps) {
   return hasOverlay ? (
     createPortal(
-      <div className="items-center justify-center bg-black/60 flex h-full w-full fixed top-0 left-0 select-none z-[9999]">
-        <LoadingWrapper label={label} />
+      <div
+        className={cn(
+          'items-center justify-center bg-black/60 flex h-full w-full fixed top-0 left-0 select-none z-[9999]',
+          classNames?.overlay
+        )}>
+        {label && <LoadingWrapper label={label} />}
       </div>,
       document.body
     )

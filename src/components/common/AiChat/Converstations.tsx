@@ -73,7 +73,7 @@ export function Converstations() {
             {
               'flex justify-end before:border-b-primary before:bottom-0 before:-right-[9px] bg-primary text-white max-w-[70%] ml-auto':
                 message.role === 'user',
-              'before:border-b-gray-100 before:bottom-0 before:-left-[9px] bg-gray-100 max-w-[70%]':
+              'before:border-b-gray-100 before:bottom-0 before:-left-[9px] bg-gray-100 max-w-[90%]':
                 message.role !== 'user',
             }
           )}>
@@ -136,7 +136,6 @@ export function Converstations() {
               </svg>
             </div>
           </RenderIf>
-
           <div
             style={{ wordBreak: 'break-word' }}
             className={cn(

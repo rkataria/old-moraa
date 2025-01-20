@@ -14,5 +14,11 @@ export function Thumbnail({ frame }: ThumbnailProps) {
     return <NoFramePreview />
   }
 
-  return <Embed url={videoUrl} showControls={false} />
+  return (
+    <Embed
+      url={videoUrl}
+      showControls={false}
+      playerProps={{ showViewMode: false }}
+    />
+  )
 }

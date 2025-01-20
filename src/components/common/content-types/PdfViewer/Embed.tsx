@@ -10,7 +10,6 @@ import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { IPdfViewChangeEvent, usePdfControls } from '@/hooks/usePdfControls'
-import { useStoreSelector } from '@/hooks/useRedux'
 import { useUserPreferences } from '@/hooks/userPreferences'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { PdfFrame } from '@/types/frame-picker.type'
@@ -56,10 +55,6 @@ export function Embed({ frame, hideControls }: EmbedProps) {
     frame.config.allowedAutoScroll
   )
 
-  const { contentStudioRightSidebar } = useStoreSelector(
-    (state) => state.layout.studio
-  )
-
   useHotkeys('c', () => copyToClipboard(containerRef), {
     enabled: !hideControls,
   })
@@ -84,22 +79,6 @@ export function Embed({ frame, hideControls }: EmbedProps) {
     })
   }
 
-  const getDisplay = () => {
-    if (
-      !contentStudioRightSidebar ||
-      frame.id !== currentFrame?.id ||
-      hideControls
-    ) {
-      return display
-    }
-
-    return {
-      ...display,
-      width: display.width ? display.width - 300 : display.width,
-      height: display.height ? display.height - 300 : display.height,
-    }
-  }
-
   if (isError) {
     return <LoadError invalidUrl canUpdateFrame={permissions.canUpdateFrame} />
   }
@@ -121,7 +100,7 @@ export function Embed({ frame, hideControls }: EmbedProps) {
           pageNumber={selectedPage}
           onDocumentLoadSuccess={onDocumentLoadSuccess}
           onPageLoadSuccess={fitPageToContainer}
-          fitDimensions={getDisplay()}
+          fitDimensions={display}
           autoScroll={
             frame.config.allowedAutoScroll &&
             !hideControls &&

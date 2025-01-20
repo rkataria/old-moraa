@@ -7,6 +7,7 @@ import { useState } from 'react'
 
 import { Button } from '@nextui-org/react'
 
+import { ContentLoading } from '@/components/common/ContentLoading'
 import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
 import { uploadFile } from '@/services/storage.service'
 
@@ -28,14 +29,6 @@ export function ImageUploader({
   //     e.target.files ? uploadFile(e.target.files[0]) : null,
   //   [uploadFile]
   // )
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex items-center justify-center p-8 rounded-lg min-h-[10rem] bg-opacity-80">
-  //       <Spinner className="text-neutral-500" size={1.5} />
-  //     </div>
-  //   )
-  // }
 
   // const wrapperClass = cn(
   //   'flex flex-col items-center justify-center px-8 py-10 rounded-lg bg-opacity-80',
@@ -64,7 +57,6 @@ export function ImageUploader({
             onUpload(img.src)
           }}
           onSelect={async (file) => {
-            console.log(file)
             const sanitizedName = file.name.replace(/[^a-zA-Z0-9.]/g, '')
             const response = await uploadFile({
               file,
@@ -78,7 +70,11 @@ export function ImageUploader({
           }}
         />
       ) : (
-        `${imageUploadProgress}%`
+        <ContentLoading
+          fullPage
+          overlay
+          message={`Uploading ${imageUploadProgress}%`}
+        />
       )}
       {/* <FileUploader
         maxNumberOfFiles={1}
