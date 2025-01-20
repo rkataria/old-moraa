@@ -4,6 +4,7 @@ import { fabric } from 'fabric'
 
 import { GroupBubbleMenu } from './GroupBubbleMenu'
 import { ImageBubbleMenu } from './ImageBubbleMenu'
+import { ListBubbleMenu } from './ListBubbleMenu'
 import { RectBubbleMenu } from './RectBubbleMenu'
 import { TextboxBubbleMenu } from './TextboxBubbleMenu'
 
@@ -16,6 +17,8 @@ enum FabricObjectType {
   PATH = 'path',
   GROUP = 'group',
   ACTIVE_SELECTION = 'activeSelection',
+  BULLET_LIST = 'BulletList',
+  NUMBER_LIST = 'NumberList',
 }
 
 const calculateBubbleMenuPosition = (target: fabric.Object) => {
@@ -139,6 +142,8 @@ export function BubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
     [FabricObjectType.IMAGE]: <ImageBubbleMenu canvas={canvas} />,
     [FabricObjectType.PATH]: <RectBubbleMenu canvas={canvas} />,
     [FabricObjectType.GROUP]: <GroupBubbleMenu canvas={canvas} />,
+    [FabricObjectType.BULLET_LIST]: <ListBubbleMenu canvas={canvas} />,
+    [FabricObjectType.NUMBER_LIST]: <ListBubbleMenu canvas={canvas} />,
     [FabricObjectType.ACTIVE_SELECTION]: null,
   }
 
