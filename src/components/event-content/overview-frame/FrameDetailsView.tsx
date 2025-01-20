@@ -5,7 +5,6 @@ import { useState } from 'react'
 
 import {
   Button,
-  Image,
   Modal,
   ModalBody,
   ModalContent,
@@ -19,6 +18,7 @@ import { RecordingsOverview } from './RecordingsOverview'
 import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Participantslist } from '@/components/enroll/ParticipantList'
+import { EventImage } from '@/components/event-details/EventImage'
 import { EventTimeline } from '@/components/event-details/Timeline'
 import { useEvent } from '@/hooks/useEvent'
 import { cn } from '@/utils/utils'
@@ -93,16 +93,7 @@ export function FrameDetailsView() {
           </RenderIf>
         </div>
         <div className="flex flex-col gap-6">
-          <Image
-            src={
-              event?.image_url ||
-              'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
-            }
-            classNames={{
-              wrapper: 'w-full h-full',
-              img: 'w-full object-cover rounded-lg shadow-xl aspect-square',
-            }}
-          />
+          <EventImage src={event?.image_url} />
           <RecordingsOverview />
           <EventTimeline event={event} hosts={hosts} />
           <Participantslist participants={participants as any} hosts={hosts} />

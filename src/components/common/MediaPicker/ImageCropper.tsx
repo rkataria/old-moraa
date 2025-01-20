@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 import { Slider, Tooltip } from '@nextui-org/react'
 import Cropper, { Area } from 'react-easy-crop'
+import { CiNoWaitingSign } from 'react-icons/ci'
+import { HiOutlineArrowSmallLeft } from 'react-icons/hi2'
 import { IoIosSquareOutline } from 'react-icons/io'
 import { LuRectangleHorizontal, LuRectangleVertical } from 'react-icons/lu'
 
@@ -57,17 +59,39 @@ export function ImageCropper({
     }
   }
 
+  const defaultAspectRatio = selectedImage.width / selectedImage.height
+
   return (
-    <div className="relative left-0 top-0 w-full h-full bg-white p-4 flex flex-col gap-4">
+    <div className="relative left-0 top-0 w-full h-full bg-white flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <span className="text-md font-semibold">Crop Image</span>
+        <div className="flex justify-start items-center gap-1">
+          <Button
+            isIconOnly
+            color="default"
+            variant="light"
+            onClick={onDiscard}>
+            <HiOutlineArrowSmallLeft size={18} />
+          </Button>
+          <span className="text-md font-semibold">Crop Image</span>
+        </div>
         <div className="flex justify-end items-center gap-4">
           {aspectRatio ? null : (
             <>
+              <Tooltip content="Reset">
+                <Button
+                  color="default"
+                  variant="light"
+                  isIconOnly
+                  onClick={() => {
+                    setCropAspectRatio(undefined)
+                  }}>
+                  <CiNoWaitingSign size={22} />
+                </Button>
+              </Tooltip>
               <Tooltip content="1:1">
                 <Button
-                  color="primary"
-                  variant="light"
+                  color="default"
+                  variant={cropAspectRatio === 1 ? 'flat' : 'light'}
                   isIconOnly
                   onClick={() => {
                     setCropAspectRatio(1)
@@ -77,8 +101,8 @@ export function ImageCropper({
               </Tooltip>
               <Tooltip content="16:9">
                 <Button
-                  color="primary"
-                  variant="light"
+                  color="default"
+                  variant={cropAspectRatio === 16 / 9 ? 'flat' : 'light'}
                   isIconOnly
                   onClick={() => {
                     setCropAspectRatio(16 / 9)
@@ -88,8 +112,8 @@ export function ImageCropper({
               </Tooltip>
               <Tooltip content="9:16">
                 <Button
-                  color="primary"
-                  variant="light"
+                  color="default"
+                  variant={cropAspectRatio === 9 / 16 ? 'flat' : 'light'}
                   isIconOnly
                   onClick={() => {
                     setCropAspectRatio(9 / 16)
@@ -99,9 +123,7 @@ export function ImageCropper({
               </Tooltip>
             </>
           )}
-          <Button color="primary" variant="light" onClick={onDiscard}>
-            Discard
-          </Button>
+
           <Button color="primary" onClick={handleCropDone}>
             Done
           </Button>
@@ -113,7 +135,7 @@ export function ImageCropper({
           crop={croppedArea}
           rotation={rotation}
           zoom={zoom}
-          aspect={cropAspectRatio}
+          aspect={cropAspectRatio || defaultAspectRatio}
           onCropChange={setCroppedArea}
           onRotationChange={setRotation}
           onCropComplete={onCropComplete}

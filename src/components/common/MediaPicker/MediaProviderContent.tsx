@@ -39,6 +39,8 @@ export function MediaProviderContent({
     null
   )
 
+  const showCropper = isCropOpen && selectedImage
+
   const handleImageSelect = (imageElment: HTMLImageElement) => {
     if (crop && fileType === 'images') {
       setIsCropOpen(true)
@@ -50,7 +52,7 @@ export function MediaProviderContent({
     onSelectCallback && onSelectCallback(imageElment)
   }
 
-  if (isCropOpen && selectedImage) {
+  if (showCropper) {
     return (
       <ImageCropper
         selectedImage={selectedImage}

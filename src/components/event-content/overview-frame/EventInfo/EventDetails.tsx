@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Button,
-  Image,
   Modal,
   ModalBody,
   ModalContent,
@@ -29,10 +28,10 @@ import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipa
 import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Participantslist } from '@/components/enroll/ParticipantList'
+import { EventImage } from '@/components/event-details/EventImage'
 import { EventTimeline } from '@/components/event-details/Timeline'
 import { theme } from '@/components/events/ThemeModal'
 import { ThemePicker } from '@/components/events/ThemePicker'
-import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -144,7 +143,7 @@ export function EventDetails() {
                       minRows={1}
                       classNames={{
                         input:
-                          'text-[40px] font-semibold tracking-tight text-black/80 leading-[46px]',
+                          'text-[40px] font-semibold text-black/80 leading-[46px]',
                         inputWrapper: 'border-none p-0 shadow-none',
                       }}
                     />
@@ -253,19 +252,12 @@ export function EventDetails() {
               />
             </div>
             <div className="flex flex-col gap-6">
-              <div className="relative aspect-square">
+              <div className="relative w-full aspect-square">
                 <Controller
                   control={createEventForm.control}
                   name="imageUrl"
                   render={({ field }) => (
-                    <Image
-                      src={imageObject || field.value || IMAGE_PLACEHOLDER}
-                      classNames={{
-                        wrapper:
-                          '!max-w-none h-full rounded-lg overflow-hidden shadow-lg',
-                        img: 'w-full object-cover h-full rounded-lg',
-                      }}
-                    />
+                    <EventImage src={imageObject || (field.value as string)} />
                   )}
                 />
                 {imageUploading && (
@@ -281,6 +273,8 @@ export function EventDetails() {
                 )}
                 <RenderIf isTrue={!preview}>
                   <MediaPicker
+                    placement="left"
+                    crop
                     ImageOrientation="squarish"
                     trigger={
                       <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition-all duration-300 rounded-full cursor-pointer bottom-2 right-2 bg-black/40 hover:bg-black/50">

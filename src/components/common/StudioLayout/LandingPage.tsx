@@ -36,11 +36,7 @@ export function LandingPage() {
       className="h-full">
       <div
         className={cn(
-          'pr-4 max-w-screen-xl py-10 overflow-y-auto h-full scrollbar-none',
-          {
-            'pl-[4.4374rem]': !preview,
-            'pl-16': preview,
-          }
+          'pr-4 max-w-screen-xl py-10 overflow-y-auto h-full scrollbar-none pl-16'
         )}>
         {renderContent()}
       </div>

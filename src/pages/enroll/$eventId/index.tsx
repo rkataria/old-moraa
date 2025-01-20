@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 
 import {
   Button,
-  Image,
   Modal,
   ModalBody,
   ModalContent,
@@ -26,6 +25,7 @@ import { ContentLoading } from '@/components/common/ContentLoading'
 import { LogoWithName } from '@/components/common/Logo'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Participantslist } from '@/components/enroll/ParticipantList'
+import { EventImage } from '@/components/event-details/EventImage'
 import { EventTimeline } from '@/components/event-details/Timeline'
 import { ThemeEffects } from '@/components/events/ThemeEffects'
 import { useAuth } from '@/hooks/useAuth'
@@ -237,16 +237,7 @@ export function Visit() {
               </RenderIf>
             </div>
             <div className="flex flex-col gap-6">
-              <Image
-                src={
-                  event?.image_url ||
-                  'https://images.unsplash.com/photo-1525351159099-81893194469e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBhcnR5JTIwaW52aXRhdGlvbnxlbnwwfHwwfHx8MA%3D%3D'
-                }
-                classNames={{
-                  wrapper: 'w-full h-full',
-                  img: 'w-full object-cover rounded-lg shadow-xl aspect-square',
-                }}
-              />
+              <EventImage src={event?.image_url} />
               <RenderIf isTrue={visibleUserNote()}>
                 <div className="flex items-center gap-2 bg-green-100 p-4 rounded-sm border-green-200 border">
                   <FaCheckCircle className="text-green-600 text-2xl shrink-0" />

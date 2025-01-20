@@ -73,7 +73,6 @@ export function MediaPicker({
 }: MediaPickerProps) {
   const localFileInputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState(false)
-  const [isCropEnabled, setIsCropEnabled] = useState(crop)
   const [provider, setProvider] = useState<MediaProviderType>(
     MediaProviderType.UNSPLASH
   )
@@ -129,7 +128,6 @@ export function MediaPicker({
                       disabled={option.disabled}
                       onClick={() => {
                         setProvider(MediaProviderType.LIBRARY)
-                        setIsCropEnabled(option.allowCrop)
                         setFileType(
                           option.label.toLowerCase() as 'images' | 'videos'
                         )
@@ -150,7 +148,6 @@ export function MediaPicker({
                       disabled={option.disabled}
                       onClick={() => {
                         setProvider(option.label as MediaProviderType)
-                        setIsCropEnabled(option.allowCrop)
                       }}
                     />
                   ))}
@@ -187,10 +184,11 @@ export function MediaPicker({
           </div>
           <div className="h-full p-4 flex-auto">
             <MediaProviderContent
+              key={provider}
               ImageOrientation={ImageOrientation}
               provider={provider}
               fileType={fileType}
-              crop={isCropEnabled}
+              crop={crop}
               onSelectCallback={(imageElment) => {
                 onSelectCallback?.(imageElment)
                 setOpen(false)
