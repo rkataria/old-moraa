@@ -16,7 +16,16 @@ export function Header() {
     <div className="flex items-center justify-between w-full h-[56px] px-6 p-4 sticky top-0 bg-white z-[10] border-b">
       <div className="flex items-center gap-2 h-full flex-1">
         <div className="pr-4 border-r-2 border-gray-200 flex items-center">
-          <MoraaLogo color="primary" className="cursor-pointer" logoOnly />
+          <MoraaLogo
+            color="primary"
+            className="cursor-pointer"
+            logoOnly
+            onClick={() =>
+              router.navigate({
+                to: '/events',
+              })
+            }
+          />
         </div>
         <Breadcrumbs
           itemClasses={{

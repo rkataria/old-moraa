@@ -11,6 +11,7 @@ export interface StudioLayoutState {
   editing: boolean
   activeTab: StudioTabType
   contentStudioLeftSidebarVisible: boolean
+  contentStudioRightSidebarVisible: boolean
   contentStudioRightSidebar:
     | 'frame-settings'
     | 'frame-appearance'
@@ -28,6 +29,7 @@ const initialState: StudioLayoutState = {
   editing: false,
   activeTab: 'landing-page',
   contentStudioLeftSidebarVisible: true,
+  contentStudioRightSidebarVisible: true,
   contentStudioRightSidebar: null,
   contentStudioRightResizableSidebar: null,
   expandedSections: [],
@@ -47,6 +49,10 @@ export const layoutStudioSlice = createSlice({
     toggleContentStudioLeftSidebarVisible(state) {
       state.contentStudioLeftSidebarVisible =
         !state.contentStudioLeftSidebarVisible
+    },
+    toggleContentStudioRightSidebarVisible(state) {
+      state.contentStudioRightSidebarVisible =
+        !state.contentStudioRightSidebarVisible
     },
     setContentStudioRightSidebar(state, action) {
       state.contentStudioRightSidebar = action.payload
@@ -79,6 +85,7 @@ export const layoutStudioSlice = createSlice({
 export const {
   setActiveTabAction,
   toggleContentStudioLeftSidebarVisibleAction,
+  toggleContentStudioRightSidebarVisibleAction,
   setContentStudioRightSidebarAction,
   setEditingAction,
   setContentStudioRightResizableSidebarAction,

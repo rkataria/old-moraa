@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { User } from '@supabase/supabase-js'
 
 import { attachOnStoreInitListener, renameSliceActions } from '@/stores/helpers'
+import { attachStoreListener } from '@/stores/listener'
+import { getProfileThunk } from '@/stores/thunks/profile.thunk'
 import { getUserThunk } from '@/stores/thunks/user.thunks'
 import { supabaseClient } from '@/utils/supabase/client'
 
@@ -39,6 +41,14 @@ export const userSlice = createSlice({
       state.isLoading = false
       state.isError = true
     })
+  },
+})
+
+attachStoreListener({
+  actionCreator: getUserThunk.fulfilled,
+  effect: (_, { dispatch, getState }) => {
+    const userId = getState().user.currentUser.user?.id
+    dispatch(getProfileThunk(userId as string))
   },
 })
 

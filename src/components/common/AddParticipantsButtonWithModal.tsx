@@ -9,7 +9,6 @@ import {
   ModalHeader,
   Modal,
   ButtonProps,
-  Avatar,
 } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
@@ -24,6 +23,7 @@ import {
 } from './AddParticipantsForm'
 import { RenderIf } from './RenderIf/RenderIf'
 import { Tooltip } from './ShortuctTooltip'
+import { IUserProfile, UserAvatar } from './UserAvatar'
 import { Button } from '../ui/Button'
 
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
@@ -46,15 +46,16 @@ export function ButtonWithModal({
   buttonProps?: ButtonProps
   disclosure?: UseDisclosureReturn
 }) {
-  const user = useStoreSelector((state) => state.user.currentUser.user)
   const { eventId = '' } = useParams({ strict: false })
 
   const currentPageUrl = window.location.pathname + window.location.search
+  const profile = useStoreSelector((state) => state.user.profile.profile)
 
   const [open, setOpen] = useState<boolean>(false)
   const { participants, refetch } = useEvent({
     id: eventId,
   })
+
   const deleteParticipantMutation = useMutation({
     mutationFn: async (participantId: string) => {
       await EventService.deleteParticipant({ eventId, participantId })
@@ -116,12 +117,12 @@ export function ButtonWithModal({
                 </div>
               )}
             </Button>
-
-            <Avatar
-              size="sm"
-              className="min-w-6 w-6 h-6"
-              src={user?.user_metadata.avatar_url}
-            />
+            <RenderIf isTrue={!!profile}>
+              <UserAvatar
+                profile={profile as IUserProfile}
+                avatarProps={{ size: 'sm', className: 'min-w-6 w-6 h-6' }}
+              />
+            </RenderIf>
           </div>
         </Tooltip>
       </RenderIf>

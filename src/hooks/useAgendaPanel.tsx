@@ -10,6 +10,8 @@ import { useEventContext } from '@/contexts/EventContext'
 import {
   setAgendaPanelDisplayTypeAction,
   setExpandedSectionsAction,
+  toggleContentStudioLeftSidebarVisibleAction,
+  toggleContentStudioRightSidebarVisibleAction,
 } from '@/stores/slices/layout/studio.slice'
 import { EventContextType } from '@/types/event-context.type'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
@@ -130,6 +132,14 @@ export function AgendaPanelContextProvider({
       status:
         showPublishedFrames && eventMode !== 'present' ? 'PUBLISHED' : null,
     })
+  }
+
+  const toggleListDisplayMode = () => {
+    dispatch(
+      setAgendaPanelDisplayTypeAction(
+        listDisplayMode === 'list' ? 'grid' : 'list'
+      )
+    )
   }
 
   useHotkeys('ArrowUp', () => {
@@ -403,20 +413,24 @@ export function AgendaPanelContextProvider({
     toggleExpandedSection(currentSectionId)
   })
 
-  const toggleView = () => {
-    dispatch(
-      setAgendaPanelDisplayTypeAction(
-        listDisplayMode === 'list' ? 'grid' : 'list'
-      )
-    )
-  }
-
   useHotkeys(
     [
       KeyboardShortcuts['Agenda Panel'].grid.key,
       KeyboardShortcuts['Agenda Panel'].list.key,
     ],
-    toggleView,
+    toggleListDisplayMode,
+    liveHotKeyProps
+  )
+
+  useHotkeys(
+    KeyboardShortcuts['Agenda Panel'].expandAndCollapse.keyWithCode,
+    () => dispatch(toggleContentStudioLeftSidebarVisibleAction()),
+    liveHotKeyProps
+  )
+
+  useHotkeys(
+    KeyboardShortcuts['Agenda Panel'].expandAndCollapseRightSideBar.keyWithCode,
+    () => dispatch(toggleContentStudioRightSidebarVisibleAction()),
     liveHotKeyProps
   )
 
@@ -438,13 +452,6 @@ export function AgendaPanelContextProvider({
     dispatch(setExpandedSectionsAction([...expandedSectionIds, sectionId]))
   }
 
-  const toggleListDisplayMode = () => {
-    dispatch(
-      setAgendaPanelDisplayTypeAction(
-        listDisplayMode === 'list' ? 'grid' : 'list'
-      )
-    )
-  }
   const onMultiSelect = (frameId: string) => {
     const previousFrames = selectedFrameIds.length
       ? [...selectedFrameIds]

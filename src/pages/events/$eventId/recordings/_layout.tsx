@@ -3,10 +3,10 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { Header } from '@/components/recording/Header'
 
 export const Route = createFileRoute('/events/$eventId/recordings/_layout')({
-  component: () => <DashboardLayout />,
+  component: () => <RecordingsLayout />,
 })
 
-function DashboardLayout() {
+function RecordingsLayout() {
   return (
     <div className="flex flex-col h-screen">
       <Header />

@@ -34,7 +34,7 @@ export function Tooltip({
   return (
     <NextUiTooltip
       {...rest}
-      delay={1000}
+      delay={1500}
       content={
         content || (
           <div className="flex items-center gap-2 text-xs">

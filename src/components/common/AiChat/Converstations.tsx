@@ -5,10 +5,10 @@ import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
+import '@/styles/app-markdown.css'
 
 export function Converstations() {
   const { messages, loading } = useStoreSelector((state) => state.ai.chat)
-
   const createMarkup = (content: string) => ({
     __html: content ? marked.marked(content) : '',
   })
@@ -138,11 +138,15 @@ export function Converstations() {
           </RenderIf>
 
           <div
-            className={cn('text-sm px-4 py-3 rounded-md tracking-tight', {
-              'text-right self-end': message.role === 'user',
-              ' text-gray-800 text-left self-start': message.role !== 'user',
-              'pl-2': message.status === 'processing',
-            })}
+            style={{ wordBreak: 'break-word' }}
+            className={cn(
+              'text-sm px-4 py-3 rounded-md tracking-tight app-markdown-body',
+              {
+                'self-end': message.role === 'user',
+                'text-gray-800 text-left self-start': message.role !== 'user',
+                'pl-2': message.status === 'processing',
+              }
+            )}
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={createMarkup(message.content)}
           />

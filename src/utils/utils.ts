@@ -264,6 +264,11 @@ export const KeyboardShortcuts = {
       key: 'alt + [',
       keyWithCode: 'alt+BracketLeft',
     },
+    expandAndCollapseRightSideBar: {
+      label: 'Collapse/Expand Right Sidebar',
+      key: 'alt + ]',
+      keyWithCode: 'alt+BracketRight',
+    },
   },
   Live: {
     muteUnmute: {

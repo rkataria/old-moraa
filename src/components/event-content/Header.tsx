@@ -6,7 +6,6 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { PublishButton } from './PublishButton'
 import { StudioTabs } from './StudioTabs'
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
-import { AgendaPanelToggle } from '../common/AgendaPanel/AgendaPanelToggle'
 import { MoraaLogo } from '../common/MoraaLogo'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
 import { RenderIf } from '../common/RenderIf/RenderIf'
@@ -14,9 +13,8 @@ import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleBut
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { toggleContentStudioLeftSidebarVisibleAction } from '@/stores/slices/layout/studio.slice'
 import { getStatusColor } from '@/utils/event.util'
 
 export function Header({
@@ -29,11 +27,7 @@ export function Header({
   refetchEvent: any
 }) {
   const router = useRouter()
-  const dispatch = useStoreDispatch()
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
-  const contentStudioLeftSidebarVisible = useStoreSelector(
-    (state) => state.layout.studio.contentStudioLeftSidebarVisible
-  )
   const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
 
   const { permissions } = useEventPermissions()
@@ -92,12 +86,12 @@ export function Header({
               marginRight: activeTab === 'content-studio' ? '0px' : '-30px',
             }}
             transition={{ duration: 0.2, ease: 'easeInOut' }}>
-            <AgendaPanelToggle
+            {/* <AgendaPanelToggle
               collapsed={!contentStudioLeftSidebarVisible}
               onToggle={() => {
                 dispatch(toggleContentStudioLeftSidebarVisibleAction())
               }}
-            />
+            /> */}
           </motion.div>
           {/* <Tooltip content={event?.name} isDisabled={event?.name?.length < 45}> */}
           <span className="font-medium text-base whitespace-nowrap overflow-hidden text-ellipsis max-w-[28vw]">

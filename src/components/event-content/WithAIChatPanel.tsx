@@ -31,7 +31,7 @@ export function WithAIChatPanel({ children }: { children: ReactNode }) {
         </PanelResizeHandle>
       )}
       {resizableRightSidebarVisible && (
-        <Panel defaultSize={40} minSize={25}>
+        <Panel defaultSize={40} minSize={25} className="border z-10 rounded-lg">
           <AIChat
             onClose={() =>
               dispatch(setContentStudioRightResizableSidebarAction(null))

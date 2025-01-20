@@ -448,16 +448,16 @@ input[type='number']::-webkit-outer-spin-button {
 
 /* Selection Color */
 *::selection {
-  background: #7c3aed;
-  color: #ffffff;
+  background: #dac8fa !important;
+  color: black !important;
 }
 *::-moz-selection {
-  background: #7c3aed;
-  color: #ffffff;
+  background: #dac8fa !important;
+  color: black !important;
 }
 *::-webkit-selection {
-  background: #7c3aed;
-  color: #ffffff;
+  background: #dac8fa !important;
+  color: black !important;
 }
 
 /* Moraa Slide */

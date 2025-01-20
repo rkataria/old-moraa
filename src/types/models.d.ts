@@ -1,5 +1,6 @@
 import { Tables } from './supabase-db'
 
+export type ProfileModel = Tables<{ schema: 'public' }, 'profile'>
 export type EventModel = Tables<{ schema: 'public' }, 'event'>
 export type MeetingModel = Tables<{ schema: 'public' }, 'meeting'>
 export type SectionModel = Tables<{ schema: 'public' }, 'section'>

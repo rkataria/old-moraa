@@ -13,7 +13,7 @@ import { FrameType } from '@/utils/frame-picker.util'
 
 export function ContentStudioRightSidebarControls() {
   const dispatch = useStoreDispatch()
-  const { eventMode, currentFrame, preview } = useEventContext()
+  const { eventMode, currentFrame } = useEventContext()
   const { permissions } = useEventPermissions()
 
   const { contentStudioRightSidebar } = useStoreSelector(
@@ -35,16 +35,6 @@ export function ContentStudioRightSidebarControls() {
 
   const renderContent = () => {
     if (!currentFrame) return []
-
-    if (preview) {
-      return [
-        {
-          key: 'frame-notes',
-          title: 'Notes',
-          content: <FrameNoteToggleButton />,
-        },
-      ]
-    }
 
     if ([FrameType.MORAA_SLIDE].includes(currentFrame.type as FrameType)) {
       return [

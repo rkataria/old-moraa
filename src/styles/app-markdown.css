@@ -1,0 +1,177 @@
+/* Global markdown body styling */
+.app-markdown-body {
+  margin: 0 auto;
+  word-wrap: break-word;
+}
+
+/* Headings */
+.app-markdown-body h1,
+.app-markdown-body h2,
+.app-markdown-body h3,
+.app-markdown-body h4,
+.app-markdown-body h5,
+.app-markdown-body h6 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.app-markdown-body h1 {
+  font-size: 2.5em;
+}
+
+.app-markdown-body h2 {
+  font-size: 2em;
+}
+
+.app-markdown-body h3 {
+  font-size: 1.75em;
+}
+
+.app-markdown-body h4 {
+  font-size: 1.5em;
+}
+
+.app-markdown-body h5 {
+  font-size: 1.25em;
+}
+
+.app-markdown-body h6 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs */
+.app-markdown-body p {
+  margin-bottom: 12px;
+}
+
+.app-markdown-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+.app-markdown-body a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.app-markdown-body a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Lists */
+.app-markdown-body ul,
+.app-markdown-body ol {
+  margin-bottom: 12px;
+}
+
+.app-markdown-body li {
+  margin-bottom: 8px;
+}
+
+/* Bullet Points (Unordered Lists) */
+.app-markdown-body ul {
+  list-style-type: disc;
+}
+
+.app-markdown-body ul li {
+  list-style-position: inside;
+}
+
+/* Numbered Lists (Ordered Lists) */
+.app-markdown-body ol {
+  list-style-type: decimal;
+  margin-left: 20px;
+}
+
+.app-markdown-body ol li {
+  list-style-position: inside;
+}
+
+/* Code blocks */
+.app-markdown-body pre {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  color: #333;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  margin-bottom: 1rem;
+}
+
+.app-markdown-body pre code {
+  display: block;
+  color: #d6336c;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1em;
+  white-space: pre-wrap;
+}
+
+/* Inline code */
+.app-markdown-body code {
+  background-color: #f4f4f4;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  color: #d6336c;
+}
+
+/* Blockquotes */
+.app-markdown-body blockquote {
+  border-left: 4px solid #007bff;
+  padding-left: 15px;
+  margin-left: 0;
+  color: #666;
+  font-style: italic;
+}
+
+/* Images */
+.app-markdown-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+}
+
+/* Tables */
+.app-markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+
+.app-markdown-body th,
+.app-markdown-body td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.app-markdown-body th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+/* Task lists */
+.app-markdown-body input[type='checkbox'] {
+  margin-right: 8px;
+}
+
+.app-markdown-body li input[type='checkbox'] {
+  margin-left: 10px;
+}
+
+.app-markdown-body input[type='checkbox']:checked {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+/* Horizontal rule */
+.app-markdown-body hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
