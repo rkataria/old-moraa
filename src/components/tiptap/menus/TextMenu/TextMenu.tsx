@@ -12,7 +12,7 @@ import { useTextmenuCommands } from './hooks/useTextmenuCommands'
 import { useTextmenuContentTypes } from './hooks/useTextmenuContentTypes'
 import { useTextmenuStates } from './hooks/useTextmenuStates'
 
-import { ColorPicker } from '@/components/tiptap/panels'
+import { ColorPicker } from '@/components/common/ColorPicker'
 import { Icon } from '@/components/tiptap/ui/Icon'
 import { Toolbar } from '@/components/tiptap/ui/Toolbar'
 
@@ -104,46 +104,26 @@ export function TextMenu({ editor }: TextMenuProps) {
           <Icon name="CodeXml" />
         </MemoButton>
         <EditLinkPopover onSetLink={commands.onLink} />
-
-        <Popover placement="bottom">
-          <PopoverTrigger>
+        <MemoColorPicker
+          trigger={
             <MemoButton
               active={!!states.currentHighlight}
               tooltip="Highlight text">
               <Icon name="Highlighter" />
             </MemoButton>
-          </PopoverTrigger>
-          <PopoverContent>
-            {() => (
-              <div className="p-1">
-                <MemoColorPicker
-                  color={states.currentHighlight}
-                  onChange={commands.onChangeHighlight}
-                  onClear={commands.onClearHighlight}
-                />
-              </div>
-            )}
-          </PopoverContent>
-        </Popover>
-
-        <Popover placement="bottom">
-          <PopoverTrigger>
+          }
+          defaultColor={states.currentHighlight}
+          onChange={commands.onChangeHighlight}
+        />
+        <MemoColorPicker
+          trigger={
             <MemoButton active={!!states.currentColor} tooltip="Text color">
               <Icon name="Palette" />
             </MemoButton>
-          </PopoverTrigger>
-          <PopoverContent>
-            {() => (
-              <div className="p-1">
-                <MemoColorPicker
-                  color={states.currentColor}
-                  onChange={commands.onChangeColor}
-                  onClear={commands.onClearColor}
-                />
-              </div>
-            )}
-          </PopoverContent>
-        </Popover>
+          }
+          defaultColor={states.currentColor}
+          onChange={commands.onChangeColor}
+        />
         <Popover placement="bottom">
           <PopoverTrigger>
             <MemoButton tooltip="More options">

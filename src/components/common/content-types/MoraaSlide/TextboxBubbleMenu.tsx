@@ -133,7 +133,7 @@ export function TextboxBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         <ColorPicker
           className="h-4 w-4 border-2 border-black/20"
           defaultColor={activeObject.fill as string}
-          onchange={(color) => {
+          onChange={(color) => {
             changeTextStyles({
               canvas,
               activeObject,

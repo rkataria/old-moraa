@@ -77,9 +77,8 @@ export function Draw() {
                 label="Fill Color"
                 control={
                   <ColorPicker
-                    className="border-1 border-black/50"
                     defaultColor={canvas.freeDrawingBrush.color as string}
-                    onchange={setFillColor}
+                    onChange={setFillColor}
                   />
                 }
               />

@@ -93,9 +93,8 @@ export function BackgroundControlsModal({
                   <div className="flex justify-between items-center">
                     <h3>Color</h3>
                     <ColorPicker
-                      className="border-1 border-black/50"
                       defaultColor={backgroundColor as string}
-                      onchange={handleBackgroundChange}
+                      onChange={handleBackgroundChange}
                     />
                   </div>
                   <div className="flex justify-between items-center">

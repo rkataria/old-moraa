@@ -66,7 +66,7 @@ export function ListBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         <ColorPicker
           className="h-4 w-4 border-2 border-black/20"
           defaultColor={activeObject.fill as string}
-          onchange={(color) => {
+          onChange={(color) => {
             activeObject.set('fill', color)
             canvas.renderAll()
             canvas.fire('object:modified', { target: activeObject })

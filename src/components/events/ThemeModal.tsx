@@ -246,7 +246,7 @@ export function ThemeModal({
 
                       <ColorPicker
                         defaultColor={selectedTheme?.color}
-                        onchange={handleColorChange}
+                        onChange={handleColorChange}
                       />
                     </div>
                   </PopoverContent>

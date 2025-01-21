@@ -150,9 +150,9 @@ export function PollEditor({ frame: frameFromRemote }: EditProps) {
                       className="text-black/25 hover:text-black/50 text-lg cursor-pointer"
                     />
                     <ColorPicker
-                      onchange={(color) => handlePollColor(color, index)}
+                      onChange={(color) => handlePollColor(color, index)}
                       defaultColor={option.color}
-                      className="w-4 h-4 rounded-sm cursor-pointer max-w-4 overflow-hidden"
+                      className="w-4 h-4 rounded-sm"
                     />
                   </div>
                 </li>

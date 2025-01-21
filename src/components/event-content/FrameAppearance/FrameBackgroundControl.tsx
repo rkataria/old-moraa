@@ -17,9 +17,9 @@ export function FrameBackgroundControl() {
       label="Background color"
       control={
         <ColorPicker
-          className="border-1 border-black/50 rounded-full w-9 h-5"
+          className="border-1 border-black/50 rounded-full"
           defaultColor={currentFrame.config?.backgroundColor}
-          onchange={(color) => {
+          onChange={(color) => {
             if (currentFrame.config?.backgroundColor === color) return
 
             updateFrame({

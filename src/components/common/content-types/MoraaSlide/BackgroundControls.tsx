@@ -144,9 +144,8 @@ export function MoraaSlideBackgroundControls() {
                     className="flex justify-between items-center"
                     control={
                       <ColorPicker
-                        className="border-1 border-black/50"
                         defaultColor={overlayColor as string}
-                        onchange={(color) => {
+                        onChange={(color) => {
                           if (blendFilter) {
                             blendFilter.color = color
                             blendFilter.mode = 'overlay'

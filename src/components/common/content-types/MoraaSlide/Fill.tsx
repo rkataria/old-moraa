@@ -2,6 +2,7 @@ import { Slider } from '@nextui-org/react'
 
 import { ColorPicker } from '../../ColorPicker'
 import { LabelWithInlineControl } from '../../LabelWithInlineControl'
+import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { changeTextStyles } from '@/utils/moraa-slide'
@@ -23,13 +24,16 @@ export function Fill() {
   return (
     <div className="flex flex-col gap-3 pt-4">
       <LabelWithInlineControl
-        label={activeObject.type === 'textbox' ? 'Text Color' : 'Fill Color'}
+        label={
+          ['textbox', 'BulletList', 'NumberList'].includes(activeObject.type!)
+            ? 'Text Color'
+            : 'Fill Color'
+        }
         className="items-center"
         control={
           <ColorPicker
-            className="border-1 border-black/50"
             defaultColor={fill as string}
-            onchange={(color) => {
+            onChange={(color) => {
               const { type } = activeObject
               if (type === 'textbox') {
                 changeTextStyles({
@@ -54,67 +58,78 @@ export function Fill() {
           />
         }
       />
-      <LabelWithInlineControl
-        label="Border Color"
-        className="items-center"
-        control={
-          <ColorPicker
-            className="border-1 border-black/50"
-            defaultColor={strokeColor as string}
-            onchange={(color) => {
-              const { type } = activeObject
+      <RenderIf
+        isTrue={
+          !['textbox', 'BulletList', 'NumberList'].includes(activeObject.type!)
+        }>
+        <LabelWithInlineControl
+          label="Border Color"
+          className="items-center"
+          control={
+            <ColorPicker
+              defaultColor={strokeColor as string}
+              onChange={(color) => {
+                const { type } = activeObject
 
-              if (type === 'group') {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                const objects = activeObject.getObjects()
-                objects.forEach((object: fabric.Object) =>
-                  object.set('stroke', color)
-                )
-              } else {
-                activeObject.set('stroke', color)
-              }
+                if (type === 'group') {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  const objects = activeObject.getObjects()
+                  objects.forEach((object: fabric.Object) =>
+                    object.set('stroke', color)
+                  )
+                } else {
+                  activeObject.set('stroke', color)
+                }
 
-              canvas.renderAll()
-            }}
-          />
-        }
-      />
-      <LabelWithInlineControl
-        label="Border Width"
-        className="flex-col"
-        control={
-          <Slider
-            size="sm"
-            showTooltip
-            step={1}
-            maxValue={40}
-            minValue={0}
-            aria-label="Stroke Width"
-            className="w-full"
-            value={strokeWidth}
-            onChange={(value) => {
-              const { type } = activeObject
+                canvas.renderAll()
+                canvas.fire('object:modified', { target: activeObject })
+              }}
+            />
+          }
+        />
+      </RenderIf>
+      <RenderIf
+        isTrue={
+          !['textbox', 'BulletList', 'NumberList'].includes(activeObject.type!)
+        }>
+        <LabelWithInlineControl
+          label="Border Width"
+          className="flex-col items-start"
+          control={
+            <Slider
+              size="sm"
+              showTooltip
+              step={1}
+              maxValue={40}
+              minValue={0}
+              aria-label="Stroke Width"
+              className="w-full"
+              defaultValue={strokeWidth as number}
+              onChange={(value) => {
+                const { type } = activeObject
 
-              if (type === 'group') {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                const objects = activeObject.getObjects()
-                objects.forEach((object: fabric.Object) =>
-                  object.set('strokeWidth', value as number)
-                )
-              } else {
-                activeObject.set('strokeWidth', value as number)
-              }
+                if (type === 'group') {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  const objects = activeObject.getObjects()
+                  objects.forEach((object: fabric.Object) =>
+                    object.set('strokeWidth', value as number)
+                  )
+                } else {
+                  activeObject.set('strokeWidth', value as number)
+                }
 
-              canvas.renderAll()
-            }}
-          />
-        }
-      />
+                canvas.renderAll()
+                canvas.fire('object:modified', { target: activeObject })
+              }}
+            />
+          }
+        />
+      </RenderIf>
       <LabelWithInlineControl
         label="Opacity"
-        className="flex-col"
+        className="flex-col items-start"
         control={
           <Slider
             size="sm"
@@ -124,10 +139,11 @@ export function Fill() {
             minValue={0}
             aria-label="Opacity"
             className="w-full"
-            value={opacity}
+            defaultValue={opacity as number}
             onChange={(value) => {
               activeObject.set('opacity', value as number)
               canvas.renderAll()
+              canvas.fire('object:modified', { target: activeObject })
             }}
           />
         }
