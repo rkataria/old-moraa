@@ -10,6 +10,7 @@ import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { IPdfViewChangeEvent, usePdfControls } from '@/hooks/usePdfControls'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { useUserPreferences } from '@/hooks/userPreferences'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { PdfFrame } from '@/types/frame-picker.type'
@@ -24,6 +25,9 @@ export function Embed({ frame, hideControls }: EmbedProps) {
   const currentFrame = useCurrentFrame()
   const { permissions } = useEventPermissions()
   const { userPreferences, userPreferencesPdf } = useUserPreferences()
+  const resizableRightSidebarVisible = useStoreSelector(
+    (state) => state.layout.studio.contentStudioRightResizableSidebar
+  )
 
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -89,6 +93,9 @@ export function Embed({ frame, hideControls }: EmbedProps) {
 
   return (
     <div
+      style={{
+        maxWidth: resizableRightSidebarVisible && !hideControls ? '40vw' : '',
+      }}
       className={cn('relative h-full overflow-hidden', {
         'pt-12': !hideControls,
       })}>
@@ -107,6 +114,7 @@ export function Embed({ frame, hideControls }: EmbedProps) {
             currentFrame?.id === frame.id
           }
           totalPages={totalPages}
+          maxWidth={containerRef.current?.clientWidth}
         />
 
         <RenderIf isTrue={!hideControls}>

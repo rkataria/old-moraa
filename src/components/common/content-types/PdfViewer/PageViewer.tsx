@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { pdfjs, Document, Page } from 'react-pdf'
 
 import { PdfDocumentLoadEvent } from '@/hooks/usePdfControls'
@@ -23,6 +25,7 @@ export function PdfPage({
   fitDimensions = { width: 800 },
   autoScroll = false,
   totalPages = 1,
+  maxWidth,
   onDocumentLoadSuccess,
   onPageLoadSuccess,
 }: {
@@ -33,10 +36,12 @@ export function PdfPage({
     | undefined
   autoScroll?: boolean
   totalPages?: number | null
+  maxWidth?: number
   onDocumentLoadSuccess: (data: PdfDocumentLoadEvent) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onPageLoadSuccess: (page: any) => void
 }) {
+  const [isLoaded, setIsLoaded] = useState(false)
   const pagesToRender = autoScroll ? totalPages : 1
 
   return (
@@ -51,8 +56,11 @@ export function PdfPage({
         .map((_, index) => (
           <Page
             pageNumber={autoScroll ? index + 1 : pageNumber}
-            onLoadSuccess={onPageLoadSuccess}
-            width={fitDimensions.width}
+            onLoadSuccess={(page) => {
+              onPageLoadSuccess(page)
+              setIsLoaded(true)
+            }}
+            width={!isLoaded ? maxWidth : fitDimensions.width}
             height={fitDimensions.height}
             className={cn('w-fit mx-auto', `page-${index + 1}`, {
               'mb-2': autoScroll,

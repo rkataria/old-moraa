@@ -83,7 +83,7 @@ export function RightSidebar({ dyteStates, setDyteStates }: RightSidebarProps) {
             />
           </div>
           <NoteOverlay
-            className="p-4"
+            className="p-4 pt-[3.1875rem] h-full max-h-full overflow-y-auto scrollbar-hide"
             editable={false}
             onClose={() => {
               dispatch(closeRightSidebarAction())

@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 
 import { useParams, useRouter } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
-import { IoPlayCircleOutline } from 'react-icons/io5'
 import { LiaPhotoVideoSolid } from 'react-icons/lia'
 
 import { ResponsiveVideoPlayer } from '@/components/common/ResponsiveVideoPlayer'
@@ -50,7 +49,6 @@ export function RecordingsOverview() {
       <div className="flex items-center justify-between">
         <p className="font-medium">Recording</p>
         <p className="text-gray-400 text-xs font-light">
-          recorded on{' '}
           {DateTime.fromISO(recording.stopped_time).toFormat('MMMM dd, yyyy')}
         </p>
       </div>
@@ -61,12 +59,6 @@ export function RecordingsOverview() {
             showControls={false}
             showViewMode={false}
           />
-          <div className="absolute left-0 top-0 grid place-items-center w-full h-full bg-black/40">
-            <IoPlayCircleOutline
-              size={50}
-              className="  text-white cursor-pointer"
-            />
-          </div>
         </div>
 
         <div className="flex flex-col justify-between h-full">
