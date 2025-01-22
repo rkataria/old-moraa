@@ -15,7 +15,10 @@ export const uploadFile = ({
   neverExpire?: boolean
   onProgressChange?: (percentage: number) => void
 }) => {
-  const _bucketName = bucketName ?? 'assets-uploads'
+  const _bucketName =
+    bucketName ??
+    import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME ??
+    'assets-uploads'
 
   // Create an object to store the upload instance
   const uploadWrapper: { uploadInstance?: Upload } = {}

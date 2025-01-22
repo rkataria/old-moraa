@@ -42,7 +42,7 @@ export function LocalVideoEdit({
       const response = await uploadFile({
         fileName: `${frame.id}/video-${Date.now()}-${file.name}`,
         file,
-        bucketName: 'assets-uploads',
+        bucketName: import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'assets-uploads'
         onProgressChange: (p) => {
           if (typeof p === 'number') {
             setProgress(Math.ceil(p))

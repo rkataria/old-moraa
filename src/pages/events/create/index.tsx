@@ -223,8 +223,8 @@ export function EventsCreatePage() {
                     setImageUploading(true)
                     const response: any = await uploadFile({
                       file,
-                      fileName: `event-image-${eventId}-.${file.name.split('.').pop()}`,
-                      bucketName: 'image-uploads',
+                      fileName: `${eventId}/event-image-.${file.name.split('.').pop()}`,
+                      bucketName: import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'image-uploads',
                       onProgressChange: setImageUploadProgress,
                     }).promise
 

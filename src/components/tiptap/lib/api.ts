@@ -12,8 +12,9 @@ export class API {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: any = await uploadFile({
         file,
+        // TODO: revisit this to add frameId in path
         fileName: `tiptap-${Date.now()}-${file.name}`,
-        bucketName: 'image-uploads',
+        bucketName: import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'image-uploads',
         onProgressChange: setLoadingPercentage,
       }).promise
 
@@ -22,14 +23,12 @@ export class API {
 
         return response?.url
       }
-
-      return '/image-placeholder.png'
     } catch (error) {
       console.error('Error uploading image:', error)
       setLoadingPercentage?.(null)
-
-      return '/image-placeholder.png'
     }
+
+    return '/image-placeholder.png'
   }
 }
 

@@ -184,8 +184,8 @@ export function ScheduleEventForm<
           )}
           <LocalFilePicker
             accept="image/png, image/jpeg, image/jpg"
-            fileName={`event-image-${eventId}`}
-            bucketName="image-uploads"
+            fileName={`${eventId}/event-image`}
+            bucketName={import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME} // "image-uploads"
             uploadRemote
             crop
             trigger={

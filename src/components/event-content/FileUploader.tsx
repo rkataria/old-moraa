@@ -61,7 +61,7 @@ export function FileUploader({
   title = 'Upload Files',
   maxNumberOfFiles = 1,
   allowedFileTypes,
-  bucketName = 'assets-uploads',
+  bucketName = import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'assets-uploads',
   folderName,
   useTUS = false,
   hint = 'You can upload files from your local device, Dropbox, Google Drive, One Drive, Unsplash, or a URL',
@@ -142,6 +142,7 @@ export function FileUploader({
 
     _uppy.on('complete', async (result) => {
       if (result.failed.length === 0) {
+        // TODO: refactor this to use bucketName instead of hardcoding
         if (bucketName === 'image-uploads') {
           onPublicFilesUploaded?.(
             getFiles(result.successful) as FileWithoutSignedUrl[]

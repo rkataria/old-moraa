@@ -22,8 +22,9 @@ export const uploadPDFFile = async (
       uploadDataDuringCreation: true,
       removeFingerprintOnSuccess: true, // Important if you want to allow re-uploading the same file https://github.com/tus/tus-js-client/blob/main/docs/api.md#removefingerprintonsuccess
       metadata: {
-        bucketName: 'pdf-uploads',
-        objectName: fileName,
+        bucketName: import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'pdf-uploads',
+        // TODO: revisit to add frameId in path, or see if it can exist without a frame
+        objectName: `media/${fileName}`,
       },
       chunkSize: 6 * 1024 * 1024, // NOTE: it must be set to 6MB (for now) do not change it
       onError(error) {

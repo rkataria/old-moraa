@@ -123,8 +123,8 @@ export function PollSettings() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const response: any = await uploadFile({
               file,
-              fileName: `tiptap-.${file.name.split('.').pop()}`,
-              bucketName: 'image-uploads',
+              fileName: `${currentFrame.id}/tiptap-.${file.name.split('.').pop()}`,
+              bucketName: import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'image-uploads',
               onProgressChange: setUploadPercentage,
             }).promise
             if (response?.url) {
@@ -156,8 +156,8 @@ export function PollSettings() {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const response: any = await uploadFile({
                       file,
-                      fileName: `tiptap-.${file.name.split('.').pop()}`,
-                      bucketName: 'image-uploads',
+                      fileName: `${currentFrame.id}/tiptap-.${file.name.split('.').pop()}`,
+                      bucketName: import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'image-uploads',
                       onProgressChange: setUploadPercentage,
                     }).promise
                     if (response?.url) {

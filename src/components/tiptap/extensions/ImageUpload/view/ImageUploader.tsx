@@ -60,8 +60,9 @@ export function ImageUploader({
             const sanitizedName = file.name.replace(/[^a-zA-Z0-9.]/g, '')
             const response = await uploadFile({
               file,
+              // TODO: Revisit this to include frameId in fileName
               fileName: `tiptap-${Date.now()}-${sanitizedName}`,
-              bucketName: 'image-uploads',
+              bucketName: import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'image-uploads',
               onProgressChange: setImageUploadProgress,
             }).promise
             if (response?.url) {
