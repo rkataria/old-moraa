@@ -56,7 +56,7 @@ export const uploadPDFFile = async (
 
 export const downloadPDFFile = (fileName: string) =>
   supabaseClient.storage
-    .from('pdf-uploads')
+    .from(import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME) // earlier 'pdf-uploads'
     .download(fileName)
     .then((res) => {
       if (res.error) throw res.error
@@ -65,4 +65,6 @@ export const downloadPDFFile = (fileName: string) =>
     })
 
 export const deletePDFFile = (fileName: string) =>
-  supabaseClient.storage.from('pdf-uploads').remove([fileName])
+  supabaseClient.storage
+    .from(import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME) // earlier 'pdf-uploads'
+    .remove([fileName])

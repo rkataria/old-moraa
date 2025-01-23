@@ -12,7 +12,11 @@ type LiveProps = {
 export function Live({ frame }: LiveProps) {
   const signedURLQuery = useQuery({
     queryKey: ['image-frame', frame.content?.imagePath],
-    queryFn: () => getSignedUrl('assets-uploads', frame.content?.imagePath),
+    queryFn: () =>
+      getSignedUrl(
+        import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'assets-uploads',
+        frame.content?.imagePath
+      ),
     enabled: !!frame.content?.imagePath && !frame.content?.url,
     refetchOnMount: false,
     staleTime: Infinity,

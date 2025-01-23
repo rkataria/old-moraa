@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { FilePickerDropzone } from '../FilePickerDropzone'
 
+import { useAuth } from '@/hooks/useAuth'
 import { uploadFile } from '@/services/storage.service'
 import { formatFileSize } from '@/utils/file-size-format'
 
@@ -41,14 +42,18 @@ interface FilePickerModalProps {
   onFileUploaded: (file: Omit<MediaFile, 'status' | 'progress'>) => void
 }
 
-const getFilePath = (fileName: string) => `media-library/file-${fileName}`
+const getFilePath = (fileName: string, profileId: string) => {
+  const sanitizedName = fileName.replace(/[^a-zA-Z0-9.]/g, '')
 
+  return `${profileId}/${sanitizedName}`
+}
 export function FilePickerModal({
   isOpen,
   onClose,
   onFileUploaded,
 }: FilePickerModalProps) {
   const [files, setFiles] = useState<MediaFile[]>([])
+  const { currentUser } = useAuth()
   const uploadFilesMutation = useMutation({
     mutationFn: async (file: MediaFile) => {
       const { promise, cancelUpload } = uploadFile({
@@ -167,7 +172,7 @@ export function FilePickerModal({
                     return {
                       id,
                       file,
-                      path: getFilePath(file.name),
+                      path: getFilePath(file.name, currentUser.id),
                       progress: 0,
                       status: UploadStatus.NOT_STARTED,
                     }

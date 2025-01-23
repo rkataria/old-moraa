@@ -81,7 +81,7 @@ export const MediaLibrary = withSelectable<string>(
         })
 
         const signedURLs = await getSignedUrls(
-          'assets-uploads',
+          import.meta.env.VITE_MORAA_ASSETS_BUCKET_NAME, // 'assets-uploads',
           response.data.map((item) => item.path!)
         )
 
