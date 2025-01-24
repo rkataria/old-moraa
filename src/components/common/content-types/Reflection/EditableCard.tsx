@@ -176,7 +176,7 @@ export function EditableCard({
 
           <div className="flex items-center gap-2">
             {editEnabled && (
-              <Button color="danger" variant="light" onClick={handleCancel}>
+              <Button variant="light" onClick={handleCancel}>
                 Reset
               </Button>
             )}
@@ -205,7 +205,7 @@ export function EditableCard({
 
                 setEditEnabled(false)
               }}>
-              Save
+              Submit
             </Button>
           </div>
         </div>

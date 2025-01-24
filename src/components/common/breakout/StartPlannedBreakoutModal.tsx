@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useDyteParticipants } from '@/hooks/useDyteParticipants'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
@@ -44,13 +45,13 @@ export function StartPlannedBreakoutModal({
   open,
   setOpen,
 }: StartPlannedBreakoutModalProps) {
+  const { joinedParticipants } = useDyteParticipants()
   const [openAssignmentModal, setOpenAssignmentModal] = useState(false)
   const { updateFrame } = useEventContext()
   const { eventRealtimeChannel, currentFrame, presentationStatus } =
     useEventSession()
   const dyteMeeting = useDyteMeeting()
-  const currentParticipantCount =
-    dyteMeeting.meeting.participants.joined.toArray().length
+  const currentParticipantCount = joinedParticipants.length
   const roomsCount = currentFrame?.content?.breakoutRooms?.length
   const participantsPerGroup = currentFrame?.config?.participantPerGroup
   const breakoutDuration = currentFrame?.config.breakoutDuration
@@ -304,9 +305,7 @@ export function StartPlannedBreakoutModal({
   }
 
   const isParticipantJoined = (participantId: string) =>
-    dyteMeeting.meeting.participants.active
-      .toArray()
-      .some((p) => p.customParticipantId === participantId)
+    joinedParticipants.some((p) => p.customParticipantId === participantId)
 
   const startBreakout = () => {
     if (!startBreakoutSession) {

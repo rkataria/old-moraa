@@ -1,6 +1,7 @@
 import { useDyteMeeting } from '@dytesdk/react-web-core'
 import { Avatar } from '@nextui-org/react'
 
+import { useDyteParticipants } from '@/hooks/useDyteParticipants'
 import { cn } from '@/utils/utils'
 
 type ParticipantLiveProps = {
@@ -18,6 +19,7 @@ export function ParticipantLive({
   hideEmail,
 }: ParticipantLiveProps) {
   const { meeting } = useDyteMeeting()
+  const { joinedParticipants } = useDyteParticipants()
 
   if (!meeting) {
     return null
@@ -26,9 +28,7 @@ export function ParticipantLive({
   const isParticipantInMeeting =
     meeting.self.customParticipantId === participant.id
       ? true
-      : meeting.participants.active
-          .toArray()
-          .some((p) => p.customParticipantId === participant.id)
+      : joinedParticipants.some((p) => p.customParticipantId === participant.id)
 
   return (
     <div

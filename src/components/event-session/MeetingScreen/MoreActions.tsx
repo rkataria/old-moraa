@@ -19,12 +19,14 @@ import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipa
 import { DeleteConfirmationModal } from '@/components/common/DeleteConfirmationModal'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useDyteParticipants } from '@/hooks/useDyteParticipants'
 import { useRecording } from '@/hooks/useRecording'
 import { useStoreDispatch } from '@/hooks/useRedux'
 import { openChangeContentTilesLayoutModalAction } from '@/stores/slices/layout/live.slice'
 import { cn } from '@/utils/utils'
 
 export function MoreActions() {
+  const { joinedParticipants } = useDyteParticipants()
   const [openRecordingConfirmationModal, setOpenRecordingConfirmationModal] =
     useState(false)
   const { setDyteStates, isHost } = useEventSession()
@@ -38,7 +40,7 @@ export function MoreActions() {
   const dispatch = useStoreDispatch()
 
   const handleMicDisable = async () => {
-    meeting.participants.joined.toArray().forEach((p) => {
+    joinedParticipants.forEach((p) => {
       meeting.participants.disableAudio(p.id)
     })
     toast.success('All participant muted')

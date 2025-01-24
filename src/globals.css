@@ -500,3 +500,9 @@ dyte-clock dyte-icon {
 .giphy-search-bar > div > div {
   background: #7c3aed !important;
 }
+
+
+/* Tldraw styles overrides for recorder view */
+.recorder-container .tlui-helper-buttons {
+  display: none !important;
+}

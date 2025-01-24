@@ -12,8 +12,10 @@ export function MeetingSetupParticipants() {
         await meeting.participants.getParticipantsInMeetingPreJoin()
 
       if (participants?.peers) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setJoinedParticipants(participants.peers as any)
+        setJoinedParticipants(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          participants.peers.filter((p) => !p.flags?.hiddenParticipant) as any
+        )
       }
     }
 

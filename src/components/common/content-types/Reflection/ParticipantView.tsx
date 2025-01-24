@@ -6,6 +6,7 @@ import groupBy from 'lodash.groupby'
 import { Card } from './Card'
 import { SelfCard } from './SelfCard'
 import { TypingUserCards } from './TypingUserCards'
+import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useAuth } from '@/hooks/useAuth'
@@ -51,11 +52,13 @@ export function ParticipantView() {
 
   return (
     <Fragment key={key}>
-      <SelfCard
-        username={username}
-        selfResponse={selfResponse}
-        avatarUrl={getAvatarForName(username, user.user_metadata.avatar_url)}
-      />
+      <RenderIf isTrue={!dyteMeeting.self.permissions.isRecorder}>
+        <SelfCard
+          username={username}
+          selfResponse={selfResponse}
+          avatarUrl={getAvatarForName(username, user.user_metadata.avatar_url)}
+        />
+      </RenderIf>
       {otherResponses.map((res) => (
         <Card
           key={res.id}

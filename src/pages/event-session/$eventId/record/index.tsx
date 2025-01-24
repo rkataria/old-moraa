@@ -193,7 +193,7 @@ export function RecordPage() {
         <BreakoutManagerContextProvider>
           <EventProvider eventMode="present">
             <EventSessionProvider>
-              <div className="outline-4 border-green-500">
+              <div className="recorder-container p-4">
                 <RecordingView />
               </div>
             </EventSessionProvider>
