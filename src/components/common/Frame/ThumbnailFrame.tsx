@@ -16,7 +16,6 @@ import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
 import { BreakoutFrame } from '@/components/common/breakout/BreakoutFrame'
 import { GoogleSlidesFrame } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
 import { MoraaPadFrame } from '@/components/common/content-types/MoraaPad/MoraaPad'
-import { RoomProvider } from '@/contexts/RoomProvider'
 import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 
@@ -36,11 +35,7 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
       <ImageViewerFrame key={frame.id} frame={frame} asThumbnail />
     ),
     [FrameType.MIRO_EMBED]: <MiroEmbedFrame frame={frame as any} asThumbnail />,
-    [FrameType.MORAA_BOARD]: (
-      <RoomProvider frameId={frame.id}>
-        <MoraaBoardFrame frame={frame} asThumbnail />
-      </RoomProvider>
-    ),
+    [FrameType.MORAA_BOARD]: <MoraaBoardFrame frame={frame} asThumbnail />,
     [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} asThumbnail />,
     [FrameType.MORAA_SLIDE]: (
       <MoraaSlideFrame key={frame.id} frame={frame as any} asThumbnail />

@@ -21,7 +21,7 @@ export function RoomProvider({ children, frameId }: RoomProviderProps) {
     <LBRoomProvider
       id={`moraaboard:${frameId}`}
       initialPresence={{ presence: undefined, isHost: false }}
-      initialStorage={{ records: new LiveMap() }}>
+      initialStorage={{ records: new LiveMap(), thumbnail: '' }}>
       <ClientSideSuspense
         fallback={
           <div className="h-full w-full flex items-center justify-content">

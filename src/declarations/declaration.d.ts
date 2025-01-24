@@ -14,6 +14,7 @@ declare global {
     Storage: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       records: LiveMap<string, any> // Used by tldraw
+      thumbnail: string // Used by tldraw
     }
     // Custom user info set when authenticating with a secret key
     UserMeta: {

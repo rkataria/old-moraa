@@ -9,7 +9,6 @@ import { RichTextSettings } from './RichTextSettings'
 import { VideoEmbedSettings } from './VideoEmbedSettings'
 
 import { useEventContext } from '@/contexts/EventContext'
-import { RoomProvider } from '@/contexts/RoomProvider'
 import { FrameType } from '@/utils/frame-picker.util'
 
 export function FrameSettings() {
@@ -27,11 +26,7 @@ export function FrameSettings() {
     [FrameType.IMAGE_VIEWER]: null,
     [FrameType.RICH_TEXT]: <RichTextSettings />,
     [FrameType.MIRO_EMBED]: <MiroEmbedSettings />,
-    [FrameType.MORAA_BOARD]: (
-      <RoomProvider frameId={currentFrame.id}>
-        <MoraaBoardSettings key={currentFrame.id} />
-      </RoomProvider>
-    ),
+    [FrameType.MORAA_BOARD]: <MoraaBoardSettings key={currentFrame.id} />,
     [FrameType.MORAA_SLIDE]: null,
     [FrameType.BREAKOUT]: <BreakoutSettings />,
     [FrameType.POWERPOINT]: null,

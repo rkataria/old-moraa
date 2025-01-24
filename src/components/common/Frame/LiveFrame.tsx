@@ -21,7 +21,6 @@ import { RichTextFrame } from '../content-types/RichText/RichText'
 import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
 
 import { frameTypesWithTitle } from '@/components/event-content/FrameTitleDescriptionPanel'
-import { RoomProvider } from '@/contexts/RoomProvider'
 import { IFrame } from '@/types/frame.type'
 import {
   FrameType,
@@ -68,11 +67,7 @@ export function LiveFrame({ frame }: FrameContainerProps) {
     [FrameType.MIRO_EMBED]: (
       <MiroEmbedFrame frame={frame as any} isLiveSession />
     ),
-    [FrameType.MORAA_BOARD]: (
-      <RoomProvider frameId={frame.id}>
-        <MoraaBoardFrame frame={frame} isLiveSession />
-      </RoomProvider>
-    ),
+    [FrameType.MORAA_BOARD]: <MoraaBoardFrame frame={frame} isLiveSession />,
     [FrameType.MORAA_PAD]: <MoraaPadFrame frame={frame} isLiveSession />,
     [FrameType.MORAA_SLIDE]: (
       <MoraaSlideFrame key={frame.id} frame={frame as any} isLiveSession />

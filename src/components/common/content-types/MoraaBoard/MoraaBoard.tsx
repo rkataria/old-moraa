@@ -26,7 +26,7 @@ export function MoraaBoardFrame({
   }
 
   if (asThumbnail) {
-    return <Thumbnail frame={frame} />
+    return <Thumbnail />
   }
 
   if (!preview && permissions.canUpdateFrame) {

@@ -19,6 +19,7 @@ import {
 import { IconTrash } from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
+import { IoGridOutline } from 'react-icons/io5'
 import { RxDotsVertical } from 'react-icons/rx'
 
 // eslint-disable-next-line import/no-cycle
@@ -27,15 +28,12 @@ import { ContentLoading } from '../ContentLoading'
 import { DropdownActions } from '../DropdownActions'
 import { ViewSwitcher } from '../ViewSwitcher'
 
-import { RoomProvider } from '@/contexts/RoomProvider'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useProfile } from '@/hooks/useProfile'
 import { LibraryService } from '@/services/library.service'
 import { IFrame } from '@/types/frame.type'
-import { FrameType } from '@/utils/frame-picker.util'
+import { FRAME_PICKER_FRAMES } from '@/utils/frame-picker.util'
 import { cn, FrameColorCodes } from '@/utils/utils'
-
-const AllFrameTypes = ['All Frames', ...Object.values(FrameType)]
 
 function ThumbnailContainer({
   libraryItem,
@@ -51,19 +49,10 @@ function ThumbnailContainer({
 
   return (
     <div ref={thumbnailContainerRef} className="relative w-full h-full">
-      {libraryItem.frame.type === FrameType.MORAA_BOARD ? (
-        <RoomProvider frameId={libraryItem.frame.id}>
-          <FrameThumbnailCard
-            frame={libraryItem.frame}
-            containerWidth={containerWidth}
-          />
-        </RoomProvider>
-      ) : (
-        <FrameThumbnailCard
-          frame={libraryItem.frame}
-          containerWidth={containerWidth}
-        />
-      )}
+      <FrameThumbnailCard
+        frame={libraryItem.frame}
+        containerWidth={containerWidth}
+      />
     </div>
   )
 }
@@ -77,24 +66,28 @@ export function FrameLibrary({
   allowFrameDelete?: boolean
   frameTypes?: string[]
 }) {
+  const AllFrameTypes = [
+    { title: 'All Frames', icon: <IoGridOutline size={24} /> },
+    ...FRAME_PICKER_FRAMES.map((frame) => ({
+      title: frame.type,
+      icon: frame.iconSmall,
+    })).filter((option) => !frameTypes || frameTypes?.includes(option.title)),
+  ]
+
   const [page, setPage] = useState(1)
   const profile = useProfile()
 
-  const [frameType, setFrameType] = useState(AllFrameTypes[0])
+  const [frameType, setFrameType] = useState(AllFrameTypes[0].title)
 
   const [listDisplayMode, toggleListDisplayMode] = useState<string>('grid')
   const libraryQuery = useQuery({
-    queryKey: [
-      'library-frames',
-      page,
-      frameTypes || (frameType !== AllFrameTypes[0] ? [frameType] : []),
-    ],
+    queryKey: ['library-frames', page, frameType],
     queryFn: () =>
       LibraryService.getFrameFromLibrary({
         profileId: profile!.data!.id,
         page,
         frameTypes:
-          frameTypes || (frameType !== AllFrameTypes[0] ? [frameType] : []),
+          frameType !== AllFrameTypes[0].title ? [frameType] : undefined,
       }),
     enabled: !!profile?.data?.id,
   })
@@ -126,10 +119,13 @@ export function FrameLibrary({
             onChange={(e) => {
               setFrameType(e.target.value)
             }}>
-            {AllFrameTypes.map((label) => (
-              <SelectItem value={label} key={label} title={label}>
-                {label}
-              </SelectItem>
+            {AllFrameTypes.map((type) => (
+              <SelectItem
+                key={type.title}
+                value={type.title}
+                startContent={type?.icon}
+                title={type.title}
+              />
             ))}
           </Select>
         </div>

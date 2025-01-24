@@ -1,15 +1,18 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import {
   useOthers,
+  useRoom,
   useSelf,
   useUpdateMyPresence,
 } from '@liveblocks/react/suspense'
 import {
   type Editor as TldrawEditor,
+  Editor as IEditor,
+  exportToBlob,
   PeopleMenu,
   Tldraw,
-  TLTextShapeProps,
+  TLShapeId,
 } from 'tldraw'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
@@ -17,8 +20,8 @@ import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useProfile } from '@/hooks/useProfile'
 import { useStorageStore } from '@/hooks/useStorageStore'
 import { IFrame } from '@/types/frame.type'
-
 import 'tldraw/tldraw.css'
+import { blobToBase64WithMime } from '@/utils/base-64'
 
 interface EditorProps {
   frame: IFrame
@@ -31,6 +34,7 @@ export function Editor({
   readOnly = false,
   asThumbnail = false,
 }: EditorProps) {
+  const isReadonly = readOnly || asThumbnail
   const { data: userProfile } = useProfile()
   const editorRef = useRef<TldrawEditor | null>(null)
   const { permissions } = useEventPermissions()
@@ -41,6 +45,8 @@ export function Editor({
   const hostPresence = useOthers((others) =>
     others.find((other) => other.presence.isHost)
   )
+  const room = useRoom()
+
   const store = useStorageStore({
     frameId: frame.id,
     user: { id, color: info?.color, name: info?.name },
@@ -52,9 +58,42 @@ export function Editor({
     editorRef.current?.startFollowingUser(hostPresence.id)
   }, [hostPresence, userProfile])
 
-  if (store.status !== 'synced-remote') return <ContentLoading />
+  const saveCurrentEditorThumbnail = useCallback(
+    (editor: IEditor, shapes: Set<TLShapeId>) => {
+      if (!editor || !shapes?.size || isReadonly) return
+      exportToBlob({
+        editor,
+        ids: [...shapes],
+        format: 'svg',
+        opts: { background: false, padding: 10 },
+      }).then((blob) => {
+        blobToBase64WithMime(blob, 'image/svg+xml').then((base64URL) => {
+          room.getStorage().then((storage) => {
+            storage.root.update({
+              thumbnail: base64URL,
+            })
+          })
+        })
+      })
+    },
+    [isReadonly, room]
+  )
 
-  const isReadonly = readOnly || asThumbnail
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const editor = editorRef.current
+      const shapeIds = editor?.getCurrentPageShapeIds()
+      if (!editor || !shapeIds?.size) return
+
+      saveCurrentEditorThumbnail(editor, shapeIds)
+    }, 7000)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [room, saveCurrentEditorThumbnail])
+
+  if (store.status !== 'synced-remote') return <ContentLoading />
 
   return (
     <Tldraw
@@ -67,37 +106,8 @@ export function Editor({
       }}
       hideUi={isReadonly}
       onMount={(editor) => {
-        const shapes = editor
-          .getCurrentPageShapes()
-          .filter((shape) => shape.type === 'text')
-
-        editor.updateShapes(
-          shapes.map((shape) => {
-            const currentWidth = (shape.props as TLTextShapeProps).w
-
-            if (!currentWidth) return shape
-            const widthStr = currentWidth.toString()
-            const decimalPart = widthStr.split('.')[1]
-            const lastDecimalDigit = parseInt(decimalPart.slice(-1), 10)
-            const decimalPlaces = decimalPart.length
-            const adjustment = 1 / 10 ** decimalPlaces
-            const newWidth =
-              lastDecimalDigit % 2 === 0
-                ? currentWidth + adjustment
-                : currentWidth - adjustment
-
-            return {
-              ...shape,
-              props: {
-                ...shape.props,
-                w: parseFloat(newWidth.toFixed(decimalPlaces)),
-              },
-            }
-          })
-        )
-
         editorRef.current = editor
-
+        saveCurrentEditorThumbnail(editor, editor?.getCurrentPageShapeIds())
         editor.updateInstanceState({
           isReadonly: !!isReadonly,
         })
