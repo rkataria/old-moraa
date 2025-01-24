@@ -15,6 +15,7 @@ export type TooltipComponentProps = {
   actionKey?: string
   content?: ReactNode
   isOpen?: boolean
+  allowClosing?: boolean
 }
 
 export type TooltipProps = TooltipComponentProps &
@@ -45,6 +46,8 @@ export function Tooltip({
                   <Kbd
                     keys={key === 'alt' ? 'option' : (key as KbdKey)}
                     classNames={{
+                      abbr: 'text-xs',
+                      content: 'text-xs',
                       base: 'bg-gray-700 text-white rounded-[4px]',
                     }}>
                     {key === 'alt' ? 'Opt' : key}

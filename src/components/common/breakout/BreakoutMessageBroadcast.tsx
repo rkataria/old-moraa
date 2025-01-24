@@ -37,8 +37,10 @@ export function BreakoutMessageBroadcast() {
     if (!isMessageModalOpen) {
       setMessage('')
       setSendingMessageToRooms([])
+    } else {
+      setSendingMessageToRooms(connectedMeetings?.map((meet) => meet.id || ''))
     }
-  }, [isMessageModalOpen])
+  }, [connectedMeetings, isMessageModalOpen])
 
   const onMessageSend = () => {
     eventRealtimeChannel?.send({
@@ -55,11 +57,13 @@ export function BreakoutMessageBroadcast() {
 
   return (
     <>
-      <Tooltip content="Send message in breakout rooms">
+      <Tooltip content="Broadcast message in breakout rooms">
         <Button
-          variant="light"
-          isIconOnly
+          variant="flat"
+          color="primary"
+          size="sm"
           onClick={() => setIsMessageModalOpen(true)}>
+          Broadcast Message
           <PiTelegramLogoLight fontSize={18} />
         </Button>
       </Tooltip>
@@ -67,7 +71,7 @@ export function BreakoutMessageBroadcast() {
         isOpen={isMessageModalOpen}
         onClose={() => setIsMessageModalOpen(false)}>
         <ModalContent>
-          <ModalHeader>Send Message In Breakout</ModalHeader>
+          <ModalHeader>Broadcast Message In Breakout</ModalHeader>
           <div className="p-4">
             <Textarea
               size="sm"
@@ -82,7 +86,7 @@ export function BreakoutMessageBroadcast() {
                 meet.id ? (
                   <Checkbox
                     className="mr-4 mb-4"
-                    checked={sendingMessageToRooms.includes(meet.id)}
+                    isSelected={sendingMessageToRooms.includes(meet.id)}
                     onChange={() =>
                       sendingMessageToRooms.includes(meet.id!)
                         ? setSendingMessageToRooms(
@@ -102,8 +106,17 @@ export function BreakoutMessageBroadcast() {
             </div>
           </div>
           <ModalFooter>
-            <Button onClick={() => setIsMessageModalOpen(false)}>Cancel</Button>
-            <Button disabled={!message} onClick={() => onMessageSend()}>
+            <Button
+              size="sm"
+              variant="bordered"
+              onClick={() => setIsMessageModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              color="primary"
+              disabled={!message}
+              onClick={() => onMessageSend()}>
               Send
             </Button>
           </ModalFooter>

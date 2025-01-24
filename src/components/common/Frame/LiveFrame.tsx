@@ -40,7 +40,6 @@ export const framesWithBorder = [
   FrameType.VIDEO_EMBED,
   FrameType.POWERPOINT,
   FrameType.GOOGLE_SLIDES,
-  FrameType.BREAKOUT,
   FrameType.IMAGE_VIEWER,
 ]
 

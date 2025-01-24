@@ -12,7 +12,6 @@ import {
   exportToBlob,
   PeopleMenu,
   Tldraw,
-  TLShapeId,
 } from 'tldraw'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
@@ -59,8 +58,18 @@ export function Editor({
   }, [hostPresence, userProfile])
 
   const saveCurrentEditorThumbnail = useCallback(
-    (editor: IEditor, shapes: Set<TLShapeId>) => {
-      if (!editor || !shapes?.size || isReadonly) return
+    (editor: IEditor) => {
+      if (!editor || isReadonly) return
+      const shapes = editor?.getCurrentPageShapeIds()
+      if (!shapes?.size) {
+        room.getStorage().then((storage) => {
+          storage.root.update({
+            thumbnail: '',
+          })
+        })
+
+        return
+      }
       exportToBlob({
         editor,
         ids: [...shapes],
@@ -82,10 +91,9 @@ export function Editor({
   useEffect(() => {
     const interval = setInterval(() => {
       const editor = editorRef.current
-      const shapeIds = editor?.getCurrentPageShapeIds()
-      if (!editor || !shapeIds?.size) return
+      if (!editor) return
 
-      saveCurrentEditorThumbnail(editor, shapeIds)
+      saveCurrentEditorThumbnail(editor)
     }, 7000)
 
     return () => {
@@ -107,7 +115,7 @@ export function Editor({
       hideUi={isReadonly}
       onMount={(editor) => {
         editorRef.current = editor
-        saveCurrentEditorThumbnail(editor, editor?.getCurrentPageShapeIds())
+        saveCurrentEditorThumbnail(editor)
         editor.updateInstanceState({
           isReadonly: !!isReadonly,
         })

@@ -103,7 +103,7 @@ export function BreakoutRoomActivityCard({
   }
 
   return (
-    <div className="border rounded-xl bg-white" key={breakout?.name}>
+    <div className="border rounded-xl bg-white relative" key={breakout?.name}>
       <div className="flex justify-between items-center gap-4 px-3">
         <EditableLabel
           readOnly={!editable || !updateBreakoutRoomName}
@@ -244,7 +244,12 @@ export function BreakoutRoomActivityCard({
           )}
         </StrictModeDroppable>
       )}
-      {JoinRoomButton}
+      <RenderIf isTrue={!!JoinRoomButton}>
+        <div className="h-10" />
+        <div className="absolute bottom-0 right-0 left-0 mt-10">
+          {JoinRoomButton}
+        </div>
+      </RenderIf>
     </div>
   )
 }

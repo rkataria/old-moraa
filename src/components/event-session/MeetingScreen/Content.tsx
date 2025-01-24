@@ -74,9 +74,10 @@ export function Content() {
     frame_breakout_view: (
       <PanelsContent>
         <div className="relative flex-1 w-full h-full rounded-md overflow-hidden">
-          <h2 className="text-xl font-semibold my-4 mx-2 flex items-center">
-            Breakout <BreakoutMessageBroadcast />
-          </h2>
+          <div className="text-xl font-semibold py-4 mb-4 mx-2 flex items-center justify-between border-b border-gray-300">
+            <h3>Breakout</h3>
+            <BreakoutMessageBroadcast />
+          </div>
           <BreakoutRoomsWithParticipants key="frame_breakout_view" />
         </div>
       </PanelsContent>

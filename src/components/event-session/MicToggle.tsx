@@ -44,8 +44,12 @@ export function MicToggle({
   const getTooltipProps = () => {
     if (isSpeaking && !isMicEnabled && !hideSpeakingAlert) {
       return {
-        label:
-          "You're on mute! Click the mic button or use the shortcut to unmute.",
+        label: (
+          <p>
+            You&apos;re on mute! <br /> Click the mic button or <br /> use the
+            shortcut to unmute.
+          </p>
+        ),
         actionKey: KeyboardShortcuts.Live.muteUnmute.key,
         isOpen: true,
       }
