@@ -11,37 +11,21 @@ export const getPreviousFrame = ({
   currentFrame: IFrame | null
   onlyPublished?: boolean
 }) => {
-  if (!currentFrame) {
-    if (!currentFrame) {
-      const frames = getFilteredFramesByStatus({
-        frames: sections.flatMap((section) => section.frames ?? []),
-        status: onlyPublished ? 'PUBLISHED' : null,
-      })
+  const frames = getFilteredFramesByStatus({
+    frames: sections.flatMap((section) => section.frames ?? []),
+    status: onlyPublished ? 'PUBLISHED' : null,
+  })
 
-      return frames.at(-1)
-    }
+  if (!currentFrame) {
+    return frames?.[0] ?? null
   }
 
-  const section = sections.find((s) => s.id === currentFrame.section_id)
-
-  if (!section) return null
-
-  const currentFrameIndex = section.frames.findIndex(
-    (frame) =>
-      frame?.id === currentFrame?.id &&
-      (!onlyPublished || frame?.status === 'PUBLISHED')
+  const currentFrameIndex = frames.findIndex(
+    (frame) => frame.id === currentFrame.id
   )
 
-  if (currentFrameIndex > 0) {
-    return section.frames[currentFrameIndex - 1]
-  }
-
-  const sectionIndex = sections.findIndex((s) => s.id === section.id)
-
-  if (sectionIndex > 0) {
-    const previousSectionFrames = sections[sectionIndex - 1].frames
-
-    return previousSectionFrames[previousSectionFrames.length - 1]
+  if (currentFrameIndex > 0 && currentFrameIndex < frames.length) {
+    return frames[currentFrameIndex - 1]
   }
 
   return null
@@ -56,35 +40,21 @@ export const getNextFrame = ({
   currentFrame: IFrame | null
   onlyPublished?: boolean
 }) => {
-  if (!currentFrame) {
-    const frames = getFilteredFramesByStatus({
-      frames: sections.flatMap((section) => section.frames ?? []),
-      status: onlyPublished ? 'PUBLISHED' : null,
-    })
+  const frames = getFilteredFramesByStatus({
+    frames: sections.flatMap((section) => section.frames ?? []),
+    status: onlyPublished ? 'PUBLISHED' : null,
+  })
 
-    return frames?.[0]
+  if (!currentFrame) {
+    return frames?.[0] ?? null
   }
 
-  const section = sections.find((s) => s.id === currentFrame.section_id)
-
-  if (!section) return null
-
-  const currentSectionFrames = section.frames
-
-  const currentFrameIndex = currentSectionFrames.findIndex(
-    (frame) =>
-      frame?.id === currentFrame?.id &&
-      (!onlyPublished || frame.status === 'PUBLISHED')
+  const currentFrameIndex = frames.findIndex(
+    (frame) => frame.id === currentFrame.id
   )
 
-  if (currentFrameIndex < currentSectionFrames.length - 1) {
-    return currentSectionFrames[currentFrameIndex + 1]
-  }
-
-  const sectionIndex = sections.findIndex((s) => s.id === section.id)
-
-  if (sectionIndex < sections.length - 1) {
-    return (sections[sectionIndex + 1].frames ?? [])[0]
+  if (currentFrameIndex < frames.length - 1) {
+    return frames[currentFrameIndex + 1]
   }
 
   return null

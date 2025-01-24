@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Badge } from '@nextui-org/react'
 import { useNavigate, useRouter } from '@tanstack/react-router'
@@ -51,6 +51,7 @@ export function FrameItem({
   actionDisabled,
   framePosition,
 }: FrameItemProps) {
+  const frameRef = useRef<HTMLDivElement>(null)
   const {
     currentFrame,
     eventMode,
@@ -88,21 +89,6 @@ export function FrameItem({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false)
   const { leftSidebarVisiblity } = useStudioLayout()
 
-  const handleFrameAction = (action: {
-    key: FrameActionKey
-    label: string
-  }) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const actions: Record<FrameActionKey, any> = {
-      delete: () => setIsDeleteModalOpen(true),
-      'move-up': () => moveUpFrame(frame),
-      'move-down': () => moveDownFrame(frame),
-      'duplicate-frame': () => duplicateFrame(frame),
-      'save-frame-in-library': () => saveFrameInLibrary(frame),
-    }
-
-    actions[action.key]()
-  }
   const dispatch = useStoreDispatch()
   const isMeetingJoined = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.dyte.isMeetingJoined
@@ -120,6 +106,46 @@ export function FrameItem({
     (store) =>
       store.event.currentEvent.liveSessionState.breakout.isBreakoutActive
   )
+
+  const sidebarExpanded = leftSidebarVisiblity === 'maximized'
+
+  const isBulkSelected =
+    selectedFrameIds.includes(frame.id) && selectedFrameIds.length > 1
+
+  const isCurrentFrameActive =
+    !currentSectionId && currentFrame?.id === frame?.id
+
+  const frameActive = isBulkSelected || isCurrentFrameActive
+
+  const breakoutRunning = isBreakoutActive && breakoutFrameId === frame.id
+
+  useEffect(() => {
+    if (!frameRef.current) return
+
+    if (currentFrame?.id !== frame.id) return
+
+    frameRef.current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
+    })
+  }, [frameRef, currentFrame, frame.id])
+
+  const handleFrameAction = (action: {
+    key: FrameActionKey
+    label: string
+  }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const actions: Record<FrameActionKey, any> = {
+      delete: () => setIsDeleteModalOpen(true),
+      'move-up': () => moveUpFrame(frame),
+      'move-down': () => moveDownFrame(frame),
+      'duplicate-frame': () => duplicateFrame(frame),
+      'save-frame-in-library': () => saveFrameInLibrary(frame),
+    }
+
+    actions[action.key]()
+  }
 
   const handleDelete = async (_frame: IFrame) => {
     if (_frame.type === FrameType.BREAKOUT) {
@@ -166,18 +192,6 @@ export function FrameItem({
     }
   }
 
-  const sidebarExpanded = leftSidebarVisiblity === 'maximized'
-
-  const isBulkSelected =
-    selectedFrameIds.includes(frame.id) && selectedFrameIds.length > 1
-
-  const isCurrentFrameActive =
-    !currentSectionId && currentFrame?.id === frame?.id
-
-  const frameActive = isBulkSelected || isCurrentFrameActive
-
-  const breakoutRunning = isBreakoutActive && breakoutFrameId === frame.id
-
   const renderFrameContent = () => {
     if (listDisplayMode === 'grid') {
       return (
@@ -194,8 +208,6 @@ export function FrameItem({
 
     return (
       <div
-        key={`frame-${frame?.id}`}
-        data-miniframe-id={frame?.id}
         className={cn(
           'relative flex items-center h-8 px-2 gap-2.5 rounded-md overflow-hidden hover:bg-gray-200 group/frame-item cursor-pointer',
           {
@@ -308,17 +320,18 @@ export function FrameItem({
 
   return (
     <div
+      ref={frameRef}
+      key={`frame-${frame?.id}`}
+      data-miniframe-id={frame?.id}
       className={cn('relative w-full', {
         'w-fit': !sidebarExpanded,
         'opacity-0': shouldHideFrameOnDrag(),
       })}>
       {renderFrameContent()}
       {displayMultiDragPlaceholder()}
-      {sidebarExpanded && (
-        <RenderIf isTrue={sidebarExpanded && !frame?.content?.breakoutFrameId}>
-          <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
-        </RenderIf>
-      )}
+      <RenderIf isTrue={sidebarExpanded && !frame?.content?.breakoutFrameId}>
+        <AddItemBar sectionId={frame.section_id!} frameId={frame?.id} />
+      </RenderIf>
       <DeleteFrameModal
         isModalOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

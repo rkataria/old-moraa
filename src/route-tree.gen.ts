@@ -19,7 +19,6 @@ import { Route as OnboardingIndexImport } from './pages/onboarding/index'
 import { Route as LoginIndexImport } from './pages/login/index'
 import { Route as LoginMessagesImport } from './pages/login/messages'
 import { Route as dashboardLayoutImport } from './pages/(dashboard)/_layout'
-import { Route as PresentationEventIdIndexImport } from './pages/presentation/$eventId/index'
 import { Route as EventsCreateIndexImport } from './pages/events/create/index'
 import { Route as EventsEventIdIndexImport } from './pages/events/$eventId/index'
 import { Route as EventSessionEventIdIndexImport } from './pages/event-session/$eventId/index'
@@ -81,11 +80,6 @@ const dashboardLayoutRoute = dashboardLayoutImport.update({
 
 const EventsEventIdRecordingsRoute = EventsEventIdRecordingsImport.update({
   path: '/events/$eventId/recordings',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const PresentationEventIdIndexRoute = PresentationEventIdIndexImport.update({
-  path: '/presentation/$eventId/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -250,13 +244,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsCreateIndexImport
       parentRoute: typeof rootRoute
     }
-    '/presentation/$eventId/': {
-      id: '/presentation/$eventId/'
-      path: '/presentation/$eventId'
-      fullPath: '/presentation/$eventId'
-      preLoaderRoute: typeof PresentationEventIdIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/(dashboard)/_layout/library/frames': {
       id: '/_layout/library/frames'
       path: '/library/frames'
@@ -359,7 +346,6 @@ export const routeTree = rootRoute.addChildren({
   EventSessionEventIdIndexRoute,
   EventsEventIdIndexRoute,
   EventsCreateIndexRoute,
-  PresentationEventIdIndexRoute,
   EventsEventIdRecordingsRoute: EventsEventIdRecordingsRoute.addChildren({
     EventsEventIdRecordingsLayoutRoute:
       EventsEventIdRecordingsLayoutRoute.addChildren({
@@ -388,7 +374,6 @@ export const routeTree = rootRoute.addChildren({
         "/event-session/$eventId/",
         "/events/$eventId/",
         "/events/create/",
-        "/presentation/$eventId/",
         "/events/$eventId/recordings",
         "/event-session/$eventId/record/"
       ]
@@ -434,9 +419,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/events/create/": {
       "filePath": "events/create/index.tsx"
-    },
-    "/presentation/$eventId/": {
-      "filePath": "presentation/$eventId/index.tsx"
     },
     "/_layout/library/frames": {
       "filePath": "(dashboard)/_layout/library/frames.tsx",

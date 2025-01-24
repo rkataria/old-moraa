@@ -76,8 +76,6 @@ export function FrameGridView({
       </RenderIf>
 
       <div
-        key={`frame-${frame?.id}`}
-        data-miniframe-id={frame?.id}
         className={cn(
           'relative cursor-pointer overflow-hidden rounded-md group/frame-item w-full',
           {

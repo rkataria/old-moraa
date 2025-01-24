@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { Chip } from '@nextui-org/react'
 import { IoChevronForward } from 'react-icons/io5'
@@ -15,13 +15,13 @@ import { SectionDropdownActions } from '../SectionDropdownActions'
 import { Tooltip } from '../ShortuctTooltip'
 import { StrictModeDroppable } from '../StrictModeDroppable'
 
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
-import { EventContextType } from '@/types/event-context.type'
 import {
   EventSessionMode,
   PresentationStatuses,
@@ -53,8 +53,9 @@ export function SectionItem({
     deleteSection,
     setOverviewOpen,
     addFrameToSection,
-  } = useContext(EventContext) as EventContextType
+  } = useEventContext()
   const { permissions } = useEventPermissions()
+  const currentFrame = useCurrentFrame()
   const {
     expandedSectionIds,
     currentSectionId,
@@ -85,9 +86,12 @@ export function SectionItem({
           status: 'PUBLISHED',
         })
 
+  const handleExpandSection = () => {
+    toggleExpandedSection(section.id)
+  }
+
   const handleSectionClick = () => {
     setOverviewOpen(false)
-    toggleExpandedSection(section.id)
 
     setInsertInSectionId(section.id)
     setInsertAfterFrameId(null)
@@ -136,12 +140,13 @@ export function SectionItem({
             'flex justify-between items-center rounded-md px-2 group/section-item hover:bg-gray-200 hover:border-gray-200',
             {
               'bg-primary-100': sectionActive,
+              'bg-gray-100': currentFrame?.section_id === section.id,
             },
             className
           )}>
           <div
             className="flex justify-start items-center flex-auto gap-2 h-8 border-0 rounded-md"
-            onClick={handleSectionClick}>
+            onClick={handleExpandSection}>
             <IoChevronForward
               className={cn('duration-300 shrink-0 cursor-pointer', {
                 'rotate-90': sectionExpanded,
@@ -151,6 +156,7 @@ export function SectionItem({
               readOnly={actionDisabled}
               label={section.name}
               className="text-sm font-semibold tracking-tight cursor-pointer"
+              onClick={handleSectionClick}
               onUpdate={(value: string) => {
                 updateSection({
                   sectionPayload: { name: value },

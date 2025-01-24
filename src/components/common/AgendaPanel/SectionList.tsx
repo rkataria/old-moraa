@@ -12,10 +12,9 @@ import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
-import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { reorderFrameAction } from '@/stores/slices/event/current-event/section.slice'
 import { buildReorderFramesPayload } from '@/utils/drag.utils'
-import { cn, scrollParentToChild } from '@/utils/utils'
+import { cn } from '@/utils/utils'
 
 export function SectionList() {
   const { sections, reorderSection, reorderFrame, eventMode, preview } =
@@ -23,7 +22,6 @@ export function SectionList() {
   const { permissions } = useEventPermissions()
   const sectionListRef = useRef<HTMLDivElement>(null)
   const { leftSidebarVisiblity } = useStudioLayout()
-  const currentFrame = useCurrentFrame()
 
   const dispatch = useStoreDispatch()
 
@@ -31,30 +29,6 @@ export function SectionList() {
     useAgendaPanel()
 
   const expanded = leftSidebarVisiblity === 'maximized'
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const scrollToActiveFrame = () => {
-    if (!currentFrame) return
-
-    const currentFrameElement = document.querySelector(
-      `div[data-miniframe-id="${currentFrame.id}"]`
-    )
-
-    const ele = currentFrameElement
-
-    if (!ele) return
-
-    scrollParentToChild({
-      parent: sectionListRef.current!,
-      child: ele as HTMLElement,
-      topOffset: 100,
-      bottomOffset: 100,
-    })
-  }
-
-  useEffect(() => {
-    scrollToActiveFrame()
-  }, [currentFrame, scrollToActiveFrame])
 
   const actionDisabled =
     eventMode !== 'edit' || !permissions.canUpdateSection || preview
