@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 import { Button } from '@nextui-org/button'
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import reduce from 'lodash.reduce'
 import { marked } from 'marked'
 import { HiOutlineChatBubbleLeft } from 'react-icons/hi2'
 
@@ -11,10 +12,7 @@ import { ResponsiveVideoPlayer } from '@/components/common/ResponsiveVideoPlayer
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useCsvData } from '@/hooks/useCsv'
 import { useEvent } from '@/hooks/useEvent'
-import {
-  useGetOrGenerateSummary,
-  useGetRecording,
-} from '@/hooks/useEventRecordings'
+import { useGetSummary, useGetRecording } from '@/hooks/useEventRecordings'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useTxtData } from '@/hooks/useTxt'
 import { setCurrentEventIdAction } from '@/stores/slices/event/current-event/event.slice'
@@ -56,7 +54,7 @@ function RecordingDetails() {
     recordingId,
   })
 
-  const { summary, isFetching: isFetchingSummary } = useGetOrGenerateSummary({
+  const { summary, isFetching: isFetchingSummary } = useGetSummary({
     token: enrollment?.meeting_token,
     sessionId: recording?.session_id,
   })
@@ -66,6 +64,55 @@ function RecordingDetails() {
   const { data: transcriptsData } = useCsvData(
     transcripts?.transcript_download_url
   )
+
+  type Transcript = Array<string>
+  type GroupedTranscript = {
+    speakerId: string
+    speakerName: string
+    startTimestamp: string
+    endTimestamp: string
+    text: string
+  }
+  // TODO:Need to do this from BE.
+  function groupTranscripts(
+    _transcripts: Transcript[],
+    timeOffset = 3
+  ): GroupedTranscript[] {
+    const grouped = reduce(
+      _transcripts,
+      (result: GroupedTranscript[], current: Transcript) => {
+        const prev = result[result.length - 1]
+        const currentTimestamp = parseInt(current[0], 10)
+
+        if (
+          prev &&
+          prev.speakerId === current[1] && // speakerId check
+          currentTimestamp - parseInt(prev.endTimestamp, 10) <= timeOffset
+        ) {
+          // Combine current text with the previous one
+          prev.text += ` ${current[5]}`
+          // eslint-disable-next-line prefer-destructuring
+          prev.endTimestamp = current[0] // Update the end timestamp
+        } else {
+          // Start a new group with the current transcript
+          result.push({
+            speakerId: current[1],
+            speakerName: current[4], // Assuming speaker name is directly part of the transcript
+            startTimestamp: current[0],
+            endTimestamp: current[0],
+            text: current[5],
+          })
+        }
+
+        return result
+      },
+      []
+    )
+
+    // Return an array of objects with speaker info and transcript text
+    return grouped
+  }
+  const groupedTranscripts = groupTranscripts(transcriptsData, 5)
 
   useEffect(() => {
     if (enrollment) return
@@ -122,10 +169,12 @@ function RecordingDetails() {
 
     return (
       <div className="grid gap-6 bg-white p-4 rounded-sm mt-2 overflow-y-auto max-h-[84vh] scrollbar-none">
-        {transcriptsData.map((transcript) => (
+        {groupedTranscripts.map((transcript) => (
           <div className="">
-            <p className="font-medium">{transcript[4]}</p>
-            <p className="text-xs text-gray-500 mt-1">{transcript[5]}</p>
+            <p className="font-medium">{transcript.speakerName}</p>
+            <p className="text-xs text-gray-500 mt-1 break-words">
+              {transcript.text}
+            </p>
           </div>
         ))}
       </div>

@@ -35,52 +35,21 @@ const getRecordings = async ({
   }
 }
 
-const fetchOrGenerateSummary = async ({
+const getSummary = async ({
   meetingToken,
   sessionId,
-  maxRetries = 3,
-  initialDelay = 1000,
 }: {
   meetingToken: string
   sessionId: string
   maxRetries?: number
   initialDelay?: number
 }) => {
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms))
+  const response = await DyteRecordingService.getSummary({
+    token: meetingToken,
+    sessionId,
+  })
 
-  const getSummary = async () => {
-    const response = await DyteRecordingService.getSummary({
-      token: meetingToken,
-      sessionId,
-    })
-
-    return response.json()
-  }
-
-  let summaryData = await getSummary()
-
-  if (!summaryData?.success) {
-    await DyteRecordingService.generateSummary({
-      token: meetingToken,
-      sessionId,
-    })
-
-    let delayTime = initialDelay
-
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      await delay(delayTime)
-      summaryData = await getSummary()
-      if (summaryData?.success) {
-        return summaryData
-      }
-      delayTime *= 2
-    }
-
-    console.warn('Summary generation timed out.')
-
-    return null
-  }
+  const summaryData = await response.json()
 
   return summaryData?.data || {}
 }
@@ -137,5 +106,5 @@ const getRecording = async ({
 export const RecordingsService = {
   getRecordings,
   getRecording,
-  fetchOrGenerateSummary,
+  getSummary,
 }

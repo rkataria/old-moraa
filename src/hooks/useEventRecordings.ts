@@ -85,7 +85,7 @@ export const useGetRecording = ({
   }
 }
 
-export const useGetOrGenerateSummary = ({
+export const useGetSummary = ({
   token,
   sessionId,
 }: {
@@ -95,7 +95,7 @@ export const useGetOrGenerateSummary = ({
   const eventsRecordingQuery: UseQueryResult<any, Error> = useQuery({
     queryKey: ['recordings', 'summary', sessionId],
     queryFn: () =>
-      RecordingsService.fetchOrGenerateSummary({
+      RecordingsService.getSummary({
         meetingToken: token as string,
         sessionId: sessionId as string,
       }),
