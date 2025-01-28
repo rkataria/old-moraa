@@ -8,7 +8,7 @@ import { shuffleAndGroup } from './shuffle-array'
 import { AssignmentOption } from '@/components/common/breakout/AssignmentOptionSelector'
 
 export type StartBreakoutConfig = {
-  participantsPerRoom?: number
+  participantPerGroup?: number
   roomsCount?: number
   assignmentOption: AssignmentOption
 }
@@ -76,14 +76,15 @@ export class BreakoutRooms {
   }
 
   async startBreakoutRooms({
-    participantsPerRoom,
+    participantPerGroup,
     roomsCount,
     assignmentOption,
   }: StartBreakoutConfig) {
     await this.cleanupBreakoutManagerInstance()
-    if (participantsPerRoom === undefined && roomsCount === undefined) {
+
+    if (participantPerGroup === undefined && roomsCount === undefined) {
       throw new Error(
-        'Either participantsPerRoom or roomsCount must be provided'
+        'Either participantPerGroup or roomsCount must be provided'
       )
     }
 
@@ -92,7 +93,7 @@ export class BreakoutRooms {
     if (participants.length === 0) return
 
     const getGroupSize = () => {
-      if (participantsPerRoom) return participantsPerRoom
+      if (participantPerGroup) return participantPerGroup
 
       return Math.floor(participants.length / roomsCount!) || 1
     }

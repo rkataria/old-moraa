@@ -2,7 +2,7 @@ export function shuffleAndGroup(
   participants: string[],
   groupSize: number
 ): string[][] {
-  if (groupSize <= 0 || groupSize > participants.length) {
+  if (groupSize <= 0) {
     throw new Error('Invalid group size')
   }
   // Shuffle the participants array using the Fisher-Yates algorithm

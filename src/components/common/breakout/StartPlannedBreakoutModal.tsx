@@ -53,18 +53,18 @@ export function StartPlannedBreakoutModal({
   const dyteMeeting = useDyteMeeting()
   const currentParticipantCount = joinedParticipants.length
   const roomsCount = currentFrame?.content?.breakoutRooms?.length
-  const participantsPerGroup = currentFrame?.config?.participantPerGroup
+  const participantPerGroup = currentFrame?.config?.participantPerGroup
   const breakoutDuration = currentFrame?.config.breakoutDuration
   const assignmentOption = currentFrame?.config
     .assignmentOption as AssignmentOption
   const [breakoutConfig, setBreakoutConfig] = useState({
     participantPerGroup:
-      participantsPerGroup ||
+      participantPerGroup ||
       Math.ceil(currentParticipantCount / (roomsCount || 2)),
     roomsCount:
       roomsCount ||
-      (participantsPerGroup
-        ? Math.floor(currentParticipantCount / participantsPerGroup)
+      (participantPerGroup
+        ? Math.floor(currentParticipantCount / participantPerGroup)
         : 2),
     breakoutDuration: breakoutDuration || 5,
     assignmentOption: assignmentOption || 'auto',
@@ -78,12 +78,12 @@ export function StartPlannedBreakoutModal({
   useEffect(() => {
     setBreakoutConfig({
       participantPerGroup:
-        participantsPerGroup ||
+        participantPerGroup ||
         Math.ceil(currentParticipantCount / (roomsCount || 2)),
       roomsCount:
         roomsCount ||
-        (participantsPerGroup
-          ? Math.floor(currentParticipantCount / participantsPerGroup)
+        (participantPerGroup
+          ? Math.floor(currentParticipantCount / participantPerGroup)
           : 2),
       breakoutDuration: breakoutDuration || 5,
       assignmentOption: assignmentOption || 'auto',
@@ -91,14 +91,14 @@ export function StartPlannedBreakoutModal({
   }, [
     breakoutDuration,
     currentParticipantCount,
-    participantsPerGroup,
+    participantPerGroup,
     roomsCount,
     assignmentOption,
   ])
 
   const isConfigAlreadyProvided =
     typeof roomsCount !== 'undefined' ||
-    typeof participantsPerGroup !== 'undefined'
+    typeof participantPerGroup !== 'undefined'
 
   const DurationUI = (
     <div className="grid grid-cols-[50%_50%] gap-2">
@@ -183,7 +183,7 @@ export function StartPlannedBreakoutModal({
             min={1}
             max={30}
             allowNegative={false}
-            number={participantsPerGroup}
+            number={participantPerGroup}
             onNumberChange={(setNumber) =>
               setBreakoutConfig((conf) => ({
                 ...conf,
@@ -243,7 +243,7 @@ export function StartPlannedBreakoutModal({
          * And the `participantPerGroup` only exist on breakout group type so it won't get sent for a breakout room type
          */
         roomsCount: config.roomsCount,
-        participantsPerRoom: config.participantsPerRoom,
+        participantPerGroup: config.participantPerGroup,
         assignmentOption: config.assignmentOption || 'auto',
       })
       const connectedMeetingsToActivitiesMap: { [x: string]: string } =
@@ -406,7 +406,7 @@ export function StartPlannedBreakoutModal({
                 <div className="flex flex-col gap-6">
                   {isConfigAlreadyProvided
                     ? ShowConfigurationsUI[
-                        participantsPerGroup ? 'participants_per_room' : 'rooms'
+                        participantPerGroup ? 'participants_per_room' : 'rooms'
                       ]
                     : ConfigureRoomsUI}
                   {DurationUI}
