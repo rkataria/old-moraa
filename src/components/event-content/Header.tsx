@@ -1,6 +1,5 @@
 import { Chip } from '@nextui-org/react'
 import { useRouter } from '@tanstack/react-router'
-import { motion } from 'framer-motion'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { PublishButton } from './PublishButton'
@@ -13,7 +12,6 @@ import { AIChatbotToggleButton } from '../common/StudioLayout/AIChatbotToggleBut
 import { SessionActionButton } from '../common/StudioLayout/SessionActionButton'
 
 import { useEventPermissions } from '@/hooks/useEventPermissions'
-import { useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { getStatusColor } from '@/utils/event.util'
 
@@ -28,7 +26,6 @@ export function Header({
 }) {
   const router = useRouter()
   const { rightSidebarVisiblity, setRightSidebarVisiblity } = useStudioLayout()
-  const activeTab = useStoreSelector((state) => state.layout.studio.activeTab)
 
   const { permissions } = useEventPermissions()
 
@@ -75,29 +72,9 @@ export function Header({
           />
         </div>
         <div className="border-r-0 border-gray-200 font-semibold flex justify-start items-center gap-2 overflow-hidden">
-          <motion.div
-            initial={{
-              position: 'relative',
-              left: activeTab === 'content-studio' ? '0px' : '-40px',
-              marginRight: activeTab === 'content-studio' ? '0px' : '-30px',
-            }}
-            animate={{
-              left: activeTab === 'content-studio' ? '0vw' : '-40px',
-              marginRight: activeTab === 'content-studio' ? '0px' : '-30px',
-            }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}>
-            {/* <AgendaPanelToggle
-              collapsed={!contentStudioLeftSidebarVisible}
-              onToggle={() => {
-                dispatch(toggleContentStudioLeftSidebarVisibleAction())
-              }}
-            /> */}
-          </motion.div>
-          {/* <Tooltip content={event?.name} isDisabled={event?.name?.length < 45}> */}
           <span className="font-medium text-base whitespace-nowrap overflow-hidden text-ellipsis max-w-[28vw]">
             {event?.name}
           </span>
-          {/* </Tooltip> */}
           <RenderIf isTrue={permissions.canUpdateFrame}>
             <Chip
               variant="flat"

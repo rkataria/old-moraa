@@ -41,6 +41,7 @@ import {
   type VideoMiddlewareConfig,
   PresentationStatuses,
   DyteStates,
+  UpdateReflectionPayload,
 } from '@/types/event-session.type'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -261,6 +262,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           '* , participant:participant_id(*, enrollment:enrollment_id(*, profile:user_id(*)))'
         )
         .eq('frame_id', currentFrame.id)
+        .order('created_at', { ascending: true }) // or false for descending
+
       // .eq('dyte_meeting_id', dyteMeeting.meta.meetingId)
 
       if (_error) {
@@ -479,17 +482,14 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       console.error(_error)
     }
   }
+
   const updateReflection = async ({
     id,
     reflection,
     username,
     anonymous,
-  }: {
-    id: string
-    reflection: string
-    username: string
-    anonymous: boolean
-  }) => {
+    reply,
+  }: UpdateReflectionPayload) => {
     try {
       const frameResponse = await supabase.from('frame_response').upsert({
         id,
@@ -497,6 +497,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
           reflection,
           username,
           anonymous,
+          reply: reply ? { ...reply } : undefined,
         },
       })
 

@@ -12,7 +12,7 @@ export function PdfSettings() {
   if (!currentFrame) return null
 
   return (
-    <div className="flex flex-col gap-4">
+    <>
       <SwitchControl
         label="Container scroll"
         checked={currentFrame.config.allowedAutoScroll}
@@ -43,6 +43,6 @@ export function PdfSettings() {
           })
         }
       />
-    </div>
+    </>
   )
 }

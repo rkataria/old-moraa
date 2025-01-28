@@ -7,6 +7,7 @@ import { ParticipantView } from './ParticipantView'
 import { SelfCard } from './SelfCard'
 import { TypingUserCards } from './TypingUserCards'
 import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
+import { SideImageLayout } from '../../SideImageLayout'
 
 import type { IFrame, IReflectionResponse } from '@/types/frame.type'
 
@@ -57,15 +58,23 @@ function HostView() {
     isSelfResponseForCurrentDyteMeeting(r) ? 'selfResponses' : 'otherResponses'
   )
 
-  const selfResponse = selfResponses[0] as IReflectionResponse | undefined
-
   return (
     <>
       <SelfCard
         username={username}
         avatarUrl={user.user_metadata.avatar_url}
-        selfResponse={selfResponse}
+        selfResponse={undefined}
+        totalResponsesCount={selfResponses.length}
       />
+
+      {selfResponses.map((selfResponse) => (
+        <SelfCard
+          username={username}
+          avatarUrl={user.user_metadata.avatar_url}
+          selfResponse={selfResponse}
+        />
+      ))}
+
       {otherResponses.map((res) => (
         <Card
           key={res.id}
@@ -93,26 +102,28 @@ export function Live() {
     session?.data?.framesConfig?.[currentFrame.id]?.reflectionStarted
 
   return (
-    <>
-      <FrameTitleDescriptionPreview
-        frame={currentFrame as IFrame}
-        afterTitle={
-          <Chip
-            variant="flat"
-            size="sm"
-            className="rounded-lg -translate-y-1.5 translate-x-4"
-            color={reflectionStarted ? 'success' : 'warning'}>
-            {reflectionStarted
-              ? 'Reflection is active'
-              : 'Reflection is closed'}
-          </Chip>
-        }
-      />
-      <div className="w-full h-full flex justify-start items-start rounded-md border border-gray-200 p-4">
-        <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-4">
-          {isHost ? <HostView /> : <ParticipantView />}
+    <SideImageLayout imageConfig={currentFrame.config.image}>
+      <div className="flex flex-col h-full gap-4 overflow-auto scrollbar-none">
+        <FrameTitleDescriptionPreview
+          frame={currentFrame as IFrame}
+          afterTitle={
+            <Chip
+              variant="flat"
+              size="sm"
+              className="rounded-lg -translate-y-1.5 translate-x-4"
+              color={reflectionStarted ? 'success' : 'warning'}>
+              {reflectionStarted
+                ? 'Reflection is active'
+                : 'Reflection is closed'}
+            </Chip>
+          }
+        />
+        <div className="border border flex-1 rounded-md border border-gray-200 p-4">
+          <div className="w-full h-[auto] grid grid-cols-[repeat(auto-fill,_minmax(252px,_1fr))] gap-4">
+            {isHost ? <HostView /> : <ParticipantView />}
+          </div>
         </div>
       </div>
-    </>
+    </SideImageLayout>
   )
 }

@@ -37,13 +37,5 @@ export function FrameSettings() {
 
   const renderer = renderersByContentType[currentFrame.type as FrameType]
 
-  return (
-    <div>
-      {/* <RightSidebarHeader
-        icon={<FiSettings size={18} />}
-        title="Frame Settings"
-      /> */}
-      <div className="flex flex-col gap-4">{renderer}</div>
-    </div>
-  )
+  return <div className="flex flex-col gap-4">{renderer}</div>
 }

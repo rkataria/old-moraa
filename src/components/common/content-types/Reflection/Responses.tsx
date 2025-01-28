@@ -20,6 +20,7 @@ export function Responses({
     enabled: !!frameId,
     refetchOnWindowFocus: false,
   })
+
   const responses = reflectionResponseQuery?.data?.responses || []
 
   if (reflectionResponseQuery.isLoading) {
@@ -52,7 +53,7 @@ export function Responses({
       <p className="text-gray-600 mb-4">
         {responses.length} responses captured during live session
       </p>
-      <div className="w-full grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+      <div className="w-full grid grid-cols-[repeat(auto-fill,_minmax(252px,_1fr))] gap-4 p-1">
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {responses.map((frameResponse: any) => (
           <PreviewCard

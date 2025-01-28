@@ -10,9 +10,15 @@ type SelfCardProps = {
   username: string
   selfResponse: IReflectionResponse | undefined
   avatarUrl?: string
+  totalResponsesCount?: number
 }
 
-export function SelfCard({ username, selfResponse, avatarUrl }: SelfCardProps) {
+export function SelfCard({
+  username,
+  selfResponse,
+  avatarUrl,
+  totalResponsesCount,
+}: SelfCardProps) {
   const defaultEditEnabled = !selfResponse
 
   const [editEnabled, setEditEnabled] = useState<boolean>(defaultEditEnabled)
@@ -29,6 +35,7 @@ export function SelfCard({ username, selfResponse, avatarUrl }: SelfCardProps) {
         editEnabled
         setEditEnabled={setEditEnabled}
         selfResponse={selfResponse as IReflectionResponse}
+        totalResponsesCount={totalResponsesCount}
       />
     )
   }

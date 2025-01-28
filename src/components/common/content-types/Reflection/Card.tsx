@@ -1,10 +1,15 @@
+import { useState } from 'react'
+
 import {
   Button,
   Card as NextUICard,
   CardBody,
   CardHeader,
   Avatar,
+  Input,
 } from '@nextui-org/react'
+import { FaCheck } from 'react-icons/fa'
+import { MdOutlineEdit } from 'react-icons/md'
 import { VscReactions } from 'react-icons/vsc'
 
 import { Emojis } from './Emojis'
@@ -122,16 +127,25 @@ export function Card({
   avatarUrl,
   enableEditReflection,
 }: CardProps) {
+  const { isHost, updateReflection } = useEventSession()
+  const currentUserId = useStoreSelector(
+    (state) => state.user.currentUser.user?.id
+  )
   const reflectedUserAvatarUrl =
     response.participant.enrollment?.profile?.avatar_url
+
   const {
     username: reflectedUsername,
     reflection,
     anonymous: isAnonymous = false,
   } = response.response
   const responseId = response.id
+  const reply = response.response?.reply
   const currentFrame = useCurrentFrame()
+  const [showReplyInput, setShowReplyInput] = useState(false)
+  const [answer, setAnswer] = useState(reply?.title)
 
+  const respondedUserId = response.participant.enrollment.user_id
   const getAvatar = () => {
     if (isAnonymous) {
       return 'https://github.com/shadcn.png'
@@ -200,6 +214,65 @@ export function Card({
             canReact={canReact()}
           />
         </div>
+
+        <RenderIf isTrue={!!(reply && !showReplyInput)}>
+          <div className="relative group/reply flex items-start gap-2 p-2 rounded-lg bg-gray-100 mt-4">
+            <Avatar
+              size="sm"
+              src={reply?.avatarUrl}
+              className="w-5 h-5 min-w-5"
+            />
+            <p className="text-xs pt-[0.0625rem]">{reply?.title}</p>
+            <RenderIf isTrue={isHost && respondedUserId !== currentUserId}>
+              <Button
+                size="sm"
+                isIconOnly
+                variant="light"
+                className="absolute right-1 top-2 text-primary hidden group-hover/reply:flex w-5 h-5 min-w-5"
+                onClick={() => setShowReplyInput(true)}>
+                <MdOutlineEdit size={16} />
+              </Button>
+            </RenderIf>
+          </div>
+        </RenderIf>
+        <RenderIf
+          isTrue={
+            showReplyInput ||
+            (!reply && isHost && respondedUserId !== currentUserId)
+          }>
+          <div className="flex items-center gap-1 mt-4">
+            <Input
+              placeholder="Reply to learner"
+              size="sm"
+              type="text"
+              value={answer}
+              className="bg-gray-100"
+              classNames={{ input: 'text-xs font-medium' }}
+              onChange={(e) => setAnswer(e.target.value)}
+            />
+            <Button
+              size="sm"
+              isIconOnly
+              className="bg-primary/20 text-primary rounded-full"
+              onClick={() => {
+                setShowReplyInput(false)
+                if (!answer) return
+                updateReflection?.({
+                  id: response.id,
+                  reflection,
+                  username: reflectedUsername,
+                  anonymous: isAnonymous,
+                  reply: {
+                    name: userName,
+                    avatarUrl,
+                    title: answer,
+                  },
+                })
+              }}>
+              <FaCheck />
+            </Button>
+          </div>
+        </RenderIf>
       </CardBody>
     </NextUICard>
   )

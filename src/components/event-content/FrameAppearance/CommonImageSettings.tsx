@@ -1,90 +1,81 @@
-import { Key, useContext, useState } from 'react'
+import { Key, useState } from 'react'
 
-import { Tabs, Tab, Image } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
+import { Image, Tab, Tabs } from '@nextui-org/react'
 import { VscLayoutActivitybarLeft } from 'react-icons/vsc'
 
 import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { SwitchControl } from '@/components/common/SwitchControl'
-import { Button } from '@/components/ui/Button'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { uploadFile } from '@/services/storage.service'
-import { EventContextType } from '@/types/event-context.type'
+import { IFrame } from '@/types/frame.type'
 
-export function MCQSettings() {
-  const { currentFrame, updateFrame } = useContext(
-    EventContext
-  ) as EventContextType
+export function CommonImageSettings({ frame }: { frame: IFrame }) {
+  const { updateFrame } = useEventContext()
+
   const [uploadPercentage, setUploadPercentage] = useState(0)
+
   const onUpload = (imageUrl: string) => {
-    if (!currentFrame) return
+    if (!frame) return
     updateFrame({
       framePayload: {
         config: {
-          ...currentFrame.config,
+          ...frame.config,
           image: {
             url: imageUrl,
             position: 'left',
           },
         },
       },
-      frameId: currentFrame.id,
+      frameId: frame.id,
     })
   }
+
   const handlePositionChange = (view: Key) => {
-    if (!currentFrame) return
+    if (!frame) return
+
     updateFrame({
       framePayload: {
         config: {
-          ...currentFrame.config,
+          ...frame.config,
           image: {
-            ...currentFrame.config.image,
+            ...frame.config.image,
             position: view,
           },
         },
       },
-      frameId: currentFrame.id,
+      frameId: frame.id,
     })
   }
+
   const removeImage = () => {
-    if (!currentFrame) return
+    if (!frame) return
+
     setUploadPercentage(0)
+
     updateFrame({
       framePayload: {
         config: {
-          ...currentFrame.config,
+          ...frame.config,
           image: {},
         },
       },
-      frameId: currentFrame.id,
+      frameId: frame.id,
     })
   }
-  if (!currentFrame) return null
 
   return (
     <>
-      <SwitchControl
-        label="Allow anonymous votes"
-        checked={currentFrame.config.allowVoteAnonymously}
-        onChange={() =>
-          updateFrame({
-            framePayload: {
-              config: {
-                ...currentFrame.config,
-                allowVoteAnonymously: !currentFrame.config.allowVoteAnonymously,
-              },
-            },
-            frameId: currentFrame.id,
-          })
-        }
-      />
-      <RenderIf isTrue={!currentFrame.config?.image?.url}>
+      <RenderIf isTrue={!frame.config?.image?.url}>
         <MediaPicker
+          crop
+          ImageOrientation="squarish"
           trigger={
             <Button
               fullWidth
-              className="relative"
-              variant="light"
+              size="sm"
+              className="relative border-1 rounded-lg"
+              variant="bordered"
               isDisabled={!!uploadPercentage}>
               {uploadPercentage ? 'Uploading' : 'Add image'}{' '}
               {uploadPercentage ? `${uploadPercentage}%` : null}
@@ -108,11 +99,12 @@ export function MCQSettings() {
           }}
         />
       </RenderIf>
-      <RenderIf isTrue={!!currentFrame.config?.image?.position}>
+
+      <RenderIf isTrue={!!frame.config?.image?.position}>
         <>
           <div className="relative group/poll-image">
             <Image
-              src={currentFrame.config?.image?.url}
+              src={frame.config?.image?.url}
               classNames={{
                 wrapper: 'w-full h-full',
                 img: 'aspect-video object-cover',
@@ -121,7 +113,13 @@ export function MCQSettings() {
             <div className="absolute w-full h-full z-10 bg-black/30 top-0 left-0 rounded-lg group-hover/poll-image:opacity-100 opacity-0 duration-300 grid place-items-center">
               <div className="flex items-center gap-2">
                 <MediaPicker
-                  trigger={<Button className="text-xs">Change</Button>}
+                  crop
+                  ImageOrientation="squarish"
+                  trigger={
+                    <Button size="sm" className="text-xs">
+                      Change
+                    </Button>
+                  }
                   onSelectCallback={(img) => {
                     if (!img) return
                     onUpload(img.src)
@@ -139,7 +137,9 @@ export function MCQSettings() {
                     }
                   }}
                 />
+
                 <Button
+                  size="sm"
                   className="text-xs bg-gray-700 text-white"
                   onClick={removeImage}>
                   Remove
@@ -147,8 +147,9 @@ export function MCQSettings() {
               </div>
             </div>
           </div>
+
           <Tabs
-            selectedKey={currentFrame.config?.image?.position}
+            selectedKey={frame.config?.image?.position}
             onSelectionChange={handlePositionChange}
             variant="solid"
             aria-label="Tabs variants">

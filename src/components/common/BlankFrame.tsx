@@ -14,7 +14,7 @@ import { useStoreDispatch } from '@/hooks/useRedux'
 import { setIsPreviewOpenAction } from '@/stores/slices/event/current-event/event.slice'
 import { updateFrameThunk } from '@/stores/thunks/frame.thunks'
 import { IFrame } from '@/types/frame.type'
-import { getDefaultContent } from '@/utils/content.util'
+import { getDefaultContent, getFrameConfig } from '@/utils/content.util'
 import {
   FramePickerFrame,
   FrameType,
@@ -61,40 +61,21 @@ export function BlankFrame({
       blocks: frame.content?.blocks,
       question: frame?.content?.question || frame.content?.title,
     }
-
-    let frameConfig = {
-      ...frame.config,
-    }
-
-    const breakoutConfigKeyName =
-      breakoutType === BREAKOUT_TYPES.ROOMS
-        ? 'breakoutRoomsCount'
-        : 'participantPerGroup'
-
-    if (frameType === FrameType.BREAKOUT) {
-      const breakoutPayload = {
-        breakoutType,
-        [breakoutConfigKeyName]: breakoutRoomsGroupsCount,
-        breakoutDuration: breakoutRoomsGroupsTime,
-        assignmentOption,
-      }
-      frameConfig = {
-        ...frameConfig,
-        ...breakoutPayload,
-      }
-    }
-
-    if (frameType === FrameType.MORAA_BOARD) {
-      const defaultBoardConfig = { allowToDraw: true }
-      frameConfig = { ...frameConfig, ...defaultBoardConfig }
-    }
-
     dispatch(
       updateFrameThunk({
         frameId: frame.id,
         frame: {
           ...frame,
-          config: frameConfig,
+          config: getFrameConfig({
+            frameType,
+            config: frame.config,
+            data: {
+              breakoutType,
+              breakoutRoomsGroupsCount,
+              breakoutRoomsGroupsTime,
+              assignmentOption,
+            },
+          }),
           content: {
             ...getDefaultContent({
               frameType,

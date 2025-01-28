@@ -40,8 +40,22 @@ export type FrameReaction = {
   }
 }
 
+export interface IReflectionReply {
+  name: string
+  avatarUrl: string
+  title: string
+}
+
 export type DyteStates = {
   [key: string]: any
+}
+
+export type UpdateReflectionPayload = {
+  id: string
+  reflection: string
+  username: string
+  anonymous: boolean
+  reply?: IReflectionReply
 }
 
 export type EventSessionContextType = {
@@ -94,17 +108,7 @@ export type EventSessionContextType = {
     username: string
     anonymous: boolean
   }) => void
-  updateReflection?: ({
-    id,
-    reflection,
-    username,
-    anonymous,
-  }: {
-    id: string
-    reflection: string
-    username: string
-    anonymous: boolean
-  }) => void
+  updateReflection?: (payload: UpdateReflectionPayload) => void
   emoteOnReflection?: ({
     participantId,
     reaction,

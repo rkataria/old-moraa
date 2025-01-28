@@ -44,8 +44,6 @@ export function ParticipantView() {
     isSelfResponseForCurrentDyteMeeting(r) ? 'selfResponses' : 'otherResponses'
   )
 
-  const selfResponse = selfResponses[0] as IReflectionResponse | undefined
-
   // NOTE: This is important to make sure the component re-renders when the breakout room status changes
   // So that we get the latest participant data
   const key = `dm-${dyteMeetingId}-br-${JSON.stringify(isBreakoutActive)}`
@@ -55,10 +53,22 @@ export function ParticipantView() {
       <RenderIf isTrue={!dyteMeeting.self.permissions.isRecorder}>
         <SelfCard
           username={username}
-          selfResponse={selfResponse}
-          avatarUrl={getAvatarForName(username, user.user_metadata.avatar_url)}
+          avatarUrl={user.user_metadata.avatar_url}
+          selfResponse={undefined}
+          totalResponsesCount={selfResponses.length}
         />
+        {selfResponses.map((selfResponse) => (
+          <SelfCard
+            username={username}
+            selfResponse={selfResponse}
+            avatarUrl={getAvatarForName(
+              username,
+              user.user_metadata.avatar_url
+            )}
+          />
+        ))}
       </RenderIf>
+
       {otherResponses.map((res) => (
         <Card
           key={res.id}

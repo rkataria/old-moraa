@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react'
 
+import { IReflectionReply } from './event-session.type'
 import { type AgendaFrameDisplayType } from './event.type'
 
 import { IUserProfile } from '@/components/common/UserAvatar'
@@ -106,6 +107,7 @@ export interface IReflectionResponse {
     username: string
     reflection: string
     anonymous?: boolean
+    reply?: IReflectionReply
   }
 }
 

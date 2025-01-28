@@ -11,6 +11,7 @@ import {
   Textarea,
 } from '@nextui-org/react'
 import { useDebounce } from '@uidotdev/usehooks'
+import { IoIosInformationCircleOutline } from 'react-icons/io'
 
 import { RenderIf } from '../../RenderIf/RenderIf'
 
@@ -28,8 +29,9 @@ type EditableCardProps = {
   // setReflection: (value: ReflectionState) => void
   editEnabled: boolean
   avatarUrl?: string
-  setEditEnabled: (value: boolean) => void
+  totalResponsesCount?: number
   selfResponse: IReflectionResponse | undefined
+  setEditEnabled: (value: boolean) => void
 }
 
 type ReflectionState = {
@@ -40,8 +42,9 @@ export function EditableCard({
   username,
   editEnabled,
   avatarUrl,
-  setEditEnabled,
   selfResponse,
+  totalResponsesCount,
+  setEditEnabled,
 }: EditableCardProps) {
   const defaultAnonymous = selfResponse?.response.anonymous ?? false
   const defaultReflectionValue = selfResponse?.response?.reflection ?? ''
@@ -128,7 +131,15 @@ export function EditableCard({
     return false
   }
 
+  const reply = selfResponse?.response.reply
+
   const shouldReflectionDisabled = getReflectionDisabled()
+
+  const maxReflectionAllowed = currentFrame?.config?.maxReflectionsPerUser
+
+  const hasReachedMaxCount = maxReflectionAllowed === totalResponsesCount
+
+  if (hasReachedMaxCount) return null
 
   return (
     <Card
@@ -147,6 +158,23 @@ export function EditableCard({
         </div>
       </CardHeader>
       <CardBody className="pt-0 flex flex-col justify-between">
+        <RenderIf
+          isTrue={
+            !!(
+              maxReflectionAllowed > 1 &&
+              (!totalResponsesCount ||
+                maxReflectionAllowed - totalResponsesCount > 1)
+            )
+          }>
+          <p className="flex items-center gap-1 text-xs mb-2 pl-1 text-gray-400">
+            <IoIosInformationCircleOutline size={18} />
+            You can add{' '}
+            {totalResponsesCount
+              ? maxReflectionAllowed - totalResponsesCount
+              : maxReflectionAllowed}{' '}
+            cards
+          </p>
+        </RenderIf>
         <Textarea
           className="text-sm"
           placeholder="Enter your reflection here."
@@ -194,18 +222,19 @@ export function EditableCard({
                     username,
                     anonymous: anonymous!,
                   })
+                  handleCancel()
                 } else {
                   updateReflection?.({
                     id: selfResponse.id,
                     reflection: reflection.value,
                     username,
                     anonymous: anonymous!,
+                    reply,
                   })
+                  setEditEnabled(false)
                 }
-
-                setEditEnabled(false)
               }}>
-              Submit
+              {selfResponse ? 'Save' : 'Add'}
             </Button>
           </div>
         </div>

@@ -29,7 +29,7 @@ import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setExpandedSectionsAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus, EventStatus } from '@/types/enums'
 import { IFrame } from '@/types/frame.type'
-import { getDefaultContent } from '@/utils/content.util'
+import { getDefaultContent, getFrameConfig } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
 import { KeyboardShortcuts } from '@/utils/utils'
 
@@ -98,39 +98,18 @@ export function FrameManager() {
 
     const insertInSection = currentSection || sections[0]
 
-    let frameConfig = {
-      textColor: '#000',
-      allowVoteOnMultipleOptions: false,
-      time: 1,
-    }
-
-    const breakoutConfigKeyName =
-      breakoutType === BREAKOUT_TYPES.ROOMS
-        ? 'breakoutRoomsCount'
-        : 'participantPerGroup'
-
-    if (type === FrameType.BREAKOUT) {
-      const breakoutPayload = {
-        breakoutType,
-        [breakoutConfigKeyName]: breakoutRoomsGroupsCount,
-        breakoutDuration: breakoutRoomsGroupsTime,
-        assignmentOption,
-      }
-      frameConfig = {
-        ...frameConfig,
-        ...breakoutPayload,
-      }
-    }
-
-    if (type === FrameType.MORAA_BOARD) {
-      const defaultBoardConfig = { allowToDraw: true }
-      frameConfig = { ...frameConfig, ...defaultBoardConfig }
-    }
-
     const newFrame: IFrame = {
       id: uuidv4(),
       name: `Frame ${(insertInSection?.frames?.length || 0) + 1}`,
-      config: frameConfig,
+      config: getFrameConfig({
+        frameType: type,
+        data: {
+          breakoutType,
+          breakoutRoomsGroupsCount,
+          breakoutRoomsGroupsTime,
+          assignmentOption,
+        },
+      }),
       content: getDefaultContent({
         frameType: type,
         templateKey,

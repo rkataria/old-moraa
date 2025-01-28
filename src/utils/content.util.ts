@@ -153,6 +153,68 @@ export const getDefaultContent = ({
   }
 }
 
+export const getFrameConfig = ({
+  frameType,
+  config,
+  data,
+}: {
+  frameType: FrameType
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config?: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any
+}) => {
+  const newFrameConfig = {
+    textColor: '#000',
+    allowVoteOnMultipleOptions: false,
+    time: 1,
+    ...config,
+  }
+
+  switch (frameType) {
+    case FrameType.BREAKOUT: {
+      const {
+        breakoutType,
+        breakoutRoomsGroupsCount,
+        breakoutRoomsGroupsTime,
+        assignmentOption,
+      } = data || {}
+
+      const breakoutConfigKeyName =
+        breakoutType === BREAKOUT_TYPES.ROOMS
+          ? 'breakoutRoomsCount'
+          : 'participantPerGroup'
+
+      const breakoutPayload = {
+        breakoutType,
+        [breakoutConfigKeyName]: breakoutRoomsGroupsCount,
+        breakoutDuration: breakoutRoomsGroupsTime,
+        assignmentOption,
+      }
+
+      return {
+        ...newFrameConfig,
+        ...breakoutPayload,
+      }
+    }
+
+    case FrameType.MORAA_BOARD: {
+      const defaultBoardConfig = { allowToDraw: true }
+
+      return { ...newFrameConfig, ...defaultBoardConfig }
+    }
+
+    case FrameType.REFLECTION: {
+      const defaultReflectionConfig = { maxReflectionsPerUser: 1 }
+
+      return { ...newFrameConfig, ...defaultReflectionConfig }
+    }
+
+    default:
+      return newFrameConfig
+  }
+}
+
 export const isFrameInteractive = (frame: IFrame) =>
   [
     FrameType.POLL,
