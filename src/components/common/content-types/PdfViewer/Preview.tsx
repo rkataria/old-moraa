@@ -17,7 +17,7 @@ export function Preview({ frame, hideControls = false }: PreviewProps) {
 
   return (
     <LoadError
-      invalidUrl={!frame.content?.googleSlideUrl}
+      invalidUrl={!frame.content?.pdfPath}
       canUpdateFrame={permissions.canUpdateFrame}
     />
   )

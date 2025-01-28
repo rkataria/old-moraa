@@ -79,9 +79,17 @@ export function Participantslist({
             tab: 'max-w-fit px-0 h-12',
             tabContent: 'group-data-[selected=true]:text-primary',
           }}>
-          <Tab key="going" title={`${registeredUsers.length} Going`} />
+          <Tab
+            key="going"
+            title={`${registeredUsers.length} going`}
+            className="font-medium"
+          />
           {visibleInvitedTab && (
-            <Tab key="invited" title={`${nonRegisteredUsers.length} Invited`} />
+            <Tab
+              key="invited"
+              title={`${nonRegisteredUsers.length} invited`}
+              className="font-medium"
+            />
           )}
         </Tabs>
         <p className="flex items-center justify-between text-sm font-medium text-slate-500">

@@ -8,11 +8,11 @@ import { Input } from '@nextui-org/react'
 import toast from 'react-hot-toast'
 import { FaYoutube } from 'react-icons/fa'
 
+import { VideoProvider } from './utils/types'
+
 import { FrameFormContainer } from '@/components/event-content/FrameFormContainer'
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
-import { useStoreDispatch } from '@/hooks/useRedux'
-import { setFrameSettingsViewAction } from '@/stores/slices/layout/studio.slice'
 import { IFrame } from '@/types/frame.type'
 import { isValidYouTubeVideoUrl } from '@/utils/url'
 
@@ -20,20 +20,21 @@ type LocalVideoEditProps = {
   frame: IFrame & {
     content: {
       videoUrl: string
-      provider: 'local' | 'youtube' | 'vimeo'
+      provider: VideoProvider | null
     }
   }
+  onUpdate: () => void
   onProviderChange: () => void
 }
 
 export function YoutubeVideoEdit({
   frame,
+  onUpdate,
   onProviderChange,
 }: LocalVideoEditProps) {
   const [videoUrl, setVideoUrl] = useState<string>(frame.content.videoUrl)
   const [isUpdating, setIsUpdating] = useState<boolean>(false)
   const { updateFrame } = useEventContext()
-  const dispatch = useStoreDispatch()
 
   const updateVideoUrl = () => {
     const validUrl = isValidYouTubeVideoUrl(videoUrl)
@@ -44,7 +45,11 @@ export function YoutubeVideoEdit({
       return
     }
 
-    if (frame.content.videoUrl === videoUrl) return
+    if (frame.content.videoUrl === videoUrl) {
+      onUpdate()
+
+      return
+    }
 
     setIsUpdating(true)
 
@@ -53,15 +58,13 @@ export function YoutubeVideoEdit({
         content: {
           ...frame.content,
           videoUrl,
-          provider: 'youtube',
+          provider: VideoProvider.YOUTUBE,
         },
       },
       frameId: frame.id,
     })
-
+    onUpdate()
     setIsUpdating(false)
-
-    dispatch(setFrameSettingsViewAction('preview'))
   }
 
   return (

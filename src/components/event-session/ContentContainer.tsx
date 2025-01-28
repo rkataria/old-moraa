@@ -98,12 +98,12 @@ export function ContentContainer() {
 
   if (currentFrame) {
     if (eventSessionMode === EventSessionMode.PEEK) {
-      return <Frame frame={currentFrame} />
+      return <Frame key={currentFrame?.id} frame={currentFrame} />
     }
 
     return (
       <div className="relative h-full flex flex-col">
-        <Frame key={`frame-${currentFrame.id}`} frame={currentFrame} />
+        <Frame key={currentFrame?.id} frame={currentFrame} />
       </div>
     )
   }

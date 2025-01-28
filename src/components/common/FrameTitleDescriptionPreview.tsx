@@ -51,7 +51,6 @@ export function FrameTitleDescriptionPreview({
       FrameType.MIRO_EMBED,
       FrameType.PDF_VIEWER,
       FrameType.VIDEO_EMBED,
-      FrameType.VIDEO,
     ].includes(frame.type)
   ) {
     return null

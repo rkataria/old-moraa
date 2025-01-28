@@ -62,7 +62,6 @@ export function StudioFrame({ frame }: FrameContainerProps) {
     [FrameType.Q_A]: null,
     [FrameType.REFLECTION]: <ReflectionFrame key={frame.id} frame={frame} />,
     [FrameType.RICH_TEXT]: <RichTextFrame frame={frame} />,
-    [FrameType.VIDEO]: <VideoEmbedFrame frame={frame as any} />,
     [FrameType.VIDEO_EMBED]: <VideoEmbedFrame frame={frame as any} />,
     [FrameType.MCQ]: <MCQFrame frame={frame as any} />,
   }

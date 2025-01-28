@@ -20,9 +20,6 @@ export interface StudioLayoutState {
   contentStudioRightResizableSidebar: 'ai-chat' | null
   expandedSections: string[]
   agendaPanelDisplayType: 'list' | 'grid'
-  frameSettings: {
-    view: 'form' | 'preview'
-  }
 }
 
 const initialState: StudioLayoutState = {
@@ -34,9 +31,6 @@ const initialState: StudioLayoutState = {
   contentStudioRightResizableSidebar: null,
   expandedSections: [],
   agendaPanelDisplayType: 'grid',
-  frameSettings: {
-    view: 'form',
-  },
 }
 
 export const layoutStudioSlice = createSlice({
@@ -75,10 +69,6 @@ export const layoutStudioSlice = createSlice({
     setAgendaPanelDisplayType(state, action) {
       state.agendaPanelDisplayType = action.payload
     },
-
-    setFrameSettingsView(state, action) {
-      state.frameSettings.view = action.payload
-    },
   },
 })
 
@@ -92,5 +82,4 @@ export const {
   resetStudioLayoutStateAction,
   setAgendaPanelDisplayTypeAction,
   setExpandedSectionsAction,
-  setFrameSettingsViewAction,
 } = renameSliceActions(layoutStudioSlice.actions)

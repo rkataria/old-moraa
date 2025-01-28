@@ -1,6 +1,7 @@
 import { Edit } from './Edit'
 import { Live } from './Live'
 import { Preview } from './Preview'
+import { Thumbnail } from './Thumbnail'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -18,6 +19,10 @@ export function QAFrame({ frame, isLiveSession, asThumbnail }: QAFrameProps) {
 
   if (isLiveSession) {
     return <Live frame={frame} />
+  }
+
+  if (asThumbnail) {
+    return <Thumbnail frame={frame} />
   }
 
   if (!preview && permissions.canUpdateFrame && !asThumbnail) {

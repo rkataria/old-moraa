@@ -2,7 +2,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
-import { Dispatch, Key, SetStateAction, useContext, useState } from 'react'
+import {
+  Dispatch,
+  Key,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import { Button, Checkbox, Chip } from '@nextui-org/react'
 import { useRouter } from '@tanstack/react-router'
@@ -25,15 +32,15 @@ import { EditableLabel } from '@/components/common/EditableLabel'
 import { Note } from '@/components/common/Note'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useStoreDispatch } from '@/hooks/useRedux'
+import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import {
   setCurrentFrameIdAction,
   setIsOverviewOpenAction,
 } from '@/stores/slices/event/current-event/event.slice'
 import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus } from '@/types/enums'
-import { EventContextType } from '@/types/event-context.type'
 import { IFrame, ISection } from '@/types/frame.type'
 import { getBlankFrame, getBreakoutFrames } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -71,11 +78,25 @@ export function FrameItem({
     setAddedFromSessionPlanner,
     deleteFrame,
     addFrameToSection,
-  } = useContext(EventContext) as EventContextType
+  } = useEventContext()
+  const currentFrame = useCurrentFrame()
   const [visibleNestedList, setVisibleNestedList] = useState(false)
   const dispatch = useStoreDispatch()
+  const frameRef = useRef<HTMLDivElement>(null)
 
   const sectionId = section.id
+
+  useEffect(() => {
+    if (!frameRef.current) return
+
+    if (currentFrame?.id !== frame.id) return
+
+    frameRef.current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
+    })
+  }, [frameRef, currentFrame, frame.id])
 
   const onFrameTitleChange = (frameId: string, title: string) => {
     if (!editable) return
@@ -247,6 +268,7 @@ export function FrameItem({
                 '!bg-primary-50':
                   frameIdToBeFocus === frame.id ||
                   selectedFrameIds.includes(frame.id),
+                'bg-primary-50': currentFrame?.id === frame.id,
               }
             )}>
             <RenderIf isTrue={!!parentBreakoutFrame}>
@@ -348,6 +370,7 @@ export function FrameItem({
             </RenderIf>
 
             <div
+              ref={frameRef}
               className="relative rounded-md flex items-center gap-1 group/color_code p-2 pl-6 min-w-[100px] group/frame-name cursor-pointer"
               style={{ flex: 3 }}
               onClick={() => navigateToFrameContent(frame.id)}>

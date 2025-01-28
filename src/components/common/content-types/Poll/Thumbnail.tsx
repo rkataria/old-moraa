@@ -1,21 +1,19 @@
 import { Preview } from './Preview'
 import { FrameNoContentPlaceholder } from '../../FrameNoContentPlaceholder'
-import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 import { RenderIf } from '../../RenderIf/RenderIf'
 
-import { IFrame } from '@/types/frame.type'
+import { PollFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 
-export function Thumbnail({ frame }: { frame: IFrame }) {
-  const showPlaceholder = !frame.content?.title && !frame.content?.description
+export function Thumbnail({ frame }: { frame: PollFrame }) {
+  const showPlaceholder = !frame.content?.question
 
   return (
     <div className="w-full h-full">
       <RenderIf isTrue={showPlaceholder}>
-        <FrameNoContentPlaceholder frameTyp={FrameType.RICH_TEXT} />
+        <FrameNoContentPlaceholder frameTyp={FrameType.POLL} />
       </RenderIf>
       <RenderIf isTrue={!showPlaceholder}>
-        <FrameTitleDescriptionPreview frame={frame} key={frame.id} />
         <Preview frame={frame} />
       </RenderIf>
     </div>

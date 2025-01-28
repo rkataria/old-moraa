@@ -51,12 +51,6 @@ export const getDefaultContent = ({
         ],
       }
 
-    case FrameType.VIDEO:
-      return {
-        url: 'https://www.youtube.com/watch?v=5qap5aO4i9A',
-        blocks: [headerBlock, paragraphBlock],
-      }
-
     case FrameType.VIDEO_EMBED:
       return {
         blocks: [headerBlock, paragraphBlock],

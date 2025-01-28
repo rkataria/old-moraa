@@ -1,6 +1,9 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useState } from 'react'
 
 import { Input } from '@nextui-org/react'
+import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { SiMiro } from 'react-icons/si'
 
@@ -9,9 +12,8 @@ import { Embed } from './Embed'
 import { FrameFormContainer } from '@/components/event-content/FrameFormContainer'
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
-import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { setFrameSettingsViewAction } from '@/stores/slices/layout/studio.slice'
 import { type IFrame } from '@/types/frame.type'
+import { cn } from '@/utils/utils'
 
 export type MiroEmbedFrameType = IFrame & {
   content: {
@@ -53,20 +55,11 @@ const getBoardId = (boardIdentifier: string): string | undefined => {
 }
 
 export function Edit({ frame }: EditProps) {
+  const [editable, setEditable] = useState(false)
   const [boardIdentifier, setBoardIdentifier] = useState('')
   const { updateFrame } = useEventContext()
-  const isEditMode = useStoreSelector(
-    (state) => state.layout.studio.frameSettings.view === 'form'
-  )
-  const dispatch = useStoreDispatch()
-
   useEffect(() => {
     setBoardIdentifier(frame.content?.boardId || '')
-
-    if (frame.content?.boardId) {
-      dispatch(setFrameSettingsViewAction('preview'))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frame.content.boardId])
 
   const saveMiroUrl = () => {
@@ -78,7 +71,11 @@ export function Edit({ frame }: EditProps) {
       return
     }
 
-    if (frame.content.boardId === boardId) return
+    if (frame.content.boardId === boardId) {
+      setEditable(false)
+
+      return
+    }
 
     updateFrame({
       framePayload: {
@@ -89,20 +86,36 @@ export function Edit({ frame }: EditProps) {
       },
       frameId: frame.id,
     })
-
-    dispatch(setFrameSettingsViewAction('preview'))
   }
 
-  const isUpdating = isEditMode && frame.content?.boardId?.length > 0
-
-  if (!isEditMode) {
-    return <Embed frame={frame} />
+  if (frame.content.boardId && !editable) {
+    return (
+      <div className="relative h-full rounded-md overflow-hidden">
+        <Embed frame={frame} />
+        <motion.div
+          initial={{ opacity: 0, y: 50, x: '-50%' }}
+          animate={{ opacity: 1, y: -50, x: '-50%' }}
+          transition={{
+            duration: 0.3,
+          }}
+          exit={{ opacity: 0, y: 50, x: '-50%' }}
+          className={cn(
+            'absolute left-1/2 bottom-0',
+            'bg-black text-white py-2 px-6 rounded-full shadow-sm cursor-pointer transition-all duration-300',
+            'flex justify-start gap-2'
+          )}
+          onClick={() => setEditable(true)}>
+          <p>Do you want to replace this board?</p>
+          <span className="underline">Click here</span>
+        </motion.div>
+      </div>
+    )
   }
 
   return (
     <FrameFormContainer
       headerIcon={<SiMiro size={72} className="text-primary" />}
-      headerTitle={`${isUpdating ? 'Edit' : 'Embed'} Miro Board`}
+      headerTitle={`${frame.content?.boardId ? 'Edit' : 'Embed'} Miro Board`}
       headerDescription="Easily embed Miro board into Moraa Frame for seamless collaboration and smooth editing."
       footerNote="Make sure the Miro board is publically accessible or shared with participants.">
       <Input
@@ -123,7 +136,7 @@ export function Edit({ frame }: EditProps) {
         fullWidth
         onClick={saveMiroUrl}
         disabled={!boardIdentifier}>
-        {isUpdating ? 'Save' : 'Embed'} Miro Board
+        {frame.content?.boardId ? 'Update' : 'Embed'} Miro Board
       </Button>
     </FrameFormContainer>
   )

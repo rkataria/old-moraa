@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BlankFrame } from '../BlankFrame'
+// eslint-disable-next-line import/no-cycle
+import { BreakoutFrame } from '../content-types/Breakout/Breakout'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
 import { MCQFrame } from '../content-types/MCQ/MCQ'
 import { MiroEmbedFrame } from '../content-types/MiroEmbed/MiroEmbed'
@@ -13,7 +15,6 @@ import { ReflectionFrame } from '../content-types/Reflection/Reflection'
 import { RichTextFrame } from '../content-types/RichText/RichText'
 import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
 
-import { BreakoutFrame } from '@/components/common/breakout/BreakoutFrame'
 import { GoogleSlidesFrame } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
 import { MoraaPadFrame } from '@/components/common/content-types/MoraaPad/MoraaPad'
 import { IFrame } from '@/types/frame.type'
@@ -25,9 +26,7 @@ type ThumbnailFrameProps = {
 
 export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
   const renderersByFrameType: Record<FrameType, React.ReactNode> = {
-    [FrameType.BREAKOUT]: (
-      <BreakoutFrame frame={frame as BreakoutFrame} isEditable={false} />
-    ),
+    [FrameType.BREAKOUT]: <BreakoutFrame frame={frame as any} asThumbnail />,
     [FrameType.GOOGLE_SLIDES]: (
       <GoogleSlidesFrame frame={frame as any} asThumbnail />
     ),
@@ -52,7 +51,6 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
       <ReflectionFrame frame={frame} key={frame.id} asThumbnail />
     ),
     [FrameType.RICH_TEXT]: <RichTextFrame frame={frame} asThumbnail />,
-    [FrameType.VIDEO]: <VideoEmbedFrame frame={frame as any} asThumbnail />,
     [FrameType.VIDEO_EMBED]: (
       <VideoEmbedFrame frame={frame as any} asThumbnail />
     ),

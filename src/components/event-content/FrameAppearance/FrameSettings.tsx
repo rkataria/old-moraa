@@ -17,7 +17,6 @@ export function FrameSettings() {
   if (!currentFrame) return null
 
   const renderersByContentType: Record<FrameType, React.ReactNode> = {
-    [FrameType.VIDEO]: null,
     [FrameType.POLL]: <PollSettings />,
     [FrameType.GOOGLE_SLIDES]: null,
     [FrameType.PDF_VIEWER]: <PdfSettings />,

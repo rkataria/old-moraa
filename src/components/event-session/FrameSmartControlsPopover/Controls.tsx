@@ -23,7 +23,6 @@ export const getControls = (frameType: FrameType) => {
     [FrameType.Q_A]: null,
     [FrameType.REFLECTION]: <ReflectionControls />,
     [FrameType.RICH_TEXT]: null,
-    [FrameType.VIDEO]: null,
     [FrameType.VIDEO_EMBED]: null,
     [FrameType.MCQ]: <MCQControls />,
   }

@@ -1,6 +1,7 @@
 import { Edit } from './Edit'
 import { Live } from './Live'
 import { Preview } from './Preview'
+import { Thumbnail } from './Thumbnail'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -24,7 +25,11 @@ export function PollFrame({
     return <Live frame={frame as PollFrame} />
   }
 
-  if (!preview && permissions.canUpdateFrame && !asThumbnail) {
+  if (asThumbnail) {
+    return <Thumbnail frame={frame as PollFrame} />
+  }
+
+  if (!preview && permissions.canUpdateFrame) {
     return <Edit frame={frame as PollFrame} />
   }
 

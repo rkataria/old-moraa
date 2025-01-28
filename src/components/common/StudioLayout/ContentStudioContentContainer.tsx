@@ -77,13 +77,13 @@ export function ContentStudioContentContainer() {
 
     if (currentFrame) {
       return isFrameHasVideoAspectRatio(currentFrame.type) ? (
-        <div className="relative w-full pt-[54.25%]">
+        <div className="relative w-full pt-[56.25%]">
           <div className="absolute top-0 left-0 right-0 bottom-0">
-            <Frame frame={currentFrame} />
+            <Frame key={currentFrame?.id} frame={currentFrame} />
           </div>
         </div>
       ) : (
-        <Frame frame={currentFrame} />
+        <Frame key={currentFrame?.id} frame={currentFrame} />
       )
     }
 

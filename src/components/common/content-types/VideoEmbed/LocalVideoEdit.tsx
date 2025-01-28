@@ -8,34 +8,34 @@ import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { FaVideo } from 'react-icons/fa'
 
+import { VideoProvider } from './utils/types'
 import { ContentLoading } from '../../ContentLoading'
 import { FilePickerDropzone } from '../../FilePickerDropzone'
 import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { FrameFormContainer } from '@/components/event-content/FrameFormContainer'
 import { useEventContext } from '@/contexts/EventContext'
-import { useStoreDispatch } from '@/hooks/useRedux'
 import { uploadFile } from '@/services/storage.service'
-import { setFrameSettingsViewAction } from '@/stores/slices/layout/studio.slice'
 import { IFrame } from '@/types/frame.type'
 
 type LocalVideoEditProps = {
   frame: IFrame & {
     content: {
       videoUrl: string
-      provider: 'local' | 'youtube' | 'vimeo' | null
+      provider: VideoProvider | null
     }
   }
+  onUpdate: () => void
   onProviderChange: () => void
 }
 
 export function LocalVideoEdit({
   frame,
+  onUpdate,
   onProviderChange,
 }: LocalVideoEditProps) {
   const [progress, setProgress] = useState<number>(0)
   const { updateFrame } = useEventContext()
-  const dispatch = useStoreDispatch()
 
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -64,13 +64,13 @@ export function LocalVideoEdit({
           content: {
             ...frame.content,
             videoUrl: url,
-            provider: 'local',
+            provider: VideoProvider.LOCAL,
           },
         },
         frameId: frame.id,
       })
 
-      dispatch(setFrameSettingsViewAction('preview'))
+      onUpdate()
 
       toast.success('Video uploaded successfully.')
     },

@@ -1,9 +1,10 @@
 import 'tldraw/tldraw.css'
 import { useStorage } from '@liveblocks/react/suspense'
 
+import { FrameNoContentPlaceholder } from '../../FrameNoContentPlaceholder'
 import { RenderIf } from '../../RenderIf/RenderIf'
 
-import { FRAME_PICKER_FRAMES, FrameType } from '@/utils/frame-picker.util'
+import { FrameType } from '@/utils/frame-picker.util'
 
 export function Thumbnail() {
   const thumbnailImageSrc = useStorage((room) => room.thumbnail)
@@ -16,14 +17,7 @@ export function Thumbnail() {
       />
 
       <RenderIf isTrue={!thumbnailImageSrc}>
-        <div className="scale-[6] h-full flex items-center justify-center text-gray-300">
-          {
-            FRAME_PICKER_FRAMES.find(
-              (frame) => frame.type === FrameType.MORAA_BOARD
-            )?.iconLarge
-          }
-          MoraaBoard
-        </div>
+        <FrameNoContentPlaceholder frameTyp={FrameType.MORAA_BOARD} />
       </RenderIf>
       <RenderIf isTrue={!!thumbnailImageSrc}>
         <img

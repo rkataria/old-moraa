@@ -1,6 +1,7 @@
 import { IconPhoto } from '@tabler/icons-react'
 import { BiSolidBarChartAlt2 } from 'react-icons/bi'
 import {
+  BsCircleSquare,
   BsFillFileEarmarkRichtextFill,
   BsPlayBtnFill,
   BsPostcardHeart,
@@ -10,7 +11,7 @@ import { FaFilePdf, FaFilePowerpoint } from 'react-icons/fa'
 import { LuListTodo } from 'react-icons/lu'
 import { RiSketching } from 'react-icons/ri'
 import { SiGoogleslides, SiMiro, SiSlides } from 'react-icons/si'
-import { TbTextWrap, TbTriangleSquareCircleFilled } from 'react-icons/tb'
+import { TbTextWrap } from 'react-icons/tb'
 
 import { MORAA_SLIDE_TEMPLATES } from './moraa-slide-templates'
 
@@ -51,7 +52,6 @@ export type FramePickerFrame = {
 export enum FrameType {
   MORAA_SLIDE = 'Moraa Slide',
   POLL = 'Poll',
-  VIDEO = 'Video',
   GOOGLE_SLIDES = 'Google Slides',
   REFLECTION = 'Reflections',
   PDF_VIEWER = 'PDF',
@@ -197,11 +197,9 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
   },
   {
     name: 'Breakout',
-    icon: (
-      <TbTriangleSquareCircleFilled className="w-full h-full max-w-11 max-h-11" />
-    ),
-    iconLarge: <TbTriangleSquareCircleFilled size={32} />,
-    iconSmall: <TbTriangleSquareCircleFilled size={24} />,
+    icon: <BsCircleSquare className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <BsCircleSquare size={32} />,
+    iconSmall: <BsCircleSquare size={24} />,
     description: 'Plan breakout rooms and activities',
     type: FrameType.BREAKOUT,
     category: FrameCategory.COLLABORATION_TOOL,
@@ -253,7 +251,6 @@ export const getFrameType = (frameType: FrameType) =>
 
 export const isFrameHasVideoAspectRatio = (frameType: FrameType) =>
   [
-    FrameType.VIDEO,
     FrameType.VIDEO_EMBED,
     FrameType.GOOGLE_SLIDES,
     FrameType.IMAGE_VIEWER,

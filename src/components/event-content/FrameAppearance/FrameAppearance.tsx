@@ -18,7 +18,6 @@ export function FrameAppearance() {
   if (!currentFrame) return null
 
   const renderersByContentType: Record<FrameType, React.ReactNode> = {
-    [FrameType.VIDEO]: null,
     [FrameType.POLL]: null,
     [FrameType.GOOGLE_SLIDES]: null,
     [FrameType.PDF_VIEWER]: null,

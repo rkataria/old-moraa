@@ -212,6 +212,9 @@ export function ResponsiveVideoPlayer({
             }))
           }
         }}
+        onError={(error) => {
+          console.error('Error:', error)
+        }}
       />
       {/* Player Custom Control */}
       {showControls && playerControl === PlayerControl.CUSTOM && (

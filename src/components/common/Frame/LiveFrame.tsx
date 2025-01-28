@@ -36,7 +36,6 @@ export const framesWithBorder = [
   FrameType.MORAA_SLIDE,
   FrameType.POLL,
   FrameType.MCQ,
-  FrameType.VIDEO,
   FrameType.VIDEO_EMBED,
   FrameType.POWERPOINT,
   FrameType.GOOGLE_SLIDES,
@@ -81,7 +80,6 @@ export function LiveFrame({ frame }: FrameContainerProps) {
       <ReflectionFrame key={frame.id} frame={frame} isLiveSession />
     ),
     [FrameType.RICH_TEXT]: <RichTextFrame frame={frame} isLiveSession />,
-    [FrameType.VIDEO]: <VideoEmbedFrame frame={frame as any} isLiveSession />,
     [FrameType.VIDEO_EMBED]: (
       <VideoEmbedFrame frame={frame as any} isLiveSession />
     ),

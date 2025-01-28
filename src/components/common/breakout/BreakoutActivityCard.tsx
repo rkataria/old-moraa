@@ -7,8 +7,7 @@ import { Avatar } from '@nextui-org/react'
 import { IconTrash } from '@tabler/icons-react'
 import { Draggable } from 'react-beautiful-dnd'
 import { IoEllipsisVerticalOutline } from 'react-icons/io5'
-import { PiNoteBlankLight } from 'react-icons/pi'
-import { TbApps, TbAppsFilled } from 'react-icons/tb'
+import { TbApps, TbTriangleSquareCircleFilled } from 'react-icons/tb'
 import { TiDocumentDelete } from 'react-icons/ti'
 
 // TODO: Fix this.
@@ -172,11 +171,13 @@ export function BreakoutRoomActivityCard({
                 className={cn('grid place-items-center gap-4', {
                   'gap-2': !editable,
                 })}>
-                {editable ? (
-                  <TbAppsFilled size={48} className="text-primary-300" />
-                ) : (
-                  <PiNoteBlankLight size={48} className="text-gray-200" />
-                )}
+                <TbTriangleSquareCircleFilled
+                  size={48}
+                  className={cn({
+                    'text-primary-300': editable,
+                    'text-gray-300': !editable,
+                  })}
+                />
 
                 <p className="text-xs text-center">
                   {editable ? (
