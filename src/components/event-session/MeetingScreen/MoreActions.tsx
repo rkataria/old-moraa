@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useDyteParticipants } from '@/hooks/useDyteParticipants'
 import { useRecording } from '@/hooks/useRecording'
-import { useStoreDispatch } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { openChangeContentTilesLayoutModalAction } from '@/stores/slices/layout/live.slice'
 import { cn } from '@/utils/utils'
 
@@ -38,6 +38,10 @@ export function MoreActions() {
 
   const { isRecording, startRecording } = useRecording()
   const dispatch = useStoreDispatch()
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
 
   const handleMicDisable = async () => {
     joinedParticipants.forEach((p) => {
@@ -49,7 +53,7 @@ export function MoreActions() {
   const renderMenuItems = () => {
     const items = []
 
-    if (isHost) {
+    if (isHost && !isInBreakoutMeeting) {
       items.push(
         <DropdownItem
           key="record-meeting"

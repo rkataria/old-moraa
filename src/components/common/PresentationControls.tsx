@@ -6,7 +6,7 @@ import { FrameSmartControls } from '../event-session/FrameSmartControlsPopover/F
 import { Button } from '../ui/Button'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useStoreDispatch } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import {
   EventSessionMode,
@@ -26,6 +26,10 @@ export function PresentationControls() {
     eventSessionMode,
   } = useEventSession()
   const dispatch = useStoreDispatch()
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
 
   const handlePresentationToggle = () => {
     if (presentationStarted) {
@@ -58,7 +62,7 @@ export function PresentationControls() {
   }
 
   // Allow only host to control the presentation
-  if (!isHost) return null
+  if (!isHost || isInBreakoutMeeting) return null
 
   const presentationStarted =
     presentationStatus === PresentationStatuses.STARTED

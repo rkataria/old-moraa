@@ -4,6 +4,7 @@ import { IoShareOutline } from 'react-icons/io5'
 import { ControlButton } from '../common/ControlButton'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
 
 export function ScreenShareToggle() {
@@ -12,9 +13,13 @@ export function ScreenShareToggle() {
   const isScreenShared = useDyteSelector(
     (state) => state.self?.screenShareEnabled
   )
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
 
   // ALlow only to share screen if the user is a host
-  if (!isHost) return null
+  if (!isHost && !isInBreakoutMeeting) return null
 
   return (
     <ControlButton

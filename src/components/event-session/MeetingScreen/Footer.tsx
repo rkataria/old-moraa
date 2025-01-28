@@ -15,6 +15,7 @@ import { ContentTypeIcon } from '@/components/common/ContentTypeIcon'
 import { PresentationControls } from '@/components/common/PresentationControls'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -23,6 +24,10 @@ import { cn } from '@/utils/utils'
 export function Footer() {
   const currentFrame = useCurrentFrame()
   const { isHost, presentationStatus } = useEventSession()
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
 
   return (
     <div className="h-full w-full flex justify-between items-center px-2">
@@ -80,7 +85,7 @@ export function Footer() {
           <PresentationControls />
           <ReactWithEmojiToggle />
           <RaiseHandToggle />
-          <RenderIf isTrue={isHost}>
+          <RenderIf isTrue={isHost && !isInBreakoutMeeting}>
             <AppsToggle />
           </RenderIf>
           <LeaveMeetingToggle />

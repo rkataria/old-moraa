@@ -16,6 +16,10 @@ import { cn } from '@/utils/utils'
 export function LeftSidebar() {
   const { permissions } = useEventPermissions()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
   const dispatch = useStoreDispatch()
   const layout = useStoreSelector(
     (state) => state.layout.live.contentTilesLayoutConfig.layout
@@ -30,7 +34,9 @@ export function LeftSidebar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layout])
 
-  if (!permissions.canAcessAllSessionControls) return null
+  if (!permissions.canAcessAllSessionControls || isInBreakoutMeeting) {
+    return null
+  }
 
   return (
     <motion.div

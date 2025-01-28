@@ -6,6 +6,7 @@ import {
   setCurrentFrameIdAction,
   setCurrentSectionIdAction,
 } from './event.slice'
+import { collapseLeftSidebarAction } from '../../layout/live.slice'
 
 import { USER_PREFERENCES_LOCAL_STORAGE_KEY } from '@/constants/common'
 import { getRealtimeChannelForEvent } from '@/services/realtime/supabase-realtime.service'
@@ -338,6 +339,8 @@ attachStoreListener({
     const { dyteClient } = getState().event.currentEvent.liveSessionState.dyte
 
     const dyteConnectedMeetingId = dyteClient?.meta.meetingId
+
+    if (action.payload) dispatch(collapseLeftSidebarAction())
 
     if (!dyteClient || !dyteConnectedMeetingId || !meetingId) return
     if (action.payload) {

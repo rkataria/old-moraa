@@ -34,6 +34,10 @@ export function Header() {
       state.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.meetingTitles
   )
+  const isInBreakoutMeeting = useStoreSelector(
+    (state) =>
+      state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
+  )
   const { permissions } = useEventPermissions()
   const { leftSidebarMode } = useStoreSelector((state) => state.layout.live)
   const dispatch = useStoreDispatch()
@@ -65,7 +69,10 @@ export function Header() {
     <div className="h-full w-full flex justify-between items-center gap-4 px-4">
       <div className="flex-1 flex justify-start items-center gap-2 h-full">
         <MoraaLogo color="primary" logoOnly className="mr-2" />
-        <RenderIf isTrue={permissions.canAcessAllSessionControls}>
+        <RenderIf
+          isTrue={
+            permissions.canAcessAllSessionControls && !isInBreakoutMeeting
+          }>
           <div className="pr-1">
             <AgendaPanelToggle
               collapsed={leftSidebarMode === 'collapsed'}

@@ -178,7 +178,7 @@ export function StartPlannedBreakoutModal({
             room(s) would be created.
           </p>
         </div>
-        <div className="flex justify-center items-center">
+        <div className="flex justify-end items-center">
           <NumberInput
             min={1}
             max={30}
