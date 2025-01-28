@@ -63,6 +63,25 @@ const createFrames = async (
   )
 }
 
+const duplicateFrame = async (framePayload: {
+  frameId: string
+  sectionId: string
+  meetingId: string
+}) => {
+  const query = supabaseClient.functions.invoke('duplicate-frame', {
+    body: {
+      ...framePayload,
+    },
+  })
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
 const updateFrame = async ({
   framePayload,
   frameId,
@@ -154,6 +173,7 @@ const deleteFrames = async ({
 export const FrameService = {
   getFrames,
   createFrame,
+  duplicateFrame,
   createFrames,
   updateFrame,
   updateFrames,

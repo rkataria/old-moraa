@@ -4,7 +4,6 @@ import { useState } from 'react'
 
 import { Chip } from '@nextui-org/react'
 import { IoChevronForward } from 'react-icons/io5'
-import { v4 as uuidv4 } from 'uuid'
 
 import { AddItemBar } from './AddItemBar'
 import { FrameList } from './FrameList'
@@ -20,6 +19,7 @@ import { useAgendaPanel } from '@/hooks/useAgendaPanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
+import { FrameService } from '@/services/frame.service'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import {
@@ -52,7 +52,6 @@ export function SectionItem({
     updateSection,
     deleteSection,
     setOverviewOpen,
-    addFrameToSection,
   } = useEventContext()
   const { permissions } = useEventPermissions()
   const currentFrame = useCurrentFrame()
@@ -114,21 +113,10 @@ export function SectionItem({
     !sectionExpanded || section.frames.length === 0
 
   const duplicateFrame = (frame: IFrame) => {
-    const newFrame = {
-      id: uuidv4(),
-      config: frame.config,
-      content: frame.content,
-      status: frame.status,
-      type: frame.type,
-      section_id: frame.section_id,
-      meeting_id: frame.meeting_id,
-      name: `Copy-${frame.name}`,
-    }
-
-    addFrameToSection({
-      frame: newFrame,
-      section,
-      afterFrameId: frame.id!,
+    FrameService.duplicateFrame({
+      frameId: frame.id,
+      meetingId: frame.meeting_id as string,
+      sectionId: frame.section_id as string,
     })
   }
 
