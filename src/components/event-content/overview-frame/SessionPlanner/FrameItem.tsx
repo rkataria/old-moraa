@@ -315,9 +315,7 @@ export function FrameItem({
                   frameId={frame.id}
                   onAddFrame={() => {
                     addFrameToSection({
-                      frame: getBlankFrame(
-                        `Frame ${(section?.frames?.length || 0) + 1}`
-                      ),
+                      frame: getBlankFrame('Untitled'),
                       section,
                       afterFrameId: frame.id,
                     })

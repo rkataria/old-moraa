@@ -100,7 +100,7 @@ export function FrameManager() {
 
     const newFrame: IFrame = {
       id: uuidv4(),
-      name: `Frame ${(insertInSection?.frames?.length || 0) + 1}`,
+      name: type,
       config: getFrameConfig({
         frameType: type,
         data: {

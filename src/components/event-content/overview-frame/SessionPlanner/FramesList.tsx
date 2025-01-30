@@ -66,7 +66,7 @@ export function FramesList({
     setInsertInSectionId(sectionId)
 
     addFrameToSection({
-      frame: getBlankFrame(`Frame ${(section?.frames?.length || 0) + 1}`),
+      frame: getBlankFrame('Untitled'),
       section,
     })
   }
