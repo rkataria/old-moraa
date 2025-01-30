@@ -10,6 +10,8 @@ export type GetEventParams = {
 }
 
 const getEvents = async (range: { from: number; to: number }) => {
+  console.log('Get Events Called')
+
   const {
     data: { user },
   } = await supabaseClient.auth.getUser()

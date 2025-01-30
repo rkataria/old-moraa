@@ -95,7 +95,7 @@ export class BreakoutRooms {
     const getGroupSize = () => {
       if (participantPerGroup) return participantPerGroup
 
-      return Math.floor(participants.length / roomsCount!) || 1
+      return Math.ceil(participants.length / roomsCount!) || 1
     }
 
     const groupSize = getGroupSize()
