@@ -70,8 +70,13 @@ export function FramePicker({
   breakoutFrameId,
   onBreakoutFrameImport,
 }: FramePickerProps) {
-  const { meeting, currentSectionId, sections, setOpenContentTypePicker } =
-    useEventContext()
+  const {
+    meeting,
+    currentSectionId,
+    sections,
+    setOpenContentTypePicker,
+    insertAfterFrameId,
+  } = useEventContext()
   const [frameSelected, setFrameSelected] = useState<FramePickerFrame | null>(
     null
   )
@@ -97,6 +102,7 @@ export function FramePicker({
         frameId: frame.id,
         meetingId: meeting?.id,
         sectionId: currentSectionId || sections[sections.length - 1]?.id,
+        insertAfterFrameId: insertAfterFrameId as string,
       },
       {
         onSuccess: () => {
@@ -115,6 +121,7 @@ export function FramePicker({
         frameId: frame.id,
         meetingId: meeting?.id,
         sectionId: currentSectionId || sections[sections.length - 1]?.id,
+        insertAfterFrameId: breakoutFrameId as string,
         breakoutFrameId,
       },
       {

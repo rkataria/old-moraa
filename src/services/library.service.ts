@@ -159,19 +159,22 @@ const importFrameFromLibrary = async ({
   meetingId,
   sectionId,
   breakoutFrameId,
+  insertAfterFrameId,
 }: {
   frameId: string
   sectionId: string
   meetingId: string
   breakoutFrameId?: string
+  insertAfterFrameId: string
 }): Promise<{ success: boolean; frame: IFrame }> =>
   supabaseClient.functions
     .invoke('import-from-library', {
       body: {
-        frameId,
+        frameIds: [frameId],
         meetingId,
         sectionId,
         breakoutFrameId,
+        insertAfterFrameId,
       },
     })
     .then((res) => JSON.parse(res.data))
