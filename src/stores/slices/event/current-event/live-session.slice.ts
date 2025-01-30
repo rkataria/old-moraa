@@ -374,29 +374,18 @@ attachStoreListener({
       return
     }
     const { eventId } = getState().event.currentEvent.eventState
-    const isMeetingOwner =
-      getState().event.currentEvent.eventState.isCurrentUserOwnerOfEvent
     const meetingId =
       getState().event.currentEvent.meetingState.meeting.data?.id
 
     const dyteMeetingId = dyteClient.meta.meetingId
 
     dispatch(setCurrentDyteMeetingIdAction(dyteMeetingId))
-    if (isMeetingOwner) {
-      dispatch(
-        getExistingOrCreateNewActiveSessionThunk({
-          dyteMeetingId,
-          meetingId,
-        })
-      )
-    } else {
-      dispatch(
-        getMeetingSessionThunk({
-          dyteMeetingId,
-          meetingId,
-        })
-      )
-    }
+    dispatch(
+      getExistingOrCreateNewActiveSessionThunk({
+        dyteMeetingId,
+        meetingId,
+      })
+    )
 
     const userPreferences = localStorage.getItem(
       USER_PREFERENCES_LOCAL_STORAGE_KEY
