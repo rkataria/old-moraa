@@ -12,7 +12,9 @@ type PreviewProps = {
 
 export function Thumbnail({ frame }: PreviewProps) {
   const showPlaceholder =
-    !frame.content?.activityId && !frame.content?.groupActivityId
+    !frame.content?.activityId &&
+    !frame.content?.groupActivityId &&
+    !!frame.content?.breakoutRooms?.some((br) => !br.activityId)
 
   return (
     <div className="w-full h-full">

@@ -6,7 +6,9 @@ import { MCQFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 
 export function Thumbnail({ frame }: { frame: MCQFrame }) {
-  const showPlaceholder = !frame.content?.googleSlideUrl
+  const showPlaceholder =
+    !frame.content?.title ||
+    !!frame.content?.options.some((option) => !option.name)
 
   return (
     <div className="w-full h-full">

@@ -11,7 +11,6 @@ export function Preview({ frame }: PreviewProps) {
   return (
     <>
       <FrameTitleDescriptionPreview frame={frame} />
-
       <Editor
         editorId={frame.id}
         editable={false}
