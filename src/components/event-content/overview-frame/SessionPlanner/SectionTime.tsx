@@ -62,7 +62,7 @@ export function SectionTime({
         typeof frame?.config?.time === 'number' &&
         frame.type !== FrameType.BREAKOUT
       ) {
-        totalTime += frame.config.time
+        totalTime += frame.config?.time || 0
 
         return
       }
@@ -70,7 +70,7 @@ export function SectionTime({
         frame?.config &&
         typeof frame?.config?.breakoutDuration === 'number'
       ) {
-        totalTime += frame.config.breakoutDuration
+        totalTime += frame.config?.breakoutDuration || 0
       }
     })
 
