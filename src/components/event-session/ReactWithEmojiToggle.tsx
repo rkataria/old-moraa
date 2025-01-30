@@ -157,11 +157,12 @@ export function ReactWithEmojiToggle() {
         <div className="flex w-full flex-col bg-white pb-0 pl-2">
           <Tabs
             disableAnimation
+            keyboardActivation="manual"
             color="primary"
             variant="underlined"
             classNames={{
               tabList: 'pb-0 gap-6',
-              tab: 'max-w-fit px-0 h-10 !outline-none after:w-full',
+              tab: 'max-w-fit px-0 h-10 !outline-none after:w-full data-[focus-visible=true]:outline-0',
             }}
             selectedKey={selectedTab as string}
             onSelectionChange={setSelectedTab}>

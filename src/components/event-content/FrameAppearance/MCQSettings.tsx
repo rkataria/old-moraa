@@ -148,10 +148,14 @@ export function MCQSettings() {
             </div>
           </div>
           <Tabs
+            keyboardActivation="manual"
             selectedKey={currentFrame.config?.image?.position}
             onSelectionChange={handlePositionChange}
             variant="solid"
-            aria-label="Tabs variants">
+            aria-label="Tabs variants"
+            classNames={{
+              tab: 'data-[focus-visible=true]:outline-0',
+            }}>
             <Tab key="left" title={<VscLayoutActivitybarLeft />} />
             <Tab
               key="right"

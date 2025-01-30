@@ -99,10 +99,11 @@ export function SecondaryHeader() {
         aria-label="Studio Tabs"
         color="primary"
         selectedKey={activeTab}
+        keyboardActivation="manual"
         classNames={{
           base: 'h-full',
           tabList: 'bg-transparent border-gray-100 shadow-none h-full pb-0',
-          tab: 'text-gray-600 h-full !outline-none',
+          tab: 'text-gray-600 h-full !outline-none data-[focus-visible=true]:outline-0',
           tabContent:
             'px-4 text-gray-600 h-full flex justify-center items-center font-medium',
         }}

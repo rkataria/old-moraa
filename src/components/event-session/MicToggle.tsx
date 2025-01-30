@@ -42,7 +42,7 @@ export function MicToggle({
   )
 
   const getTooltipProps = () => {
-    if (isSpeaking && !isMicEnabled && !hideSpeakingAlert) {
+    if (isSpeaking) {
       return {
         label: (
           <p>
