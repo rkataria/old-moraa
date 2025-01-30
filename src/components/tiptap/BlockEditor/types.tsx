@@ -11,7 +11,7 @@ export interface TiptapProps {
   hasCollab: boolean
   ydoc: YDoc
   provider?: TiptapCollabProvider | null | undefined
-  editorInfo: { name: string; avatar: string }
+  editorInfo: { name: string; avatar: string; color: string }
   editable?: boolean
   setAiToken: (token: string) => void
   setCollabToken: (token: string) => void

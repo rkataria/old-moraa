@@ -50,13 +50,6 @@ export function FrameList({
 
   if (!showList) return null
 
-  const previousUnrenderedNestedBreakoutsCount = (frameId: string) => {
-    const currentFrameIndex = frames.findIndex((f) => f.id === frameId)
-    const prevIds = frames.slice(0, currentFrameIndex)
-
-    return prevIds.filter((f) => f?.content?.breakoutFrameId).length
-  }
-
   const framesExcludingNestedBreakouts = frames.filter(
     (f) => !f?.content?.breakoutFrameId
   )
@@ -92,11 +85,7 @@ export function FrameList({
                           duplicateFrame={duplicateFrame}
                           saveFrameInLibrary={saveFrameInLibrary}
                           actionDisabled={actionDisabled}
-                          framePosition={
-                            sectionStartingIndex +
-                            frameIndex -
-                            previousUnrenderedNestedBreakoutsCount(frame.id)
-                          }
+                          framePosition={sectionStartingIndex + frameIndex}
                         />
                         <RenderIf
                           isTrue={
