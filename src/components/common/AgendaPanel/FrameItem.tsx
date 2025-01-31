@@ -124,11 +124,14 @@ export function FrameItem({
 
     if (currentFrame?.id !== frame.id) return
 
-    frameRef.current.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center',
-    })
+    // TODO: Remove setTimeout once the issue is fixed https://github.com/facebook/react/issues/23396
+    setTimeout(() => {
+      frameRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center',
+      })
+    }, 0)
   }, [frameRef, currentFrame, frame.id])
 
   const handleFrameAction = (action: {
