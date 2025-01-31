@@ -4,13 +4,18 @@ import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 
 import { DeleteConfirmationModal } from '@/components/common/DeleteConfirmationModal'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { FrameResponseService } from '@/services/frame-response.service'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { toggleStartAndStopActivityAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { PresentationStatuses } from '@/types/event-session.type'
 
 export function ReflectionControls() {
+  const { presentationStatus } = useEventSession()
+
   const [openResetConfirmationModal, setOpenResetConfirmationModal] =
     useState(false)
   const frame = useCurrentFrame()
@@ -38,19 +43,21 @@ export function ReflectionControls() {
 
   return (
     <>
-      <Button
-        title="Start Reflection"
-        color={reflectionStarted ? 'danger' : 'primary'}
-        onClick={() => {
-          dispatch(
-            toggleStartAndStopActivityAction({
-              frameId: frame.id,
-              activity: 'reflection',
-            })
-          )
-        }}>
-        {reflectionStarted ? 'End' : 'Start'} Reflection
-      </Button>
+      <RenderIf isTrue={presentationStatus === PresentationStatuses.STARTED}>
+        <Button
+          title="Start Reflection"
+          color={reflectionStarted ? 'danger' : 'primary'}
+          onClick={() => {
+            dispatch(
+              toggleStartAndStopActivityAction({
+                frameId: frame.id,
+                activity: 'reflection',
+              })
+            )
+          }}>
+          {reflectionStarted ? 'End' : 'Start'} Reflection
+        </Button>
+      </RenderIf>
       <Button
         title="Reset Reflection"
         disabled={reflectionStarted}

@@ -4,22 +4,16 @@ import { useQuery } from '@tanstack/react-query'
 import { EventService } from '@/services/event.service'
 import { EventModel } from '@/types/models'
 
-export const useEvent = ({
-  id,
-  fetchActiveSession = false,
-}: {
-  id: string
-  fetchActiveSession?: boolean
-}) => {
+export const useEvent = ({ id }: { id: string }) => {
   const eventQuery = useQuery({
     queryKey: ['event', id],
     queryFn: () =>
       EventService.getEvent({
         eventId: id,
-        fetchActiveSession,
       }),
     enabled: !!id,
     refetchOnWindowFocus: false,
+    staleTime: Infinity,
   })
 
   const hosts =

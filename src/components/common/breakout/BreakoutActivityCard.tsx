@@ -198,15 +198,17 @@ export function BreakoutRoomActivityCard({
       {!!participants && (
         <StrictModeDroppable
           droppableId={`participant-droppable_${roomId}`}
+          direction="horizontal"
           type="participant">
           {(participantDroppableProvided, snapshot) => (
             <div
               key={`participant-draggable_${roomId}`}
               ref={participantDroppableProvided.innerRef}
               className={cn(
-                'flex items-center m-2 pl-2 relative rounded-md transition-all',
+                'flex items-center m-2 px-2 pt-2 relative rounded-md transition-all border-2 border-transparent flex-wrap',
                 {
-                  'border-3 border-gray-600': snapshot.isDraggingOver,
+                  'border-2 border-gray-600 animate-pulse':
+                    snapshot.isDraggingOver,
                   'border-2 border-gray-400': snapshot.draggingFromThisWith,
                 }
               )}

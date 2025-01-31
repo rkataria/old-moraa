@@ -174,7 +174,7 @@ export function AssignParticipantsModal({
               </div>
             </ModalHeader>
             <ModalBody
-              className={cn('p-0 h-full', {
+              className={cn('px-4 h-full', {
                 'max-h-[calc(80vh_-_104px)]': !actions,
                 'max-h-[calc(80vh_-_104px_-_56px)]': !!actions,
               })}>

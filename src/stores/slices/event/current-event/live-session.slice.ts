@@ -333,24 +333,8 @@ attachStoreListener({
 
 attachStoreListener({
   actionCreator: liveSessionSlice.actions.setIsInBreakout,
-  effect: async (action, { dispatch, getState }) => {
-    const meetingId =
-      getState().event.currentEvent.meetingState.meeting.data?.id
-    const { dyteClient } = getState().event.currentEvent.liveSessionState.dyte
-
-    const dyteConnectedMeetingId = dyteClient?.meta.meetingId
-
+  effect: async (action, { dispatch }) => {
     if (action.payload) dispatch(collapseLeftSidebarAction())
-
-    if (!dyteClient || !dyteConnectedMeetingId || !meetingId) return
-    if (action.payload) {
-      dispatch(
-        getMeetingSessionThunk({
-          meetingId,
-          dyteMeetingId: dyteConnectedMeetingId,
-        })
-      )
-    }
   },
 })
 
@@ -378,14 +362,25 @@ attachStoreListener({
       getState().event.currentEvent.meetingState.meeting.data?.id
 
     const dyteMeetingId = dyteClient.meta.meetingId
+    console.log({ dyteMeetingId })
 
     dispatch(setCurrentDyteMeetingIdAction(dyteMeetingId))
-    dispatch(
-      getExistingOrCreateNewActiveSessionThunk({
-        dyteMeetingId,
-        meetingId,
-      })
-    )
+
+    if (!action.payload?.connectedMeetings.parentMeeting?.id) {
+      dispatch(
+        getExistingOrCreateNewActiveSessionThunk({
+          dyteMeetingId,
+          meetingId,
+        })
+      )
+    } else {
+      dispatch(
+        getMeetingSessionThunk({
+          meetingId,
+          dyteMeetingId,
+        })
+      )
+    }
 
     const userPreferences = localStorage.getItem(
       USER_PREFERENCES_LOCAL_STORAGE_KEY
@@ -477,6 +472,12 @@ attachStoreListener({
 
     if (!connectedDyteMeetingId) return
 
+    console.log('Subscribing for: ', {
+      connectedDyteMeetingId,
+      eventId,
+      meetingId,
+    })
+
     supabaseClient
       .channel(`event:${eventId}-3`, { config: { broadcast: { self: false } } })
       .on(
@@ -519,6 +520,12 @@ attachStoreListener({
             return
           }
           if (!payload.new.data) return
+          console.log(
+            payload.new.id,
+            getState().event.currentEvent.liveSessionState.activeSession.data
+              ?.id
+          )
+
           if (
             payload.new.id !==
             getState().event.currentEvent.liveSessionState.activeSession.data

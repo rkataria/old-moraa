@@ -83,19 +83,37 @@ export function BreakoutTypePicker({
 }: ChooseContentTypeProps) {
   const [selectedBreakoutType, setSelectedBreakoutType] =
     useState<BREAKOUT_TYPES>(BREAKOUT_TYPES.GROUPS)
-  const [breakoutRoomsGroupsCount, setBreakoutRoomsGroupsCount] =
-    useState<number>(2)
-  const [breakoutRoomsGroupsTime, setBreakoutRoomsGroupsTime] =
-    useState<number>(5)
-  const [assignmentOption, setAssignmentOption] =
-    useState<AssignmentOption>('auto')
+
+  const [breakoutConfig, setBreakoutConfig] = useState<{
+    [x in BREAKOUT_TYPES]: {
+      duration: number
+      groupSize?: number
+      roomsCount?: number
+      assignmentOption: AssignmentOption
+    }
+  }>({
+    [BREAKOUT_TYPES.GROUPS]: {
+      duration: 5,
+      groupSize: 2,
+      assignmentOption: 'auto',
+    },
+    [BREAKOUT_TYPES.ROOMS]: {
+      duration: 5,
+      roomsCount: 2,
+      assignmentOption: 'auto',
+    },
+  })
 
   const onSubmit = () => {
     onChoose(
       selectedBreakoutType,
-      breakoutRoomsGroupsCount,
-      breakoutRoomsGroupsTime,
-      assignmentOption
+      breakoutConfig[selectedBreakoutType][
+        selectedBreakoutType === BREAKOUT_TYPES.GROUPS
+          ? 'groupSize'
+          : 'roomsCount'
+      ],
+      breakoutConfig[selectedBreakoutType].duration,
+      breakoutConfig[selectedBreakoutType].assignmentOption
     )
   }
 
@@ -172,13 +190,31 @@ export function BreakoutTypePicker({
                               min={2}
                               max={30}
                               allowNegative={false}
-                              number={breakoutRoomsGroupsCount}
+                              number={
+                                breakoutConfig[breakoutType.breakoutType][
+                                  breakoutType.breakoutType ===
+                                  BREAKOUT_TYPES.GROUPS
+                                    ? 'groupSize'
+                                    : 'roomsCount'
+                                ]
+                              }
                               disabled={
                                 selectedBreakoutType !==
                                 breakoutType.breakoutType
                               }
                               onNumberChange={(count: number) =>
-                                setBreakoutRoomsGroupsCount(count)
+                                setBreakoutConfig({
+                                  ...breakoutConfig,
+                                  [breakoutType.breakoutType]: {
+                                    ...breakoutConfig[
+                                      breakoutType.breakoutType
+                                    ],
+                                    [breakoutType.breakoutType ===
+                                    BREAKOUT_TYPES.GROUPS
+                                      ? 'groupSize'
+                                      : 'roomsCount']: count,
+                                  },
+                                })
                               }
                             />
                           </span>
@@ -196,13 +232,24 @@ export function BreakoutTypePicker({
                               min={2}
                               max={30}
                               allowNegative={false}
-                              number={breakoutRoomsGroupsTime}
+                              number={
+                                breakoutConfig[breakoutType.breakoutType]
+                                  .duration
+                              }
                               disabled={
                                 selectedBreakoutType !==
                                 breakoutType.breakoutType
                               }
                               onNumberChange={(count: number) =>
-                                setBreakoutRoomsGroupsTime(count)
+                                setBreakoutConfig({
+                                  ...breakoutConfig,
+                                  [breakoutType.breakoutType]: {
+                                    ...breakoutConfig[
+                                      breakoutType.breakoutType
+                                    ],
+                                    duration: count,
+                                  },
+                                })
                               }
                             />
                           </span>
@@ -218,12 +265,20 @@ export function BreakoutTypePicker({
                                 BREAKOUT_TYPES.GROUPS
                               }
                               assignmentOption={
-                                breakoutType.breakoutType ===
-                                BREAKOUT_TYPES.GROUPS
-                                  ? 'auto'
-                                  : assignmentOption
+                                breakoutConfig[breakoutType.breakoutType]
+                                  .assignmentOption
                               }
-                              onChange={setAssignmentOption}
+                              onChange={(option) =>
+                                setBreakoutConfig({
+                                  ...breakoutConfig,
+                                  [breakoutType.breakoutType]: {
+                                    ...breakoutConfig[
+                                      breakoutType.breakoutType
+                                    ],
+                                    assignmentOption: option,
+                                  },
+                                })
+                              }
                             />
                           </div>
                         </div>

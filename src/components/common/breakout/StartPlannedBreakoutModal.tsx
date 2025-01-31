@@ -34,6 +34,7 @@ import {
   notifyBreakoutStart,
 } from '@/utils/breakout.utils'
 import { StartBreakoutConfig } from '@/utils/dyte-breakout'
+import { shuffleAndGroup } from '@/utils/shuffle-array'
 import { getCurrentTimestamp } from '@/utils/timer.utils'
 
 type StartPlannedBreakoutModalProps = {
@@ -75,6 +76,10 @@ export function StartPlannedBreakoutModal({
   )
   const dispatch = useStoreDispatch()
 
+  const breakoutType = currentFrame?.config.breakoutType
+  const isGroupsBreakout = breakoutType === BREAKOUT_TYPES.GROUPS
+  const isRoomsBreakout = breakoutType === BREAKOUT_TYPES.ROOMS
+
   useEffect(() => {
     setBreakoutConfig({
       participantPerGroup:
@@ -99,6 +104,40 @@ export function StartPlannedBreakoutModal({
   const isConfigAlreadyProvided =
     typeof roomsCount !== 'undefined' ||
     typeof participantPerGroup !== 'undefined'
+
+  const RoomSizeConfig = (() => {
+    // Calculate the distribution based on the groups array
+    const groups = shuffleAndGroup(
+      joinedParticipants.map((p) => p.id),
+      isRoomsBreakout
+        ? Math.ceil(joinedParticipants.length / breakoutConfig.roomsCount!) || 1
+        : breakoutConfig.participantPerGroup
+    )
+
+    const groupSizes = groups.map((group) => group.length) // Get the size of each group
+    const sizeCountMap = new Map<number, number>() // Map to store how many groups have a specific size
+
+    // Populate the sizeCountMap
+    groupSizes.forEach((size) => {
+      if (sizeCountMap.has(size)) {
+        sizeCountMap.set(size, sizeCountMap.get(size)! + 1)
+      } else {
+        sizeCountMap.set(size, 1)
+      }
+    })
+
+    // Generate the distribution statement
+    const distributionStatement = Array.from(sizeCountMap.entries()).map(
+      ([size, count]) => (
+        <p>
+          {count} room{count > 1 ? 's' : ''} * {size} participant
+          {size > 1 ? 's' : ''}
+        </p>
+      )
+    )
+
+    return <p className="pl-4">{distributionStatement}</p>
+  })()
 
   const DurationUI = (
     <div className="grid grid-cols-[50%_50%] gap-2">
@@ -154,13 +193,7 @@ export function StartPlannedBreakoutModal({
       <div className="grid grid-cols-[50%_50%] gap-2">
         <div>
           <p className="flex items-center">Number of rooms:</p>{' '}
-          <p className="text-xs text-gray-500">
-            Approx{' '}
-            {Math.ceil(
-              currentParticipantCount / (breakoutConfig.roomsCount as number)
-            )}{' '}
-            participant(s) per room.
-          </p>
+          <p className="text-xs text-gray-500">{RoomSizeConfig}</p>
         </div>
         <div className="flex justify-end px-11 items-center">
           {breakoutConfig.roomsCount}
@@ -170,13 +203,8 @@ export function StartPlannedBreakoutModal({
     participants_per_room: (
       <div className="grid grid-cols-[50%_50%] gap-2">
         <div>
-          <p className="flex items-center">Max participants per room:</p>
-          <p className="text-xs text-gray-500">
-            {Math.ceil(
-              currentParticipantCount / breakoutConfig.participantPerGroup
-            )}{' '}
-            room(s) would be created.
-          </p>
+          <p className="flex items-center">Participants per room:</p>
+          <p className="text-xs text-gray-500">{RoomSizeConfig}</p>
         </div>
         <div className="flex justify-end items-center">
           <NumberInput
@@ -201,13 +229,7 @@ export function StartPlannedBreakoutModal({
     <div className="grid grid-cols-[50%_50%] gap-2">
       <div>
         <p className="flex items-center">Number of rooms:</p>{' '}
-        <p className="text-xs text-gray-500">
-          Approx{' '}
-          {Math.ceil(
-            currentParticipantCount / (breakoutConfig.roomsCount as number)
-          )}{' '}
-          participant(s) per room.
-        </p>
+        <p className="text-xs text-gray-500">{RoomSizeConfig}</p>
       </div>
       <div className="flex justify-center items-center">
         <NumberInput
@@ -242,8 +264,10 @@ export function StartPlannedBreakoutModal({
          * Because the breakoutRooms array only exist on breakout room type so it won't get sent for a breakout group type
          * And the `participantPerGroup` only exist on breakout group type so it won't get sent for a breakout room type
          */
-        roomsCount: config.roomsCount,
-        participantPerGroup: config.participantPerGroup,
+        roomsCount: isRoomsBreakout ? config.roomsCount : undefined,
+        participantPerGroup: isGroupsBreakout
+          ? config.participantPerGroup
+          : undefined,
         assignmentOption: config.assignmentOption || 'auto',
       })
       const connectedMeetingsToActivitiesMap: { [x: string]: string } =

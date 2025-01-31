@@ -7,6 +7,8 @@ import { MeetingModel } from '@/types/models'
 export const getMeetingThunk = createAsyncThunk<MeetingModel, string>(
   'event/getMeeting',
   async (eventId: string) => {
+    console.log('getEventMeeting')
+
     const response = await EventService.getEvent({ eventId })
 
     return response.meeting as MeetingModel

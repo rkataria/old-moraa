@@ -78,7 +78,9 @@ export function Content() {
             <h3>Breakout</h3>
             <BreakoutMessageBroadcast />
           </div>
-          <BreakoutRoomsWithParticipants key="frame_breakout_view" />
+          <div className="overflow-y-auto h-[80%]">
+            <BreakoutRoomsWithParticipants key="frame_breakout_view" />
+          </div>
         </div>
       </PanelsContent>
     ),

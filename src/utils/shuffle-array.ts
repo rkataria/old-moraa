@@ -3,7 +3,7 @@ export function shuffleAndGroup(
   groupSize: number
 ): string[][] {
   if (groupSize <= 0) {
-    throw new Error('Invalid group size')
+    return []
   }
   // Shuffle the participants array using the Fisher-Yates algorithm
   const shuffleArray = (array: string[]): void => {
@@ -23,7 +23,10 @@ export function shuffleAndGroup(
     groups.push(shuffledParticipants.slice(i, i + groupSize))
   }
   // Combine small leftover groups into the last group if necessary
-  if (groups.length > 1 && groups[groups.length - 1].length < groupSize) {
+  if (
+    groups.length > 1 &&
+    groups[groups.length - 1].length < Math.ceil(groupSize / 2)
+  ) {
     const leftovers = groups.pop()!
     groups[groups.length - 1].push(...leftovers)
   }
