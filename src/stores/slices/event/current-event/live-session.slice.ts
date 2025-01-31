@@ -362,6 +362,7 @@ attachStoreListener({
       getState().event.currentEvent.meetingState.meeting.data?.id
 
     const dyteMeetingId = dyteClient.meta.meetingId
+    console.log({ dyteMeetingId })
 
     dispatch(setCurrentDyteMeetingIdAction(dyteMeetingId))
 
@@ -471,6 +472,12 @@ attachStoreListener({
 
     if (!connectedDyteMeetingId) return
 
+    console.log('Subscribing for: ', {
+      connectedDyteMeetingId,
+      eventId,
+      meetingId,
+    })
+
     supabaseClient
       .channel(`event:${eventId}-3`, { config: { broadcast: { self: false } } })
       .on(
@@ -513,6 +520,12 @@ attachStoreListener({
             return
           }
           if (!payload.new.data) return
+          console.log(
+            payload.new.id,
+            getState().event.currentEvent.liveSessionState.activeSession.data
+              ?.id
+          )
+
           if (
             payload.new.id !==
             getState().event.currentEvent.liveSessionState.activeSession.data

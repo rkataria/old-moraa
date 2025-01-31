@@ -12,6 +12,7 @@ import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
+import { PresentationStatuses } from '@/types/event-session.type'
 import {
   notificationDuration,
   notifyBreakoutEnd,
@@ -21,7 +22,7 @@ import { FrameType } from '@/utils/frame-picker.util'
 
 export function BreakoutControls() {
   const [openStartBreakoutModal, setOpenStartBreakoutModal] = useState(false)
-  const { isHost } = useEventSession()
+  const { isHost, presentationStatus } = useEventSession()
 
   const frame = useCurrentFrame()
   const { isBreakoutActive } = useBreakoutRooms()
@@ -68,16 +69,30 @@ export function BreakoutControls() {
     breakoutRoomsInstance?.endBreakoutRooms()
   }
 
+  const isNoParticipantsInRoom = !!participants.toArray().length
+  const isBreakoutActiveOnAnotherFrame =
+    isBreakoutActive && frame.id !== sessionBreakoutFrameId
   const showEndBreakoutButton =
     isBreakoutActive && frame.id === sessionBreakoutFrameId
-  console.log(isBreakoutActive, frame.id, sessionBreakoutFrameId)
+
+  console.log(isNoParticipantsInRoom)
 
   return (
     <>
-      <RenderIf isTrue={!showEndBreakoutButton}>
+      <RenderIf
+        isTrue={
+          !showEndBreakoutButton &&
+          presentationStatus === PresentationStatuses.STARTED
+        }>
         <Tooltip
-          content="Cannot start the breakout without participants."
-          hidden={!!participants.toArray().length}>
+          content={
+            isBreakoutActiveOnAnotherFrame
+              ? 'Breakout is active on another frame'
+              : isNoParticipantsInRoom
+                ? 'Cannot start the breakout without participants.'
+                : ''
+          }
+          hidden={isNoParticipantsInRoom && !isBreakoutActiveOnAnotherFrame}>
           <Button
             title="Start breakout"
             color="primary"

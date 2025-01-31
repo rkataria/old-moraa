@@ -205,7 +205,7 @@ export function BreakoutRoomActivityCard({
               key={`participant-draggable_${roomId}`}
               ref={participantDroppableProvided.innerRef}
               className={cn(
-                'flex items-center m-2 px-2 pt-2 relative rounded-md transition-all border-2 border-transparent',
+                'flex items-center m-2 px-2 pt-2 relative rounded-md transition-all border-2 border-transparent flex-wrap',
                 {
                   'border-2 border-gray-600 animate-pulse':
                     snapshot.isDraggingOver,

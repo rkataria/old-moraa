@@ -4,13 +4,17 @@ import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 
 import { DeleteConfirmationModal } from '@/components/common/DeleteConfirmationModal'
+import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { FrameResponseService } from '@/services/frame-response.service'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { toggleStartAndStopActivityAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { PresentationStatuses } from '@/types/event-session.type'
 
 export function PollControls() {
+  const { presentationStatus } = useEventSession()
   const [openResetConfirmationModal, setOpenResetConfirmationModal] =
     useState(false)
   const frame = useCurrentFrame()
@@ -37,19 +41,21 @@ export function PollControls() {
 
   return (
     <>
-      <Button
-        title="Start poll"
-        color={pollStarted ? 'danger' : 'primary'}
-        onClick={() => {
-          dispatch(
-            toggleStartAndStopActivityAction({
-              frameId: frame.id,
-              activity: 'poll',
-            })
-          )
-        }}>
-        {pollStarted ? 'End' : 'Start'} Poll
-      </Button>
+      <RenderIf isTrue={presentationStatus === PresentationStatuses.STARTED}>
+        <Button
+          title="Start poll"
+          color={pollStarted ? 'danger' : 'primary'}
+          onClick={() => {
+            dispatch(
+              toggleStartAndStopActivityAction({
+                frameId: frame.id,
+                activity: 'poll',
+              })
+            )
+          }}>
+          {pollStarted ? 'End' : 'Start'} Poll
+        </Button>
+      </RenderIf>
       <Button
         title="Reset poll"
         disabled={pollStarted}
