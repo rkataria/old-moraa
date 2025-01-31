@@ -70,6 +70,7 @@ export function BreakoutControls() {
 
   const showEndBreakoutButton =
     isBreakoutActive && frame.id === sessionBreakoutFrameId
+  console.log(isBreakoutActive, frame.id, sessionBreakoutFrameId)
 
   return (
     <>

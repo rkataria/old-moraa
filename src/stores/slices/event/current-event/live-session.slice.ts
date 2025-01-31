@@ -380,12 +380,18 @@ attachStoreListener({
     const dyteMeetingId = dyteClient.meta.meetingId
 
     dispatch(setCurrentDyteMeetingIdAction(dyteMeetingId))
-    dispatch(
-      getExistingOrCreateNewActiveSessionThunk({
-        dyteMeetingId,
-        meetingId,
-      })
-    )
+
+    /* Don't get or create session in case the participant get's into breakout room as this is explicitly handled.
+     * in `actionCreator: liveSessionSlice.actions.setIsInBreakout`
+     */
+    if (!action.payload?.connectedMeetings.parentMeeting?.id) {
+      dispatch(
+        getExistingOrCreateNewActiveSessionThunk({
+          dyteMeetingId,
+          meetingId,
+        })
+      )
+    }
 
     const userPreferences = localStorage.getItem(
       USER_PREFERENCES_LOCAL_STORAGE_KEY
