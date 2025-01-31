@@ -216,16 +216,19 @@ attachStoreListener({
 
     if (!section) return
 
+    const deletedFrameIndex = section.frames?.indexOf(deletedFrameId) || 0
+    const previousFrameId =
+      section.frames?.[
+        deletedFrameIndex > 0 ? deletedFrameIndex - 1 : deletedFrameIndex! + 1
+      ]
     const updatedFrames = section.frames?.filter(
       (frameId) => frameId !== deletedFrameId
     )
 
-    const lastFrame: string = updatedFrames?.[updatedFrames.length - 1] || ''
-
-    if (!lastFrame) {
+    if (!previousFrameId) {
       dispatch(setCurrentSectionIdAction(section.id))
     } else {
-      dispatch(setCurrentFrameIdAction(lastFrame))
+      dispatch(setCurrentFrameIdAction(previousFrameId))
     }
 
     dispatch(

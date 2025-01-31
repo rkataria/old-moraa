@@ -69,6 +69,7 @@ export function Participantslist({
       <div className="flex items-center justify-between">
         <Tabs
           key="underlined"
+          keyboardActivation="manual"
           aria-label="Tabs variants"
           variant="underlined"
           selectedKey={selected}
@@ -76,7 +77,7 @@ export function Participantslist({
           classNames={{
             tabList: 'gap-6 w-full relative rounded-none p-0',
             cursor: 'w-full bg-primary',
-            tab: 'max-w-fit px-0 h-12',
+            tab: 'max-w-fit px-0 h-12 data-[focus-visible=true]:outline-0',
             tabContent: 'group-data-[selected=true]:text-primary',
           }}>
           <Tab

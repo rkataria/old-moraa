@@ -501,8 +501,12 @@ dyte-clock dyte-icon {
   background: #7c3aed !important;
 }
 
-
 /* Tldraw styles overrides for recorder view */
 .recorder-container .tlui-helper-buttons {
   display: none !important;
+}
+
+.sanitized-rich-text .node-imageUpload,
+.sanitized-rich-text .node-aiImage {
+  display: none;
 }

@@ -1,6 +1,5 @@
 import { Preview } from './Preview'
 import { FrameNoContentPlaceholder } from '../../FrameNoContentPlaceholder'
-import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { IFrame } from '@/types/frame.type'
@@ -15,7 +14,6 @@ export function Thumbnail({ frame }: { frame: IFrame }) {
         <FrameNoContentPlaceholder frameTyp={FrameType.RICH_TEXT} />
       </RenderIf>
       <RenderIf isTrue={!showPlaceholder}>
-        <FrameTitleDescriptionPreview frame={frame} key={frame.id} />
         <Preview frame={frame} />
       </RenderIf>
     </div>

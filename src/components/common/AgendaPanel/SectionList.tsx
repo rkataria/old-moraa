@@ -106,7 +106,6 @@ export function SectionList() {
           'gap-2 py-2': !expanded,
         }
       )}>
-      {/* <button onClick={() => setDragAllowed(true)}>Enable</button> */}
       <DragDropContext
         onDragStart={(result) => {
           setDraggingFrameId(

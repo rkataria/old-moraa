@@ -3,6 +3,7 @@ import FontFaceObserver from 'fontfaceobserver'
 import toast from 'react-hot-toast'
 import { IoIosSquare } from 'react-icons/io'
 import { twMerge } from 'tailwind-merge'
+import uniqolor from 'uniqolor'
 
 import { FrameStatus } from '@/types/enums'
 import { ISection } from '@/types/frame.type'
@@ -404,3 +405,10 @@ export const copyToClipboard = (containerRef: any) => {
     }
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getUniqueColor = (userId: string, options?: any) =>
+  uniqolor(userId as string, {
+    lightness: 75,
+    ...options,
+  }).color

@@ -315,9 +315,7 @@ export function FrameItem({
                   frameId={frame.id}
                   onAddFrame={() => {
                     addFrameToSection({
-                      frame: getBlankFrame(
-                        `Frame ${(section?.frames?.length || 0) + 1}`
-                      ),
+                      frame: getBlankFrame('Untitled'),
                       section,
                       afterFrameId: frame.id,
                     })
@@ -352,7 +350,7 @@ export function FrameItem({
 
             <RenderIf isTrue={!editable && !parentBreakoutFrame}>
               <div className="grid place-items-center">
-                {frame.config?.breakoutDuration || frame.config.time || 0} min
+                {frame.config?.breakoutDuration || frame.config?.time || 0} min
               </div>
             </RenderIf>
 

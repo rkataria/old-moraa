@@ -17,7 +17,8 @@ export function Thumbnail({ frame }: { frame: IFrame }) {
     staleTime: Infinity,
   })
 
-  const showPlaceholder = !frame.content?.imagePath
+  const showPlaceholder =
+    !frame.content?.imagePath && !frame.content?.url && !frame.content?.path
 
   return (
     <div className="w-full h-full">

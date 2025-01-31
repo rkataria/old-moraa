@@ -6,7 +6,9 @@ import { PollFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 
 export function Thumbnail({ frame }: { frame: PollFrame }) {
-  const showPlaceholder = !frame.content?.question
+  const showPlaceholder =
+    !frame.content?.question ||
+    !!frame.content?.options.some((option) => !option.name)
 
   return (
     <div className="w-full h-full">

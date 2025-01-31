@@ -50,14 +50,16 @@ export function ContentItemMenu({ editor, classnames }: ContentItemMenuProps) {
         <Toolbar.Button onClick={actions.handleAdd}>
           <Icon name="Plus" />
         </Toolbar.Button>
+        <Toolbar.Button onClick={() => setMenuOpen(true)}>
+          <Icon name="GripVertical" />
+        </Toolbar.Button>
         <Popover
           isOpen={menuOpen}
           placement="bottom"
-          onOpenChange={(open) => setMenuOpen(open)}>
+          onOpenChange={(open) => setMenuOpen(open)}
+          offset={20}>
           <PopoverTrigger>
-            <Toolbar.Button className={classnames?.gripButton}>
-              <Icon name="GripVertical" />
-            </Toolbar.Button>
+            <span />
           </PopoverTrigger>
           <PopoverContent>
             {() => (

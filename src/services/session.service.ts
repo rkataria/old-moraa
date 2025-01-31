@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { SessionModel } from '@/types/models'
 import { supabaseClient } from '@/utils/supabase/client'
 
 const getActiveSession = async ({
@@ -67,36 +68,21 @@ const getExistingOrCreateNewActiveSession = async ({
   dyteMeetingId?: string
   defaultData?: object | null
 }) => {
-  if (!meetingId && !dyteMeetingId) return null
+  if (!meetingId && !dyteMeetingId) throw new Error('Session not found')
 
-  const query = supabaseClient
-    .from('session')
-    .select('*')
-    .eq('status', 'ACTIVE')
+  const { data, error } = await supabaseClient.rpc('get_or_create_session', {
+    meeting_id_input: meetingId as string,
+    dyte_meeting_id_input: dyteMeetingId as string,
+    default_data_input: defaultData as any,
+  })
 
-  // Conditionally add filters
-  if (meetingId) {
-    query.eq('meeting_id', meetingId)
+  if (error || !data) {
+    console.error('Error fetching or inserting session:', error)
+
+    throw new Error('Session not found')
   }
 
-  if (dyteMeetingId) {
-    query.eq('connected_dyte_meeting_id', dyteMeetingId)
-  }
-
-  const getQuery = await query.single()
-
-  // If no session exists, create a new one
-  if (!getQuery.data) {
-    return createSession({
-      meetingId,
-      dyteMeetingId,
-      defaultData,
-      status: 'ACTIVE',
-    })
-  }
-
-  // Return the existing session
-  return getQuery
+  return { data } as { data: SessionModel }
 }
 
 const createSession = async ({

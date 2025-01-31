@@ -25,7 +25,7 @@ export function GetStartedPlaceholder({ className }: { className?: string }) {
             onClick={() => {
               dispatch(setIsPreviewOpenAction(false))
               addFrameToSection({
-                frame: getBlankFrame('Frame 1'),
+                frame: getBlankFrame('Untitled'),
                 section: sections[0],
               })
             }}

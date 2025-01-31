@@ -128,13 +128,14 @@ export function EventList() {
           </p>
         </div>
         <Tabs
+          keyboardActivation="manual"
           onSelectionChange={toggleListDisplayMode}
           size="sm"
           classNames={{
             tabList: 'p-0 border gap-0 bg-white',
             cursor: 'w-full bg-primary-100 rounded-none',
             tabContent: 'group-data-[selected=true]:text-primary',
-            tab: 'p-2.5',
+            tab: 'p-2.5 data-[focus-visible=true]:outline-0',
           }}>
           <Tab key="grid" title={<BsGrid size={16} />} />
           <Tab key="list" title={<BsList size={16} />} />

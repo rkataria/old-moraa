@@ -96,7 +96,7 @@ export function BreakoutFrame({ frame, isEditable = false }: BreakoutProps) {
 
     const newFrame: IFrame = existingFrame || {
       id: uuidv4(),
-      name: `Frame ${(insertInSection?.frames?.length || 0) + 1}`,
+      name: contentType,
       config: frameConfig,
       content: {
         ...(getDefaultContent({

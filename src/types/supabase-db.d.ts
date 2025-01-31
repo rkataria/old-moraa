@@ -596,6 +596,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_or_create_session: {
+        Args: {
+          meeting_id_input: string
+          dyte_meeting_id_input: string
+          default_data_input: Json
+        }
+        Returns: Record<string, unknown>
+      }
     }
     Enums: {
       [_ in never]: never

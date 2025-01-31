@@ -8,8 +8,9 @@ import { getAvatar, getProfileName, IUserProfile } from '../../UserAvatar'
 
 import { BlockEditor } from '@/components/tiptap/BlockEditor'
 import { useProfile } from '@/hooks/useProfile'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { useRichText } from '@/hooks/useRichText'
-import { cn } from '@/utils/utils'
+import { cn, getUniqueColor } from '@/utils/utils'
 
 export interface AiState {
   isAiLoading: boolean
@@ -42,6 +43,8 @@ export function Editor({
 }: EditorProps) {
   const room = editorId
 
+  const userId = useStoreSelector((state) => state.user.currentUser.user?.id)
+
   const { provider, aiToken, collabToken, ydoc, setCollabToken, setAiToken } =
     useRichText(room)
 
@@ -63,7 +66,11 @@ export function Editor({
         ydoc={ydoc}
         hasCollab={enableCollaboration}
         provider={provider}
-        editorInfo={{ name, avatar }}
+        editorInfo={{
+          name,
+          avatar,
+          color: getUniqueColor(userId as string),
+        }}
         editable={editable}
         setAiToken={setAiToken}
         setCollabToken={setCollabToken}

@@ -95,6 +95,7 @@ export function ContentStudioRightSidebarControls() {
 
       <Tabs
         key="underlined"
+        keyboardActivation="manual"
         aria-label="Sidebar Tabs"
         variant="underlined"
         selectedKey={contentStudioRightSidebar}
@@ -104,7 +105,7 @@ export function ContentStudioRightSidebarControls() {
         classNames={{
           tabList: 'gap-6 w-full relative rounded-none p-0',
           cursor: 'w-full bg-primary',
-          tab: 'max-w-fit px-0 h-10 pt-0',
+          tab: 'max-w-fit px-0 h-10 pt-0 data-[focus-visible=true]:outline-0',
           tabContent: 'group-data-[selected=true]:text-primary',
           base: 'mt-1',
         }}>

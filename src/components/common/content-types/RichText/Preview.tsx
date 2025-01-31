@@ -11,13 +11,12 @@ export function Preview({ frame }: PreviewProps) {
   return (
     <>
       <FrameTitleDescriptionPreview frame={frame} />
-
       <Editor
         editorId={frame.id}
         editable={false}
         classNames={{
           wrapper:
-            'overflow-hidden border border-gray-200 bg-[#FEFEFE] rounded-md',
+            'overflow-hidden border border-gray-200 bg-[#FEFEFE] rounded-md sanitized-rich-text p-4',
         }}
         hideSideBar
         enableCollaboration={false}

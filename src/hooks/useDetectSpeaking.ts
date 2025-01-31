@@ -22,17 +22,28 @@ export function useDetectSpeaking({ detect }: { detect: boolean }) {
         play: false,
       })
 
-      speechEvents.on('speaking', () => {
-        setSpeaking(true)
-      })
+      speechEvents.on('speaking', handleSpeaking)
 
-      speechEvents.on('stopped_speaking', () => {
-        setSpeaking(false)
-      })
+      speechEvents.on('stopped_speaking', handleStoppedSpeaking)
     }
 
     detectSpeaking()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detect])
+
+  const handleSpeaking = () => {
+    if (!detect) {
+      setSpeaking(false)
+
+      return
+    }
+    setSpeaking(true)
+  }
+
+  const handleStoppedSpeaking = () => {
+    setSpeaking(false)
+  }
 
   return {
     isSpeaking: speaking,
