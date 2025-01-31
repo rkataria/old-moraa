@@ -333,24 +333,8 @@ attachStoreListener({
 
 attachStoreListener({
   actionCreator: liveSessionSlice.actions.setIsInBreakout,
-  effect: async (action, { dispatch, getState }) => {
-    const meetingId =
-      getState().event.currentEvent.meetingState.meeting.data?.id
-    const { dyteClient } = getState().event.currentEvent.liveSessionState.dyte
-
-    const dyteConnectedMeetingId = dyteClient?.meta.meetingId
-
+  effect: async (action, { dispatch }) => {
     if (action.payload) dispatch(collapseLeftSidebarAction())
-
-    if (!dyteClient || !dyteConnectedMeetingId || !meetingId) return
-    if (action.payload) {
-      dispatch(
-        getMeetingSessionThunk({
-          meetingId,
-          dyteMeetingId: dyteConnectedMeetingId,
-        })
-      )
-    }
   },
 })
 
@@ -381,14 +365,18 @@ attachStoreListener({
 
     dispatch(setCurrentDyteMeetingIdAction(dyteMeetingId))
 
-    /* Don't get or create session in case the participant get's into breakout room as this is explicitly handled.
-     * in `actionCreator: liveSessionSlice.actions.setIsInBreakout`
-     */
     if (!action.payload?.connectedMeetings.parentMeeting?.id) {
       dispatch(
         getExistingOrCreateNewActiveSessionThunk({
           dyteMeetingId,
           meetingId,
+        })
+      )
+    } else {
+      dispatch(
+        getMeetingSessionThunk({
+          meetingId,
+          dyteMeetingId,
         })
       )
     }
