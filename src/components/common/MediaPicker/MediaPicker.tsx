@@ -188,7 +188,7 @@ export function MediaPicker({
               ImageOrientation={ImageOrientation}
               provider={provider}
               fileType={fileType}
-              crop={crop}
+              crop={crop && provider !== MediaProviderType.GIPHY}
               onSelectCallback={(imageElment) => {
                 onSelectCallback?.(imageElment)
                 setOpen(false)
