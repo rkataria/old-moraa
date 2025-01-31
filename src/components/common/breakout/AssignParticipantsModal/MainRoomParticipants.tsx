@@ -37,9 +37,9 @@ export function MainRoomParticipants({
                       {...draggableProvided.dragHandleProps}
                       className="mb-2 items-center mr-2">
                       {eventMode === 'present' ? (
-                        <ParticipantLive participant={item} hideEmail />
+                        <ParticipantLive participant={item} />
                       ) : (
-                        <Participant participant={item} hideEmail />
+                        <Participant participant={item} />
                       )}
                     </div>
                   )}
