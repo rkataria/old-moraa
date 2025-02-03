@@ -17,6 +17,7 @@ export function GroupBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
         onClick={() => {
           activeObject.setOnGroup()
           canvas.renderAll()
+          canvas.fire('object:modified', { target: activeObject })
         }}>
         <LiaObjectGroup size={16} />
       </Button>
@@ -31,6 +32,7 @@ export function GroupBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
             activeObject.fontStyle === 'italic' ? 'normal' : 'italic'
           )
           canvas.renderAll()
+          canvas.fire('object:modified', { target: activeObject })
         }}>
         <LiaObjectUngroup size={16} />
       </Button>

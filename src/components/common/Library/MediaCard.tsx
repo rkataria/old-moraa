@@ -88,6 +88,7 @@ export function MediaCard({
             src={fileUrl}
             alt={fileName}
             className="h-full w-full object-cover"
+            crossOrigin="anonymous"
           />
         </div>
       )

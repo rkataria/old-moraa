@@ -19,6 +19,7 @@ export function Position() {
     if (key === 'width') {
       activeObject.scaleToWidth(parseInt(value, 10))
       canvas.renderAll()
+      canvas.fire('object:modified', { target: activeObject })
 
       return
     }
@@ -26,12 +27,14 @@ export function Position() {
     if (key === 'height') {
       activeObject.scaleToHeight(parseInt(value, 10))
       canvas.renderAll()
+      canvas.fire('object:modified', { target: activeObject })
 
       return
     }
 
     activeObject.set(key, parseInt(value, 10))
     canvas.renderAll()
+    canvas.fire('object:modified', { target: activeObject })
   }
 
   const { left, top, width, height, scaleX, scaleY, angle } = activeObject

@@ -42,8 +42,9 @@ export function RectBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
           }}
           onChange={(color) => {
             setStroke(color)
-            canvas.getActiveObject()?.set('stroke', color)
+            activeObject.set('stroke', color)
             canvas.renderAll()
+            canvas.fire('object:modified', { target: activeObject })
           }}
         />
         <span>Border</span>
@@ -51,8 +52,9 @@ export function RectBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
       <NumberInputCaret
         number={activeObject.strokeWidth}
         onChange={(value: number) => {
-          canvas.getActiveObject()?.set('strokeWidth', Number(value))
+          activeObject.set('strokeWidth', Number(value))
           canvas.renderAll()
+          canvas.fire('object:modified', { target: activeObject })
         }}
       />
 

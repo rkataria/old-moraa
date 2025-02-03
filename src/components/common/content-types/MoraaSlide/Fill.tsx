@@ -67,7 +67,7 @@ export function Fill() {
           className="items-center"
           control={
             <ColorPicker
-              defaultColor={strokeColor as string}
+              defaultColor={strokeColor || undefined}
               onChange={(color) => {
                 const { type } = activeObject
 
@@ -98,6 +98,7 @@ export function Fill() {
           className="flex-col items-start"
           control={
             <Slider
+              key={strokeWidth} // NOTE: This is a hack to force the slider to re-render when the strokeWidth changes
               size="sm"
               showTooltip
               step={1}
@@ -132,6 +133,7 @@ export function Fill() {
         className="flex-col items-start"
         control={
           <Slider
+            key={opacity} // NOTE: This is a hack to force the slider to re-render when the opacity changes
             size="sm"
             showTooltip
             step={0.1}

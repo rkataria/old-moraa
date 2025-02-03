@@ -22,6 +22,7 @@ export function RectSettings() {
             activeObject.set('rx', Number(value))
             activeObject.set('ry', Number(value))
             canvas.renderAll()
+            canvas.fire('object:modified', { target: activeObject })
           }}
         />
       </div>

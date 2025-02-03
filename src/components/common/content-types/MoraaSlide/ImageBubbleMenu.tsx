@@ -74,9 +74,13 @@ export function ImageBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
     if (!shadow) return
 
     const shadowObject = new fabric.Shadow(shadow.shadowOptions)
+    const activeObject = canvas.getActiveObject()
 
-    canvas.getActiveObject()?.set('shadow', shadowObject)
+    if (!activeObject) return
+
+    activeObject.set('shadow', shadowObject)
     canvas.renderAll()
+    canvas.fire('object:modified', { target: activeObject })
   }
 
   return (
@@ -97,9 +101,13 @@ export function ImageBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
           if (!imageElement) return
           const _activeObject = canvas.getActiveObject() as fabric.Image
 
-          _activeObject?.setElement(imageElement)
-          _activeObject?.setCoords()
+          if (!_activeObject) return
+
+          _activeObject.setElement(imageElement)
+          _activeObject.setCoords()
+
           canvas.renderAll()
+          canvas.fire('object:modified', { target: _activeObject })
         }}
       />
       <Dropdown showArrow offset={10}>

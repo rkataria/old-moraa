@@ -23,6 +23,7 @@ export function LineHeight() {
           onChange={(value: number) => {
             activeObject?.set('lineHeight', Number(value))
             canvas.renderAll()
+            canvas.fire('object:modified', { target: activeObject })
           }}
         />
       }

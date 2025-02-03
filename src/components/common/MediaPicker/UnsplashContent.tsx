@@ -82,6 +82,7 @@ export function UnsplashContent({
                 src={image.urls.regular}
                 className="rounded-md w-full block"
                 alt=""
+                crossOrigin="anonymous"
                 id={image.id}
                 onClick={() =>
                   onSelect(

@@ -21,6 +21,7 @@ export function LetterSpacing() {
           onChange={(value: number) => {
             activeObject?.set('charSpacing', Number(value))
             canvas.renderAll()
+            canvas.fire('object:modified', { target: activeObject })
           }}
         />
       }

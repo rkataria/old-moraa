@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { HexColorPicker } from 'react-colorful'
 
-import { DEFAULT_COLORS } from '@/constants/common'
+import { CUSTOM_COLORS } from '@/constants/common'
 import { cn } from '@/utils/utils'
 
 export type ColorPickerProps = {
   trigger?: React.ReactNode
   defaultColor?: string
-  defaultColors?: string[]
+  customColors?: string[]
   className?: string
   style?: React.CSSProperties
   onChange: (color: string) => void
@@ -18,8 +18,8 @@ export type ColorPickerProps = {
 
 export function ColorPicker({
   trigger,
-  defaultColor = '#FF0000',
-  defaultColors = DEFAULT_COLORS,
+  defaultColor = '#000000',
+  customColors = CUSTOM_COLORS,
   className,
   style = {},
   onChange,
@@ -27,6 +27,12 @@ export function ColorPicker({
   const [color, setColor] = useState(defaultColor)
 
   useEffect(() => {
+    setColor(defaultColor)
+  }, [defaultColor])
+
+  useEffect(() => {
+    if (color === defaultColor) return
+
     onChange(color)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [color])
@@ -69,7 +75,7 @@ export function ColorPicker({
             onChange={handleInputChange}
           />
           <div className="flex flex-wrap justify-between items-center gap-1 w-full">
-            {defaultColors.map((currentColor) => (
+            {customColors.map((currentColor) => (
               <button
                 type="button"
                 className="h-6 w-6 rounded-md cursor-pointer border-1 border-transparent hover:border-black"

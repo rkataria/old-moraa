@@ -22,6 +22,7 @@ export function TextAlignControls() {
   const aligText = (align: string) => {
     activeObject.set('textAlign', align)
     canvas.renderAll()
+    canvas.fire('object:modified', { target: activeObject })
   }
 
   return (

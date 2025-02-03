@@ -2,7 +2,7 @@ import { UserPreferences } from '@/types/common'
 
 export const DEFAULT_PAGE_SIZE = 10
 export const TITLE_CHARACTER_LIMIT = 300
-export const DEFAULT_COLORS = [
+export const CUSTOM_COLORS = [
   '#FF6900',
   '#FCB900',
   '#7BDCB5',
