@@ -31,6 +31,7 @@ import {
   setExpandedSectionsInPlannerAction,
   toggleSectionExpansionInPlannerAction,
 } from '@/stores/slices/event/current-event/section.slice'
+import { STUDIO_TABS } from '@/types/event.type'
 import { IFrame, ISection } from '@/types/frame.type'
 import { cn, sortByStatus } from '@/utils/utils'
 
@@ -76,6 +77,8 @@ export function SessionPlanner({
   )
 
   const allSectionsCollapsed = expandedSections.length === 0
+
+  const isEmptyState = sections.length === 1 && sections[0].frames.length === 0
 
   const getNewlyAddedIds = (
     updatedSections: ISection[],
@@ -272,22 +275,6 @@ export function SessionPlanner({
                                           <BiCollapseVertical size={18} />
                                         ),
                                       },
-                                      // {
-                                      //   key: 'unpublished',
-                                      //   label:
-                                      //     'Move Unpublished frames at top',
-                                      //   icon: (
-                                      //     <IoIosArrowRoundUp
-                                      //       className="rotate-180"
-                                      //       size={18}
-                                      //     />
-                                      //   ),
-                                      // },
-                                      // {
-                                      //   key: 'reset',
-                                      //   label: 'Reset ordering of frames',
-                                      //   icon: <RxReset size={16} />,
-                                      // },
                                     ]}
                                     onAction={(key) =>
                                       handleSectionDropdownActions(
@@ -393,61 +380,6 @@ export function SessionPlanner({
                                 }))}
                                 className="h-5 w-full"
                               />
-                              {/* <RenderIf isTrue={editable}>
-                                  <div
-                                    className={cn(
-                                      'flex items-center justify-center',
-                                      {
-                                        'pr-2': !expandedSections.includes(
-                                          section.id
-                                        ),
-                                      }
-                                    )}>
-                                    <Tooltip
-                                      content="Toggle to share or unshare all frames simultaneously"
-                                      color="primary"
-                                      showArrow
-                                      radius="sm">
-                                      <div className="flex items-center gap-2">
-                                        <p className="text-sm text-primary/80">
-                                          {!section.frames.some(
-                                            (frame) =>
-                                              frame?.status ===
-                                              FrameStatus.DRAFT
-                                          )
-                                            ? 'Unshare'
-                                            : 'Share'}
-                                        </p>
-                                        <Switch
-                                          size="sm"
-                                          isSelected={
-                                            !section.frames.some(
-                                              (frame) =>
-                                                frame?.status ===
-                                                FrameStatus.DRAFT
-                                            )
-                                          }
-                                          className="p-0"
-                                          onChange={() =>
-                                            changeSectionStatus(
-                                              section,
-                                              !section.frames.some(
-                                                (frame) =>
-                                                  frame?.status ===
-                                                  FrameStatus.DRAFT
-                                              )
-                                                ? FrameStatus.DRAFT
-                                                : FrameStatus.PUBLISHED
-                                            )
-                                          }
-                                          disabled={
-                                            !permissions.canUpdateSection
-                                          }
-                                        />
-                                      </div>
-                                    </Tooltip>
-                                  </div>
-                                </RenderIf> */}
                             </div>
                           </div>
 
@@ -462,12 +394,10 @@ export function SessionPlanner({
                             />
                           </RenderIf>
 
-                          <RenderIf
-                            isTrue={
-                              sections.length === 1 &&
-                              section.frames.length === 0
-                            }>
-                            <GetStartedPlaceholder />
+                          <RenderIf isTrue={isEmptyState}>
+                            <GetStartedPlaceholder
+                              fromTab={STUDIO_TABS.SESSION_PLANNER}
+                            />
                           </RenderIf>
 
                           <RenderIf
@@ -487,7 +417,7 @@ export function SessionPlanner({
                             />
                           </RenderIf>
 
-                          <RenderIf isTrue={editable && sections.length > 0}>
+                          <RenderIf isTrue={editable && !isEmptyState}>
                             <div
                               className={cn(
                                 'relative flex items-center w-full h-5 opacity-0 hover:opacity-100 cursor-pointer group/add-section duration-100',

@@ -16,8 +16,7 @@ export function Live({ frame }: LiveProps) {
         editorId={frame.id}
         editable={false}
         classNames={{
-          wrapper:
-            'overflow-hidden border bg-[#FEFEFE] rounded-md sanitized-rich-text p-4',
+          wrapper: 'overflow-hidden border bg-[#FEFEFE] rounded-md p-4',
         }}
         hideSideBar
         enableCollaboration={false}

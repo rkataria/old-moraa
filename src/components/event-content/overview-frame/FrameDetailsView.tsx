@@ -86,7 +86,9 @@ export function FrameDetailsView() {
                 showHeader={false}
                 editable={false}
                 hideSideBar
-                classNames={{ editorInPreview: 'overflow-y-visible' }}
+                classNames={{
+                  editorInPreview: 'overflow-y-visible',
+                }}
                 onEmptyContent={() => setShowEditor(false)}
               />
             </div>

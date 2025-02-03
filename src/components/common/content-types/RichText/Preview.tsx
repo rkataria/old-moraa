@@ -16,7 +16,7 @@ export function Preview({ frame }: PreviewProps) {
         editable={false}
         classNames={{
           wrapper:
-            'overflow-hidden border border-gray-200 bg-[#FEFEFE] rounded-md sanitized-rich-text p-4',
+            'overflow-hidden border border-gray-200 bg-[#FEFEFE] rounded-md p-4',
         }}
         hideSideBar
         enableCollaboration={false}

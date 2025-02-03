@@ -129,7 +129,7 @@ export function McqEditor({ frame: frameFromRemote }: EditProps) {
       <div className={cn('w-full h-auto flex justify-start items-start mt-8')}>
         <div
           className={cn('w-full', {
-            'w-[46rem]': !withImage,
+            'max-w-[46rem]': !withImage,
           })}>
           <RadioGroup
             label={!answer ? 'Select an answer' : null}

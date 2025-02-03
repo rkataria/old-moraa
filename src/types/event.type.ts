@@ -16,3 +16,9 @@ export interface IMeetingFramesPayload {
 }
 
 export type AgendaFrameDisplayType = 'thumbnail' | 'list'
+
+export enum STUDIO_TABS {
+  LANDING_PAGE = 'landing-page',
+  SESSION_PLANNER = 'session-planner',
+  CONTENT_STUDIO = 'content-studio',
+}

@@ -507,6 +507,7 @@ dyte-clock dyte-icon {
 }
 
 .sanitized-rich-text .node-imageUpload,
+.sanitized-rich-text .node-aiWriter,
 .sanitized-rich-text .node-aiImage {
   display: none;
 }

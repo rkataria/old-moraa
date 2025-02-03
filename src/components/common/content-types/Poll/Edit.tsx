@@ -117,7 +117,7 @@ export function PollEditor({ frame: frameFromRemote }: EditProps) {
       <div className={cn('w-full h-auto flex justify-start items-start mt-8')}>
         <div
           className={cn('w-full', {
-            'w-[46rem]': !withImage,
+            'max-w-[46rem]': !withImage,
           })}>
           <ul className="mb-4 grid gap-4">
             {options.map(

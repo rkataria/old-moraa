@@ -1,5 +1,5 @@
 /* eslint-disable radix */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { cn, Divider, Input } from '@nextui-org/react'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -44,6 +44,12 @@ export function PdfControls({
   const [pageNumber, setPageNumber] = useState(currentPage)
   const { permissions } = useEventPermissions()
 
+  useEffect(() => {
+    setPageNumber(currentPage)
+  }, [currentPage])
+
+  const isSinglePagePdf = totalPages === 1
+
   const handlePrevious = () => {
     if (currentPage === 1) return
 
@@ -52,6 +58,7 @@ export function PdfControls({
   }
 
   const handleNext = () => {
+    if (currentPage === totalPages) return
     handleCurrentPageChange(currentPage + 1)
     setPageNumber(currentPage + 1)
   }
@@ -89,13 +96,17 @@ export function PdfControls({
         </Tooltip>
         <div className="flex items-center">
           <Input
+            isDisabled={isSinglePagePdf}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             value={pageNumber as any}
             type="number"
             className="w-[30px]"
             classNames={{
-              inputWrapper: '!p-0 bg-gray-50 !h-[20px] !min-h-[20px] px-1',
+              inputWrapper: cn('!p-0 bg-gray-50 !h-[20px] !min-h-[20px] px-1', {
+                'bg-transparent': isSinglePagePdf,
+              }),
               input: 'text-center',
+              base: '!opacity-100',
             }}
             onChange={(e) => setPageNumber(parseInt(e.target.value))}
             onBlur={(event) => {

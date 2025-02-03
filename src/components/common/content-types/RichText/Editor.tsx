@@ -60,7 +60,14 @@ export function Editor({
   }
 
   return (
-    <div className={cn('flex h-full', classNames?.wrapper)}>
+    <div
+      className={cn(
+        'flex h-full',
+        {
+          'sanitized-rich-text': !editable,
+        },
+        classNames?.wrapper
+      )}>
       <BlockEditor
         aiToken={aiToken}
         ydoc={ydoc}

@@ -10,6 +10,7 @@ import { SessionPlanner } from '@/components/event-content/overview-frame/Sessio
 import { WithAIChatPanel } from '@/components/event-content/WithAIChatPanel'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { resetStudioLayoutStateAction } from '@/stores/slices/layout/studio.slice'
+import { STUDIO_TABS } from '@/types/event.type'
 
 type StudioLayoutProps = {
   header: React.ReactNode
@@ -27,7 +28,7 @@ export function StudioLayout({ header }: StudioLayoutProps) {
   )
 
   const renderContent = () => {
-    if (activeTab === 'landing-page') {
+    if (activeTab === STUDIO_TABS.LANDING_PAGE) {
       return (
         <div className="w-full h-full p-4 bg-transparent rounded-md">
           <WithAIChatPanel>
@@ -36,7 +37,7 @@ export function StudioLayout({ header }: StudioLayoutProps) {
         </div>
       )
     }
-    if (activeTab === 'session-planner') {
+    if (activeTab === STUDIO_TABS.SESSION_PLANNER) {
       return (
         <div className="w-full h-full p-4 max-w-screen-3xl overflow-y-auto scrollbar-none bg-transparent rounded-md">
           <WithAIChatPanel>
@@ -45,7 +46,7 @@ export function StudioLayout({ header }: StudioLayoutProps) {
         </div>
       )
     }
-    if (activeTab === 'content-studio') {
+    if (activeTab === STUDIO_TABS.CONTENT_STUDIO) {
       return <ContentStudio />
     }
 

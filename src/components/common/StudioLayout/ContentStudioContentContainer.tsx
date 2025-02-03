@@ -12,6 +12,7 @@ import { Frame } from '@/components/common/Frame/Frame'
 import { GetStartedPlaceholder } from '@/components/event-content/overview-frame/SessionPlanner/GetStartedPlaceholder'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
+import { STUDIO_TABS } from '@/types/event.type'
 import { getFirstFrame } from '@/utils/event.util'
 import { isFrameHasVideoAspectRatio } from '@/utils/frame-picker.util'
 import { getFrameCount, getPublishedFrameCount } from '@/utils/utils'
@@ -62,7 +63,10 @@ export function ContentStudioContentContainer() {
     if (frameCount === 0) {
       if (permissions.canUpdateFrame) {
         return (
-          <GetStartedPlaceholder className="h-full mt-0 flex justify-center items-center" />
+          <GetStartedPlaceholder
+            fromTab={STUDIO_TABS.CONTENT_STUDIO}
+            className="h-full mt-0 flex justify-center items-center"
+          />
         )
       }
 

@@ -38,6 +38,8 @@ export function Live({ frame }: LiveProps) {
     isError,
     display,
     totalPages,
+    selectedPage,
+    handlePageChange,
     fitPageToContainer,
     handleDisplayChange,
     onDocumentLoadSuccess,
@@ -85,6 +87,15 @@ export function Live({ frame }: LiveProps) {
     )
   }
 
+  const managePageChange = (newPosition: number) => {
+    if (isHost) {
+      updateSessionOnPageChange(newPosition)
+
+      return
+    }
+    handlePageChange(newPosition)
+  }
+
   if (isError) {
     return (
       <EmptyPlaceholder
@@ -108,7 +119,7 @@ export function Live({ frame }: LiveProps) {
         ref={containerRef}>
         <PdfPage
           file={pdf}
-          pageNumber={currentPage}
+          pageNumber={selectedPage}
           onDocumentLoadSuccess={onDocumentLoadSuccess}
           onPageLoadSuccess={fitPageToContainer}
           fitDimensions={display}
@@ -121,10 +132,9 @@ export function Live({ frame }: LiveProps) {
         config={display}
         onDisplayChange={updateSessionOnDisplayChange}
         downloadPdf={downloadPDF}
-        currentPage={currentPage}
+        currentPage={selectedPage}
         totalPages={totalPages}
-        handleCurrentPageChange={updateSessionOnPageChange}
-        hideControls={!isHost}
+        handleCurrentPageChange={managePageChange}
       />
     </div>
   )

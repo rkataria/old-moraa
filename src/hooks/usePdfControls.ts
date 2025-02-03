@@ -100,6 +100,13 @@ export function usePdfControls(
   const [selectedPage, setSelectedPage] = useState<number>(initialPage || 1)
   const [isLandscape, setIsLandscape] = useState(false)
 
+  useEffect(() => {
+    if (!initialPage) return
+    if (initialPage === selectedPage) return
+    setSelectedPage(initialPage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPage])
+
   const [display, setDisplay] = useState<IDisplay>(
     initialDisplay ? { ...initialDisplay } : { fitType: PdfView.FIT_TO_PAGE }
   )

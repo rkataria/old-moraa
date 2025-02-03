@@ -9,8 +9,13 @@ import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus } from '@/types/enums'
+import { STUDIO_TABS } from '@/types/event.type'
 
-const VALID_TABS = ['landing-page', 'session-planner', 'content-studio']
+const VALID_TABS = [
+  STUDIO_TABS.LANDING_PAGE,
+  STUDIO_TABS.SESSION_PLANNER,
+  STUDIO_TABS.CONTENT_STUDIO,
+]
 
 export function StudioTabs() {
   const router = useRouter()

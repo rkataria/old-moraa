@@ -70,7 +70,7 @@ export function Preview({ frame }: PreviewProps) {
             hideSideBar
             enableCollaboration
             classNames={{
-              wrapper: 'overflow-hidden w-full sanitized-rich-text',
+              wrapper: 'overflow-hidden w-full',
               container: 'flex flex-col overflow-hidden',
             }}
           />
