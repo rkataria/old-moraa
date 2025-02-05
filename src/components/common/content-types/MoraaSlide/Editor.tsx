@@ -176,7 +176,7 @@ export function MoraaSlideEditor({
   }, [frameBackgroundColor])
 
   return (
-    <div className="relative flex-auto h-full w-auto aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-md overflow-hidden border-gray-100 border-1">
+    <div className="relative flex-auto h-full w-auto aspect-video max-w-7xl m-auto ml-0 bg-transparent rounded-md overflow-hidden border-gray-200 border-1">
       <LoadFonts />
       <ResizeObserver
         onResize={() => {

@@ -1,3 +1,5 @@
+import { useCallback } from 'react'
+
 import {
   Button,
   Dropdown,
@@ -70,6 +72,33 @@ const SHADOWS: SHADOW[] = [
 ]
 
 export function ImageBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
+  const replaceImage = useCallback(
+    (imageElement: HTMLImageElement, _activeObject: fabric.Image) => {
+      if (!imageElement) return
+      if (!_activeObject) return
+
+      const oldImageWidth = Math.round(_activeObject.getScaledWidth()) ?? 300
+      const oldImageHeight = Math.round(_activeObject.getScaledHeight()) ?? 300
+
+      const newImageWidth = imageElement.width
+      const newImageHeight = imageElement.height
+
+      const scaleX = oldImageWidth / newImageWidth
+      const scaleY = oldImageHeight / newImageHeight
+
+      _activeObject.setElement(imageElement, {
+        width: newImageWidth,
+        height: newImageHeight,
+        scaleX,
+        scaleY,
+      })
+
+      canvas.renderAll()
+      canvas.fire('object:modified', { target: _activeObject })
+    },
+    [canvas]
+  )
+
   const addShadow = (shadow: SHADOW) => {
     if (!shadow) return
 
@@ -86,6 +115,7 @@ export function ImageBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
   return (
     <div className="flex justify-start items-center gap-1">
       <MediaPicker
+        crop
         trigger={
           <Button
             size="sm"
@@ -96,18 +126,30 @@ export function ImageBubbleMenu({ canvas }: { canvas: fabric.Canvas }) {
             <span>Replace</span>
           </Button>
         }
-        onSelect={() => {}}
-        onSelectCallback={(imageElement) => {
-          if (!imageElement) return
+        onSelect={(file) => {
           const _activeObject = canvas.getActiveObject() as fabric.Image
+          const reader = new FileReader()
 
-          if (!_activeObject) return
+          reader.addEventListener(
+            'load',
+            () => {
+              const img = new Image()
 
-          _activeObject.setElement(imageElement)
-          _activeObject.setCoords()
+              img.onload = () => {
+                replaceImage(img, _activeObject)
+              }
 
-          canvas.renderAll()
-          canvas.fire('object:modified', { target: _activeObject })
+              img.src = reader.result as string
+            },
+            false
+          )
+
+          if (file) {
+            reader.readAsDataURL(file)
+          }
+        }}
+        onSelectCallback={(imageElement) => {
+          replaceImage(imageElement, canvas.getActiveObject() as fabric.Image)
         }}
       />
       <Dropdown showArrow offset={10}>

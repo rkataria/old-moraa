@@ -423,6 +423,18 @@ export const setObjectControlsVisibility = (canvas: fabric.Canvas) => {
   if (!activeObject) return
 
   switch (activeObject?.type) {
+    case 'image':
+      activeObject.setControlsVisibility({
+        tl: true,
+        tr: true,
+        bl: true,
+        br: true,
+        mt: true,
+        mb: true,
+        ml: true,
+        mr: true,
+      })
+      break
     case 'BulletList':
     case 'NumberList':
     case 'textbox':
