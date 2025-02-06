@@ -506,6 +506,32 @@ dyte-clock dyte-icon {
   display: none !important;
 }
 
+.tlui-toolbar {
+  padding-bottom: 0 !important;
+}
+
+.tlui-toolbar__extras__controls.tlui-buttons__horizontal,
+.tlui-toolbar__tools,
+.tlui-menu,
+.tlui-popover__content,
+.tlui-menu-zone, 
+.tlui-navigation-panel::before, 
+.tlui-style-panel__wrapper {
+  background-color: #fff !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.tlui-toolbar__tools,
+.tlui-menu-zone, 
+.tlui-navigation-panel::before, 
+.tlui-style-panel__wrapper {
+  margin: 4px !important;
+}
+
+
+
 .sanitized-rich-text .node-imageUpload,
 .sanitized-rich-text .node-aiWriter,
 .sanitized-rich-text .node-aiImage {

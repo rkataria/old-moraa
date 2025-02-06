@@ -2,6 +2,10 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { renameSliceActions } from '@/stores/helpers'
 
+export type MoraaBoardFrameState = {
+  isFullscreen: boolean
+}
+
 export type StudioTabType =
   | 'session-planner'
   | 'content-studio'
@@ -20,6 +24,7 @@ export interface StudioLayoutState {
   contentStudioRightResizableSidebar: 'ai-chat' | null
   expandedSections: string[]
   agendaPanelDisplayType: 'list' | 'grid'
+  currentFrameStates: MoraaBoardFrameState | null
 }
 
 const initialState: StudioLayoutState = {
@@ -31,6 +36,7 @@ const initialState: StudioLayoutState = {
   contentStudioRightResizableSidebar: null,
   expandedSections: [],
   agendaPanelDisplayType: 'grid',
+  currentFrameStates: null,
 }
 
 export const layoutStudioSlice = createSlice({
@@ -69,6 +75,10 @@ export const layoutStudioSlice = createSlice({
     setAgendaPanelDisplayType(state, action) {
       state.agendaPanelDisplayType = action.payload
     },
+
+    setCurrentFrameState(state, action) {
+      state.currentFrameStates = action.payload
+    },
   },
 })
 
@@ -82,4 +92,5 @@ export const {
   resetStudioLayoutStateAction,
   setAgendaPanelDisplayTypeAction,
   setExpandedSectionsAction,
+  setCurrentFrameStateAction,
 } = renameSliceActions(layoutStudioSlice.actions)

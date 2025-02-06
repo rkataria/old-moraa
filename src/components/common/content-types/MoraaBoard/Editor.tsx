@@ -10,17 +10,23 @@ import {
   type Editor as TldrawEditor,
   Editor as IEditor,
   exportToBlob,
-  PeopleMenu,
   Tldraw,
+  DefaultMainMenu,
+  DefaultPageMenu,
 } from 'tldraw'
 
+import { RenderIf } from '../../RenderIf/RenderIf'
+
 import { ContentLoading } from '@/components/common/ContentLoading'
+import { SharePanel } from '@/components/moraa-board/SharePanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useProfile } from '@/hooks/useProfile'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { useStorageStore } from '@/hooks/useStorageStore'
 import { IFrame } from '@/types/frame.type'
 import 'tldraw/tldraw.css'
 import { blobToBase64WithMime } from '@/utils/base-64'
+import { cn } from '@/utils/utils'
 
 interface EditorProps {
   frame: IFrame
@@ -28,11 +34,28 @@ interface EditorProps {
   asThumbnail?: boolean
 }
 
+const components = ({
+  editor,
+  isHost,
+  frameId,
+}: {
+  editor: TldrawEditor | null
+  isHost: boolean
+  frameId: string
+}) => ({
+  SharePanel: () => <SharePanel editorInstance={editor} frameId={frameId} />,
+  MainMenu: isHost ? DefaultMainMenu : null,
+  PageMenu: isHost ? DefaultPageMenu : null,
+})
+
 export function Editor({
   frame,
   readOnly = false,
   asThumbnail = false,
 }: EditorProps) {
+  const currentFrameStates = useStoreSelector(
+    (store) => store.layout.studio.currentFrameStates
+  )
   const isReadonly = readOnly || asThumbnail
   const { data: userProfile } = useProfile()
   const editorRef = useRef<TldrawEditor | null>(null)
@@ -104,23 +127,38 @@ export function Editor({
   if (store.status !== 'synced-remote') return <ContentLoading />
 
   return (
-    <Tldraw
-      autoFocus
-      store={store}
-      className="z-[1] relative w-full h-full border border-gray-200 bg-[#FEFEFE] rounded-md"
-      components={{
-        SharePanel: PeopleMenu,
-        DebugPanel: null,
-      }}
-      hideUi={isReadonly}
-      onMount={(editor) => {
-        editorRef.current = editor
-        saveCurrentEditorThumbnail(editor)
-        editor.updateInstanceState({
-          isReadonly: !!isReadonly,
-        })
-        editor.zoomOut(editor.getViewportScreenCenter())
-      }}
-    />
+    <div
+      className={cn('relative w-full h-full', {
+        'fixed left-0 top-0 w-full h-full z-[99]':
+          !asThumbnail && currentFrameStates?.isFullscreen,
+      })}>
+      <Tldraw
+        autoFocus
+        store={store}
+        className="z-[1] relative w-full h-full border border-gray-200 bg-[#FEFEFE] rounded-md"
+        components={components({
+          editor: editorRef.current,
+          isHost: permissions.canUpdateFrame,
+          frameId: frame.id,
+        })}
+        onMount={(editor) => {
+          editorRef.current = editor
+          saveCurrentEditorThumbnail(editor)
+          editor.updateInstanceState({
+            isReadonly: !!isReadonly,
+          })
+          editor.zoomOut(editor.getViewportScreenCenter())
+        }}>
+        {/* <RenderIf isTrue={!isReadonly}>
+          <VerticalToolbar />
+        </RenderIf> */}
+      </Tldraw>
+
+      <RenderIf isTrue={isReadonly}>
+        <div className="absolute right-0 top-0 z-1">
+          <SharePanel editorInstance={editorRef.current} frameId={frame.id} />
+        </div>
+      </RenderIf>
+    </div>
   )
 }

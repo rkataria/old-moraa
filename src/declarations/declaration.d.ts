@@ -10,11 +10,19 @@ declare global {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       presence: any // Used by tldraw
       isHost: boolean
+      hideCursor?: boolean
     }
     Storage: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       records: LiveMap<string, any> // Used by tldraw
       thumbnail: string // Used by tldraw
+      UserPresenceEvent: {
+        type: 'BRING_ALL_TO_HOST' | 'BRING_TO_HOST'
+        message: {
+          userId: string
+          frameId: string
+        }
+      }
     }
     // Custom user info set when authenticating with a secret key
     UserMeta: {

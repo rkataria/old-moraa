@@ -1,36 +1,40 @@
-import { useContext } from 'react'
+import { useEffect, useState } from 'react'
+
+import { useDebounce } from '@uidotdev/usehooks'
 
 import { SwitchControl } from '@/components/common/SwitchControl'
-import { EventContext } from '@/contexts/EventContext'
+import { useEventContext } from '@/contexts/EventContext'
 import { useFlags } from '@/flags/client'
-import { EventContextType } from '@/types/event-context.type'
 
 export function MoraaBoardSettings() {
+  const [allowToDraw, setAllowToDraw] = useState(false)
+  const debouncedValue = useDebounce(allowToDraw, 500)
   const { flags } = useFlags()
 
-  const { currentFrame, updateFrame } = useContext(
-    EventContext
-  ) as EventContextType
+  const { currentFrame, updateFrame } = useEventContext()
 
-  if (!currentFrame) return null
+  useEffect(() => {
+    if (!currentFrame) return
+
+    updateFrame({
+      framePayload: {
+        config: {
+          ...currentFrame.config,
+          allowToDraw: debouncedValue,
+        },
+      },
+      frameId: currentFrame.id,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedValue])
 
   if (!flags?.enable_drawing_on_board) return null
 
   return (
     <SwitchControl
       label="Allow users to draw on the board"
-      checked={currentFrame.config.allowToDraw}
-      onChange={() =>
-        updateFrame({
-          framePayload: {
-            config: {
-              ...currentFrame.config,
-              allowToDraw: !currentFrame.config.allowToDraw,
-            },
-          },
-          frameId: currentFrame.id,
-        })
-      }
+      checked={allowToDraw}
+      onChange={() => setAllowToDraw((prev) => !prev)}
     />
   )
 }
