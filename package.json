@@ -171,6 +171,7 @@
     "react-resizable-panels": "^2.0.20",
     "react-responsive-masonry": "^2.3.0",
     "react-textarea-autosize": "^8.5.3",
+    "react-wordcloud": "^1.2.7",
     "redux": "^5.0.1",
     "styled-components": "^6.1.13",
     "supabase": "^1.207.9",

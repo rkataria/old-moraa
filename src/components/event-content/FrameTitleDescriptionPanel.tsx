@@ -13,6 +13,7 @@ export const frameTypesWithTitle = [
   FrameType.MORAA_BOARD,
   FrameType.MORAA_PAD,
   FrameType.RICH_TEXT,
+  FrameType.WORD_CLOUD,
 ]
 
 export const frameTypesWithDescription = [

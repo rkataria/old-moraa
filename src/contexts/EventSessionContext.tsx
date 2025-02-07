@@ -42,13 +42,20 @@ import {
   PresentationStatuses,
   DyteStates,
   UpdateReflectionPayload,
+  AddWordCloudPayload,
+  UpdateWordCloudPayload,
 } from '@/types/event-session.type'
 import { getNextFrame, getPreviousFrame } from '@/utils/event-session.utils'
 import { FrameType } from '@/utils/frame-picker.util'
 import { supabaseClient } from '@/utils/supabase/client'
 
 const frameHasFrameResponses = (frameType: FrameType) =>
-  [FrameType.POLL, FrameType.REFLECTION, FrameType.MCQ].includes(frameType)
+  [
+    FrameType.POLL,
+    FrameType.REFLECTION,
+    FrameType.MCQ,
+    FrameType.WORD_CLOUD,
+  ].includes(frameType)
 
 const supabase = supabaseClient
 interface EventSessionProviderProps {
@@ -419,6 +426,50 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     }
   }
 
+  const onAddWordsInCloud = async ({ frameId, words }: AddWordCloudPayload) => {
+    try {
+      const frameResponse = await supabase
+        .from('frame_response')
+        .upsert({
+          response: { words },
+          frame_id: frameId,
+          participant_id: participant?.id,
+          dyte_meeting_id: dyteMeeting.meta.meetingId,
+        })
+        .eq('frame_id', frameId)
+        .eq('participant_id', participant?.id as string)
+        .select()
+
+      if (frameResponse.error) {
+        console.error(frameResponse.error)
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (_error: any) {
+      console.error(_error)
+    }
+  }
+
+  const onUpdateWordsInCloud = async ({
+    frameResponseId,
+    words,
+  }: UpdateWordCloudPayload) => {
+    try {
+      const frameResponse = await supabase.from('frame_response').upsert({
+        id: frameResponseId,
+        response: {
+          words,
+        },
+      })
+
+      if (frameResponse.error) {
+        console.error(frameResponse.error)
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (_error: any) {
+      console.error(_error)
+    }
+  }
+
   const onUpdateVote = async (
     responseId: string,
     {
@@ -719,6 +770,8 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         nextFrame,
         previousFrame,
         onVote,
+        onAddWordsInCloud,
+        onUpdateWordsInCloud,
         onUpdateVote,
         addReflection,
         updateReflection,

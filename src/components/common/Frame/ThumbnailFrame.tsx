@@ -14,6 +14,7 @@ import { PowerPointFrame } from '../content-types/PowerPoint/PowerPoint'
 import { ReflectionFrame } from '../content-types/Reflection/Reflection'
 import { RichTextFrame } from '../content-types/RichText/RichText'
 import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
+import { WordCloudFrame } from '../content-types/WordCloud/WordCloud'
 
 import { GoogleSlidesFrame } from '@/components/common/content-types/GoogleSlides/GoogleSlides'
 import { MoraaPadFrame } from '@/components/common/content-types/MoraaPad/MoraaPad'
@@ -55,6 +56,7 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
       <VideoEmbedFrame frame={frame as any} asThumbnail />
     ),
     [FrameType.MCQ]: <MCQFrame frame={frame as any} asThumbnail />,
+    [FrameType.WORD_CLOUD]: <WordCloudFrame frame={frame as any} asThumbnail />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (

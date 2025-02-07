@@ -2,6 +2,7 @@ import { BreakoutControls } from './BreakoutControls'
 import { MCQControls } from './MCQControls'
 import { PollControls } from './PollControls'
 import { ReflectionControls } from './ReflectionControls'
+import { WordCloudControls } from './WordCloudControls'
 
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -25,6 +26,7 @@ export const getControls = (frameType: FrameType) => {
     [FrameType.RICH_TEXT]: null,
     [FrameType.VIDEO_EMBED]: null,
     [FrameType.MCQ]: <MCQControls />,
+    [FrameType.WORD_CLOUD]: <WordCloudControls />,
   }
 
   const renderer = renderersByFrameType[frameType]

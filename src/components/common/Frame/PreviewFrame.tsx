@@ -19,6 +19,7 @@ import { PowerPointFrame } from '../content-types/PowerPoint/PowerPoint'
 import { ReflectionFrame } from '../content-types/Reflection/Reflection'
 import { RichTextFrame } from '../content-types/RichText/RichText'
 import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
+import { WordCloudFrame } from '../content-types/WordCloud/WordCloud'
 
 import { frameTypesWithTitle } from '@/components/event-content/FrameTitleDescriptionPanel'
 import { IFrame } from '@/types/frame.type'
@@ -65,6 +66,7 @@ export function PreviewFrame({ frame }: PreviewFrameProps) {
     [FrameType.RICH_TEXT]: <RichTextFrame frame={frame} />,
     [FrameType.VIDEO_EMBED]: <VideoEmbedFrame frame={frame as any} />,
     [FrameType.MCQ]: <MCQFrame frame={frame as any} />,
+    [FrameType.WORD_CLOUD]: <WordCloudFrame frame={frame as any} />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (

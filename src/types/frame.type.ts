@@ -111,6 +111,20 @@ export interface IReflectionResponse {
   }
 }
 
+export interface IWordCloudResponse {
+  id: string
+  dyte_meeting_id: string
+  participant: {
+    enrollment: {
+      user_id: string
+      profile: IUserProfile
+    }
+  }
+  response: {
+    words: string[]
+  }
+}
+
 export interface IPollResponse {
   id: string
   participant: {

@@ -61,6 +61,7 @@ export function ContentStudioRightSidebarControls() {
         FrameType.MCQ,
         FrameType.MIRO_EMBED,
         FrameType.VIDEO_EMBED,
+        FrameType.WORD_CLOUD,
       ].includes(currentFrame.type as FrameType)
     ) {
       return [

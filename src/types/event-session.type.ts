@@ -5,7 +5,12 @@ import { Dispatch, SetStateAction } from 'react'
 import { VideoMiddleware } from '@dytesdk/web-core'
 import { RealtimeChannel } from '@supabase/supabase-js'
 
-import type { IPollResponse, IReflectionResponse, IFrame } from './frame.type'
+import type {
+  IPollResponse,
+  IReflectionResponse,
+  IFrame,
+  IWordCloudResponse,
+} from './frame.type'
 
 export enum PresentationStatuses {
   STARTED = 'started',
@@ -58,12 +63,26 @@ export type UpdateReflectionPayload = {
   reply?: IReflectionReply
 }
 
+export type AddWordCloudPayload = {
+  frameId: string
+  words: string[]
+}
+
+export type UpdateWordCloudPayload = {
+  frameResponseId: string
+  words: string[]
+}
+
 export type EventSessionContextType = {
   isHost: boolean
   currentFrame: IFrame | null
   presentationStatus: PresentationStatuses
   currentFrameLoading: boolean
-  currentFrameResponses?: IReflectionResponse[] | IPollResponse[] | null
+  currentFrameResponses?:
+    | IReflectionResponse[]
+    | IPollResponse[]
+    | IWordCloudResponse[]
+    | null
   participant: any
   activeSession: any
   videoMiddlewareConfig: VideoMiddlewareConfig | null
@@ -88,6 +107,8 @@ export type EventSessionContextType = {
       anonymous: boolean
     }
   ) => void
+  onAddWordsInCloud: (payload: AddWordCloudPayload) => void
+  onUpdateWordsInCloud: (payload: UpdateWordCloudPayload) => void
   onUpdateVote: (
     responseId: string,
     {

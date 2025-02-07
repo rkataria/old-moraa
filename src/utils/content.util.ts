@@ -102,6 +102,13 @@ export const getDefaultContent = ({
         blocks: [paragraphBlock],
       }
 
+    case FrameType.WORD_CLOUD:
+      return {
+        question: '',
+
+        blocks: [paragraphBlock],
+      }
+
     case FrameType.REFLECTION:
       return {
         blocks: [paragraphBlock],
@@ -202,6 +209,15 @@ export const getFrameConfig = ({
       const defaultReflectionConfig = { maxReflectionsPerUser: 1 }
 
       return { ...newFrameConfig, ...defaultReflectionConfig }
+    }
+
+    case FrameType.WORD_CLOUD: {
+      const defaultWordCloudConfig = {
+        maxWords: 1,
+        colors: ['#FF6347', '#32CD32', '#1E90FF', '#FFD700', '#9400D3'],
+      }
+
+      return { ...newFrameConfig, ...defaultWordCloudConfig }
     }
 
     default:

@@ -33,6 +33,7 @@ export function FrameAppearance() {
     [FrameType.Q_A]: null,
     [FrameType.MORAA_PAD]: null,
     [FrameType.MCQ]: null,
+    [FrameType.WORD_CLOUD]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type as FrameType]

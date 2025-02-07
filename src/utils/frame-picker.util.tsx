@@ -8,6 +8,7 @@ import {
   BsQuestion,
 } from 'react-icons/bs'
 import { FaFilePdf, FaFilePowerpoint } from 'react-icons/fa'
+import { HiCloud } from 'react-icons/hi2'
 import { LuListTodo } from 'react-icons/lu'
 import { RiSketching } from 'react-icons/ri'
 import { SiGoogleslides, SiMiro, SiSlides } from 'react-icons/si'
@@ -65,6 +66,7 @@ export enum FrameType {
   Q_A = 'Q/A',
   MORAA_PAD = 'Moraapad',
   MCQ = 'MCQ',
+  WORD_CLOUD = 'Word Cloud',
 }
 
 export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
@@ -227,6 +229,16 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     isAvailableForBreakout: true,
     category: FrameCategory.COLLABORATION_TOOL,
     isCommingSoon: false,
+  },
+  {
+    name: 'Word Cloud',
+    icon: <HiCloud className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <HiCloud size={32} />,
+    iconSmall: <HiCloud size={24} />,
+    description:
+      'Collect words in real time and visualize ideas interactively.',
+    type: FrameType.WORD_CLOUD,
+    category: FrameCategory.INTERACTION,
   },
 ]
 

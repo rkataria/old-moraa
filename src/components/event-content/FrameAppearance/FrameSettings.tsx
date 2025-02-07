@@ -7,6 +7,7 @@ import { PollSettings } from './PollSettings'
 import { ReflectionSettings } from './ReflectionSettings'
 import { RichTextSettings } from './RichTextSettings'
 import { VideoEmbedSettings } from './VideoEmbedSettings'
+import { WordCloudSettings } from './WordCloudSettings'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { FrameType } from '@/utils/frame-picker.util'
@@ -32,6 +33,7 @@ export function FrameSettings() {
     [FrameType.Q_A]: null,
     [FrameType.MORAA_PAD]: null,
     [FrameType.MCQ]: <MCQSettings />,
+    [FrameType.WORD_CLOUD]: <WordCloudSettings />,
   }
 
   const renderer = renderersByContentType[currentFrame.type as FrameType]

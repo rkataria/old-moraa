@@ -19,6 +19,7 @@ import { PowerPointFrame } from '../content-types/PowerPoint/PowerPoint'
 import { ReflectionFrame } from '../content-types/Reflection/Reflection'
 import { RichTextFrame } from '../content-types/RichText/RichText'
 import { VideoEmbedFrame } from '../content-types/VideoEmbed/VideoEmbed'
+import { WordCloudFrame } from '../content-types/WordCloud/WordCloud'
 
 import { frameTypesWithTitle } from '@/components/event-content/FrameTitleDescriptionPanel'
 import { IFrame } from '@/types/frame.type'
@@ -85,6 +86,9 @@ export function LiveFrame({ frame }: FrameContainerProps) {
     ),
 
     [FrameType.MCQ]: <MCQFrame frame={frame as any} isLiveSession />,
+    [FrameType.WORD_CLOUD]: (
+      <WordCloudFrame frame={frame as any} isLiveSession />
+    ),
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (
