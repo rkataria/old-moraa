@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { useDebounce } from '@uidotdev/usehooks'
 import isEqual from 'lodash.isequal'
 
+import { CommonImageSettings } from './CommonImageSettings'
+
 import { ColorPicker } from '@/components/common/ColorPicker'
 import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
@@ -30,10 +32,7 @@ export function WordCloudSettings() {
 
   if (!currentFrame) return null
 
-  console.log('currentFrame', currentFrame)
-
   const colors = updatedConfig?.colors || []
-  console.log('colors', colors)
 
   const handleColorChange = (index: number, color: string) => {
     const updatedColors = [...colors]
@@ -77,6 +76,7 @@ export function WordCloudSettings() {
           </div>
         }
       />
+      <CommonImageSettings frame={currentFrame} />
     </>
   )
 }

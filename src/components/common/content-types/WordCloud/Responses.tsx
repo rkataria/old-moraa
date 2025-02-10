@@ -8,18 +8,17 @@ import { WordCloud } from './WordsPreview'
 
 import { FrameResponseService } from '@/services/frame-response.service'
 import { IFrame } from '@/types/frame.type'
+import { getAvatarForName } from '@/utils/utils'
 
 export function Responses({
   frame,
   responses,
   placeholder,
-  animate,
 }: {
   frame: IFrame
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responses?: any
   placeholder?: ReactNode
-  animate?: boolean
 }) {
   const wordCloudResponseQuery = useQuery({
     queryKey: ['frame-response-word-cloud', frame.id],
@@ -31,8 +30,6 @@ export function Responses({
   const responsesFromQuery = wordCloudResponseQuery.data?.responses
 
   const wordResponses = !responses ? responsesFromQuery : responses
-
-  console.log('wordResponses', wordResponses)
 
   const wordsWithParticipants = [].concat(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -59,6 +56,10 @@ export function Responses({
           id: entry.participant.id,
           name: `${entry.participant.enrollment.profile.first_name} ${entry.participant.enrollment.profile.last_name}`,
           email: entry.participant.enrollment.profile.email,
+          avatar_url: getAvatarForName(
+            `${entry.participant.enrollment.profile.first_name} ${entry.participant.enrollment.profile.last_name}`,
+            entry.participant.enrollment.profile.avatar_url
+          ),
         })
       ),
     }
@@ -73,12 +74,12 @@ export function Responses({
       <p className="text-gray-600 mb-4">
         {wordResponses?.length} responses captured during live session
       </p>
-      <div className="h-full">
+      <div className="h-full w-full">
         <WordCloud
-          animate={animate}
           words={wordsWithCount.map((word) => ({
             text: word.text,
             value: word.count,
+            participants: word.participants,
           }))}
           colors={frame.config.colors}
         />

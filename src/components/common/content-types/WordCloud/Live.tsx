@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { Chip, Input } from '@nextui-org/react'
-import isEqual from 'lodash.isequal'
 
 import { Responses } from './Responses'
 import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'
 import { RenderIf } from '../../RenderIf/RenderIf'
+import { SideImageLayout } from '../../SideImageLayout'
 
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -17,8 +17,6 @@ export function Live({ frame }: { frame: IFrame }) {
   const [error, setError] = useState('')
   const currentUser = useStoreSelector((state) => state.user.currentUser.user)
 
-  const [animate, setAnimate] = useState(false)
-
   const maxWordsCount = frame.config?.maxWords
 
   const {
@@ -29,10 +27,6 @@ export function Live({ frame }: { frame: IFrame }) {
 
   const responses: IWordCloudResponse[] =
     (currentFrameResponses as IWordCloudResponse[]) ?? []
-
-  const [previousResponses, setPreviousResponses] = useState<
-    IWordCloudResponse[] | null
-  >(null)
 
   const session = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.activeSession.data
@@ -97,75 +91,68 @@ export function Live({ frame }: { frame: IFrame }) {
     return 'No more words to enter'
   }
 
-  useEffect(() => {
-    if (!isEqual(currentFrameResponses, previousResponses)) {
-      setPreviousResponses(responses)
-      setAnimate(true)
-      setTimeout(() => {
-        setAnimate(false)
-      }, 2000)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [responses])
-
   return (
-    <div className="flex flex-col h-full">
-      <FrameTitleDescriptionPreview
-        frame={frame}
-        afterTitle={
-          <Chip
-            variant="flat"
-            size="sm"
-            className="rounded-lg -translate-y-1.5 translate-x-4"
-            color={wordCloudStarted ? 'success' : 'warning'}>
-            {wordCloudStarted ? 'WordCloud is active' : 'Word Cloud is closed'}
-          </Chip>
-        }
-      />
+    <SideImageLayout imageConfig={frame.config.image}>
+      <div className="flex flex-col h-full">
+        <FrameTitleDescriptionPreview
+          frame={frame}
+          afterTitle={
+            <Chip
+              variant="flat"
+              size="sm"
+              className="rounded-lg -translate-y-1.5 translate-x-4"
+              color={wordCloudStarted ? 'success' : 'warning'}>
+              {wordCloudStarted
+                ? 'WordCloud is active'
+                : 'Word Cloud is closed'}
+            </Chip>
+          }
+        />
 
-      <RenderIf isTrue={submittedWords.length !== maxWordsCount}>
-        <div className="relative flex items-center bg-gray-100 rounded-full pl-6 pr-2 w-[60%] mx-auto mb-4 mt-6">
-          <Input
-            isDisabled={!wordCloudStarted}
-            size="lg"
-            value={word}
-            type="text"
-            placeholder={getPlaceholder()}
-            classNames={{
-              inputWrapper: 'rounded-xl !bg-transparent shadow-none px-0',
-              base: 'max-w-[inherit] !bg-transparent',
-            }}
-            onChange={(e) => {
-              setWord(e.target.value)
-              setError('')
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                handleAdd()
-              }
-            }}
-          />
+        <RenderIf isTrue={submittedWords.length !== maxWordsCount}>
+          <div className="relative flex items-center bg-gray-100 rounded-full pl-6 pr-2 w-[60%] mx-auto mb-4 mt-6">
+            <Input
+              isDisabled={!wordCloudStarted}
+              size="lg"
+              value={word}
+              type="text"
+              placeholder={getPlaceholder()}
+              classNames={{
+                inputWrapper: 'rounded-xl !bg-transparent shadow-none px-0',
+                base: 'max-w-[inherit] !bg-transparent',
+              }}
+              onChange={(e) => {
+                setWord(e.target.value)
+                setError('')
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleAdd()
+                }
+              }}
+            />
 
-          <Button
-            size="md"
-            isDisabled={!wordCloudStarted}
-            color="primary"
-            className="max-w-fit ml-auto rounded-full"
-            onClick={handleAdd}>
-            Add
-          </Button>
+            <Button
+              size="md"
+              isDisabled={!wordCloudStarted}
+              color="primary"
+              className="max-w-fit ml-auto rounded-full"
+              onClick={handleAdd}>
+              Add
+            </Button>
 
-          {error && (
-            <p className="w-full text-center absolute -bottom-6 text-xs text-red-400">
-              {error}
-            </p>
-          )}
-        </div>
-      </RenderIf>
-      <RenderIf isTrue={!!responses?.[0]?.response?.words?.length}>
-        <Responses responses={responses} frame={frame} animate={animate} />
-      </RenderIf>
-    </div>
+            {error && (
+              <p className="w-full text-center absolute -bottom-6 text-xs text-red-400">
+                {error}
+              </p>
+            )}
+          </div>
+        </RenderIf>
+        <RenderIf isTrue={!!responses?.[0]?.response?.words?.length}>
+          <Responses responses={responses} frame={frame} />
+        </RenderIf>
+      </div>
+    </SideImageLayout>
   )
 }
