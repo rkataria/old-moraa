@@ -297,27 +297,33 @@ attachStoreListener({
     liveSessionSlice.actions.silentUpdateMeetingSessionData
   ),
   effect: (_, { getState, getOriginalState, dispatch }) => {
-    const oldSessionData =
-      getOriginalState().event.currentEvent.liveSessionState.activeSession.data
-        ?.data
     const newSessionData =
       getState().event.currentEvent.liveSessionState.activeSession.data?.data
+
     const { currentFrameId, currentSectionId } =
       getState().event.currentEvent.eventState
 
-    // If presentation status is changed
-    if (
-      oldSessionData?.presentationStatus === PresentationStatuses.STARTED &&
-      newSessionData?.presentationStatus === PresentationStatuses.STOPPED
-    ) {
-      dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
+    // Whatever key is true then it's value should be used as a new event session mode.
+    const eventSessionModeMap = {
+      [String(
+        newSessionData?.presentationStatus === PresentationStatuses.STOPPED
+      )]: EventSessionMode.LOBBY,
+      [String(
+        newSessionData?.presentationStatus === PresentationStatuses.STARTED
+      )]: EventSessionMode.PRESENTATION,
     }
 
+    const newEventSessionMode = eventSessionModeMap.true
+    const oldEventSessionMode =
+      getOriginalState().event.currentEvent.liveSessionState.eventSessionMode
+
     if (
-      oldSessionData?.presentationStatus === PresentationStatuses.STOPPED &&
-      newSessionData?.presentationStatus === PresentationStatuses.STARTED
+      // Only update the event session mode if the old value is different from the new one.
+      newEventSessionMode !== oldEventSessionMode &&
+      // Do not manage peek logic from here as it is local to the host and should not be affected by session changes.
+      oldEventSessionMode !== EventSessionMode.PEEK
     ) {
-      dispatch(updateEventSessionModeAction(EventSessionMode.PRESENTATION))
+      dispatch(updateEventSessionModeAction(newEventSessionMode))
     }
 
     if (newSessionData?.currentFrameId !== currentFrameId) {
@@ -362,7 +368,6 @@ attachStoreListener({
       getState().event.currentEvent.meetingState.meeting.data?.id
 
     const dyteMeetingId = dyteClient.meta.meetingId
-    console.log({ dyteMeetingId })
 
     dispatch(setCurrentDyteMeetingIdAction(dyteMeetingId))
 
@@ -472,12 +477,6 @@ attachStoreListener({
 
     if (!connectedDyteMeetingId) return
 
-    console.log('Subscribing for: ', {
-      connectedDyteMeetingId,
-      eventId,
-      meetingId,
-    })
-
     supabaseClient
       .channel(`event:${eventId}-3`, { config: { broadcast: { self: false } } })
       .on(
@@ -520,11 +519,6 @@ attachStoreListener({
             return
           }
           if (!payload.new.data) return
-          console.log(
-            payload.new.id,
-            getState().event.currentEvent.liveSessionState.activeSession.data
-              ?.id
-          )
 
           if (
             payload.new.id !==
