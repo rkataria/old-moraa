@@ -112,7 +112,7 @@ export function LocalVideoEdit({
             <span
               className="cursor-pointer text-blue-400 underline text-sm"
               onClick={onProviderChange}>
-              Embed from Youtube or Vimeo?{' '}
+              Embed from Youtube or from any other url?{' '}
             </span>
           </div>
         )

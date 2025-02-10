@@ -1,5 +1,5 @@
 export enum VideoProvider {
   LOCAL = 'local',
   YOUTUBE = 'youtube',
-  VIMEO = 'vimeo',
+  EMBED_URL = 'embed-url',
 }

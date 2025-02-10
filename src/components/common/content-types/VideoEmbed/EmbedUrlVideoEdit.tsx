@@ -5,8 +5,7 @@
 import { useState } from 'react'
 
 import { Input } from '@nextui-org/react'
-import toast from 'react-hot-toast'
-import { FaVimeo } from 'react-icons/fa'
+import { FaVideo } from 'react-icons/fa'
 
 import { VideoProvider } from './utils/types'
 
@@ -14,9 +13,8 @@ import { FrameFormContainer } from '@/components/event-content/FrameFormContaine
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
 import { IFrame } from '@/types/frame.type'
-import { isValidVimeoVideoUrl } from '@/utils/url'
 
-type VimeoVideoEditProps = {
+type EmbedUrlVideoEditProps = {
   frame: IFrame & {
     content: {
       videoUrl: string
@@ -27,24 +25,16 @@ type VimeoVideoEditProps = {
   onProviderChange: () => void
 }
 
-export function VimeoVideoEdit({
+export function EmbedUrlVideoEdit({
   frame,
   onUpdate,
   onProviderChange,
-}: VimeoVideoEditProps) {
+}: EmbedUrlVideoEditProps) {
   const [videoUrl, setVideoUrl] = useState<string>(frame.content.videoUrl)
   const [isUpdating, setIsUpdating] = useState<boolean>(false)
   const { updateFrame } = useEventContext()
 
   const updateVideoUrl = () => {
-    const validUrl = isValidVimeoVideoUrl(videoUrl)
-
-    if (!validUrl) {
-      toast.error('Please enter a valid Vimeo video URL')
-
-      return
-    }
-
     if (frame.content.videoUrl === videoUrl) {
       onUpdate()
 
@@ -58,7 +48,7 @@ export function VimeoVideoEdit({
         content: {
           ...frame.content,
           videoUrl,
-          provider: VideoProvider.VIMEO,
+          provider: VideoProvider.EMBED_URL,
         },
       },
       frameId: frame.id,
@@ -71,12 +61,12 @@ export function VimeoVideoEdit({
 
   return (
     <FrameFormContainer
-      headerIcon={<FaVimeo size={72} className="text-primary" />}
-      headerTitle="Embed Vimeo Video"
-      headerDescription="Easily embed Vimeo video into Moraa Frame for smooth playing."
+      headerIcon={<FaVideo size={72} className="text-primary" />}
+      headerTitle="Embed Video"
+      headerDescription="Easily embed video into Moraa Frame for smooth playing."
       footerNote={
         <div className="flex flex-col gap-2">
-          <span>Make sure the Vimeo video is publically accessible.</span>
+          <span>Make sure the video is publically accessible.</span>
           <span
             className="cursor-pointer text-blue-400 underline text-sm"
             onClick={onProviderChange}>
@@ -89,12 +79,10 @@ export function VimeoVideoEdit({
         classNames={{
           inputWrapper: 'shadow-none',
         }}
-        errorMessage="Please enter a valid Vimeo video URL"
-        isInvalid={!isValidVimeoVideoUrl(videoUrl)}
         value={videoUrl}
         color="primary"
-        label="Vimeo Video URL"
-        placeholder="Enter Vimeo video url"
+        label="Video URL"
+        placeholder="Enter video url"
         disabled={isUpdating}
         onChange={(e) => setVideoUrl(e.target.value)}
       />
@@ -103,7 +91,7 @@ export function VimeoVideoEdit({
         variant="flat"
         size="md"
         fullWidth
-        disabled={isUpdating}
+        isDisabled={isUpdating || !videoUrl}
         onClick={updateVideoUrl}>
         {isUpdating ? 'Embeding...' : 'Embed Video'}
       </Button>

@@ -1,5 +1,4 @@
 import { Loading } from './Loading'
-import { RenderIf } from './RenderIf/RenderIf'
 
 import { cn } from '@/utils/utils'
 
@@ -8,6 +7,10 @@ type ContentLoadingProps = {
   fullPage?: boolean
   overlay?: boolean
   transparent?: boolean
+  classNames?: {
+    container?: string
+    message?: string
+  }
 }
 
 export function ContentLoading({
@@ -15,6 +18,7 @@ export function ContentLoading({
   fullPage = false,
   overlay = false,
   transparent,
+  classNames = {},
 }: ContentLoadingProps) {
   return (
     <div
@@ -24,15 +28,15 @@ export function ContentLoading({
           'fixed left-0 top-0 w-screen h-screen z-[51]': fullPage,
           'bg-black/30': overlay,
           'bg-transparent': transparent,
-        }
+        },
+        classNames.container
       )}>
-      <RenderIf isTrue={!transparent}>
-        <div className="bg-white p-4 rounded-lg">
-          <Loading />
-
-          {message && <p className="!text-sm">{message}</p>}
-        </div>
-      </RenderIf>
+      <div className="p-4 rounded-lg">
+        <Loading />
+        {message && (
+          <p className={cn('text-sm', classNames.message)}>{message}</p>
+        )}
+      </div>
     </div>
   )
 }

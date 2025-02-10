@@ -8,9 +8,9 @@ import { motion } from 'framer-motion'
 import { FaYoutube } from 'react-icons/fa'
 
 import { Embed } from './Embed'
+import { EmbedUrlVideoEdit } from './EmbedUrlVideoEdit'
 import { LocalVideoEdit } from './LocalVideoEdit'
 import { VideoProvider } from './utils/types'
-import { VimeoVideoEdit } from './VimeoVideoEdit'
 import { YoutubeVideoEdit } from './YoutubeVideoEdit'
 
 import { IFrame } from '@/types/frame.type'
@@ -81,9 +81,9 @@ export function Edit({ frame }: EditProps) {
     )
   }
 
-  if (provider === VideoProvider.VIMEO) {
+  if (provider === VideoProvider.EMBED_URL) {
     return (
-      <VimeoVideoEdit
+      <EmbedUrlVideoEdit
         frame={frame as any}
         onUpdate={() => setEditable(false)}
         onProviderChange={() => setProvider(null)}
@@ -97,39 +97,39 @@ export function Edit({ frame }: EditProps) {
         <div className="flex flex-col justify-center items-center gap-4 pb-8 w-full m-auto">
           <FaYoutube size={72} className="text-primary" />
           <h2 className="subheading-1 text-primary">
-            How would you like to embed video
+            How would you like to source your video
           </h2>
           <p className="text-center text-foreground">
-            Choose an option to start embeding video
+            Choose an option to a embeding video
           </p>
         </div>
         <div className="flex justify-center items-center gap-8">
           <div
             className={cn(
-              'font-semibold aspect-video bg-gray-100 rounded-md p-8 flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
+              'font-medium h-20 flex-1 text-center bg-gray-100 rounded-md flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
             )}
             onClick={() => setProvider(VideoProvider.LOCAL)}>
-            Local
+            Upload from computer
           </div>
           <div
             className={cn(
-              'font-semibold aspect-video bg-gray-100 rounded-md p-8 flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
+              'font-medium h-20 flex-1 text-center bg-gray-100 rounded-md flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
             )}
             onClick={() => setProvider(VideoProvider.YOUTUBE)}>
-            Youtube
+            Search YouTube
           </div>
           <div
             className={cn(
-              'font-semibold aspect-video bg-gray-100 rounded-md p-8 flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
+              'font-medium h-20 flex-1 text-center bg-gray-100 rounded-md flex justify-center items-center cursor-pointer border-2 border-transparent hover:border-primary'
             )}
-            onClick={() => setProvider(VideoProvider.VIMEO)}>
-            Vimeo
+            onClick={() => setProvider(VideoProvider.EMBED_URL)}>
+            Embed URL
           </div>
         </div>
         <p className="text-sm font-[300] text-gray-400 text-center pt-4">
           If you want to use local video, please choose "Local Video" option to
-          upload your video. If you want to embed from Youtube or Vimeo, please
-          choose respective option.
+          upload your video. If you want to embed from Youtube or from any other
+          url, please choose respective option.
         </p>
       </div>
     </div>
