@@ -22,7 +22,6 @@ import { TbFileDescription, TbUserEdit } from 'react-icons/tb'
 import * as yup from 'yup'
 
 import { BlurbEditor } from './BlurbEditor'
-import { RecordingsOverview } from '../RecordingsOverview'
 
 import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
 import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'
@@ -313,7 +312,6 @@ export function EventDetails() {
                   />
                 </RenderIf>
               </div>
-              <RecordingsOverview />
               <ThemePicker
                 onThemeChange={handleThemeChange}
                 selectedTheme={selectedTheme}

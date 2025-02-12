@@ -63,7 +63,6 @@ function ActionButton({
     return (
       <div className="flex items-center">
         <Button
-          gradient="primary"
           color="primary"
           onClick={() => window.open(`/event-session/${eventId}`, '__blank')}
           size="sm"

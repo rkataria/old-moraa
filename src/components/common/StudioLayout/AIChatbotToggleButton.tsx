@@ -1,5 +1,5 @@
 import { useHotkeys } from 'react-hotkeys-hook'
-import { IoSparklesSharp } from 'react-icons/io5'
+import { HiSparkles } from 'react-icons/hi2'
 
 import { Tooltip } from '../ShortuctTooltip'
 
@@ -32,10 +32,10 @@ export function ToggleButton() {
         size="sm"
         isIconOnly
         onClick={toggleSidebar}
-        variant="bordered"
+        variant="light"
         color="primary"
-        className="cursor-pointer active !bg-gradient-to-br from-primary/10 to-white border-1">
-        <IoSparklesSharp size={18} strokeWidth={1.2} />
+        className="!bg-transparent">
+        <HiSparkles size={24} className="hover:text-yellow-500" />
       </Button>
     </Tooltip>
   )

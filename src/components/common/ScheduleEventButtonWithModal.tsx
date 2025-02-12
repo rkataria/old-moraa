@@ -170,7 +170,7 @@ export function ScheduleEventButtonWithModal({
           size="sm"
           variant="solid"
           fullWidth
-          gradient="primary"
+          color="primary"
           onClick={() => setOpen(true)}
           {...buttonProps}>
           {actionButtonLabel}

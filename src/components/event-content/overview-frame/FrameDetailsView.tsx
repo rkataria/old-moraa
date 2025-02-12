@@ -13,8 +13,6 @@ import {
 } from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
 
-import { RecordingsOverview } from './RecordingsOverview'
-
 import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Participantslist } from '@/components/enroll/ParticipantList'
@@ -96,7 +94,6 @@ export function FrameDetailsView() {
         </div>
         <div className="flex flex-col gap-6">
           <EventImage src={event?.image_url} />
-          <RecordingsOverview />
           <EventTimeline event={event} hosts={hosts} />
           <Participantslist participants={participants as any} hosts={hosts} />
         </div>

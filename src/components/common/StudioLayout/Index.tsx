@@ -5,8 +5,10 @@ import { useDispatch } from 'react-redux'
 import { ContentStudio } from './ContentStudio'
 import { Header } from './Header'
 import { LandingPage } from './LandingPage'
+import { Recordings } from './recordings/Recordings'
 
 import { SessionPlanner } from '@/components/event-content/overview-frame/SessionPlanner/SessionPlanner'
+import { StudioTabs } from '@/components/event-content/StudioTabs'
 import { WithAIChatPanel } from '@/components/event-content/WithAIChatPanel'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { resetStudioLayoutStateAction } from '@/stores/slices/layout/studio.slice'
@@ -50,6 +52,10 @@ export function StudioLayout({ header }: StudioLayoutProps) {
       return <ContentStudio />
     }
 
+    if (activeTab === STUDIO_TABS.RECORDINGS) {
+      return <Recordings />
+    }
+
     return null
   }
 
@@ -58,7 +64,11 @@ export function StudioLayout({ header }: StudioLayoutProps) {
       <div className="flex-none w-full sticky top-0 z-50">
         <Header>{header}</Header>
       </div>
-      <div className="flex-auto w-full overflow-hidden">{renderContent()}</div>
+      <div className="flex gap-1 items-start w-full flex-auto w-full overflow-hidden">
+        <StudioTabs />
+
+        {renderContent()}
+      </div>
     </div>
   )
 }

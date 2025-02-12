@@ -73,9 +73,7 @@ export function MCQPreview({
 export function Preview({ frame }: { frame: MCQFrame }) {
   return (
     <SideImageLayout imageConfig={frame.config.image}>
-      <div className="p-4">
-        <MCQPreview frame={frame} />
-      </div>
+      <MCQPreview frame={frame} />
     </SideImageLayout>
   )
 }

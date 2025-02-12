@@ -1,4 +1,5 @@
 import { BreakoutSettings } from './BreakoutSettings'
+import { CommonSettings } from './CommonSettings'
 import { MCQSettings } from './MCQSettings'
 import { MiroEmbedSettings } from './MiroEmbedSettings'
 import { MoraaBoardSettings } from './MoraaBoardSettings'
@@ -39,5 +40,10 @@ export function FrameSettings() {
 
   const renderer = renderersByContentType[currentFrame.type as FrameType]
 
-  return <div className="flex flex-col gap-4">{renderer}</div>
+  return (
+    <div className="flex flex-col gap-4">
+      <CommonSettings />
+      {renderer}
+    </div>
+  )
 }

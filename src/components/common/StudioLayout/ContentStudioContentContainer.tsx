@@ -87,7 +87,9 @@ export function ContentStudioContentContainer() {
           </div>
         </div>
       ) : (
-        <Frame key={currentFrame?.id} frame={currentFrame} />
+        <div className="bg-white border w-full h-full p-4 rounded-lg">
+          <Frame key={currentFrame?.id} frame={currentFrame} />
+        </div>
       )
     }
 
@@ -115,7 +117,7 @@ export function ContentStudioContentContainer() {
   }
 
   return (
-    <div className="w-full h-full rounded-md overflow-hidden overflow-y-auto scrollbar-thin bg-transparent">
+    <div className="w-full h-full rounded-md bg-white overflow-hidden overflow-y-auto scrollbar-thin bg-transparent">
       {renderContent()}
     </div>
   )

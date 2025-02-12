@@ -1,8 +1,9 @@
-import { useContext } from 'react'
+import { ReactNode, useContext } from 'react'
 
-import { Switch } from '@nextui-org/react'
+import { Switch, Tab, Tabs } from '@nextui-org/react'
 import { useRouter } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { TbEye, TbPencil } from 'react-icons/tb'
 import { useDispatch } from 'react-redux'
 
 import { EventContext } from '@/contexts/EventContext'
@@ -11,6 +12,15 @@ import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { setIsPreviewOpenAction } from '@/stores/slices/event/current-event/event.slice'
 import { EventContextType } from '@/types/event-context.type'
+
+function Title({ icon, title }: { icon: ReactNode; title: string }) {
+  return (
+    <div className="flex items-center gap-1">
+      {icon}
+      <p className="font-medium">{title}</p>
+    </div>
+  )
+}
 
 export function PreviewSwitcher() {
   const router = useRouter()
@@ -54,6 +64,29 @@ export function PreviewSwitcher() {
   if (!permissions.canUpdateFrame) {
     return null
   }
+
+  return (
+    <Tabs
+      size="sm"
+      radius="full"
+      keyboardActivation="manual"
+      color="primary"
+      selectedKey={preview ? 'view' : 'edit'}
+      onSelectionChange={handlePreviewSwitcher}
+      classNames={{
+        tabList: 'gap-0',
+        tab: 'data-[focus-visible=true]:outline-0',
+      }}>
+      <Tab
+        key="edit"
+        title={<Title icon={<TbPencil size={18} />} title="Edit" />}
+      />
+      <Tab
+        key="view"
+        title={<Title icon={<TbEye size={18} />} title="View" />}
+      />
+    </Tabs>
+  )
 
   return (
     <Switch

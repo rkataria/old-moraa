@@ -10,7 +10,7 @@ const StudioLayoutHeaderHeight = 56
 export function ContentStudio() {
   return (
     <div
-      className="w-full p-4 flex justify-start items-start gap-4"
+      className="w-full p-2 py-3 flex justify-start items-start gap-2"
       style={{
         height: `calc(100vh - ${StudioLayoutHeaderHeight}px)`,
       }}>
@@ -22,7 +22,6 @@ export function ContentStudio() {
         </WithAIChatPanel>
       </div>
       <ContentStudioRightSidebar />
-      {/* <ContentStudioRightSidebarControls /> */}
     </div>
   )
 }

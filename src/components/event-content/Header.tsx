@@ -3,7 +3,6 @@ import { useRouter } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { PublishButton } from './PublishButton'
-import { StudioTabs } from './StudioTabs'
 import { AddParticipantsButtonWithModal } from '../common/AddParticipantsButtonWithModal'
 import { MoraaLogo } from '../common/MoraaLogo'
 import { PreviewSwitcher } from '../common/PreviewSwitcher'
@@ -39,11 +38,8 @@ export function Header({
 
   const renderActionButtons = () => (
     <>
-      <PreviewSwitcher />
-
-      <AIChatbotToggleButton />
-
       <AddParticipantsButtonWithModal />
+      <AIChatbotToggleButton />
 
       <SessionActionButton eventId={event.id} eventStatus={event.status} />
       <PublishButton
@@ -57,7 +53,7 @@ export function Header({
   if (!event) return null
 
   return (
-    <div className="flex items-center justify-between w-full h-full px-6 bg-transparent">
+    <div className="flex items-center justify-between w-full h-full px-6 bg-white border-b">
       <div className="flex items-center gap-2 h-full flex-1">
         <div className="pr-4 border-r-2 border-gray-200 flex items-center">
           <MoraaLogo
@@ -77,9 +73,9 @@ export function Header({
           </span>
           <RenderIf isTrue={permissions.canUpdateFrame}>
             <Chip
-              variant="flat"
+              variant="dot"
               size="sm"
-              className="rounded-lg"
+              className="rounded-lg border-1"
               color={getStatusColor(event.status)}>
               {event.status}
             </Chip>
@@ -88,10 +84,10 @@ export function Header({
       </div>
 
       <div className="flex justify-center">
-        <StudioTabs />
+        <PreviewSwitcher />
       </div>
 
-      <div className="flex items-center justify-end h-full gap-2 flex-1">
+      <div className="flex items-center justify-end h-full gap-3 flex-1">
         {renderActionButtons()}
       </div>
     </div>

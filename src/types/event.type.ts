@@ -21,4 +21,5 @@ export enum STUDIO_TABS {
   LANDING_PAGE = 'landing-page',
   SESSION_PLANNER = 'session-planner',
   CONTENT_STUDIO = 'content-studio',
+  RECORDINGS = 'recordings',
 }

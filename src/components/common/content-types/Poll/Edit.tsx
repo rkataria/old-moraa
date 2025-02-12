@@ -114,7 +114,7 @@ export function PollEditor({ frame: frameFromRemote }: EditProps) {
         onSuccessiveEnters={focusOnFirstEmptyOption}
       />
       <FrameTextBlock blockType="paragraph" />
-      <div className={cn('w-full h-auto flex justify-start items-start mt-8')}>
+      <div className="w-full h-auto flex justify-start items-start mt-8">
         <div
           className={cn('w-full', {
             'max-w-[46rem]': !withImage,

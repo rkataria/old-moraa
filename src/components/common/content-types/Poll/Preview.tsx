@@ -76,9 +76,7 @@ export function PollPreview({
 export function Preview({ frame }: { frame: PollFrame }) {
   return (
     <SideImageLayout imageConfig={frame.config.image}>
-      <div className="p-4">
-        <PollPreview frame={frame} />
-      </div>
+      <PollPreview frame={frame} />
     </SideImageLayout>
   )
 }
