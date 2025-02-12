@@ -17,6 +17,7 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
+import { ContentTilesLayout } from '@/stores/slices/layout/live.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
@@ -28,9 +29,20 @@ export function Footer() {
     (state) =>
       state.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
   )
+  const layout = useStoreSelector(
+    (state) => state.layout.live.contentTilesLayoutConfig.layout
+  )
+  const currentFrameStates = useStoreSelector(
+    (store) => store.layout.studio.currentFrameStates
+  )
 
   return (
-    <div className="h-full w-full flex justify-between items-center px-2">
+    <div
+      className={cn('h-full w-full flex justify-between items-center px-2', {
+        'bg-white':
+          layout === ContentTilesLayout.Spotlight ||
+          currentFrameStates?.isFullscreen,
+      })}>
       <div className="flex-1 flex justify-start items-center gap-2 p-2 h-12">
         <RenderIf
           isTrue={

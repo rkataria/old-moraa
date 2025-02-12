@@ -21,10 +21,12 @@ import {
 } from '@/stores/slices/layout/studio.slice'
 
 export function SharePanel({
-  editorInstance,
+  onStartFollowing,
+  onStopFollowing,
   frameId,
 }: {
-  editorInstance: TldrawEditor | null
+  onStartFollowing?: TldrawEditor['startFollowingUser']
+  onStopFollowing?: TldrawEditor['stopFollowingUser']
   frameId: string
 }) {
   const currentFrameStates = useStoreSelector(
@@ -37,7 +39,6 @@ export function SharePanel({
   const broadcast = useBroadcastEvent()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   useEventListener(({ event }: any) => {
-    if (!editorInstance) return
     if (!event) return
     if (
       event.type === 'BRING_ALL_TO_HOST' &&
@@ -51,9 +52,9 @@ export function SharePanel({
       // })
 
       // NOTE: Follow the host and unfollow instantly to bring all participants to host
-      editorInstance.startFollowingUser(event.message.userId as string)
+      onStartFollowing?.(event.message.userId as string)
       setTimeout(() => {
-        editorInstance.stopFollowingUser()
+        onStopFollowing?.()
       }, 500)
     }
   })
@@ -110,13 +111,13 @@ export function SharePanel({
         onBringAllToHost={handleBringAllToHost}
         toggleFollowUser={(userId) => {
           if (followingUserId === userId) {
-            editorInstance?.stopFollowingUser()
+            onStopFollowing?.()
             setFollowingUserId(undefined)
 
             return
           }
 
-          editorInstance?.startFollowingUser(userId)
+          onStartFollowing?.(userId)
           setFollowingUserId(userId)
         }}
       />
@@ -131,10 +132,10 @@ export function SharePanel({
     hostPresence,
     isFollowingHost,
     handleBringAllToHost,
-    editorInstance,
+    onStartFollowing,
+    onStopFollowing,
   ])
 
-  if (!editorInstance) return null
   if (!self) return null
 
   return (

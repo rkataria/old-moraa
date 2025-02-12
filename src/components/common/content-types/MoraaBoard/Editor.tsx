@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import {
   useOthers,
@@ -6,6 +6,7 @@ import {
   useSelf,
   useUpdateMyPresence,
 } from '@liveblocks/react/suspense'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   type Editor as TldrawEditor,
   Editor as IEditor,
@@ -21,8 +22,9 @@ import { ContentLoading } from '@/components/common/ContentLoading'
 import { SharePanel } from '@/components/moraa-board/SharePanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useProfile } from '@/hooks/useProfile'
-import { useStoreSelector } from '@/hooks/useRedux'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useStorageStore } from '@/hooks/useStorageStore'
+import { setCurrentFrameStateAction } from '@/stores/slices/layout/studio.slice'
 import { IFrame } from '@/types/frame.type'
 import 'tldraw/tldraw.css'
 import { blobToBase64WithMime } from '@/utils/base-64'
@@ -35,15 +37,23 @@ interface EditorProps {
 }
 
 const components = ({
-  editor,
+  startFollowingUser,
+  stopFollowingUser,
   isHost,
   frameId,
 }: {
-  editor: TldrawEditor | null
+  startFollowingUser?: TldrawEditor['startFollowingUser']
+  stopFollowingUser?: TldrawEditor['stopFollowingUser']
   isHost: boolean
   frameId: string
 }) => ({
-  SharePanel: () => <SharePanel editorInstance={editor} frameId={frameId} />,
+  SharePanel: () => (
+    <SharePanel
+      onStartFollowing={startFollowingUser}
+      onStopFollowing={stopFollowingUser}
+      frameId={frameId}
+    />
+  ),
   MainMenu: isHost ? DefaultMainMenu : null,
   PageMenu: isHost ? DefaultPageMenu : null,
 })
@@ -73,6 +83,20 @@ export function Editor({
     frameId: frame.id,
     user: { id, color: info?.color, name: info?.name },
   })
+  const dispatch = useStoreDispatch()
+
+  useHotkeys(
+    'Esc',
+    () => {
+      dispatch(
+        setCurrentFrameStateAction({
+          ...currentFrameStates,
+          isFullscreen: false,
+        })
+      )
+    },
+    [currentFrameStates?.isFullscreen]
+  )
 
   useEffect(() => {
     if (!hostPresence) return
@@ -111,6 +135,17 @@ export function Editor({
     [isReadonly, room]
   )
 
+  const memoizedComponents = useMemo(
+    () =>
+      components({
+        startFollowingUser: editorRef.current?.startFollowingUser,
+        stopFollowingUser: editorRef.current?.stopFollowingUser,
+        isHost: permissions.canUpdateFrame,
+        frameId: frame.id,
+      }),
+    [permissions.canUpdateFrame, frame.id]
+  )
+
   useEffect(() => {
     const interval = setInterval(() => {
       const editor = editorRef.current
@@ -136,11 +171,7 @@ export function Editor({
         autoFocus
         store={store}
         className="z-[1] relative w-full h-full border border-gray-200 bg-[#FEFEFE] rounded-md"
-        components={components({
-          editor: editorRef.current,
-          isHost: permissions.canUpdateFrame,
-          frameId: frame.id,
-        })}
+        components={memoizedComponents}
         onMount={(editor) => {
           editorRef.current = editor
           saveCurrentEditorThumbnail(editor)
@@ -156,7 +187,11 @@ export function Editor({
 
       <RenderIf isTrue={isReadonly}>
         <div className="absolute right-0 top-0 z-1">
-          <SharePanel editorInstance={editorRef.current} frameId={frame.id} />
+          <SharePanel
+            onStartFollowing={editorRef.current?.startFollowingUser}
+            onStopFollowing={editorRef.current?.stopFollowingUser}
+            frameId={frame.id}
+          />
         </div>
       </RenderIf>
     </div>
