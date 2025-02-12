@@ -249,6 +249,10 @@ export const KeyboardShortcuts = {
       label: 'Switch to content',
       key: '3',
     },
+    recordingTab: {
+      label: 'Switch to Recordings',
+      key: '4',
+    },
   },
 
   'Agenda Panel': {

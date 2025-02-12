@@ -80,6 +80,8 @@ export function StudioTabs() {
     permissions.canUpdateFrame ? handleTabChange('content-studio') : {}
   )
 
+  useHotkeys('4', () => handleTabChange('recordings'))
+
   return (
     <div className="h-full w-[64px] min-w-[64px] bg-white pt-4 z-[11]">
       <Tabs
