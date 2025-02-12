@@ -33,7 +33,7 @@ export default {
           700: '#602cdd',
           800: '#5025d7',
           900: '#3213ce',
-          DEFAULT: '#7C3AED',
+          DEFAULT: '#3A3A3E',
           foreground: '#FFFFFF',
         },
         secondary: {
