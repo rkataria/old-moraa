@@ -6,6 +6,7 @@ import ResizeObserver from 'rc-resize-observer'
 import { BlankFrame } from '../BlankFrame'
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from '../content-types/Breakout/Breakout'
+import { EmbedLinkFrame } from '../content-types/EmbedLink/EmbedLink'
 import { GoogleSlidesFrame } from '../content-types/GoogleSlides/GoogleSlides'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
 import { MCQFrame } from '../content-types/MCQ/MCQ'
@@ -66,6 +67,7 @@ export function StudioFrame({ frame }: FrameContainerProps) {
     [FrameType.VIDEO_EMBED]: <VideoEmbedFrame frame={frame as any} />,
     [FrameType.MCQ]: <MCQFrame frame={frame as any} />,
     [FrameType.WORD_CLOUD]: <WordCloudFrame frame={frame as any} />,
+    [FrameType.EMBED_LINK]: <EmbedLinkFrame frame={frame as any} />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (

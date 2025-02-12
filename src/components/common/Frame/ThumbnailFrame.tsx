@@ -3,6 +3,7 @@
 import { BlankFrame } from '../BlankFrame'
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from '../content-types/Breakout/Breakout'
+import { EmbedLinkFrame } from '../content-types/EmbedLink/EmbedLink'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
 import { MCQFrame } from '../content-types/MCQ/MCQ'
 import { MiroEmbedFrame } from '../content-types/MiroEmbed/MiroEmbed'
@@ -57,6 +58,7 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
     ),
     [FrameType.MCQ]: <MCQFrame frame={frame as any} asThumbnail />,
     [FrameType.WORD_CLOUD]: <WordCloudFrame frame={frame as any} asThumbnail />,
+    [FrameType.EMBED_LINK]: <EmbedLinkFrame frame={frame as any} asThumbnail />,
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (

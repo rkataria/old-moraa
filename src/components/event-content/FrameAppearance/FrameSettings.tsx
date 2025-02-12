@@ -34,6 +34,7 @@ export function FrameSettings() {
     [FrameType.MORAA_PAD]: null,
     [FrameType.MCQ]: <MCQSettings />,
     [FrameType.WORD_CLOUD]: <WordCloudSettings />,
+    [FrameType.EMBED_LINK]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type as FrameType]

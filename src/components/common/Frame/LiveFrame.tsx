@@ -6,6 +6,7 @@ import ResizeObserver from 'rc-resize-observer'
 import { BlankFrame } from '../BlankFrame'
 // eslint-disable-next-line import/no-cycle
 import { BreakoutFrame } from '../content-types/Breakout/Breakout'
+import { EmbedLinkFrame } from '../content-types/EmbedLink/EmbedLink'
 import { GoogleSlidesFrame } from '../content-types/GoogleSlides/GoogleSlides'
 import { ImageViewerFrame } from '../content-types/ImageViewer/ImageViewer'
 import { MCQFrame } from '../content-types/MCQ/MCQ'
@@ -88,6 +89,9 @@ export function LiveFrame({ frame }: FrameContainerProps) {
     [FrameType.MCQ]: <MCQFrame frame={frame as any} isLiveSession />,
     [FrameType.WORD_CLOUD]: (
       <WordCloudFrame frame={frame as any} isLiveSession />
+    ),
+    [FrameType.EMBED_LINK]: (
+      <EmbedLinkFrame frame={frame as any} isLiveSession />
     ),
   }
 

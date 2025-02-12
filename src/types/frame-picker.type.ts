@@ -29,3 +29,9 @@ export type MoraaSlideFrame = IFrame & {
     objects: fabric.Object[]
   }
 }
+
+export type EmbedLinkFrame = IFrame & {
+  content: {
+    url: string
+  }
+}

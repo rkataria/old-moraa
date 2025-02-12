@@ -27,6 +27,7 @@ export const getControls = (frameType: FrameType) => {
     [FrameType.VIDEO_EMBED]: null,
     [FrameType.MCQ]: <MCQControls />,
     [FrameType.WORD_CLOUD]: <WordCloudControls />,
+    [FrameType.EMBED_LINK]: null,
   }
 
   const renderer = renderersByFrameType[frameType]

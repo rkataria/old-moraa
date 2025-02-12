@@ -10,6 +10,7 @@ import {
 import { FaFilePdf, FaFilePowerpoint } from 'react-icons/fa'
 import { HiCloud } from 'react-icons/hi2'
 import { LuListTodo } from 'react-icons/lu'
+import { PiCodeSimpleBold } from 'react-icons/pi'
 import { RiSketching } from 'react-icons/ri'
 import { SiGoogleslides, SiMiro, SiSlides } from 'react-icons/si'
 import { TbTextWrap } from 'react-icons/tb'
@@ -67,6 +68,7 @@ export enum FrameType {
   MORAA_PAD = 'Moraapad',
   MCQ = 'MCQ',
   WORD_CLOUD = 'Word Cloud',
+  EMBED_LINK = 'Embed Link',
 }
 
 export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
@@ -239,6 +241,15 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
       'Collect words in real time and visualize ideas interactively.',
     type: FrameType.WORD_CLOUD,
     category: FrameCategory.INTERACTION,
+  },
+  {
+    name: 'Embed Link',
+    icon: <PiCodeSimpleBold className="w-full h-full max-w-11 max-h-11" />,
+    iconLarge: <PiCodeSimpleBold size={32} />,
+    iconSmall: <PiCodeSimpleBold size={24} />,
+    description: 'Easly embed any url for seamless collaboration',
+    type: FrameType.EMBED_LINK,
+    category: FrameCategory.MEDIA,
   },
 ]
 

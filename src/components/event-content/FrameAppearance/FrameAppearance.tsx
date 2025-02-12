@@ -34,6 +34,7 @@ export function FrameAppearance() {
     [FrameType.MORAA_PAD]: null,
     [FrameType.MCQ]: null,
     [FrameType.WORD_CLOUD]: null,
+    [FrameType.EMBED_LINK]: null,
   }
 
   const renderer = renderersByContentType[currentFrame.type as FrameType]
