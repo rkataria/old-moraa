@@ -25,10 +25,10 @@
   "dependencies": {
     "@ai-sdk/openai": "^0.0.13",
     "@dytesdk/react-ui-kit": "^2.1.5",
-    "@dytesdk/react-web-core": "^2.2.1",
+    "@dytesdk/react-web-core": "^2.3.0",
     "@dytesdk/recording-sdk": "^2.0.0",
     "@dytesdk/video-background-transformer": "^2.0.5",
-    "@dytesdk/web-core": "^2.2.1",
+    "@dytesdk/web-core": "^2.3.0",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@giphy/react-components": "^9.8.0",

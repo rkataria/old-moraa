@@ -23,7 +23,6 @@ import { FrameType } from '@/utils/frame-picker.util'
 export function BreakoutControls() {
   const [openStartBreakoutModal, setOpenStartBreakoutModal] = useState(false)
   const { isHost, presentationStatus } = useEventSession()
-
   const frame = useCurrentFrame()
   const { isBreakoutActive } = useBreakoutRooms()
   const { eventRealtimeChannel } = useRealtimeChannel()
@@ -74,8 +73,6 @@ export function BreakoutControls() {
     isBreakoutActive && frame.id !== sessionBreakoutFrameId
   const showEndBreakoutButton =
     isBreakoutActive && frame.id === sessionBreakoutFrameId
-
-  console.log(isNoParticipantsInRoom)
 
   return (
     <>

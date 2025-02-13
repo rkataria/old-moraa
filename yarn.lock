@@ -593,12 +593,12 @@
   dependencies:
     "@dytesdk/ui-kit" "2.1.5"
 
-"@dytesdk/react-web-core@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-2.2.1.tgz#38d5b9f15ea01e24b3e27e79a6dca232a66ff2fd"
-  integrity sha512-fD7E01fk0v4dtXI2215TCjuWTqW/EH/kFoEnTvCmNau7tP267OI59DiaIObSsE7FleB+3u0rvmA8bQqzN42k6Q==
+"@dytesdk/react-web-core@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@dytesdk/react-web-core/-/react-web-core-2.3.0.tgz#fc3861a0e8c9af0f99863b12e624d6d52862d9f9"
+  integrity sha512-CKH1Kn0+cLtoyyL9MzWzlFD3OxP0cMqdP+WUF7+AM7e6aXrEigTCQ69ui1qwzmuww6Uw1l2zfjrhznk8I74RTA==
   dependencies:
-    "@dytesdk/web-core" "2.2.1"
+    "@dytesdk/web-core" "2.3.0"
 
 "@dytesdk/recording-sdk@^2.0.0":
   version "2.0.0"
@@ -615,10 +615,10 @@
   resolved "https://registry.yarnpkg.com/@dytesdk/video-background-transformer/-/video-background-transformer-2.0.5.tgz#111484c1e64dc69376f5d8f1e568fa15daf25f69"
   integrity sha512-emC4RlZRLbTUJGgEvS9hQZV9q9sXnhU9kZ8jBZB2UXM2VbCjGDs4uA2Rq0FYoVIPUbX+toR37si1MIZh/k35XQ==
 
-"@dytesdk/web-core@2.2.1", "@dytesdk/web-core@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-2.2.1.tgz#c1b05452e5be1ca148165837c5007a350b237c98"
-  integrity sha512-fIpDt6DZw9/obvA3dpAWWVrpqmaROgoAkjRkwMWcXMJu1vNWelxNZKeswzr77A6AqngOcAeVDFWBRVkxeR/jYw==
+"@dytesdk/web-core@2.3.0", "@dytesdk/web-core@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@dytesdk/web-core/-/web-core-2.3.0.tgz#12203a189a1df2ba0b54a2006d5c79cd1107d493"
+  integrity sha512-oQhMA/dak56ovLIy/6uwI7CxDGbzmK7ZAvBTLY6S5JRPjmv8GsZiCUNHmXEtPu+AkoULzrQEkSs2/3o6Gugumw==
   dependencies:
     "@protobuf-ts/runtime" "^2.7.0"
     bowser "^2.11.0"

@@ -139,12 +139,16 @@ export class BreakoutRooms {
     await this.cleanupBreakoutManagerInstance()
 
     this.manager.unassignAllParticipants()
-    this.manager.allConnectedMeetings.forEach((m) =>
-      this.manager.deleteMeeting(m.id)
-    )
-
     this.manager.applyChanges(this.dyteClient)
     await this.cleanupBreakoutManagerInstance()
+
+    setTimeout(async () => {
+      this.manager.allConnectedMeetings.forEach((m) =>
+        this.manager.deleteMeeting(m.id)
+      )
+      this.manager.applyChanges(this.dyteClient)
+      await this.cleanupBreakoutManagerInstance()
+    }, 1000)
   }
 
   async joinRoom(destinationMeetId: string) {
