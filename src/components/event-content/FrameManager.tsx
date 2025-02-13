@@ -22,6 +22,7 @@ import { StudioLayout } from '../common/StudioLayout/Index'
 import { SyncingStatus } from '../common/SyncingStatus'
 
 import { useEventContext } from '@/contexts/EventContext'
+import { useConfirmReloadOrClose } from '@/hooks/useConfirmReloadOrClose'
 import { useEnsureEventEnrollment } from '@/hooks/useEnsureEventEnrollment'
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
@@ -34,6 +35,7 @@ import { FrameType } from '@/utils/frame-picker.util'
 import { KeyboardShortcuts } from '@/utils/utils'
 
 export function FrameManager() {
+  useConfirmReloadOrClose()
   const { eventId } = useParams({ strict: false })
   const { permissions } = useEventPermissions()
   const {

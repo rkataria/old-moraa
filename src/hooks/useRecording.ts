@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { useParams } from '@tanstack/react-router'
+import toast from 'react-hot-toast'
 
 import { useEventPermissions } from './useEventPermissions'
 import { useStoreSelector } from './useRedux'
@@ -44,8 +45,8 @@ export function useRecording() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHost, isRecording, connectedMeetings, flags?.record_breakout_meeting])
 
-  const startRecording = () => {
-    startRecordingForMeeting(mainMeetingId)
+  const startRecording = async () => {
+    await startRecordingForMeeting(mainMeetingId)
   }
 
   const startRecordingForMeeting = async (meetingId: string) => {
@@ -57,13 +58,17 @@ export function useRecording() {
       eventId: eventId!,
     })
 
-    if (startRecordingResponse.status === 201) {
-      eventRealtimeChannel?.send({
-        type: 'broadcast',
-        event: 'recording-about-to-start',
-        payload: {},
-      })
+    if (startRecordingResponse.status !== 201) {
+      toast.error('Failed to start recording, please try again')
+
+      return
     }
+
+    eventRealtimeChannel?.send({
+      type: 'broadcast',
+      event: 'recording-about-to-start',
+      payload: {},
+    })
   }
 
   const stopRecordingForMeeting = async ({
@@ -77,9 +82,14 @@ export function useRecording() {
       token: enrollment.meeting_token,
       recordingId,
     })
-    if (startRecordingResponse.status === 200) {
-      setRequestedForRecording(true)
+
+    if (startRecordingResponse.status !== 200) {
+      toast.error('Failed to stop recording, please try again')
+
+      return
     }
+
+    setRequestedForRecording(true)
   }
 
   return {

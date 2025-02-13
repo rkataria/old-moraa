@@ -30,8 +30,12 @@ export const getFrameName = ({
   frame,
   // sections,
 }: {
-  frame: IFrame
+  frame: IFrame | null
 }) => {
+  if (!frame) {
+    return ''
+  }
+
   if (
     !frame.content?.blocks &&
     !frame.content?.title &&

@@ -4,13 +4,13 @@
 
 import { useState } from 'react'
 
-import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
-import { IoMdRadioButtonOn } from 'react-icons/io'
+import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import { IoMusicalNotesOutline } from 'react-icons/io5'
-import { TbApps, TbAppsFilled, TbClock } from 'react-icons/tb'
+import { TbClock } from 'react-icons/tb'
 
 import { AppsDropdownMenuItem } from './AppsDropdownMenuItem'
+import { AppsRecordingDropdownMenuItem } from './AppsRecordingMenuItem'
 import { MusicControls } from './Music/MusicControls'
 import { TimerModal } from './TimerModal'
 import {
@@ -20,8 +20,6 @@ import {
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { Button } from '../ui/Button'
 
-import { useEventSession } from '@/contexts/EventSessionContext'
-import { useFlags } from '@/flags/client'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
@@ -33,12 +31,7 @@ export function AppsToggle() {
   const [isTimerOpen, setIsTimerOpen] = useState(false)
   const [isContentVisible, setIsContentVisible] = useState(false)
   const [showAudioControlsState, setShowAudioControlsState] = useState(false)
-  const { meeting } = useDyteMeeting()
-  const { flags } = useFlags()
-  const { isHost } = useEventSession()
-  const recordingState = useDyteSelector(
-    (meet) => meet.recording.recordingState
-  )
+
   const dispatch = useStoreDispatch()
   const session = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.activeSession.data!
@@ -56,16 +49,6 @@ export function AppsToggle() {
       session.data.timerStartedStamp,
       session.data.timerDuration
     ) > 0
-
-  const isRecording = recordingState === 'RECORDING'
-
-  const onRecordingToggle = () => {
-    if (isRecording) {
-      meeting.recording.stop()
-    } else {
-      meeting.recording.start()
-    }
-  }
 
   const isTimerDisabled = isBreakoutActive && breakoutType === 'planned'
   const visibleMusicControls =
@@ -85,11 +68,7 @@ export function AppsToggle() {
               active: isContentVisible,
             })}
             isIconOnly>
-            {isContentVisible ? (
-              <TbAppsFilled size={18} />
-            ) : (
-              <TbApps size={18} />
-            )}
+            <AiOutlineAppstoreAdd size={18} className="rotate-180" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-0">
@@ -138,18 +117,7 @@ export function AppsToggle() {
                   }
                 }}
               />
-              <RenderIf isTrue={!!(isHost && flags?.show_recording_button)}>
-                <AppsDropdownMenuItem
-                  icon={<IoMdRadioButtonOn size={24} />}
-                  title={isRecording ? 'Stop Recording' : 'Record Meeting'}
-                  description={
-                    isRecording
-                      ? 'Stop recording the meeting'
-                      : 'Start or stop recording the meeting'
-                  }
-                  onClick={onRecordingToggle}
-                />
-              </RenderIf>
+              <AppsRecordingDropdownMenuItem />
               <UnplannedBreakoutButton
                 onClick={() => setIsContentVisible(false)}
               />

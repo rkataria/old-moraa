@@ -7,7 +7,7 @@ import { IoChevronForward } from 'react-icons/io5'
 
 import { AddItemBar } from './AddItemBar'
 import { FrameList } from './FrameList'
-import { DeleteConfirmationModal } from '../DeleteConfirmationModal'
+import { ConfirmationModal } from '../ConfirmationModal'
 import { EditableLabel } from '../EditableLabel'
 import { RenderIf } from '../RenderIf/RenderIf'
 import { SectionDropdownActions } from '../SectionDropdownActions'
@@ -277,7 +277,7 @@ export function SectionItem({
           </div>
         )}
       </StrictModeDroppable>
-      <DeleteConfirmationModal
+      <ConfirmationModal
         open={isDeleteModalOpen}
         description={
           <p>

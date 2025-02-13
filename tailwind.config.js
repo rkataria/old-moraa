@@ -59,14 +59,19 @@ export default {
         inter: ['Inter Variable', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'],
       },
+      animation: {
+        typing: 'typing 1s ease-in-out infinite',
+        marquee: 'marquee 10s linear infinite',
+      },
       keyframes: {
         typing: {
           '0%, 100%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(2)' },
         },
-      },
-      animation: {
-        typing: 'typing 1s ease-in-out infinite',
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
       },
       layout: {
         fontSize: {

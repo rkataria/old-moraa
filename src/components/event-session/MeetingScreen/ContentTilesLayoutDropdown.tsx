@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import {
   Dropdown,
   DropdownItem,
@@ -6,43 +8,42 @@ import {
   DropdownTrigger,
 } from '@nextui-org/react'
 import { BsLayoutSidebarInsetReverse } from 'react-icons/bs'
+import { LuLayoutDashboard } from 'react-icons/lu'
 import { MdSettingsSuggest } from 'react-icons/md'
 import { TbLayoutGridFilled } from 'react-icons/tb'
 
 import { Button } from '@/components/ui/Button'
-import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import {
   changeContentTilesLayoutConfigAction,
   ContentTilesLayout,
   openChangeContentTilesLayoutModalAction,
 } from '@/stores/slices/layout/live.slice'
-import { PresentationStatuses } from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
 
-export function ContentTilesLayoutDropdown() {
-  const { presentationStatus } = useEventSession()
+export function ContentTilesLayoutDropdown({
+  showLabel,
+}: {
+  showLabel?: boolean
+}) {
+  const [open, setOpen] = useState(false)
   const dispatch = useStoreDispatch()
   const layout = useStoreSelector(
     (store) => store.layout.live.contentTilesLayoutConfig.layout
   )
 
-  if (presentationStatus === PresentationStatuses.STOPPED) return null
-
   return (
-    <Dropdown offset={20} showArrow>
+    <Dropdown offset={20} showArrow onOpenChange={setOpen}>
       <DropdownTrigger>
         <Button
-          isIconOnly
-          gradient="primary"
-          color={
-            layout === ContentTilesLayout.Spotlight ? 'default' : 'primary'
-          }
-          className={cn({
-            'bg-black/20 text-white hover:bg-opacity-10':
-              layout === ContentTilesLayout.Spotlight,
-          })}>
-          <TbLayoutGridFilled size={20} />
+          size="sm"
+          isIconOnly={!showLabel}
+          className={cn('live-button', {
+            active: open,
+          })}
+          startContent={<LuLayoutDashboard size={16} />}
+          variant="light">
+          {showLabel ? 'Layout' : null}
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label="Dropdown menu with description" variant="faded">

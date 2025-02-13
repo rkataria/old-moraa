@@ -31,6 +31,7 @@ import { LiveLayout } from '@/components/common/LiveLayout'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useConfirmReloadOrClose } from '@/hooks/useConfirmReloadOrClose'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
@@ -60,6 +61,7 @@ export type DyteStates = {
 }
 
 export function MeetingScreen() {
+  useConfirmReloadOrClose()
   const { eventId } = useParams({ strict: false })
   const router = useRouter()
   const { meeting } = useDyteMeeting()

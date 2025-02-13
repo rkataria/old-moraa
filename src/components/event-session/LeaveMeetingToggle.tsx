@@ -8,7 +8,11 @@ import { ControlButton } from '../common/ControlButton'
 
 import { cn } from '@/utils/utils'
 
-export function LeaveMeetingToggle() {
+type LeaveMeetingToggleProps = {
+  showLabel?: boolean
+}
+
+export function LeaveMeetingToggle({ showLabel }: LeaveMeetingToggleProps) {
   const { meeting } = useDyteMeeting()
   const [states, setStates] = useState({})
 
@@ -23,13 +27,14 @@ export function LeaveMeetingToggle() {
           size: 'sm',
           variant: 'flat',
           className: cn('transition-all duration-300 bg-red-500 text-white'),
-          isIconOnly: true,
+          isIconOnly: !showLabel,
+          startContent: <TbDoorExit size={16} className="text-white" />,
         }}
         tooltipProps={{
           label: 'Leave meeting',
         }}
         onClick={() => setState({ activeLeaveConfirmation: true })}>
-        <TbDoorExit size={16} className="text-white" />
+        {showLabel ? 'Leave' : null}
       </ControlButton>
 
       <DyteDialogManager

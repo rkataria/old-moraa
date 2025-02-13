@@ -10,7 +10,7 @@ import {
 
 import { Button } from '../ui/Button'
 
-type DeleteConfirmationModalProps = {
+type ConfirmationModalProps = {
   open: boolean
   title?: string | React.ReactNode
   description?: string | React.ReactNode
@@ -19,14 +19,14 @@ type DeleteConfirmationModalProps = {
   onConfirm: () => void
 }
 
-export function DeleteConfirmationModal({
+export function ConfirmationModal({
   open,
   title,
   description,
   confirmButtonLabel = 'Yes, Delete',
   onClose,
   onConfirm,
-}: DeleteConfirmationModalProps) {
+}: ConfirmationModalProps) {
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {

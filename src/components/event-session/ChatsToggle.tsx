@@ -7,18 +7,25 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { ControlButton } from '../common/ControlButton'
 import { ChatIcon } from '../svg'
 
+import { useEventSession } from '@/contexts/EventSessionContext'
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import {
+  closeRightSidebarAction,
+  setRightSidebarAction,
+} from '@/stores/slices/layout/live.slice'
 import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
-export function ChatsToggle({
-  isChatsSidebarOpen,
-  onClick,
-}: {
-  isChatsSidebarOpen: boolean
-  onClick: () => void
-}) {
+type ChatToggleProps = {
+  showLabel?: boolean
+}
+
+export function ChatsToggle({ showLabel }: ChatToggleProps) {
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
   const [newMessageReceived, setNewMessageReceived] = useState<boolean>(false)
+  const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
+  const { dyteStates, setDyteStates } = useEventSession()
+  const dispatch = useStoreDispatch()
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,12 +35,26 @@ export function ChatsToggle({
     })
   }, [meeting, selfParticipant.userId])
 
-  const handleChat = () => {
+  const handleToggle = () => {
     setNewMessageReceived(false)
-    onClick()
+    if (rightSidebarMode === 'chat') {
+      dispatch(closeRightSidebarAction())
+      setDyteStates({
+        ...dyteStates,
+        sidebar: null,
+      })
+    } else {
+      setDyteStates({
+        activeSidebar: true,
+        sidebar: 'chat',
+      })
+      dispatch(setRightSidebarAction('chat'))
+    }
   }
 
-  useHotkeys('c', handleChat, liveHotKeyProps)
+  useHotkeys('c', handleToggle, liveHotKeyProps)
+
+  const isChatsSidebarOpen = rightSidebarMode === 'chat'
 
   return (
     <Badge
@@ -46,6 +67,7 @@ export function ChatsToggle({
         buttonProps={{
           size: 'sm',
           variant: 'light',
+          isIconOnly: !showLabel,
           disableRipple: true,
           disableAnimation: true,
           className: cn('live-button', {
@@ -63,8 +85,8 @@ export function ChatsToggle({
           label: KeyboardShortcuts.Live.chats.label,
           actionKey: KeyboardShortcuts.Live.chats.key,
         }}
-        onClick={handleChat}>
-        Chat
+        onClick={handleToggle}>
+        {showLabel ? 'Chat' : null}
       </ControlButton>
     </Badge>
   )

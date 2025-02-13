@@ -1,4 +1,4 @@
-import { Key, useCallback, useEffect, useMemo, useState } from 'react'
+import { Key, useCallback, useMemo, useState } from 'react'
 
 import { SortDescriptor, Pagination, Tabs, Tab } from '@nextui-org/react'
 import { Link } from '@tanstack/react-router'
@@ -29,20 +29,18 @@ export function EventList() {
   const [listDisplayMode, toggleListDisplayMode] = useState('grid' as Key)
   const [currentPage, setCurrentPage] = useState(1)
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>()
-  const { events, count, isLoading, refetch } = useEvents({
+  const {
+    events,
+    count: totalEventsCount,
+    isLoading,
+    refetch,
+  } = useEvents({
     from: (currentPage - 1) * rowsPerPage,
     to: currentPage * rowsPerPage - 1,
   })
   const isEducator = profile.user_type === UserType.EDUCATOR
-  const [totalEventsCount, setTotalEventsCount] = useState(0)
 
-  const pages = Math.ceil(totalEventsCount / rowsPerPage)
-
-  useEffect(() => {
-    if (count) {
-      setTotalEventsCount(count)
-    }
-  }, [count])
+  const pages = Math.ceil((totalEventsCount ?? 0) / rowsPerPage)
 
   const getCellValue = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

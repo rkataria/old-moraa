@@ -6,7 +6,7 @@ import { Button } from '../ui/Button'
 import { cn } from '@/utils/utils'
 
 export type MeetingControlButtonProps = {
-  children: React.ReactNode
+  children?: React.ReactNode
   tooltipProps?: TooltipComponentProps
   buttonProps: ButtonProps
   hideTooltip?: boolean

@@ -16,7 +16,11 @@ import {
 } from '@/stores/slices/layout/live.slice'
 import { KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
-export function NoteToggle() {
+type NoteToggleProps = {
+  showLabel?: boolean
+}
+
+export function NoteToggle({ showLabel }: NoteToggleProps) {
   const dispatch = useDispatch()
   const { isHost } = useEventSession()
   const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
@@ -53,6 +57,7 @@ export function NoteToggle() {
         buttonProps={{
           size: 'sm',
           variant: 'light',
+          isIconOnly: !showLabel,
           disableRipple: true,
           disableAnimation: true,
           className: cn('live-button', {
@@ -71,7 +76,7 @@ export function NoteToggle() {
           actionKey: KeyboardShortcuts.Live.notes.key,
         }}
         onClick={handleNoteToggle}>
-        Notes
+        {showLabel ? 'Notes' : null}
       </ControlButton>
     )
   }

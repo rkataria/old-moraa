@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 
-import { DeleteConfirmationModal } from '@/components/common/DeleteConfirmationModal'
+import { ConfirmationModal } from '@/components/common/ConfirmationModal'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -65,7 +65,7 @@ export function WordCloudControls() {
         Reset cloud
       </Button>
 
-      <DeleteConfirmationModal
+      <ConfirmationModal
         open={openResetConfirmationModal}
         title="Are you sure you want to reset this Word cloud?"
         description="All current responses will be permanently removed, and

@@ -1,12 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { AddContentButton } from '../AgendaPanel/AddContentButton'
-import { AgendaPanelToggle } from '../AgendaPanel/AgendaPanelToggle'
+import { StudioAgendaPanelToggle } from '../AgendaPanel/AgendaPanelToggle'
 import { Toolbars } from '../content-types/MoraaSlide/Toolbars'
 
 import { useEventContext } from '@/contexts/EventContext'
-import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { toggleContentStudioLeftSidebarVisibleAction } from '@/stores/slices/layout/studio.slice'
+import { useStoreSelector } from '@/hooks/useRedux'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
@@ -24,11 +23,7 @@ function LeftSidebar() {
   const { contentStudioLeftSidebarVisible } = useStoreSelector(
     (state) => state.layout.studio
   )
-  const dispatch = useStoreDispatch()
 
-  const toggleLeftSidebar = () => {
-    dispatch(toggleContentStudioLeftSidebarVisibleAction())
-  }
   const isVisible = !contentStudioLeftSidebarVisible
 
   return (
@@ -42,10 +37,7 @@ function LeftSidebar() {
           className={cn(
             'relative p-2 bg-white rounded-md shadow-2xl flex justify-start items-center gap-0'
           )}>
-          <AgendaPanelToggle
-            collapsed={!contentStudioLeftSidebarVisible}
-            onToggle={toggleLeftSidebar}
-          />
+          <StudioAgendaPanelToggle />
           <AddContentButton className="flex-auto pl-2" />
         </motion.div>
       ) : (

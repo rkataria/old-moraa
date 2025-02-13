@@ -74,7 +74,7 @@ export function FrameStatusToggleButton() {
       )
     },
     {
-      enabled: currentFrame && permissions.canUpdateFrame,
+      enabled: !!currentFrame && permissions.canUpdateFrame,
     },
     [currentFrame, updateFrameStatus]
   )

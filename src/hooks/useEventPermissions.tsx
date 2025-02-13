@@ -27,7 +27,7 @@ export const useEventPermissions = () => {
   const roles: any = eventQuery.data?.roles
   const entityLevelPermissions = roles?.permissions || []
 
-  const checkPermission = (subject: string, action: string) =>
+  const checkPermission = (subject: string, action: string): boolean =>
     entityLevelPermissions.some(
       (permission: { subject: string; action: string }) =>
         permission.subject === subject && permission.action === action

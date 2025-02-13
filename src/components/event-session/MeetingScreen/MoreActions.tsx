@@ -9,26 +9,21 @@ import {
   useDisclosure,
 } from '@nextui-org/react'
 import toast from 'react-hot-toast'
-import { BsRecord2 } from 'react-icons/bs'
-import { FaStopCircle } from 'react-icons/fa'
 import { HiDotsVertical } from 'react-icons/hi'
 import { IoSettingsOutline, IoVolumeMuteOutline } from 'react-icons/io5'
 import { LuUserPlus2 } from 'react-icons/lu'
 
 import { AddParticipantsButtonWithModal } from '@/components/common/AddParticipantsButtonWithModal'
-import { DeleteConfirmationModal } from '@/components/common/DeleteConfirmationModal'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useDyteParticipants } from '@/hooks/useDyteParticipants'
-import { useRecording } from '@/hooks/useRecording'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { openChangeContentTilesLayoutModalAction } from '@/stores/slices/layout/live.slice'
 import { cn } from '@/utils/utils'
 
 export function MoreActions() {
   const { joinedParticipants } = useDyteParticipants()
-  const [openRecordingConfirmationModal, setOpenRecordingConfirmationModal] =
-    useState(false)
+
   const { setDyteStates, isHost } = useEventSession()
   const [open, setOpen] = useState(false)
 
@@ -36,7 +31,6 @@ export function MoreActions() {
 
   const { meeting } = useDyteMeeting()
 
-  const { isRecording, startRecording } = useRecording()
   const dispatch = useStoreDispatch()
   const isInBreakoutMeeting = useStoreSelector(
     (state) =>
@@ -54,23 +48,6 @@ export function MoreActions() {
     const items = []
 
     if (isHost && !isInBreakoutMeeting) {
-      items.push(
-        <DropdownItem
-          key="record-meeting"
-          startContent={isRecording ? <FaStopCircle /> : <BsRecord2 />}
-          onClick={async () => {
-            if (isRecording) {
-              meeting.recording.stop()
-
-              return
-            }
-
-            setOpenRecordingConfirmationModal(true)
-          }}>
-          {isRecording ? 'Stop recording' : 'Start recording'}
-        </DropdownItem>
-      )
-
       items.push(
         <DropdownItem
           key="add-participants"
@@ -140,18 +117,6 @@ export function MoreActions() {
           disclosure={addParticipantsDisclosure}
         />
       )}
-      <DeleteConfirmationModal
-        open={openRecordingConfirmationModal}
-        confirmButtonLabel="Start Recording"
-        title="Ready to Start Recording?"
-        description="Once you hit start, we’ll begin recording everything in the session.
-               Make sure everyone’s set before you begin!"
-        onConfirm={() => {
-          startRecording()
-          setOpenRecordingConfirmationModal(false)
-        }}
-        onClose={() => setOpenRecordingConfirmationModal(false)}
-      />
     </div>
   )
 }

@@ -8,7 +8,7 @@ import { CiEdit } from 'react-icons/ci'
 import { IoEyeOutline } from 'react-icons/io5'
 import { RxDotsVertical } from 'react-icons/rx'
 
-import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal'
+import { ConfirmationModal } from '../common/ConfirmationModal'
 import { DropdownActions } from '../common/DropdownActions'
 import { DuplicateConfirmationModal } from '../common/DuplicateConfirmationModal'
 import { Button } from '../ui/Button'
@@ -166,7 +166,7 @@ export function EventActions({
   return (
     <>
       {getActionView()}
-      <DeleteConfirmationModal
+      <ConfirmationModal
         open={deleteConfirmationVisible}
         description={
           <p>

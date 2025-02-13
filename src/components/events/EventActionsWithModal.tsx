@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 
-import { DeleteConfirmationModal } from '../common/DeleteConfirmationModal'
+import { ConfirmationModal } from '../common/ConfirmationModal'
 import { DropdownActions } from '../common/DropdownActions'
 
 import { EventService } from '@/services/event/event-service'
@@ -63,7 +63,7 @@ export function EventActionsWithModal({
         }}
       />
 
-      <DeleteConfirmationModal
+      <ConfirmationModal
         open={deleteConfirmationVisible}
         description={
           <p>

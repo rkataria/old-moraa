@@ -76,11 +76,11 @@
   }
 
   .live-button {
-    @apply !bg-transparent !text-black hover:!text-primary !gap-1;
+    @apply !bg-transparent !text-black hover:!text-primary-500 !gap-1;
   }
 
   .live-button.active {
-    @apply !text-primary !opacity-100;
+    @apply !text-primary-500 !opacity-100;
   }
 
   .studio-button {
