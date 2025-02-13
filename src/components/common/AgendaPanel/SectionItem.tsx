@@ -22,6 +22,7 @@ import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { FrameService } from '@/services/frame.service'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
+import { FrameStatus } from '@/types/enums'
 import {
   EventSessionMode,
   PresentationStatuses,
@@ -76,14 +77,22 @@ export function SectionItem({
         ?.presentationStatus
   )
 
-  const frames =
-    permissions.canUpdateFrame &&
-    (eventMode === 'edit' || eventMode === 'present')
-      ? section.frames
-      : getFilteredFramesByStatus({
-          frames: section.frames,
-          status: 'PUBLISHED',
-        })
+  const getFrames = () => {
+    if (!permissions.canUpdateFrame) {
+      return getFilteredFramesByStatus({
+        frames: section.frames,
+        status: FrameStatus.PUBLISHED,
+      })
+    }
+
+    if (eventMode === 'present') {
+      return section.frames.filter((f) => !!f.type)
+    }
+
+    return section.frames
+  }
+
+  const frames = getFrames()
 
   const handleExpandSection = () => {
     toggleExpandedSection(section.id)

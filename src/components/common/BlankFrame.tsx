@@ -25,14 +25,10 @@ import { cn } from '@/utils/utils'
 
 export function BlankFrame({
   frame,
-  isEdit = false,
-  isThumbnail = false,
-  isLive = false,
+  showEmptyPlaceholder = false,
 }: {
   frame: IFrame
-  isEdit?: boolean
-  isThumbnail?: boolean
-  isLive?: boolean
+  showEmptyPlaceholder?: boolean
 }) {
   const dispatch = useStoreDispatch()
   const [selectedContentType, setContentType] = useState<FrameType | null>(null)
@@ -109,7 +105,7 @@ export function BlankFrame({
       onChoose(frame.type, frame.templateKey)
     }
 
-    if (!isEdit) {
+    if (showEmptyPlaceholder) {
       dispatch(setIsPreviewOpenAction(false))
     }
   }
@@ -152,7 +148,7 @@ export function BlankFrame({
   }
 
   const renderChooseFrame = () => {
-    if (isThumbnail || isLive) {
+    if (showEmptyPlaceholder) {
       return <NoFramePreview />
     }
 
@@ -195,7 +191,7 @@ export function BlankFrame({
   }
 
   const renderTitleDescription = () => {
-    if (isEdit) {
+    if (!showEmptyPlaceholder) {
       return (
         <>
           <FrameText disableEnter type="title" />

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, MouseEvent } from 'react'
 
-import { Listbox, ListboxItem } from '@nextui-org/react'
+import { Listbox, ListboxItem, ListboxProps } from '@nextui-org/react'
 import { ReactNode } from '@tanstack/react-router'
 
 import { RenderIf } from '../RenderIf/RenderIf'
@@ -13,12 +13,15 @@ export function ContextMenu({
   items,
   disabled,
   className = '',
+  listBoxProps,
   handleActions,
 }: {
   children: ReactNode
   items: FrameAction[]
   disabled?: boolean
   className?: string
+  listBoxProps?: Omit<ListboxProps, 'children'>
+
   handleActions: (item: FrameAction) => void
 }) {
   const [visible, setVisible] = useState(false)
@@ -65,7 +68,8 @@ export function ContextMenu({
         <Listbox
           aria-label="Actions"
           className="fixed w-fit bg-white border border-gray-300 shadow-lg z-[200] py-1 mt-1 rounded-lg"
-          style={{ left: `${position.x}px`, top: `${position.y}px` }}>
+          style={{ left: `${position.x}px`, top: `${position.y}px` }}
+          {...listBoxProps}>
           {items.map((item) => (
             <ListboxItem
               key={item.key}

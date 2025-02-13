@@ -1,5 +1,7 @@
 import { useContext } from 'react'
 
+import toast from 'react-hot-toast'
+
 import { SwitchControl } from '@/components/common/SwitchControl'
 import { EventContext } from '@/contexts/EventContext'
 import { FrameStatus } from '@/types/enums'
@@ -16,7 +18,12 @@ export function CommonSettings() {
     <SwitchControl
       label="Share with learners"
       checked={currentFrame.status === FrameStatus.PUBLISHED}
-      onChange={() =>
+      onChange={() => {
+        if (!currentFrame.type) {
+          toast.error('Frame must have a content type to be shared.')
+
+          return
+        }
         updateFrame({
           framePayload: {
             ...currentFrame,
@@ -27,7 +34,7 @@ export function CommonSettings() {
           },
           frameId: currentFrame.id,
         })
-      }
+      }}
     />
   )
 }

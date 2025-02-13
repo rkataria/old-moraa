@@ -96,7 +96,7 @@ export function LiveFrame({ frame }: FrameContainerProps) {
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (
-    <BlankFrame frame={frame} isLive />
+    <BlankFrame frame={frame} showEmptyPlaceholder />
   )
   const frameHasTitle = frameTypesWithTitle.includes(frame.type)
 

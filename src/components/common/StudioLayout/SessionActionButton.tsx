@@ -85,7 +85,7 @@ function ActionButton({
   if (eventStatus === EventStatus.ACTIVE) {
     return (
       <Button
-        gradient="primary"
+        color="primary"
         title="Join live session"
         onClick={() => window.open(`/event-session/${eventId}`, '__blank')}>
         Join live session

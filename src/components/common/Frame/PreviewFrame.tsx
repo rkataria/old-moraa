@@ -72,7 +72,7 @@ export function PreviewFrame({ frame }: PreviewFrameProps) {
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (
-    <BlankFrame frame={frame} />
+    <BlankFrame frame={frame} showEmptyPlaceholder />
   )
 
   const frameHasTitle = frameTypesWithTitle.includes(frame.type)

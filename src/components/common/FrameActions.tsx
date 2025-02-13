@@ -48,11 +48,14 @@ export function FrameActions({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleActions: (item: any) => void
 }) {
+  const disabledKeys = !frameType ? ['save-frame-in-library'] : []
+
   return (
     <Dropdown placement="bottom-start">
       <DropdownTrigger>{triggerIcon}</DropdownTrigger>
       <DropdownMenu
         aria-label="Dropdown menu with icons"
+        disabledKeys={disabledKeys}
         items={frameActions.filter(
           (action) => !action.disableForFrames?.includes(frameType)
         )}>

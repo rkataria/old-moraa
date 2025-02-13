@@ -71,7 +71,7 @@ export function StudioFrame({ frame }: FrameContainerProps) {
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (
-    <BlankFrame frame={frame} isEdit />
+    <BlankFrame frame={frame} />
   )
 
   const frameHasTitle = frameTypesWithTitle.includes(frame.type)

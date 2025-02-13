@@ -66,6 +66,9 @@ export function FrameGridView({
       items={frameActions.filter(
         (action) => !action.disableForFrames?.includes(frame.type)
       )}
+      listBoxProps={{
+        disabledKeys: !frame.type ? ['save-frame-in-library'] : [],
+      }}
       handleActions={handleFrameAction}
       disabled={!permissions.canUpdateFrame || preview}
       className={cn('flex items-start gap-2 p-0.5 pl-2 rounded-lg', {

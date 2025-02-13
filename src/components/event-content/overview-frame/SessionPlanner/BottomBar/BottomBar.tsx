@@ -37,16 +37,16 @@ interface IBottomBar {
   selectedFrameIds: string[]
   sectionId: string
   frames: IFrame[]
-  setSelectedFrameIds: Dispatch<SetStateAction<string[]>>
   parentBreakoutFrame?: IFrame | null
+  setSelectedFrameIds: Dispatch<SetStateAction<string[]>>
 }
 
 export function BottomBar({
   selectedFrameIds,
   sectionId,
   frames = [],
-  setSelectedFrameIds,
   parentBreakoutFrame,
+  setSelectedFrameIds,
 }: IBottomBar) {
   const { deleteFrames, updateFrame } = useEventContext()
   const dispatch = useStoreDispatch()
@@ -100,14 +100,21 @@ export function BottomBar({
 
   const changeFramesStatus = (status: FrameStatus) => {
     setActionRunning(false)
+
+    // Filter frames that have a valid content type
+    const validFrames = frames
+      .filter((frame) => selectedFrameIds.includes(frame.id) && frame.type)
+      .map((frame) => frame.id)
+
     dispatch(
       bulkUpdateFramesThunk({
-        frameIds: selectedFrameIds,
+        frameIds: validFrames,
         payload: {
           status,
         },
       })
     )
+
     toast.success(
       status === FrameStatus.PUBLISHED
         ? 'Selected frames have been shared with learners.'

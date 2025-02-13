@@ -62,7 +62,7 @@ export function ThumbnailFrame({ frame }: ThumbnailFrameProps) {
   }
 
   const renderer = renderersByFrameType[frame.type as FrameType] || (
-    <BlankFrame frame={frame} isThumbnail />
+    <BlankFrame frame={frame} showEmptyPlaceholder />
   )
 
   return (
