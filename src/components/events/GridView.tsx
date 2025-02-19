@@ -9,7 +9,7 @@ import { EventActions } from './EventActions'
 import { Loading } from '../common/Loading'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { Tooltip } from '../common/ShortuctTooltip'
-import { UserAvatar } from '../common/UserAvatar'
+import { getProfileName, UserAvatar } from '../common/UserAvatar'
 
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { EventStatus } from '@/types/enums'
@@ -53,7 +53,7 @@ export function GridView({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 gap-4 min-[1920px]:grid-cols-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-[1920px]:grid-cols-6 gap-4">
       {eventRows.map((event) => (
         <Card
           key={event.id}
@@ -161,9 +161,9 @@ export function GridView({
               {event.description}
             </p>
 
-            <div className="w-full absolute bottom-0 left-0 flex items-center justify-between p-4">
+            <div className="w-full gap-4 absolute bottom-0 left-0 flex items-center justify-between p-4">
               <Tooltip label="Last updated" showArrow delay={700}>
-                <p className="text-xs text-black/60 ">
+                <p className="text-xs text-black/60 min-w-fit">
                   <RenderIf isTrue={event.owner_id === currentUserId}>
                     Updated by you on{' '}
                   </RenderIf>
@@ -178,7 +178,7 @@ export function GridView({
               <RenderIf isTrue={event.owner_id !== currentUserId}>
                 <UserAvatar
                   tooltipProps={{
-                    label: 'Educator',
+                    label: `Educator - ${getProfileName(event.profile)}`,
                     showArrow: true,
                     delay: 700,
                   }}
@@ -188,7 +188,7 @@ export function GridView({
                     size: 'lg',
                     classNames: { base: 'w-6 h-6 min-w-6' },
                   }}
-                  nameClass="font-medium text-xs text-black/60"
+                  nameClass="font-medium text-xs text-black/60 line-clamp-1 break-all"
                 />
               </RenderIf>
             </div>

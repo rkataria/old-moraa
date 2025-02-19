@@ -62,7 +62,9 @@ function FooterLeftContent() {
       </RenderIf>
       <div className="flex justify-start items-center gap-2 p-2 h-11 rounded-[12px] border-1 border-gray-300 bg-white w-56">
         <PresentationControls />
-        <Divider orientation="vertical" />
+        <RenderIf isTrue={!!isHost}>
+          <Divider orientation="vertical" />
+        </RenderIf>
         <FrameName
           animate={presentationStatus === PresentationStatuses.STARTED}
         />

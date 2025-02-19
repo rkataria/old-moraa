@@ -119,7 +119,7 @@ export function Live() {
           }
         />
         <div className="border border flex-1 rounded-md border border-gray-200 p-4">
-          <div className="w-full h-[auto] grid grid-cols-[repeat(auto-fill,_minmax(252px,_1fr))] gap-4">
+          <div className="w-full h-[auto] grid grid-cols-[repeat(auto-fill,_minmax(270px,_1fr))] gap-4">
             {isHost ? <HostView /> : <ParticipantView />}
           </div>
         </div>

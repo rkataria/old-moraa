@@ -17,7 +17,7 @@ import { useEvents } from '@/hooks/useEvents'
 import { useProfile } from '@/hooks/useProfile'
 import { UserType } from '@/types/common'
 
-const rowsPerPage = 10
+const rowsPerPage = 12
 
 export function EventList() {
   const {
