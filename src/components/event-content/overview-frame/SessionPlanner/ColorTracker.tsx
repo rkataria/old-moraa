@@ -1,5 +1,5 @@
 import { Tooltip } from '@/components/common/ShortuctTooltip'
-import { cn, FrameColorCodes } from '@/utils/utils'
+import { cn, FrameEngagementTypes } from '@/utils/utils'
 
 interface ITrack {
   label: string
@@ -63,8 +63,9 @@ export function SessionColorTracker({
         ((timeByColorCode[colorCode] / totalTime) * 100).toFixed(1)
       ),
       color:
-        FrameColorCodes[`${colorCode as keyof typeof FrameColorCodes}`]
-          ?.color || '#D9D9D9',
+        FrameEngagementTypes[
+          `${colorCode as keyof typeof FrameEngagementTypes}`
+        ]?.color || '#D9D9D9',
     }))
 
     return percentages

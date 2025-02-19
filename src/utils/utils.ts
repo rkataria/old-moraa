@@ -5,6 +5,8 @@ import { IoIosSquare } from 'react-icons/io'
 import { twMerge } from 'tailwind-merge'
 import uniqolor from 'uniqolor'
 
+import { FrameEngagementType } from './frame-picker.util'
+
 import { FrameStatus } from '@/types/enums'
 import { ISection } from '@/types/frame.type'
 
@@ -180,42 +182,37 @@ export const sortByStatus = (
   status: string
 ) => (b.status === status ? 1 : 0) - (a.status === status ? 1 : 0)
 
-export const FrameColorCodes = {
-  exercise: {
-    key: 'exercise',
-    label: 'Exercise',
-    icon: IoIosSquare({ color: '#87E7AB', size: 24 }),
-    color: '#87E7AB',
+export const FrameEngagementTypes = {
+  [FrameEngagementType.CONCEPT]: {
+    label: 'Concept',
+    icon: IoIosSquare({ color: '#81C784', size: 24 }), // Muted green
+    color: '#81C784',
   },
-  theory: {
-    key: 'theory',
-    label: 'Theory',
-    icon: IoIosSquare({ color: '#AAC1F4', size: 24 }),
-    color: '#AAC1F4',
-  },
-  discussion: {
-    key: 'discussion',
+  [FrameEngagementType.DISCUSSION]: {
     label: 'Discussion',
-    icon: IoIosSquare({ color: '#F28F9A', size: 24 }),
-    color: '#F28F9A',
+    icon: IoIosSquare({ color: '#64B5F6', size: 24 }), // Muted blue
+    color: '#64B5F6',
   },
-  break: {
-    key: 'break',
+  [FrameEngagementType.BREAK]: {
     label: 'Break',
-    icon: IoIosSquare({ color: '#FFD65B', size: 24 }),
-    color: '#FFD65B',
+    icon: IoIosSquare({ color: '#FF7043', size: 24 }), // Muted orange
+    color: '#FF7043',
   },
-  energizer: {
-    key: 'energizer',
-    label: 'Energizer',
-    icon: IoIosSquare({ color: '#C5A3FF', size: 24 }),
-    color: '#C5A3FF',
+  [FrameEngagementType.SPARK]: {
+    label: 'Spark',
+    icon: IoIosSquare({ color: '#FFEB3B', size: 24 }), // Muted yellow
+    color: '#FFEB3B',
   },
-  none: {
+  [FrameEngagementType.APPLY]: {
+    label: 'Apply',
+    icon: IoIosSquare({ color: '#AB47BC', size: 24 }), // Muted purple
+    color: '#AB47BC',
+  },
+  [FrameEngagementType.NONE]: {
     key: 'none',
     label: 'None',
-    icon: IoIosSquare({ color: '#C4C4C4', size: 24 }),
-    color: '#C4C4C4',
+    icon: IoIosSquare({ color: '#9E9E9E', size: 24 }), // Muted gray
+    color: '#9E9E9E',
   },
 }
 

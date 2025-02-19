@@ -30,7 +30,7 @@ export function DropdownActions({
           <DropdownItem
             key={item.key}
             startContent={item.icon}
-            className="flex items-center gap-2 hover:bg-gray-200">
+            className="flex items-center gap-2 hover:bg-gray-200 !outline-none">
             {item.label}
           </DropdownItem>
         )}

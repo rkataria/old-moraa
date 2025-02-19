@@ -12,7 +12,8 @@ import { LuTag } from 'react-icons/lu'
 import { useEventContext } from '@/contexts/EventContext'
 import { useStoreDispatch } from '@/hooks/useRedux'
 import { updateFrameThunk } from '@/stores/thunks/frame.thunks'
-import { FrameColorCodes } from '@/utils/utils'
+import { FrameEngagementType } from '@/utils/frame-picker.util'
+import { FrameEngagementTypes } from '@/utils/utils'
 
 export function CategoryChange({
   selectedFrameIds,
@@ -43,6 +44,11 @@ export function CategoryChange({
     setSelectedFrameIds([])
   }
 
+  const actions = Object.keys(FrameEngagementTypes).map((key) => ({
+    key,
+    ...FrameEngagementTypes[key as FrameEngagementType],
+  }))
+
   return (
     <Popover isOpen={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <PopoverTrigger>
@@ -62,7 +68,7 @@ export function CategoryChange({
           </div>
 
           <div className="grid gap-1 mt-1">
-            {Object.values(FrameColorCodes).map((category) => (
+            {actions.map((category) => (
               <Button
                 startContent={category.icon}
                 variant="light"

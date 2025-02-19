@@ -25,6 +25,15 @@ export enum FrameCategory {
   DOCUMENT = 'document',
 }
 
+export enum FrameEngagementType {
+  CONCEPT = 'concept',
+  DISCUSSION = 'discussion',
+  BREAK = 'break',
+  SPARK = 'spark',
+  APPLY = 'apply',
+  NONE = 'none',
+}
+
 export type FrameTemplate = {
   key: string
   name: string
@@ -49,6 +58,7 @@ export type FramePickerFrame = {
   hasTemplates?: boolean
   isCommingSoon?: boolean
   templates?: FrameTemplate[]
+  engagementType?: FrameEngagementType
 }
 
 export enum FrameType {
@@ -84,6 +94,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     category: FrameCategory.PRESENTATION,
     hasTemplates: true,
     templates: MORAA_SLIDE_TEMPLATES,
+    engagementType: FrameEngagementType.CONCEPT,
   },
   {
     name: 'Google Slides',
@@ -93,6 +104,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description: 'Empower presentations with seamless Google Slides embed',
     type: FrameType.GOOGLE_SLIDES,
     category: FrameCategory.DOCUMENT,
+    engagementType: FrameEngagementType.CONCEPT,
   },
   {
     name: 'Powerpoint',
@@ -104,6 +116,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     type: FrameType.POWERPOINT,
     category: FrameCategory.DOCUMENT,
     disabled: true,
+    engagementType: FrameEngagementType.CONCEPT,
   },
 
   {
@@ -116,6 +129,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description: 'Create a frame using a rich text editor',
     type: FrameType.RICH_TEXT,
     category: FrameCategory.DOCUMENT,
+    engagementType: FrameEngagementType.CONCEPT,
   },
   {
     name: 'Video',
@@ -125,6 +139,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description: 'Embed videos from YouTube platform',
     type: FrameType.VIDEO_EMBED,
     category: FrameCategory.MEDIA,
+    engagementType: FrameEngagementType.CONCEPT,
   },
   {
     name: 'PDF',
@@ -134,6 +149,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description: 'Upload and integrate your PDF content as a multi-page frame!',
     type: FrameType.PDF_VIEWER,
     category: FrameCategory.DOCUMENT,
+    engagementType: FrameEngagementType.CONCEPT,
   },
   {
     name: 'Image',
@@ -143,6 +159,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description: 'Upload and display images on your frames',
     type: FrameType.IMAGE_VIEWER,
     category: FrameCategory.MEDIA,
+    engagementType: FrameEngagementType.CONCEPT,
   },
   {
     name: 'Poll',
@@ -153,6 +170,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
       'Break ice, gauge opinions visually. Dive into dialogue effortlessly.',
     type: FrameType.POLL,
     category: FrameCategory.INTERACTION,
+    engagementType: FrameEngagementType.SPARK,
   },
   {
     name: 'MCQ',
@@ -163,6 +181,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
       'Ask, choose, and learn: Simplify decision-making through interactive MCQs.',
     type: FrameType.MCQ,
     category: FrameCategory.INTERACTION,
+    engagementType: FrameEngagementType.SPARK,
   },
   {
     name: 'Reflections',
@@ -174,6 +193,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     type: FrameType.REFLECTION,
     category: FrameCategory.INTERACTION,
     isAvailableForBreakout: true,
+    engagementType: FrameEngagementType.DISCUSSION,
   },
   {
     name: 'Q/A',
@@ -186,6 +206,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     category: FrameCategory.COLLABORATION_TOOL,
     isCommingSoon: true,
     disabled: true,
+    engagementType: FrameEngagementType.DISCUSSION,
   },
   {
     name: 'Miro',
@@ -198,6 +219,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     category: FrameCategory.PRESENTATION,
     disabled: false,
     isAvailableForBreakout: true,
+    engagementType: FrameEngagementType.APPLY,
   },
   {
     name: 'Breakout',
@@ -207,6 +229,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description: 'Plan breakout rooms and activities',
     type: FrameType.BREAKOUT,
     category: FrameCategory.COLLABORATION_TOOL,
+    engagementType: FrameEngagementType.APPLY,
   },
   {
     name: 'moraaBoard',
@@ -218,6 +241,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     type: FrameType.MORAA_BOARD,
     isAvailableForBreakout: true,
     category: FrameCategory.COLLABORATION_TOOL,
+    engagementType: FrameEngagementType.APPLY,
   },
 
   {
@@ -231,6 +255,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     isAvailableForBreakout: true,
     category: FrameCategory.COLLABORATION_TOOL,
     isCommingSoon: false,
+    engagementType: FrameEngagementType.APPLY,
   },
   {
     name: 'Word Cloud',
@@ -241,6 +266,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
       'Collect words in real time and visualize ideas interactively.',
     type: FrameType.WORD_CLOUD,
     category: FrameCategory.INTERACTION,
+    engagementType: FrameEngagementType.SPARK,
   },
   {
     name: 'Embed Link',
@@ -250,6 +276,7 @@ export const FRAME_PICKER_FRAMES: FramePickerFrame[] = [
     description: 'Easly embed any url for seamless collaboration',
     type: FrameType.EMBED_LINK,
     category: FrameCategory.MEDIA,
+    engagementType: FrameEngagementType.CONCEPT,
   },
 ]
 

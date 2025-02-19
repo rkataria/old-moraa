@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { FrameType } from './frame-picker.util'
+import { FRAME_PICKER_FRAMES, FrameType } from './frame-picker.util'
 
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { FrameStatus } from '@/types/enums'
@@ -169,6 +169,8 @@ export const getFrameConfig = ({
     textColor: '#000',
     allowVoteOnMultipleOptions: false,
     time: 1,
+    colorCode: FRAME_PICKER_FRAMES.find((frame) => frame.type === frameType)
+      ?.engagementType,
     ...config,
   }
 

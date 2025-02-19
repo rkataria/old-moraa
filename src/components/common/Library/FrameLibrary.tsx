@@ -33,7 +33,7 @@ import { useProfile } from '@/hooks/useProfile'
 import { LibraryService } from '@/services/library.service'
 import { IFrame } from '@/types/frame.type'
 import { FRAME_PICKER_FRAMES } from '@/utils/frame-picker.util'
-import { cn, FrameColorCodes } from '@/utils/utils'
+import { cn, FrameEngagementTypes } from '@/utils/utils'
 
 function ThumbnailContainer({
   libraryItem,
@@ -175,16 +175,16 @@ export function FrameLibrary({
                               color="default"
                               style={{
                                 background:
-                                  FrameColorCodes[
+                                  FrameEngagementTypes[
                                     item.frame.config
-                                      ?.colorCode as keyof typeof FrameColorCodes
+                                      ?.colorCode as keyof typeof FrameEngagementTypes
                                   ]?.color,
                                 color: item.frame.config?.textColor,
                               }}>
                               {
-                                FrameColorCodes[
+                                FrameEngagementTypes[
                                   item.frame.config
-                                    ?.colorCode as keyof typeof FrameColorCodes
+                                    ?.colorCode as keyof typeof FrameEngagementTypes
                                 ]?.label
                               }
                             </Chip>
