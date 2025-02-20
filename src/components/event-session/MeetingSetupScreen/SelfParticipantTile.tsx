@@ -13,17 +13,15 @@ export function SelfParticipantTile() {
     <DyteParticipantTile
       meeting={meeting}
       participant={selfParticipant}
-      className="relative w-full h-auto aspect-video bg-gray-800">
+      className="relative w-full h-auto aspect-video">
       <DyteAvatar size="md" participant={selfParticipant} />
       <div className="absolute top-2 left-2">
-        {/* <DyteNameTag participant={selfParticipant} className="bg-gray-400 pr-4"> */}
         <DyteAudioVisualizer
           size="sm"
           slot="start"
           className="text-white"
           participant={selfParticipant}
         />
-        {/* </DyteNameTag> */}
       </div>
     </DyteParticipantTile>
   )

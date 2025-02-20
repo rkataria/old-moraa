@@ -1,6 +1,7 @@
 import { ParticipantsClassicView } from './ParticipantsClassicView'
 import { ParticipantsGalleryView } from './ParticipantsGalleryView'
 import { ParticipantsSpotlightView } from './ParticipantsSpotlightView'
+import { MeetingParticipants } from '../common/MeetingParticipants/MeetingParticipants'
 
 import { useDyteParticipants } from '@/hooks/useDyteParticipants'
 
@@ -18,6 +19,9 @@ export function ParticipantTiles({
     sortedParticipants,
   } = useDyteParticipants()
 
+  return <MeetingParticipants />
+
+  // TODO: Remove this code after integrating MeetingParticipants
   if (spotlightMode) {
     if (pinnedParticipants.length > 0) {
       return (

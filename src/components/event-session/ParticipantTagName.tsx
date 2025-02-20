@@ -12,7 +12,7 @@ export function ParticipantTagName({
   return (
     <div
       className={cn(
-        'absolute bottom-2 left-2 w-fit h-6 p-1 text-white flex justify-center items-center'
+        'absolute bottom-[4%] left-[4%] w-fit max-w-[60%] line-clamp-1 flex-nowrap h-6 p-1 text-white text-left'
       )}>
       {name}
     </div>
