@@ -9,11 +9,13 @@ import { DragDropContext } from 'react-beautiful-dnd'
 
 // eslint-disable-next-line import/no-cycle
 import { BreakoutRoomActivityCard } from './BreakoutActivityCard'
+import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { RenderIf } from '../RenderIf/RenderIf'
 
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useBreakoutActivities } from '@/hooks/useBreakoutActivities'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 
@@ -63,30 +65,30 @@ export function BreakoutRoomsWithParticipants({
 
   const breakoutFrame = getFrameById(breakoutFrameId!)
 
-  const breakoutRooms = breakoutFrame?.content?.breakoutRooms || [
-    {
-      activityId: breakoutFrame.content?.groupActivityId,
-      name: 'Group Activity',
-    },
-  ]
+  const breakoutActivityQuery = useBreakoutActivities({
+    frameId: breakoutFrameId!,
+  })
 
   const meetingsAndActivityList = Object.entries(
     connectedMeetingsToActivitiesMap || {}
   )
 
-  const sortedConnectedMeetings = breakoutFrame.content?.groupActivityId
-    ? connectedMeetings.sort((a, b) => a.id!.localeCompare(b.id!))
-    : breakoutRooms
-        .map(
-          (room) =>
-            connectedMeetings.find((meet) =>
-              meetingsAndActivityList.find(
-                ([meetId, activityId]) =>
-                  room?.activityId === activityId && meet.id === meetId
-              )
-            ) as DyteConnectedMeetings['meetings'][number]
-        )
-        .filter(Boolean)
+  if (!breakoutActivityQuery.isSuccess) return null
+
+  const sortedConnectedMeetings =
+    breakoutFrame.config.breakoutType === BREAKOUT_TYPES.GROUPS
+      ? connectedMeetings.sort((a, b) => a.id!.localeCompare(b.id!))
+      : breakoutActivityQuery.data
+          .map(
+            (room) =>
+              connectedMeetings.find((meet) =>
+                meetingsAndActivityList.find(
+                  ([meetId, activityId]) =>
+                    room?.activity_frame_id === activityId && meet.id === meetId
+                )
+              ) as DyteConnectedMeetings['meetings'][number]
+          )
+          .filter(Boolean)
 
   return (
     <div className="w-full flex-1">
@@ -118,21 +120,24 @@ export function BreakoutRoomsWithParticipants({
           <BreakoutRoomActivityCard
             editable={false}
             breakout={{
+              id: '',
               name: 'Main Room',
+              activity_frame_id: '',
             }}
             roomId={mainMeetingId}
-            idx={1000}
             hideActivityCard
             participants={mainMeetingParticipants}
           />
-          {sortedConnectedMeetings.map((meet, index) => (
+          {sortedConnectedMeetings.map((meet) => (
             <BreakoutRoomActivityCard
               key={meet.id}
-              idx={index}
               breakout={{
-                activityId:
-                  connectedMeetingsToActivitiesMap?.[meet.id as string],
-                name: meetingTitles?.find((m) => m.id === meet.id)?.title,
+                id: '',
+                activity_frame_id: connectedMeetingsToActivitiesMap?.[
+                  meet.id as string
+                ] as string,
+                name: meetingTitles?.find((m) => m.id === meet.id)
+                  ?.title as string,
               }}
               editable={false}
               roomId={meet.id}

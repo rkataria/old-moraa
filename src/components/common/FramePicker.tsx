@@ -20,6 +20,8 @@ import { IoArrowBack } from 'react-icons/io5'
 import { FramePickerCard } from './FramePickerCard'
 import { FramePickerTemplateCard } from './FramePickerTemplateCard'
 // eslint-disable-next-line import/no-cycle
+import { BreakoutFrameLibrary } from './Library/BreakoutFrameLibrary'
+// eslint-disable-next-line import/no-cycle
 import { FrameLibrary } from './Library/FrameLibrary'
 
 import { useEventContext } from '@/contexts/EventContext'
@@ -100,7 +102,7 @@ export function FramePicker({
     await importFrameMutation.mutate(
       {
         frameId: frame.id,
-        meetingId: meeting?.id,
+        meetingId: meeting!.id,
         sectionId: currentSectionId || sections[sections.length - 1]?.id,
         insertAfterFrameId: insertAfterFrameId as string,
       },
@@ -119,7 +121,7 @@ export function FramePicker({
     await importFrameMutation.mutate(
       {
         frameId: frame.id,
-        meetingId: meeting?.id,
+        meetingId: meeting!.id,
         sectionId: currentSectionId || sections[sections.length - 1]?.id,
         insertAfterFrameId: breakoutFrameId as string,
         breakoutFrameId,
@@ -132,6 +134,10 @@ export function FramePicker({
         },
       }
     )
+  }
+
+  const onBreakoutExistingActivityImport = async (frame: IFrame) => {
+    onBreakoutFrameImport?.(frame)
   }
 
   const renderHeaderContents = () => {
@@ -224,6 +230,16 @@ export function FramePicker({
                     : onBreakoutActivityFrameImport
                 }
                 frameTypes={breakoutFrames.map((f) => f.type)}
+              />
+            </Tab>
+            <Tab title="Existing Frames">
+              <BreakoutFrameLibrary
+                meetingId={meeting!.id}
+                onFrameClick={
+                  importFrameMutation.isPending
+                    ? () => null
+                    : onBreakoutExistingActivityImport
+                }
               />
             </Tab>
           </Tabs>

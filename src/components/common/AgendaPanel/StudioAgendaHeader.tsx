@@ -17,7 +17,7 @@ export function StudioAgendaHeader() {
       }}>
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-black/80">Frames</span>
+          <span className="text-black/80">Agenda</span>
           <ListViewToggle />
         </div>
         <AddContentButton className="flex-auto" />

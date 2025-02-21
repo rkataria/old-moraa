@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 
 import { ISection, IFrame, ISectionConfig } from './frame.type'
+import { MeetingModel } from './models'
 
 export type EventModeType = 'view' | 'edit' | 'present'
 
@@ -10,7 +11,7 @@ export type EventContextType = {
   eventId: string
   eventMode: EventModeType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  meeting: any
+  meeting: MeetingModel | null
   currentFrame: IFrame | null
   overviewOpen: boolean
   loading: boolean

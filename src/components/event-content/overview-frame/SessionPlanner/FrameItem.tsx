@@ -33,7 +33,9 @@ import { Note } from '@/components/common/Note'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Tooltip } from '@/components/common/ShortuctTooltip'
 import { useEventContext } from '@/contexts/EventContext'
+import { useBreakoutActivities } from '@/hooks/useBreakoutActivities'
 import { useStoreDispatch } from '@/hooks/useRedux'
+import { FrameService } from '@/services/frame.service'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import {
   setCurrentFrameIdAction,
@@ -42,7 +44,7 @@ import {
 import { setActiveTabAction } from '@/stores/slices/layout/studio.slice'
 import { FrameStatus } from '@/types/enums'
 import { IFrame, ISection } from '@/types/frame.type'
-import { getBlankFrame, getBreakoutFrames } from '@/utils/content.util'
+import { getBlankFrame } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
@@ -73,12 +75,16 @@ export function FrameItem({
     preview,
     insertAfterFrameId,
     insertInSectionId,
-    sections,
     updateFrame,
     setAddedFromSessionPlanner,
     deleteFrame,
     addFrameToSection,
+    getFrameById,
   } = useEventContext()
+  const breakoutActivityQuery = useBreakoutActivities({
+    frameId: frame.id!,
+    enabled: frame.type === FrameType.BREAKOUT,
+  })
   const currentFrame = useCurrentFrame()
   const [visibleNestedList, setVisibleNestedList] = useState(false)
   const dispatch = useStoreDispatch()
@@ -127,13 +133,13 @@ export function FrameItem({
     })
     if (
       frame.type === FrameType.BREAKOUT &&
-      frame?.content?.breakoutRooms?.length
+      breakoutActivityQuery.data?.length
     ) {
       if (frame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
-        frame?.content?.breakoutRooms?.map((ele) => {
-          if (ele?.activityId) {
+        breakoutActivityQuery.data?.map((ele) => {
+          if (ele?.activity_frame_id) {
             updateFrame({
-              frameId: ele?.activityId,
+              frameId: ele?.activity_frame_id,
               framePayload: {
                 status: newState,
               },
@@ -143,15 +149,18 @@ export function FrameItem({
           return 0
         })
       } else if (frame?.config?.breakoutType === BREAKOUT_TYPES.GROUPS) {
-        if (frame?.content?.groupActivityId) {
+        if (breakoutActivityQuery.data[0]?.activity_frame_id) {
           updateFrame({
-            frameId: frame?.content?.groupActivityId,
+            frameId: breakoutActivityQuery.data[0]?.activity_frame_id,
             framePayload: {
               status: newState,
             },
           })
         }
       }
+      setTimeout(() => {
+        breakoutActivityQuery.refetch()
+      }, 2000)
     }
   }
 
@@ -169,44 +178,13 @@ export function FrameItem({
     })
   }
 
-  const handleBreakoutActivityFrameDelete = (breakoutFrame: IFrame | null) => {
-    if (!breakoutFrame) return
-    let payload = {}
+  const handleFrameDropdownActions = async (key: Key) => {
+    if (key === 'delete' && frame.type === FrameType.BREAKOUT) {
+      await FrameService.deleteActivitiesOfBreakoutFrame({
+        breakoutFrameId: frame.id,
+      })
 
-    if (breakoutFrame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
-      payload = {
-        content: {
-          ...breakoutFrame.content,
-          breakoutRooms:
-            breakoutFrame.content?.breakoutRooms?.map((activity) =>
-              activity.activityId === frame.id
-                ? { ...activity, activityId: null }
-                : activity
-            ) || [],
-        },
-      }
-    } else {
-      payload = {
-        content: {
-          ...breakoutFrame.content,
-          groupActivityId: null,
-        },
-      }
-    }
-
-    updateFrame({ framePayload: payload, frameId: breakoutFrame.id })
-    deleteFrame(frame)
-  }
-
-  const handleFrameDropdownActions = (key: Key) => {
-    if (
-      key === 'delete' &&
-      frame?.content?.breakoutFrameId &&
-      parentBreakoutFrame
-    ) {
-      handleBreakoutActivityFrameDelete(parentBreakoutFrame)
-
-      return
+      breakoutActivityQuery.refetch()
     }
 
     if (key === 'delete') {
@@ -223,10 +201,11 @@ export function FrameItem({
     setSelectedFrameIds(selectedFrameIds.filter((id) => id !== frame.id))
   }
 
-  const breakoutFrames = getBreakoutFrames({
-    frames: sections.find((s) => s.id === sectionId)?.frames || [],
-    breakoutFrame: frame,
-  })
+  const breakoutFrames = breakoutActivityQuery.data
+    ?.filter((activity) => activity.activity_frame_id)
+    .map((a) => getFrameById(a.activity_frame_id!))
+    .filter(Boolean) as unknown as IFrame[]
+
   const navigateToFrameContent = (frameId: string) => {
     dispatch(setCurrentFrameIdAction(frameId))
     dispatch(setIsOverviewOpenAction(false))

@@ -7,7 +7,6 @@ import { useParams, useRouter } from '@tanstack/react-router'
 import { OnDragEndResponder } from 'react-beautiful-dnd'
 import toast from 'react-hot-toast'
 
-import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { useSyncValueInRedux } from '@/hooks/syncValueInRedux'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
@@ -91,6 +90,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   const { permissions } = useEventPermissions()
 
   const { sections } = useEventSelector()
+  const allFrames = useStoreSelector(
+    (state) => state.event.currentEvent.frameState.frame.data
+  )
 
   const [openContentTypePicker, setOpenContentTypePicker] =
     useState<boolean>(false)
@@ -345,14 +347,6 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
     return null
   }
 
-  const _deleteFrame = async (id: string) => {
-    const Response = await FrameService.deleteFrame(id)
-
-    if (Response.error) {
-      console.error('error while deleting frame: ', Response.error)
-    }
-  }
-
   const deleteFrame = async (frame: IFrame) => {
     dispatch(deleteFrameThunk({ frameId: frame.id }))
 
@@ -372,29 +366,13 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const deleteBreakoutFrames = async (frame: IFrame) => {
-    const breakoutIds = [frame.id]
-    _deleteFrame(frame.id)
-
-    if (frame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS) {
-      frame?.content?.breakoutRooms?.map(async (ele) => {
-        if (ele?.activityId) {
-          _deleteFrame(ele?.activityId)
-          breakoutIds.push(ele?.activityId)
-        }
-
-        return ele
-      })
-    } else if (frame?.content?.groupActivityId) {
-      _deleteFrame(frame?.content?.groupActivityId)
-      breakoutIds.push(frame?.content?.groupActivityId)
-    }
-
+    await FrameService.deleteActivitiesOfBreakoutFrame({
+      breakoutFrameId: frame.id,
+    })
     // Update the section with the frame
     const section = sections.find((s) => s.id === frame.section_id)
 
-    const _frames = section!.frames
-      .filter((s) => !breakoutIds?.includes(s?.id))
-      .filter((s) => s?.id)
+    const _frames = section!.frames.filter((s) => s?.id !== frame.id)
 
     await updateSection({
       sectionPayload: {
@@ -402,6 +380,8 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
       },
       sectionId: section!.id,
     })
+
+    await FrameService.deleteFrame(frame.id)
 
     return null
   }
@@ -509,10 +489,9 @@ export function EventProvider({ children, eventMode }: EventProviderProps) {
   }
 
   const getFrameById = (frameId: string): IFrame => {
-    const _frames = sections.map((sec) => sec.frames).flat(2)
-    const cFrame = _frames.find((f) => f?.id === frameId) as IFrame
+    const _frame = (allFrames || [])?.find((f) => f?.id === frameId) as IFrame
 
-    return cFrame
+    return _frame
   }
 
   const handleSetCurrentFrame = (frame: IFrame | null) => {

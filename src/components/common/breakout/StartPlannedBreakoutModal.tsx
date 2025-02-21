@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { useBreakoutActivities } from '@/hooks/useBreakoutActivities'
 import { useDyteParticipants } from '@/hooks/useDyteParticipants'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
@@ -53,7 +54,10 @@ export function StartPlannedBreakoutModal({
     useEventSession()
   const dyteMeeting = useDyteMeeting()
   const currentParticipantCount = joinedParticipants.length
-  const roomsCount = currentFrame?.content?.breakoutRooms?.length
+  const breakoutActivityQuery = useBreakoutActivities({
+    frameId: currentFrame!.id!,
+  })
+  const roomsCount = breakoutActivityQuery.data?.length
   const participantPerGroup = currentFrame?.config?.participantPerGroup
   const breakoutDuration = currentFrame?.config.breakoutDuration
   const assignmentOption = currentFrame?.config
@@ -260,10 +264,6 @@ export function StartPlannedBreakoutModal({
 
     try {
       await breakoutRoomsInstance?.startBreakoutRooms({
-        /*
-         * Because the breakoutRooms array only exist on breakout room type so it won't get sent for a breakout group type
-         * And the `participantPerGroup` only exist on breakout group type so it won't get sent for a breakout room type
-         */
         roomsCount: isRoomsBreakout ? config.roomsCount : undefined,
         participantPerGroup: isGroupsBreakout
           ? config.participantPerGroup
@@ -340,8 +340,15 @@ export function StartPlannedBreakoutModal({
       setOpen(false)
       startBreakoutSession({
         ...breakoutConfig,
-        activities: currentFrame?.content?.breakoutRooms,
-        activityId: currentFrame?.content?.groupActivityId,
+        activities: isRoomsBreakout
+          ? breakoutActivityQuery.data?.map((activity) => ({
+              name: activity.name as string,
+              activityId: activity.activity_frame_id!,
+            }))
+          : undefined,
+        activityId: isGroupsBreakout
+          ? breakoutActivityQuery.data?.[0].activity_frame_id || undefined
+          : undefined,
         breakoutFrameId: currentFrame?.id,
       })
 
@@ -355,8 +362,15 @@ export function StartPlannedBreakoutModal({
       notifyBreakoutEnd(eventRealtimeChannel)
       startBreakoutSession({
         ...breakoutConfig,
-        activities: currentFrame?.content?.breakoutRooms,
-        activityId: currentFrame?.content?.groupActivityId,
+        activities: isRoomsBreakout
+          ? breakoutActivityQuery.data?.map((activity) => ({
+              name: activity.name as string,
+              activityId: activity.activity_frame_id!,
+            }))
+          : undefined,
+        activityId: isGroupsBreakout
+          ? breakoutActivityQuery.data?.[0].activity_frame_id || undefined
+          : undefined,
         breakoutFrameId: currentFrame?.id,
       })
     }, notificationDuration * 1000)

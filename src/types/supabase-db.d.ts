@@ -50,6 +50,45 @@ export type Database = {
           },
         ]
       }
+      breakout_activity: {
+        Row: {
+          activity_frame_id: string | null
+          breakout_frame_id: string | null
+          created_at: string
+          id: string
+          name: string | null
+        }
+        Insert: {
+          activity_frame_id?: string | null
+          breakout_frame_id?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          activity_frame_id?: string | null
+          breakout_frame_id?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'breakout_activity_activity_frame_id_fkey'
+            columns: ['activity_frame_id']
+            isOneToOne: false
+            referencedRelation: 'frame'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'breakout_activity_breakout_frame_id_fkey'
+            columns: ['breakout_frame_id']
+            isOneToOne: false
+            referencedRelation: 'frame'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       enrollment: {
         Row: {
           created_at: string
@@ -475,6 +514,59 @@ export type Database = {
           },
         ]
       }
+      recording: {
+        Row: {
+          created_at: string
+          duration: number | null
+          dyte_session_id: string | null
+          file_size: number | null
+          id: string
+          meeting_id: string | null
+          recording_name: string | null
+          recording_url: string | null
+          started_at: string | null
+          stopped_at: string | null
+          transcript_name: string | null
+          transcript_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration?: number | null
+          dyte_session_id?: string | null
+          file_size?: number | null
+          id?: string
+          meeting_id?: string | null
+          recording_name?: string | null
+          recording_url?: string | null
+          started_at?: string | null
+          stopped_at?: string | null
+          transcript_name?: string | null
+          transcript_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration?: number | null
+          dyte_session_id?: string | null
+          file_size?: number | null
+          id?: string
+          meeting_id?: string | null
+          recording_name?: string | null
+          recording_url?: string | null
+          started_at?: string | null
+          stopped_at?: string | null
+          transcript_name?: string | null
+          transcript_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'recording_meeting_id_fkey'
+            columns: ['meeting_id']
+            isOneToOne: false
+            referencedRelation: 'meeting'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       role: {
         Row: {
           created_at: string
@@ -603,6 +695,13 @@ export type Database = {
           default_data_input: Json
         }
         Returns: Record<string, unknown>
+      }
+      insert_breakout_activities: {
+        Args: {
+          breakout_id_input: string
+          activity_count: number
+        }
+        Returns: undefined
       }
     }
     Enums: {

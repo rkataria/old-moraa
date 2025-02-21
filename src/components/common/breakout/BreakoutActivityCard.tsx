@@ -22,11 +22,11 @@ import { StrictModeDroppable } from '../StrictModeDroppable'
 import { Button } from '@/components/ui/Button'
 import { useEventContext } from '@/contexts/EventContext'
 import { useDimensions } from '@/hooks/useDimensions'
+import { BreakoutActivityModel } from '@/types/models'
 import { cn } from '@/utils/utils'
 
 type BreakoutRoomActivityCardProps = {
-  breakout: any
-  idx: number
+  breakout: Pick<BreakoutActivityModel, 'activity_frame_id' | 'id' | 'name'>
   hideActivityCard?: boolean
   participants?: {
     id?: string
@@ -35,10 +35,10 @@ type BreakoutRoomActivityCardProps = {
     customParticipantId?: string
   }[]
   editable: boolean
-  deleteActivityFrame?: (idx: number) => void
-  updateBreakoutRoomName?: (value: string, idx: number) => void
-  deleteRoomGroup?: (idx: number) => void
-  onAddNewActivity?: (index: number) => void
+  deleteActivityFrame?: (roomId: string) => void
+  updateBreakoutRoomName?: (value: string, roomId: string) => void
+  deleteRoomGroup?: (roomId: string) => void
+  onAddNewActivity?: (roomId: string) => void
   hideRoomDelete?: boolean
   JoinRoomButton?: React.ReactElement
   roomId?: string
@@ -65,7 +65,6 @@ export const roomActions = [
 export function BreakoutRoomActivityCard({
   breakout,
   editable,
-  idx,
   hideActivityCard = false,
   updateBreakoutRoomName,
   deleteRoomGroup,
@@ -91,10 +90,10 @@ export function BreakoutRoomActivityCard({
       actions.push(roomActions[0])
     }
 
-    if (breakout?.activityId) {
+    if (breakout?.activity_frame_id) {
       actions.push(roomActions[2])
     }
-    if (!breakout?.activityId) {
+    if (!breakout?.activity_frame_id) {
       actions.push(roomActions[1])
     }
 
@@ -112,7 +111,7 @@ export function BreakoutRoomActivityCard({
             if (!editable) return
             // if (frame.content.breakout === value) return
 
-            updateBreakoutRoomName?.(value, idx)
+            updateBreakoutRoomName?.(value, breakout.id)
           }}
         />
         <RenderIf isTrue={editable}>
@@ -125,15 +124,15 @@ export function BreakoutRoomActivityCard({
             actions={getActions()}
             onAction={(actionKey) => {
               if (actionKey === 'delete-room') {
-                deleteRoomGroup?.(idx)
+                deleteRoomGroup?.(breakout.id)
               }
 
               if (actionKey === 'delete-room-activity') {
-                deleteActivityFrame?.(idx)
+                deleteActivityFrame?.(breakout.id)
               }
 
               if (actionKey === 'add-activity') {
-                onAddNewActivity?.(idx)
+                onAddNewActivity?.(breakout.id)
               }
             }}
           />
@@ -145,27 +144,30 @@ export function BreakoutRoomActivityCard({
             'border border-gray-100 text-gray-400 m-1 bg-[#f9f6ff] rounded-xl aspect-video'
           )}>
           <RenderIf
-            isTrue={breakout?.activityId && getFrameById(breakout?.activityId)}>
+            isTrue={
+              !!breakout?.activity_frame_id &&
+              !!getFrameById(breakout?.activity_frame_id)
+            }>
             <div
               ref={thumbnailContainerRef}
               className="relative w-full h-full cursor-pointer"
               onClick={() => {
                 if (!editable) return
-                setCurrentFrame(getFrameById(breakout?.activityId))
+                setCurrentFrame(getFrameById(breakout!.activity_frame_id!))
               }}>
               <BreakoutFrameThumbnailCard
-                frame={getFrameById(breakout?.activityId)}
+                frame={getFrameById(breakout?.activity_frame_id as string)}
                 containerWidth={containerWidth}
                 inViewPort
               />
             </div>
           </RenderIf>
-          <RenderIf isTrue={!breakout?.activityId}>
+          <RenderIf isTrue={!breakout?.activity_frame_id}>
             <div
               className="grid place-items-center h-full w-full cursor-pointer aspect-video"
               onClick={() => {
                 if (!editable) return
-                onAddNewActivity?.(idx)
+                onAddNewActivity?.(breakout.id)
               }}>
               <div
                 className={cn('grid place-items-center gap-4', {

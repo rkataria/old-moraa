@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext } from 'react'
 
-import { v4 as uuidv4 } from 'uuid'
-
 import { AssignmentOptionSelector } from '@/components/common/breakout/AssignmentOptionSelector'
 import { AssignParticipantsModalTrigger } from '@/components/common/breakout/AssignParticipantsModal/AssignParticipantsModalTrigger'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
@@ -10,15 +8,20 @@ import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlid
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { EventContext } from '@/contexts/EventContext'
+import { useBreakoutActivities } from '@/hooks/useBreakoutActivities'
+import { FrameService } from '@/services/frame.service'
 import { EventContextType } from '@/types/event-context.type'
 
 export function BreakoutSettings() {
   const { currentFrame, updateFrame, getFrameById, deleteFrame } = useContext(
     EventContext
   ) as EventContextType
+  const breakoutActivityQuery = useBreakoutActivities({
+    frameId: currentFrame!.id,
+  })
   if (!currentFrame) return null
 
-  const updateBreakout = (count: number) => {
+  const updateBreakout = async (count: number) => {
     if (currentFrame?.config?.breakoutType === BREAKOUT_TYPES.GROUPS) {
       updateFrame({
         framePayload: {
@@ -32,57 +35,34 @@ export function BreakoutSettings() {
 
       return
     }
-    if (count > currentFrame?.config?.breakoutRoomsCount) {
-      updateFrame({
-        framePayload: {
-          config: {
-            ...currentFrame?.config,
-            breakoutRoomsCount: count,
-          },
-          content: {
-            ...currentFrame?.content,
-            breakoutRooms: [
-              ...(currentFrame?.content?.breakoutRooms || []),
-              {
-                name: `Room - ${count}`,
-                id: uuidv4(),
-              },
-            ],
-          },
+    if (count > (breakoutActivityQuery.data?.length || 1)) {
+      await FrameService.createActivityBreakoutFrame([
+        {
+          breakoutFrameId: currentFrame!.id,
+          name: 'Activity',
         },
-        frameId: currentFrame.id,
-      })
+      ])
+      breakoutActivityQuery.refetch()
     } else {
       handleRoomsActivityDelete(
-        currentFrame?.content?.breakoutRooms?.[count]?.activityId || '',
-        count
+        breakoutActivityQuery.data![count].activity_frame_id!,
+        breakoutActivityQuery.data![count].id!
       )
     }
   }
-  const handleRoomsActivityDelete = (activityId: string, count: number) => {
-    if (activityId) {
-      deleteFrame(
-        getFrameById(
-          currentFrame?.content?.breakoutRooms?.[count]?.activityId || ''
-        )
-      )
+  const handleRoomsActivityDelete = async (
+    activityFrameId: string,
+    activityId: string
+  ) => {
+    if (activityFrameId) {
+      deleteFrame(getFrameById(activityFrameId))
     }
-    // currentFrame?.content?.breakoutRooms?.pop()
 
-    updateFrame({
-      framePayload: {
-        config: {
-          ...currentFrame?.config,
-          breakoutRoomsCount:
-            (currentFrame?.content?.breakoutRooms?.length || 1) - 1,
-        },
-        content: {
-          ...currentFrame?.content,
-          breakoutRooms: currentFrame?.content?.breakoutRooms?.slice(0, -1),
-        },
-      },
-      frameId: currentFrame.id,
+    await FrameService.deleteActivityBreakoutFrame({
+      activityId,
     })
+
+    breakoutActivityQuery.refetch()
   }
 
   return (
@@ -119,7 +99,7 @@ export function BreakoutSettings() {
           <TwoWayNumberCounter
             defaultCount={
               currentFrame?.config?.breakoutType === BREAKOUT_TYPES.ROOMS
-                ? currentFrame?.config?.breakoutRoomsCount
+                ? breakoutActivityQuery.data?.length
                 : currentFrame?.config?.participantPerGroup
             }
             noNegative

@@ -16,6 +16,7 @@ import { RoomList } from './RoomList'
 import { RenderIf } from '../../RenderIf/RenderIf'
 
 import { useEventContext } from '@/contexts/EventContext'
+import { useBreakoutActivities } from '@/hooks/useBreakoutActivities'
 import { useEvent } from '@/hooks/useEvent'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { cn } from '@/utils/utils'
@@ -40,6 +41,9 @@ export function AssignParticipantsModal({
   const [assignments, setAssignments] = useState<Record<string, string[]>>(
     currentFrame?.content?.breakoutRoomAssignments || {}
   )
+  const breakoutActivityQuery = useBreakoutActivities({
+    frameId: currentFrame.id!,
+  })
 
   useEffect(() => {
     if (
@@ -128,7 +132,7 @@ export function AssignParticipantsModal({
     })
   }
 
-  const rooms = currentFrame.content?.breakoutRooms || []
+  const rooms = breakoutActivityQuery.data || []
 
   const participantsList = (participants || []).map((participant) => ({
     id: participant.id,

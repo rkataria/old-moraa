@@ -3,9 +3,7 @@ import { useSelector } from 'react-redux'
 
 import { RootState } from '../store'
 
-import { IFrame } from '@/types/frame.type'
 import { FrameModel, SectionModel } from '@/types/models'
-import { getBreakoutFrames } from '@/utils/content.util'
 import { FrameType } from '@/utils/frame-picker.util'
 
 type PopulatedSectionSelector = Array<
@@ -57,14 +55,6 @@ const orderFramesByParent = (frames: Array<FrameModel>) => {
       // Order activity frames based on breakout frame
       if (frame.type === FrameType.BREAKOUT) {
         orderedFrames.push(frame)
-      }
-      const activityFrames = getBreakoutFrames({
-        frames: frames as IFrame[],
-        breakoutFrame: frame,
-      })
-
-      if (Array.isArray(activityFrames)) {
-        orderedFrames.push(...(activityFrames as FrameModel[]))
       }
     } else {
       orderedFrames.push(frame)

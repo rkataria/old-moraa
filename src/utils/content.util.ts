@@ -141,12 +141,6 @@ export const getDefaultContent = ({
         blocks: [headerBlock, paragraphBlock],
         title: data?.title,
         description: data?.description,
-        breakoutRooms:
-          data?.breakoutType === BREAKOUT_TYPES.GROUPS
-            ? undefined
-            : new Array(data?.breakoutRoomsCount)
-                .fill('')
-                .map((_, idx) => ({ name: `Room - ${idx + 1}`, id: uuidv4() })),
       }
 
     default:
@@ -289,33 +283,6 @@ export const getContentStudioRightSidebarControlKeys = (
   }
 
   return ['frame-notes', 'frame-status']
-}
-
-export const getBreakoutFrames = ({
-  frames,
-  breakoutFrame,
-}: {
-  frames: IFrame[]
-  breakoutFrame?: IFrame
-}) => {
-  if (breakoutFrame?.type === FrameType.BREAKOUT) {
-    if (breakoutFrame.content?.breakoutRooms?.length) {
-      const breakoutActivityFramesId = breakoutFrame.content?.breakoutRooms
-        .map((activity) => activity.activityId)
-        .filter(Boolean)
-
-      return breakoutActivityFramesId
-        .map((id) => frames.find((tFrame) => tFrame.id === id))
-        .filter(Boolean) as IFrame[]
-    }
-    const breakoutFrames = frames.filter(
-      (f) => f?.content?.breakoutFrameId === breakoutFrame?.id
-    )
-
-    return breakoutFrames
-  }
-
-  return null
 }
 
 export const getBlankFrame = (name: string) => ({

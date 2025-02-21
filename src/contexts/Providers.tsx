@@ -9,6 +9,7 @@ import { init } from 'emoji-mart'
 import { Toaster } from 'react-hot-toast'
 import { Provider as ReduxProvider } from 'react-redux'
 
+import { ConfirmationModalProvider } from './ConfirmationModalContext'
 import { LiveblocksProvider } from './LiveblocksProvider'
 import { MoraaSlideEditorContextProvider } from './MoraaSlideEditorContext'
 
@@ -30,7 +31,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
               <MoraaSlideEditorContextProvider>
                 <LiveblocksProvider>
                   <main className="moraa-light text-foreground bg-background">
-                    {children}
+                    <ConfirmationModalProvider>
+                      {children}
+                    </ConfirmationModalProvider>
                   </main>
                 </LiveblocksProvider>
                 <Toaster position="bottom-right" reverseOrder={false} />

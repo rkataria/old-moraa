@@ -22,10 +22,11 @@ import { v4 as uuidv4 } from 'uuid'
 import { CategoryChange } from './CategoryChange'
 import { MoveToSection } from './MoveTo'
 
-import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { useEventContext } from '@/contexts/EventContext'
+import { useResetBreakoutActivitiesQuery } from '@/hooks/useBreakoutActivities'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { FrameService } from '@/services/frame.service'
 import {
   bulkUpdateFramesThunk,
   createFramesThunk,
@@ -48,10 +49,11 @@ export function BottomBar({
   parentBreakoutFrame,
   setSelectedFrameIds,
 }: IBottomBar) {
-  const { deleteFrames, updateFrame } = useEventContext()
+  const { deleteFrames } = useEventContext()
   const dispatch = useStoreDispatch()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [actionRunning, setActionRunning] = useState(false)
+  const { resetBreakoutActivitiesQuery } = useResetBreakoutActivitiesQuery()
 
   const deleteFramesPending = useStoreSelector(
     (state) => state.event.currentEvent.frameState.deleteFramesThunk.isLoading
@@ -59,29 +61,10 @@ export function BottomBar({
 
   const handleBreakoutActivityFrameDelete = (breakoutFrame: IFrame | null) => {
     if (!breakoutFrame) return
-    let payload = {}
-    if (breakoutFrame.config.breakoutType === BREAKOUT_TYPES.ROOMS) {
-      payload = {
-        content: {
-          ...breakoutFrame.content,
-          breakoutRooms:
-            breakoutFrame.content?.breakoutRooms?.map((activity) =>
-              selectedFrameIds.includes(activity.activityId || '')
-                ? { ...activity, activityId: null }
-                : activity
-            ) || [],
-        },
-      }
-    } else {
-      payload = {
-        content: {
-          ...breakoutFrame.content,
-          groupActivityId: null,
-        },
-      }
-    }
 
-    updateFrame({ framePayload: payload, frameId: breakoutFrame.id })
+    FrameService.deleteActivityFramesOfBreakout({
+      activityIds: selectedFrameIds,
+    })
   }
 
   const deleteSelectedFrames = async () => {
@@ -92,6 +75,7 @@ export function BottomBar({
 
     if (parentBreakoutFrame) {
       handleBreakoutActivityFrameDelete(parentBreakoutFrame)
+      resetBreakoutActivitiesQuery()
     }
 
     setActionRunning(true)

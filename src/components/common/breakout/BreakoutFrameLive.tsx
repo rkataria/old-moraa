@@ -18,6 +18,7 @@ import { BREAKOUT_TYPES } from '../BreakoutTypePicker'
 import { FrameTitleDescriptionPreview } from '../FrameTitleDescriptionPreview'
 import { RenderIf } from '../RenderIf/RenderIf'
 
+import { useBreakoutActivities } from '@/hooks/useBreakoutActivities'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { IFrame } from '@/types/frame.type'
@@ -43,6 +44,7 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
       state.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutFrameId === state.event.currentEvent.eventState.currentFrameId
   )
+  const breakoutActivityQuery = useBreakoutActivities({ frameId: frame.id })
 
   const isBreakoutActiveOnCurrentFrame =
     isBreakoutActive && isCurrentFrameBreakoutFrame
@@ -54,10 +56,9 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
         {!isBreakoutActiveOnCurrentFrame ? (
           <div className="grid grid-cols-[repeat(auto-fill,_minmax(262px,_1fr))] gap-3 overflow-y-auto">
             <DragDropContext onDragEnd={() => {}}>
-              {frame.content?.breakoutRooms?.map((breakout, idx) => (
+              {breakoutActivityQuery.data?.map((breakout) => (
                 <BreakoutRoomActivityCard
-                  key={breakout.activityId}
-                  idx={idx}
+                  key={breakout.id}
                   editable={false}
                   breakout={breakout}
                 />
@@ -76,11 +77,12 @@ export function BreakoutFrameLive({ frame }: BreakoutProps) {
             <DragDropContext onDragEnd={() => {}}>
               <BreakoutRoomActivityCard
                 key={frame.id}
-                idx={0}
                 editable={false}
                 breakout={{
                   name: 'Group Activity',
-                  activityId: frame?.content?.groupActivityId,
+                  activity_frame_id:
+                    breakoutActivityQuery.data?.[0]?.activity_frame_id ?? '',
+                  id: '',
                 }}
               />
             </DragDropContext>

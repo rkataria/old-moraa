@@ -12,8 +12,6 @@ import { useEventContext } from '@/contexts/EventContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useStudioLayout } from '@/hooks/useStudioLayout'
 import { IFrame } from '@/types/frame.type'
-import { getBreakoutFrames } from '@/utils/content.util'
-import { FrameType } from '@/utils/frame-picker.util'
 import { cn } from '@/utils/utils'
 
 type FrameListProps = {
@@ -87,42 +85,6 @@ export function FrameList({
                           actionDisabled={actionDisabled}
                           framePosition={sectionStartingIndex + frameIndex}
                         />
-                        <RenderIf
-                          isTrue={
-                            (currentFrame?.type === FrameType.BREAKOUT &&
-                              currentFrame?.id === frame?.id) ||
-                            (!!currentFrame &&
-                              Boolean(
-                                getBreakoutFrames({
-                                  frames,
-                                  breakoutFrame: frame,
-                                })
-                                  ?.map((_frame: IFrame) => _frame?.id)
-                                  .includes(currentFrame?.id)
-                              ))
-                          }>
-                          <div
-                            className={cn('ml-6', {
-                              'my-2': getBreakoutFrames({
-                                frames,
-                                breakoutFrame: frame,
-                              })?.length,
-                            })}>
-                            {getBreakoutFrames({
-                              frames,
-                              breakoutFrame: frame,
-                            })?.map((f: IFrame) => (
-                              <div key={f?.id} className="flex w-full">
-                                <FrameItem
-                                  frame={f}
-                                  saveFrameInLibrary={saveFrameInLibrary}
-                                  duplicateFrame={duplicateFrame}
-                                  actionDisabled={actionDisabled}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </RenderIf>
                       </div>
                     )}
                   </Draggable>

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IFrame } from '@/types/frame.type'
+import { BreakoutActivityModel, FrameModel } from '@/types/models'
 import { supabaseClient } from '@/utils/supabase/client'
 
 const getFrames = async ({
@@ -36,6 +37,177 @@ const createFrame = async (framePayload: {
     .insert([framePayload])
     .select('*')
     .single()
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const getBreakoutActivitiesOfMeeting = async ({
+  page = 1,
+  pageSize = 8,
+  search,
+  ...data
+}: {
+  meetingId: string
+  search?: string
+  page?: number
+  pageSize: number
+}) => {
+  const offset = (page - 1) * pageSize
+  const query = supabaseClient
+    .from('breakout_activity')
+    .select<
+      '*, frame:breakout_frame_id(*), activity:activity_frame_id(*)',
+      BreakoutActivityModel & { frame: FrameModel; activity: FrameModel }
+    >('*, frame:breakout_frame_id(*), activity:activity_frame_id(*)', {
+      count: 'exact',
+    })
+    .eq('frame.meeting_id', data.meetingId)
+    .not('activity_frame_id', 'is', null)
+    .order('created_at', { ascending: true })
+    .range(offset, pageSize * page - 1)
+
+  if (search) {
+    query.ilike('activity.name', `%${search}%`)
+  }
+
+  return query.then(
+    (res) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const getActivityOfBreakoutFrame = async (data: {
+  breakoutFrameId: string
+}) => {
+  const query = supabaseClient
+    .from('breakout_activity')
+    .select<
+      '*, frame:breakout_frame_id(*), activity:activity_frame_id(*)',
+      BreakoutActivityModel & { frame: FrameModel; activity: FrameModel }
+    >('*, frame:breakout_frame_id(*), activity:activity_frame_id(*)')
+    .eq('breakout_frame_id', data.breakoutFrameId)
+    .order('created_at', { ascending: true })
+
+  return query.then(
+    (res) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const createDefaultBreakoutActivities = async (data: {
+  breakoutFrameId: string
+  count: number
+}) => {
+  const query = supabaseClient.rpc('insert_breakout_activities', {
+    breakout_id_input: data.breakoutFrameId,
+    activity_count: data.count,
+  })
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const createActivityBreakoutFrame = async (
+  data: {
+    breakoutFrameId: string
+    activityFrameId?: string
+    name: string
+  }[]
+) => {
+  const query = supabaseClient
+    .from('breakout_activity')
+    .insert(
+      data.map((breakout) => ({
+        activity_frame_id: breakout.activityFrameId,
+        breakout_frame_id: breakout.breakoutFrameId,
+        name: breakout.name,
+      }))
+    )
+    .select('*')
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const updateActivityBreakoutFrame = async (data: {
+  activityId: string
+  activityFrameId?: string | null
+  name?: string
+}) => {
+  const query = supabaseClient
+    .from('breakout_activity')
+    .update({
+      ...(data.activityFrameId !== undefined
+        ? { activity_frame_id: data.activityFrameId }
+        : {}),
+      ...(data.name !== undefined ? { name: data.name } : {}),
+    })
+    .eq('id', data.activityId)
+    .select('*')
+    .single()
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const deleteActivityBreakoutFrame = async (data: { activityId: string }) => {
+  const query = supabaseClient
+    .from('breakout_activity')
+    .delete()
+    .eq('id', data.activityId)
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const deleteActivityFramesOfBreakout = async (data: {
+  activityIds: string[]
+}) => {
+  const query = supabaseClient
+    .from('breakout_activity')
+    .update({ activity_frame_id: null })
+    .in('activity_frame_id', data.activityIds)
+
+  return query.then(
+    (res: any) => res,
+    (error: any) => {
+      throw error
+    }
+  )
+}
+
+const deleteActivitiesOfBreakoutFrame = async (data: {
+  breakoutFrameId: string
+}) => {
+  const query = supabaseClient
+    .from('breakout_activity')
+    .delete()
+    .eq('activity_frame_id', data.breakoutFrameId)
 
   return query.then(
     (res: any) => res,
@@ -174,6 +346,14 @@ export const FrameService = {
   getFrames,
   createFrame,
   duplicateFrame,
+  getBreakoutActivitiesOfMeeting,
+  getActivityOfBreakoutFrame,
+  createActivityBreakoutFrame,
+  createDefaultBreakoutActivities,
+  updateActivityBreakoutFrame,
+  deleteActivityBreakoutFrame,
+  deleteActivitiesOfBreakoutFrame,
+  deleteActivityFramesOfBreakout,
   createFrames,
   updateFrame,
   updateFrames,

@@ -3,6 +3,7 @@ import { BreakoutFrame } from '../../breakout/BreakoutFrame'
 import { FrameNoContentPlaceholder } from '../../FrameNoContentPlaceholder'
 import { RenderIf } from '../../RenderIf/RenderIf'
 
+import { useBreakoutActivities } from '@/hooks/useBreakoutActivities'
 import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'
 
@@ -11,10 +12,12 @@ type PreviewProps = {
 }
 
 export function Thumbnail({ frame }: PreviewProps) {
-  const showPlaceholder =
-    !frame.content?.activityId &&
-    !frame.content?.groupActivityId &&
-    !!frame.content?.breakoutRooms?.some((br) => !br.activityId)
+  const breakoutActivityQuery = useBreakoutActivities({
+    frameId: frame.id!,
+  })
+  const showPlaceholder = !!breakoutActivityQuery.data?.some(
+    (br) => !br.activity_frame_id
+  )
 
   return (
     <div className="w-full h-full">
