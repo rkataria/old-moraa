@@ -688,6 +688,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_breakout_activities_for_meeting: {
+        Args: {
+          meeting_id_input: string
+          limit_input: number
+          offset_input: number
+          search_input: string
+        }
+        Returns: Json
+      }
       get_or_create_session: {
         Args: {
           meeting_id_input: string

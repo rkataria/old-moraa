@@ -58,25 +58,22 @@ const getBreakoutActivitiesOfMeeting = async ({
   pageSize: number
 }) => {
   const offset = (page - 1) * pageSize
-  const query = supabaseClient
-    .from('breakout_activity')
-    .select<
-      '*, frame:breakout_frame_id(*), activity:activity_frame_id(*)',
-      BreakoutActivityModel & { frame: FrameModel; activity: FrameModel }
-    >('*, frame:breakout_frame_id(*), activity:activity_frame_id(*)', {
-      count: 'exact',
-    })
-    .eq('frame.meeting_id', data.meetingId)
-    .not('activity_frame_id', 'is', null)
-    .order('created_at', { ascending: true })
-    .range(offset, pageSize * page - 1)
-
-  if (search) {
-    query.ilike('activity.name', `%${search}%`)
-  }
+  const query: any = supabaseClient.rpc('get_breakout_activities_for_meeting', {
+    limit_input: pageSize,
+    offset_input: offset,
+    search_input: search || '',
+    meeting_id_input: data.meetingId,
+  })
 
   return query.then(
-    (res) => res,
+    (res: any) =>
+      ({ data: res.data.data, count: res.data.count }) as {
+        data: (BreakoutActivityModel & {
+          frame: FrameModel
+          activity: FrameModel
+        })[]
+        count: number
+      },
     (error: any) => {
       throw error
     }
