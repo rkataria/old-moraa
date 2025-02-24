@@ -29,11 +29,6 @@ import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { SessionService } from '@/services/session.service'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { PresentationStatuses } from '@/types/event-session.type'
-import {
-  notificationDuration,
-  notifyBreakoutEnd,
-  notifyBreakoutStart,
-} from '@/utils/breakout.utils'
 import { StartBreakoutConfig } from '@/utils/dyte-breakout'
 import { shuffleAndGroup } from '@/utils/shuffle-array'
 import { getCurrentTimestamp } from '@/utils/timer.utils'
@@ -74,7 +69,8 @@ export function StartPlannedBreakoutModal({
     breakoutDuration: breakoutDuration || 5,
     assignmentOption: assignmentOption || 'auto',
   })
-  const { breakoutRoomsInstance } = useBreakoutManagerContext()
+  const { breakoutRoomsInstance, handleBreakoutEndWithTimerDialog } =
+    useBreakoutManagerContext()
   const meetingId = useStoreSelector(
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
@@ -354,26 +350,25 @@ export function StartPlannedBreakoutModal({
 
       return
     }
-
-    notifyBreakoutStart(eventRealtimeChannel)
     setOpen(false)
 
-    setTimeout(() => {
-      notifyBreakoutEnd(eventRealtimeChannel)
-      startBreakoutSession({
-        ...breakoutConfig,
-        activities: isRoomsBreakout
-          ? breakoutActivityQuery.data?.map((activity) => ({
-              name: activity.name as string,
-              activityId: activity.activity_frame_id!,
-            }))
-          : undefined,
-        activityId: isGroupsBreakout
-          ? breakoutActivityQuery.data?.[0].activity_frame_id || undefined
-          : undefined,
-        breakoutFrameId: currentFrame?.id,
-      })
-    }, notificationDuration * 1000)
+    handleBreakoutEndWithTimerDialog({
+      onBreakoutEndTriggered() {
+        startBreakoutSession({
+          ...breakoutConfig,
+          activities: isRoomsBreakout
+            ? breakoutActivityQuery.data?.map((activity) => ({
+                name: activity.name as string,
+                activityId: activity.activity_frame_id!,
+              }))
+            : undefined,
+          activityId: isGroupsBreakout
+            ? breakoutActivityQuery.data?.[0].activity_frame_id || undefined
+            : undefined,
+          breakoutFrameId: currentFrame?.id,
+        })
+      },
+    })
   }
 
   const moveParticipantsToMainRoom = async (

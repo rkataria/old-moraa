@@ -3,7 +3,7 @@ import { RealtimeChannel } from '@supabase/realtime-js'
 
 import { IFrame, ISection } from '@/types/frame.type'
 
-export const notifyBreakoutStart = (realtimeChannel: RealtimeChannel) => {
+export const showBreakoutTimerDialog = (realtimeChannel: RealtimeChannel) => {
   realtimeChannel.send({
     type: 'broadcast',
     event: 'start-breakout-notify',
@@ -11,7 +11,7 @@ export const notifyBreakoutStart = (realtimeChannel: RealtimeChannel) => {
   })
 }
 
-export const notifyBreakoutEnd = (realtimeChannel: RealtimeChannel) => {
+export const hideBreakoutTimerDialog = (realtimeChannel: RealtimeChannel) => {
   realtimeChannel.send({
     type: 'broadcast',
     event: 'stop-breakout-notify',

@@ -142,13 +142,24 @@ export class BreakoutRooms {
     this.manager.applyChanges(this.dyteClient)
     await this.cleanupBreakoutManagerInstance()
 
-    setTimeout(async () => {
+    if (
+      this.dyteClient.connectedMeetings.parentMeeting.id !==
+      this.dyteClient.meta.meetingId
+    ) {
+      this.dyteClient.connectedMeetings.once('meetingChanged', async () => {
+        this.manager.allConnectedMeetings.forEach((m) =>
+          this.manager.deleteMeeting(m.id)
+        )
+        this.manager.applyChanges(this.dyteClient)
+        await this.cleanupBreakoutManagerInstance()
+      })
+    } else {
       this.manager.allConnectedMeetings.forEach((m) =>
         this.manager.deleteMeeting(m.id)
       )
       this.manager.applyChanges(this.dyteClient)
       await this.cleanupBreakoutManagerInstance()
-    }, 1000)
+    }
   }
 
   async joinRoom(destinationMeetId: string) {

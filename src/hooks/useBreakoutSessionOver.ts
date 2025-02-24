@@ -3,18 +3,32 @@ import { useEffect } from 'react'
 import { useBreakoutRooms } from './useBreakoutRooms'
 import { useStoreDispatch } from './useRedux'
 
+import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { updateMeetingSessionDataAction } from '@/stores/slices/event/current-event/live-session.slice'
 
 export const useBreakoutSessionOver = () => {
   const dispatch = useStoreDispatch()
   const { isBreakoutActive } = useBreakoutRooms()
-  const { isHost } = useEventSession()
+  const { isHost, eventRealtimeChannel } = useEventSession()
+  const { handleBreakoutEndWithTimerDialog } = useBreakoutManagerContext()
 
   useEffect(() => {
-    if (!isHost) return
+    if (!isHost || !eventRealtimeChannel) return
 
-    if (isBreakoutActive) return
+    if (isBreakoutActive) {
+      eventRealtimeChannel?.on(
+        'broadcast',
+        { event: 'breakout-time-ended' },
+        () => {
+          if (!isHost) return
+
+          handleBreakoutEndWithTimerDialog()
+        }
+      )
+
+      return
+    }
 
     dispatch(
       updateMeetingSessionDataAction({
@@ -27,7 +41,7 @@ export const useBreakoutSessionOver = () => {
       })
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBreakoutActive])
+  }, [isBreakoutActive, eventRealtimeChannel])
 
   return null
 }

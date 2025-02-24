@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { Tooltip } from '@nextui-org/tooltip'
@@ -8,25 +8,18 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { PresentationStatuses } from '@/types/event-session.type'
-import {
-  notificationDuration,
-  notifyBreakoutEnd,
-  notifyBreakoutStart,
-} from '@/utils/breakout.utils'
 import { FrameType } from '@/utils/frame-picker.util'
 
 export function BreakoutControls() {
   const [openStartBreakoutModal, setOpenStartBreakoutModal] = useState(false)
-  const { isHost, presentationStatus } = useEventSession()
+  const { presentationStatus } = useEventSession()
   const frame = useCurrentFrame()
   const { isBreakoutActive } = useBreakoutRooms()
-  const { eventRealtimeChannel } = useRealtimeChannel()
-  const { breakoutRoomsInstance } = useBreakoutManagerContext()
+  const { handleBreakoutEndWithTimerDialog } = useBreakoutManagerContext()
   const participants = useDyteSelector((state) => state.participants.joined)
   const sessionBreakoutFrameId = useStoreSelector(
     (store) =>
@@ -34,39 +27,8 @@ export function BreakoutControls() {
         ?.breakoutFrameId || null
   )
 
-  const handleBreakoutEnd = () => {
-    if (!eventRealtimeChannel) {
-      endBreakoutSession()
-
-      return
-    }
-    notifyBreakoutStart(eventRealtimeChannel)
-    setTimeout(() => {
-      notifyBreakoutEnd(eventRealtimeChannel)
-      endBreakoutSession()
-    }, notificationDuration * 1000)
-  }
-
-  useEffect(() => {
-    if (!eventRealtimeChannel) return
-
-    eventRealtimeChannel.on(
-      'broadcast',
-      { event: 'breakout-time-ended' },
-      () => {
-        if (!isHost) return
-        handleBreakoutEnd()
-      }
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHost, eventRealtimeChannel])
-
   if (!frame) return null
   if (frame.type !== FrameType.BREAKOUT) return null
-
-  const endBreakoutSession = () => {
-    breakoutRoomsInstance?.endBreakoutRooms()
-  }
 
   const isNoParticipantsInRoom = !!participants.toArray().length
   const isBreakoutActiveOnAnotherFrame =
@@ -107,7 +69,7 @@ export function BreakoutControls() {
         <Button
           title="End breakout"
           className="bg-red-500 text-white"
-          onClick={handleBreakoutEnd}>
+          onClick={() => handleBreakoutEndWithTimerDialog()}>
           End Breakout
         </Button>
       </RenderIf>

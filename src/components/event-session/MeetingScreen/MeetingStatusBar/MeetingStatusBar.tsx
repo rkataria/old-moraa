@@ -8,22 +8,15 @@ import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
-import { useRealtimeChannel } from '@/contexts/RealtimeChannelContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
 import { updateEventSessionModeAction } from '@/stores/slices/event/current-event/live-session.slice'
 import { EventSessionMode } from '@/types/event-session.type'
-import {
-  notificationDuration,
-  notifyBreakoutEnd,
-  notifyBreakoutStart,
-} from '@/utils/breakout.utils'
 import { getRemainingTimestamp } from '@/utils/timer.utils'
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 export function MeetingStatusBar() {
-  const { eventSessionMode, startPresentation, isHost, setDyteStates } =
-    useEventSession()
+  const { eventSessionMode, startPresentation, isHost } = useEventSession()
   const dispatch = useStoreDispatch()
   const currentFrame = useCurrentFrame()
   const isInBreakoutMeeting = useStoreSelector(
@@ -51,8 +44,7 @@ export function MeetingStatusBar() {
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutType
   )
-  const { eventRealtimeChannel } = useRealtimeChannel()
-  const { breakoutRoomsInstance } = useBreakoutManagerContext()
+  const { handleBreakoutEndWithTimerDialog } = useBreakoutManagerContext()
 
   const timerActive =
     session?.data?.timerStartedStamp &&
@@ -62,28 +54,18 @@ export function MeetingStatusBar() {
       session.data.timerDuration
     ) > 0
 
-  const endBreakoutSession = () => {
-    breakoutRoomsInstance?.endBreakoutRooms()
-  }
-
   const handleBreakoutEnd = () => {
-    if (!eventRealtimeChannel) {
-      endBreakoutSession()
-
-      return
-    }
-    notifyBreakoutStart(eventRealtimeChannel)
-    setTimeout(() => {
-      notifyBreakoutEnd(eventRealtimeChannel)
-      endBreakoutSession()
-    }, notificationDuration * 1000)
+    handleBreakoutEndWithTimerDialog()
   }
 
   if (timerActive) {
     return (
       <Timer
         showEndBreakout={
-          isHost && isBreakoutActive && currentFrame?.id !== breakoutFrameId
+          isHost &&
+          isBreakoutActive &&
+          currentFrame?.id !== breakoutFrameId &&
+          !isInBreakoutMeeting
         }
         onEndBreakout={handleBreakoutEnd}
       />
@@ -99,27 +81,6 @@ export function MeetingStatusBar() {
         actions={[
           <RenderIf isTrue={!isHost}>
             <AskForHelpButton />
-          </RenderIf>,
-          <RenderIf isTrue={isHost && breakoutType !== 'planned'}>
-            <Button
-              onClick={() => {
-                setDyteStates((state) => ({
-                  ...state,
-                  activeBreakoutRoomsManager: {
-                    active: true,
-                    mode: 'create',
-                  },
-                }))
-              }}>
-              Manage
-            </Button>
-          </RenderIf>,
-          <RenderIf isTrue={isHost && isBreakoutActive}>
-            <Button
-              className="bg-red-500 text-white"
-              onClick={handleBreakoutEnd}>
-              End Breakout
-            </Button>
           </RenderIf>,
         ]}
       />
@@ -137,20 +98,6 @@ export function MeetingStatusBar() {
           description: 'text-sm font-medium',
         }}
         actions={[
-          <RenderIf isTrue={breakoutType !== 'planned'}>
-            <Button
-              onClick={() => {
-                setDyteStates((state) => ({
-                  ...state,
-                  activeBreakoutRoomsManager: {
-                    active: true,
-                    mode: 'create',
-                  },
-                }))
-              }}>
-              Manage
-            </Button>
-          </RenderIf>,
           <RenderIf isTrue={isBreakoutActive}>
             <Button
               className="bg-red-500 text-white"

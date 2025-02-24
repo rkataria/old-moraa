@@ -24,7 +24,7 @@ export function Timer({
   onEndBreakout: () => void
 }) {
   const { eventRealtimeChannel } = useRealtimeChannel()
-  const { isHost, setDyteStates } = useEventSession()
+  const { isHost } = useEventSession()
   const session = useStoreSelector(
     (store) => store.event.currentEvent.liveSessionState.activeSession.data!
   )
@@ -154,21 +154,6 @@ export function Timer({
         <RenderIf isTrue={isHost && !isBreakoutActive}>
           <Button className="bg-red-500 text-white" onClick={stopTimer}>
             Stop
-          </Button>
-        </RenderIf>,
-        <RenderIf
-          isTrue={isHost && breakoutType !== 'planned' && !!showEndBreakout}>
-          <Button
-            onClick={() => {
-              setDyteStates((state) => ({
-                ...state,
-                activeBreakoutRoomsManager: {
-                  active: true,
-                  mode: 'create',
-                },
-              }))
-            }}>
-            Manage
           </Button>
         </RenderIf>,
         <RenderIf isTrue={!!showEndBreakout}>
