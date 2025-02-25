@@ -104,9 +104,11 @@ function getTilesPositions({
         : tileSize.width
     const updatedTileSize = calculateTileSize(dynamicTileWidth, tileSize.height)
     const updatedLeftOffset =
-      isLastRow && isLastRowIncomplete
-        ? (containerWidth - tilesInLastRow * updatedTileSize.width) / 2
-        : 0
+      tilesCount === 1
+        ? (containerWidth - updatedTileSize.width) / 2
+        : isLastRow && isLastRowIncomplete
+          ? (containerWidth - tilesInLastRow * updatedTileSize.width) / 2
+          : 0
 
     const currentRowTileWidth = isLastRow
       ? updatedTileSize.width

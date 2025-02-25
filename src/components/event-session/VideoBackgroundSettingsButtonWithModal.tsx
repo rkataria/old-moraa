@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { DyteParticipantTile } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
@@ -18,8 +18,7 @@ import { Tooltip } from '../common/ShortuctTooltip'
 import { Button } from '../ui/Button'
 
 import { VIRTUAL_BACKGROUND_IMAGES } from '@/constants/dyte'
-import { EventSessionContext } from '@/contexts/EventSessionContext'
-import { EventSessionContextType } from '@/types/event-session.type'
+import { useEventSession } from '@/contexts/EventSessionContext'
 import { cn } from '@/utils/utils'
 
 type VideoBackgroundSettingsButtonWithModalProps = {
@@ -39,9 +38,17 @@ export function VideoBackgroundSettingsButtonWithModal({
 
   const selfParticipant = useDyteSelector((m) => m.self)
 
-  const { videoMiddlewareConfig, setVideoMiddlewareConfig } = useContext(
-    EventSessionContext
-  ) as EventSessionContextType
+  const { videoMiddlewareConfig, setVideoMiddlewareConfig } = useEventSession()
+
+  useEffect(() => {
+    const setVideoMiddlewareGlobalConfig = async () => {
+      await meeting.self.setVideoMiddlewareGlobalConfig({
+        disablePerFrameCanvasRendering: true,
+      })
+    }
+
+    setVideoMiddlewareGlobalConfig()
+  }, [meeting.self])
 
   const addMiddleWare = async ({
     type,
@@ -53,6 +60,14 @@ export function VideoBackgroundSettingsButtonWithModal({
     const videoBackgroundTransformer =
       await DyteVideoBackgroundTransformer.init({
         meeting,
+        segmentationConfig: {
+          // https://volcomix.github.io/virtual-background/
+          model: 'meet', // 'meet' | 'mlkit' | 'bodypix'
+          backend: 'wasmSimd',
+          inputResolution: '256x144', // '256x144' for meet
+          pipeline: 'webgl2', // 'webgl2' | 'canvas2dCpu' // canvas2dCpu gives sharper blur, webgl2 is faster.
+          targetFps: 35,
+        },
       })
 
     let middleWare
