@@ -1,4 +1,4 @@
-import { ButtonProps } from '@nextui-org/react'
+import { ButtonProps } from '@heroui/react'
 
 import { Tooltip, TooltipComponentProps } from './ShortuctTooltip'
 import { Button } from '../ui/Button'

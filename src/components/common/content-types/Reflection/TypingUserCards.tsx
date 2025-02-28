@@ -1,5 +1,5 @@
 import { useDyteSelector } from '@dytesdk/react-web-core'
-import { User } from '@nextui-org/react'
+import { User } from '@heroui/react'
 
 import { useTypingUsers } from '@/hooks/useTypingUsers'
 import { getAvatarForName } from '@/utils/utils'

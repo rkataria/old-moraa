@@ -2,7 +2,7 @@ import {
   ButtonProps,
   extendVariants,
   Button as NextUIButton,
-} from '@nextui-org/react'
+} from '@heroui/react'
 
 export const Button = extendVariants(NextUIButton, {
   variants: {

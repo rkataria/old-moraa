@@ -9,7 +9,7 @@ import {
   CardHeader,
   Checkbox,
   Textarea,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useDebounce } from '@uidotdev/usehooks'
 import { IoIosInformationCircleOutline } from 'react-icons/io'
 

@@ -7,7 +7,7 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import Compressor from '@uppy/compressor'
 import Uppy, { UppyFile } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'

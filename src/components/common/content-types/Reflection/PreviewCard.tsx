@@ -1,4 +1,4 @@
-import { Card, cn, CardHeader, Avatar, CardBody } from '@nextui-org/react'
+import { Card, cn, CardHeader, Avatar, CardBody } from '@heroui/react'
 
 import { Emojis } from './Emojis'
 

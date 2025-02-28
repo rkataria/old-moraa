@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/react'
+import { BreadcrumbItem, Breadcrumbs } from '@heroui/react'
 import { useParams, useRouter } from '@tanstack/react-router'
 
 import { MoraaLogo } from '../common/MoraaLogo'

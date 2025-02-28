@@ -3,7 +3,7 @@
 
 import { MouseEvent, useRef } from 'react'
 
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import { IoCheckmarkCircle } from 'react-icons/io5'
 
 import { ActiveBreakoutIndicator } from './ActiveBreakoutIndicator'

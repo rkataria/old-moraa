@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
-import { Tooltip } from '@nextui-org/tooltip'
+import { Tooltip } from '@heroui/tooltip'
 
 import { StartPlannedBreakoutModal } from '@/components/common/breakout/StartPlannedBreakoutModal'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'

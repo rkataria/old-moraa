@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 
 import { languages, tones } from '@/components/tiptap/lib/constants'
 import { DropdownButton } from '@/components/tiptap/ui/Dropdown'

@@ -7,7 +7,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { AiOutlineClose } from 'react-icons/ai'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'

@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Fragment, useState } from 'react'
 
-import { Checkbox } from '@nextui-org/react'
+import { Checkbox } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { BottomBar } from './BottomBar/BottomBar'

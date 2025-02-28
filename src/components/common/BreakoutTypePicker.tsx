@@ -11,7 +11,7 @@ import {
   Card,
   CardBody,
   ModalFooter,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { BsCircleSquare } from 'react-icons/bs'
 import { FaPeopleGroup } from 'react-icons/fa6'
 import { LuSquareStack } from 'react-icons/lu'

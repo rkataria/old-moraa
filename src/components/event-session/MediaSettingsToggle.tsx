@@ -1,4 +1,4 @@
-import { ButtonProps } from '@nextui-org/button'
+import { ButtonProps } from '@heroui/button'
 import { LuSettings } from 'react-icons/lu'
 
 import { ControlButton } from '../common/ControlButton'

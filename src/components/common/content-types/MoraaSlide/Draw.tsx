@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Slider,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { MdOutlineDraw } from 'react-icons/md'
 
 import { ColorPicker } from '../../ColorPicker'

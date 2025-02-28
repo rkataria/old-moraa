@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
   User,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useRouter } from '@tanstack/react-router'
 
 import { EventActions } from './EventActions'

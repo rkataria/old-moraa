@@ -1,4 +1,4 @@
-import { cn } from '@nextui-org/react'
+import { cn } from '@heroui/react'
 import { ReactNode } from '@tanstack/react-router'
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels'
 

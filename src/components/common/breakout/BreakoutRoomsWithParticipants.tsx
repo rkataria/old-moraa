@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteConnectedMeetings } from '@dytesdk/web-core'
-import { Button } from '@nextui-org/react'
+import { Button } from '@heroui/react'
 import { DragDropContext } from 'react-beautiful-dnd'
 
 // eslint-disable-next-line import/no-cycle

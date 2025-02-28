@@ -6,7 +6,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { Duration, DurationObjectUnits } from 'luxon'
 import { BiExpandAlt } from 'react-icons/bi'
 import { IoCloseCircle, IoTimeOutline } from 'react-icons/io5'

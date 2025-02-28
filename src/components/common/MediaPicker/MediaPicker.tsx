@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useRef, useState } from 'react'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { BiSolidImage, BiSolidVideos } from 'react-icons/bi'
 import { FaPhotoVideo, FaUnsplash } from 'react-icons/fa'
 import { SiGiphy, SiIcons8 } from 'react-icons/si'

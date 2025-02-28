@@ -4,8 +4,8 @@
 
 import { useState } from 'react'
 
+import { Image, Input } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Image, Input } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useLocation, useRouter } from '@tanstack/react-router'
 import { motion } from 'framer-motion'

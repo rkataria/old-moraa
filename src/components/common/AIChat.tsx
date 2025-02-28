@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import { ReactNode, useEffect, useRef, useState } from 'react'
 
-import { Button, ScrollShadow } from '@nextui-org/react'
+import { Button, ScrollShadow } from '@heroui/react'
 import { useParams } from '@tanstack/react-router'
 import axios from 'axios'
 import { BsTrash3 } from 'react-icons/bs'

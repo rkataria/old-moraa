@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react'
 
-import { Radio, RadioGroup } from '@nextui-org/react'
+import { Radio, RadioGroup } from '@heroui/react'
 import { useThrottle } from '@uidotdev/usehooks'
 import isEqual from 'lodash.isequal'
 import { BsTrash3 } from 'react-icons/bs'

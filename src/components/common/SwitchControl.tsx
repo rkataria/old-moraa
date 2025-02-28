@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Switch } from '@nextui-org/react'
+import { Switch } from '@heroui/react'
 
 import { LabelWithInlineControl } from './LabelWithInlineControl'
 

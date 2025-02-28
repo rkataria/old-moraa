@@ -1,4 +1,4 @@
-import { Checkbox } from '@nextui-org/react'
+import { Checkbox } from '@heroui/react'
 
 import { PollFrame, PollOption } from '@/types/frame.type'
 

@@ -1,7 +1,7 @@
 import { Key, useState } from 'react'
 
-import { Button } from '@nextui-org/button'
-import { Image, Tab, Tabs } from '@nextui-org/react'
+import { Button } from '@heroui/button'
+import { Image, Tab, Tabs } from '@heroui/react'
 import { VscLayoutActivitybarLeft } from 'react-icons/vsc'
 
 import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'

@@ -10,7 +10,7 @@ import {
   ModalHeader,
   Textarea,
   Tooltip,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import toast from 'react-hot-toast'
 import { PiTelegramLogoLight } from 'react-icons/pi'
 

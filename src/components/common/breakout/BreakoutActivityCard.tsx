@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useRef } from 'react'
 
-import { Avatar } from '@nextui-org/react'
+import { Avatar } from '@heroui/react'
 import { IconTrash } from '@tabler/icons-react'
 import { Draggable } from 'react-beautiful-dnd'
 import { IoEllipsisVerticalOutline } from 'react-icons/io5'

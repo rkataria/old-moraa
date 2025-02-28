@@ -1,7 +1,7 @@
 /* eslint-disable radix */
 import { useContext, useEffect, useState } from 'react'
 
-import { Button, Input, InputProps } from '@nextui-org/react'
+import { Button, Input, InputProps } from '@heroui/react'
 import { useDebounce } from '@uidotdev/usehooks'
 
 import { EventContext } from '@/contexts/EventContext'

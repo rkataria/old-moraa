@@ -7,7 +7,7 @@ import {
   ModalContent,
   ModalHeader,
   useDisclosure,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 import {
   createFileRoute,

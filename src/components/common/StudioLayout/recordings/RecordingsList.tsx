@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react'
 
-import { Button } from '@nextui-org/button'
-import { Image, Pagination } from '@nextui-org/react'
+import { Button } from '@heroui/button'
+import { Image, Pagination } from '@heroui/react'
 import { useNavigate, useParams, useRouter } from '@tanstack/react-router'
 import { DateTime, Duration } from 'luxon'
 import { BsClockHistory, BsSortDown, BsSortUp } from 'react-icons/bs'

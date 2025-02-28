@@ -9,7 +9,7 @@ import {
   ModalContent,
   Progress,
   Chip,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 import { v4 as uuidv4 } from 'uuid'

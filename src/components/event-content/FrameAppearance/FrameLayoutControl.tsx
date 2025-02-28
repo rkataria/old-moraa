@@ -1,11 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react'
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { CiGrid42 } from 'react-icons/ci'
 
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'

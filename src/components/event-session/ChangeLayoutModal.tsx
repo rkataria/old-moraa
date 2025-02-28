@@ -8,7 +8,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import toast from 'react-hot-toast'
 
 import { NumberInput } from '../common/NumberInput'

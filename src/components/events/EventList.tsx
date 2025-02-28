@@ -1,6 +1,6 @@
 import { Key, useCallback, useMemo, useState } from 'react'
 
-import { SortDescriptor, Pagination, Tabs, Tab } from '@nextui-org/react'
+import { SortDescriptor, Pagination, Tabs, Tab } from '@heroui/react'
 import { Link } from '@tanstack/react-router'
 import { BsGrid, BsList } from 'react-icons/bs'
 import { IoCalendarClear } from 'react-icons/io5'

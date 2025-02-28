@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 
-import { Input } from '@nextui-org/react'
+import { Input } from '@heroui/react'
 import { FaVideo } from 'react-icons/fa'
 
 import { VideoProvider } from './utils/types'

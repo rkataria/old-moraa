@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { Divider, ScrollShadow } from '@nextui-org/react'
+import { Divider, ScrollShadow } from '@heroui/react'
 import CharacterCount from '@tiptap/extension-character-count'
 import { Color } from '@tiptap/extension-color'
 import Document from '@tiptap/extension-document'

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button, ButtonGroup } from '@nextui-org/react'
+import { Button, ButtonGroup } from '@heroui/react'
 
 import { cn } from '@/utils/utils'
 

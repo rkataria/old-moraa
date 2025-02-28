@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { Avatar, Card, CardBody, Chip, Image } from '@nextui-org/react'
+import { Avatar, Card, CardBody, Chip, Image } from '@heroui/react'
 import { useRouter } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
 

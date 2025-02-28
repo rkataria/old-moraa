@@ -6,7 +6,7 @@ import {
   Chip,
   Divider,
   Skeleton,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useQuery } from '@tanstack/react-query'
 import uniqBy from 'lodash.uniqby'
 

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Modal, ModalContent, ModalBody, Image } from '@nextui-org/react'
+import { Modal, ModalContent, ModalBody, Image } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button } from '../ui/Button'

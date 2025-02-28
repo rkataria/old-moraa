@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/react'
+import { Button } from '@heroui/react'
 import { BiDotsHorizontalRounded } from 'react-icons/bi'
 
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'

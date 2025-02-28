@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { LuShapes } from 'react-icons/lu'
 
 import { SHAPE_TYPES, ShapePickerContent } from './ShapePickerContent'

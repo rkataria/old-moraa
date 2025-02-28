@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { cn, Image } from '@nextui-org/react'
+import { cn, Image } from '@heroui/react'
 import { AiOutlineClose } from 'react-icons/ai'
 
 import { theme, ThemeModal, Themes } from './ThemeModal'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 
-import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
+import type { UseDisclosureReturn } from '@heroui/use-disclosure'
 
 export function ThemePicker({
   disclosure,

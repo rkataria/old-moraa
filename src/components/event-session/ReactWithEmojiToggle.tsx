@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
   Tab,
   Tabs,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { IoHappy, IoHappyOutline } from 'react-icons/io5'
 
@@ -224,7 +224,6 @@ export function ReactWithEmojiToggle() {
                   <em-emoji set="apple" id={echo.emoji} size={18} />
                   <p className="text-xs font-medium">{echo.name}</p>
                 </div>
-
                 <Kbd className="h-4 rounded-md text-[11px]">{index + 1}</Kbd>
               </div>
             ))}

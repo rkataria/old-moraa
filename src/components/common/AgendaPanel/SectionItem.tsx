@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
-import { Chip } from '@nextui-org/react'
+import { Chip } from '@heroui/react'
 import { IoChevronForward } from 'react-icons/io5'
 
 import { AddItemBar } from './AddItemBar'

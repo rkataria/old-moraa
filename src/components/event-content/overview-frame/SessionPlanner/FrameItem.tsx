@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react'
 
-import { Button, Checkbox, Chip } from '@nextui-org/react'
+import { Button, Checkbox, Chip } from '@heroui/react'
 import { useRouter } from '@tanstack/react-router'
 import { Draggable } from 'react-beautiful-dnd'
 import { BsArrowsAngleExpand, BsTrash } from 'react-icons/bs'

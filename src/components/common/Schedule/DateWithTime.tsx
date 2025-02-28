@@ -1,4 +1,3 @@
-import { parseDate } from '@internationalized/date'
 import {
   Button,
   DatePicker,
@@ -7,7 +6,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
+import { parseDate } from '@internationalized/date'
 import { DateTime } from 'luxon'
 import { Control, Controller } from 'react-hook-form'
 
@@ -54,7 +54,7 @@ export function DateWithTime({ control, dateName, timeName }: IDateWithTime) {
               onChange={(value) =>
                 field.onChange({
                   target: {
-                    value: getValue(value),
+                    value: getValue(value as DateValue),
                   },
                 })
               }

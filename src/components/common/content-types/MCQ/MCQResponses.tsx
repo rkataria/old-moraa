@@ -1,4 +1,4 @@
-import { Chip } from '@nextui-org/react'
+import { Chip } from '@heroui/react'
 import { motion } from 'framer-motion'
 import { IoCheckmarkCircle } from 'react-icons/io5'
 import { RxCrossCircled } from 'react-icons/rx'

@@ -11,7 +11,7 @@ import {
   ModalHeader,
   Tabs,
   Tab,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { IoArrowBack } from 'react-icons/io5'

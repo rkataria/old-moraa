@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useState } from 'react'
 
-import { Pagination } from '@nextui-org/react'
+import { Pagination } from '@heroui/react'
 import { createFileRoute, useParams, useRouter } from '@tanstack/react-router'
 import { DateTime, Duration } from 'luxon'
 import { BsClockHistory, BsSortDown, BsSortUp } from 'react-icons/bs'

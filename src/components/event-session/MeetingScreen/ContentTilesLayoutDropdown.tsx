@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   DropdownSection,
   DropdownTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { BsLayoutSidebarInsetReverse } from 'react-icons/bs'
 import { LuLayoutDashboard } from 'react-icons/lu'
 import { MdSettingsSuggest } from 'react-icons/md'

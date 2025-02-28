@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 
-import { Skeleton } from '@nextui-org/react'
+import { Skeleton } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { LoadError } from './LoadError'

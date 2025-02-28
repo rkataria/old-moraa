@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { ButtonProps } from '@nextui-org/button'
+import { ButtonProps } from '@heroui/button'
 import { PiUsersThree } from 'react-icons/pi'
 
 import { AssignParticipantsModal } from './AssignParticipantsModal'

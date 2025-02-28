@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Image } from '@nextui-org/react'
+import { Image } from '@heroui/react'
 import { ReactNode } from '@tanstack/react-router'
 import Draggable from 'react-draggable'
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { Editor } from '@tiptap/react'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 

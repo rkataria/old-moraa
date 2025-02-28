@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-import { Card, Skeleton } from '@nextui-org/react'
+import { Card, Skeleton } from '@heroui/react'
 import { useQuery } from '@tanstack/react-query'
 
 import { PreviewCard } from './PreviewCard'

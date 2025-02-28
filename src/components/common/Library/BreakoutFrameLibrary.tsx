@@ -3,7 +3,7 @@
 
 import { useRef, useState } from 'react'
 
-import { cn, Input, Pagination } from '@nextui-org/react'
+import { cn, Input, Pagination } from '@heroui/react'
 import { useQuery } from '@tanstack/react-query'
 import { IoSearch } from 'react-icons/io5'
 

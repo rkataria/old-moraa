@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Button, ButtonGroup } from '@nextui-org/react'
+import { Button, ButtonGroup } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { DeleteFrameModal } from '../../DeleteFrameModal'

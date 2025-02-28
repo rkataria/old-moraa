@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Input, Pagination } from '@nextui-org/react'
+import { Input, Pagination } from '@heroui/react'
 import { useQuery } from '@tanstack/react-query'
 import { IoSearchOutline } from 'react-icons/io5'
 import { TbLibraryPhoto } from 'react-icons/tb'

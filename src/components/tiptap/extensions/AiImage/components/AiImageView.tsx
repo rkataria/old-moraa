@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { Extension, NodeViewWrapper, NodeViewWrapperProps } from '@tiptap/react'
 import { ImageOptions } from '@tiptap-pro/extension-ai'
 import toast from 'react-hot-toast'

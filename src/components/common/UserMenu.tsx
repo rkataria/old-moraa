@@ -5,7 +5,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from '@nextui-org/react'
+} from '@heroui/react'
 
 import { IUserProfile, UserAvatar } from './UserAvatar'
 import { NamesForm } from '../auth/NamesForm'

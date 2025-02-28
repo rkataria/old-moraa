@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
+import { Button, Chip, Input } from '@heroui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Button, Chip, Input } from '@nextui-org/react'
 import { useMutation } from '@tanstack/react-query'
 import isEqual from 'lodash.isequal'
 import {

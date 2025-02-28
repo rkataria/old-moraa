@@ -1,4 +1,4 @@
-import { cn } from '@nextui-org/react'
+import { cn } from '@heroui/react'
 import { useQuery } from '@tanstack/react-query'
 
 import { MCQResponses } from './MCQResponses'

@@ -1,4 +1,4 @@
-import { Tabs, Tab, Divider } from '@nextui-org/react'
+import { Tabs, Tab, Divider } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { FrameAppearanceToggleButton } from './FrameAppearanceToggleButton'

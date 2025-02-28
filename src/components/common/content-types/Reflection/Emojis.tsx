@@ -1,4 +1,4 @@
-import { Avatar, Chip, cn } from '@nextui-org/react'
+import { Avatar, Chip, cn } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import groupBy from 'lodash.groupby'
 

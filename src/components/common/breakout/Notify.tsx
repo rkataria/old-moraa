@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Modal, ModalContent, ModalBody, Image } from '@nextui-org/react'
+import { Modal, ModalContent, ModalBody, Image } from '@heroui/react'
 import { useDispatch } from 'react-redux'
 
 import { RenderIf } from '../RenderIf/RenderIf'

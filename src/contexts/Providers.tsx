@@ -1,7 +1,7 @@
 import React from 'react'
 
 import data from '@emoji-mart/data/sets/14/apple.json'
-import { NextUIProvider } from '@nextui-org/react'
+import { HeroUIProvider } from '@heroui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { init } from 'emoji-mart'
 // TODO: React - Fix this theme
@@ -24,7 +24,7 @@ const queryClient = new QueryClient()
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ReduxProvider store={store}>
-      <NextUIProvider>
+      <HeroUIProvider>
         <QueryClientProvider client={queryClient}>
           <UserContextProvider>
             <AppContextProvider>
@@ -41,7 +41,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             </AppContextProvider>
           </UserContextProvider>
         </QueryClientProvider>
-      </NextUIProvider>
+      </HeroUIProvider>
     </ReduxProvider>
   )
 }

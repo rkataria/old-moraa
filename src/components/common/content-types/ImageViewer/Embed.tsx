@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Image, Skeleton } from '@nextui-org/react'
+import { Image, Skeleton } from '@heroui/react'
 
 import { Hotspot, HotspotImageWrapper } from '../../HotspotImageWrapper'
 

@@ -12,7 +12,7 @@ import {
   TableBody,
   TableCell,
   TableRow,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { IconTrash } from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { DateTime } from 'luxon'

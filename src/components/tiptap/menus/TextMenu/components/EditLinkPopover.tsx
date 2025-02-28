@@ -1,4 +1,4 @@
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 
 import { LinkEditorPanel } from '@/components/tiptap/panels'
 import { Icon } from '@/components/tiptap/ui/Icon'

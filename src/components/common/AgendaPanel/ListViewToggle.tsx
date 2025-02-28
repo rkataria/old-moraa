@@ -1,4 +1,4 @@
-import { Tab, Tabs } from '@nextui-org/react'
+import { Tab, Tabs } from '@heroui/react'
 import { BsGrid, BsList } from 'react-icons/bs'
 
 import { Tooltip } from '../ShortuctTooltip'

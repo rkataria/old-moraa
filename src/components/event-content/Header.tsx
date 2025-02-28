@@ -1,4 +1,4 @@
-import { Chip } from '@nextui-org/react'
+import { Chip } from '@heroui/react'
 import { useRouter } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 

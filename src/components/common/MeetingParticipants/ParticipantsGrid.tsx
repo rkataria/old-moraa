@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { DyteParticipant, DyteSelf } from '@dytesdk/web-core'
-import { ButtonGroup } from '@nextui-org/button'
+import { ButtonGroup } from '@heroui/button'
 import { motion } from 'framer-motion'
 import ResizeObserver from 'rc-resize-observer'
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'

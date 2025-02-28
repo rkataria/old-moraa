@@ -5,7 +5,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { LuSettings2, LuUser2 } from 'react-icons/lu'
 
 import { Button } from '@/components/ui/Button'

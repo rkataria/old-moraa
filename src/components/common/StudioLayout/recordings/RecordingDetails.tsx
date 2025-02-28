@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import reduce from 'lodash.reduce'
 import { marked } from 'marked'

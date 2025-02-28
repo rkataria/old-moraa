@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Slider, Tooltip } from '@nextui-org/react'
+import { Slider, Tooltip } from '@heroui/react'
 import Cropper, { Area } from 'react-easy-crop'
 import { CiNoWaitingSign } from 'react-icons/ci'
 import { HiOutlineArrowSmallLeft } from 'react-icons/hi2'

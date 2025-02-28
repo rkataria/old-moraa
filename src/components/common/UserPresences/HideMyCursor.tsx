@@ -1,5 +1,5 @@
+import { Switch } from '@heroui/react'
 import { useSelf, useUpdateMyPresence } from '@liveblocks/react'
-import { Switch } from '@nextui-org/react'
 
 import { LabelWithInlineControl } from '../LabelWithInlineControl'
 

@@ -1,4 +1,4 @@
-import { Image } from '@nextui-org/react'
+import { Image } from '@heroui/react'
 
 import { IMAGE_PLACEHOLDER } from '@/constants/common'
 import { cn } from '@/utils/utils'

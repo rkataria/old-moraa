@@ -3,7 +3,7 @@
 
 import { Dispatch, SetStateAction } from 'react'
 
-import { Radio, RadioGroup } from '@nextui-org/react'
+import { Radio, RadioGroup } from '@heroui/react'
 
 import { MCQFrame, MCQOption } from '@/types/frame.type'
 import { cn } from '@/utils/utils'

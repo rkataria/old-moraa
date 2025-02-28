@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 
-import { Button, Modal, ModalContent } from '@nextui-org/react'
+import { Button, Modal, ModalContent } from '@heroui/react'
 import { MdOutlineDriveFolderUpload } from 'react-icons/md'
 
 import { ImageCropper } from './MediaPicker/ImageCropper'

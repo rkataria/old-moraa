@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
-import { Slider } from '@nextui-org/react'
+import { Slider } from '@heroui/react'
 import { fabric } from 'fabric'
 import { PiCaretDown } from 'react-icons/pi'
 

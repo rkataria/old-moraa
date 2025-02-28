@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { Button } from '@nextui-org/button'
-import { Select, SelectItem, Slider } from '@nextui-org/react'
+import { Button } from '@heroui/button'
+import { Select, SelectItem, Slider } from '@heroui/react'
 import { useDebounce } from '@uidotdev/usehooks'
 import isEqual from 'lodash.isequal'
 import { FaPlay, FaPause } from 'react-icons/fa'

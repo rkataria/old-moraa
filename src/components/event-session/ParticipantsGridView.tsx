@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 
 import { DyteParticipant, DyteSelf } from '@dytesdk/web-core'
-import { Button, ButtonGroup } from '@nextui-org/react'
+import { Button, ButtonGroup } from '@heroui/react'
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
 
 import { ParticipantTile } from './ParticipantTile'

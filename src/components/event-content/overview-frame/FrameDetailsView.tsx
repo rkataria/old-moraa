@@ -10,7 +10,7 @@ import {
   ModalContent,
   ModalHeader,
   useDisclosure,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useParams } from '@tanstack/react-router'
 
 import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'

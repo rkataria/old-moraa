@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react'
 import { useIdle } from '@uidotdev/usehooks'
 import useSound from 'use-sound'
 

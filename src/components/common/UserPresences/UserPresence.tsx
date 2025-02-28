@@ -4,7 +4,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   User,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { BiDotsVertical } from 'react-icons/bi'
 
 import { Button } from '@/components/ui/Button'

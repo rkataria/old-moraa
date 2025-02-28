@@ -7,7 +7,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useParams } from '@tanstack/react-router'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 

@@ -1,5 +1,5 @@
-import { Button } from '@nextui-org/button'
-import { cn } from '@nextui-org/react'
+import { Button } from '@heroui/button'
+import { cn } from '@heroui/react'
 import {
   TbLayoutSidebarRightCollapse,
   TbLayoutSidebarRightExpand,

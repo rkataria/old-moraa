@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button } from '@nextui-org/react'
+import { Button } from '@heroui/react'
 import { IconTrash } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'

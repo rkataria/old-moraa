@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 
-import { Button } from '@nextui-org/react'
+import { Button } from '@heroui/react'
 import { IconX } from '@tabler/icons-react'
 import { Menu } from 'lucide-react'
 

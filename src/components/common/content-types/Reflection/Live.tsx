@@ -1,5 +1,5 @@
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { Chip } from '@nextui-org/react'
+import { Chip } from '@heroui/react'
 import groupBy from 'lodash.groupby'
 
 import { Card } from './Card'

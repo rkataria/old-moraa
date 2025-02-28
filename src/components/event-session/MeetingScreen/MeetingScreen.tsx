@@ -11,7 +11,7 @@ import {
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant, leaveRoomState } from '@dytesdk/web-core'
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import { useParams, useRouter } from '@tanstack/react-router'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'

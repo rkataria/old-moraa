@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
@@ -16,7 +16,7 @@ import { RenderIf } from './RenderIf/RenderIf'
 import { ScheduleEventForm, ScheduleEventFormData } from './ScheduleEventForm'
 import { Button } from '../ui/Button'
 
-import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
+import type { UseDisclosureReturn } from '@heroui/use-disclosure'
 
 import { useEvent } from '@/hooks/useEvent'
 import { EventService } from '@/services/event/event-service'

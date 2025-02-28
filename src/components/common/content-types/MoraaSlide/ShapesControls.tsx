@@ -2,12 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/alt-text */
 
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react'
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { fabric } from 'fabric'
 import { RiShapesLine } from 'react-icons/ri'
 

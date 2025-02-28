@@ -7,7 +7,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'

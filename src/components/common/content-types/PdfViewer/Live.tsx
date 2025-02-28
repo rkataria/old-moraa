@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import { Skeleton } from '@nextui-org/react'
+import { Skeleton } from '@heroui/react'
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
 
 import { PdfPage } from './PageViewer'

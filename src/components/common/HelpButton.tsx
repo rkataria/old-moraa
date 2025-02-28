@@ -1,4 +1,4 @@
-import { ButtonProps, useDisclosure } from '@nextui-org/react'
+import { ButtonProps, useDisclosure } from '@heroui/react'
 import { IoIosHelpCircleOutline } from 'react-icons/io'
 
 import { KeyboardShortcutsModal } from './KeyboardShortcutsModal'

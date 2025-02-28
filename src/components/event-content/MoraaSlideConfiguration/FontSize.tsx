@@ -1,4 +1,4 @@
-import { ButtonGroup } from '@nextui-org/react'
+import { ButtonGroup } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button } from '@/components/ui/Button'

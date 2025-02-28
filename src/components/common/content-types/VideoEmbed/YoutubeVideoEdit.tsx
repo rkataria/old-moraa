@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { Pagination } from '@nextui-org/react'
+import { Pagination } from '@heroui/react'
 import { ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { FaYoutube } from 'react-icons/fa'

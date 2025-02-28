@@ -6,7 +6,7 @@ import {
   PopoverContent,
   Input,
   Button,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { AiOutlineClose } from 'react-icons/ai'
 import { GoArrowRight } from 'react-icons/go'
 

@@ -1,7 +1,7 @@
 import { KeyboardEvent, useState } from 'react'
 
+import { Input, Button, Chip } from '@heroui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Input, Button, Chip } from '@nextui-org/react'
 import { useForm, Controller } from 'react-hook-form'
 import { AiOutlineUsergroupAdd } from 'react-icons/ai'
 import { TbChevronDown } from 'react-icons/tb'

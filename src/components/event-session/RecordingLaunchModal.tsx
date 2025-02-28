@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { Modal, ModalContent, ModalBody } from '@nextui-org/react'
+import { Modal, ModalContent, ModalBody } from '@heroui/react'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useRecording } from '@/hooks/useRecording'

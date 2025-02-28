@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import { Chip } from '@nextui-org/react'
+import { Chip } from '@heroui/react'
 import uniqBy from 'lodash.uniqby'
 
 import { EditableLabel } from './EditableLabel'

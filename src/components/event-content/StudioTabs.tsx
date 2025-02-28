@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from 'react'
 
-import { Tab, Tabs } from '@nextui-org/react'
+import { Tab, Tabs } from '@heroui/react'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { BsCollectionPlay } from 'react-icons/bs'

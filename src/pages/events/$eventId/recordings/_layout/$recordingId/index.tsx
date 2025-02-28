@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import reduce from 'lodash.reduce'
 import { marked } from 'marked'

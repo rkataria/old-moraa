@@ -11,13 +11,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 
 import { ColorPicker } from '../common/ColorPicker'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { Button } from '../ui/Button'
 
-import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
+import type { UseDisclosureReturn } from '@heroui/use-disclosure'
 
 import { PatternKeys, PatternStyles } from '@/utils/event.util'
 import { cn } from '@/utils/utils'

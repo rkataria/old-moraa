@@ -1,4 +1,4 @@
-import { Card, CardBody } from '@nextui-org/react'
+import { Card, CardBody } from '@heroui/react'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 
 import { EventDate } from './Date'

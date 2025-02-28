@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import { motion } from 'framer-motion'
 import { IoMdAdd } from 'react-icons/io'
 import { IoCloseOutline, IoDocumentText } from 'react-icons/io5'

@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { BubbleMenu, Editor } from '@tiptap/react'
 
 import { AIDropdown } from './components/AIDropdown'

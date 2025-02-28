@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Skeleton } from '@nextui-org/react'
+import { Skeleton } from '@heroui/react'
 import ReactGoogleSlides from 'react-google-slides'
 
 import { PageControls } from '@/components/common/PageControls'

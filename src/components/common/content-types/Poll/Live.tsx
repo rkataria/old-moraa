@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react'
 
-import { Chip } from '@nextui-org/react'
+import { Chip } from '@heroui/react'
 
 import { AnonymousToggle } from './AnonymousToggle'
 import { PollResponse } from './PollResponse'

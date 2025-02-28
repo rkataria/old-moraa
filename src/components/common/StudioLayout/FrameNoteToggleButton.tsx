@@ -1,4 +1,4 @@
-import { Badge } from '@nextui-org/react'
+import { Badge } from '@heroui/react'
 import toast from 'react-hot-toast'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { TbBubbleFilled, TbBubbleText } from 'react-icons/tb'

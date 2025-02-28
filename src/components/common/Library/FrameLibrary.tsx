@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from 'react'
 
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import {
   Chip,
   Pagination,
@@ -15,7 +15,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { IconTrash } from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { DateTime } from 'luxon'
@@ -122,7 +122,6 @@ export function FrameLibrary({
             {AllFrameTypes.map((type) => (
               <SelectItem
                 key={type.title}
-                value={type.title}
                 startContent={type?.icon}
                 title={type.title}
               />

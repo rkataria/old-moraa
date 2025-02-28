@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Avatar } from '@nextui-org/react'
+import { Avatar } from '@heroui/react'
 import { PiCaretDownLight } from 'react-icons/pi'
 
 export function Trigger({

@@ -1,7 +1,7 @@
 import { memo } from 'react'
 
+import { Avatar, AvatarGroup } from '@heroui/react'
 import { WebSocketStatus } from '@hocuspocus/provider'
-import { Avatar, AvatarGroup } from '@nextui-org/react'
 
 import { EditorUser } from '../types'
 

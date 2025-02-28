@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
-import { Badge } from '@nextui-org/react'
+import { Badge } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { ControlButton } from '../common/ControlButton'

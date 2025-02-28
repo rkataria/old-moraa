@@ -4,7 +4,6 @@
 
 import { useEffect, useState } from 'react'
 
-import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Button,
   Modal,
@@ -13,7 +12,8 @@ import {
   ModalHeader,
   Textarea,
   useDisclosure,
-} from '@nextui-org/react'
+} from '@heroui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useDebounce } from '@uidotdev/usehooks'

@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import { Button } from '@nextui-org/react'
+import { Button } from '@heroui/react'
 import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 

@@ -1,11 +1,6 @@
 import { useState } from 'react'
 
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Button,
-} from '@nextui-org/react'
+import { Popover, PopoverTrigger, PopoverContent, Button } from '@heroui/react'
 import { AiOutlineClose } from 'react-icons/ai'
 import { LuTag } from 'react-icons/lu'
 

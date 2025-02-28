@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useContext } from 'react'
 
-import { Checkbox, CheckboxProps } from '@nextui-org/react'
+import { Checkbox, CheckboxProps } from '@heroui/react'
 
 import { EventSessionContext } from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'

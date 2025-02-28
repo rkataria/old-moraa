@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Chip, Input } from '@nextui-org/react'
+import { Chip, Input } from '@heroui/react'
 
 import { Responses } from './Responses'
 import { FrameTitleDescriptionPreview } from '../../FrameTitleDescriptionPreview'

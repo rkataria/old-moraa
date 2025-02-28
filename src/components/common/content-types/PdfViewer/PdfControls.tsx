@@ -1,7 +1,7 @@
 /* eslint-disable radix */
 import { useEffect, useState } from 'react'
 
-import { cn, Divider, Input } from '@nextui-org/react'
+import { cn, Divider, Input } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { IoMdAdd } from 'react-icons/io'
 import { LuMinus } from 'react-icons/lu'

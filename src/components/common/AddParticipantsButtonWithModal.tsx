@@ -9,7 +9,7 @@ import {
   ModalHeader,
   Modal,
   ButtonProps,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
@@ -26,7 +26,7 @@ import { Tooltip } from './ShortuctTooltip'
 import { IUserProfile, UserAvatar } from './UserAvatar'
 import { Button } from '../ui/Button'
 
-import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
+import type { UseDisclosureReturn } from '@heroui/use-disclosure'
 
 import { useEvent } from '@/hooks/useEvent'
 import { useEventPermissions } from '@/hooks/useEventPermissions'

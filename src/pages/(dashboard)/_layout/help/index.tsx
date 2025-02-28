@@ -1,4 +1,4 @@
-import { Button, Kbd } from '@nextui-org/react'
+import { Button, Kbd } from '@heroui/react'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { KeyboardShortcutsModal } from '@/components/common/KeyboardShortcutsModal'

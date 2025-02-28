@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem } from '@nextui-org/react'
+import { Accordion, AccordionItem } from '@heroui/react'
 import { useLocation, useRouter } from '@tanstack/react-router'
 import { IconType } from 'react-icons'
 import { GoHome, GoHomeFill } from 'react-icons/go'

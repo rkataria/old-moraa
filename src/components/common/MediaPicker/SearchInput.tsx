@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Input } from '@nextui-org/react'
+import { Input } from '@heroui/react'
 import { useDebounce } from '@uidotdev/usehooks'
 import { IoSearchOutline } from 'react-icons/io5'
 

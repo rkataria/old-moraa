@@ -3,7 +3,7 @@ import {
   KbdKey,
   Tooltip as NextUiTooltip,
   TooltipProps as NextUiTooltipProps,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { ReactNode } from '@tanstack/react-router'
 
 import { RenderIf } from './RenderIf/RenderIf'

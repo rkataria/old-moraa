@@ -1,4 +1,4 @@
-import { Button, Checkbox, cn, Input } from '@nextui-org/react'
+import { Button, Checkbox, cn, Input } from '@heroui/react'
 
 import { Loading } from '@/components/common/Loading'
 

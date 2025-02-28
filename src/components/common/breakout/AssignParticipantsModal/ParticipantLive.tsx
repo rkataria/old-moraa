@@ -1,5 +1,5 @@
 import { useDyteMeeting } from '@dytesdk/react-web-core'
-import { Avatar } from '@nextui-org/react'
+import { Avatar } from '@heroui/react'
 
 import { useDyteParticipants } from '@/hooks/useDyteParticipants'
 import { cn } from '@/utils/utils'

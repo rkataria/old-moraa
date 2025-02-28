@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
-import { Kbd } from '@nextui-org/react'
+import { Kbd } from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { MdOutlineDraw } from 'react-icons/md'
 

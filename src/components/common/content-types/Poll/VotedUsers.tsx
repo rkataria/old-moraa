@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup } from '@nextui-org/react'
+import { Avatar, AvatarGroup } from '@heroui/react'
 
 import { Tooltip } from '../../ShortuctTooltip'
 

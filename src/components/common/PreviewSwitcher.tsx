@@ -1,6 +1,6 @@
 import { ReactNode, useContext } from 'react'
 
-import { Switch, Tab, Tabs } from '@nextui-org/react'
+import { Switch, Tab, Tabs } from '@heroui/react'
 import { useRouter } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { TbEye, TbPencil } from 'react-icons/tb'

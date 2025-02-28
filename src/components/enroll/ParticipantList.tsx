@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode, useState } from 'react'
 
-import { Divider, Tab, Tabs } from '@nextui-org/react'
+import { Divider, Tab, Tabs } from '@heroui/react'
 
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { IUserProfile, UserAvatar } from '../common/UserAvatar'

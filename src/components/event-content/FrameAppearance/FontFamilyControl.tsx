@@ -6,7 +6,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
 import { FONT_FAMILIES } from '@/libs/fonts'

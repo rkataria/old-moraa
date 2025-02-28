@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useRef, useState } from 'react'
 
-import { Badge } from '@nextui-org/react'
+import { Badge } from '@heroui/react'
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { RxDotsVertical } from 'react-icons/rx'
 

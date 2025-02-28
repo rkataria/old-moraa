@@ -1,6 +1,6 @@
 /* eslint-disable react/button-has-type */
 
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 
 import { BULLET_CHARS, BULLET_TYPES, getBulletChar } from './ListBox'
 import { LabelWithInlineControl } from '../../LabelWithInlineControl'

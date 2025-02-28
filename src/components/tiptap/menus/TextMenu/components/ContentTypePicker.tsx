@@ -1,11 +1,6 @@
 import { useMemo } from 'react'
 
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react'
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { icons } from 'lucide-react'
 import { IoChevronDown } from 'react-icons/io5'
 

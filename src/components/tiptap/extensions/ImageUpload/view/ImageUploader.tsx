@@ -5,7 +5,7 @@
 
 import { useState } from 'react'
 
-import { Button } from '@nextui-org/react'
+import { Button } from '@heroui/react'
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { MediaPicker } from '@/components/common/MediaPicker/MediaPicker'

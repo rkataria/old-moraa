@@ -2,7 +2,7 @@
 /* eslint-disable react/no-danger */
 import { useState } from 'react'
 
-import { Input } from '@nextui-org/react'
+import { Input } from '@heroui/react'
 import toast from 'react-hot-toast'
 import { PiCodeSimpleBold } from 'react-icons/pi'
 

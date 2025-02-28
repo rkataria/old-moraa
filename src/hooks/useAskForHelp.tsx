@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect } from 'react'
 
-import { Link } from '@nextui-org/react'
+import { Link } from '@heroui/react'
 import toast from 'react-hot-toast'
 import { IoClose } from 'react-icons/io5'
 

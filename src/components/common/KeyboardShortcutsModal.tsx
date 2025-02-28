@@ -8,13 +8,13 @@ import {
   Kbd,
   Divider,
   KbdKey,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Loading } from './Loading'
 import { RenderIf } from './RenderIf/RenderIf'
 
-import type { UseDisclosureReturn } from '@nextui-org/use-disclosure'
+import type { UseDisclosureReturn } from '@heroui/use-disclosure'
 
 import { useProfile } from '@/hooks/useProfile'
 import { UserType } from '@/types/common'

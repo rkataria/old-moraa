@@ -2,14 +2,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { Dispatch, SetStateAction, useState } from 'react'
 
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { AiOutlineClose } from 'react-icons/ai'

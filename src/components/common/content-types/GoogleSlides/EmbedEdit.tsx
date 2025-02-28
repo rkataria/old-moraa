@@ -3,8 +3,8 @@
 /* eslint-disable jsx-a11y/iframe-has-title */
 import { useState } from 'react'
 
+import { Input } from '@heroui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Input } from '@nextui-org/react'
 import { Controller, useForm } from 'react-hook-form'
 import { SiGoogleslides } from 'react-icons/si'
 import * as yup from 'yup'

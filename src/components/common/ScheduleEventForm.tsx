@@ -3,13 +3,8 @@
 
 import { ReactElement, useState } from 'react'
 
+import { Autocomplete, AutocompleteItem, Image, Textarea } from '@heroui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  Autocomplete,
-  AutocompleteItem,
-  Image,
-  Textarea,
-} from '@nextui-org/react'
 import { useParams } from '@tanstack/react-router'
 import { DateTime } from 'luxon'
 import { Control, Controller, SubmitHandler, useForm } from 'react-hook-form'

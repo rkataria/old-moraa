@@ -7,7 +7,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   useDisclosure,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import toast from 'react-hot-toast'
 import { HiDotsVertical } from 'react-icons/hi'
 import { IoSettingsOutline, IoVolumeMuteOutline } from 'react-icons/io5'

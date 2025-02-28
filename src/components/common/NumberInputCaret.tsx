@@ -7,7 +7,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { PiCaretDown, PiCaretUp } from 'react-icons/pi'
 
 import { cn } from '@/utils/utils'

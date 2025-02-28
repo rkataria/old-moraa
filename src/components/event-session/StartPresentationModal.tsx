@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Modal, ModalContent, ModalHeader } from '@nextui-org/react'
+import { Modal, ModalContent, ModalHeader } from '@heroui/react'
 
 type StartPresentationModalProps = {
   isOpen: boolean

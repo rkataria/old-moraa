@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/react'
+import { Button } from '@heroui/react'
 import { fabric } from 'fabric'
 import { LiaObjectGroup, LiaObjectUngroup } from 'react-icons/lia'
 

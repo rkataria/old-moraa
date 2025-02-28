@@ -7,7 +7,7 @@ import {
   CardHeader,
   Avatar,
   Input,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { FaCheck } from 'react-icons/fa'
 import { MdOutlineEdit } from 'react-icons/md'
 import { VscReactions } from 'react-icons/vsc'

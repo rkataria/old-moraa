@@ -11,7 +11,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalContent,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { IoTrashBinOutline } from 'react-icons/io5'
 
 import { cn } from '@/utils/utils'

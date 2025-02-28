@@ -10,7 +10,7 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { MdBlurOn } from 'react-icons/md'
 import { RiSparkling2Fill } from 'react-icons/ri'
 

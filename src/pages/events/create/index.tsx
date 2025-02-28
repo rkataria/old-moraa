@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 
-import { yupResolver } from '@hookform/resolvers/yup'
 import {
   Image,
   Modal,
@@ -10,7 +9,8 @@ import {
   ModalHeader,
   Textarea,
   useDisclosure,
-} from '@nextui-org/react'
+} from '@heroui/react'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useParams, useRouter } from '@tanstack/react-router'
 import { motion } from 'framer-motion'

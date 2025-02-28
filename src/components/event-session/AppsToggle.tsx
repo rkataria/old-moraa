@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 
-import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
+import { Popover, PopoverTrigger, PopoverContent } from '@heroui/react'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import { IoMusicalNotesOutline } from 'react-icons/io5'
 import { TbClock } from 'react-icons/tb'

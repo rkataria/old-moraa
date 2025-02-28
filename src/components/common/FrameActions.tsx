@@ -3,7 +3,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { IconArrowDown, IconArrowUp, IconTrash } from '@tabler/icons-react'
 import { IoDuplicateOutline, IoSaveOutline } from 'react-icons/io5'
 

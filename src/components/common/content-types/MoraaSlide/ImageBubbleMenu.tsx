@@ -6,7 +6,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { fabric } from 'fabric'
 import { BsShadows } from 'react-icons/bs'
 import { SlRefresh } from 'react-icons/sl'

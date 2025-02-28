@@ -1,4 +1,4 @@
-import { Image } from '@nextui-org/react'
+import { Image } from '@heroui/react'
 import { MdAdd } from 'react-icons/md'
 import { useDispatch } from 'react-redux'
 

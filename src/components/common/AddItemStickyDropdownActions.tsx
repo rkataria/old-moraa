@@ -7,7 +7,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { ChevronDownIcon } from 'lucide-react'
 import { BsCardText, BsCollection } from 'react-icons/bs'
 import { GoPlus } from 'react-icons/go'

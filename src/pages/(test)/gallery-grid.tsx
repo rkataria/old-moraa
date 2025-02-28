@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import { useEffect, useRef, useState } from 'react'
 
-import { Avatar } from '@nextui-org/react'
+import { Avatar } from '@heroui/react'
 import { createFileRoute } from '@tanstack/react-router'
 import ResizeObserver from 'rc-resize-observer'
 

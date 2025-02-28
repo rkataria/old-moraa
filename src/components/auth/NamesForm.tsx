@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   Input,
-} from '@nextui-org/react'
+} from '@heroui/react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'

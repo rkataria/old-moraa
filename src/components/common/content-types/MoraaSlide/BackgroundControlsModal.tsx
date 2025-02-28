@@ -6,7 +6,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { fabric } from 'fabric'
 import { IoColorPalette } from 'react-icons/io5'
 

@@ -12,7 +12,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { Editor } from '@tiptap/react'
 import { HexColorPicker } from 'react-colorful'
 import { GoHorizontalRule } from 'react-icons/go'

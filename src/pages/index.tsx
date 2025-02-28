@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 

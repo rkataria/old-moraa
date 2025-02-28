@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, MouseEvent } from 'react'
 
-import { Listbox, ListboxItem, ListboxProps } from '@nextui-org/react'
+import { Listbox, ListboxItem, ListboxProps } from '@heroui/react'
 import { ReactNode } from '@tanstack/react-router'
 
 import { RenderIf } from '../RenderIf/RenderIf'
