@@ -30,18 +30,12 @@ import { Route as dashboardLayoutWorkshopsIndexImport } from './pages/(dashboard
 import { Route as dashboardLayoutTemplatesIndexImport } from './pages/(dashboard)/_layout/templates/index'
 import { Route as dashboardLayoutHelpIndexImport } from './pages/(dashboard)/_layout/help/index'
 import { Route as dashboardLayoutEventsIndexImport } from './pages/(dashboard)/_layout/events/index'
-import { Route as EventsEventIdRecordingsLayoutImport } from './pages/events/$eventId/recordings/_layout'
 import { Route as dashboardLayoutLibraryMediaImport } from './pages/(dashboard)/_layout/library/media'
 import { Route as dashboardLayoutLibraryFramesImport } from './pages/(dashboard)/_layout/library/frames'
-import { Route as EventsEventIdRecordingsLayoutIndexImport } from './pages/events/$eventId/recordings/_layout/index'
-import { Route as EventsEventIdRecordingsLayoutRecordingIdIndexImport } from './pages/events/$eventId/recordings/_layout/$recordingId/index'
 
 // Create Virtual Routes
 
 const dashboardImport = createFileRoute('/(dashboard)')()
-const EventsEventIdRecordingsImport = createFileRoute(
-  '/events/$eventId/recordings',
-)()
 
 // Create/Update Routes
 
@@ -88,11 +82,6 @@ const testGalleryGridRoute = testGalleryGridImport.update({
 const dashboardLayoutRoute = dashboardLayoutImport.update({
   id: '/_layout',
   getParentRoute: () => dashboardRoute,
-} as any)
-
-const EventsEventIdRecordingsRoute = EventsEventIdRecordingsImport.update({
-  path: '/events/$eventId/recordings',
-  getParentRoute: () => rootRoute,
 } as any)
 
 const EventsCreateIndexRoute = EventsCreateIndexImport.update({
@@ -145,12 +134,6 @@ const dashboardLayoutEventsIndexRoute = dashboardLayoutEventsIndexImport.update(
   } as any,
 )
 
-const EventsEventIdRecordingsLayoutRoute =
-  EventsEventIdRecordingsLayoutImport.update({
-    id: '/_layout',
-    getParentRoute: () => EventsEventIdRecordingsRoute,
-  } as any)
-
 const dashboardLayoutLibraryMediaRoute =
   dashboardLayoutLibraryMediaImport.update({
     path: '/library/media',
@@ -161,18 +144,6 @@ const dashboardLayoutLibraryFramesRoute =
   dashboardLayoutLibraryFramesImport.update({
     path: '/library/frames',
     getParentRoute: () => dashboardLayoutRoute,
-  } as any)
-
-const EventsEventIdRecordingsLayoutIndexRoute =
-  EventsEventIdRecordingsLayoutIndexImport.update({
-    path: '/',
-    getParentRoute: () => EventsEventIdRecordingsLayoutRoute,
-  } as any)
-
-const EventsEventIdRecordingsLayoutRecordingIdIndexRoute =
-  EventsEventIdRecordingsLayoutRecordingIdIndexImport.update({
-    path: '/$recordingId/',
-    getParentRoute: () => EventsEventIdRecordingsLayoutRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -284,20 +255,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardLayoutLibraryMediaImport
       parentRoute: typeof dashboardLayoutImport
     }
-    '/events/$eventId/recordings': {
-      id: '/events/$eventId/recordings'
-      path: '/events/$eventId/recordings'
-      fullPath: '/events/$eventId/recordings'
-      preLoaderRoute: typeof EventsEventIdRecordingsImport
-      parentRoute: typeof rootRoute
-    }
-    '/events/$eventId/recordings/_layout': {
-      id: '/events/$eventId/recordings/_layout'
-      path: '/events/$eventId/recordings'
-      fullPath: '/events/$eventId/recordings'
-      preLoaderRoute: typeof EventsEventIdRecordingsLayoutImport
-      parentRoute: typeof EventsEventIdRecordingsRoute
-    }
     '/(dashboard)/_layout/events/': {
       id: '/_layout/events/'
       path: '/events'
@@ -333,20 +290,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventSessionEventIdRecordIndexImport
       parentRoute: typeof rootRoute
     }
-    '/events/$eventId/recordings/_layout/': {
-      id: '/events/$eventId/recordings/_layout/'
-      path: '/'
-      fullPath: '/events/$eventId/recordings/'
-      preLoaderRoute: typeof EventsEventIdRecordingsLayoutIndexImport
-      parentRoute: typeof EventsEventIdRecordingsLayoutImport
-    }
-    '/events/$eventId/recordings/_layout/$recordingId/': {
-      id: '/events/$eventId/recordings/_layout/$recordingId/'
-      path: '/$recordingId'
-      fullPath: '/events/$eventId/recordings/$recordingId'
-      preLoaderRoute: typeof EventsEventIdRecordingsLayoutRecordingIdIndexImport
-      parentRoute: typeof EventsEventIdRecordingsLayoutImport
-    }
   }
 }
 
@@ -374,13 +317,6 @@ export const routeTree = rootRoute.addChildren({
   EventSessionEventIdIndexRoute,
   EventsEventIdIndexRoute,
   EventsCreateIndexRoute,
-  EventsEventIdRecordingsRoute: EventsEventIdRecordingsRoute.addChildren({
-    EventsEventIdRecordingsLayoutRoute:
-      EventsEventIdRecordingsLayoutRoute.addChildren({
-        EventsEventIdRecordingsLayoutIndexRoute,
-        EventsEventIdRecordingsLayoutRecordingIdIndexRoute,
-      }),
-  }),
   EventSessionEventIdRecordIndexRoute,
 })
 
@@ -404,7 +340,6 @@ export const routeTree = rootRoute.addChildren({
         "/event-session/$eventId/",
         "/events/$eventId/",
         "/events/create/",
-        "/events/$eventId/recordings",
         "/event-session/$eventId/record/"
       ]
     },
@@ -464,20 +399,6 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "(dashboard)/_layout/library/media.tsx",
       "parent": "/_layout"
     },
-    "/events/$eventId/recordings": {
-      "filePath": "events/$eventId/recordings",
-      "children": [
-        "/events/$eventId/recordings/_layout"
-      ]
-    },
-    "/events/$eventId/recordings/_layout": {
-      "filePath": "events/$eventId/recordings/_layout.tsx",
-      "parent": "/events/$eventId/recordings",
-      "children": [
-        "/events/$eventId/recordings/_layout/",
-        "/events/$eventId/recordings/_layout/$recordingId/"
-      ]
-    },
     "/_layout/events/": {
       "filePath": "(dashboard)/_layout/events/index.tsx",
       "parent": "/_layout"
@@ -496,14 +417,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/event-session/$eventId/record/": {
       "filePath": "event-session/$eventId/record/index.tsx"
-    },
-    "/events/$eventId/recordings/_layout/": {
-      "filePath": "events/$eventId/recordings/_layout/index.tsx",
-      "parent": "/events/$eventId/recordings/_layout"
-    },
-    "/events/$eventId/recordings/_layout/$recordingId/": {
-      "filePath": "events/$eventId/recordings/_layout/$recordingId/index.tsx",
-      "parent": "/events/$eventId/recordings/_layout"
     }
   }
 }

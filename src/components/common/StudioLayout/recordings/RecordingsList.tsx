@@ -1,26 +1,24 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 
 import { Button } from '@heroui/button'
 import { Image, Pagination } from '@heroui/react'
-import { useNavigate, useParams, useRouter } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import { DateTime, Duration } from 'luxon'
 import { BsClockHistory, BsSortDown, BsSortUp } from 'react-icons/bs'
 import { CiCalendar } from 'react-icons/ci'
 
+import { itemsPerPage } from './constants'
 import { EmptyPlaceholder } from '../../EmptyPlaceholder'
 import { Loading } from '../../Loading'
 import { RenderIf } from '../../RenderIf/RenderIf'
 import { ResponsiveVideoPlayer } from '../../ResponsiveVideoPlayer'
 
-import { useGetRecordings } from '@/hooks/useEventRecordings'
-import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
-import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
+import { RecordingsModel } from '@/types/models'
 import { cn } from '@/utils/utils'
-
-const itemsPerPage = 25
 
 function formatDuration(seconds: number) {
   const duration = Duration.fromObject({ seconds }).shiftTo(
@@ -36,21 +34,23 @@ function formatDuration(seconds: number) {
   return `${hrDisplay}${minDisplay}${secDisplay}`.trim()
 }
 
-function formatAvailableTill(date: string) {
-  return `Available till ${DateTime.fromISO(date).toFormat('MMMM dd, yyyy')}`
-}
-
-function formatStartTime(startTime: string) {
-  return DateTime.fromISO(startTime).toFormat('MMMM dd, yyyy')
-}
-
-export function RecordingsList() {
-  const dispatch = useStoreDispatch()
-  const { eventId }: { eventId: string } = useParams({ strict: false })
-
-  const [currentPage, setCurrentPage] = useState(1)
-  const [sortType, setSortType] = useState('DESC')
-
+export function RecordingsList({
+  recordings,
+  isLoading,
+  currentPage,
+  totalItems,
+  sortType,
+  setCurrentPage,
+  setSortType,
+}: {
+  recordings: RecordingsModel[]
+  isLoading: boolean
+  currentPage: number
+  totalItems: number
+  sortType: string
+  setCurrentPage: Dispatch<SetStateAction<number>>
+  setSortType: Dispatch<SetStateAction<string>>
+}) {
   const router = useRouter()
 
   const searches = router.latestLocation.search as {
@@ -59,41 +59,13 @@ export function RecordingsList() {
 
   const navigate = useNavigate()
 
-  const enrollment = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState.enrollment.data
-  )
-
-  const meeting = useStoreSelector(
-    (state) => state.event.currentEvent.meetingState.meeting.data
-  )
-
-  const {
-    recordings = [],
-    metaData,
-    isFetching: fetchingRecordings,
-  } = useGetRecordings({
-    token: enrollment?.meeting_token,
-    meetingId: meeting?.dyte_meeting_id,
-    query: { page_no: currentPage, sort_order: sortType },
-  })
-
-  const pages = Math.ceil(metaData.total_count / itemsPerPage)
-
-  useEffect(() => {
-    if (enrollment) return
-    dispatch(
-      getEnrollmentThunk({
-        eventId,
-      })
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enrollment])
-
-  if (fetchingRecordings) {
-    return <Loading />
-  }
+  const pages = Math.ceil(totalItems / itemsPerPage)
 
   const renderContent = () => {
+    if (isLoading) {
+      return <Loading />
+    }
+
     if (!recordings.length) {
       return (
         <EmptyPlaceholder
@@ -110,8 +82,7 @@ export function RecordingsList() {
 
     return (
       <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,1fr))] gap-4 mt-4 mb-10">
-        {/*  eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {recordings.map((recording: any, index: number) => (
+        {recordings.map((recording) => (
           <div
             className="gap-4 border rounded-xl h-full overflow-hidden cursor-pointer shadow-md bg-white"
             onClick={() => {
@@ -120,31 +91,32 @@ export function RecordingsList() {
               })
             }}>
             <ResponsiveVideoPlayer
-              url={recording.download_url}
+              url={recording.recording_url as string}
               showControls={false}
               showViewMode={false}
               className="rounded-none"
             />
 
-            <div className="py-2 relative p-4">
-              <p className="font-medium mb-2">Recording {index + 1} </p>
-              <div className="flex items-center gap-8">
+            <div className="py-3 relative p-4">
+              <div className="flex items-center justify-between gap-8">
                 <div className="flex items-center gap-1">
-                  <CiCalendar size={18} />
-                  <p className="text-xs">
-                    {formatStartTime(recording.started_time)}
+                  <CiCalendar size={22} />
+                  <p className="text-xs font-medium">
+                    {DateTime.fromISO(recording.created_at).toLocaleString({
+                      year: 'numeric',
+                      month: 'short',
+                      day: '2-digit',
+                    })}
                   </p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <BsClockHistory size={18} />
-                  <p className="text-xs">
-                    {formatDuration(recording.recording_duration)}
+
+                <div className="flex items-center gap-2 bg-gray-700 text-white p-1.5 px-2 rounded-lg">
+                  <BsClockHistory size={16} />
+                  <p className="text-xs font-medium">
+                    {formatDuration(recording.duration as number)}
                   </p>
                 </div>
               </div>
-              <p className="text-xs ml-auto text-[10px] text-right mt-4">
-                {formatAvailableTill(recording.download_url_expiry)}
-              </p>
             </div>
           </div>
         ))}
@@ -154,11 +126,15 @@ export function RecordingsList() {
 
   return (
     <div
-      className={cn('w-full h-full px-[55px]', {
+      className={cn('w-full h-full px-[55px] overflow-auto', {
         'h-auto': !recordings.length,
       })}>
       <div className="flex items-center justify-between pt-4">
-        <p className="text-2xl font-semibold">Recaps</p>
+        <Button
+          variant="light"
+          className="text-2xl font-semibold cursor-pointer w-fit pl-0 !bg-transparent">
+          Recaps
+        </Button>
         <RenderIf isTrue={recordings.length > 1}>
           <Button
             variant="light"

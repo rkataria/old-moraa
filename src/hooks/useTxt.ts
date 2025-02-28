@@ -10,6 +10,7 @@ export const useTxtData = (txtUrl: string) => {
 
     const fetchTxt = async () => {
       try {
+        if (!txtUrl) return
         setLoading(true)
         const response = await fetch(txtUrl)
         if (!response.ok) throw new Error('Failed to fetch TXT')

@@ -526,6 +526,8 @@ export type Database = {
           recording_url: string | null
           started_at: string | null
           stopped_at: string | null
+          summary_name: string | null
+          summary_url: string | null
           transcript_name: string | null
           transcript_url: string | null
         }
@@ -540,6 +542,8 @@ export type Database = {
           recording_url?: string | null
           started_at?: string | null
           stopped_at?: string | null
+          summary_name?: string | null
+          summary_url?: string | null
           transcript_name?: string | null
           transcript_url?: string | null
         }
@@ -554,6 +558,8 @@ export type Database = {
           recording_url?: string | null
           started_at?: string | null
           stopped_at?: string | null
+          summary_name?: string | null
+          summary_url?: string | null
           transcript_name?: string | null
           transcript_url?: string | null
         }

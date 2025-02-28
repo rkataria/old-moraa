@@ -2,11 +2,13 @@
 
 import { DyteRecordingService } from './dyte-recording.service'
 
+import { supabaseClient } from '@/utils/supabase/client'
+
 export type GetRecordingsParams = {
-  token: string
   meetingId: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  query?: Record<string, any>
+  from: number
+  to: number
+  order: { ascending: boolean }
 }
 
 export type GetRecordingParams = {
@@ -15,23 +17,89 @@ export type GetRecordingParams = {
   dyteMeetingId: string
 }
 
-const getRecordings = async ({
-  token,
-  meetingId,
-  query,
-}: GetRecordingsParams) => {
-  if (!token || !meetingId) return
+function isSignedUrlExpired(url: string) {
+  if (!url) return true
+  const urlObj = new URL(url)
+  const expirySeconds = parseInt(
+    urlObj.searchParams.get('X-Goog-Expires') as string,
+    10
+  )
+  const signedDateStr = urlObj.searchParams.get('X-Goog-Date')
 
-  const recordingsResponse = await DyteRecordingService.getRecordings({
-    token,
-    dyteMeetingId: meetingId,
-    queryParams: query,
+  if (!expirySeconds || !signedDateStr) {
+    console.error('Invalid signed URL: Missing required parameters')
+
+    return true // Assume expired if parameters are missing
+  }
+
+  // Convert X-Goog-Date (e.g., "20250228T053929Z") to a Date object
+  const signedDate = new Date(
+    `${signedDateStr.substring(0, 4)}-${signedDateStr.substring(4, 6)}-${signedDateStr.substring(6, 8)}T` +
+      `${signedDateStr.substring(9, 11)}:${signedDateStr.substring(11, 13)}:${signedDateStr.substring(13, 15)}Z`
+  )
+
+  // Calculate expiration time
+  const expiryTime = signedDate.getTime() + expirySeconds * 1000
+
+  return Date.now() > expiryTime
+}
+
+const refreshRecordings = async (recordingIds: string[]) => {
+  const data = await supabaseClient.functions.invoke('refresh-recording-url', {
+    body: { recording_ids: recordingIds },
   })
 
-  const recordings = await recordingsResponse.json()
+  return JSON.parse(data.data)
+}
+
+const getRecordings = async ({
+  meetingId,
+  from,
+  to,
+  order,
+}: GetRecordingsParams) => {
+  if (!meetingId) return
+
+  const { data: recordings, count } = await supabaseClient
+    .from('recording')
+    .select('*', { count: 'exact' })
+    .eq('meeting_id', meetingId)
+    .order('created_at', order)
+    .range(from, to)
+
+  const expiredRecordingIds = recordings
+    ?.filter((recording) =>
+      isSignedUrlExpired(recording.recording_url as string)
+    )
+    .map((r) => r.id)
+
+  const refereshedRecordings: Record<
+    string,
+    {
+      recordingSignedUrl: string
+      transcriptSignedUrl: string
+      summarySignedUrl: string
+    }
+  > = expiredRecordingIds?.length
+    ? await refreshRecordings(expiredRecordingIds as string[])
+    : {}
+
+  const updatedRecordings = recordings?.map((recording) => {
+    if (!expiredRecordingIds?.includes(recording.id)) {
+      return recording
+    }
+
+    return {
+      ...recording,
+      recording_url: refereshedRecordings[recording.id].recordingSignedUrl,
+      transcript_url: refereshedRecordings[recording.id].transcriptSignedUrl,
+      summary_url: refereshedRecordings[recording.id].summarySignedUrl,
+    }
+  })
 
   return {
-    recordings,
+    recordings: updatedRecordings,
+    totalItems: count,
   }
 }
 

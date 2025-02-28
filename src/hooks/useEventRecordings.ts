@@ -7,36 +7,35 @@ import { useAuth } from './useAuth'
 import { RecordingsService } from '@/services/recordings-service'
 
 export const useGetRecordings = ({
-  token,
   meetingId,
-  query,
+  from,
+  to,
+  order,
 }: {
-  token: string | undefined | null
   meetingId: string | undefined | null
-  query?: Record<string, any>
+  from: number
+  to: number
+  order: { ascending: boolean }
 }) => {
   const { currentUser, isLoading: isUserLoading } = useAuth()
 
-  const eventsRecordingQuery: UseQueryResult<
-    {
-      recordings: any
-    },
-    Error
-  > = useQuery({
-    queryKey: ['recordings', meetingId, query],
+  const eventsRecordingQuery = useQuery({
+    queryKey: ['recordings', meetingId, from, to, order],
     queryFn: () =>
       RecordingsService.getRecordings({
-        token: token as string,
         meetingId: meetingId as string,
-        query,
+        from,
+        to,
+        order,
       }),
-    enabled: !!currentUser?.id && !!token && !!meetingId,
+    enabled: !!currentUser?.id && !!meetingId,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
   })
 
   return {
-    recordings: eventsRecordingQuery.data?.recordings?.data || [],
-    metaData: eventsRecordingQuery.data?.recordings?.paging || {},
+    recordings: eventsRecordingQuery.data?.recordings || [],
+    totalItems: eventsRecordingQuery.data?.totalItems || 0,
     refetch: eventsRecordingQuery.refetch,
     isLoading: eventsRecordingQuery.isLoading || isUserLoading,
     isFetching: eventsRecordingQuery.isFetching,

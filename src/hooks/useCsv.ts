@@ -13,6 +13,7 @@ export const useCsvData = (csvUrl: string) => {
     const fetchCsv = async () => {
       try {
         setLoading(true)
+        if (!csvUrl) return
         const response = await fetch(csvUrl)
         if (!response.ok) throw new Error('Failed to fetch CSV')
 

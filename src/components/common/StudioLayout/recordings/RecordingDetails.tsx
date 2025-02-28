@@ -8,13 +8,14 @@ import reduce from 'lodash.reduce'
 import { marked } from 'marked'
 import { HiOutlineChatBubbleLeft } from 'react-icons/hi2'
 
+import { Loading } from '../../Loading'
+
 import { EmptyPlaceholder } from '@/components/common/EmptyPlaceholder'
-import { Loading } from '@/components/common/Loading'
 import { ResponsiveVideoPlayer } from '@/components/common/ResponsiveVideoPlayer'
 import { useCsvData } from '@/hooks/useCsv'
-import { useGetSummary, useGetRecording } from '@/hooks/useEventRecordings'
-import { useStoreSelector } from '@/hooks/useRedux'
 import { useTxtData } from '@/hooks/useTxt'
+import { RecordingsModel } from '@/types/models'
+
 import 'github-markdown-css'
 
 const summaryRenderer = (content: string) => {
@@ -32,38 +33,29 @@ const summaryRenderer = (content: string) => {
   )
 }
 
-export function RecordingDetails() {
+export function RecordingDetails({
+  recording,
+  isLoading,
+}: {
+  recording: RecordingsModel
+  isLoading: boolean
+}) {
   const router = useRouter()
-  const navigate = useNavigate()
+  const isRecordingHaveTranscripts = !!recording.transcript_name
 
-  const { recordingId = '', ...searches } = router.latestLocation.search as {
+  const { data: summaryData } = useTxtData(
+    isRecordingHaveTranscripts ? (recording.summary_url as string) : ''
+  )
+
+  const { data: transcriptsData } = useCsvData(
+    isRecordingHaveTranscripts ? (recording.transcript_url as string) : ''
+  )
+
+  const searches = router.latestLocation.search as {
     recordingId?: string
   }
 
-  const enrollment = useStoreSelector(
-    (state) => state.event.currentEvent.liveSessionState.enrollment.data
-  )
-
-  const meeting = useStoreSelector(
-    (state) => state.event.currentEvent.meetingState.meeting.data
-  )
-
-  const { recording, isFetching, transcripts } = useGetRecording({
-    token: enrollment?.meeting_token,
-    meetingId: meeting?.dyte_meeting_id,
-    recordingId,
-  })
-
-  const { summary, isFetching: isFetchingSummary } = useGetSummary({
-    token: enrollment?.meeting_token,
-    sessionId: recording?.session_id,
-  })
-
-  const { data: summaryData } = useTxtData(summary?.summary_download_url)
-
-  const { data: transcriptsData } = useCsvData(
-    transcripts?.transcript_download_url
-  )
+  const navigate = useNavigate()
 
   type Transcript = Array<string>
   type GroupedTranscript = {
@@ -114,21 +106,9 @@ export function RecordingDetails() {
   }
   const groupedTranscripts = groupTranscripts(transcriptsData, 5)
 
-  if (isFetching) {
-    return <Loading />
-  }
-
   if (!recording) return null
 
   const renderSummary = () => {
-    if (isFetchingSummary) {
-      return (
-        <div className="h-10">
-          <Loading />
-        </div>
-      )
-    }
-
     if (!summaryData.trim().length) {
       return <p className="w-full text-center mt-10">No summary found!</p>
     }
@@ -137,6 +117,10 @@ export function RecordingDetails() {
   }
 
   const renderRightPanelContent = () => {
+    if (isLoading) {
+      return <Loading />
+    }
+
     if (!transcriptsData.length) {
       return (
         <div className="grid place-items-center h-full">
@@ -168,17 +152,18 @@ export function RecordingDetails() {
   return (
     <div className="grid grid-cols-[1fr_0.3fr] items-start w-full gap-4 overflow-hidden h-[calc(100vh_-_56px)]">
       <div className="flex flex-col gap-4 px-[55px] pt-4 h-full pb-[5rem] overflow-y-auto scrollbar-none max-h-[calc(100vh_-_56px)]">
-        <p
-          className="text-2xl font-semibold cursor-pointer"
+        <Button
+          variant="light"
+          className="text-2xl font-semibold cursor-pointer w-fit pl-0 !bg-transparent min-h-10"
           onClick={() => {
             navigate({
-              search: { ...searches },
+              search: { ...searches, recordingId: undefined },
             })
           }}>
           Recaps
-        </p>
+        </Button>
         <div className="aspect-video w-full bg-gray-400 rounded-lg grid place-items-center">
-          <ResponsiveVideoPlayer url={recording.download_url} />
+          <ResponsiveVideoPlayer url={recording.recording_url as string} />
         </div>
         {renderSummary()}
       </div>
