@@ -13,6 +13,13 @@ export function useDyteParticipants() {
       .toArray()
       .filter((participant) => !participant.flags.hiddenParticipant)
   )
+
+  const waitlistedParticipants = useDyteSelector((state) =>
+    state.participants.waitlisted
+      .toArray()
+      .filter((participant) => !participant.flags.hiddenParticipant)
+  )
+
   const activeParticipantsState = useDyteSelector((state) =>
     state.participants.active
       .toArray()
@@ -21,6 +28,7 @@ export function useDyteParticipants() {
           !participant.isPinned && !participant.flags.hiddenParticipant
       )
   )
+
   const pinnedParticipantsState = useDyteSelector((state) =>
     state.participants.pinned.toArray()
   )
@@ -33,8 +41,8 @@ export function useDyteParticipants() {
   const hideSelf = isOffStage || isRecorder || permissions.hiddenParticipant
 
   const activeParticipants = [
-    ...activeParticipantsState,
     ...(!self.isPinned && !hideSelf ? [self] : []),
+    ...activeParticipantsState,
   ]
   const pinnedParticipants = [
     ...pinnedParticipantsState,
@@ -44,6 +52,7 @@ export function useDyteParticipants() {
   const handRaisedParticipants = activeParticipants.filter((participant) =>
     handRaised.includes(participant.id)
   )
+
   const otherParticipants = activeParticipants.filter(
     (participant) => !handRaised.includes(participant.id)
   )
@@ -59,9 +68,11 @@ export function useDyteParticipants() {
     ...otherParticipants,
   ]
 
-  const handRaisedActiveParticipants = sortedParticipants.filter(
-    (participant) => handRaised.includes(participant.id)
-  )
+  const handRaisedActiveParticipants = handRaised
+    .map((id: string) =>
+      sortedParticipants.find((participant) => participant.id === id)
+    )
+    .filter(Boolean)
 
   return {
     joinedParticipants: joinedParticipants || [],
@@ -70,6 +81,7 @@ export function useDyteParticipants() {
     sortedParticipants: sortedParticipants || [],
     sortedParticipantsWithOutPinned: sortedParticipantsWithOutPinned || [],
     handRaisedActiveParticipants: handRaisedActiveParticipants || [],
+    waitlistedParticipants: waitlistedParticipants || [],
   } as {
     activeParticipants: DyteParticipant[]
     pinnedParticipants: DyteParticipant[]
@@ -77,5 +89,9 @@ export function useDyteParticipants() {
     sortedParticipantsWithOutPinned: DyteParticipant[]
     handRaisedActiveParticipants: DyteParticipant[]
     joinedParticipants: DyteParticipant[]
+    waitlistedParticipants: Omit<
+      DyteParticipant,
+      'audioTrack' | 'videoTrack' | 'screenShareTracks'
+    >[]
   }
 }

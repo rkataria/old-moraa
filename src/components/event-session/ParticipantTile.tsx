@@ -73,12 +73,16 @@ export function ParticipantTile({
               {
                 'w-8 h-8 p-2': !isTileSmall,
                 'w-6 h-6 p-1': isTileSmall,
+                'w-fit px-2': showOrder,
               }
             )}>
             <RenderIf isTrue={!!handRaisedOrder && showOrder}>
               <span>{handRaisedOrder}</span>
             </RenderIf>
-            <IoHandRight size={20} className="text-yellow-500" />
+            <IoHandRight
+              size={showOrder ? 16 : 20}
+              className="text-yellow-500"
+            />
           </motion.span>
         </div>
       </RenderIf>

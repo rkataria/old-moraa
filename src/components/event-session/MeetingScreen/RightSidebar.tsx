@@ -7,6 +7,7 @@ import { IoChatbubblesOutline, IoPeopleOutline } from 'react-icons/io5'
 import { LuClipboardEdit } from 'react-icons/lu'
 import { useDispatch } from 'react-redux'
 
+import { ParticipantsList } from './ParticipantsList'
 import { RightSidebarHeader } from './RightSidebarHeader'
 
 import { NoteOverlay } from '@/components/common/NotesOverlay'
@@ -46,7 +47,21 @@ export function RightSidebar({ dyteStates, setDyteStates }: RightSidebarProps) {
   const { rightSidebarMode } = useStoreSelector((state) => state.layout.live)
 
   const renderContent = () => {
-    if (['chat', 'participants', 'plugins'].includes(rightSidebarMode!)) {
+    if (['participants'].includes(rightSidebarMode!)) {
+      return (
+        <>
+          <div className="absolute left-0 top-0 h-11 w-full bg-gray-100 z-[1]">
+            <RightSidebarHeader
+              title={HeaderMap[rightSidebarMode!].title}
+              icon={HeaderMap[rightSidebarMode!].icon}
+            />
+          </div>
+          <ParticipantsList className="pt-[3.1875rem]" />
+        </>
+      )
+    }
+
+    if (['chat', 'plugins'].includes(rightSidebarMode!)) {
       return (
         <>
           <div className="absolute left-0 top-0 h-11 w-full bg-gray-100 z-[1]">

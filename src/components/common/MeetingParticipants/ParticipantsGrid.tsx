@@ -197,7 +197,11 @@ export function ParticipantsGrid({
               style={positions[index]}>
               <ParticipantTile
                 participant={participant}
-                // handRaised={handRaised.includes(participant.id)}
+                handRaised={
+                  !!handRaisedActiveParticipants.find(
+                    (p) => p.id === participant.id
+                  )
+                }
                 showOrder={handRaisedActiveParticipants.length > 1}
                 handRaisedOrder={
                   handRaisedActiveParticipants.findIndex(

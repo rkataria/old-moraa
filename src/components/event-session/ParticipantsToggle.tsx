@@ -21,16 +21,12 @@ export function ParticipantsToggle({ showLabel }: ParticipantsToggleProps) {
   const areParticipantsWaitingInLobby = useDyteSelector(
     (state) => !!state.participants.waitlisted.size
   )
-  const { dyteStates, setDyteStates } = useEventSession()
+  const { setDyteStates } = useEventSession()
   const dispatch = useStoreDispatch()
 
   const handleToggle = () => {
     if (rightSidebarMode === 'participants') {
       dispatch(closeRightSidebarAction())
-      setDyteStates({
-        ...dyteStates,
-        sidebar: null,
-      })
     } else {
       setDyteStates({
         activeSidebar: true,
