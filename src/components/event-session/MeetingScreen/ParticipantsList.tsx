@@ -3,12 +3,7 @@ import { Dispatch, SetStateAction, useState } from 'react'
 import { DyteAvatar } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 import { DyteParticipant } from '@dytesdk/web-core'
-import {
-  Accordion,
-  AccordionItem,
-  Input,
-  useDisclosure,
-} from '@nextui-org/react'
+import { Accordion, AccordionItem, Input, useDisclosure } from '@heroui/react'
 import { ReactNode } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AiOutlineUserAdd } from 'react-icons/ai'
