@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { Toolbars } from '../../frames/frame-types/MoraaSlide/Toolbars'
 import { AddContentButton } from '../AgendaPanel/AddContentButton'
 import { StudioAgendaPanelToggle } from '../AgendaPanel/AgendaPanelToggle'
-import { Toolbars } from '../content-types/MoraaSlide/Toolbars'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useStoreSelector } from '@/hooks/useRedux'

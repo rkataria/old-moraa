@@ -6,8 +6,8 @@ import isEqual from 'lodash.isequal'
 import { CommonImageSettings } from './CommonImageSettings'
 
 import { ColorPicker } from '@/components/common/ColorPicker'
-import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
+import { TwoWayNumberCounter } from '@/components/frames/frame-types/MoraaSlide/FontSizeControl'
 import { useEventContext } from '@/contexts/EventContext'
 
 export function WordCloudSettings() {

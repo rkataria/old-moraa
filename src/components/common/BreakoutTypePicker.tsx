@@ -16,11 +16,11 @@ import { BsCircleSquare } from 'react-icons/bs'
 import { FaPeopleGroup } from 'react-icons/fa6'
 import { LuSquareStack } from 'react-icons/lu'
 
+import { NumberInput } from './NumberInput'
 import {
   AssignmentOption,
   AssignmentOptionSelector,
-} from './breakout/AssignmentOptionSelector'
-import { NumberInput } from './NumberInput'
+} from '../frames/frame-types/Breakout/AssignmentOptionSelector'
 import { Button } from '../ui/Button'
 
 import { cn } from '@/utils/utils'

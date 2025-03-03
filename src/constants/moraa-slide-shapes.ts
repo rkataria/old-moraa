@@ -12,7 +12,7 @@ import {
   SquareRoundFilledSvg,
   SquareRoundOutlinedSvg,
 } from '@/assets/svg'
-import { SHAPE_TYPES } from '@/components/common/content-types/MoraaSlide/ShapePicker/ShapePickerContent'
+import { SHAPE_TYPES } from '@/components/frames/frame-types/MoraaSlide/ShapePicker/ShapePickerContent'
 
 export const MORAA_SLIDE_SHAPES: {
   [key in SHAPE_TYPES]: { label: string; svg: string }[]

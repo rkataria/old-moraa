@@ -1,6 +1,6 @@
 import { fabric } from 'fabric'
 
-import { TYPOGRAPHY_LIST } from '@/components/common/content-types/MoraaSlide/TextBox'
+import { TYPOGRAPHY_LIST } from '@/components/frames/frame-types/MoraaSlide/TextBox'
 import { DEFAULT_FONT_FAMILY } from '@/libs/fonts'
 
 export type MoraaSlideTemplate = {

@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { fabric } from 'fabric'
 
-import { getBulletChar } from '@/components/common/content-types/MoraaSlide/ListBox'
+import { getBulletChar } from '@/components/frames/frame-types/MoraaSlide/ListBox'
 
 declare module 'fabric/fabric-impl' {
   export class BulletList extends Textbox {

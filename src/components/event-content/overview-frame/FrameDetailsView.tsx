@@ -13,11 +13,11 @@ import {
 } from '@heroui/react'
 import { useParams } from '@tanstack/react-router'
 
-import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { Participantslist } from '@/components/enroll/ParticipantList'
 import { EventImage } from '@/components/event-details/EventImage'
 import { EventTimeline } from '@/components/event-details/Timeline'
+import { Editor as RichTextEditor } from '@/components/frames/frame-types/RichText/Editor'
 import { useEvent } from '@/hooks/useEvent'
 import { cn } from '@/utils/utils'
 

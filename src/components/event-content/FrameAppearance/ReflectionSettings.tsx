@@ -2,9 +2,9 @@ import { useContext } from 'react'
 
 import { CommonImageSettings } from './CommonImageSettings'
 
-import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
 import { SwitchControl } from '@/components/common/SwitchControl'
+import { TwoWayNumberCounter } from '@/components/frames/frame-types/MoraaSlide/FontSizeControl'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 

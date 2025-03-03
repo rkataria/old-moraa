@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 
 import { MeetingStatusContainer } from './MeetingScreen/MeetingStatusBar/MeetingStatusContainer'
-import { AskForHelpButton } from '../common/breakout/AskForHelpButton'
 import { RenderIf } from '../common/RenderIf/RenderIf'
+import { AskForHelpButton } from '../frames/frame-types/Breakout/AskForHelpButton'
 import { Button } from '../ui/Button'
 
 import { useEventSession } from '@/contexts/EventSessionContext'

@@ -8,8 +8,8 @@ import {
 } from '@dytesdk/react-ui-kit'
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core'
 
-import { Frame } from '../common/Frame/Frame'
 import { SectionOverview } from '../common/SectionOverview'
+import { Frame } from '../frames/Frame/Frame'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
