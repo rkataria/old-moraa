@@ -95,6 +95,7 @@ export function ReactWithEmojiToggle() {
     flyEmoji({
       emoji: EMOJIS[emojiIndex - 1],
       name: selfParticipant.name,
+      participantId: selfParticipant.id,
     })
   }
 
