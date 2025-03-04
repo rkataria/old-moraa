@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import { type Editor as TldrawEditor } from 'tldraw'
 
 import { ToolButton } from './ToolButton'
-import { UserPresences } from '../common/UserPresences'
+import { UserPresences } from '../../../common/UserPresences'
 
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
 import {

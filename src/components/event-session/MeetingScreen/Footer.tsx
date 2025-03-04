@@ -3,6 +3,7 @@ import { Divider } from '@heroui/react'
 import { NoteToggle } from './NoteToggle'
 import { AppsToggle } from '../AppsToggle'
 import { ChatsToggle } from '../ChatsToggle'
+import { FrameSmartControls } from '../FrameSmartControlsPopover/FrameSmartControlsPopover'
 import { MicToggle } from '../MicToggle'
 import { ParticipantsToggle } from '../ParticipantsToggle'
 import { RaiseHandToggle } from '../RaiseHandToggle'
@@ -61,7 +62,7 @@ function FooterLeftContent() {
         </div>
       </RenderIf>
       <RenderIf isTrue={isHost}>
-        <div className="flex justify-start items-center gap-2 p-2 h-11 rounded-[12px] border-1 border-gray-300 bg-white w-56">
+        <div className="relative flex justify-start items-center gap-2 p-2 h-11 rounded-[12px] border-1 border-gray-300 bg-white w-72">
           <PresentationControls />
           <RenderIf isTrue={!!isHost}>
             <Divider orientation="vertical" />
@@ -69,8 +70,7 @@ function FooterLeftContent() {
           <FrameName
             animate={presentationStatus === PresentationStatuses.STARTED}
           />
-          {/* <FrameDuration /> */}
-          {/* <SessionPlannerToggle /> */}
+          <FrameSmartControls />
         </div>
       </RenderIf>
     </div>
@@ -92,8 +92,6 @@ function FooterCenterContent() {
         <VideoToggle />
         <ScreenShareToggle />
         <Divider orientation="vertical" />
-        {/* <MoreActions /> */}
-        {/* <PresentationControls /> */}
         <RaiseHandToggle />
         <ReactWithEmojiToggle />
         <Divider orientation="vertical" />
