@@ -1,51 +1,53 @@
 import { useEffect, useState } from 'react'
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import hark from 'hark'
 
 export function useDetectSpeaking({ detect }: { detect: boolean }) {
-  const [speaking, setSpeaking] = useState(false)
+  const [speaking, setSpeaking] = useState<boolean>(false)
+  const [stream, setStream] = useState<MediaStream | null>(null)
 
   useEffect(() => {
-    if (!detect) {
+    let speechEvents: hark.Harker | null = null
+
+    const startDetection = async () => {
+      try {
+        const audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        })
+        setStream(audioStream)
+
+        speechEvents = hark(audioStream, {
+          interval: 200,
+          threshold: -50,
+          play: false,
+        })
+
+        speechEvents.on('speaking', () => {
+          if (detect) {
+            setSpeaking(true)
+          }
+        })
+
+        speechEvents.on('stopped_speaking', () => {
+          setSpeaking(false)
+        })
+      } catch (error) {
+        console.error('Microphone access error:', error)
+      }
+    }
+
+    if (detect) {
+      startDetection()
+    }
+
+    return () => {
+      speechEvents?.stop()
+      stream?.getTracks().forEach((track) => track.stop())
+      setStream(null)
       setSpeaking(false)
     }
-
-    const detectSpeaking = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      })
-
-      const speechEvents = hark(stream, {
-        interval: 500,
-        threshold: -40,
-        play: false,
-      })
-
-      speechEvents.on('speaking', handleSpeaking)
-
-      speechEvents.on('stopped_speaking', handleStoppedSpeaking)
-    }
-
-    detectSpeaking()
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detect])
 
-  const handleSpeaking = () => {
-    if (!detect) {
-      setSpeaking(false)
-
-      return
-    }
-    setSpeaking(true)
-  }
-
-  const handleStoppedSpeaking = () => {
-    setSpeaking(false)
-  }
-
-  return {
-    isSpeaking: speaking,
-  }
+  return { isSpeaking: speaking }
 }
