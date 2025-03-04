@@ -158,7 +158,15 @@ export type EventSessionContextType = {
     participantName: string
   }) => void
   setVideoMiddlewareConfig: (config: VideoMiddlewareConfig) => void
-  flyEmoji: ({ emoji, name }: { emoji: string; name: string }) => void
+  flyEmoji: ({
+    emoji,
+    name,
+    participantId,
+  }: {
+    emoji: string
+    name: string
+    participantId: string
+  }) => void
   sendSoundAlert: ({ sound }: { sound: string }) => void
   updateActiveSession: (data: any) => void
 }

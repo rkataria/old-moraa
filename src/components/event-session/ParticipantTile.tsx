@@ -12,6 +12,7 @@ import { ParticipantTagName } from './ParticipantTagName'
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 
+import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
 
 export function ParticipantTile({
@@ -43,6 +44,15 @@ export function ParticipantTile({
 
   const isTileSmall = (tileRef.current?.clientWidth || 0) < 250
 
+  const reactions = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.reactions
+  )
+
+  const reaction = reactions?.find(
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    (reaction) => reaction.participantId === participant.id
+  )
+
   return (
     <DyteParticipantTile
       meeting={meeting}
@@ -64,6 +74,21 @@ export function ParticipantTile({
         isTileSmall={isTileSmall}
       />
       <ParticipantTagName participant={participant} />
+      <RenderIf isTrue={!!reaction}>
+        <motion.span
+          animate={{ scale: [0, 1.1, 1] }}
+          className={cn(
+            'absolute right-2 top-2 flex justify-center items-center gap-2 bg-black/50 text-white rounded-full',
+            {
+              'w-8 h-8 p-2': !isTileSmall,
+              'w-6 h-6 p-1': isTileSmall,
+              'w-fit px-2': showOrder,
+              'right-10': handRaised,
+            }
+          )}>
+          <em-emoji set="apple" id={reaction?.reaction} size={20} />
+        </motion.span>
+      </RenderIf>
       <RenderIf isTrue={handRaised}>
         <div>
           <motion.span

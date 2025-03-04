@@ -207,11 +207,13 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
       'broadcast',
       { event: 'flying-emoji' },
       ({ payload }) => {
-        const { emoji, name, sessionId } = payload
+        const { emoji, name, sessionId, participantId } = payload
         if (sessionId !== session?.id) return
         if (!emoji) return
         window.dispatchEvent(
-          new CustomEvent('reaction_added', { detail: { emoji, name } })
+          new CustomEvent('reaction_added', {
+            detail: { emoji, name, participantId },
+          })
         )
       }
     )
@@ -718,7 +720,15 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
     )
   }
 
-  const flyEmoji = ({ emoji, name }: { emoji: string; name: string }) => {
+  const flyEmoji = ({
+    emoji,
+    name,
+    participantId,
+  }: {
+    emoji: string
+    name: string
+    participantId: string
+  }) => {
     meetingRealtimeChannel?.send({
       type: 'broadcast',
       event: 'flying-emoji',
@@ -726,6 +736,7 @@ export function EventSessionProvider({ children }: EventSessionProviderProps) {
         emoji,
         name,
         sessionId: session?.id,
+        participantId,
       },
     })
   }

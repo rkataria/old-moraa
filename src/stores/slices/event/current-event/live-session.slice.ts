@@ -86,6 +86,11 @@ type LiveSessionState = {
   recording: {
     notify: boolean
   }
+  reactions?: {
+    participantId: string
+    reaction: string
+    id: string
+  }[]
 }
 
 const initialState: LiveSessionState = {
@@ -109,6 +114,7 @@ const initialState: LiveSessionState = {
   recording: {
     notify: false,
   },
+  reactions: [],
 }
 
 export const liveSessionSlice = createSlice({
@@ -231,6 +237,18 @@ export const liveSessionSlice = createSlice({
           },
         },
       }
+    },
+
+    setReactions: (
+      state,
+      action: PayloadAction<
+        { participantId: string; reaction: string; id: string }[]
+      >
+    ) => {
+      if (!state.dyte.isMeetingJoined) {
+        return
+      }
+      state.reactions = action.payload
     },
 
     resetLiveSession: () => initialState,
@@ -554,4 +572,5 @@ export const {
   setBreakoutNotifyAction,
   setRecordingLaunchModalAction,
   toggleStartAndStopActivityAction,
+  setReactionsAction,
 } = renameSliceActions(liveSessionSlice.actions)

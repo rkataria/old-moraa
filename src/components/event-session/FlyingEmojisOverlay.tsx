@@ -1,6 +1,18 @@
+/* eslint-disable no-unused-expressions */
+
 import { useCallback, useEffect, useRef } from 'react'
 
+import { v4 as uuidv4 } from 'uuid'
+
+import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { setReactionsAction } from '@/stores/slices/event/current-event/live-session.slice'
+
 export function FlyingEmojisOverlay() {
+  const dispatch = useStoreDispatch()
+  const reactions =
+    useStoreSelector(
+      (state) => state.event.currentEvent.liveSessionState.reactions
+    ) || []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const overlayRef = useRef<any>()
 
@@ -16,7 +28,7 @@ export function FlyingEmojisOverlay() {
       if (!overlayRef.current) {
         return
       }
-      const { emoji, name } = e.detail
+      const { emoji, name, participantId } = e.detail
       const emojiDiv = document.createElement('div')
 
       const emojiElement = document.createElement('em-emoji')
@@ -38,6 +50,17 @@ export function FlyingEmojisOverlay() {
       emojiDiv.style.textAlign = 'center'
 
       overlayRef.current.appendChild(emojiDiv)
+      const id = uuidv4()
+      dispatch(
+        setReactionsAction([
+          ...reactions,
+          {
+            participantId,
+            reaction: emoji,
+            id,
+          },
+        ])
+      )
 
       emojiDiv.addEventListener('animationend', (event) => {
         if (
@@ -45,6 +68,17 @@ export function FlyingEmojisOverlay() {
           overlayRef.current?.contains(event.target)
         ) {
           handleRemoveFlyingEmoji(event.target)
+          setTimeout(() => {
+            dispatch(
+              setReactionsAction(
+                // eslint-disable-next-line array-callback-return
+                reactions.filter((reaction) => {
+                  // eslint-disable-next-line array-callback-return
+                  reaction.id !== id
+                })
+              )
+            )
+          }, 5000)
         }
       })
     }
@@ -53,7 +87,8 @@ export function FlyingEmojisOverlay() {
 
     return () =>
       window.removeEventListener('reaction_added', handleSendFlyingEmoji)
-  }, [handleRemoveFlyingEmoji])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleRemoveFlyingEmoji, reactions])
 
   return <div className="flying-emojis" ref={overlayRef} />
 }

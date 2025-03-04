@@ -199,6 +199,7 @@ export function ReactWithEmojiToggle() {
                   flyEmoji({
                     emoji,
                     name: selfParticipant.name,
+                    participantId: selfParticipant.id,
                   })
                 }
                 className="!opacity-100 rounded-lg grid gap-1.5 place-items-center bg-transparent hover:bg-gray-200 duration-300 w-full py-1.5 cursor-pointer bg-white">

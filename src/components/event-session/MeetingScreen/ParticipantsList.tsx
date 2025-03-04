@@ -58,13 +58,24 @@ function Container({ children }: { children: ReactNode }) {
 function ParticipantItem({
   participant,
   rightActions,
+  showReactions = false,
 }: {
   participant: Omit<
     DyteParticipant,
     'audioTrack' | 'videoTrack' | 'screenShareTracks'
   >
   rightActions?: ReactNode
+  showReactions?: boolean
 }) {
+  const reactions = useStoreSelector(
+    (state) => state.event.currentEvent.liveSessionState.reactions
+  )
+
+  const reaction = reactions?.find(
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    (reaction) => reaction.participantId === participant.id
+  )
+
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
   const presenceColor = getUniqueColor(
@@ -123,7 +134,7 @@ function ParticipantItem({
         </div>
 
         <div>
-          <p className="text-xs  break-all">
+          <p className="text-xs break-words">
             {participant.name}
             {meeting?.self.id === participant?.id ? ' (You)' : null}
           </p>
@@ -135,7 +146,11 @@ function ParticipantItem({
       </div>
 
       <RenderIf isTrue={!rightActions}>
-        <div className="min-w-fit">
+        <div className="min-w-fit flex items-center">
+          <RenderIf isTrue={!!reaction && showReactions}>
+            <em-emoji set="apple" id={reaction?.reaction} size={20} />
+          </RenderIf>
+
           <ControlButton
             buttonProps={{
               isIconOnly: true,
@@ -255,7 +270,7 @@ function NormalParticipants({ search }: { search: string }) {
       }>
       <Container>
         {getParticipants().map((participant) => (
-          <ParticipantItem participant={participant} />
+          <ParticipantItem participant={participant} showReactions />
         ))}
       </Container>
     </Listing>
