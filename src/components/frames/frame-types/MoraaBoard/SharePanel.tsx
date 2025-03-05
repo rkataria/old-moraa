@@ -74,6 +74,33 @@ export function SharePanel({
     toast.success('All participants are brought to you')
   }, [hostPresence, self?.presence.isHost, broadcast, frameId])
 
+  const otherUsersBasicInfo = useMemo(
+    () =>
+      otherPresences.map((other) => ({
+        id: other.id,
+        isHost: other.presence.isHost,
+        name: other.info.name as string,
+        role: other.presence.isHost ? 'Host' : 'Participant',
+        avatar: other.info.avatar as string,
+      })),
+    [otherPresences]
+  )
+
+  const hostUserBasicInfo = useMemo(
+    () =>
+      hostPresence
+        ? {
+            id: hostPresence.id,
+            isHost: hostPresence.presence.isHost,
+            name: hostPresence.info.name as string,
+            role: hostPresence.presence.isHost ? 'Host' : 'Participant',
+            avatar: hostPresence.info.avatar as string,
+          }
+        : undefined,
+
+    [hostPresence]
+  )
+
   const memoizedUserPresences = useMemo(() => {
     if (!self?.id) return null
     if (!self?.info.name) return null
@@ -88,25 +115,9 @@ export function SharePanel({
           role: self.presence.isHost ? 'Host' : 'Participant',
           avatar: self.info.avatar as string,
         }}
-        others={otherPresences.map((other) => ({
-          id: other.id,
-          isHost: other.presence.isHost,
-          name: other.info.name as string,
-          role: other.presence.isHost ? 'Host' : 'Participant',
-          avatar: other.info.avatar as string,
-        }))}
+        others={otherUsersBasicInfo}
         followingUserId={followingUserId}
-        hostPresence={
-          hostPresence
-            ? {
-                id: hostPresence.id,
-                isHost: hostPresence.presence.isHost,
-                name: hostPresence.info.name as string,
-                role: hostPresence.presence.isHost ? 'Host' : 'Participant',
-                avatar: hostPresence.info.avatar as string,
-              }
-            : undefined
-        }
+        hostPresence={hostUserBasicInfo}
         isFollowingHost={isFollowingHost}
         onBringAllToHost={handleBringAllToHost}
         toggleFollowUser={(userId) => {
@@ -127,9 +138,9 @@ export function SharePanel({
     self?.info.name,
     self?.info.avatar,
     self?.presence.isHost,
-    otherPresences,
+    otherUsersBasicInfo,
     followingUserId,
-    hostPresence,
+    hostUserBasicInfo,
     isFollowingHost,
     handleBringAllToHost,
     onStartFollowing,
