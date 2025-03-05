@@ -45,6 +45,7 @@ import {
 import { resetMeetingAction } from '@/stores/slices/event/current-event/meeting.slice'
 import { resetMoraaSlideAction } from '@/stores/slices/event/current-event/moraa-slide.slice'
 import { resetSectionAction } from '@/stores/slices/event/current-event/section.slice'
+import { changeContentTilesLayoutConfigAction } from '@/stores/slices/layout/live.slice'
 import { getEnrollmentThunk } from '@/stores/thunks/enrollment.thunk'
 import { beforeLoad } from '@/utils/before-load'
 
@@ -141,6 +142,16 @@ function EventSessionPage() {
   const isMeetingJoined = useStoreSelector(
     (state) => state.event.currentEvent.liveSessionState.dyte.isMeetingJoined
   )
+
+  useEffect(() => {
+    if (!userPreferences?.meeting?.maxTilesPerPage) return
+    dispatch(
+      changeContentTilesLayoutConfigAction({
+        maxTilesPerPage: userPreferences.meeting.maxTilesPerPage,
+      })
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userPreferences.meeting.maxTilesPerPage])
 
   useSyncValueInRedux({
     value: dyteClient,
