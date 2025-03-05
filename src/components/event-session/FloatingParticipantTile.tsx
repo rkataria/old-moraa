@@ -10,6 +10,7 @@ import { ParticipantTagName } from './ParticipantTagName'
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { cn } from '@/utils/utils'
 
 export function FloatingParticipantTile({
@@ -24,6 +25,7 @@ export function FloatingParticipantTile({
   showOrder?: boolean
 }) {
   const { meeting } = useDyteMeeting()
+  const { permissions } = useEventPermissions()
   const selfParticipant = useDyteSelector((m) => m.self)
   const presenceColor = uniqolor(
     participant.customParticipantId as string
@@ -33,6 +35,7 @@ export function FloatingParticipantTile({
   )?.color
 
   const isSelfTile = participant.id === selfParticipant.id
+  const isHost = permissions.canAcessAllSessionControls
 
   return (
     <DyteParticipantTile
@@ -49,7 +52,7 @@ export function FloatingParticipantTile({
         }}
       />
       <ParticipantAudioStatus participant={participant} isTileSmall />
-      <ParticipantTagName participant={participant} />
+      <ParticipantTagName participant={participant} isHost={isHost} />
       <RenderIf isTrue={!!handRaised}>
         <div>
           <motion.span

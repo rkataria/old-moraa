@@ -17,7 +17,11 @@ export function useParticipantsGrid(): {
   }
 } {
   const { presentationStatus } = useEventSession()
-  const { pinnedParticipants, activeParticipants } = useDyteParticipants()
+  const {
+    pinnedParticipants,
+    sortedParticipants,
+    sortedParticipantsWithOutPinned,
+  } = useDyteParticipants()
   const isPresentationStarted =
     presentationStatus === PresentationStatuses.STARTED
   const isSpeakerView = pinnedParticipants.length > 0
@@ -34,7 +38,7 @@ export function useParticipantsGrid(): {
             maxSize: 80,
           },
           {
-            participants: activeParticipants,
+            participants: sortedParticipantsWithOutPinned,
             minSize: 20,
             defaultSize: 40,
             maxSize: 50,
@@ -49,7 +53,7 @@ export function useParticipantsGrid(): {
       direction: 'horizontal',
       panels: [
         {
-          participants: [...pinnedParticipants, ...activeParticipants],
+          participants: sortedParticipants,
           minSize: 100,
           defaultSize: 100,
           maxSize: 100,

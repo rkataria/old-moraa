@@ -15,7 +15,10 @@ import { IoHappy, IoHappyOutline } from 'react-icons/io5'
 import { ControlButton } from '../common/ControlButton'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 
-import { EventSessionContext } from '@/contexts/EventSessionContext'
+import {
+  EventSessionContext,
+  useEventSession,
+} from '@/contexts/EventSessionContext'
 import { EventSessionContextType } from '@/types/event-session.type'
 import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
@@ -71,6 +74,7 @@ const EMOJIS = [
 ]
 
 export function ReactWithEmojiToggle() {
+  const { isHost } = useEventSession()
   const [isOpen, setIsOpen] = useState(false)
   const [selectedTab, setSelectedTab] = useState<Key>('reactions')
 
@@ -176,15 +180,17 @@ export function ReactWithEmojiToggle() {
                 </div>
               }
             />
-            <Tab
-              key={TABS.ECHOES}
-              title={
-                <div className="flex items-center gap-2">
-                  Echoes
-                  <Kbd className="h-5 rounded-md text-xs">E</Kbd>
-                </div>
-              }
-            />
+            {isHost && (
+              <Tab
+                key={TABS.ECHOES}
+                title={
+                  <div className="flex items-center gap-2">
+                    Echoes
+                    <Kbd className="h-5 rounded-md text-xs">E</Kbd>
+                  </div>
+                }
+              />
+            )}
           </Tabs>
         </div>
         <div

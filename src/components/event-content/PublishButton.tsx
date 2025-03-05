@@ -94,6 +94,7 @@ export function PublishButton({
             size="sm"
             className="rounded-e-none"
             variant="solid"
+            color="primary"
             onClick={() => setShowConfirmationModal(true)}>
             Publish
           </Button>

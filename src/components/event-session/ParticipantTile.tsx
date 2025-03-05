@@ -12,6 +12,7 @@ import { ParticipantTagName } from './ParticipantTagName'
 import { VideoBackgroundSettingsButtonWithModal } from './VideoBackgroundSettingsButtonWithModal'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 
+import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { cn } from '@/utils/utils'
 
@@ -26,6 +27,7 @@ export function ParticipantTile({
   handRaisedOrder?: number | null
   showOrder?: boolean
 }) {
+  const { permissions } = useEventPermissions()
   const tileRef = useRef<HTMLDivElement>(null)
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)
@@ -37,6 +39,7 @@ export function ParticipantTile({
   )?.color
 
   const isSelfTile = participant.id === selfParticipant.id
+  const isHost = permissions.canAcessAllSessionControls
 
   const avatarHeight = tileRef.current?.clientHeight
     ? `${tileRef.current.clientHeight * 0.4}px`
@@ -58,7 +61,9 @@ export function ParticipantTile({
       meeting={meeting}
       participant={participant}
       nameTagPosition="bottom-right"
-      className="w-full h-full aspect-video bg-[var(--dyte-participant-tile-bg-color)] group/tile">
+      className={cn(
+        'w-full h-full aspect-video bg-[var(--dyte-participant-tile-bg-color)] group/tile'
+      )}>
       <DyteAvatar
         size="md"
         participant={participant}
@@ -73,7 +78,6 @@ export function ParticipantTile({
         participant={participant}
         isTileSmall={isTileSmall}
       />
-      <ParticipantTagName participant={participant} />
       <RenderIf isTrue={!!reaction}>
         <motion.span
           animate={{ scale: [0, 1.1, 1] }}
@@ -89,6 +93,9 @@ export function ParticipantTile({
           <em-emoji set="apple" id={reaction?.reaction} size={20} />
         </motion.span>
       </RenderIf>
+
+      <ParticipantTagName participant={participant} isHost={isHost} />
+
       <RenderIf isTrue={handRaised}>
         <div>
           <motion.span

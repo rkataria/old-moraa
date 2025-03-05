@@ -18,8 +18,6 @@ import { Route as TermsIndexImport } from './pages/terms/index'
 import { Route as OnboardingIndexImport } from './pages/onboarding/index'
 import { Route as LoginIndexImport } from './pages/login/index'
 import { Route as LoginMessagesImport } from './pages/login/messages'
-import { Route as testLiveSessionImport } from './pages/(test)/live-session'
-import { Route as testGalleryGridImport } from './pages/(test)/gallery-grid'
 import { Route as dashboardLayoutImport } from './pages/(dashboard)/_layout'
 import { Route as EventsCreateIndexImport } from './pages/events/create/index'
 import { Route as EventsEventIdIndexImport } from './pages/events/$eventId/index'
@@ -66,16 +64,6 @@ const LoginIndexRoute = LoginIndexImport.update({
 
 const LoginMessagesRoute = LoginMessagesImport.update({
   path: '/login/messages',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const testLiveSessionRoute = testLiveSessionImport.update({
-  path: '/live-session',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const testGalleryGridRoute = testGalleryGridImport.update({
-  path: '/gallery-grid',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -170,20 +158,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof dashboardLayoutImport
       parentRoute: typeof dashboardRoute
-    }
-    '/(test)/gallery-grid': {
-      id: '/gallery-grid'
-      path: '/gallery-grid'
-      fullPath: '/gallery-grid'
-      preLoaderRoute: typeof testGalleryGridImport
-      parentRoute: typeof rootRoute
-    }
-    '/(test)/live-session': {
-      id: '/live-session'
-      path: '/live-session'
-      fullPath: '/live-session'
-      preLoaderRoute: typeof testLiveSessionImport
-      parentRoute: typeof rootRoute
     }
     '/login/messages': {
       id: '/login/messages'
@@ -307,8 +281,6 @@ export const routeTree = rootRoute.addChildren({
       dashboardLayoutWorkshopsIndexRoute,
     }),
   }),
-  testGalleryGridRoute,
-  testLiveSessionRoute,
   LoginMessagesRoute,
   LoginIndexRoute,
   OnboardingIndexRoute,
@@ -330,8 +302,6 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/",
-        "/gallery-grid",
-        "/live-session",
         "/login/messages",
         "/login/",
         "/onboarding/",
@@ -360,12 +330,6 @@ export const routeTree = rootRoute.addChildren({
         "/_layout/templates/",
         "/_layout/workshops/"
       ]
-    },
-    "/gallery-grid": {
-      "filePath": "(test)/gallery-grid.tsx"
-    },
-    "/live-session": {
-      "filePath": "(test)/live-session.tsx"
     },
     "/login/messages": {
       "filePath": "login/messages.tsx"

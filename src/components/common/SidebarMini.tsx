@@ -10,6 +10,7 @@ import { SidebarItem } from './SidebarItem'
 
 import { cn } from '@/utils/utils'
 
+// TODO: Replace this sidebar with Drawer component
 export function SidebarMini() {
   const [open, setOpen] = useState(false)
 

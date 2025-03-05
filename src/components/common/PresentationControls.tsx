@@ -2,7 +2,6 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io'
 import { RiPlayCircleFill, RiStopCircleFill } from 'react-icons/ri'
 
-import { FrameSmartControls } from '../event-session/FrameSmartControlsPopover/FrameSmartControlsPopover'
 import { Button } from '../ui/Button'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -93,7 +92,6 @@ export function PresentationControls() {
           <RiPlayCircleFill size={32} className="text-foreground" />
         )}
       </Button>
-      <FrameSmartControls />
       <Button
         isIconOnly
         size="sm"

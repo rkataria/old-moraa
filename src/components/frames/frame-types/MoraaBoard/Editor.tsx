@@ -18,7 +18,7 @@ import {
 
 import { ContentLoading } from '@/components/common/ContentLoading'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
-import { SharePanel } from '@/components/moraa-board/SharePanel'
+import { SharePanel } from '@/components/frames/frame-types/MoraaBoard/SharePanel'
 import { useEventPermissions } from '@/hooks/useEventPermissions'
 import { useProfile } from '@/hooks/useProfile'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'

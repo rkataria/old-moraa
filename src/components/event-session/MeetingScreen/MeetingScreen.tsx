@@ -24,6 +24,7 @@ import { RightSidebar } from './RightSidebar'
 import { ChangeLayoutModal } from '../ChangeLayoutModal'
 import { FlyingEmojisOverlay } from '../FlyingEmojisOverlay'
 import { IdleModeConfirmation } from '../IdleModeConfirmation'
+import { EchoPlayer } from '../Music/EchoPlayer'
 import { RecordingLaunchModal } from '../RecordingLaunchModal'
 
 import { LiveLayout } from '@/components/common/LiveLayout'
@@ -246,6 +247,8 @@ export function MeetingScreen() {
       </div>
       {/* Emoji Overlay */}
       <FlyingEmojisOverlay />
+      <EchoPlayer />
+
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
       <DyteNotifications
