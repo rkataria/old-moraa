@@ -72,10 +72,9 @@ function ParticipantItem({
     (state) => state.event.currentEvent.liveSessionState.reactions
   )
 
-  const reaction = reactions?.find(
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    (reaction) => reaction.participantId === participant.id
-  )
+  const reaction = reactions
+    ?.filter((r) => r.participantId === participant.id)
+    ?.slice(-1)[0]
 
   const { meeting } = useDyteMeeting()
   const selfParticipant = useDyteSelector((m) => m.self)

@@ -51,10 +51,9 @@ export function ParticipantTile({
     (state) => state.event.currentEvent.liveSessionState.reactions
   )
 
-  const reaction = reactions?.find(
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    (reaction) => reaction.participantId === participant.id
-  )
+  const reaction = reactions
+    ?.filter((r) => r.participantId === participant.id)
+    ?.slice(-1)[0]
 
   return (
     <DyteParticipantTile
@@ -88,6 +87,7 @@ export function ParticipantTile({
               'w-6 h-6 p-1': isTileSmall,
               'w-fit px-2': showOrder,
               'right-10': handRaised,
+              'right-14': showOrder,
             }
           )}>
           <em-emoji set="apple" id={reaction?.reaction} size={20} />
