@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
+import { useIsMutating } from '@tanstack/react-query'
+
 import { MeetingStatusContainer } from './MeetingStatusContainer'
 import { Timer } from '../../Timer'
 
@@ -44,6 +46,12 @@ export function MeetingStatusBar() {
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutType
   )
+  const startBreakoutMutationLoading = useIsMutating({
+    exact: true,
+    mutationKey: ['START_BREAKOUT'],
+    status: 'pending',
+  })
+
   const { handleBreakoutEndWithTimerDialog } = useBreakoutManagerContext()
 
   const timerActive =
@@ -86,7 +94,7 @@ export function MeetingStatusBar() {
       />
     )
   }
-  if (isHost && isBreakoutStarted) {
+  if (isHost && isBreakoutStarted && !startBreakoutMutationLoading) {
     return (
       <MeetingStatusContainer
         description={
@@ -101,7 +109,7 @@ export function MeetingStatusBar() {
           <RenderIf isTrue={isBreakoutActive}>
             <Button
               className="bg-red-500 text-white"
-              onClick={handleBreakoutEnd}>
+              onPress={handleBreakoutEnd}>
               End Breakout
             </Button>
           </RenderIf>,
@@ -130,7 +138,7 @@ export function MeetingStatusBar() {
           </RenderIf>,
           <Button
             color="danger"
-            onClick={() => {
+            onPress={() => {
               dispatch(updateEventSessionModeAction(EventSessionMode.LOBBY))
             }}>
             Go to Lobby

@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { useDyteSelector } from '@dytesdk/react-web-core'
 import { Tooltip } from '@heroui/tooltip'
+import { useIsMutating } from '@tanstack/react-query'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { StartPlannedBreakoutModal } from '@/components/frames/frame-types/Breakout/StartPlannedBreakoutModal'
@@ -26,6 +27,12 @@ export function BreakoutControls() {
       store.event.currentEvent.liveSessionState.activeSession.data?.data
         ?.breakoutFrameId || null
   )
+
+  const startBreakoutMutationLoading = useIsMutating({
+    exact: true,
+    mutationKey: ['START_BREAKOUT'],
+    status: 'pending',
+  })
 
   if (!frame) return null
   if (frame.type !== FrameType.BREAKOUT) return null
@@ -55,13 +62,16 @@ export function BreakoutControls() {
           <Button
             title="Start breakout"
             color="primary"
+            isLoading={!!startBreakoutMutationLoading}
             disabled={isBreakoutActive || !participants.toArray().length}
             disableRipple={!participants.toArray().length}
             disableAnimation={!participants.toArray().length}
-            onClick={() => {
+            onPress={() => {
               setOpenStartBreakoutModal(true)
             }}>
-            Start Breakout
+            {startBreakoutMutationLoading
+              ? 'Starting Breakout'
+              : 'Start Breakout'}
           </Button>
         </Tooltip>
       </RenderIf>
@@ -69,7 +79,7 @@ export function BreakoutControls() {
         <Button
           title="End breakout"
           className="bg-red-500 text-white"
-          onClick={() => handleBreakoutEndWithTimerDialog()}>
+          onPress={() => handleBreakoutEndWithTimerDialog()}>
           End Breakout
         </Button>
       </RenderIf>

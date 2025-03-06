@@ -9,6 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@heroui/react'
+import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 
 import {
@@ -75,6 +76,87 @@ export function StartPlannedBreakoutModal({
     (store) => store.event.currentEvent.meetingState.meeting.data?.id
   )
   const dispatch = useStoreDispatch()
+
+  const startBreakoutMutation = useMutation({
+    mutationKey: ['START_BREAKOUT'],
+    mutationFn: async (
+      config: {
+        breakoutFrameId?: string
+        breakoutDuration?: number
+        activities?: Array<{ activityId?: string; name: string }>
+        activityId?: string
+      } & StartBreakoutConfig
+    ) => {
+      if (!meetingId) return
+
+      await breakoutRoomsInstance?.startBreakoutRooms({
+        roomsCount: isRoomsBreakout ? config.roomsCount : undefined,
+        participantPerGroup: isGroupsBreakout
+          ? config.participantPerGroup
+          : undefined,
+        assignmentOption: config.assignmentOption || 'auto',
+      })
+      const { meetings } =
+        await dyteMeeting.meeting.connectedMeetings.getConnectedMeetings()
+
+      const connectedMeetingsToActivitiesMap: { [x: string]: string } =
+        meetings.reduce(
+          (acc, meet, idx) => ({
+            ...acc,
+            [meet.id as string]:
+              config?.activities?.[idx]?.activityId ||
+              config.activityId ||
+              null,
+          }),
+          {}
+        )
+      const meetingTitles = Object.entries(
+        connectedMeetingsToActivitiesMap
+      ).map(([meetId, activityId], index) => ({
+        id: meetId,
+        title: config.activities
+          ? `${config.activities.find((activity) => activity.activityId === activityId)?.name}`
+          : `Breakout group ${index + 1}`,
+      }))
+
+      const currentTimeStamp = getCurrentTimestamp()
+      const timerDuration = config.breakoutDuration
+        ? config.breakoutDuration * 60
+        : null
+      dispatch(
+        updateMeetingSessionDataAction({
+          breakoutFrameId:
+            presentationStatus === PresentationStatuses.STARTED
+              ? config.breakoutFrameId
+              : null,
+          connectedMeetingsToActivitiesMap,
+          timerStartedStamp: currentTimeStamp,
+          timerDuration,
+          meetingTitles,
+          breakoutType: 'planned',
+        })
+      )
+
+      SessionService.createSessionForBreakouts({
+        dyteMeetings: meetings.map((meet) => ({
+          connected_dyte_meeting_id: meet.id!,
+          data: {
+            currentFrameId: connectedMeetingsToActivitiesMap[meet.id!],
+            presentationStatus,
+            timerStartedStamp: currentTimeStamp,
+            timerDuration,
+            meetingTitles,
+          },
+          meeting_id: meetingId,
+        })),
+      })
+    },
+    onError: (error) => {
+      breakoutRoomsInstance?.endBreakoutRooms()
+      toast.error('Failed to start breakout, Please try again...')
+      console.log('🚀 ~ onBreakoutStartOnBreakoutSlide ~ err:', error)
+    },
+  })
 
   const breakoutType = currentFrame?.config.breakoutType
   const isGroupsBreakout = breakoutType === BREAKOUT_TYPES.GROUPS
@@ -248,93 +330,13 @@ export function StartPlannedBreakoutModal({
     </div>
   )
 
-  const startBreakoutSession = async (
-    config: {
-      breakoutFrameId?: string
-      breakoutDuration?: number
-      activities?: Array<{ activityId?: string; name: string }>
-      activityId?: string
-    } & StartBreakoutConfig
-  ) => {
-    if (!meetingId) return
-
-    try {
-      await breakoutRoomsInstance?.startBreakoutRooms({
-        roomsCount: isRoomsBreakout ? config.roomsCount : undefined,
-        participantPerGroup: isGroupsBreakout
-          ? config.participantPerGroup
-          : undefined,
-        assignmentOption: config.assignmentOption || 'auto',
-      })
-      const connectedMeetingsToActivitiesMap: { [x: string]: string } =
-        dyteMeeting.meeting.connectedMeetings.meetings.reduce(
-          (acc, meet, idx) => ({
-            ...acc,
-            [meet.id as string]:
-              config?.activities?.[idx]?.activityId ||
-              config.activityId ||
-              null,
-          }),
-          {}
-        )
-      const meetingTitles = Object.entries(
-        connectedMeetingsToActivitiesMap
-      ).map(([meetId, activityId], index) => ({
-        id: meetId,
-        title: config.activities
-          ? `${config.activities.find((activity) => activity.activityId === activityId)?.name}`
-          : `Breakout group ${index + 1}`,
-      }))
-
-      const currentTimeStamp = getCurrentTimestamp()
-      const timerDuration = config.breakoutDuration
-        ? config.breakoutDuration * 60
-        : null
-      dispatch(
-        updateMeetingSessionDataAction({
-          breakoutFrameId:
-            presentationStatus === PresentationStatuses.STARTED
-              ? config.breakoutFrameId
-              : null,
-          connectedMeetingsToActivitiesMap,
-          timerStartedStamp: currentTimeStamp,
-          timerDuration,
-          meetingTitles,
-          breakoutType: 'planned',
-        })
-      )
-
-      SessionService.createSessionForBreakouts({
-        dyteMeetings: dyteMeeting.meeting.connectedMeetings.meetings.map(
-          (meet) => ({
-            connected_dyte_meeting_id: meet.id!,
-            data: {
-              currentFrameId: connectedMeetingsToActivitiesMap[meet.id!],
-              presentationStatus,
-              timerStartedStamp: currentTimeStamp,
-              timerDuration,
-              meetingTitles,
-            },
-            meeting_id: meetingId,
-          })
-        ),
-      })
-    } catch (err) {
-      console.log('🚀 ~ onBreakoutStartOnBreakoutSlide ~ err:', err)
-    }
-  }
-
   const isParticipantJoined = (participantId: string) =>
     joinedParticipants.some((p) => p.customParticipantId === participantId)
 
   const startBreakout = () => {
-    if (!startBreakoutSession) {
-      return
-    }
-
     if (!eventRealtimeChannel) {
       setOpen(false)
-      startBreakoutSession({
+      startBreakoutMutation.mutate({
         ...breakoutConfig,
         activities: isRoomsBreakout
           ? breakoutActivityQuery.data?.map((activity) => ({
@@ -354,7 +356,7 @@ export function StartPlannedBreakoutModal({
 
     handleBreakoutEndWithTimerDialog({
       onBreakoutEndTriggered() {
-        startBreakoutSession({
+        startBreakoutMutation.mutate({
           ...breakoutConfig,
           activities: isRoomsBreakout
             ? breakoutActivityQuery.data?.map((activity) => ({

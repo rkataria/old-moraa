@@ -25,8 +25,8 @@ export function FrameSmartControls() {
     eventSessionMode === EventSessionMode.PEEK
   ) {
     return (
-      <div className="h-full px-1.5 absolute w-full top-[-51px] left-0 rounded-lg z-10">
-        <div className="h-full flex justify-start items-center gap-2">
+      <div className="h-full px-1.5 absolute w-[77%] top-[-51px] left-[-20%] rounded-lg z-10">
+        <div className="h-full flex justify-center items-center gap-2">
           <Controls />
           <CommonControls />
         </div>

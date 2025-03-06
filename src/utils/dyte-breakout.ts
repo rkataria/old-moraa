@@ -88,6 +88,12 @@ export class BreakoutRooms {
       )
     }
 
+    const existingConnectedMeetings =
+      await this.dyteClient.connectedMeetings.getConnectedMeetings()
+    if (existingConnectedMeetings.meetings.length > 0) {
+      await this.endBreakoutRooms()
+    }
+
     const participants = this.dyteClient.participants.joined.toArray()
 
     if (participants.length === 0) return
