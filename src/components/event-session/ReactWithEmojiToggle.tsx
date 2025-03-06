@@ -105,7 +105,13 @@ export function ReactWithEmojiToggle() {
 
   const handleSound = (soundIndex: number) => {
     sendSoundAlert({
-      sound: ECHOES[soundIndex - 1].path,
+      sound: ECHOES[soundIndex].path,
+    })
+
+    flyEmoji({
+      emoji: ECHOES[soundIndex].emoji,
+      name: `${ECHOES[soundIndex].name} played by ${selfParticipant.name}`,
+      participantId: selfParticipant.id,
     })
   }
 
@@ -222,11 +228,9 @@ export function ReactWithEmojiToggle() {
               // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
               <div
                 key={echo.path}
-                onClick={() =>
-                  sendSoundAlert({
-                    sound: echo.path,
-                  })
-                }
+                onClick={() => {
+                  handleSound(index)
+                }}
                 className="!opacity-100 rounded-lg flex gap-2 place-items-center justify-between bg-transparent hover:bg-gray-200 duration-300 w-full p-2 cursor-pointer bg-white">
                 <div className="flex items-center gap-2">
                   <em-emoji set="apple" id={echo.emoji} size={18} />

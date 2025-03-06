@@ -78,7 +78,7 @@ export function FlyingEmojisOverlay() {
                 })
               )
             )
-          }, 5000)
+          }, 3000)
         }
       })
     }

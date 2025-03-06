@@ -11,6 +11,7 @@ import { BsCameraVideo, BsFillCameraVideoOffFill } from 'react-icons/bs'
 import { CiSearch } from 'react-icons/ci'
 import {
   IoEllipsisVerticalOutline,
+  IoHandRightOutline,
   IoMicOff,
   IoMicOutline,
 } from 'react-icons/io5'
@@ -235,7 +236,7 @@ function ParticipantItem({
   )
 }
 
-function NormalParticipants({ search }: { search: string }) {
+function ActiveParticipants({ search }: { search: string }) {
   const { sortedParticipants } = useDyteParticipants()
   const { meeting } = useDyteMeeting()
 
@@ -243,13 +244,9 @@ function NormalParticipants({ search }: { search: string }) {
     await meeting?.participants.disableAllAudio(true)
   }
 
-  const getParticipants = () => {
-    if (!search) return sortedParticipants
-
-    return sortedParticipants.filter((p) =>
-      p.name.toLowerCase().includes(search)
-    )
-  }
+  const filteredParticipants = search
+    ? sortedParticipants.filter((p) => p.name.toLowerCase().includes(search))
+    : sortedParticipants
 
   return (
     <Listing
@@ -269,7 +266,7 @@ function NormalParticipants({ search }: { search: string }) {
         </div>
       }>
       <Container>
-        {getParticipants().map((participant) => (
+        {filteredParticipants.map((participant) => (
           <ParticipantItem participant={participant} showReactions />
         ))}
       </Container>
@@ -277,7 +274,7 @@ function NormalParticipants({ search }: { search: string }) {
   )
 }
 
-function HandRaisedParticipants({ search }: { search: string }) {
+function RaisedHandParticipants({ search }: { search: string }) {
   const { isHost } = useEventSession()
   const { handRaisedActiveParticipants } = useDyteParticipants()
   const dispatch = useStoreDispatch()
@@ -286,13 +283,11 @@ function HandRaisedParticipants({ search }: { search: string }) {
     (store) => store.event.currentEvent.liveSessionState.activeSession.data
   )
 
-  const getParticipants = () => {
-    if (!search) return handRaisedActiveParticipants
-
-    return handRaisedActiveParticipants.filter((p) =>
-      p.name.toLowerCase().includes(search)
-    )
-  }
+  const filteredHandRaisedParticipants = search
+    ? handRaisedActiveParticipants.filter((p) =>
+        p.name.toLowerCase().includes(search)
+      )
+    : handRaisedActiveParticipants
 
   if (!handRaisedActiveParticipants.length) return null
 
@@ -318,29 +313,38 @@ function HandRaisedParticipants({ search }: { search: string }) {
       </div>
 
       <Container>
-        {getParticipants().map((participant) => (
+        {filteredHandRaisedParticipants.map((participant) => (
           <ParticipantItem
             participant={participant}
             rightActions={
-              !isHost ? (
-                <div />
-              ) : (
-                <Button
-                  size="sm"
-                  variant="light"
-                  className="text-xs -mr-2.5"
-                  onClick={() => {
-                    dispatch(
-                      updateMeetingSessionDataAction({
-                        handsRaised: session?.data?.handsRaised?.filter(
-                          (pId) => pId !== participant.id
-                        ),
-                      })
-                    )
-                  }}>
-                  Lower
-                </Button>
-              )
+              <>
+                <RenderIf isTrue={!isHost}>
+                  <Button
+                    isIconOnly
+                    className="bg-transparent"
+                    isDisabled
+                    disableRipple>
+                    <IoHandRightOutline size={20} />
+                  </Button>
+                </RenderIf>
+                <RenderIf isTrue={isHost}>
+                  <Button
+                    size="sm"
+                    variant="light"
+                    className="text-xs -mr-2.5"
+                    onClick={() => {
+                      dispatch(
+                        updateMeetingSessionDataAction({
+                          handsRaised: session?.data?.handsRaised?.filter(
+                            (pId) => pId !== participant.id
+                          ),
+                        })
+                      )
+                    }}>
+                    Lower
+                  </Button>
+                </RenderIf>
+              </>
             }
           />
         ))}
@@ -380,13 +384,11 @@ function WaitListedParticipants({ search }: { search: string }) {
     )
   }
 
-  const getParticipants = () => {
-    if (!search) return waitlistedParticipants
-
-    return waitlistedParticipants.filter((p) =>
-      p.name.toLowerCase().includes(search)
-    )
-  }
+  const filteredParticipants = search
+    ? waitlistedParticipants.filter((p) =>
+        p.name.toLowerCase().includes(search)
+      )
+    : waitlistedParticipants
 
   if (!areParticipantsWaitingInLobby) return null
 
@@ -415,7 +417,7 @@ function WaitListedParticipants({ search }: { search: string }) {
       </RenderIf>
 
       <Container>
-        {getParticipants().map((participant) => (
+        {filteredParticipants.map((participant) => (
           <ParticipantItem
             participant={participant}
             rightActions={
@@ -445,7 +447,7 @@ function WaitListedParticipants({ search }: { search: string }) {
   )
 }
 
-function SearchAndInvite({
+function ParticipantFilter({
   search,
   onSearch,
 }: {
@@ -495,10 +497,10 @@ export function ParticipantsList({ className }: { className?: string }) {
 
   return (
     <div className={clsx('flex flex-col gap-0', className)}>
-      <SearchAndInvite search={search} onSearch={setSearch} />
+      <ParticipantFilter search={search} onSearch={setSearch} />
       <WaitListedParticipants search={search} />
-      <HandRaisedParticipants search={search} />
-      <NormalParticipants search={search} />
+      <RaisedHandParticipants search={search} />
+      <ActiveParticipants search={search} />
     </div>
   )
 }

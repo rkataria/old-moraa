@@ -32,8 +32,6 @@ export function Recordings() {
     order: { ascending: sortType === 'ASC' },
   })
 
-  console.log('recordings', recordings)
-
   const activeRecording = recordings.find(
     (recording) => recording.id === recordingId
   )
