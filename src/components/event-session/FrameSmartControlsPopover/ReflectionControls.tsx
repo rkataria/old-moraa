@@ -47,7 +47,7 @@ export function ReflectionControls() {
         <Button
           title="Start Reflection"
           color={reflectionStarted ? 'danger' : 'primary'}
-          onClick={() => {
+          onPress={() => {
             dispatch(
               toggleStartAndStopActivityAction({
                 frameId: frame.id,
@@ -61,7 +61,7 @@ export function ReflectionControls() {
       <Button
         title="Reset Reflection"
         disabled={reflectionStarted}
-        onClick={() => {
+        onPress={() => {
           if (reflectionStarted) return
           setOpenResetConfirmationModal(true)
         }}>

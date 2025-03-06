@@ -114,25 +114,10 @@ export function EditableCard({
     (store) => store.event.currentEvent.liveSessionState.activeSession.data
   )
 
-  const isInBreakoutMeeting = useStoreSelector(
-    (store) =>
-      store.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
-  )
-
-  const getReflectionDisabled = () => {
-    const reflectionStartedInMainRoom =
-      session?.data?.framesConfig?.[frame.id]?.reflectionStarted
-
-    if (!isInBreakoutMeeting && !reflectionStartedInMainRoom) {
-      return true
-    }
-
-    return false
-  }
-
   const reply = selfResponse?.response.reply
 
-  const shouldReflectionDisabled = getReflectionDisabled()
+  const shouldReflectionDisabled =
+    !session?.data?.framesConfig?.[frame.id]?.reflectionStarted
 
   const maxReflectionAllowed = currentFrame?.config?.maxReflectionsPerUser
 

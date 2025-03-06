@@ -158,25 +158,10 @@ export function Card({
     (store) => store.event.currentEvent.liveSessionState.activeSession.data
   )
 
-  const reflectionStartedInMainRoom =
+  const reflectionStarted =
     session?.data?.framesConfig?.[currentFrame?.id || '']?.reflectionStarted
 
-  const isInBreakoutMeeting = useStoreSelector(
-    (store) =>
-      store.event.currentEvent.liveSessionState.breakout.isInBreakoutMeeting
-  )
-
-  const canReact = () => {
-    if (isInBreakoutMeeting) return true
-
-    return reflectionStartedInMainRoom
-  }
-
-  const isEditable = () => {
-    if (isInBreakoutMeeting) return true
-
-    return isOwner && reflectionStartedInMainRoom
-  }
+  const isEditable = () => isOwner && reflectionStarted
 
   return (
     <NextUICard className="rounded-2xl shadow-md border border-gray-50">
@@ -200,7 +185,7 @@ export function Card({
           <RenderIf isTrue={isEditable()}>
             <Button
               variant="light"
-              onClick={enableEditReflection}
+              onPress={enableEditReflection}
               className="w-auto p-0 min-w-fit mt-2.5 h-auto text-xs text-slate-400 hover:text-primary !bg-transparent">
               <span>Edit</span>
             </Button>
@@ -211,7 +196,7 @@ export function Card({
             responseId={responseId}
             userName={userName}
             avatarUrl={avatarUrl}
-            canReact={canReact()}
+            canReact={reflectionStarted}
           />
         </div>
 
@@ -229,7 +214,7 @@ export function Card({
                 isIconOnly
                 variant="light"
                 className="absolute right-1 top-2 text-primary hidden group-hover/reply:flex w-5 h-5 min-w-5"
-                onClick={() => setShowReplyInput(true)}>
+                onPress={() => setShowReplyInput(true)}>
                 <MdOutlineEdit size={16} />
               </Button>
             </RenderIf>
@@ -254,7 +239,7 @@ export function Card({
               size="sm"
               isIconOnly
               className="bg-primary/20 text-primary rounded-full"
-              onClick={() => {
+              onPress={() => {
                 setShowReplyInput(false)
                 if (!answer) return
                 updateReflection?.({

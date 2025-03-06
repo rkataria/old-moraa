@@ -146,6 +146,11 @@ export function StartPlannedBreakoutModal({
             timerStartedStamp: currentTimeStamp,
             timerDuration,
             meetingTitles,
+            framesConfig: {
+              [connectedMeetingsToActivitiesMap[meet.id!]]: {
+                reflectionStarted: true,
+              },
+            },
           },
           meeting_id: meetingId,
         })),
