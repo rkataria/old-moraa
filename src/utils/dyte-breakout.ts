@@ -5,7 +5,7 @@ import DyteClient from '@dytesdk/web-core'
 
 import { shuffleAndGroup } from './shuffle-array'
 
-import { AssignmentOption } from '@/components/common/breakout/AssignmentOptionSelector'
+import { AssignmentOption } from '@/components/frames/frame-types/Breakout/AssignmentOptionSelector'
 
 export type StartBreakoutConfig = {
   participantPerGroup?: number

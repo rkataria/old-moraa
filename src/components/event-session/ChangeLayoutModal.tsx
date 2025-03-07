@@ -17,6 +17,7 @@ import { Tooltip } from '../common/ShortuctTooltip'
 import { Button } from '@/components/ui/Button'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreDispatch, useStoreSelector } from '@/hooks/useRedux'
+import { useUserPreferences } from '@/hooks/userPreferences'
 import {
   changeContentTilesLayoutConfigAction,
   closeChangeContentTilesLayoutModalAction,
@@ -56,6 +57,7 @@ const LVE_LAYOUTS: Layout[] = [
 ]
 
 export function ChangeLayoutModal() {
+  const { userPreferencesMeetingMaxTilesPerPage } = useUserPreferences()
   const contentTilesLayoutConfig = useStoreSelector(
     (store) => store.layout.live.contentTilesLayoutConfig
   )
@@ -147,12 +149,15 @@ export function ChangeLayoutModal() {
                   numbers={[6, 8, 12, 16, 20, 24, 28, 32]}
                   allowNegative={false}
                   number={config.maxTilesPerPage}
-                  onNumberChange={(value) =>
+                  onNumberChange={(value) => {
                     setConfig((prev) => ({
                       ...prev,
                       maxTilesPerPage: value as MaxTilesPerPage,
                     }))
-                  }
+                    userPreferencesMeetingMaxTilesPerPage(
+                      value as MaxTilesPerPage
+                    )
+                  }}
                 />
               </div>
               {/* <div className="flex justify-between items-center">

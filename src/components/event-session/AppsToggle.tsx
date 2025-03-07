@@ -13,11 +13,11 @@ import { AppsDropdownMenuItem } from './AppsDropdownMenuItem'
 import { AppsRecordingDropdownMenuItem } from './AppsRecordingMenuItem'
 import { MusicControls } from './Music/MusicControls'
 import { TimerModal } from './TimerModal'
+import { RenderIf } from '../common/RenderIf/RenderIf'
 import {
   UnplannedBreakoutButton,
   useOnUnplannedBreakoutSessionUpdate,
-} from '../common/breakout/UnplannedBreakoutButton'
-import { RenderIf } from '../common/RenderIf/RenderIf'
+} from '../frames/frame-types/Breakout/UnplannedBreakoutButton'
 import { Button } from '../ui/Button'
 
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'

@@ -4,11 +4,11 @@ import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { SportlightOverlayView } from './SportlightOverlayView'
 import { ContentContainer } from '../ContentContainer'
-import { ParticipantTiles } from '../ParticipantTiles'
 
-import { BreakoutMessageBroadcast } from '@/components/common/breakout/BreakoutMessageBroadcast'
-import { BreakoutRoomsWithParticipants } from '@/components/common/breakout/BreakoutRoomsWithParticipants'
+import { MeetingParticipants } from '@/components/common/MeetingParticipants/MeetingParticipants'
 import { PanelResizer } from '@/components/common/PanelResizer'
+import { BreakoutMessageBroadcast } from '@/components/frames/frame-types/Breakout/BreakoutMessageBroadcast'
+import { BreakoutRoomsWithParticipants } from '@/components/frames/frame-types/Breakout/BreakoutRoomsWithParticipants'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useBreakoutRooms } from '@/hooks/useBreakoutRooms'
 import { useStoreSelector } from '@/hooks/useRedux'
@@ -49,7 +49,7 @@ export function Content() {
     spotlight_overlay_view: <SportlightOverlayView />,
     spotlight_mode_participants: (
       <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-2xl m-auto">
-        <ParticipantTiles spotlightMode />
+        <MeetingParticipants />
       </div>
     ),
     frame_presentation_view: (
@@ -68,7 +68,7 @@ export function Content() {
     ),
     lobby_breakout_view: (
       <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-2xl m-auto">
-        <ParticipantTiles spotlightMode />
+        <MeetingParticipants />
       </div>
     ),
     frame_breakout_view: (
@@ -138,7 +138,7 @@ function PanelsContent({
           style={{
             height: `${TOPBAR_PARTICIPANT_TILES_HEIGHT}px`,
           }}>
-          <ParticipantTiles spotlightMode={false} />
+          <MeetingParticipants />
         </div>
         <div className="flex-auto h-full w-full">{children}</div>
       </div>
@@ -155,7 +155,7 @@ function PanelsContent({
 
       <Panel minSize={15} collapsedSize={15} defaultSize={20} maxSize={50}>
         <div className="flex flex-col overflow-auto h-full flex-1">
-          <ParticipantTiles spotlightMode={false} />
+          <MeetingParticipants />
         </div>
       </Panel>
     </PanelGroup>

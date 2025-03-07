@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { Header } from './Header'
 import { SwitchToEditModal } from './SwitchToEditModal'
-import { AssignmentOption } from '../common/breakout/AssignmentOptionSelector'
 import {
   BREAKOUT_TYPES,
   BreakoutTypePicker,
@@ -20,6 +19,7 @@ import { Loading } from '../common/Loading'
 import { RenderIf } from '../common/RenderIf/RenderIf'
 import { StudioLayout } from '../common/StudioLayout/Index'
 import { SyncingStatus } from '../common/SyncingStatus'
+import { AssignmentOption } from '../frames/frame-types/Breakout/AssignmentOptionSelector'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { useConfirmReloadOrClose } from '@/hooks/useConfirmReloadOrClose'

@@ -6,7 +6,7 @@ import './globals.css'
 import userflow from 'userflow.js'
 
 import { ContentLoading } from './components/common/ContentLoading'
-import { ErrorBoundary } from './components/error/SentryErrorBoundry'
+import { ErrorBoundary } from './components/common/error/SentryErrorBoundry'
 import { NotFound } from './components/NotFound'
 import { routeTree } from './route-tree.gen'
 import { supabaseClient } from './utils/supabase/client'

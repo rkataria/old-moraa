@@ -23,7 +23,6 @@ import {
   LuBold,
   LuCheckSquare,
   LuCode,
-  LuFileImage,
   LuHighlighter,
   LuItalic,
   LuLink,
@@ -36,7 +35,6 @@ import {
 } from 'react-icons/lu'
 import { MdInvertColors } from 'react-icons/md'
 
-import { FileUploader } from './FileUploader'
 import { Tooltip } from '../common/ShortuctTooltip'
 
 import { cn, isColorDark } from '@/utils/utils'
@@ -325,27 +323,9 @@ function ParagraphBlockControls({ editor }: { editor: Editor }) {
   )
 }
 function RichTextBlockControls({ editor }: { editor: Editor }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleUpload = (files: any[]) => {
-    const url = files ? files[0]?.signedUrl : ''
-    editor.chain().focus().setImage({ src: url }).run()
-  }
-
   return (
     <>
       <ParagraphBlockControls editor={editor} />
-      <div>
-        <FileUploader
-          triggerProps={{
-            isIconOnly: true,
-            className: 'text-black flex-grow-0 h-8 bg-transparent',
-            children: <LuFileImage size={18} />,
-          }}
-          allowedFileTypes={['image', 'image/jpeg', 'image/png']}
-          maxNumberOfFiles={1}
-          onFilesUploaded={handleUpload}
-        />
-      </div>
       <ControlButton
         active={editor.isActive('table')}
         icon={<LuTable size={18} />}

@@ -2,9 +2,9 @@ import { FaRegClone } from 'react-icons/fa'
 import { PiFlipHorizontalFill, PiFlipVerticalFill } from 'react-icons/pi'
 import { RiBringForward, RiSendBackward } from 'react-icons/ri'
 
-import { Fill } from '@/components/common/content-types/MoraaSlide/Fill'
-import { Position } from '@/components/common/content-types/MoraaSlide/Position'
 import { ControlButton } from '@/components/common/ControlButton'
+import { Fill } from '@/components/frames/frame-types/MoraaSlide/Fill'
+import { Position } from '@/components/frames/frame-types/MoraaSlide/Position'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 import { dupliacateObjects } from '@/utils/moraa-slide'
 

@@ -24,11 +24,12 @@ import { RightSidebar } from './RightSidebar'
 import { ChangeLayoutModal } from '../ChangeLayoutModal'
 import { FlyingEmojisOverlay } from '../FlyingEmojisOverlay'
 import { IdleModeConfirmation } from '../IdleModeConfirmation'
+import { EchoPlayer } from '../Music/EchoPlayer'
 import { RecordingLaunchModal } from '../RecordingLaunchModal'
 
-import { Notify } from '@/components/common/breakout/Notify'
 import { LiveLayout } from '@/components/common/LiveLayout'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
+import { Notify } from '@/components/frames/frame-types/Breakout/Notify'
 import { useEventContext } from '@/contexts/EventContext'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useConfirmReloadOrClose } from '@/hooks/useConfirmReloadOrClose'
@@ -246,6 +247,8 @@ export function MeetingScreen() {
       </div>
       {/* Emoji Overlay */}
       <FlyingEmojisOverlay />
+      <EchoPlayer />
+
       {/* Required Dyte Components */}
       <DyteParticipantsAudio meeting={meeting} />
       <DyteNotifications

@@ -1,6 +1,6 @@
 import { MoraaSlideActiveObjectAppearance } from './MoraaSlideActiveObjectAppearance'
 
-import { MoraaSlideBackgroundControls } from '@/components/common/content-types/MoraaSlide/BackgroundControls'
+import { MoraaSlideBackgroundControls } from '@/components/frames/frame-types/MoraaSlide/BackgroundControls'
 import { useMoraaSlideEditorContext } from '@/contexts/MoraaSlideEditorContext'
 
 export function MoraaSlideAppearance() {

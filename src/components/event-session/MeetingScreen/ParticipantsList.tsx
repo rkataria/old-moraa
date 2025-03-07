@@ -283,9 +283,9 @@ function HandRaisedParticipants({ search }: { search: string }) {
 
   return (
     <Listing title={`Raised Hands (${handRaisedActiveParticipants.length})`}>
-      <RenderIf isTrue={isHost}>
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-gray-400">First to last</p>
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-gray-400">First to last</p>
+        <RenderIf isTrue={isHost}>
           <Button
             size="sm"
             variant="light"
@@ -299,29 +299,33 @@ function HandRaisedParticipants({ search }: { search: string }) {
             }}>
             Lower all
           </Button>
-        </div>
-      </RenderIf>
+        </RenderIf>
+      </div>
 
       <Container>
         {getParticipants().map((participant) => (
           <ParticipantItem
             participant={participant}
             rightActions={
-              <Button
-                size="sm"
-                variant="light"
-                className="text-xs -mr-2.5"
-                onClick={() => {
-                  dispatch(
-                    updateMeetingSessionDataAction({
-                      handsRaised: session?.data?.handsRaised?.filter(
-                        (pId) => pId !== participant.id
-                      ),
-                    })
-                  )
-                }}>
-                Lower
-              </Button>
+              !isHost ? (
+                <div />
+              ) : (
+                <Button
+                  size="sm"
+                  variant="light"
+                  className="text-xs -mr-2.5"
+                  onClick={() => {
+                    dispatch(
+                      updateMeetingSessionDataAction({
+                        handsRaised: session?.data?.handsRaised?.filter(
+                          (pId) => pId !== participant.id
+                        ),
+                      })
+                    )
+                  }}>
+                  Lower
+                </Button>
+              )
             }
           />
         ))}

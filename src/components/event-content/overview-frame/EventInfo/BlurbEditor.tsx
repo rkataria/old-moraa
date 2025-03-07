@@ -4,14 +4,32 @@ import { useParams } from '@tanstack/react-router'
 import { Editor } from '@tiptap/core'
 import { RiFileList3Line } from 'react-icons/ri'
 
-import { initalContentAiWriter } from '../InitalContent'
-
-import { Editor as RichTextEditor } from '@/components/common/content-types/RichText/Editor'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
+import { Editor as RichTextEditor } from '@/components/frames/frame-types/RichText/Editor'
 import { Button } from '@/components/ui/Button'
 import { EventContext } from '@/contexts/EventContext'
 import { EventContextType } from '@/types/event-context.type'
 import { cn } from '@/utils/utils'
+
+const initalContentAiWriter = {
+  type: 'doc',
+  content: [
+    {
+      type: 'aiWriter',
+      attrs: {
+        id: '41781a46-1134-4d84-9021-ed5be49530c9',
+        authorName: 'Maxi',
+      },
+    },
+    {
+      type: 'paragraph',
+      attrs: {
+        class: null,
+        textAlign: 'left',
+      },
+    },
+  ],
+}
 
 export function BlurbEditor({
   editable = true,
@@ -25,19 +43,6 @@ export function BlurbEditor({
   const [onEmptyContent, setOnEmptyContent] = useState(false)
 
   const [editor, setEditor] = useState<Editor | null>(null)
-
-  // const eventData = useEvent({ id: eventId! })
-
-  // const { event } = eventData
-
-  // const getInitialContent = () => {
-  //   if (event.type === EventType.COURSE) return initialCourseContent
-  //   if (event.type === EventType.WEBINAR) return initialWebinarContent
-
-  //   if (event.type === EventType.WORKSHOP) return initialWorkshopContent
-
-  //   return initialCourseContent
-  // }
 
   const startWithAi = () => {
     setOnEmptyContent(false)

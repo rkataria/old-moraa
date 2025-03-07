@@ -6,6 +6,7 @@ export type UserPreferences = {
   meeting: {
     video: boolean
     audio: boolean
+    maxTilesPerPage: number
   }
   pdf?: {
     [key: string]: {

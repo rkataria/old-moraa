@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext } from 'react'
 
-import { AssignmentOptionSelector } from '@/components/common/breakout/AssignmentOptionSelector'
-import { AssignParticipantsModalTrigger } from '@/components/common/breakout/AssignParticipantsModal/AssignParticipantsModalTrigger'
 import { BREAKOUT_TYPES } from '@/components/common/BreakoutTypePicker'
-import { TwoWayNumberCounter } from '@/components/common/content-types/MoraaSlide/FontSizeControl'
 import { LabelWithInlineControl } from '@/components/common/LabelWithInlineControl'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
+import { AssignmentOptionSelector } from '@/components/frames/frame-types/Breakout/AssignmentOptionSelector'
+import { AssignParticipantsModalTrigger } from '@/components/frames/frame-types/Breakout/AssignParticipantsModal/AssignParticipantsModalTrigger'
+import { TwoWayNumberCounter } from '@/components/frames/frame-types/MoraaSlide/FontSizeControl'
 import { EventContext } from '@/contexts/EventContext'
 import { useBreakoutActivities } from '@/hooks/useBreakoutActivities'
 import { FrameService } from '@/services/frame.service'

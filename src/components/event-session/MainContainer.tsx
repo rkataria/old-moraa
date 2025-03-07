@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Panel, PanelGroup } from 'react-resizable-panels'
 
 import { ContentContainer } from './ContentContainer'
-import { ParticipantTiles } from './ParticipantTiles'
+import { MeetingParticipants } from '../common/MeetingParticipants/MeetingParticipants'
 import { PanelResizer } from '../common/PanelResizer'
 
 import { useEventSession } from '@/contexts/EventSessionContext'
@@ -46,7 +46,7 @@ export function MainContainer() {
       {/* Sportlight View */}
       {spotlightMode && !isBreakoutOverviewOpen ? (
         <div className="flex flex-col overflow-auto h-full flex-1 max-w-screen-2xl m-auto">
-          <ParticipantTiles spotlightMode />
+          <MeetingParticipants />
         </div>
       ) : (
         <PanelGroup direction="horizontal" autoSaveId="meetingScreenLayout">
@@ -67,7 +67,7 @@ export function MainContainer() {
             maxSize={50}
             ref={panelRef}>
             <div className="flex flex-col overflow-auto h-full flex-1">
-              <ParticipantTiles spotlightMode={false} />
+              <MeetingParticipants />
             </div>
           </Panel>
         </PanelGroup>

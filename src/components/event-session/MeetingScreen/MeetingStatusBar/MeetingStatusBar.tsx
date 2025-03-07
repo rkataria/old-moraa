@@ -3,8 +3,8 @@
 import { MeetingStatusContainer } from './MeetingStatusContainer'
 import { Timer } from '../../Timer'
 
-import { AskForHelpButton } from '@/components/common/breakout/AskForHelpButton'
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
+import { AskForHelpButton } from '@/components/frames/frame-types/Breakout/AskForHelpButton'
 import { Button } from '@/components/ui/Button'
 import { useBreakoutManagerContext } from '@/contexts/BreakoutManagerContext'
 import { useEventSession } from '@/contexts/EventSessionContext'

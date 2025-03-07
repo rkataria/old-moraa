@@ -4,6 +4,7 @@ import {
   INITIAL_USER_PREFERENCES,
   USER_PREFERENCES_LOCAL_STORAGE_KEY,
 } from '@/constants/common'
+import { MaxTilesPerPage } from '@/stores/slices/layout/live.slice'
 import { UserPreferences } from '@/types/common'
 
 export function useUserPreferences() {
@@ -24,6 +25,16 @@ export function useUserPreferences() {
     setUserPreferences((prev) => ({
       ...prev,
       meeting: { ...(prev?.meeting || {}), audio: value },
+    }))
+  }
+
+  const userPreferencesMeetingMaxTilesPerPage = (value: number) => {
+    setUserPreferences((prev) => ({
+      ...prev,
+      meeting: {
+        ...(prev?.meeting || {}),
+        maxTilesPerPage: value as MaxTilesPerPage,
+      },
     }))
   }
 
@@ -62,5 +73,6 @@ export function useUserPreferences() {
     userPreferencesMeetingVideo,
     userPreferencesMeetingAudio,
     userPreferencesPdf,
+    userPreferencesMeetingMaxTilesPerPage,
   }
 }

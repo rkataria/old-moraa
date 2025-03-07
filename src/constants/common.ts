@@ -19,5 +19,6 @@ export const INITIAL_USER_PREFERENCES: UserPreferences = {
   meeting: {
     video: true,
     audio: true,
+    maxTilesPerPage: 6,
   },
 }

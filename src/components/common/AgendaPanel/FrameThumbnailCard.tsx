@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 // eslint-disable-next-line import/no-cycle
-import { Frame } from '../Frame/Frame'
+import { Frame } from '../../frames/Frame/Frame'
 
 import { IFrame } from '@/types/frame.type'
 import { FrameType } from '@/utils/frame-picker.util'

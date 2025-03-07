@@ -15,8 +15,13 @@ import { useEventSession } from '@/contexts/EventSessionContext'
 import { useDyteParticipants } from '@/hooks/useDyteParticipants'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { ContentTilesLayout } from '@/stores/slices/layout/live.slice'
-import { PresentationStatuses } from '@/types/event-session.type'
+import {
+  EventSessionMode,
+  PresentationStatuses,
+} from '@/types/event-session.type'
 import { cn } from '@/utils/utils'
+
+const MAX_TILES_IN_LOBBY = 32
 
 const calculateTileSize = (w: number, h: number) => {
   if (w > h) {
@@ -31,7 +36,6 @@ const calculateTileSize = (w: number, h: number) => {
     height: Math.max(w, (w * 9) / 16),
   }
 }
-
 function calculateGrid({
   tilesCount,
   containerWidth,
@@ -128,14 +132,15 @@ export function ParticipantsGrid({
   participants: (DyteParticipant | Readonly<DyteSelf>)[]
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const { eventSessionMode } = useEventSession()
 
   const [currentPage, setCurrentPage] = useState<number>(1)
   const { maxTilesPerPage, layout } = useStoreSelector(
     (store) => store.layout.live.contentTilesLayoutConfig
   )
   const [tilesPerPage, setTilesPerPage] = useState<number>(maxTilesPerPage)
-  const [tiles, setTiles] = useState(participants)
-  const totalParticipants = tiles.length
+
+  const totalParticipants = participants.length
 
   const { presentationStatus } = useEventSession()
 
@@ -144,7 +149,7 @@ export function ParticipantsGrid({
     presentationStatus !== PresentationStatuses.STOPPED
 
   useEffect(() => {
-    setTiles(participants)
+    setCurrentPage(1)
   }, [participants])
 
   const tilesPosition = useCallback(
@@ -164,14 +169,21 @@ export function ParticipantsGrid({
 
   useEffect(() => {
     setPositions(tilesPosition())
-  }, [tiles, tilesPosition, currentPage])
+  }, [participants, tilesPosition, currentPage])
 
   useEffect(() => {
+    // If Lobby layout is selected, set the tiles per page to the total number of participants
+    if (eventSessionMode === EventSessionMode.LOBBY) {
+      setTilesPerPage(MAX_TILES_IN_LOBBY)
+
+      return
+    }
+
     setTilesPerPage(maxTilesPerPage)
-  }, [maxTilesPerPage])
+  }, [maxTilesPerPage, eventSessionMode])
 
   const totalPages = Math.ceil(totalParticipants / tilesPerPage)
-  const participantsInCurrentPage = tiles.slice(
+  const participantsInCurrentPage = participants.slice(
     (currentPage - 1) * tilesPerPage,
     currentPage * tilesPerPage
   )
@@ -196,6 +208,7 @@ export function ParticipantsGrid({
               className="absolute flex-none flex justify-center items-center p-1"
               style={positions[index]}>
               <ParticipantTile
+                key={participant.id}
                 participant={participant}
                 handRaised={
                   !!handRaisedActiveParticipants.find(
@@ -253,20 +266,6 @@ export function ParticipantsGrid({
                 <LuChevronRight />
               </Button>
             </ButtonGroup>
-          </RenderIf>
-          <RenderIf isTrue={process.env.NODE_ENV === 'development'}>
-            <div className="fixed bottom-2 right-2 p-2">
-              <Button
-                onClick={() =>
-                  setTiles((prev) => prev.slice(0, prev.length - 1))
-                }>
-                Remove Tile
-              </Button>
-              <Button
-                onClick={() => setTiles((prev) => [...prev, participants[0]])}>
-                Add Tile
-              </Button>
-            </div>
           </RenderIf>
         </div>
       </ResizeObserver>

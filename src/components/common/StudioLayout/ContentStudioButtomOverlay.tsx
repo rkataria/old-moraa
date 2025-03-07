@@ -1,4 +1,4 @@
-import { Toolbars } from '../content-types/MoraaSlide/Toolbars'
+import { Toolbars } from '../../frames/frame-types/MoraaSlide/Toolbars'
 
 import { useEventContext } from '@/contexts/EventContext'
 import { FrameType } from '@/utils/frame-picker.util'

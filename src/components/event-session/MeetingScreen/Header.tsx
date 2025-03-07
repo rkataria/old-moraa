@@ -31,14 +31,10 @@ export function Header() {
       <div className="flex-1 flex justify-start items-center gap-2 h-full">
         <MoraaLogo color="primary" logoOnly className="mr-2" />
         <Divider orientation="vertical" className="h-6" />
-        <div className="pr-2 pl-1 min-w-fit max-w-32 text-ellipsis line-clamp-1">
+        <div className="pr-2 mr-2 pl-1 min-w-fit max-w-36 text-ellipsis line-clamp-1">
           {meetingTitles?.find((m) => m.id === dyetMeeting.meta.meetingId)
             ?.title || event.name}{' '}
         </div>
-        {/* <DyteClock
-          meeting={dyetMeeting}
-          className="m-0 px-2 h-8 mr-2 font-thin"
-        /> */}
         <MeetingRecordingIndicator />
       </div>
       <div className="flex-auto">

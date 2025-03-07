@@ -1,6 +1,5 @@
 import { useState } from 'react'
 
-import { AssignmentOption } from './breakout/AssignmentOptionSelector'
 import { BREAKOUT_TYPES, BreakoutTypePicker } from './BreakoutTypePicker'
 import { FramePickerCard } from './FramePickerCard'
 import { FramePickerTemplateCard } from './FramePickerTemplateCard'
@@ -9,6 +8,7 @@ import { NoFramePreview } from './NoFramePreview'
 import { RenderIf } from './RenderIf/RenderIf'
 import { FrameText } from '../event-content/FrameText'
 import { FrameTextBlock } from '../event-content/FrameTextBlock'
+import { AssignmentOption } from '../frames/frame-types/Breakout/AssignmentOptionSelector'
 
 import { useStoreDispatch } from '@/hooks/useRedux'
 import { setIsPreviewOpenAction } from '@/stores/slices/event/current-event/event.slice'
