@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactNode } from 'react'
 
 import 'iframe-resizer/js/iframeResizer.contentWindow'
@@ -9,11 +10,10 @@ import {
   getProfileName,
   IUserProfile,
 } from '@/components/common/UserAvatar'
-import { BlockEditor } from '@/components/tiptap/BlockEditor'
 import { useProfile } from '@/hooks/useProfile'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useRichText } from '@/hooks/useRichText'
-import { cn, getUniqueColor } from '@/utils/utils'
+import { cn } from '@/utils/utils'
 
 export interface AiState {
   isAiLoading: boolean
@@ -71,7 +71,8 @@ export function Editor({
         },
         classNames?.wrapper
       )}>
-      <BlockEditor
+      {/* TODO: FixAI */}
+      {/* <BlockEditor
         aiToken={aiToken}
         ydoc={ydoc}
         hasCollab={enableCollaboration}
@@ -91,7 +92,7 @@ export function Editor({
         hideSideBar={hideSideBar}
         initialContent={initalContent}
         editorId={editorId}
-      />
+      /> */}
     </div>
   )
 }
