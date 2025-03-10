@@ -1,9 +1,8 @@
-import ReactWordcloud, {
-  type Word as ReactWordCloudWord,
-} from 'react-wordcloud'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 const callbacks = {
-  getWordColor: (word: ReactWordCloudWord) => word.color,
+  getWordColor: (word: any) => word.color,
 }
 
 interface Participant {
@@ -11,8 +10,10 @@ interface Participant {
   name: string
   avatar_url: string
 }
-
-interface Word extends ReactWordCloudWord {
+export interface Word {
+  [key: string]: any
+  text: string
+  value: number
   participants: Participant[]
 }
 
@@ -35,7 +36,8 @@ export function WordCloud({
 
   return (
     <div className="h-full flex word-cloud">
-      <ReactWordcloud
+      {/* TODO: FixAI */}
+      {/* <ReactWordcloud
         callbacks={callbacks}
         words={wordsWithColors}
         options={{
@@ -89,7 +91,7 @@ export function WordCloud({
           },
           ...optionProps,
         }}
-      />
+      /> */}
     </div>
   )
 }

@@ -1,7 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from 'react'
-
-import { Skeleton } from '@heroui/react'
-import ReactGoogleSlides from 'react-google-slides'
 
 import { PageControls } from '@/components/common/PageControls'
 
@@ -19,7 +17,7 @@ export function Embed({
   onPageChange,
 }: EmbedProps) {
   const [currentPage, setCurrentPage] = useState<number>(startPage)
-  const [loading, setLoading] = useState<boolean>(true)
+  // const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     setCurrentPage(startPage)
@@ -32,10 +30,11 @@ export function Embed({
 
   return (
     <div className="relative w-full h-full">
-      {loading && (
+      {/* {loading && (
         <Skeleton className="absolute top-0 left-0 w-full h-full rounded-md" />
-      )}
-      <ReactGoogleSlides
+      )} */}
+      {/* TODO: FixAI */}
+      {/* <ReactGoogleSlides
         width="100%"
         height="100%"
         slidesLink={url}
@@ -45,7 +44,7 @@ export function Embed({
         onLoad={() => {
           setLoading(false)
         }}
-      />
+      /> */}
 
       {showControls && (
         <PageControls
