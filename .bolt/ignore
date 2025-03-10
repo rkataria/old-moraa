@@ -1,0 +1,49 @@
+# Ignore everything
+*
+
+# Allow components and pages and other core directories
+!src/
+!src/components/
+!src/constants/
+!src/context/
+!src/hooks/
+!src/libs/
+!src/pages/
+!src/services/
+!src/stores/
+!src/utils/
+
+# Ignore everything inside src except components and pages
+src/*
+!src/components/
+!src/constants/
+!src/context/
+!src/hooks/
+!src/libs/
+!src/pages/
+!src/services/
+!src/stores/
+!src/utils/
+
+# Ignore all subdirectories inside src except components and pages
+src/**/*
+!src/components/**
+!src/constants/**
+!src/context/**
+!src/hooks/**
+!src/libs/**
+!src/pages/**
+!src/services/**
+!src/stores/**
+!src/utils/**
+
+# Optional: Ignore node_modules and other common files
+node_modules/
+dist/
+build/
+.env
+.env.local
+.DS_Store
+.vscode/
+.idea/
+*.log
