@@ -1,8 +1,8 @@
 import { IoSettingsOutline } from 'react-icons/io5'
 
 import { ControlButton } from '@/components/common/ControlButton'
-import { cn } from '@/components/tiptap/lib/utils'
 import { useEventSession } from '@/contexts/EventSessionContext'
+import { cn } from '@/utils/utils'
 
 type SettingsToggleProps = {
   showLabel?: boolean

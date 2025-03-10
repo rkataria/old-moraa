@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux'
 
 import { ControlButton } from '@/components/common/ControlButton'
 import { NotesIcon } from '@/components/svg'
-import { cn } from '@/components/tiptap/lib/utils'
 import { useEventSession } from '@/contexts/EventSessionContext'
 import { useStoreSelector } from '@/hooks/useRedux'
 import { useCurrentFrame } from '@/stores/hooks/useCurrentFrame'
@@ -14,7 +13,7 @@ import {
   closeRightSidebarAction,
   setRightSidebarAction,
 } from '@/stores/slices/layout/live.slice'
-import { KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
+import { cn, KeyboardShortcuts, liveHotKeyProps } from '@/utils/utils'
 
 type NoteToggleProps = {
   showLabel?: boolean
