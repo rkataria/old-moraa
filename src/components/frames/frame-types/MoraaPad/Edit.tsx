@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/react'
 import {
@@ -9,7 +10,6 @@ import { Editor } from '../RichText/Editor'
 
 import { RenderIf } from '@/components/common/RenderIf/RenderIf'
 import { FrameTitleDescriptionPanel } from '@/components/event-content/FrameTitleDescriptionPanel'
-import { Documents } from '@/components/tiptap/Sidebar/Documents'
 import { useRichText } from '@/hooks/useRichText'
 import { IFrame } from '@/types/frame.type'
 
@@ -40,14 +40,15 @@ export function Edit({ frame }: EditProps) {
           }
         )}>
         <RenderIf isTrue={showPages}>
-          <Documents
+          {/* TODO: FixAI */}
+          {/* <Documents
             pages={pages}
             activePage={activePage}
             deletePage={deletePage}
             addPage={addPage}
             handlePageChange={changeActivePage}
             renamePage={renamePage}
-          />
+          /> */}
         </RenderIf>
 
         <div className="relative w-full h-full duration-300 overflow-auto scrollbar-none">
